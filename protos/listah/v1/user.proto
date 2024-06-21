@@ -1,0 +1,90 @@
+syntax = "proto3";
+package listah;
+
+
+import "commons.proto";
+
+
+message UserServiceCreateRequest {
+    string id = 1;
+    string first_name = 2;
+    string middle_names = 3;
+    string last_names = 4;
+    string username = 5;
+    string email = 6;
+    string role = 7;
+    Audit audit = 50;
+}
+
+message UserServiceCreateResponse {
+    string id = 1;
+    string first_name = 2;
+    string middle_names = 3;
+    string last_names = 4;
+    string username = 5;
+    string email = 6;
+    string role = 7;
+    Audit audit = 50;
+}
+
+message UserServiceReadRequest {
+    string id = 1;
+}
+
+message UserServiceReadResponse {
+    string id = 1;
+    string first_name = 2;
+    string middle_names = 3;
+    string last_names = 4;
+    string username = 5;
+    string email = 6;
+    string role = 7;
+    Audit audit = 50;
+}
+
+message UserServiceUpdateRequest {
+    string id = 1;
+    string first_name = 2;
+    string middle_names = 3;
+    string last_names = 4;
+    string username = 5;
+    string email = 6;
+    string role = 7;
+    Audit audit = 50;
+}
+
+message UserServiceUpdateResponse {
+    string id = 1;
+    string first_name = 2;
+    string middle_names = 3;
+    string last_names = 4;
+    string username = 5;
+    string email = 6;
+    string role = 7;
+    Audit audit = 50;
+}
+
+message UserServiceDeleteRequest {
+    string id = 1;
+}
+
+message UserServiceDeleteResponse {
+    
+}
+
+
+service User {
+    rpc Create (UserServiceCreateRequest) returns (UserServiceCreateResponse) {
+
+    }
+    rpc Read (UserServiceReadRequest) returns (UserServiceReadResponse) {
+        
+    }
+    rpc Update(UserServiceUpdateRequest) returns (UserServiceUpdateResponse) {
+        
+    }
+    rpc Delete(UserServiceDeleteRequest) returns (UserServiceDeleteResponse) {
+        
+    }
+
+}
