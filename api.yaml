@@ -1,0 +1,16 @@
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile_api
+    ports:
+      - "5000:8080"
+    develop:
+      watch:
+        - action: sync
+          path: ./apps/api
+          target: /app/apps/api        
+        - action: rebuild
+          path: ./internal
+          target: /app/internal
