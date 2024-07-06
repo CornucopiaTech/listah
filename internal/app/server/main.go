@@ -2,34 +2,30 @@ package server
 
 import (
 	"context"
-	"net"
+	"log"
+	"net/http"
+
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 
 	"cornucopia/listah/internal/app/user"
 	pb "cornucopia/listah/internal/pkg/proto/listah/v1"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/grpclog"
 )
 
 // Run starts the gRPC service.
 // "network" and "address" are passed to net.Listen.
 func Run(ctx context.Context, network, address string) error {
-	l, err := net.Listen(network, address)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err := l.Close(); err != nil {
-			grpclog.Errorf("Failed to close %s %s: %v", network, address, err)
-		}
-	}()
-
-	s := grpc.NewServer()
-	pb.RegisterUserServiceServer(s, user.NewUserServer())
-
-	go func() {
-		defer s.GracefulStop()
-		<-ctx.Done()
-	}()
-	return s.Serve(l)
+	mux := http.NewServeMux()
+	// The generated constructors return a path and a plain net/http
+	// handler.
+	path, handler := pb.NewUserServiceHandler.NewGreetServiceHandler(user.NewUserServer())
+	mux.Handle(path, handler)
+	err := http.ListenAndServe(
+		"localhost:8080",
+		// For gRPC clients, it's convenient to support HTTP/2 without TLS. You can
+		// avoid x/net/http2 by using http.ListenAndServeTLS.
+		h2c.NewHandler(mux, &http2.Server{}),
+	)
+	log.Fatalf("listen failed: %v", err)
+	return err
 }

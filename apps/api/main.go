@@ -7,7 +7,6 @@ import (
 
 	"google.golang.org/grpc/grpclog"
 
-	gateway "cornucopia/listah/internal/app/gateway"
 	server "cornucopia/listah/internal/app/server"
 )
 
@@ -20,26 +19,7 @@ var (
 )
 
 func main() {
-	flag.Parse()
-
 	ctx := context.Background()
-
-	go func() {
-		log.Printf("Starting to run gateway server")
-		opts := gateway.Options{
-			Addr: *addrGateway,
-			GRPCServer: gateway.Endpoint{
-				Network: *networkGrpc,
-				Addr:    *addrGrpc,
-			},
-			OpenAPIDir: *openAPIDir,
-		}
-		if err := gateway.Run(ctx, opts); err != nil {
-			log.Fatal(err)
-			grpclog.Fatal(err)
-		}
-	}()
-
 	log.Printf("Starting to run gRPC server")
 	if err := server.Run(ctx, *networkGrpc, *addrGrpc); err != nil {
 		log.Fatal(err)

@@ -6,7 +6,8 @@
     "buf:lint": "buf lint",
     "buf:update": "buf dep update",
     "buf:prune": "buf dep prune",
-    "buf:generate": "buf generate"
+    "buf:generate": "buf generate",
+    "go:lint": "golangci-lint run apps/api/... internal/app/... internal/pkg/..."
   },
   "private": true,
   "dependencies": {
