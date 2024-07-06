@@ -1,13 +1,9 @@
 package user
 
 import (
-	pb "cornucopia/listah/internal/pkg/proto/listah/v1"
+	v1connect "cornucopia/listah/internal/pkg/proto/listah/v1/v1connect"
 )
 
-type service struct {
-	pb.UnimplementedUserServiceServer
-}
-
-func NewUserServer() *service {
-	return &service{}
+type Server struct {
+	v1connect.UnimplementedUserServiceHandler
 }

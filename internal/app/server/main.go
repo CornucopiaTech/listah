@@ -9,16 +9,14 @@ import (
 	"golang.org/x/net/http2/h2c"
 
 	"cornucopia/listah/internal/app/user"
-	pb "cornucopia/listah/internal/pkg/proto/listah/v1"
+	v1connect "cornucopia/listah/internal/pkg/proto/listah/v1/v1connect"
 )
 
-// Run starts the gRPC service.
-// "network" and "address" are passed to net.Listen.
 func Run(ctx context.Context, network, address string) error {
 	mux := http.NewServeMux()
 	// The generated constructors return a path and a plain net/http
 	// handler.
-	path, handler := pb.NewUserServiceHandler.NewGreetServiceHandler(user.NewUserServer())
+	path, handler := v1connect.NewUserServiceHandler(&user.Server{})
 	mux.Handle(path, handler)
 	err := http.ListenAndServe(
 		"localhost:8080",

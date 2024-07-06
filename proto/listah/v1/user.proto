@@ -80,15 +80,21 @@ message UserServiceDeleteResponse {
 
 service UserService {
     rpc Create (UserServiceCreateRequest) returns (UserServiceCreateResponse) {
-        option (google.api.http) = {
-            post: "/v1/user/create"
-        };
+        // option (google.api.http) = {
+        //     post: "/v1/user/create"
+        // };
     }
 
     rpc Read (UserServiceReadRequest) returns (UserServiceReadResponse) {
-        option (google.api.http) = {
-            get: "/v1/user/read"
-        };
+        // option (google.api.http) = {
+        //     get: "/v1/user/read"
+        // };
+    }
+
+    rpc Echo (UserServiceCreateRequest) returns (UserServiceCreateRequest) {
+        // option (google.api.http) = {
+        //     get: "/v1/user/echo"
+        // };
     }
     rpc Update(UserServiceUpdateRequest) returns (UserServiceUpdateResponse) {
 
