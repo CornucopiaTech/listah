@@ -1,0 +1,302 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "listah/v1/user.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "UserService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/user/create": {
+      "post": {
+        "operationId": "UserService_Create",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UserServiceCreateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "firstName",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "middleNames",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "lastNames",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "username",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "audit.createdBy",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "AUDIT_UPDATER_ENUM_UNSPECIFIED",
+              "AUDIT_UPDATER_ENUM_FRONTEND",
+              "AUDIT_UPDATER_ENUM_SYSOPS"
+            ],
+            "default": "AUDIT_UPDATER_ENUM_UNSPECIFIED"
+          },
+          {
+            "name": "audit.createdAt",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "audit.updatedBy",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "AUDIT_UPDATER_ENUM_UNSPECIFIED",
+              "AUDIT_UPDATER_ENUM_FRONTEND",
+              "AUDIT_UPDATER_ENUM_SYSOPS"
+            ],
+            "default": "AUDIT_UPDATER_ENUM_UNSPECIFIED"
+          },
+          {
+            "name": "audit.updatedAt",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/v1/user/read": {
+      "get": {
+        "operationId": "UserService_Read",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UserServiceReadResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1Audit": {
+      "type": "object",
+      "properties": {
+        "createdBy": {
+          "$ref": "#/definitions/v1AuditUpdaterEnum"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedBy": {
+          "$ref": "#/definitions/v1AuditUpdaterEnum"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "v1AuditUpdaterEnum": {
+      "type": "string",
+      "enum": [
+        "AUDIT_UPDATER_ENUM_UNSPECIFIED",
+        "AUDIT_UPDATER_ENUM_FRONTEND",
+        "AUDIT_UPDATER_ENUM_SYSOPS"
+      ],
+      "default": "AUDIT_UPDATER_ENUM_UNSPECIFIED"
+    },
+    "v1UserServiceCreateResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "middleNames": {
+          "type": "string"
+        },
+        "lastNames": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "audit": {
+          "$ref": "#/definitions/v1Audit"
+        }
+      }
+    },
+    "v1UserServiceDeleteResponse": {
+      "type": "object"
+    },
+    "v1UserServiceReadResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "middleNames": {
+          "type": "string"
+        },
+        "lastNames": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "audit": {
+          "$ref": "#/definitions/v1Audit"
+        }
+      }
+    },
+    "v1UserServiceUpdateResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "middleNames": {
+          "type": "string"
+        },
+        "lastNames": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "audit": {
+          "$ref": "#/definitions/v1Audit"
+        }
+      }
+    }
+  }
+}

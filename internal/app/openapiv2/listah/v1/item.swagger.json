@@ -1,0 +1,116 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "listah/v1/item.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "ItemService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1Audit": {
+      "type": "object",
+      "properties": {
+        "createdBy": {
+          "$ref": "#/definitions/v1AuditUpdaterEnum"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedBy": {
+          "$ref": "#/definitions/v1AuditUpdaterEnum"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "v1AuditUpdaterEnum": {
+      "type": "string",
+      "enum": [
+        "AUDIT_UPDATER_ENUM_UNSPECIFIED",
+        "AUDIT_UPDATER_ENUM_FRONTEND",
+        "AUDIT_UPDATER_ENUM_SYSOPS"
+      ],
+      "default": "AUDIT_UPDATER_ENUM_UNSPECIFIED"
+    },
+    "v1ItemServiceReadResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "parentListId": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "reactivateAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "audit": {
+          "$ref": "#/definitions/v1Audit"
+        }
+      }
+    }
+  }
+}

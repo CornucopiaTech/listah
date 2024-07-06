@@ -1,0 +1,105 @@
+syntax = "proto3";
+package listah.v1;
+
+
+option go_package = "cornucopia/listah/internal/pkg/proto/listah/v1";
+option java_multiple_files = true;
+option java_package = "cornucopia.listah.api.v1";
+option java_outer_classname = "ItemServicesProto";
+
+import "listah/v1/commons.proto";
+import "google/protobuf/timestamp.proto";
+
+
+
+message ItemServiceCreateRequest {
+    string id = 1;
+    string title = 2;
+	string description = 3;
+    string quantity = 4;
+    string location = 5;
+    string category = 6;
+    string note = 7;
+	string parent_list_id = 8;
+	bool active = 20;
+	google.protobuf.Timestamp reactivate_at = 21;
+	Audit audit = 50;
+}
+
+
+message ItemServiceCreateResponse {
+    string id = 1;
+    string title = 2;
+	string description = 3;
+    string quantity = 4;
+    string location = 5;
+    string category = 6;
+    string note = 7;
+	string parent_list_id = 8;
+	bool active = 20;
+	google.protobuf.Timestamp reactivate_at = 21;
+	Audit audit = 50;
+}
+
+
+message ItemServiceUpdateRequest {
+    string id = 1;
+    string title = 2;
+	string description = 3;
+    string quantity = 4;
+    string location = 5;
+    string category = 6;
+    string note = 7;
+	string parent_list_id = 8;
+	bool active = 20;
+	google.protobuf.Timestamp reactivate_at = 21;
+	Audit audit = 50;
+}
+
+
+message ItemServiceUpdateResponse {
+    string id = 1;
+    string title = 2;
+	string description = 3;
+    string quantity = 4;
+    string location = 5;
+    string category = 6;
+    string note = 7;
+	string parent_list_id = 8;
+	google.protobuf.Timestamp reactivate_at = 21;
+	Audit audit = 50;
+}
+
+
+message ItemServiceReadRequest {
+    string id = 1;
+}
+
+
+message ItemServiceReadResponse {
+    string id = 1;
+    string title = 2;
+	string description = 3;
+    string quantity = 4;
+    string location = 5;
+    string category = 6;
+    string note = 7;
+	string parent_list_id = 8;
+	bool active = 20;
+	google.protobuf.Timestamp reactivate_at = 21;
+	Audit audit = 50;
+}
+
+message ItemServiceDeleteRequest {
+    string id = 1;
+}
+
+
+message ItemServiceDeleteResponse {}
+
+
+service ItemService {
+    rpc Read(ItemServiceReadRequest) returns (ItemServiceReadResponse){
+
+    }
+}
