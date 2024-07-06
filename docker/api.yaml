@@ -5,7 +5,7 @@ services:
       context: ../
       dockerfile: docker/Dockerfile_api    
     ports:
-      - "5000:8080"
+      - "8080:8080"
     develop:
       watch:
         - action: sync

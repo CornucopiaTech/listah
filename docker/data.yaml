@@ -8,6 +8,6 @@ services:
        - ./local/db_data:/var/lib/postgresql/
     environment:
       ENV: local
-    env_file: ./.env.${ENV}
+    env_file: ../.env.${ENV}
     ports:
       - "5434:5432"

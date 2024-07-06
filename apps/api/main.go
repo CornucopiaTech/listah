@@ -1,13 +1,14 @@
 package main
 
 import (
-	"context"
 	"flag"
+	"fmt"
 	"log"
 
+	"github.com/pkg/errors"
 	"google.golang.org/grpc/grpclog"
 
-	server "cornucopia/listah/internal/app/server"
+	"cornucopia/listah/internal/app/server"
 )
 
 var (
@@ -16,9 +17,9 @@ var (
 )
 
 func main() {
-	ctx := context.Background()
 	log.Printf("Starting to run connect-go server")
-	if err := server.Run(ctx, *networkGrpc, *addrGrpc); err != nil {
+	if err := server.Run(); err != nil {
+		fmt.Println(errors.Cause(err))
 		log.Fatal(err)
 		grpclog.Fatal(err)
 	}

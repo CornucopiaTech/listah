@@ -1,4 +1,4 @@
-package booytstrap
+package bootstrap
 
 import (
 	"context"
