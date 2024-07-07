@@ -32,6 +32,9 @@ func Run() error {
 		err = errors.Join(err, otelShutdown(context.Background()))
 	}()
 
+	// // Finally, set the tracer that can be used for this package.
+	// tracer = tp.Tracer("ExampleService")
+
 	// The generated constructors return a path and a plain net/http
 	// handler.
 	mux := http.NewServeMux()

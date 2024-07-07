@@ -14,3 +14,7 @@ services:
         - action: rebuild
           path: ./internal
           target: /app/internal
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
+      - OTEL_EXPORTER_JAEGER_ENDPOINT=http://localhost:14268/api/traces
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318

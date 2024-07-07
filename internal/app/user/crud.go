@@ -6,12 +6,17 @@ import (
 	"log"
 
 	"connectrpc.com/connect"
+	"go.opentelemetry.io/otel"
 )
 
 type User struct {
 }
 
 func (s *Server) Read(ctx context.Context, req *connect.Request[pb.UserServiceReadRequest]) (*connect.Response[pb.UserServiceReadResponse], error) {
+	// Create a span to track `childFunction()` - this is a nested span whose parent is `parentSpan`
+	ctx, span := otel.Tracer("users").Start(ctx, "read")
+	defer span.End()
+
 	// ToDo: Implement Read Function
 	res := connect.NewResponse(&pb.UserServiceReadResponse{
 		Id:          "User Read Id1",
@@ -27,6 +32,9 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.UserServiceRe
 }
 
 func (s *Server) Create(ctx context.Context, req *connect.Request[pb.UserServiceCreateRequest]) (*connect.Response[pb.UserServiceCreateResponse], error) {
+	ctx, span := otel.Tracer("users").Start(ctx, "create")
+	defer span.End()
+
 	// ToDo: Implement Read Function
 	res := connect.NewResponse(&pb.UserServiceCreateResponse{
 		// req.Msg is a strongly-typed *pingv1.PingRequest, so we can access its
