@@ -34,10 +34,12 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 
-	"github.com/jaegertracing/jaeger/examples/hotrod/pkg/log"
-	"github.com/jaegertracing/jaeger/examples/hotrod/pkg/tracing/rpcmetrics"
+	"cornucopia/listah/internal/pkg/log"
+
+	"cornucopia/listah/internal/pkg/telemetry/rpcmetrics"
+
 	"github.com/jaegertracing/jaeger/pkg/metrics"
-	"github.com/jaegertracing/jaeger/pkg/otelsemconv"
+	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 )
 
 var once sync.Once
@@ -62,8 +64,8 @@ func InitOTEL(serviceName string, exporterType string, metricsFactory metrics.Fa
 
 	res, err := resource.New(
 		context.Background(),
-		resource.WithSchemaURL(otelsemconv.SchemaURL),
-		resource.WithAttributes(otelsemconv.ServiceNameKey.String(serviceName)),
+		resource.WithSchemaURL(semconv.SchemaURL),
+		resource.WithAttributes(semconv.ServiceNameKey.String(serviceName)),
 		resource.WithTelemetrySDK(),
 		resource.WithHost(),
 		resource.WithOSType(),

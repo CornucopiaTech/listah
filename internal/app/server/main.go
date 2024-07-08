@@ -13,6 +13,8 @@ import (
 	"cornucopia/listah/internal/app/user"
 	v1connect "cornucopia/listah/internal/pkg/proto/listah/v1/v1connect"
 
+	"connectrpc.com/connect"
+	"connectrpc.com/otelconnect"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 )
@@ -37,8 +39,11 @@ func Run() error {
 
 	// The generated constructors return a path and a plain net/http
 	// handler.
+	intcpt, err := otelconnect.NewInterceptor()
 	mux := http.NewServeMux()
-	path, handler := v1connect.NewUserServiceHandler(&user.Server{})
+	path, handler := v1connect.NewUserServiceHandler(&user.Server{}, connect.WithInterceptors(
+		intcpt,
+	))
 	mux.Handle(path, handler)
 
 	// Start HTTP server.
@@ -69,3 +74,15 @@ func Run() error {
 	err = srv.Shutdown(context.Background())
 	return err
 }
+
+// func run() error {
+// 	zapLogger := logger.With(zap.String("service", "driver"))
+// 	logger := log.NewFactory(zapLogger)
+// 	server := driver.NewServer(
+// 		net.JoinHostPort("0.0.0.0", strconv.Itoa(driverPort)),
+// 		otelExporter,
+// 		metricsFactory,
+// 		logger,
+// 	)
+// 	return logError(zapLogger, server.Run())
+// }

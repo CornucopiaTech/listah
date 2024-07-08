@@ -14,11 +14,9 @@ import (
 	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
-	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutlog"
-	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 	"go.opentelemetry.io/otel/log/global"
 	"go.opentelemetry.io/otel/propagation"
 	sdklog "go.opentelemetry.io/otel/sdk/log"
@@ -165,8 +163,10 @@ func initPropagator() propagation.TextMapPropagator {
 // Initializes an OTLP exporter, and configures the corresponding trace provider.
 func initHttpTracerProvider(ctx context.Context, res *resource.Resource) (*sdktrace.TracerProvider, error) {
 	// Define Http exporter
-	client := otlptracehttp.NewClient("http://localhost:4318")
-	exporter, err := otlptracehttp.New(ctx, client)
+	// client := otlptracehttp.NewClient("http://localhost:4318")
+	// exporter, err := otlptracehttp.New(ctx, client)
+	// client := otlptracehttp.NewClient()
+	exporter, err := otlptracehttp.New(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to create HTTP trace exporter: %w", err)
 	}
@@ -250,29 +250,4 @@ func initConsoleLoggerProvider() (*sdklog.LoggerProvider, error) {
 		sdklog.WithProcessor(sdklog.NewBatchProcessor(logExporter)),
 	)
 	return loggerProvider, nil
-}
-
-func createOtelExporter(ctx, exporterType string) (sdktrace.SpanExporter, error) {
-	var exporter sdktrace.SpanExporter
-	var err error
-	switch exporterType {
-	case "jaeger":
-		exporter, err = jaeger.New(
-			jaeger.WithCollectorEndpoint(),
-		)
-	case "otlp":
-		var opts []otlptracehttp.Option
-		if !withSecure() {
-			opts = []otlptracehttp.Option{otlptracehttp.WithInsecure()}
-		}
-		exporter, err = otlptrace.New(
-			ctx,
-			otlptracehttp.NewClient(opts...),
-		)
-	case "stdout":
-		exporter, err = stdouttrace.New()
-	default:
-		return nil, fmt.Errorf("unrecognized exporter type %s", exporterType)
-	}
-	return exporter, err
 }
