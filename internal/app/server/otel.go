@@ -1,4 +1,4 @@
-package bootstrap
+package server
 
 import (
 	"context"
@@ -14,14 +14,16 @@ import (
 	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
-	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutlog"
 	"go.opentelemetry.io/otel/log/global"
 	"go.opentelemetry.io/otel/propagation"
 	sdklog "go.opentelemetry.io/otel/sdk/log"
+	"go.opentelemetry.io/otel/sdk/metric"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/resource"
+	"go.opentelemetry.io/otel/sdk/trace"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 )
@@ -29,7 +31,7 @@ import (
 // ToDo: Pass service name in config or env variable.
 var serviceName = semconv.ServiceNameKey.String("Listah")
 
-func InitSDK(ctx context.Context) (shutdown func(context.Context) error, err error) {
+func initSDK() (shutdown func(context.Context) error, err error) {
 	var shutdownFuncs []func(context.Context) error
 
 	// shutdown calls cleanup functions registered via shutdownFuncs.
@@ -49,7 +51,7 @@ func InitSDK(ctx context.Context) (shutdown func(context.Context) error, err err
 	handleErr := func(inErr error, errMsg string) {
 		log.Fatalf(errMsg+": %v", err)
 		fmt.Println(gerrors.Cause(err))
-		err = errors.Join(inErr, shutdown(ctx))
+		err = errors.Join(inErr, shutdown(context.Background()))
 	}
 
 	//
@@ -76,32 +78,13 @@ func InitSDK(ctx context.Context) (shutdown func(context.Context) error, err err
 
 	//
 	// Create a new tracer provider with a batch span processor and the given exporter.
-	tracerProviderHttp, err := initHttpTracerProvider(ctx, res)
+	tracerProviderHttp, err := initHttpTracerProvider(context.Background(), res)
 	if err != nil {
 		handleErr(err, "Failed to initialize HTTP tracer for Otel")
 		log.Fatalf("Failed to initialize HTTP tracer for Otel: %v", err)
 	}
 	shutdownFuncs = append(shutdownFuncs, tracerProviderHttp.Shutdown)
 	otel.SetTracerProvider(tracerProviderHttp)
-
-	// //
-	// // Initialise gRPC client connection
-	// conn, err := initConn()
-	// if err != nil {
-	// 	handleErr(err, "Failed to initialize gRPC client connection for Otel")
-	// 	log.Fatalf("Failed to initialize gRPC client connection for Otel: %v", err)
-	// }
-
-	// //
-	// // Set up trace provider.
-	// // ToDo: Find out the purpose of exporters and providers
-	// tracerProviderGrpc, err := initGrpcTracerProvider(ctx, res, conn)
-	// if err != nil {
-	// 	handleErr(err, "Failed to create a gRPC trace provider for Otel")
-	// 	log.Fatalf("Failed to create a gRPC trace provider for Otel: %v", err)
-	// }
-	// shutdownFuncs = append(shutdownFuncs, tracerProviderGrpc.Shutdown)
-	// otel.SetTracerProvider(tracerProviderGrpc)
 
 	// //
 	// // Set up HTTP meter provider
@@ -163,39 +146,19 @@ func initPropagator() propagation.TextMapPropagator {
 // Initializes an OTLP exporter, and configures the corresponding trace provider.
 func initHttpTracerProvider(ctx context.Context, res *resource.Resource) (*sdktrace.TracerProvider, error) {
 	// Define Http exporter
-	// client := otlptracehttp.NewClient("http://localhost:4318")
+	client := otlptracehttp.NewClient()
 	// exporter, err := otlptracehttp.New(ctx, client)
 	// client := otlptracehttp.NewClient()
-	exporter, err := otlptracehttp.New(ctx)
+	exporter, err := otlptrace.New(ctx, client)
+	// exporter, err := otlptracehttp.New(ctx, client)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to create HTTP trace exporter: %w", err)
+		return nil, fmt.Errorf("failed to create HTTP trace exporter: %w", err)
 	}
 
 	return sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(exporter),
 		sdktrace.WithResource(res),
 	), nil
-}
-
-// Initializes an OTLP exporter, and configures the corresponding trace provider.
-func initGrpcTracerProvider(ctx context.Context, res *resource.Resource, conn *grpc.ClientConn) (*sdktrace.TracerProvider, error) {
-	// Define Grpc exporter
-	exporter, err := otlptracegrpc.New(ctx, otlptracegrpc.WithGRPCConn(conn))
-	if err != nil {
-		return nil, fmt.Errorf("Failed to create gRPC trace exporter: %w", err)
-	}
-
-	// Register the trace exporter with a TracerProvider, using a batch
-	// span processor to aggregate spans before export.
-	bsp := sdktrace.NewBatchSpanProcessor(exporter)
-	traceProvider := sdktrace.NewTracerProvider(
-		sdktrace.WithSampler(sdktrace.AlwaysSample()),
-		sdktrace.WithResource(res),
-		sdktrace.WithSpanProcessor(bsp),
-	)
-
-	// Shutdown will flush any remaining spans and shut down the exporter.
-	return traceProvider, nil
 }
 
 // Initializes an OTLP exporter, and configures the corresponding meter provider.
@@ -250,4 +213,11 @@ func initConsoleLoggerProvider() (*sdklog.LoggerProvider, error) {
 		sdklog.WithProcessor(sdklog.NewBatchProcessor(logExporter)),
 	)
 	return loggerProvider, nil
+}
+
+func SetupOtel() {
+	// Exporting to different platforms can be configured here
+	otel.SetTracerProvider(trace.NewTracerProvider())
+	otel.SetMeterProvider(metric.NewMeterProvider())
+	otel.SetTextMapPropagator(propagation.TraceContext{})
 }

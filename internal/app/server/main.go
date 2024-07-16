@@ -3,13 +3,14 @@ package server
 import (
 	"context"
 	"errors"
+	"log"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
 
-	bts "cornucopia/listah/internal/app/bootstrap"
+	"cornucopia/listah/internal/app/bootstrap"
 	"cornucopia/listah/internal/app/user"
 	v1connect "cornucopia/listah/internal/pkg/proto/listah/v1/v1connect"
 
@@ -20,12 +21,15 @@ import (
 )
 
 func Run() error {
+	// Run application bootstrapping
+	infra := bootstrap.Init()
+
 	// Handle SIGINT (CTRL+C) gracefully.
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	_, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 
 	// Set up OpenTelemetry.
-	otelShutdown, err := bts.InitSDK(ctx)
+	otelShutdown, err := initSDK()
 	if err != nil {
 		return err
 	}
@@ -34,13 +38,20 @@ func Run() error {
 		err = errors.Join(err, otelShutdown(context.Background()))
 	}()
 
-	// // Finally, set the tracer that can be used for this package.
-	// tracer = tp.Tracer("ExampleService")
-
 	// The generated constructors return a path and a plain net/http
 	// handler.
 	intcpt, err := otelconnect.NewInterceptor()
+	if err != nil {
+		log.Fatal(err)
+	}
 	mux := http.NewServeMux()
+
+	// otelconnect.NewInterceptor provides an interceptor that adds tracing and
+	// metrics to both clients and handlers. By default, it uses OpenTelemetry's
+	// global TracerProvider and MeterProvider, which you can configure by
+	// following the OpenTelemetry documentation. If you'd prefer to avoid
+	// globals, use otelconnect.WithTracerProvider and
+	// otelconnect.WithMeterProvider.
 	path, handler := v1connect.NewUserServiceHandler(&user.Server{}, connect.WithInterceptors(
 		intcpt,
 	))
@@ -48,8 +59,8 @@ func Run() error {
 
 	// Start HTTP server.
 	srv := &http.Server{
-		Addr:         ":8080",
-		BaseContext:  func(_ net.Listener) context.Context { return ctx },
+		Addr:         infra.Config.Api.Address,
+		BaseContext:  func(_ net.Listener) context.Context { return context.Background() },
 		ReadTimeout:  time.Second,
 		WriteTimeout: 10 * time.Second,
 		Handler:      h2c.NewHandler(mux, &http2.Server{}),
@@ -64,7 +75,7 @@ func Run() error {
 	case err = <-srvErr:
 		// Error when starting HTTP server.
 		return err
-	case <-ctx.Done():
+	case <-context.Background().Done():
 		// Wait for first CTRL+C.
 		// Stop receiving signal notifications as soon as possible.
 		stop()
@@ -74,15 +85,3 @@ func Run() error {
 	err = srv.Shutdown(context.Background())
 	return err
 }
-
-// func run() error {
-// 	zapLogger := logger.With(zap.String("service", "driver"))
-// 	logger := log.NewFactory(zapLogger)
-// 	server := driver.NewServer(
-// 		net.JoinHostPort("0.0.0.0", strconv.Itoa(driverPort)),
-// 		otelExporter,
-// 		metricsFactory,
-// 		logger,
-// 	)
-// 	return logError(zapLogger, server.Run())
-// }
