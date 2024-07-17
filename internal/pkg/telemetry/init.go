@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package tracing
+package telemetry
 
 import (
 	"context"
@@ -34,10 +34,9 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 
-	"cornucopia/listah/internal/pkg/log"
-
 	"cornucopia/listah/internal/pkg/telemetry/rpcmetrics"
 
+	"github.com/jaegertracing/jaeger/examples/hotrod/pkg/log"
 	"github.com/jaegertracing/jaeger/pkg/metrics"
 	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 )

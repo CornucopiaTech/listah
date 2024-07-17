@@ -3,33 +3,33 @@ package server
 import (
 	"context"
 	"errors"
-	"log"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
 
-	"cornucopia/listah/internal/app/bootstrap"
-	"cornucopia/listah/internal/app/user"
-	v1connect "cornucopia/listah/internal/pkg/proto/listah/v1/v1connect"
+	pkgErrors "github.com/pkg/errors"
 
-	"connectrpc.com/connect"
-	"connectrpc.com/otelconnect"
-	"golang.org/x/net/http2"
-	"golang.org/x/net/http2/h2c"
+	"cornucopia/listah/internal/app/bootstrap"
+	"cornucopia/listah/internal/pkg/telemetry"
+
+	"go.uber.org/zap"
 )
 
 func Run() error {
+	//
 	// Run application bootstrapping
-	infra := bootstrap.Init()
+	infra := bootstrap.InitInfra()
 
+	//
 	// Handle SIGINT (CTRL+C) gracefully.
 	_, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 
+	//
 	// Set up OpenTelemetry.
-	otelShutdown, err := initSDK()
+	otelShutdown, err := telemetry.InitSDK()
 	if err != nil {
 		return err
 	}
@@ -38,48 +38,49 @@ func Run() error {
 		err = errors.Join(err, otelShutdown(context.Background()))
 	}()
 
-	// The generated constructors return a path and a plain net/http
-	// handler.
-	intcpt, err := otelconnect.NewInterceptor()
+	//
+	// Get route handler
+	handler := handle(infra)
+
+	//
+	// Define listener
+	lis, err := net.Listen("tcp", infra.Config.Api.Address)
 	if err != nil {
-		log.Fatal(err)
+		infra.Logger.Bg().Fatal("failed to listen", zap.Error(err))
 	}
-	mux := http.NewServeMux()
 
-	// otelconnect.NewInterceptor provides an interceptor that adds tracing and
-	// metrics to both clients and handlers. By default, it uses OpenTelemetry's
-	// global TracerProvider and MeterProvider, which you can configure by
-	// following the OpenTelemetry documentation. If you'd prefer to avoid
-	// globals, use otelconnect.WithTracerProvider and
-	// otelconnect.WithMeterProvider.
-	path, handler := v1connect.NewUserServiceHandler(&user.Server{}, connect.WithInterceptors(
-		intcpt,
-	))
-	mux.Handle(path, handler)
-
-	// Start HTTP server.
+	//
+	// Define HTTP server
 	srv := &http.Server{
 		Addr:         infra.Config.Api.Address,
 		BaseContext:  func(_ net.Listener) context.Context { return context.Background() },
 		ReadTimeout:  time.Second,
 		WriteTimeout: 10 * time.Second,
-		Handler:      h2c.NewHandler(mux, &http2.Server{}),
+		Handler:      handler,
 	}
-	srvErr := make(chan error, 1)
-	go func() {
-		srvErr <- srv.ListenAndServe()
-	}()
 
-	// Wait for interruption.
-	select {
-	case err = <-srvErr:
-		// Error when starting HTTP server.
-		return err
-	case <-context.Background().Done():
-		// Wait for first CTRL+C.
-		// Stop receiving signal notifications as soon as possible.
-		stop()
+	//
+	// Start serving
+	infra.Logger.Bg().Info("server listening at %v", zap.String("address", infra.Config.Api.Address))
+	if err = srv.Serve(lis); err != nil && !pkgErrors.Is(err, http.ErrServerClosed) {
+		infra.Logger.Bg().Fatal("server failed to serve", zap.Error(pkgErrors.WithStack(err)))
 	}
+
+	// srvErr := make(chan error, 1)
+	// go func() {
+	// 	srvErr <- srv.Serve(lis)
+	// }()
+
+	// // Wait for interruption.
+	// select {
+	// case err = <-srvErr:
+	// 	// Error when starting HTTP server.
+	// 	return err
+	// case <-context.Background().Done():
+	// 	// Wait for first CTRL+C.
+	// 	// Stop receiving signal notifications as soon as possible.
+	// 	stop()
+	// }
 
 	// When Shutdown is called, ListenAndServe immediately returns ErrServerClosed.
 	err = srv.Shutdown(context.Background())

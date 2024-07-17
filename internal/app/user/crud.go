@@ -7,6 +7,7 @@ import (
 
 	"connectrpc.com/connect"
 	"go.opentelemetry.io/otel"
+	"go.uber.org/zap"
 )
 
 type User struct {
@@ -16,6 +17,8 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.UserServiceRe
 	// Create a span to track `childFunction()` - this is a nested span whose parent is `parentSpan`
 	ctx, span := otel.Tracer("users").Start(ctx, "read")
 	defer span.End()
+
+	s.Infra.Logger.For(ctx).Info("Reading user", zap.String("user", req.Msg.Id))
 
 	// ToDo: Implement Read Function
 	res := connect.NewResponse(&pb.UserServiceReadResponse{
@@ -34,6 +37,8 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.UserServiceRe
 func (s *Server) Create(ctx context.Context, req *connect.Request[pb.UserServiceCreateRequest]) (*connect.Response[pb.UserServiceCreateResponse], error) {
 	ctx, span := otel.Tracer("users").Start(ctx, "create")
 	defer span.End()
+
+	s.Infra.Logger.For(ctx).Info("Creating user", zap.String("user", req.Msg.Id))
 
 	// ToDo: Implement Read Function
 	res := connect.NewResponse(&pb.UserServiceCreateResponse{

@@ -1,4 +1,4 @@
-package user
+package item
 
 import (
 	"cornucopia/listah/internal/app/bootstrap"
@@ -9,7 +9,7 @@ import (
 // This struct below was defined without keys but when it is implemented, keys were added to it.
 type Server struct {
 	*bootstrap.Infra
-	v1connect.UnimplementedUserServiceHandler
+	v1connect.UnimplementedItemServiceHandler
 }
 
 func NewServer(infra *bootstrap.Infra) *Server {
