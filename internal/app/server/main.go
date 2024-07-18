@@ -46,6 +46,7 @@ func Run() error {
 	// Define listener
 	lis, err := net.Listen("tcp", infra.Config.Api.Address)
 	if err != nil {
+		infra.OtelLogger.Fatal("failed to listen", zap.Error(err))
 		infra.Logger.Bg().Fatal("failed to listen", zap.Error(err))
 	}
 
@@ -61,8 +62,10 @@ func Run() error {
 
 	//
 	// Start serving
+	infra.OtelLogger.Info("server listening at %v", zap.String("address", infra.Config.Api.Address))
 	infra.Logger.Bg().Info("server listening at %v", zap.String("address", infra.Config.Api.Address))
 	if err = srv.Serve(lis); err != nil && !pkgErrors.Is(err, http.ErrServerClosed) {
+		infra.OtelLogger.Fatal("server failed to serve", zap.Error(pkgErrors.WithStack(err)))
 		infra.Logger.Bg().Fatal("server failed to serve", zap.Error(pkgErrors.WithStack(err)))
 	}
 

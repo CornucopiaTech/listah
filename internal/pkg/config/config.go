@@ -7,6 +7,8 @@ import (
 	"os"
 )
 
+const appName string = "Listah"
+
 type AppConfig struct {
 	Host    string
 	Port    string
@@ -24,6 +26,7 @@ type DatabaseConfig struct {
 	User             string
 	Password         string
 	ConnectionString string
+	Address          string
 }
 
 type TelemetryConfig struct {
@@ -31,6 +34,8 @@ type TelemetryConfig struct {
 }
 
 type Config struct {
+	AppName   string
+	Env       string
 	App       AppConfig
 	Api       ApiConfig
 	Database  DatabaseConfig
@@ -42,15 +47,27 @@ func Init() (*Config, error) {
 	appConfig := loadApp()
 	dbConfig := loadDatabase()
 	telemetryConfig := loadTelemetry()
-	fmt.Printf("%s lives in %s.\n", os.Getenv("NAME"), os.Getenv("BURROW"))
 
 	return &Config{
+		AppName:   appName,
+		Env:       loadEnv(),
 		Api:       *apiConfig,
 		App:       *appConfig,
 		Database:  *dbConfig,
 		Telemetry: *telemetryConfig,
 	}, nil
 
+}
+
+func loadEnv() string {
+	var env string
+	if os.Getenv("ENV") != "" {
+		env = os.Getenv("ENV")
+	} else {
+		env = "PROD"
+	}
+	fmt.Printf("Environment is: %v\n", env)
+	return env
 }
 
 func loadApi() *ApiConfig {
@@ -127,6 +144,7 @@ func loadDatabase() *DatabaseConfig {
 		Password:         dbPassword,
 		DatabaseName:     dbName,
 		ConnectionString: connectionString,
+		Address:          net.JoinHostPort(dbHost, dbPort),
 	}
 }
 

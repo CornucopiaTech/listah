@@ -18,7 +18,8 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.UserServiceRe
 	ctx, span := otel.Tracer("users").Start(ctx, "read")
 	defer span.End()
 
-	s.Infra.Logger.For(ctx).Info("Reading user", zap.String("user", req.Msg.Id))
+	s.Infra.Logger.For(ctx).Info("Reading user with zap logger factory", zap.String("user", req.Msg.Id))
+	s.Infra.OtelLogger.Ctx(ctx).Info("Reading user with otel logger", zap.String("user", req.Msg.Id))
 
 	// ToDo: Implement Read Function
 	res := connect.NewResponse(&pb.UserServiceReadResponse{
@@ -38,6 +39,7 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.UserService
 	ctx, span := otel.Tracer("users").Start(ctx, "create")
 	defer span.End()
 
+	s.Infra.OtelLogger.Ctx(ctx).Info("Creating user", zap.String("user", req.Msg.Id))
 	s.Infra.Logger.For(ctx).Info("Creating user", zap.String("user", req.Msg.Id))
 
 	// ToDo: Implement Read Function

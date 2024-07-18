@@ -16,6 +16,7 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 	ctx, span := otel.Tracer("items").Start(ctx, "read")
 	defer span.End()
 
+	s.Infra.OtelLogger.Ctx(ctx).Info("Reading item", zap.String("item", req.Msg.Id))
 	s.Infra.Logger.For(ctx).Info("Reading item", zap.String("item", req.Msg.Id))
 
 	// ToDo: Implement Read Function
@@ -39,6 +40,7 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemService
 	ctx, span := otel.Tracer("items").Start(ctx, "create")
 	defer span.End()
 
+	s.Infra.OtelLogger.Ctx(ctx).Info("Creating item", zap.String("item", req.Msg.Id))
 	s.Infra.Logger.For(ctx).Info("Creating item", zap.String("item", req.Msg.Id))
 
 	// ToDo: Implement Read Function
