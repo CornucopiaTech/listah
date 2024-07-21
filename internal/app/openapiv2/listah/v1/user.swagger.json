@@ -85,7 +85,7 @@
         "middleNames": {
           "type": "string"
         },
-        "lastNames": {
+        "lastName": {
           "type": "string"
         },
         "username": {
@@ -114,7 +114,7 @@
         "middleNames": {
           "type": "string"
         },
-        "lastNames": {
+        "lastName": {
           "type": "string"
         },
         "username": {
@@ -146,7 +146,7 @@
         "middleNames": {
           "type": "string"
         },
-        "lastNames": {
+        "lastName": {
           "type": "string"
         },
         "username": {
@@ -175,7 +175,7 @@
         "middleNames": {
           "type": "string"
         },
-        "lastNames": {
+        "lastName": {
           "type": "string"
         },
         "username": {

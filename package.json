@@ -7,7 +7,14 @@
     "buf:update": "buf dep update",
     "buf:prune": "buf dep prune",
     "buf:generate": "buf generate",
-    "go:lint": "golangci-lint run apps/api/... internal/app/... internal/pkg/..."
+    "go:lint": "golangci-lint run apps/api/... internal/app/... internal/pkg/...",
+    "prisma:generate": "prisma generate",
+    "prisma:validate": "prisma validate",
+    "prisma:format": "prisma format",
+    "prisma:push": "prisma db push --skip-generate",
+    "prisma:dev": "prisma migrate dev --create-only --skip-generate",
+    "prisma:reset": "prisma migrate reset --skip-generate",
+    "prisma:deploy": "prisma migrate deploy"
   },
   "private": true,
   "dependencies": {
@@ -21,6 +28,7 @@
     "@angular/router": "~18.0.0",
     "@bufbuild/buf": "^1.33.0",
     "@nx/angular": "19.3.0",
+    "prisma": "^5.17.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"

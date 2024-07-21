@@ -2,6 +2,7 @@ package repository
 
 import (
 	"cornucopia/listah/internal/pkg/config"
+	"cornucopia/listah/internal/pkg/logging"
 	"fmt"
 	"time"
 
@@ -17,13 +18,11 @@ import (
 )
 
 type Repository struct {
-	Db *bun.DB
+	Db    *bun.DB
+	Users UserRepository
 }
 
-func Init(cfg *config.Config) *Repository {
-	// dsn := "postgres://postgres:@localhost:5432/test?sslmode=disable"
-	// // dsn := "unix://user:pass@dbname/var/run/postgresql/.s.PGSQL.5432"
-	// sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
+func Init(cfg *config.Config, logger *logging.Factory) *Repository {
 	var enableTls bool
 
 	switch cfg.Env {
@@ -65,7 +64,8 @@ func Init(cfg *config.Config) *Repository {
 	}
 
 	return &Repository{
-		Db: db,
+		Db:    db,
+		Users: &userRepositoryAgent{db: db, logger: logger},
 	}
 
 }

@@ -1,0 +1,61 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["prismaSchemaFolder", "multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_CONNECTION_URL")
+  schemas  = ["app_logs", "api_logs", "app"]
+}
+
+model Category {
+  id               String        @id
+  name             String
+  description      String
+  items            Item[]
+  child_categories SubCategory[]
+
+  @@map("parent_categories")
+  @@schema("app")
+}
+
+model SubCategory {
+  id                String     @id
+  name              String
+  description       String
+  parent_categories Category[]
+
+  @@map("child_categories")
+  @@schema("app")
+}
+
+model Item {
+  id            String     @id
+  title         String
+  description   String
+  quantity      String
+  location      String
+  note          String
+  categories    Category[]
+  active        Boolean
+  reactivate_at DateTime
+  audit         Json       @db.Json
+
+  @@map("items")
+  @@schema("app")
+}
+
+model User {
+  id           String @id
+  first_name   String
+  middle_names String
+  last_name    String
+  username     String
+  email        String
+  role         String
+  audit        Json   @db.Json
+
+  @@map("users")
+  @@schema("app")
+}

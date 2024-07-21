@@ -32,14 +32,24 @@ func handle(infra *bootstrap.Infra) http.Handler {
 	// following the OpenTelemetry documentation. If you'd prefer to avoid
 	// globals, use otelconnect.WithTracerProvider and
 	// otelconnect.WithMeterProvider.
+
+	//
+	// Handle User connect-go generated paths
 	path, handler := v1connect.NewUserServiceHandler(
 		user.NewServer(infra),
 		connect.WithInterceptors(intcpt))
 	mux.Handle(path, handler)
 
+	//
+	// Handle Item Connect-go generated paths
 	path, handler = v1connect.NewItemServiceHandler(
 		item.NewServer(infra),
 		connect.WithInterceptors(intcpt))
 	mux.Handle(path, handler)
+
+	//
+	// Handle Swagger json files
+	fs := http.FileServer(http.Dir("openapiv2/"))
+	mux.Handle("/openapiv2/", http.StripPrefix("/openapiv2/", fs))
 	return h2c.NewHandler(mux, &http2.Server{})
 }

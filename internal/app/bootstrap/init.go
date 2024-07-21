@@ -31,7 +31,7 @@ func InitInfra() *Infra {
 		log.Fatalf("cannot create otel logger")
 	}
 
-	repo := repository.Init(cfgs)
+	repo := repository.Init(cfgs, logger)
 
 	// ToDo: Define metrics
 	// //

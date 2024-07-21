@@ -14,7 +14,7 @@ message UserServiceCreateRequest {
     string id = 1;
     string first_name = 2;
     string middle_names = 3;
-    string last_names = 4;
+    string last_name= 4;
     string username = 5;
     string email = 6;
     string role = 20;
@@ -25,7 +25,7 @@ message UserServiceCreateResponse {
     string id = 1;
     string first_name = 2;
     string middle_names = 3;
-    string last_names = 4;
+    string last_name= 4;
     string username = 5;
     string email = 6;
     string role = 20;
@@ -40,7 +40,7 @@ message UserServiceReadResponse {
     string id = 1;
     string first_name = 2;
     string middle_names = 3;
-    string last_names = 4;
+    string last_name= 4;
     string username = 5;
     string email = 6;
     string role = 20;
@@ -51,7 +51,7 @@ message UserServiceUpdateRequest {
     string id = 1;
     string first_name = 2;
     string middle_names = 3;
-    string last_names = 4;
+    string last_name= 4;
     string username = 5;
     string email = 6;
     string role = 20;
@@ -62,7 +62,7 @@ message UserServiceUpdateResponse {
     string id = 1;
     string first_name = 2;
     string middle_names = 3;
-    string last_names = 4;
+    string last_name= 4;
     string username = 5;
     string email = 6;
     string role = 20;
