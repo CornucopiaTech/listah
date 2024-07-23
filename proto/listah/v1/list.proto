@@ -4,6 +4,3 @@ package listah.v1;
 
 
 option go_package = "cornucopia/listah/internal/pkg/proto/listah/v1";
-option java_multiple_files = true;
-option java_package = "cornucopia.listah.api.v1";
-option java_outer_classname = "ListProto";

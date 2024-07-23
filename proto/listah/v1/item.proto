@@ -3,9 +3,7 @@ package listah.v1;
 
 
 option go_package = "cornucopia/listah/internal/pkg/proto/listah/v1";
-option java_multiple_files = true;
-option java_package = "cornucopia.listah.api.v1";
-option java_outer_classname = "ItemServicesProto";
+
 
 import "listah/v1/commons.proto";
 import "google/protobuf/timestamp.proto";
@@ -20,9 +18,9 @@ message ItemServiceCreateRequest {
     string location = 5;
     string category = 6;
     string note = 7;
-	string parent_list_id = 8;
+	string parentListId = 8;
 	bool active = 20;
-	google.protobuf.Timestamp reactivate_at = 21;
+	google.protobuf.Timestamp reactivateAt = 21;
 	Audit audit = 50;
 }
 
@@ -35,9 +33,9 @@ message ItemServiceCreateResponse {
     string location = 5;
     string category = 6;
     string note = 7;
-	string parent_list_id = 8;
+	string parentListId = 8;
 	bool active = 20;
-	google.protobuf.Timestamp reactivate_at = 21;
+	google.protobuf.Timestamp reactivateAt = 21;
 	Audit audit = 50;
 }
 
@@ -50,9 +48,9 @@ message ItemServiceUpdateRequest {
     string location = 5;
     string category = 6;
     string note = 7;
-	string parent_list_id = 8;
+	string parentListId = 8;
 	bool active = 20;
-	google.protobuf.Timestamp reactivate_at = 21;
+	google.protobuf.Timestamp reactivateAt = 21;
 	Audit audit = 50;
 }
 
@@ -65,8 +63,9 @@ message ItemServiceUpdateResponse {
     string location = 5;
     string category = 6;
     string note = 7;
-	string parent_list_id = 8;
-	google.protobuf.Timestamp reactivate_at = 21;
+	string parentListId = 8;
+	bool active = 20;
+	google.protobuf.Timestamp reactivateAt = 21;
 	Audit audit = 50;
 }
 
@@ -84,9 +83,9 @@ message ItemServiceReadResponse {
     string location = 5;
     string category = 6;
     string note = 7;
-	string parent_list_id = 8;
+	string parentListId = 8;
 	bool active = 20;
-	google.protobuf.Timestamp reactivate_at = 21;
+	google.protobuf.Timestamp reactivateAt = 21;
 	Audit audit = 50;
 }
 

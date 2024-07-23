@@ -48,17 +48,17 @@
     "v1Audit": {
       "type": "object",
       "properties": {
-        "createdBy": {
+        "created_by": {
           "$ref": "#/definitions/v1AuditUpdaterEnum"
         },
-        "createdAt": {
+        "created_at": {
           "type": "string",
           "format": "date-time"
         },
-        "updatedBy": {
+        "updated_by": {
           "$ref": "#/definitions/v1AuditUpdaterEnum"
         },
-        "updatedAt": {
+        "updated_at": {
           "type": "string",
           "format": "date-time"
         }

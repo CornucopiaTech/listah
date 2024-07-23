@@ -60,30 +60,35 @@ func Run() error {
 		Handler:      handler,
 	}
 
-	//
-	// Start serving
-	infra.OtelLogger.Info("server listening at %v", zap.String("address", infra.Config.Api.Address))
-	infra.Logger.Bg().Info("server listening at %v", zap.String("address", infra.Config.Api.Address))
-	if err = srv.Serve(lis); err != nil && !pkgErrors.Is(err, http.ErrServerClosed) {
-		infra.OtelLogger.Fatal("server failed to serve", zap.Error(pkgErrors.WithStack(err)))
-		infra.Logger.Bg().Fatal("server failed to serve", zap.Error(pkgErrors.WithStack(err)))
+	// //
+	// // Start serving
+	// infra.OtelLogger.Info("server listening at %v", zap.String("address", infra.Config.Api.Address))
+	// infra.Logger.Bg().Info("server listening at %v", zap.String("address", infra.Config.Api.Address))
+	// // if err = srv.Serve(lis); err != nil && !pkgErrors.Is(err, http.ErrServerClosed) {
+	// // 	infra.OtelLogger.Fatal("server failed to serve", zap.Error(pkgErrors.WithStack(err)))
+	// // 	infra.Logger.Bg().Fatal("server failed to serve", zap.Error(pkgErrors.WithStack(err)))
+	// // }
+
+	srvErr := make(chan error, 1)
+	go func() {
+		srvErr <- srv.Serve(lis)
+	}()
+
+	// Wait for interruption.
+	select {
+	case err = <-srvErr:
+		// Error when starting HTTP server.
+		if err != nil && !pkgErrors.Is(err, http.ErrServerClosed) {
+			infra.OtelLogger.Fatal("server failed to serve", zap.Error(pkgErrors.WithStack(err)))
+			infra.Logger.Bg().Fatal("server failed to serve", zap.Error(pkgErrors.WithStack(err)))
+		}
+
+		return err
+	case <-context.Background().Done():
+		// Wait for first CTRL+C.
+		// Stop receiving signal notifications as soon as possible.
+		stop()
 	}
-
-	// srvErr := make(chan error, 1)
-	// go func() {
-	// 	srvErr <- srv.Serve(lis)
-	// }()
-
-	// // Wait for interruption.
-	// select {
-	// case err = <-srvErr:
-	// 	// Error when starting HTTP server.
-	// 	return err
-	// case <-context.Background().Done():
-	// 	// Wait for first CTRL+C.
-	// 	// Stop receiving signal notifications as soon as possible.
-	// 	stop()
-	// }
 
 	// When Shutdown is called, ListenAndServe immediately returns ErrServerClosed.
 	err = srv.Shutdown(context.Background())

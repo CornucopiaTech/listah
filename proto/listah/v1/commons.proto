@@ -3,17 +3,15 @@ package listah.v1;
 // package commons;
 
 option go_package = "cornucopia/listah/internal/pkg/proto/listah/v1";
-option java_multiple_files = true;
-option java_package = "cornucopia.listah.api.v1";
-option java_outer_classname = "CommonsProto";
+
 
 import "google/protobuf/timestamp.proto";
 
 message Audit {
-    AuditUpdaterEnum created_by = 1;
-    google.protobuf.Timestamp created_at = 2;
-    AuditUpdaterEnum updated_by = 50;
-    google.protobuf.Timestamp updated_at = 51;
+    AuditUpdaterEnum created_by = 1 [json_name = "created_by"];
+    google.protobuf.Timestamp created_at = 2 [json_name = "created_at"];
+    AuditUpdaterEnum updated_by = 50 [json_name = "updated_by"];
+    google.protobuf.Timestamp updated_at = 51 [json_name = "updated_at"];
 }
 
 enum AuditUpdaterEnum {
@@ -21,23 +19,3 @@ enum AuditUpdaterEnum {
     AUDIT_UPDATER_ENUM_FRONTEND = 1;
     AUDIT_UPDATER_ENUM_SYSOPS = 2;
 }
-
-// message User {
-//     string id = 0;
-//     string first_name = 2;
-//     string middle_names = 3;
-//     string last_names = 4;
-//     string username = 5;
-//     string email = 6;
-//     string role = 7;
-// }
-
-
-// message Item {
-//     string id = 0;
-//     string title = 2;
-//     string quantity = 3;
-//     string location = 4;
-//     string category = 5;
-//     string note = 6;
-// }

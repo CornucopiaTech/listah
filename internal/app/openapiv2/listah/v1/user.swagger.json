@@ -48,17 +48,17 @@
     "v1Audit": {
       "type": "object",
       "properties": {
-        "createdBy": {
+        "created_by": {
           "$ref": "#/definitions/v1AuditUpdaterEnum"
         },
-        "createdAt": {
+        "created_at": {
           "type": "string",
           "format": "date-time"
         },
-        "updatedBy": {
+        "updated_by": {
           "$ref": "#/definitions/v1AuditUpdaterEnum"
         },
-        "updatedAt": {
+        "updated_at": {
           "type": "string",
           "format": "date-time"
         }
@@ -79,13 +79,13 @@
         "id": {
           "type": "string"
         },
-        "firstName": {
+        "first_name": {
           "type": "string"
         },
-        "middleNames": {
+        "middle_names": {
           "type": "string"
         },
-        "lastName": {
+        "last_name": {
           "type": "string"
         },
         "username": {
@@ -108,13 +108,13 @@
         "id": {
           "type": "string"
         },
-        "firstName": {
+        "first_name": {
           "type": "string"
         },
-        "middleNames": {
+        "middle_names": {
           "type": "string"
         },
-        "lastName": {
+        "last_name": {
           "type": "string"
         },
         "username": {
@@ -140,13 +140,13 @@
         "id": {
           "type": "string"
         },
-        "firstName": {
+        "first_name": {
           "type": "string"
         },
-        "middleNames": {
+        "middle_names": {
           "type": "string"
         },
-        "lastName": {
+        "last_name": {
           "type": "string"
         },
         "username": {
@@ -169,13 +169,13 @@
         "id": {
           "type": "string"
         },
-        "firstName": {
+        "first_name": {
           "type": "string"
         },
-        "middleNames": {
+        "middle_names": {
           "type": "string"
         },
-        "lastName": {
+        "last_name": {
           "type": "string"
         },
         "username": {
