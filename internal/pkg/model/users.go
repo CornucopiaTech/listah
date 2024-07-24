@@ -2,11 +2,14 @@ package model
 
 import (
 	pb "cornucopia/listah/internal/pkg/proto/listah/v1"
+	v1 "cornucopia/listah/internal/pkg/proto/listah/v1"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/uptrace/bun"
 	"go.opentelemetry.io/otel"
 	"golang.org/x/net/context"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type User struct {
@@ -21,49 +24,89 @@ type User struct {
 	Audit         Audit
 }
 
-func PrepCreateRequest(ctx context.Context, msg *pb.UserServiceCreateRequest) *User {
-	_, span := otel.Tracer("users").Start(ctx, "prep create request")
+func (u *User) UserModelFromRequest(ctx context.Context, msg *pb.UserServiceCreateRequest) {
+	_, span := otel.Tracer("user-model").Start(ctx, "prep create request")
 	defer span.End()
-	newUser := &User{
-		Id:          uuid.Must(uuid.NewV7()).String(),
-		FirstName:   msg.GetFirstName(),
-		MiddleNames: msg.GetMiddleNames(),
-		LastName:    msg.GetLastName(),
-		Username:    msg.GetUsername(),
-		Email:       msg.GetEmail(),
-		Role:        msg.GetRole(),
-		Audit: Audit{
-			CreatedBy: msg.Audit.GetCreatedBy(),
-			UpdatedBy: msg.Audit.GetUpdatedBy(),
-			UpdatedAt: msg.Audit.UpdatedAt.AsTime(),
-		},
+
+	// Update user model
+	u.Id = uuid.Must(uuid.NewV7()).String()
+	u.FirstName = msg.GetFirstName()
+	u.MiddleNames = msg.GetMiddleNames()
+	u.LastName = msg.GetLastName()
+	u.Username = msg.GetUsername()
+	u.Email = msg.GetEmail()
+	u.Role = msg.GetRole()
+	u.Audit = Audit{
+		CreatedAt: time.Now().UTC(),
+		CreatedBy: msg.Audit.GetCreatedBy(),
+		UpdatedBy: msg.Audit.GetUpdatedBy(),
+		UpdatedAt: msg.Audit.GetCreatedAt().AsTime(),
+	}
+}
+
+func (u *User) UpdateUserModelFromRequest(ctx context.Context, msg *pb.UserServiceUpdateRequest, readUser *User) {
+	_, span := otel.Tracer("user-model").Start(ctx, "prep update request")
+	defer span.End()
+
+	u.Id = msg.GetId()
+	u.FirstName = msg.GetFirstName()
+	u.MiddleNames = msg.GetMiddleNames()
+	u.LastName = msg.GetLastName()
+	u.Username = msg.GetUsername()
+	u.Email = msg.GetEmail()
+	u.Role = msg.GetRole()
+	u.Audit = Audit{
+		CreatedAt: msg.Audit.GetCreatedAt().AsTime(),
+		CreatedBy: msg.Audit.GetCreatedBy(),
+		UpdatedBy: msg.Audit.GetUpdatedBy(),
+		UpdatedAt: time.Now().UTC(),
 	}
 
-	return newUser
+	// Set fields that were not included in the update request.
+	if u.FirstName == "" {
+		u.FirstName = readUser.FirstName
+	}
+
+	if u.MiddleNames == "" {
+		u.MiddleNames = readUser.MiddleNames
+	}
+
+	if u.LastName == "" {
+		u.LastName = readUser.LastName
+	}
+
+	if u.Username == "" {
+		u.Username = readUser.Username
+	}
+
+	if u.Email == "" {
+		u.Email = readUser.Email
+	}
+
+	if u.Role == "" {
+		u.Role = readUser.Role
+	}
 
 }
 
-// func PrepCreateResponse(ctx context.Context, user *User) *pb.UserServiceCreateResponse {
-// 	_, span := otel.Tracer("users").Start(ctx, "prep create request")
-// 	defer span.End()
-// 	return &pb.UserServiceCreateResponse{
-// 		// req.Msg is a strongly-typed *pingv1.PingRequest, so we can access its
-// 		// fields without type assertions.
-// 		Id:          user.Id,
-// 		FirstName:   user.FirstName,
-// 		MiddleNames: user.MiddleNames,
-// 		LastName:    user.LastName,
-// 		Username:    user.Username,
-// 		Email:       user.Email,
-// 		Role:        user.Role,
-// 		Audit: &v1.Audit{
-// 			// CreatedBy: pb.AuditUpdaterEnum(pb.AuditUpdaterEnum_value[user.Audit.CreatedBy]),
-// 			CreatedBy: pb.AuditUpdaterEnum(user.Audit.CreatedBy),
-// 			CreatedAt: timestamppb.New(user.Audit.CreatedAt),
-// 			UpdatedBy: pb.AuditUpdaterEnum(user.Audit.UpdatedBy),
-// 			// UpdatedBy: pb.AuditUpdaterEnum(pb.AuditUpdaterEnum_value[user.Audit.UpdatedBy]),
-// 			UpdatedAt: timestamppb.New(user.Audit.UpdatedAt),
-// 		},
-// 	}
-
-// }
+func (u *User) UserModelToResponse(ctx context.Context) *pb.UserServiceCreateResponse {
+	_, span := otel.Tracer("user-model").Start(ctx, "user model to response")
+	defer span.End()
+	return &pb.UserServiceCreateResponse{
+		// req.Msg is a strongly-typed *pingv1.PingRequest, so we can access its
+		// fields without type assertions.
+		Id:          u.Id,
+		FirstName:   u.FirstName,
+		MiddleNames: u.MiddleNames,
+		LastName:    u.LastName,
+		Username:    u.Username,
+		Email:       u.Email,
+		Role:        u.Role,
+		Audit: &v1.Audit{
+			CreatedBy: u.Audit.CreatedBy,
+			CreatedAt: timestamppb.New(u.Audit.CreatedAt),
+			UpdatedBy: u.Audit.UpdatedBy,
+			UpdatedAt: timestamppb.New(u.Audit.UpdatedAt),
+		},
+	}
+}

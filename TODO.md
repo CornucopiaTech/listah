@@ -17,12 +17,12 @@ Technical Needs
 - List groups and subgroups
 
 # API
-- [ ] initialise the internal infrastructure used within the API (logging, telemetry, connection to DB)
-- [ ] Define gRPC services such that each server contains all the internal infra that were bootstrapped 
+- [x] initialise the internal infrastructure used within the API (logging, telemetry, connection to DB)
+- [ ] Define gRPC services such that each server contains all the internal infra that were bootstrapped
 
-- [ ] Set up logging
+- [x] Set up logging
 - [ ] Set up authentication
-- [ ] Set up Prisma ORM
+- [x] Set up Prisma ORM
 - [ ] Define RESTful routes
 - [ ] Define cors
 

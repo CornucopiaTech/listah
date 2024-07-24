@@ -12,10 +12,10 @@ import (
 )
 
 type UserRepository interface {
-	SelectOne(ctx context.Context, id string) *model.User
+	SelectOne(ctx context.Context, id string) (*model.User, error)
 	InsertOne(ctx context.Context, user *model.User) error
-	// CreateOne()
-	// UpdateOne()
+	UpdateOne(ctx context.Context, user *model.User) error
+
 	// DeleteOne()
 	// SelectMany()
 	// InsertMany()
@@ -29,18 +29,19 @@ type userRepositoryAgent struct {
 	logger *logging.Factory
 }
 
-func (a *userRepositoryAgent) SelectOne(ctx context.Context, id string) *model.User {
+func (a *userRepositoryAgent) SelectOne(ctx context.Context, id string) (*model.User, error) {
 	ctx, span := otel.Tracer("user-repository").Start(ctx, "SelectOne")
 	defer span.End()
 
-	a.logger.For(ctx).Info("Selection user", zap.String("user", id))
+	a.logger.For(ctx).Info("Selecting user", zap.String("user", id))
 
 	user := new(model.User)
 	err := a.db.NewSelect().Model(user).Where("id = ?", id).Scan(ctx)
 	if err != nil {
-		a.logger.For(ctx).Fatal("Error occurred while selecting user", zap.String("user", id), zap.String("cause", errors.Cause(err).Error()))
+		a.logger.For(ctx).Error("Error occurred in repository while selecting user", zap.String("user", id), zap.String("cause", errors.Cause(err).Error()))
+		return nil, err
 	}
-	return user
+	return user, nil
 }
 
 func (a *userRepositoryAgent) InsertOne(ctx context.Context, user *model.User) error {
@@ -50,7 +51,22 @@ func (a *userRepositoryAgent) InsertOne(ctx context.Context, user *model.User) e
 	a.logger.For(ctx).Info("Inserting user", zap.String("user", user.Id))
 	_, err := a.db.NewInsert().Model(user).Exec(ctx)
 	if err != nil {
-		a.logger.For(ctx).Fatal("Error occurred while inserting user", zap.String("user", user.Id), zap.String("cause", errors.Cause(err).Error()))
+		a.logger.For(ctx).Error("Error occurred in repository while inserting user", zap.String("user", user.Id), zap.String("cause", errors.Cause(err).Error()))
+		return err
+	}
+
+	return nil
+}
+
+func (a *userRepositoryAgent) UpdateOne(ctx context.Context, user *model.User) error {
+	ctx, span := otel.Tracer("user-repository").Start(ctx, "UpdateOne")
+	defer span.End()
+
+	a.logger.For(ctx).Info("Updatinging user", zap.String("user", user.Id))
+	_, err := a.db.NewUpdate().Model(user).WherePK().Exec(ctx)
+	if err != nil {
+		a.logger.For(ctx).Error("Error occurred in repository while updating user", zap.String("user", user.Id), zap.String("cause", errors.Cause(err).Error()))
+		return err
 	}
 
 	return nil

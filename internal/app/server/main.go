@@ -60,15 +60,6 @@ func Run() error {
 		Handler:      handler,
 	}
 
-	// //
-	// // Start serving
-	// infra.OtelLogger.Info("server listening at %v", zap.String("address", infra.Config.Api.Address))
-	// infra.Logger.Bg().Info("server listening at %v", zap.String("address", infra.Config.Api.Address))
-	// // if err = srv.Serve(lis); err != nil && !pkgErrors.Is(err, http.ErrServerClosed) {
-	// // 	infra.OtelLogger.Fatal("server failed to serve", zap.Error(pkgErrors.WithStack(err)))
-	// // 	infra.Logger.Bg().Fatal("server failed to serve", zap.Error(pkgErrors.WithStack(err)))
-	// // }
-
 	srvErr := make(chan error, 1)
 	go func() {
 		srvErr <- srv.Serve(lis)
