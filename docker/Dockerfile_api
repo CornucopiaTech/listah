@@ -1,0 +1,41 @@
+FROM golang:1.22 as builder
+
+ENV GO111MODULE=on
+
+# Create app user and groupt ie
+RUN useradd -ms /bin/sh -u 1001 app
+USER app
+
+# Change to the app directory; Copy internal code to the container image; Download internal dependencies
+WORKDIR /app/internal
+COPY --chown=app:app ./internal  /app/internal
+RUN go mod download
+
+# Create (if not exists) and change to the app directory; Copy app files
+WORKDIR /app/apps
+COPY --chown=app:app  ./apps  /app/apps/
+
+# Create (if not exists) and change to the api directory; Download api dependencies;
+WORKDIR /app/apps/api
+RUN go mod download
+
+# Create (if not exists) and Change to the app directory; Build the binary.
+WORKDIR /app/apps/api
+RUN go build -v -o server
+
+
+
+# Use the official Debian slim image for a lean production container.
+# https://hub.docker.com/_/debian
+# https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
+FROM debian:bookworm-slim
+RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy the binary to the production image from the builder stage.
+COPY --from=builder /app/apps/api/server /app/server
+
+
+# Run the web service on container startup.
+CMD ["/app/server"]

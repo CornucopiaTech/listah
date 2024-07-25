@@ -1,0 +1,22 @@
+syntax = "proto3";
+package listah.v1;
+
+option go_package = "cornucopia/listah/internal/pkg/proto/listah/v1";
+
+
+import "google/protobuf/timestamp.proto";
+
+message Audit {
+    AuditUpdaterEnum created_by = 1 [json_name = "created_by"];
+    google.protobuf.Timestamp created_at = 2 [json_name = "created_at"];
+    AuditUpdaterEnum updated_by = 50 [json_name = "updated_by"];
+    google.protobuf.Timestamp updated_at = 51 [json_name = "updated_at"];
+    AuditUpdaterEnum deleted_by = 100 [json_name = "deleted_by"];
+    google.protobuf.Timestamp deleted_at = 101 [json_name = "deleted_at"];
+}
+
+enum AuditUpdaterEnum {
+    AUDIT_UPDATER_ENUM_UNSPECIFIED = 0;
+    AUDIT_UPDATER_ENUM_FRONTEND = 1;
+    AUDIT_UPDATER_ENUM_SYSOPS = 2;
+}

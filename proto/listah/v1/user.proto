@@ -1,0 +1,120 @@
+syntax = "proto3";
+package listah.v1;
+
+
+option go_package = "cornucopia/listah/internal/pkg/proto/listah/v1";
+
+
+import "listah/v1/commons.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+
+message UserServiceCreateRequest {
+    string id = 1;
+    string first_name = 2 [json_name = "first_name"];
+    string middle_names = 3 [json_name = "middle_names"];
+    string last_name = 4 [json_name = "last_name"];
+    string username = 5;
+    string email = 6;
+//    google.protobuf.Timestamp deleted_at = 7;
+    string role = 20;
+    Audit audit = 50;
+}
+
+message UserServiceCreateResponse {
+    string id = 1;
+    string first_name = 2 [json_name = "first_name"];
+    string middle_names = 3 [json_name = "middle_names"];
+    string last_name = 4 [json_name = "last_name"];
+    string username = 5;
+    string email = 6;
+//    google.protobuf.Timestamp deleted_at = 7;
+    string role = 20;
+    Audit audit = 50;
+}
+
+message UserServiceReadRequest {
+    string id = 1;
+}
+
+message UserServiceReadResponse {
+    string id = 1;
+    string first_name = 2 [json_name = "first_name"];
+    string middle_names = 3 [json_name = "middle_names"];
+    string last_name = 4 [json_name = "last_name"];
+    string username = 5;
+    string email = 6;
+//    google.protobuf.Timestamp deleted_at = 7;
+    string role = 20;
+    Audit audit = 50;
+}
+
+message UserServiceUpdateRequest {
+    string id = 1;
+    string first_name = 2 [json_name = "first_name"];
+    string middle_names = 3 [json_name = "middle_names"];
+    string last_name = 4 [json_name = "last_name"];
+    string username = 5;
+    string email = 6;
+//    google.protobuf.Timestamp deleted_at = 7;
+    string role = 20;
+    Audit audit = 50;
+}
+
+message UserServiceUpdateResponse {
+    string id = 1;
+    string first_name = 2 [json_name = "first_name"];
+    string middle_names = 3 [json_name = "middle_names"];
+    string last_name = 4 [json_name = "last_name"];
+    string username = 5;
+    string email = 6;
+//    google.protobuf.Timestamp deleted_at = 7;
+    string role = 20;
+    Audit audit = 50;
+}
+
+message UserServiceDeleteRequest {
+    string id = 1;
+    Audit audit = 50;
+}
+
+message UserServiceDeleteResponse {
+    string id = 1;
+    string first_name = 2 [json_name = "first_name"];
+    string middle_names = 3 [json_name = "middle_names"];
+    string last_name = 4 [json_name = "last_name"];
+    string username = 5;
+    string email = 6;
+//    google.protobuf.Timestamp deleted_at = 7;
+    string role = 20;
+    Audit audit = 50;
+}
+
+
+service UserService {
+    rpc Create (UserServiceCreateRequest) returns (UserServiceCreateResponse) {
+        // option (google.api.http) = {
+        //     post: "/v1/user/create"
+        // };
+    }
+
+    rpc Read (UserServiceReadRequest) returns (UserServiceReadResponse) {
+        // option (google.api.http) = {
+        //     get: "/v1/user/read"
+        // };
+    }
+
+    rpc Echo (UserServiceCreateRequest) returns (UserServiceCreateRequest) {
+        // option (google.api.http) = {
+        //     get: "/v1/user/echo"
+        // };
+    }
+    rpc Update(UserServiceUpdateRequest) returns (UserServiceUpdateResponse) {
+
+    }
+    rpc Delete(UserServiceDeleteRequest) returns (UserServiceDeleteResponse) {
+
+    }
+
+}

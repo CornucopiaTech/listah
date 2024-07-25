@@ -1,0 +1,39 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+        cors:
+          allowed_origins:
+            - http://*
+            - https://*
+extensions:
+  health_check: {}
+  zpages:
+    endpoint: '0.0.0.0:55679'
+exporters:
+  logging:
+    loglevel: debug
+  otlp/traces:
+    endpoint: jaeger:4317
+    tls:
+      insecure: true
+  prometheus:
+    endpoint: 0.0.0.0:9090
+    namespace: testapp
+  debug:
+
+service:
+  extensions: [health_check, zpages]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [otlp/traces, debug]
+
+    metrics:
+      receivers: [otlp]
+      processors: []
+      exporters: [prometheus, debug]

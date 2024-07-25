@@ -1,0 +1,6 @@
+syntax = "proto3";
+// package list;
+package listah.v1;
+
+
+option go_package = "cornucopia/listah/internal/pkg/proto/listah/v1";
