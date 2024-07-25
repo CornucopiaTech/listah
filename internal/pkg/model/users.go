@@ -24,7 +24,7 @@ type User struct {
 	Audit         Audit
 }
 
-func (u *User) UserModelFromRequest(ctx context.Context, msg *pb.UserServiceCreateRequest) {
+func (u *User) CreateUserModelFromRequest(ctx context.Context, msg *pb.UserServiceCreateRequest) {
 	_, span := otel.Tracer("user-model").Start(ctx, "prep create request")
 	defer span.End()
 
@@ -37,10 +37,12 @@ func (u *User) UserModelFromRequest(ctx context.Context, msg *pb.UserServiceCrea
 	u.Email = msg.GetEmail()
 	u.Role = msg.GetRole()
 	u.Audit = Audit{
-		CreatedAt: time.Now().UTC(),
 		CreatedBy: msg.Audit.GetCreatedBy(),
 		UpdatedBy: msg.Audit.GetUpdatedBy(),
-		UpdatedAt: msg.Audit.GetCreatedAt().AsTime(),
+		DeletedBy: msg.Audit.GetDeletedBy(),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: msg.Audit.GetUpdatedAt().AsTime(),
+		DeletedAt: msg.Audit.GetDeletedAt().AsTime(),
 	}
 }
 
@@ -56,10 +58,11 @@ func (u *User) UpdateUserModelFromRequest(ctx context.Context, msg *pb.UserServi
 	u.Email = msg.GetEmail()
 	u.Role = msg.GetRole()
 	u.Audit = Audit{
-		CreatedAt: msg.Audit.GetCreatedAt().AsTime(),
 		CreatedBy: msg.Audit.GetCreatedBy(),
 		UpdatedBy: msg.Audit.GetUpdatedBy(),
+		CreatedAt: msg.Audit.GetCreatedAt().AsTime(),
 		UpdatedAt: time.Now().UTC(),
+		DeletedAt: msg.Audit.GetDeletedAt().AsTime(),
 	}
 
 	// Set fields that were not included in the update request.
@@ -89,6 +92,28 @@ func (u *User) UpdateUserModelFromRequest(ctx context.Context, msg *pb.UserServi
 
 }
 
+func (u *User) DeleteUserModelFromRequest(ctx context.Context, msg *pb.UserServiceDeleteRequest, readUser *User) {
+	_, span := otel.Tracer("user-model").Start(ctx, "prep delete request")
+	defer span.End()
+
+	u.Id = readUser.Id
+	u.FirstName = readUser.FirstName
+	u.MiddleNames = readUser.MiddleNames
+	u.LastName = readUser.LastName
+	u.Username = readUser.Username
+	u.Email = readUser.Email
+	u.Role = readUser.Role
+	u.Audit = Audit{
+
+		CreatedBy: readUser.Audit.CreatedBy,
+		UpdatedBy: msg.Audit.DeletedBy, //Set the updater to whomever is deleting the reocord
+		DeletedBy: msg.Audit.DeletedBy,
+		CreatedAt: readUser.Audit.CreatedAt,
+		UpdatedAt: time.Now().UTC(), //Set the record to recently updated
+		DeletedAt: time.Now().UTC(),
+	}
+}
+
 func (u *User) UserModelToResponse(ctx context.Context) *pb.UserServiceCreateResponse {
 	_, span := otel.Tracer("user-model").Start(ctx, "user model to response")
 	defer span.End()
@@ -104,9 +129,11 @@ func (u *User) UserModelToResponse(ctx context.Context) *pb.UserServiceCreateRes
 		Role:        u.Role,
 		Audit: &v1.Audit{
 			CreatedBy: u.Audit.CreatedBy,
-			CreatedAt: timestamppb.New(u.Audit.CreatedAt),
 			UpdatedBy: u.Audit.UpdatedBy,
+			DeletedBy: u.Audit.DeletedBy,
 			UpdatedAt: timestamppb.New(u.Audit.UpdatedAt),
+			CreatedAt: timestamppb.New(u.Audit.CreatedAt),
+			DeletedAt: timestamppb.New(u.Audit.DeletedAt),
 		},
 	}
 }

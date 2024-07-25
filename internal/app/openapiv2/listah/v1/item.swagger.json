@@ -61,6 +61,13 @@
         "updated_at": {
           "type": "string",
           "format": "date-time"
+        },
+        "deleted_by": {
+          "$ref": "#/definitions/v1AuditUpdaterEnum"
+        },
+        "deleted_at": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },

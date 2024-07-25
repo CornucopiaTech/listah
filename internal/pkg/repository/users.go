@@ -15,6 +15,8 @@ type UserRepository interface {
 	SelectOne(ctx context.Context, id string) (*model.User, error)
 	InsertOne(ctx context.Context, user *model.User) error
 	UpdateOne(ctx context.Context, user *model.User) error
+	DeleteOne(ctx context.Context, id string) error
+	SoftDeleteOne(ctx context.Context, user *model.User) error
 
 	// DeleteOne()
 	// SelectMany()
@@ -62,12 +64,41 @@ func (a *userRepositoryAgent) UpdateOne(ctx context.Context, user *model.User) e
 	ctx, span := otel.Tracer("user-repository").Start(ctx, "UpdateOne")
 	defer span.End()
 
-	a.logger.For(ctx).Info("Updatinging user", zap.String("user", user.Id))
+	a.logger.For(ctx).Info("Updating user", zap.String("user", user.Id))
 	_, err := a.db.NewUpdate().Model(user).WherePK().Exec(ctx)
 	if err != nil {
 		a.logger.For(ctx).Error("Error occurred in repository while updating user", zap.String("user", user.Id), zap.String("cause", errors.Cause(err).Error()))
 		return err
 	}
 
+	return nil
+}
+
+func (a *userRepositoryAgent) SoftDeleteOne(ctx context.Context, user *model.User) error {
+	ctx, span := otel.Tracer("user-repository").Start(ctx, "SoftDeleteOne")
+	defer span.End()
+
+	a.logger.For(ctx).Info("soft-deleting user", zap.String("user", user.Id))
+	_, err := a.db.NewUpdate().Model(user).WherePK().Exec(ctx)
+	if err != nil {
+		a.logger.For(ctx).Error("Error occurred in repository while soft-deleting user", zap.String("user", user.Id), zap.String("cause", errors.Cause(err).Error()))
+		return err
+	}
+	return nil
+
+}
+
+func (a *userRepositoryAgent) DeleteOne(ctx context.Context, id string) error {
+	ctx, span := otel.Tracer("user-repository").Start(ctx, "DeleteOne")
+	defer span.End()
+
+	a.logger.For(ctx).Info("Selecting user", zap.String("user", id))
+
+	user := new(model.User)
+	_, err := a.db.NewDelete().Model(user).Where("id = ?", id).Exec(ctx)
+	if err != nil {
+		a.logger.For(ctx).Error("Error occurred in repository while deleting user", zap.String("user", id), zap.String("cause", errors.Cause(err).Error()))
+		return err
+	}
 	return nil
 }

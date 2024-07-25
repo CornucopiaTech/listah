@@ -39,8 +39,6 @@ func Init(cfg *config.Config, logger *logging.Factory) *Repository {
 		pgdriver.WithNetwork("tcp"),
 		pgdriver.WithAddr(cfg.Database.Address),
 		pgdriver.WithInsecure(enableTls),
-		// pgdriver.WithTLSConfig(&tls.Config{InsecureSkipVerify: false}),
-		// pgdriver.WithTLSConfig(&tls.Config{InsecureSkipVerify: true}),
 		pgdriver.WithUser(cfg.Database.User),
 		pgdriver.WithPassword(cfg.Database.Password),
 		pgdriver.WithDatabase(cfg.Database.DatabaseName),
@@ -49,9 +47,6 @@ func Init(cfg *config.Config, logger *logging.Factory) *Repository {
 		pgdriver.WithDialTimeout(5*time.Second),
 		pgdriver.WithReadTimeout(5*time.Second),
 		pgdriver.WithWriteTimeout(5*time.Second),
-		// pgdriver.WithConnParams(map[string]interface{}{
-		// 	"search_path": "my_search_path",
-		// }),
 	)
 
 	sqldb := otelsql.OpenDB(pgconn)

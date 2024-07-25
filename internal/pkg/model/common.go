@@ -7,7 +7,9 @@ import (
 
 type Audit struct {
 	CreatedBy v1.AuditUpdaterEnum
-	CreatedAt time.Time
 	UpdatedBy v1.AuditUpdaterEnum
+	DeletedBy v1.AuditUpdaterEnum
+	CreatedAt time.Time
 	UpdatedAt time.Time
+	DeletedAt time.Time
 }

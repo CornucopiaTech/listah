@@ -7,6 +7,8 @@ option go_package = "cornucopia/listah/internal/pkg/proto/listah/v1";
 
 import "listah/v1/commons.proto";
 import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
 
 message UserServiceCreateRequest {
     string id = 1;
@@ -15,6 +17,7 @@ message UserServiceCreateRequest {
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
     string email = 6;
+//    google.protobuf.Timestamp deleted_at = 7;
     string role = 20;
     Audit audit = 50;
 }
@@ -26,6 +29,7 @@ message UserServiceCreateResponse {
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
     string email = 6;
+//    google.protobuf.Timestamp deleted_at = 7;
     string role = 20;
     Audit audit = 50;
 }
@@ -41,6 +45,7 @@ message UserServiceReadResponse {
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
     string email = 6;
+//    google.protobuf.Timestamp deleted_at = 7;
     string role = 20;
     Audit audit = 50;
 }
@@ -52,6 +57,7 @@ message UserServiceUpdateRequest {
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
     string email = 6;
+//    google.protobuf.Timestamp deleted_at = 7;
     string role = 20;
     Audit audit = 50;
 }
@@ -63,16 +69,26 @@ message UserServiceUpdateResponse {
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
     string email = 6;
+//    google.protobuf.Timestamp deleted_at = 7;
     string role = 20;
     Audit audit = 50;
 }
 
 message UserServiceDeleteRequest {
     string id = 1;
+    Audit audit = 50;
 }
 
 message UserServiceDeleteResponse {
-
+    string id = 1;
+    string first_name = 2 [json_name = "first_name"];
+    string middle_names = 3 [json_name = "middle_names"];
+    string last_name = 4 [json_name = "last_name"];
+    string username = 5;
+    string email = 6;
+//    google.protobuf.Timestamp deleted_at = 7;
+    string role = 20;
+    Audit audit = 50;
 }
 
 

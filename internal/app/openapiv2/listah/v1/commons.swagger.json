@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "package commons;",
+    "title": "listah/v1/commons.proto",
     "version": "version not set"
   },
   "consumes": [

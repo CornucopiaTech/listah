@@ -16,11 +16,11 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.UserService
 	ctx, span := otel.Tracer("user-service").Start(ctx, "create")
 	defer span.End()
 
-	s.Infra.Logger.For(ctx).Info("Creating user", zap.String("user", req.Msg.Id))
+	s.Infra.Logger.For(ctx).Info("Creating user")
 
 	// Get user model for user repository
 	newUserModel := new(model.User)
-	newUserModel.UserModelFromRequest(ctx, req.Msg)
+	newUserModel.CreateUserModelFromRequest(ctx, req.Msg)
 
 	// Inser user model in repository
 	if err := s.Infra.Repository.Users.InsertOne(ctx, newUserModel); err != nil {
@@ -96,6 +96,45 @@ func (s *Server) Update(ctx context.Context, req *connect.Request[pb.UserService
 
 	// Marshal copy from generic (user create response) to update response proto message
 	resUser := new(pb.UserServiceUpdateResponse)
+
+	utils.MarshalCopyProto(genericResUser, resUser)
+
+	res := connect.NewResponse(resUser)
+	return res, nil
+}
+
+func (s *Server) Delete(ctx context.Context, req *connect.Request[pb.UserServiceDeleteRequest]) (*connect.Response[pb.UserServiceDeleteResponse], error) {
+	ctx, span := otel.Tracer("user-service").Start(ctx, "delete")
+	defer span.End()
+
+	s.Infra.Logger.For(ctx).Info("Deleting user", zap.String("user", req.Msg.Id))
+
+	// Read initial user model from repository
+	readUser, err := s.Infra.Repository.Users.SelectOne(ctx, req.Msg.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Create user model for update from information sent in request
+	updateUserModel := new(model.User)
+	updateUserModel.DeleteUserModelFromRequest(ctx, req.Msg, readUser)
+
+	// Update User model in repository
+	if err := s.Infra.Repository.Users.SoftDeleteOne(ctx, updateUserModel); err != nil {
+		return nil, err
+	}
+
+	// Read user model from repository after soft-delete
+	readUser, err = s.Infra.Repository.Users.SelectOne(ctx, req.Msg.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert user model to generic (user create response) proto message
+	genericResUser := readUser.UserModelToResponse(ctx)
+
+	// Marshal copy from generic (user create response) to update response proto message
+	resUser := new(pb.UserServiceDeleteResponse)
 
 	utils.MarshalCopyProto(genericResUser, resUser)
 

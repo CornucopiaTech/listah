@@ -61,6 +61,13 @@
         "updated_at": {
           "type": "string",
           "format": "date-time"
+        },
+        "deleted_by": {
+          "$ref": "#/definitions/v1AuditUpdaterEnum"
+        },
+        "deleted_at": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
@@ -95,7 +102,8 @@
           "type": "string"
         },
         "role": {
-          "type": "string"
+          "type": "string",
+          "title": "google.protobuf.Timestamp deleted_at = 7;"
         },
         "audit": {
           "$ref": "#/definitions/v1Audit"
@@ -124,7 +132,8 @@
           "type": "string"
         },
         "role": {
-          "type": "string"
+          "type": "string",
+          "title": "google.protobuf.Timestamp deleted_at = 7;"
         },
         "audit": {
           "$ref": "#/definitions/v1Audit"
@@ -132,7 +141,34 @@
       }
     },
     "v1UserServiceDeleteResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "middle_names": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string",
+          "title": "google.protobuf.Timestamp deleted_at = 7;"
+        },
+        "audit": {
+          "$ref": "#/definitions/v1Audit"
+        }
+      }
     },
     "v1UserServiceReadResponse": {
       "type": "object",
@@ -156,7 +192,8 @@
           "type": "string"
         },
         "role": {
-          "type": "string"
+          "type": "string",
+          "title": "google.protobuf.Timestamp deleted_at = 7;"
         },
         "audit": {
           "$ref": "#/definitions/v1Audit"
@@ -185,7 +222,8 @@
           "type": "string"
         },
         "role": {
-          "type": "string"
+          "type": "string",
+          "title": "google.protobuf.Timestamp deleted_at = 7;"
         },
         "audit": {
           "$ref": "#/definitions/v1Audit"
