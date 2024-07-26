@@ -57,11 +57,12 @@ func (i *Item) UpdateItemModelFromRequest(ctx context.Context, msg *pb.ItemServi
 	i.CategoryId = msg.GetCategoryId()
 	i.ReactivateAt = msg.GetReactivateAt().AsTime()
 	i.Audit = Audit{
-		CreatedBy: msg.Audit.GetCreatedBy(),
+		CreatedBy: readItem.Audit.CreatedBy,
 		UpdatedBy: msg.Audit.GetUpdatedBy(),
-		CreatedAt: msg.Audit.GetCreatedAt().AsTime(),
+		DeletedBy: readItem.Audit.DeletedBy,
+		CreatedAt: readItem.Audit.CreatedAt,
 		UpdatedAt: time.Now().UTC(),
-		DeletedAt: msg.Audit.GetDeletedAt().AsTime(),
+		DeletedAt: readItem.Audit.DeletedAt,
 	}
 
 	// Set fields that were not included in the update request.

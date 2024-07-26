@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	SubCategoryService_Create_FullMethodName = "/listah.v1.SubCategoryService/Create"
-	SubCategoryService_Read_FullMethodName   = "/listah.v1.SubCategoryService/Read"
-	SubCategoryService_Update_FullMethodName = "/listah.v1.SubCategoryService/Update"
-	SubCategoryService_Delete_FullMethodName = "/listah.v1.SubCategoryService/Delete"
+	SubCategoryService_Create_FullMethodName    = "/listah.v1.SubCategoryService/Create"
+	SubCategoryService_Read_FullMethodName      = "/listah.v1.SubCategoryService/Read"
+	SubCategoryService_Update_FullMethodName    = "/listah.v1.SubCategoryService/Update"
+	SubCategoryService_Delete_FullMethodName    = "/listah.v1.SubCategoryService/Delete"
+	SubCategoryService_ListItems_FullMethodName = "/listah.v1.SubCategoryService/ListItems"
 )
 
 // SubCategoryServiceClient is the client API for SubCategoryService service.
@@ -33,6 +34,7 @@ type SubCategoryServiceClient interface {
 	Read(ctx context.Context, in *SubCategoryServiceReadRequest, opts ...grpc.CallOption) (*SubCategoryServiceReadResponse, error)
 	Update(ctx context.Context, in *SubCategoryServiceUpdateRequest, opts ...grpc.CallOption) (*SubCategoryServiceUpdateResponse, error)
 	Delete(ctx context.Context, in *SubCategoryServiceDeleteRequest, opts ...grpc.CallOption) (*SubCategoryServiceDeleteResponse, error)
+	ListItems(ctx context.Context, in *SubCategoryServiceDeleteRequest, opts ...grpc.CallOption) (*SubCategoryServiceDeleteResponse, error)
 }
 
 type subCategoryServiceClient struct {
@@ -83,6 +85,16 @@ func (c *subCategoryServiceClient) Delete(ctx context.Context, in *SubCategorySe
 	return out, nil
 }
 
+func (c *subCategoryServiceClient) ListItems(ctx context.Context, in *SubCategoryServiceDeleteRequest, opts ...grpc.CallOption) (*SubCategoryServiceDeleteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SubCategoryServiceDeleteResponse)
+	err := c.cc.Invoke(ctx, SubCategoryService_ListItems_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SubCategoryServiceServer is the server API for SubCategoryService service.
 // All implementations should embed UnimplementedSubCategoryServiceServer
 // for forward compatibility
@@ -91,6 +103,7 @@ type SubCategoryServiceServer interface {
 	Read(context.Context, *SubCategoryServiceReadRequest) (*SubCategoryServiceReadResponse, error)
 	Update(context.Context, *SubCategoryServiceUpdateRequest) (*SubCategoryServiceUpdateResponse, error)
 	Delete(context.Context, *SubCategoryServiceDeleteRequest) (*SubCategoryServiceDeleteResponse, error)
+	ListItems(context.Context, *SubCategoryServiceDeleteRequest) (*SubCategoryServiceDeleteResponse, error)
 }
 
 // UnimplementedSubCategoryServiceServer should be embedded to have forward compatible implementations.
@@ -108,6 +121,9 @@ func (UnimplementedSubCategoryServiceServer) Update(context.Context, *SubCategor
 }
 func (UnimplementedSubCategoryServiceServer) Delete(context.Context, *SubCategoryServiceDeleteRequest) (*SubCategoryServiceDeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedSubCategoryServiceServer) ListItems(context.Context, *SubCategoryServiceDeleteRequest) (*SubCategoryServiceDeleteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListItems not implemented")
 }
 
 // UnsafeSubCategoryServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -193,6 +209,24 @@ func _SubCategoryService_Delete_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SubCategoryService_ListItems_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubCategoryServiceDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubCategoryServiceServer).ListItems(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubCategoryService_ListItems_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubCategoryServiceServer).ListItems(ctx, req.(*SubCategoryServiceDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SubCategoryService_ServiceDesc is the grpc.ServiceDesc for SubCategoryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -215,6 +249,10 @@ var SubCategoryService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _SubCategoryService_Delete_Handler,
+		},
+		{
+			MethodName: "ListItems",
+			Handler:    _SubCategoryService_ListItems_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -142,11 +142,11 @@ func (s *Server) Delete(ctx context.Context, req *connect.Request[pb.UserService
 	return res, nil
 }
 
-func (s *Server) Echo(ctx context.Context, req *connect.Request[pb.UserServiceCreateRequest]) (*connect.Response[pb.UserServiceCreateRequest], error) {
+func (s *Server) Echo(ctx context.Context, req *connect.Request[pb.UserServiceEchoRequest]) (*connect.Response[pb.UserServiceEchoResponse], error) {
 	// connect.Request and connect.Response give you direct access to headers and
 	// trailers. No context-based nonsense!
 	log.Println(req.Header().Get("Some-Header"))
-	res := connect.NewResponse(&pb.UserServiceCreateRequest{
+	res := connect.NewResponse(&pb.UserServiceEchoResponse{
 		// req.Msg is a strongly-typed *pingv1.PingRequest, so we can access its
 		// fields without type assertions.
 		Id:          req.Msg.Id,

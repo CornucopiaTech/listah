@@ -146,18 +146,7 @@ func (s *Server) Echo(ctx context.Context, req *connect.Request[pb.ItemServiceCr
 	// connect.Request and connect.Response give you direct access to headers and
 	// trailers. No context-based nonsense!
 	log.Println(req.Header().Get("Some-Header"))
-	res := connect.NewResponse(&pb.ItemServiceCreateRequest{
-		// req.Msg is a strongly-typed *pingv1.PingRequest, so we can access its
-		// fields without type assertions.
-		Id:          req.Msg.Id,
-		FirstName:   req.Msg.FirstName,
-		MiddleNames: req.Msg.MiddleNames,
-		LastName:    req.Msg.LastName,
-		Itemname:    req.Msg.Itemname,
-		Email:       req.Msg.Email,
-		Role:        req.Msg.Role,
-		Audit:       req.Msg.Audit,
-	})
+	res := connect.NewResponse(&pb.ItemServiceCreateRequest{})
 	res.Header().Set("Some-Other-Header", "hello!")
 	return res, nil
 }

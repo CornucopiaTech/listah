@@ -6,6 +6,7 @@ option go_package = "cornucopia/listah/internal/pkg/proto/listah/v1";
 
 
 import "listah/v1/commons.proto";
+import "listah/v1/item.proto";
 import "google/protobuf/timestamp.proto";
 
 
@@ -21,7 +22,7 @@ message CategoryServiceCreateRequest {
 
 message CategoryServiceCreateResponse {
     string id = 1;
-    string title = 2;
+    string name = 2;
     string description = 3;
     string note = 7;
     Audit audit = 50;
@@ -30,7 +31,7 @@ message CategoryServiceCreateResponse {
 
 message CategoryServiceUpdateRequest {
     string id = 1;
-    string title = 2;
+    string name = 2;
     string description = 3;
     string note = 7;
     Audit audit = 50;
@@ -39,7 +40,7 @@ message CategoryServiceUpdateRequest {
 
 message CategoryServiceUpdateResponse {
     string id = 1;
-    string title = 2;
+    string name = 2;
     string description = 3;
     string note = 7;
     Audit audit = 50;
@@ -53,7 +54,7 @@ message CategoryServiceReadRequest {
 
 message CategoryServiceReadResponse {
     string id = 1;
-    string title = 2;
+    string name = 2;
     string description = 3;
     string note = 7;
     Audit audit = 50;
@@ -61,14 +62,30 @@ message CategoryServiceReadResponse {
 
 message CategoryServiceDeleteRequest {
     string id = 1;
+    Audit audit = 50;
 }
 
 
 message CategoryServiceDeleteResponse {
     string id = 1;
-    string title = 2;
+    string name = 2;
     string description = 3;
     string note = 7;
+    Audit audit = 50;
+}
+
+message CategoryServiceListItemsRequest {
+    string id = 1;
+}
+
+
+message CategoryServiceListItemsResponse {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string note = 7;
+    repeated string items = 20;
+    // repeated ItemServiceReadResponse items = 20;
     Audit audit = 50;
 }
 
@@ -78,4 +95,5 @@ service CategoryService {
     rpc Read(CategoryServiceReadRequest) returns (CategoryServiceReadResponse){}
     rpc Update(CategoryServiceUpdateRequest) returns (CategoryServiceUpdateResponse){}
     rpc Delete(CategoryServiceDeleteRequest) returns (CategoryServiceDeleteResponse){}
+    rpc ListItems(CategoryServiceListItemsRequest) returns (CategoryServiceListItemsResponse){}
 }

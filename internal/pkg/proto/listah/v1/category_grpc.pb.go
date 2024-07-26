@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	CategoryService_Create_FullMethodName = "/listah.v1.CategoryService/Create"
-	CategoryService_Read_FullMethodName   = "/listah.v1.CategoryService/Read"
-	CategoryService_Update_FullMethodName = "/listah.v1.CategoryService/Update"
-	CategoryService_Delete_FullMethodName = "/listah.v1.CategoryService/Delete"
+	CategoryService_Create_FullMethodName    = "/listah.v1.CategoryService/Create"
+	CategoryService_Read_FullMethodName      = "/listah.v1.CategoryService/Read"
+	CategoryService_Update_FullMethodName    = "/listah.v1.CategoryService/Update"
+	CategoryService_Delete_FullMethodName    = "/listah.v1.CategoryService/Delete"
+	CategoryService_ListItems_FullMethodName = "/listah.v1.CategoryService/ListItems"
 )
 
 // CategoryServiceClient is the client API for CategoryService service.
@@ -33,6 +34,7 @@ type CategoryServiceClient interface {
 	Read(ctx context.Context, in *CategoryServiceReadRequest, opts ...grpc.CallOption) (*CategoryServiceReadResponse, error)
 	Update(ctx context.Context, in *CategoryServiceUpdateRequest, opts ...grpc.CallOption) (*CategoryServiceUpdateResponse, error)
 	Delete(ctx context.Context, in *CategoryServiceDeleteRequest, opts ...grpc.CallOption) (*CategoryServiceDeleteResponse, error)
+	ListItems(ctx context.Context, in *CategoryServiceListItemsRequest, opts ...grpc.CallOption) (*CategoryServiceListItemsResponse, error)
 }
 
 type categoryServiceClient struct {
@@ -83,6 +85,16 @@ func (c *categoryServiceClient) Delete(ctx context.Context, in *CategoryServiceD
 	return out, nil
 }
 
+func (c *categoryServiceClient) ListItems(ctx context.Context, in *CategoryServiceListItemsRequest, opts ...grpc.CallOption) (*CategoryServiceListItemsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CategoryServiceListItemsResponse)
+	err := c.cc.Invoke(ctx, CategoryService_ListItems_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CategoryServiceServer is the server API for CategoryService service.
 // All implementations should embed UnimplementedCategoryServiceServer
 // for forward compatibility
@@ -91,6 +103,7 @@ type CategoryServiceServer interface {
 	Read(context.Context, *CategoryServiceReadRequest) (*CategoryServiceReadResponse, error)
 	Update(context.Context, *CategoryServiceUpdateRequest) (*CategoryServiceUpdateResponse, error)
 	Delete(context.Context, *CategoryServiceDeleteRequest) (*CategoryServiceDeleteResponse, error)
+	ListItems(context.Context, *CategoryServiceListItemsRequest) (*CategoryServiceListItemsResponse, error)
 }
 
 // UnimplementedCategoryServiceServer should be embedded to have forward compatible implementations.
@@ -108,6 +121,9 @@ func (UnimplementedCategoryServiceServer) Update(context.Context, *CategoryServi
 }
 func (UnimplementedCategoryServiceServer) Delete(context.Context, *CategoryServiceDeleteRequest) (*CategoryServiceDeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedCategoryServiceServer) ListItems(context.Context, *CategoryServiceListItemsRequest) (*CategoryServiceListItemsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListItems not implemented")
 }
 
 // UnsafeCategoryServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -193,6 +209,24 @@ func _CategoryService_Delete_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CategoryService_ListItems_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CategoryServiceListItemsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CategoryServiceServer).ListItems(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CategoryService_ListItems_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CategoryServiceServer).ListItems(ctx, req.(*CategoryServiceListItemsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CategoryService_ServiceDesc is the grpc.ServiceDesc for CategoryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -215,6 +249,10 @@ var CategoryService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _CategoryService_Delete_Handler,
+		},
+		{
+			MethodName: "ListItems",
+			Handler:    _CategoryService_ListItems_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

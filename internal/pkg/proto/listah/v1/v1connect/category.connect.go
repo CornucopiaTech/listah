@@ -41,15 +41,19 @@ const (
 	CategoryServiceUpdateProcedure = "/listah.v1.CategoryService/Update"
 	// CategoryServiceDeleteProcedure is the fully-qualified name of the CategoryService's Delete RPC.
 	CategoryServiceDeleteProcedure = "/listah.v1.CategoryService/Delete"
+	// CategoryServiceListItemsProcedure is the fully-qualified name of the CategoryService's ListItems
+	// RPC.
+	CategoryServiceListItemsProcedure = "/listah.v1.CategoryService/ListItems"
 )
 
 // These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
 var (
-	categoryServiceServiceDescriptor      = v1.File_listah_v1_category_proto.Services().ByName("CategoryService")
-	categoryServiceCreateMethodDescriptor = categoryServiceServiceDescriptor.Methods().ByName("Create")
-	categoryServiceReadMethodDescriptor   = categoryServiceServiceDescriptor.Methods().ByName("Read")
-	categoryServiceUpdateMethodDescriptor = categoryServiceServiceDescriptor.Methods().ByName("Update")
-	categoryServiceDeleteMethodDescriptor = categoryServiceServiceDescriptor.Methods().ByName("Delete")
+	categoryServiceServiceDescriptor         = v1.File_listah_v1_category_proto.Services().ByName("CategoryService")
+	categoryServiceCreateMethodDescriptor    = categoryServiceServiceDescriptor.Methods().ByName("Create")
+	categoryServiceReadMethodDescriptor      = categoryServiceServiceDescriptor.Methods().ByName("Read")
+	categoryServiceUpdateMethodDescriptor    = categoryServiceServiceDescriptor.Methods().ByName("Update")
+	categoryServiceDeleteMethodDescriptor    = categoryServiceServiceDescriptor.Methods().ByName("Delete")
+	categoryServiceListItemsMethodDescriptor = categoryServiceServiceDescriptor.Methods().ByName("ListItems")
 )
 
 // CategoryServiceClient is a client for the listah.v1.CategoryService service.
@@ -58,6 +62,7 @@ type CategoryServiceClient interface {
 	Read(context.Context, *connect.Request[v1.CategoryServiceReadRequest]) (*connect.Response[v1.CategoryServiceReadResponse], error)
 	Update(context.Context, *connect.Request[v1.CategoryServiceUpdateRequest]) (*connect.Response[v1.CategoryServiceUpdateResponse], error)
 	Delete(context.Context, *connect.Request[v1.CategoryServiceDeleteRequest]) (*connect.Response[v1.CategoryServiceDeleteResponse], error)
+	ListItems(context.Context, *connect.Request[v1.CategoryServiceListItemsRequest]) (*connect.Response[v1.CategoryServiceListItemsResponse], error)
 }
 
 // NewCategoryServiceClient constructs a client for the listah.v1.CategoryService service. By
@@ -94,15 +99,22 @@ func NewCategoryServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(categoryServiceDeleteMethodDescriptor),
 			connect.WithClientOptions(opts...),
 		),
+		listItems: connect.NewClient[v1.CategoryServiceListItemsRequest, v1.CategoryServiceListItemsResponse](
+			httpClient,
+			baseURL+CategoryServiceListItemsProcedure,
+			connect.WithSchema(categoryServiceListItemsMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // categoryServiceClient implements CategoryServiceClient.
 type categoryServiceClient struct {
-	create *connect.Client[v1.CategoryServiceCreateRequest, v1.CategoryServiceCreateResponse]
-	read   *connect.Client[v1.CategoryServiceReadRequest, v1.CategoryServiceReadResponse]
-	update *connect.Client[v1.CategoryServiceUpdateRequest, v1.CategoryServiceUpdateResponse]
-	delete *connect.Client[v1.CategoryServiceDeleteRequest, v1.CategoryServiceDeleteResponse]
+	create    *connect.Client[v1.CategoryServiceCreateRequest, v1.CategoryServiceCreateResponse]
+	read      *connect.Client[v1.CategoryServiceReadRequest, v1.CategoryServiceReadResponse]
+	update    *connect.Client[v1.CategoryServiceUpdateRequest, v1.CategoryServiceUpdateResponse]
+	delete    *connect.Client[v1.CategoryServiceDeleteRequest, v1.CategoryServiceDeleteResponse]
+	listItems *connect.Client[v1.CategoryServiceListItemsRequest, v1.CategoryServiceListItemsResponse]
 }
 
 // Create calls listah.v1.CategoryService.Create.
@@ -125,12 +137,18 @@ func (c *categoryServiceClient) Delete(ctx context.Context, req *connect.Request
 	return c.delete.CallUnary(ctx, req)
 }
 
+// ListItems calls listah.v1.CategoryService.ListItems.
+func (c *categoryServiceClient) ListItems(ctx context.Context, req *connect.Request[v1.CategoryServiceListItemsRequest]) (*connect.Response[v1.CategoryServiceListItemsResponse], error) {
+	return c.listItems.CallUnary(ctx, req)
+}
+
 // CategoryServiceHandler is an implementation of the listah.v1.CategoryService service.
 type CategoryServiceHandler interface {
 	Create(context.Context, *connect.Request[v1.CategoryServiceCreateRequest]) (*connect.Response[v1.CategoryServiceCreateResponse], error)
 	Read(context.Context, *connect.Request[v1.CategoryServiceReadRequest]) (*connect.Response[v1.CategoryServiceReadResponse], error)
 	Update(context.Context, *connect.Request[v1.CategoryServiceUpdateRequest]) (*connect.Response[v1.CategoryServiceUpdateResponse], error)
 	Delete(context.Context, *connect.Request[v1.CategoryServiceDeleteRequest]) (*connect.Response[v1.CategoryServiceDeleteResponse], error)
+	ListItems(context.Context, *connect.Request[v1.CategoryServiceListItemsRequest]) (*connect.Response[v1.CategoryServiceListItemsResponse], error)
 }
 
 // NewCategoryServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -163,6 +181,12 @@ func NewCategoryServiceHandler(svc CategoryServiceHandler, opts ...connect.Handl
 		connect.WithSchema(categoryServiceDeleteMethodDescriptor),
 		connect.WithHandlerOptions(opts...),
 	)
+	categoryServiceListItemsHandler := connect.NewUnaryHandler(
+		CategoryServiceListItemsProcedure,
+		svc.ListItems,
+		connect.WithSchema(categoryServiceListItemsMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/listah.v1.CategoryService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case CategoryServiceCreateProcedure:
@@ -173,6 +197,8 @@ func NewCategoryServiceHandler(svc CategoryServiceHandler, opts ...connect.Handl
 			categoryServiceUpdateHandler.ServeHTTP(w, r)
 		case CategoryServiceDeleteProcedure:
 			categoryServiceDeleteHandler.ServeHTTP(w, r)
+		case CategoryServiceListItemsProcedure:
+			categoryServiceListItemsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -196,4 +222,8 @@ func (UnimplementedCategoryServiceHandler) Update(context.Context, *connect.Requ
 
 func (UnimplementedCategoryServiceHandler) Delete(context.Context, *connect.Request[v1.CategoryServiceDeleteRequest]) (*connect.Response[v1.CategoryServiceDeleteResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.CategoryService.Delete is not implemented"))
+}
+
+func (UnimplementedCategoryServiceHandler) ListItems(context.Context, *connect.Request[v1.CategoryServiceListItemsRequest]) (*connect.Response[v1.CategoryServiceListItemsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.CategoryService.ListItems is not implemented"))
 }

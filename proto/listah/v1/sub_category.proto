@@ -7,6 +7,7 @@ option go_package = "cornucopia/listah/internal/pkg/proto/listah/v1";
 
 import "listah/v1/commons.proto";
 import "listah/v1/category.proto";
+import "listah/v1/item.proto";
 import "google/protobuf/timestamp.proto";
 
 
@@ -19,11 +20,9 @@ message SubCategoryServiceCreateRequest {
     repeated string category_ids = 8;
     Audit audit = 50;
     }
-
-
 message SubCategoryServiceCreateResponse {
     string id = 1;
-    string title = 2;
+    string name = 2;
     string description = 3;
     string note = 7;
     repeated string category_id = 8;
@@ -33,17 +32,15 @@ message SubCategoryServiceCreateResponse {
 
 message SubCategoryServiceUpdateRequest {
     string id = 1;
-    string title = 2;
+    string name = 2;
     string description = 3;
     string note = 7;
     repeated string category_id = 8;
     Audit audit = 50;
 }
-
-
 message SubCategoryServiceUpdateResponse {
     string id = 1;
-    string title = 2;
+    string name = 2;
     string description = 3;
     string note = 7;
     repeated string category_id = 8;
@@ -54,28 +51,40 @@ message SubCategoryServiceUpdateResponse {
 message SubCategoryServiceReadRequest {
     string id = 1;
 }
-
-
 message SubCategoryServiceReadResponse {
     string id = 1;
-    string title = 2;
+    string name = 2;
     string description = 3;
     string note = 7;
     repeated string category_id = 8;
     Audit audit = 50;
 }
 
+
 message SubCategoryServiceDeleteRequest {
     string id = 1;
+    Audit audit = 50;
 }
-
-
 message SubCategoryServiceDeleteResponse {
     string id = 1;
-    string title = 2;
+    string name = 2;
     string description = 3;
     string note = 7;
     repeated string category_id = 8;
+    Audit audit = 50;
+}
+
+
+message SubCategoryServiceListItemsRequest {
+    string id = 1;
+}
+message SubCategoryServiceListItemsResponse {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string note = 7;
+    repeated string items = 20;
+    // repeated ItemServiceReadResponse items = 20;
     Audit audit = 50;
 }
 
@@ -85,4 +94,5 @@ service SubCategoryService {
     rpc Read(SubCategoryServiceReadRequest) returns (SubCategoryServiceReadResponse){}
     rpc Update(SubCategoryServiceUpdateRequest) returns (SubCategoryServiceUpdateResponse){}
     rpc Delete(SubCategoryServiceDeleteRequest) returns (SubCategoryServiceDeleteResponse){}
+    rpc ListItems(SubCategoryServiceDeleteRequest) returns (SubCategoryServiceDeleteResponse){}
 }

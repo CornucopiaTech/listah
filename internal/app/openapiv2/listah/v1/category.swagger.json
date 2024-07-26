@@ -86,7 +86,7 @@
         "id": {
           "type": "string"
         },
-        "title": {
+        "name": {
           "type": "string"
         },
         "description": {
@@ -106,7 +106,7 @@
         "id": {
           "type": "string"
         },
-        "title": {
+        "name": {
           "type": "string"
         },
         "description": {
@@ -120,13 +120,40 @@
         }
       }
     },
+    "v1CategoryServiceListItemsResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "audit": {
+          "$ref": "#/definitions/v1Audit",
+          "title": "repeated ItemServiceReadResponse items = 20;"
+        }
+      }
+    },
     "v1CategoryServiceReadResponse": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string"
         },
-        "title": {
+        "name": {
           "type": "string"
         },
         "description": {
@@ -146,7 +173,7 @@
         "id": {
           "type": "string"
         },
-        "title": {
+        "name": {
           "type": "string"
         },
         "description": {

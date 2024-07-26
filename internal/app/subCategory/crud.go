@@ -3,7 +3,7 @@ package subSubCategory
 import (
 	"context"
 	"cornucopia/listah/internal/pkg/model"
-	pb "cornucopia/listah/internal/pkg/proto/listah/v1"
+	v1 "cornucopia/listah/internal/pkg/proto/listah/v1"
 	"cornucopia/listah/internal/pkg/utils"
 	"log"
 
@@ -12,7 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (s *Server) Create(ctx context.Context, req *connect.Request[pb.SubCategoryServiceCreateRequest]) (*connect.Response[pb.SubCategoryServiceCreateResponse], error) {
+func (s *Server) Create(ctx context.Context, req *connect.Request[v1.SubCategoryServiceCreateRequest]) (*connect.Response[v1.SubCategoryServiceCreateResponse], error) {
 	ctx, span := otel.Tracer("subSubCategory-service").Start(ctx, "create")
 	defer span.End()
 
@@ -40,7 +40,7 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.SubCategory
 	return res, nil
 }
 
-func (s *Server) Read(ctx context.Context, req *connect.Request[pb.SubCategoryServiceReadRequest]) (*connect.Response[pb.SubCategoryServiceReadResponse], error) {
+func (s *Server) Read(ctx context.Context, req *connect.Request[v1.SubCategoryServiceReadRequest]) (*connect.Response[v1.SubCategoryServiceReadResponse], error) {
 	ctx, span := otel.Tracer("subSubCategory-service").Start(ctx, "read")
 	defer span.End()
 
@@ -56,7 +56,7 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.SubCategorySe
 	genericResSubCategory := readSubCategory.SubCategoryModelToResponse(ctx)
 
 	// Marshal copy from generic subSubCategory response to read subSubCategory response
-	resSubCategory := new(pb.SubCategoryServiceReadResponse)
+	resSubCategory := new(v1.SubCategoryServiceReadResponse)
 	utils.MarshalCopyProto(genericResSubCategory, resSubCategory)
 
 	res := connect.NewResponse(resSubCategory)
@@ -64,7 +64,7 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.SubCategorySe
 	return res, nil
 }
 
-func (s *Server) Update(ctx context.Context, req *connect.Request[pb.SubCategoryServiceUpdateRequest]) (*connect.Response[pb.SubCategoryServiceUpdateResponse], error) {
+func (s *Server) Update(ctx context.Context, req *connect.Request[v1.SubCategoryServiceUpdateRequest]) (*connect.Response[v1.SubCategoryServiceUpdateResponse], error) {
 	ctx, span := otel.Tracer("subSubCategory-service").Start(ctx, "update")
 	defer span.End()
 
@@ -95,7 +95,7 @@ func (s *Server) Update(ctx context.Context, req *connect.Request[pb.SubCategory
 	genericResSubCategory := readSubCategory.SubCategoryModelToResponse(ctx)
 
 	// Marshal copy from generic (subSubCategory create response) to update response proto message
-	resSubCategory := new(pb.SubCategoryServiceUpdateResponse)
+	resSubCategory := new(v1.SubCategoryServiceUpdateResponse)
 
 	utils.MarshalCopyProto(genericResSubCategory, resSubCategory)
 
@@ -103,7 +103,7 @@ func (s *Server) Update(ctx context.Context, req *connect.Request[pb.SubCategory
 	return res, nil
 }
 
-func (s *Server) Delete(ctx context.Context, req *connect.Request[pb.SubCategoryServiceDeleteRequest]) (*connect.Response[pb.SubCategoryServiceDeleteResponse], error) {
+func (s *Server) Delete(ctx context.Context, req *connect.Request[v1.SubCategoryServiceDeleteRequest]) (*connect.Response[v1.SubCategoryServiceDeleteResponse], error) {
 	ctx, span := otel.Tracer("subSubCategory-service").Start(ctx, "delete")
 	defer span.End()
 
@@ -134,7 +134,7 @@ func (s *Server) Delete(ctx context.Context, req *connect.Request[pb.SubCategory
 	genericResSubCategory := readSubCategory.SubCategoryModelToResponse(ctx)
 
 	// Marshal copy from generic (subSubCategory create response) to update response proto message
-	resSubCategory := new(pb.SubCategoryServiceDeleteResponse)
+	resSubCategory := new(v1.SubCategoryServiceDeleteResponse)
 
 	utils.MarshalCopyProto(genericResSubCategory, resSubCategory)
 
@@ -142,11 +142,11 @@ func (s *Server) Delete(ctx context.Context, req *connect.Request[pb.SubCategory
 	return res, nil
 }
 
-func (s *Server) Echo(ctx context.Context, req *connect.Request[pb.SubCategoryServiceCreateRequest]) (*connect.Response[pb.SubCategoryServiceCreateRequest], error) {
+func (s *Server) Echo(ctx context.Context, req *connect.Request[v1.SubCategoryServiceCreateRequest]) (*connect.Response[v1.SubCategoryServiceCreateRequest], error) {
 	// connect.Request and connect.Response give you direct access to headers and
 	// trailers. No context-based nonsense!
 	log.Println(req.Header().Get("Some-Header"))
-	res := connect.NewResponse(&pb.SubCategoryServiceCreateRequest{
+	res := connect.NewResponse(&v1.SubCategoryServiceCreateRequest{
 		// req.Msg is a strongly-typed *pingv1.PingRequest, so we can access its
 		// fields without type assertions.
 		Id:              req.Msg.Id,

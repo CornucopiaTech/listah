@@ -58,11 +58,12 @@ func (u *User) UpdateUserModelFromRequest(ctx context.Context, msg *pb.UserServi
 	u.Email = msg.GetEmail()
 	u.Role = msg.GetRole()
 	u.Audit = Audit{
-		CreatedBy: msg.Audit.GetCreatedBy(),
+		CreatedBy: readUser.Audit.CreatedBy,
 		UpdatedBy: msg.Audit.GetUpdatedBy(),
-		CreatedAt: msg.Audit.GetCreatedAt().AsTime(),
+		DeletedBy: readUser.Audit.DeletedBy,
+		CreatedAt: readUser.Audit.CreatedAt,
 		UpdatedAt: time.Now().UTC(),
-		DeletedAt: msg.Audit.GetDeletedAt().AsTime(),
+		DeletedAt: readUser.Audit.DeletedAt,
 	}
 
 	// Set fields that were not included in the update request.
@@ -89,7 +90,6 @@ func (u *User) UpdateUserModelFromRequest(ctx context.Context, msg *pb.UserServi
 	if u.Role == "" {
 		u.Role = readUser.Role
 	}
-
 }
 
 func (u *User) DeleteUserModelFromRequest(ctx context.Context, msg *pb.UserServiceDeleteRequest, readUser *User) {

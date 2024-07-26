@@ -44,15 +44,19 @@ const (
 	// SubCategoryServiceDeleteProcedure is the fully-qualified name of the SubCategoryService's Delete
 	// RPC.
 	SubCategoryServiceDeleteProcedure = "/listah.v1.SubCategoryService/Delete"
+	// SubCategoryServiceListItemsProcedure is the fully-qualified name of the SubCategoryService's
+	// ListItems RPC.
+	SubCategoryServiceListItemsProcedure = "/listah.v1.SubCategoryService/ListItems"
 )
 
 // These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
 var (
-	subCategoryServiceServiceDescriptor      = v1.File_listah_v1_sub_category_proto.Services().ByName("SubCategoryService")
-	subCategoryServiceCreateMethodDescriptor = subCategoryServiceServiceDescriptor.Methods().ByName("Create")
-	subCategoryServiceReadMethodDescriptor   = subCategoryServiceServiceDescriptor.Methods().ByName("Read")
-	subCategoryServiceUpdateMethodDescriptor = subCategoryServiceServiceDescriptor.Methods().ByName("Update")
-	subCategoryServiceDeleteMethodDescriptor = subCategoryServiceServiceDescriptor.Methods().ByName("Delete")
+	subCategoryServiceServiceDescriptor         = v1.File_listah_v1_sub_category_proto.Services().ByName("SubCategoryService")
+	subCategoryServiceCreateMethodDescriptor    = subCategoryServiceServiceDescriptor.Methods().ByName("Create")
+	subCategoryServiceReadMethodDescriptor      = subCategoryServiceServiceDescriptor.Methods().ByName("Read")
+	subCategoryServiceUpdateMethodDescriptor    = subCategoryServiceServiceDescriptor.Methods().ByName("Update")
+	subCategoryServiceDeleteMethodDescriptor    = subCategoryServiceServiceDescriptor.Methods().ByName("Delete")
+	subCategoryServiceListItemsMethodDescriptor = subCategoryServiceServiceDescriptor.Methods().ByName("ListItems")
 )
 
 // SubCategoryServiceClient is a client for the listah.v1.SubCategoryService service.
@@ -61,6 +65,7 @@ type SubCategoryServiceClient interface {
 	Read(context.Context, *connect.Request[v1.SubCategoryServiceReadRequest]) (*connect.Response[v1.SubCategoryServiceReadResponse], error)
 	Update(context.Context, *connect.Request[v1.SubCategoryServiceUpdateRequest]) (*connect.Response[v1.SubCategoryServiceUpdateResponse], error)
 	Delete(context.Context, *connect.Request[v1.SubCategoryServiceDeleteRequest]) (*connect.Response[v1.SubCategoryServiceDeleteResponse], error)
+	ListItems(context.Context, *connect.Request[v1.SubCategoryServiceDeleteRequest]) (*connect.Response[v1.SubCategoryServiceDeleteResponse], error)
 }
 
 // NewSubCategoryServiceClient constructs a client for the listah.v1.SubCategoryService service. By
@@ -97,15 +102,22 @@ func NewSubCategoryServiceClient(httpClient connect.HTTPClient, baseURL string, 
 			connect.WithSchema(subCategoryServiceDeleteMethodDescriptor),
 			connect.WithClientOptions(opts...),
 		),
+		listItems: connect.NewClient[v1.SubCategoryServiceDeleteRequest, v1.SubCategoryServiceDeleteResponse](
+			httpClient,
+			baseURL+SubCategoryServiceListItemsProcedure,
+			connect.WithSchema(subCategoryServiceListItemsMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // subCategoryServiceClient implements SubCategoryServiceClient.
 type subCategoryServiceClient struct {
-	create *connect.Client[v1.SubCategoryServiceCreateRequest, v1.SubCategoryServiceCreateResponse]
-	read   *connect.Client[v1.SubCategoryServiceReadRequest, v1.SubCategoryServiceReadResponse]
-	update *connect.Client[v1.SubCategoryServiceUpdateRequest, v1.SubCategoryServiceUpdateResponse]
-	delete *connect.Client[v1.SubCategoryServiceDeleteRequest, v1.SubCategoryServiceDeleteResponse]
+	create    *connect.Client[v1.SubCategoryServiceCreateRequest, v1.SubCategoryServiceCreateResponse]
+	read      *connect.Client[v1.SubCategoryServiceReadRequest, v1.SubCategoryServiceReadResponse]
+	update    *connect.Client[v1.SubCategoryServiceUpdateRequest, v1.SubCategoryServiceUpdateResponse]
+	delete    *connect.Client[v1.SubCategoryServiceDeleteRequest, v1.SubCategoryServiceDeleteResponse]
+	listItems *connect.Client[v1.SubCategoryServiceDeleteRequest, v1.SubCategoryServiceDeleteResponse]
 }
 
 // Create calls listah.v1.SubCategoryService.Create.
@@ -128,12 +140,18 @@ func (c *subCategoryServiceClient) Delete(ctx context.Context, req *connect.Requ
 	return c.delete.CallUnary(ctx, req)
 }
 
+// ListItems calls listah.v1.SubCategoryService.ListItems.
+func (c *subCategoryServiceClient) ListItems(ctx context.Context, req *connect.Request[v1.SubCategoryServiceDeleteRequest]) (*connect.Response[v1.SubCategoryServiceDeleteResponse], error) {
+	return c.listItems.CallUnary(ctx, req)
+}
+
 // SubCategoryServiceHandler is an implementation of the listah.v1.SubCategoryService service.
 type SubCategoryServiceHandler interface {
 	Create(context.Context, *connect.Request[v1.SubCategoryServiceCreateRequest]) (*connect.Response[v1.SubCategoryServiceCreateResponse], error)
 	Read(context.Context, *connect.Request[v1.SubCategoryServiceReadRequest]) (*connect.Response[v1.SubCategoryServiceReadResponse], error)
 	Update(context.Context, *connect.Request[v1.SubCategoryServiceUpdateRequest]) (*connect.Response[v1.SubCategoryServiceUpdateResponse], error)
 	Delete(context.Context, *connect.Request[v1.SubCategoryServiceDeleteRequest]) (*connect.Response[v1.SubCategoryServiceDeleteResponse], error)
+	ListItems(context.Context, *connect.Request[v1.SubCategoryServiceDeleteRequest]) (*connect.Response[v1.SubCategoryServiceDeleteResponse], error)
 }
 
 // NewSubCategoryServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -166,6 +184,12 @@ func NewSubCategoryServiceHandler(svc SubCategoryServiceHandler, opts ...connect
 		connect.WithSchema(subCategoryServiceDeleteMethodDescriptor),
 		connect.WithHandlerOptions(opts...),
 	)
+	subCategoryServiceListItemsHandler := connect.NewUnaryHandler(
+		SubCategoryServiceListItemsProcedure,
+		svc.ListItems,
+		connect.WithSchema(subCategoryServiceListItemsMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/listah.v1.SubCategoryService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case SubCategoryServiceCreateProcedure:
@@ -176,6 +200,8 @@ func NewSubCategoryServiceHandler(svc SubCategoryServiceHandler, opts ...connect
 			subCategoryServiceUpdateHandler.ServeHTTP(w, r)
 		case SubCategoryServiceDeleteProcedure:
 			subCategoryServiceDeleteHandler.ServeHTTP(w, r)
+		case SubCategoryServiceListItemsProcedure:
+			subCategoryServiceListItemsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -199,4 +225,8 @@ func (UnimplementedSubCategoryServiceHandler) Update(context.Context, *connect.R
 
 func (UnimplementedSubCategoryServiceHandler) Delete(context.Context, *connect.Request[v1.SubCategoryServiceDeleteRequest]) (*connect.Response[v1.SubCategoryServiceDeleteResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.SubCategoryService.Delete is not implemented"))
+}
+
+func (UnimplementedSubCategoryServiceHandler) ListItems(context.Context, *connect.Request[v1.SubCategoryServiceDeleteRequest]) (*connect.Response[v1.SubCategoryServiceDeleteResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.SubCategoryService.ListItems is not implemented"))
 }
