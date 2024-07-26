@@ -1,12 +1,12 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "listah/v1/user.proto",
+    "title": "listah/v1/category.proto",
     "version": "version not set"
   },
   "tags": [
     {
-      "name": "UserService"
+      "name": "CategoryService"
     }
   ],
   "consumes": [
@@ -80,150 +80,80 @@
       ],
       "default": "AUDIT_UPDATER_ENUM_UNSPECIFIED"
     },
-    "v1UserServiceCreateResponse": {
+    "v1CategoryServiceCreateResponse": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string"
         },
-        "first_name": {
+        "title": {
           "type": "string"
         },
-        "middle_names": {
+        "description": {
           "type": "string"
         },
-        "last_name": {
+        "note": {
           "type": "string"
-        },
-        "username": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "role": {
-          "type": "string",
-          "title": "google.protobuf.Timestamp deleted_at = 7;"
         },
         "audit": {
           "$ref": "#/definitions/v1Audit"
         }
       }
     },
-    "v1UserServiceDeleteResponse": {
+    "v1CategoryServiceDeleteResponse": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string"
         },
-        "first_name": {
+        "title": {
           "type": "string"
         },
-        "middle_names": {
+        "description": {
           "type": "string"
         },
-        "last_name": {
+        "note": {
           "type": "string"
-        },
-        "username": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "role": {
-          "type": "string",
-          "title": "google.protobuf.Timestamp deleted_at = 7;"
         },
         "audit": {
           "$ref": "#/definitions/v1Audit"
         }
       }
     },
-    "v1UserServiceEchoResponse": {
+    "v1CategoryServiceReadResponse": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string"
         },
-        "first_name": {
+        "title": {
           "type": "string"
         },
-        "middle_names": {
+        "description": {
           "type": "string"
         },
-        "last_name": {
+        "note": {
           "type": "string"
-        },
-        "username": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "role": {
-          "type": "string",
-          "title": "google.protobuf.Timestamp deleted_at = 7;"
         },
         "audit": {
           "$ref": "#/definitions/v1Audit"
         }
       }
     },
-    "v1UserServiceReadResponse": {
+    "v1CategoryServiceUpdateResponse": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string"
         },
-        "first_name": {
+        "title": {
           "type": "string"
         },
-        "middle_names": {
+        "description": {
           "type": "string"
         },
-        "last_name": {
+        "note": {
           "type": "string"
-        },
-        "username": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "role": {
-          "type": "string",
-          "title": "google.protobuf.Timestamp deleted_at = 7;"
-        },
-        "audit": {
-          "$ref": "#/definitions/v1Audit"
-        }
-      }
-    },
-    "v1UserServiceUpdateResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "first_name": {
-          "type": "string"
-        },
-        "middle_names": {
-          "type": "string"
-        },
-        "last_name": {
-          "type": "string"
-        },
-        "username": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "role": {
-          "type": "string",
-          "title": "google.protobuf.Timestamp deleted_at = 7;"
         },
         "audit": {
           "$ref": "#/definitions/v1Audit"

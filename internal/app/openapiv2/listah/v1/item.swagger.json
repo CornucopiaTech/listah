@@ -86,7 +86,7 @@
         "id": {
           "type": "string"
         },
-        "title": {
+        "name": {
           "type": "string"
         },
         "description": {
@@ -95,24 +95,19 @@
         "quantity": {
           "type": "string"
         },
-        "location": {
-          "type": "string"
-        },
-        "category": {
-          "type": "string"
-        },
         "note": {
           "type": "string"
         },
-        "parentListId": {
-          "type": "string"
+        "category_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
-        "active": {
-          "type": "boolean"
-        },
-        "reactivateAt": {
+        "reactivate_at": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "purchase_history = 9; //ToDo: Determine if purchase history is needed\nbool active = 20;"
         },
         "audit": {
           "$ref": "#/definitions/v1Audit"

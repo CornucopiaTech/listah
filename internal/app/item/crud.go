@@ -2,63 +2,143 @@ package item
 
 import (
 	"context"
+	"cornucopia/listah/internal/pkg/model"
 	pb "cornucopia/listah/internal/pkg/proto/listah/v1"
+	"cornucopia/listah/internal/pkg/utils"
 	"log"
 
 	"connectrpc.com/connect"
 	"go.opentelemetry.io/otel"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceReadRequest]) (*connect.Response[pb.ItemServiceReadResponse], error) {
-	// Create a span to track `childFunction()` - this is a nested span whose parent is `parentSpan`
-	ctx, span := otel.Tracer("items").Start(ctx, "read")
+func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemServiceCreateRequest]) (*connect.Response[pb.ItemServiceCreateResponse], error) {
+	ctx, span := otel.Tracer("item-service").Start(ctx, "create")
 	defer span.End()
 
-	s.Infra.OtelLogger.Ctx(ctx).Info("Reading item", zap.String("item", req.Msg.Id))
-	s.Infra.Logger.For(ctx).Info("Reading item", zap.String("item", req.Msg.Id))
+	s.Infra.Logger.For(ctx).Info("Creating item")
 
-	// ToDo: Implement Read Function
-	res := connect.NewResponse(&pb.ItemServiceReadResponse{
-		Id:           "Item Read Id1",
-		Title:        "Item Read Title",
-		Description:  "Item Read Description",
-		Quantity:     "Item Read Quantity",
-		Location:     "Item Read Location",
-		Category:     "Item Read Category",
-		Note:         "Item Read Note",
-		ParentListId: "Item Read ParentListId",
-		Active:       false,
-		ReactivateAt: timestamppb.Now(),
-	})
-	res.Header().Set("Some-Other-Header", "hello!")
+	// Get item model for item repository
+	newItemModel := new(model.Item)
+	newItemModel.CreateItemModelFromRequest(ctx, req.Msg)
+
+	// Inser item model in repository
+	if err := s.Infra.Repository.Items.InsertOne(ctx, newItemModel); err != nil {
+		return nil, err
+	}
+
+	// Read created item model from repository
+	readItem, err := s.Infra.Repository.Items.SelectOne(ctx, newItemModel.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert created item model to proto response
+	resItem := readItem.ItemModelToResponse(ctx)
+	res := connect.NewResponse(resItem)
+
 	return res, nil
 }
 
-func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemServiceCreateRequest]) (*connect.Response[pb.ItemServiceCreateResponse], error) {
-	ctx, span := otel.Tracer("items").Start(ctx, "create")
+func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceReadRequest]) (*connect.Response[pb.ItemServiceReadResponse], error) {
+	ctx, span := otel.Tracer("item-service").Start(ctx, "read")
 	defer span.End()
 
-	s.Infra.OtelLogger.Ctx(ctx).Info("Creating item", zap.String("item", req.Msg.Id))
-	s.Infra.Logger.For(ctx).Info("Creating item", zap.String("item", req.Msg.Id))
+	s.Infra.Logger.For(ctx).Info("Reading item", zap.String("item", req.Msg.Id))
 
-	// ToDo: Implement Read Function
-	res := connect.NewResponse(&pb.ItemServiceCreateResponse{
-		// req.Msg is a strongly-typed *pingv1.PingRequest, so we can access its
-		// fields without type assertions.
-		Id:           req.Msg.Id,
-		Title:        req.Msg.Title,
-		Description:  req.Msg.Description,
-		Quantity:     req.Msg.Quantity,
-		Location:     req.Msg.Location,
-		Category:     req.Msg.Category,
-		Note:         req.Msg.Note,
-		ParentListId: req.Msg.ParentListId,
-		Active:       req.Msg.Active,
-		ReactivateAt: req.Msg.ReactivateAt,
-	})
-	res.Header().Set("Some-Other-Header", "hello!")
+	// Read item model from repository
+	readItem, err := s.Infra.Repository.Items.SelectOne(ctx, req.Msg.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert item model to generic (item create) proto response
+	genericResItem := readItem.ItemModelToResponse(ctx)
+
+	// Marshal copy from generic item response to read item response
+	resItem := new(pb.ItemServiceReadResponse)
+	utils.MarshalCopyProto(genericResItem, resItem)
+
+	res := connect.NewResponse(resItem)
+
+	return res, nil
+}
+
+func (s *Server) Update(ctx context.Context, req *connect.Request[pb.ItemServiceUpdateRequest]) (*connect.Response[pb.ItemServiceUpdateResponse], error) {
+	ctx, span := otel.Tracer("item-service").Start(ctx, "update")
+	defer span.End()
+
+	s.Infra.Logger.For(ctx).Info("Updating item", zap.String("item", req.Msg.Id))
+
+	// Read initial item model from repository
+	readItem, err := s.Infra.Repository.Items.SelectOne(ctx, req.Msg.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Create item model for update from information sent in request
+	updateItemModel := new(model.Item)
+	updateItemModel.UpdateItemModelFromRequest(ctx, req.Msg, readItem)
+
+	// Update Item model in repository
+	if err := s.Infra.Repository.Items.UpdateOne(ctx, updateItemModel); err != nil {
+		return nil, err
+	}
+
+	// Read item model from repository after update
+	readItem, err = s.Infra.Repository.Items.SelectOne(ctx, req.Msg.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert item model to generic (item create response) proto message
+	genericResItem := readItem.ItemModelToResponse(ctx)
+
+	// Marshal copy from generic (item create response) to update response proto message
+	resItem := new(pb.ItemServiceUpdateResponse)
+
+	utils.MarshalCopyProto(genericResItem, resItem)
+
+	res := connect.NewResponse(resItem)
+	return res, nil
+}
+
+func (s *Server) Delete(ctx context.Context, req *connect.Request[pb.ItemServiceDeleteRequest]) (*connect.Response[pb.ItemServiceDeleteResponse], error) {
+	ctx, span := otel.Tracer("item-service").Start(ctx, "delete")
+	defer span.End()
+
+	s.Infra.Logger.For(ctx).Info("Deleting item", zap.String("item", req.Msg.Id))
+
+	// Read initial item model from repository
+	readItem, err := s.Infra.Repository.Items.SelectOne(ctx, req.Msg.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Create item model for update from information sent in request
+	updateItemModel := new(model.Item)
+	updateItemModel.DeleteItemModelFromRequest(ctx, req.Msg, readItem)
+
+	// Update Item model in repository
+	if err := s.Infra.Repository.Items.SoftDeleteOne(ctx, updateItemModel); err != nil {
+		return nil, err
+	}
+
+	// Read item model from repository after soft-delete
+	readItem, err = s.Infra.Repository.Items.SelectOne(ctx, req.Msg.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert item model to generic (item create response) proto message
+	genericResItem := readItem.ItemModelToResponse(ctx)
+
+	// Marshal copy from generic (item create response) to update response proto message
+	resItem := new(pb.ItemServiceDeleteResponse)
+
+	utils.MarshalCopyProto(genericResItem, resItem)
+
+	res := connect.NewResponse(resItem)
 	return res, nil
 }
 
@@ -69,16 +149,14 @@ func (s *Server) Echo(ctx context.Context, req *connect.Request[pb.ItemServiceCr
 	res := connect.NewResponse(&pb.ItemServiceCreateRequest{
 		// req.Msg is a strongly-typed *pingv1.PingRequest, so we can access its
 		// fields without type assertions.
-		Id:           req.Msg.Id,
-		Title:        req.Msg.Title,
-		Description:  req.Msg.Description,
-		Quantity:     req.Msg.Quantity,
-		Location:     req.Msg.Location,
-		Category:     req.Msg.Category,
-		Note:         req.Msg.Note,
-		ParentListId: req.Msg.ParentListId,
-		Active:       req.Msg.Active,
-		ReactivateAt: req.Msg.ReactivateAt,
+		Id:          req.Msg.Id,
+		FirstName:   req.Msg.FirstName,
+		MiddleNames: req.Msg.MiddleNames,
+		LastName:    req.Msg.LastName,
+		Itemname:    req.Msg.Itemname,
+		Email:       req.Msg.Email,
+		Role:        req.Msg.Role,
+		Audit:       req.Msg.Audit,
 	})
 	res.Header().Set("Some-Other-Header", "hello!")
 	return res, nil

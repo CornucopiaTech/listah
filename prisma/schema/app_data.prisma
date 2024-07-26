@@ -10,29 +10,33 @@ datasource db {
 }
 
 model Category {
-  id               String        @id
+  id               String        @id @db.Uuid
   name             String
-  description      String
+  description      String        @db.Text
+  note             String        @db.Text
+  audit            Json          @db.Json
   items            Item[]
-  child_categories SubCategory[]
+  sub_category_ids SubCategory[]
 
-  @@map("parent_categories")
+  @@map("categories")
   @@schema("app")
 }
 
 model SubCategory {
-  id                String     @id
-  name              String
-  description       String
-  parent_categories Category[]
+  id           String     @id @db.Uuid
+  name         String
+  description  String     @db.Text
+  note         String     @db.Text
+  audit        Json       @db.Json
+  category_ids Category[]
 
-  @@map("child_categories")
+  @@map("sub_categories")
   @@schema("app")
 }
 
 model Item {
-  id            String     @id
-  title         String
+  id            String     @id @db.Uuid
+  name          String
   description   String
   quantity      String
   location      String
@@ -47,7 +51,7 @@ model Item {
 }
 
 model User {
-  id           String @id
+  id           String @id @db.Uuid
   first_name   String
   middle_names String
   last_name    String

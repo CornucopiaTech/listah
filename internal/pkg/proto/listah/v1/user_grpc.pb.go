@@ -32,7 +32,7 @@ const (
 type UserServiceClient interface {
 	Create(ctx context.Context, in *UserServiceCreateRequest, opts ...grpc.CallOption) (*UserServiceCreateResponse, error)
 	Read(ctx context.Context, in *UserServiceReadRequest, opts ...grpc.CallOption) (*UserServiceReadResponse, error)
-	Echo(ctx context.Context, in *UserServiceCreateRequest, opts ...grpc.CallOption) (*UserServiceCreateRequest, error)
+	Echo(ctx context.Context, in *UserServiceEchoRequest, opts ...grpc.CallOption) (*UserServiceEchoResponse, error)
 	Update(ctx context.Context, in *UserServiceUpdateRequest, opts ...grpc.CallOption) (*UserServiceUpdateResponse, error)
 	Delete(ctx context.Context, in *UserServiceDeleteRequest, opts ...grpc.CallOption) (*UserServiceDeleteResponse, error)
 }
@@ -65,9 +65,9 @@ func (c *userServiceClient) Read(ctx context.Context, in *UserServiceReadRequest
 	return out, nil
 }
 
-func (c *userServiceClient) Echo(ctx context.Context, in *UserServiceCreateRequest, opts ...grpc.CallOption) (*UserServiceCreateRequest, error) {
+func (c *userServiceClient) Echo(ctx context.Context, in *UserServiceEchoRequest, opts ...grpc.CallOption) (*UserServiceEchoResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UserServiceCreateRequest)
+	out := new(UserServiceEchoResponse)
 	err := c.cc.Invoke(ctx, UserService_Echo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -101,7 +101,7 @@ func (c *userServiceClient) Delete(ctx context.Context, in *UserServiceDeleteReq
 type UserServiceServer interface {
 	Create(context.Context, *UserServiceCreateRequest) (*UserServiceCreateResponse, error)
 	Read(context.Context, *UserServiceReadRequest) (*UserServiceReadResponse, error)
-	Echo(context.Context, *UserServiceCreateRequest) (*UserServiceCreateRequest, error)
+	Echo(context.Context, *UserServiceEchoRequest) (*UserServiceEchoResponse, error)
 	Update(context.Context, *UserServiceUpdateRequest) (*UserServiceUpdateResponse, error)
 	Delete(context.Context, *UserServiceDeleteRequest) (*UserServiceDeleteResponse, error)
 }
@@ -116,7 +116,7 @@ func (UnimplementedUserServiceServer) Create(context.Context, *UserServiceCreate
 func (UnimplementedUserServiceServer) Read(context.Context, *UserServiceReadRequest) (*UserServiceReadResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Read not implemented")
 }
-func (UnimplementedUserServiceServer) Echo(context.Context, *UserServiceCreateRequest) (*UserServiceCreateRequest, error) {
+func (UnimplementedUserServiceServer) Echo(context.Context, *UserServiceEchoRequest) (*UserServiceEchoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Echo not implemented")
 }
 func (UnimplementedUserServiceServer) Update(context.Context, *UserServiceUpdateRequest) (*UserServiceUpdateResponse, error) {
@@ -174,7 +174,7 @@ func _UserService_Read_Handler(srv interface{}, ctx context.Context, dec func(in
 }
 
 func _UserService_Echo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserServiceCreateRequest)
+	in := new(UserServiceEchoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -186,7 +186,7 @@ func _UserService_Echo_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: UserService_Echo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).Echo(ctx, req.(*UserServiceCreateRequest))
+		return srv.(UserServiceServer).Echo(ctx, req.(*UserServiceEchoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

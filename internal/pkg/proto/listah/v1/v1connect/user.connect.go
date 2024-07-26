@@ -59,7 +59,7 @@ var (
 type UserServiceClient interface {
 	Create(context.Context, *connect.Request[v1.UserServiceCreateRequest]) (*connect.Response[v1.UserServiceCreateResponse], error)
 	Read(context.Context, *connect.Request[v1.UserServiceReadRequest]) (*connect.Response[v1.UserServiceReadResponse], error)
-	Echo(context.Context, *connect.Request[v1.UserServiceCreateRequest]) (*connect.Response[v1.UserServiceCreateRequest], error)
+	Echo(context.Context, *connect.Request[v1.UserServiceEchoRequest]) (*connect.Response[v1.UserServiceEchoResponse], error)
 	Update(context.Context, *connect.Request[v1.UserServiceUpdateRequest]) (*connect.Response[v1.UserServiceUpdateResponse], error)
 	Delete(context.Context, *connect.Request[v1.UserServiceDeleteRequest]) (*connect.Response[v1.UserServiceDeleteResponse], error)
 }
@@ -86,7 +86,7 @@ func NewUserServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 			connect.WithSchema(userServiceReadMethodDescriptor),
 			connect.WithClientOptions(opts...),
 		),
-		echo: connect.NewClient[v1.UserServiceCreateRequest, v1.UserServiceCreateRequest](
+		echo: connect.NewClient[v1.UserServiceEchoRequest, v1.UserServiceEchoResponse](
 			httpClient,
 			baseURL+UserServiceEchoProcedure,
 			connect.WithSchema(userServiceEchoMethodDescriptor),
@@ -111,7 +111,7 @@ func NewUserServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 type userServiceClient struct {
 	create *connect.Client[v1.UserServiceCreateRequest, v1.UserServiceCreateResponse]
 	read   *connect.Client[v1.UserServiceReadRequest, v1.UserServiceReadResponse]
-	echo   *connect.Client[v1.UserServiceCreateRequest, v1.UserServiceCreateRequest]
+	echo   *connect.Client[v1.UserServiceEchoRequest, v1.UserServiceEchoResponse]
 	update *connect.Client[v1.UserServiceUpdateRequest, v1.UserServiceUpdateResponse]
 	delete *connect.Client[v1.UserServiceDeleteRequest, v1.UserServiceDeleteResponse]
 }
@@ -127,7 +127,7 @@ func (c *userServiceClient) Read(ctx context.Context, req *connect.Request[v1.Us
 }
 
 // Echo calls listah.v1.UserService.Echo.
-func (c *userServiceClient) Echo(ctx context.Context, req *connect.Request[v1.UserServiceCreateRequest]) (*connect.Response[v1.UserServiceCreateRequest], error) {
+func (c *userServiceClient) Echo(ctx context.Context, req *connect.Request[v1.UserServiceEchoRequest]) (*connect.Response[v1.UserServiceEchoResponse], error) {
 	return c.echo.CallUnary(ctx, req)
 }
 
@@ -145,7 +145,7 @@ func (c *userServiceClient) Delete(ctx context.Context, req *connect.Request[v1.
 type UserServiceHandler interface {
 	Create(context.Context, *connect.Request[v1.UserServiceCreateRequest]) (*connect.Response[v1.UserServiceCreateResponse], error)
 	Read(context.Context, *connect.Request[v1.UserServiceReadRequest]) (*connect.Response[v1.UserServiceReadResponse], error)
-	Echo(context.Context, *connect.Request[v1.UserServiceCreateRequest]) (*connect.Response[v1.UserServiceCreateRequest], error)
+	Echo(context.Context, *connect.Request[v1.UserServiceEchoRequest]) (*connect.Response[v1.UserServiceEchoResponse], error)
 	Update(context.Context, *connect.Request[v1.UserServiceUpdateRequest]) (*connect.Response[v1.UserServiceUpdateResponse], error)
 	Delete(context.Context, *connect.Request[v1.UserServiceDeleteRequest]) (*connect.Response[v1.UserServiceDeleteResponse], error)
 }
@@ -215,7 +215,7 @@ func (UnimplementedUserServiceHandler) Read(context.Context, *connect.Request[v1
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.UserService.Read is not implemented"))
 }
 
-func (UnimplementedUserServiceHandler) Echo(context.Context, *connect.Request[v1.UserServiceCreateRequest]) (*connect.Response[v1.UserServiceCreateRequest], error) {
+func (UnimplementedUserServiceHandler) Echo(context.Context, *connect.Request[v1.UserServiceEchoRequest]) (*connect.Response[v1.UserServiceEchoResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.UserService.Echo is not implemented"))
 }
 

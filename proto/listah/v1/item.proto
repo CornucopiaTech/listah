@@ -12,61 +12,57 @@ import "google/protobuf/timestamp.proto";
 
 message ItemServiceCreateRequest {
     string id = 1;
-    string title = 2;
-	string description = 3;
+    string name = 2;
+    string description = 3;
     string quantity = 4;
-    string location = 5;
-    string category = 6;
-    string note = 7;
-	string parentListId = 8;
-	bool active = 20;
-	google.protobuf.Timestamp reactivateAt = 21;
-	Audit audit = 50;
+    string note = 5;
+    repeated string category_id = 6 [json_name = "category_id"];
+    // purchase_history = 9; //ToDo: Determine if purchase history is needed
+    // bool active = 20;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivate_at"];
+    Audit audit = 50;
 }
 
 
 message ItemServiceCreateResponse {
     string id = 1;
-    string title = 2;
-	string description = 3;
+    string name = 2;
+    string description = 3;
     string quantity = 4;
-    string location = 5;
-    string category = 6;
-    string note = 7;
-	string parentListId = 8;
-	bool active = 20;
-	google.protobuf.Timestamp reactivateAt = 21;
-	Audit audit = 50;
+    string note = 5;
+    repeated string category_id = 6 [json_name = "category_id"];
+    // purchase_history = 9; //ToDo: Determine if purchase history is needed
+    // bool active = 20;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivate_at"];
+    Audit audit = 50;
 }
 
 
 message ItemServiceUpdateRequest {
     string id = 1;
-    string title = 2;
-	string description = 3;
+    string name = 2;
+    string description = 3;
     string quantity = 4;
-    string location = 5;
-    string category = 6;
-    string note = 7;
-	string parentListId = 8;
-	bool active = 20;
-	google.protobuf.Timestamp reactivateAt = 21;
-	Audit audit = 50;
+    string note = 5;
+    repeated string category_id = 6 [json_name = "category_id"];
+    // purchase_history = 9; //ToDo: Determine if purchase history is needed
+    // bool active = 20;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivate_at"];
+    Audit audit = 50;
 }
 
 
 message ItemServiceUpdateResponse {
     string id = 1;
-    string title = 2;
-	string description = 3;
+    string name = 2;
+    string description = 3;
     string quantity = 4;
-    string location = 5;
-    string category = 6;
-    string note = 7;
-	string parentListId = 8;
-	bool active = 20;
-	google.protobuf.Timestamp reactivateAt = 21;
-	Audit audit = 50;
+    string note = 5;
+    repeated string category_id = 6 [json_name = "category_id"];
+    // purchase_history = 9; //ToDo: Determine if purchase history is needed
+    // bool active = 20;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivate_at"];
+    Audit audit = 50;
 }
 
 
@@ -77,24 +73,35 @@ message ItemServiceReadRequest {
 
 message ItemServiceReadResponse {
     string id = 1;
-    string title = 2;
-	string description = 3;
+    string name = 2;
+    string description = 3;
     string quantity = 4;
-    string location = 5;
-    string category = 6;
-    string note = 7;
-	string parentListId = 8;
-	bool active = 20;
-	google.protobuf.Timestamp reactivateAt = 21;
-	Audit audit = 50;
+    string note = 5;
+    repeated string category_id = 6 [json_name = "category_id"];
+    // purchase_history = 9; //ToDo: Determine if purchase history is needed
+    // bool active = 20;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivate_at"];
+    Audit audit = 50;
 }
 
 message ItemServiceDeleteRequest {
     string id = 1;
+    Audit audit = 50;
 }
 
 
-message ItemServiceDeleteResponse {}
+message ItemServiceDeleteResponse {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string quantity = 4;
+    string note = 5;
+    repeated string category_id = 6 [json_name = "category_id"];
+    // purchase_history = 9; //ToDo: Determine if purchase history is needed
+    // bool active = 20;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivate_at"];
+    Audit audit = 50;
+}
 
 
 service ItemService {

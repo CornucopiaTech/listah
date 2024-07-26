@@ -1,0 +1,88 @@
+syntax = "proto3";
+package listah.v1;
+
+
+option go_package = "cornucopia/listah/internal/pkg/proto/listah/v1";
+
+
+import "listah/v1/commons.proto";
+import "listah/v1/category.proto";
+import "google/protobuf/timestamp.proto";
+
+
+
+message SubCategoryServiceCreateRequest {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string note = 7;
+    repeated string category_ids = 8;
+    Audit audit = 50;
+    }
+
+
+message SubCategoryServiceCreateResponse {
+    string id = 1;
+    string title = 2;
+    string description = 3;
+    string note = 7;
+    repeated string category_id = 8;
+    Audit audit = 50;
+}
+
+
+message SubCategoryServiceUpdateRequest {
+    string id = 1;
+    string title = 2;
+    string description = 3;
+    string note = 7;
+    repeated string category_id = 8;
+    Audit audit = 50;
+}
+
+
+message SubCategoryServiceUpdateResponse {
+    string id = 1;
+    string title = 2;
+    string description = 3;
+    string note = 7;
+    repeated string category_id = 8;
+    Audit audit = 50;
+}
+
+
+message SubCategoryServiceReadRequest {
+    string id = 1;
+}
+
+
+message SubCategoryServiceReadResponse {
+    string id = 1;
+    string title = 2;
+    string description = 3;
+    string note = 7;
+    repeated string category_id = 8;
+    Audit audit = 50;
+}
+
+message SubCategoryServiceDeleteRequest {
+    string id = 1;
+}
+
+
+message SubCategoryServiceDeleteResponse {
+    string id = 1;
+    string title = 2;
+    string description = 3;
+    string note = 7;
+    repeated string category_id = 8;
+    Audit audit = 50;
+}
+
+
+service SubCategoryService {
+    rpc Create(SubCategoryServiceCreateRequest) returns (SubCategoryServiceCreateResponse){}
+    rpc Read(SubCategoryServiceReadRequest) returns (SubCategoryServiceReadResponse){}
+    rpc Update(SubCategoryServiceUpdateRequest) returns (SubCategoryServiceUpdateResponse){}
+    rpc Delete(SubCategoryServiceDeleteRequest) returns (SubCategoryServiceDeleteResponse){}
+}

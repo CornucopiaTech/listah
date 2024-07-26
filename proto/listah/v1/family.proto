@@ -10,6 +10,6 @@ import "listah/v1/user.proto";
 import "listah/v1/list.proto";
 
 message FamilyCreateRequest {
-	string id = 1;
-	repeated string member_id = 2;
+    string id = 1;
+    repeated string member_id = 2;
 }

@@ -1,0 +1,81 @@
+syntax = "proto3";
+package listah.v1;
+
+
+option go_package = "cornucopia/listah/internal/pkg/proto/listah/v1";
+
+
+import "listah/v1/commons.proto";
+import "google/protobuf/timestamp.proto";
+
+
+
+message CategoryServiceCreateRequest {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string note = 7;
+    Audit audit = 50;
+    }
+
+
+message CategoryServiceCreateResponse {
+    string id = 1;
+    string title = 2;
+    string description = 3;
+    string note = 7;
+    Audit audit = 50;
+}
+
+
+message CategoryServiceUpdateRequest {
+    string id = 1;
+    string title = 2;
+    string description = 3;
+    string note = 7;
+    Audit audit = 50;
+}
+
+
+message CategoryServiceUpdateResponse {
+    string id = 1;
+    string title = 2;
+    string description = 3;
+    string note = 7;
+    Audit audit = 50;
+}
+
+
+message CategoryServiceReadRequest {
+    string id = 1;
+}
+
+
+message CategoryServiceReadResponse {
+    string id = 1;
+    string title = 2;
+    string description = 3;
+    string note = 7;
+    Audit audit = 50;
+}
+
+message CategoryServiceDeleteRequest {
+    string id = 1;
+}
+
+
+message CategoryServiceDeleteResponse {
+    string id = 1;
+    string title = 2;
+    string description = 3;
+    string note = 7;
+    Audit audit = 50;
+}
+
+
+service CategoryService {
+    rpc Create(CategoryServiceCreateRequest) returns (CategoryServiceCreateResponse){}
+    rpc Read(CategoryServiceReadRequest) returns (CategoryServiceReadResponse){}
+    rpc Update(CategoryServiceUpdateRequest) returns (CategoryServiceUpdateResponse){}
+    rpc Delete(CategoryServiceDeleteRequest) returns (CategoryServiceDeleteResponse){}
+}
