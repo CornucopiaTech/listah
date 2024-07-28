@@ -11,7 +11,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-type Category struct {
+type Store struct {
 	bun.BaseModel `bun:"table:app.categories,alias:u"`
 	Id            string `bun:",pk"`
 	Name          string
@@ -20,9 +20,9 @@ type Category struct {
 	Audit         Audit
 }
 
-type Categories []*Category
+type Stores []*Store
 
-func (c *Category) CreateCategoryModelFromRequest(ctx context.Context, msg *v1.CategoryServiceCreateOneRequest) {
+func (c *Store) CreateStoreModelFromRequest(ctx context.Context, msg *v1.StoreServiceCreateOneRequest) {
 	_, span := otel.Tracer("category-model").Start(ctx, "prep create request")
 	defer span.End()
 
@@ -41,39 +41,20 @@ func (c *Category) CreateCategoryModelFromRequest(ctx context.Context, msg *v1.C
 	}
 }
 
-func CreateManyCategoryModelFromRequest(ctx context.Context, msg *v1.CategoryServiceCreateManyRequest) *Categories {
+func CreateManyStoreModelFromRequest(ctx context.Context, msg *v1.StoreServiceCreateManyRequest) *Stores {
 	_, span := otel.Tracer("category-model").Start(ctx, "prep create many request")
 	defer span.End()
 
-	c := Categories{}
-	for _, value := range msg.Category {
-		aCat := new(Category)
-		aCat.CreateCategoryModelFromRequest(ctx, value)
+	c := Stores{}
+	for _, value := range msg.Store {
+		aCat := new(Store)
+		aCat.CreateStoreModelFromRequest(ctx, value)
 		c = append(c, aCat)
 	}
 	return &c
 }
 
-func (c *Category) ReadCategoryModelFromRequest(ctx context.Context, msg *v1.CategoryServiceCreateOneRequest) {
-	_, span := otel.Tracer("category-model").Start(ctx, "prep create request")
-	defer span.End()
-
-	// Update category model
-	c.Id = uuid.Must(uuid.NewV7()).String()
-	c.Name = msg.GetName()
-	c.Description = msg.GetDescription()
-	c.Note = msg.GetNote()
-	c.Audit = Audit{
-		CreatedBy: msg.Audit.GetCreatedBy(),
-		UpdatedBy: msg.Audit.GetUpdatedBy(),
-		DeletedBy: msg.Audit.GetDeletedBy(),
-		CreatedAt: time.Now().UTC(),
-		UpdatedAt: msg.Audit.GetUpdatedAt().AsTime(),
-		DeletedAt: msg.Audit.GetDeletedAt().AsTime(),
-	}
-}
-
-func (c *Category) UpdateCategoryModelFromRequest(ctx context.Context, msg *v1.CategoryServiceUpdateOneRequest, readCategory *Category) {
+func (c *Store) UpdateStoreModelFromRequest(ctx context.Context, msg *v1.StoreServiceUpdateOneRequest, readStore *Store) {
 	_, span := otel.Tracer("category-model").Start(ctx, "prep update request")
 	defer span.End()
 
@@ -83,50 +64,50 @@ func (c *Category) UpdateCategoryModelFromRequest(ctx context.Context, msg *v1.C
 	c.Note = msg.GetNote()
 	c.Audit = Audit{
 		// CreatedBy: msg.Audit.GetCreatedBy(),
-		CreatedBy: readCategory.Audit.CreatedBy,
+		CreatedBy: readStore.Audit.CreatedBy,
 		UpdatedBy: msg.Audit.GetUpdatedBy(),
-		DeletedBy: readCategory.Audit.DeletedBy,
-		CreatedAt: readCategory.Audit.CreatedAt,
+		DeletedBy: readStore.Audit.DeletedBy,
+		CreatedAt: readStore.Audit.CreatedAt,
 		UpdatedAt: time.Now().UTC(),
-		DeletedAt: readCategory.Audit.DeletedAt,
+		DeletedAt: readStore.Audit.DeletedAt,
 	}
 
 	// Set fields that were not included in the update request.
 	if c.Name == "" {
-		c.Name = readCategory.Name
+		c.Name = readStore.Name
 	}
 
 	if c.Description == "" {
-		c.Description = readCategory.Description
+		c.Description = readStore.Description
 	}
 
 	if c.Note == "" {
-		c.Note = readCategory.Note
+		c.Note = readStore.Note
 	}
 }
 
-func (c *Category) DeleteCategoryModelFromRequest(ctx context.Context, msg *v1.CategoryServiceDeleteOneRequest, readCategory *Category) {
+func (c *Store) DeleteStoreModelFromRequest(ctx context.Context, msg *v1.StoreServiceDeleteOneRequest, readStore *Store) {
 	_, span := otel.Tracer("category-model").Start(ctx, "prep delete request")
 	defer span.End()
 
-	c.Id = readCategory.Id
-	c.Name = readCategory.Name
-	c.Description = readCategory.Description
-	c.Note = readCategory.Note
+	c.Id = readStore.Id
+	c.Name = readStore.Name
+	c.Description = readStore.Description
+	c.Note = readStore.Note
 	c.Audit = Audit{
-		CreatedBy: readCategory.Audit.CreatedBy,
+		CreatedBy: readStore.Audit.CreatedBy,
 		UpdatedBy: msg.Audit.DeletedBy, //Set the updater to who deleted the reocord
 		DeletedBy: msg.Audit.DeletedBy,
-		CreatedAt: readCategory.Audit.CreatedAt,
+		CreatedAt: readStore.Audit.CreatedAt,
 		UpdatedAt: time.Now().UTC(), //Set the record to recently updated
 		DeletedAt: time.Now().UTC(),
 	}
 }
 
-func (c *Category) CategoryModelToResponse(ctx context.Context) *v1.CategoryServiceCreateOneResponse {
+func (c *Store) StoreModelToResponse(ctx context.Context) *v1.StoreServiceCreateOneResponse {
 	_, span := otel.Tracer("category-model").Start(ctx, "category model to response")
 	defer span.End()
-	return &v1.CategoryServiceCreateOneResponse{
+	return &v1.StoreServiceCreateOneResponse{
 		Id:          c.Id,
 		Name:        c.Name,
 		Description: c.Description,
@@ -142,13 +123,13 @@ func (c *Category) CategoryModelToResponse(ctx context.Context) *v1.CategoryServ
 	}
 }
 
-func (cs *Categories) ManyCategoryModelToResponse(ctx context.Context) *v1.CategoryServiceCreateManyResponse {
+func (cs *Stores) ManyStoreModelToResponse(ctx context.Context) *v1.StoreServiceCreateManyResponse {
 	_, span := otel.Tracer("category-model").Start(ctx, "category model to response")
 	defer span.End()
 
-	resValue := &v1.CategoryServiceCreateManyResponse{}
+	resValue := &v1.StoreServiceCreateManyResponse{}
 	for _, c := range *cs {
-		a := &v1.CategoryServiceCreateOneResponse{
+		a := &v1.StoreServiceCreateOneResponse{
 			Id:          c.Id,
 			Name:        c.Name,
 			Description: c.Description,
@@ -162,7 +143,7 @@ func (cs *Categories) ManyCategoryModelToResponse(ctx context.Context) *v1.Categ
 				DeletedAt: timestamppb.New(c.Audit.DeletedAt),
 			},
 		}
-		resValue.Category = append(resValue.Category, a)
+		resValue.Store = append(resValue.Store, a)
 	}
 	return resValue
 }

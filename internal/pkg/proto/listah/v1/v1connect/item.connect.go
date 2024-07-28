@@ -45,7 +45,7 @@ var (
 
 // ItemServiceClient is a client for the listah.v1.ItemService service.
 type ItemServiceClient interface {
-	Read(context.Context, *connect.Request[v1.ItemServiceReadRequest]) (*connect.Response[v1.ItemServiceReadResponse], error)
+	Read(context.Context, *connect.Request[v1.ItemServiceReadOneRequest]) (*connect.Response[v1.ItemServiceReadOneResponse], error)
 }
 
 // NewItemServiceClient constructs a client for the listah.v1.ItemService service. By default, it
@@ -58,7 +58,7 @@ type ItemServiceClient interface {
 func NewItemServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) ItemServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
 	return &itemServiceClient{
-		read: connect.NewClient[v1.ItemServiceReadRequest, v1.ItemServiceReadResponse](
+		read: connect.NewClient[v1.ItemServiceReadOneRequest, v1.ItemServiceReadOneResponse](
 			httpClient,
 			baseURL+ItemServiceReadProcedure,
 			connect.WithSchema(itemServiceReadMethodDescriptor),
@@ -69,17 +69,17 @@ func NewItemServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 
 // itemServiceClient implements ItemServiceClient.
 type itemServiceClient struct {
-	read *connect.Client[v1.ItemServiceReadRequest, v1.ItemServiceReadResponse]
+	read *connect.Client[v1.ItemServiceReadOneRequest, v1.ItemServiceReadOneResponse]
 }
 
 // Read calls listah.v1.ItemService.Read.
-func (c *itemServiceClient) Read(ctx context.Context, req *connect.Request[v1.ItemServiceReadRequest]) (*connect.Response[v1.ItemServiceReadResponse], error) {
+func (c *itemServiceClient) Read(ctx context.Context, req *connect.Request[v1.ItemServiceReadOneRequest]) (*connect.Response[v1.ItemServiceReadOneResponse], error) {
 	return c.read.CallUnary(ctx, req)
 }
 
 // ItemServiceHandler is an implementation of the listah.v1.ItemService service.
 type ItemServiceHandler interface {
-	Read(context.Context, *connect.Request[v1.ItemServiceReadRequest]) (*connect.Response[v1.ItemServiceReadResponse], error)
+	Read(context.Context, *connect.Request[v1.ItemServiceReadOneRequest]) (*connect.Response[v1.ItemServiceReadOneResponse], error)
 }
 
 // NewItemServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -107,6 +107,6 @@ func NewItemServiceHandler(svc ItemServiceHandler, opts ...connect.HandlerOption
 // UnimplementedItemServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedItemServiceHandler struct{}
 
-func (UnimplementedItemServiceHandler) Read(context.Context, *connect.Request[v1.ItemServiceReadRequest]) (*connect.Response[v1.ItemServiceReadResponse], error) {
+func (UnimplementedItemServiceHandler) Read(context.Context, *connect.Request[v1.ItemServiceReadOneRequest]) (*connect.Response[v1.ItemServiceReadOneResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.Read is not implemented"))
 }

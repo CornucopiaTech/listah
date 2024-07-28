@@ -80,7 +80,7 @@
       ],
       "default": "AUDIT_UPDATER_ENUM_UNSPECIFIED"
     },
-    "v1ItemServiceReadResponse": {
+    "v1ItemServiceReadOneResponse": {
       "type": "object",
       "properties": {
         "id": {

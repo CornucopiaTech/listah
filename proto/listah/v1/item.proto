@@ -10,7 +10,7 @@ import "google/protobuf/timestamp.proto";
 
 
 
-message ItemServiceCreateRequest {
+message ItemServiceCreateOneRequest {
     string id = 1;
     string name = 2;
     string description = 3;
@@ -24,7 +24,7 @@ message ItemServiceCreateRequest {
 }
 
 
-message ItemServiceCreateResponse {
+message ItemServiceCreateOneResponse {
     string id = 1;
     string name = 2;
     string description = 3;
@@ -38,7 +38,7 @@ message ItemServiceCreateResponse {
 }
 
 
-message ItemServiceUpdateRequest {
+message ItemServiceUpdateOneRequest {
     string id = 1;
     string name = 2;
     string description = 3;
@@ -52,7 +52,7 @@ message ItemServiceUpdateRequest {
 }
 
 
-message ItemServiceUpdateResponse {
+message ItemServiceUpdateOneResponse {
     string id = 1;
     string name = 2;
     string description = 3;
@@ -66,12 +66,12 @@ message ItemServiceUpdateResponse {
 }
 
 
-message ItemServiceReadRequest {
+message ItemServiceReadOneRequest {
     string id = 1;
 }
 
 
-message ItemServiceReadResponse {
+message ItemServiceReadOneResponse {
     string id = 1;
     string name = 2;
     string description = 3;
@@ -84,13 +84,13 @@ message ItemServiceReadResponse {
     Audit audit = 50;
 }
 
-message ItemServiceDeleteRequest {
+message ItemServiceDeleteOneRequest {
     string id = 1;
     Audit audit = 50;
 }
 
 
-message ItemServiceDeleteResponse {
+message ItemServiceDeleteOneResponse {
     string id = 1;
     string name = 2;
     string description = 3;
@@ -105,7 +105,7 @@ message ItemServiceDeleteResponse {
 
 
 service ItemService {
-    rpc Read(ItemServiceReadRequest) returns (ItemServiceReadResponse){
+    rpc Read(ItemServiceReadOneRequest) returns (ItemServiceReadOneResponse){
 
     }
 }

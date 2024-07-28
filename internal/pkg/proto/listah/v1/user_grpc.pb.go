@@ -19,22 +19,30 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	UserService_Create_FullMethodName = "/listah.v1.UserService/Create"
-	UserService_Read_FullMethodName   = "/listah.v1.UserService/Read"
-	UserService_Echo_FullMethodName   = "/listah.v1.UserService/Echo"
-	UserService_Update_FullMethodName = "/listah.v1.UserService/Update"
-	UserService_Delete_FullMethodName = "/listah.v1.UserService/Delete"
+	UserService_CreateOne_FullMethodName  = "/listah.v1.UserService/CreateOne"
+	UserService_CreateMany_FullMethodName = "/listah.v1.UserService/CreateMany"
+	UserService_ReadOne_FullMethodName    = "/listah.v1.UserService/ReadOne"
+	UserService_ReadMany_FullMethodName   = "/listah.v1.UserService/ReadMany"
+	UserService_UpdateOne_FullMethodName  = "/listah.v1.UserService/UpdateOne"
+	UserService_UpdateMany_FullMethodName = "/listah.v1.UserService/UpdateMany"
+	UserService_DeleteOne_FullMethodName  = "/listah.v1.UserService/DeleteOne"
+	UserService_DeleteMany_FullMethodName = "/listah.v1.UserService/DeleteMany"
+	UserService_Echo_FullMethodName       = "/listah.v1.UserService/Echo"
 )
 
 // UserServiceClient is the client API for UserService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
-	Create(ctx context.Context, in *UserServiceCreateRequest, opts ...grpc.CallOption) (*UserServiceCreateResponse, error)
-	Read(ctx context.Context, in *UserServiceReadRequest, opts ...grpc.CallOption) (*UserServiceReadResponse, error)
+	CreateOne(ctx context.Context, in *UserServiceCreateOneRequest, opts ...grpc.CallOption) (*UserServiceCreateOneResponse, error)
+	CreateMany(ctx context.Context, in *UserServiceCreateManyRequest, opts ...grpc.CallOption) (*UserServiceCreateManyResponse, error)
+	ReadOne(ctx context.Context, in *UserServiceReadOneRequest, opts ...grpc.CallOption) (*UserServiceReadOneResponse, error)
+	ReadMany(ctx context.Context, in *UserServiceReadManyRequest, opts ...grpc.CallOption) (*UserServiceReadManyResponse, error)
+	UpdateOne(ctx context.Context, in *UserServiceUpdateOneRequest, opts ...grpc.CallOption) (*UserServiceUpdateOneResponse, error)
+	UpdateMany(ctx context.Context, in *UserServiceUpdateManyRequest, opts ...grpc.CallOption) (*UserServiceUpdateManyResponse, error)
+	DeleteOne(ctx context.Context, in *UserServiceDeleteOneRequest, opts ...grpc.CallOption) (*UserServiceDeleteOneResponse, error)
+	DeleteMany(ctx context.Context, in *UserServiceDeleteManyRequest, opts ...grpc.CallOption) (*UserServiceDeleteManyResponse, error)
 	Echo(ctx context.Context, in *UserServiceEchoRequest, opts ...grpc.CallOption) (*UserServiceEchoResponse, error)
-	Update(ctx context.Context, in *UserServiceUpdateRequest, opts ...grpc.CallOption) (*UserServiceUpdateResponse, error)
-	Delete(ctx context.Context, in *UserServiceDeleteRequest, opts ...grpc.CallOption) (*UserServiceDeleteResponse, error)
 }
 
 type userServiceClient struct {
@@ -45,20 +53,80 @@ func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
 	return &userServiceClient{cc}
 }
 
-func (c *userServiceClient) Create(ctx context.Context, in *UserServiceCreateRequest, opts ...grpc.CallOption) (*UserServiceCreateResponse, error) {
+func (c *userServiceClient) CreateOne(ctx context.Context, in *UserServiceCreateOneRequest, opts ...grpc.CallOption) (*UserServiceCreateOneResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UserServiceCreateResponse)
-	err := c.cc.Invoke(ctx, UserService_Create_FullMethodName, in, out, cOpts...)
+	out := new(UserServiceCreateOneResponse)
+	err := c.cc.Invoke(ctx, UserService_CreateOne_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) Read(ctx context.Context, in *UserServiceReadRequest, opts ...grpc.CallOption) (*UserServiceReadResponse, error) {
+func (c *userServiceClient) CreateMany(ctx context.Context, in *UserServiceCreateManyRequest, opts ...grpc.CallOption) (*UserServiceCreateManyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UserServiceReadResponse)
-	err := c.cc.Invoke(ctx, UserService_Read_FullMethodName, in, out, cOpts...)
+	out := new(UserServiceCreateManyResponse)
+	err := c.cc.Invoke(ctx, UserService_CreateMany_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ReadOne(ctx context.Context, in *UserServiceReadOneRequest, opts ...grpc.CallOption) (*UserServiceReadOneResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserServiceReadOneResponse)
+	err := c.cc.Invoke(ctx, UserService_ReadOne_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ReadMany(ctx context.Context, in *UserServiceReadManyRequest, opts ...grpc.CallOption) (*UserServiceReadManyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserServiceReadManyResponse)
+	err := c.cc.Invoke(ctx, UserService_ReadMany_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UpdateOne(ctx context.Context, in *UserServiceUpdateOneRequest, opts ...grpc.CallOption) (*UserServiceUpdateOneResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserServiceUpdateOneResponse)
+	err := c.cc.Invoke(ctx, UserService_UpdateOne_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UpdateMany(ctx context.Context, in *UserServiceUpdateManyRequest, opts ...grpc.CallOption) (*UserServiceUpdateManyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserServiceUpdateManyResponse)
+	err := c.cc.Invoke(ctx, UserService_UpdateMany_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) DeleteOne(ctx context.Context, in *UserServiceDeleteOneRequest, opts ...grpc.CallOption) (*UserServiceDeleteOneResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserServiceDeleteOneResponse)
+	err := c.cc.Invoke(ctx, UserService_DeleteOne_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) DeleteMany(ctx context.Context, in *UserServiceDeleteManyRequest, opts ...grpc.CallOption) (*UserServiceDeleteManyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserServiceDeleteManyResponse)
+	err := c.cc.Invoke(ctx, UserService_DeleteMany_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,55 +143,51 @@ func (c *userServiceClient) Echo(ctx context.Context, in *UserServiceEchoRequest
 	return out, nil
 }
 
-func (c *userServiceClient) Update(ctx context.Context, in *UserServiceUpdateRequest, opts ...grpc.CallOption) (*UserServiceUpdateResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UserServiceUpdateResponse)
-	err := c.cc.Invoke(ctx, UserService_Update_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userServiceClient) Delete(ctx context.Context, in *UserServiceDeleteRequest, opts ...grpc.CallOption) (*UserServiceDeleteResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UserServiceDeleteResponse)
-	err := c.cc.Invoke(ctx, UserService_Delete_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // UserServiceServer is the server API for UserService service.
 // All implementations should embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
-	Create(context.Context, *UserServiceCreateRequest) (*UserServiceCreateResponse, error)
-	Read(context.Context, *UserServiceReadRequest) (*UserServiceReadResponse, error)
+	CreateOne(context.Context, *UserServiceCreateOneRequest) (*UserServiceCreateOneResponse, error)
+	CreateMany(context.Context, *UserServiceCreateManyRequest) (*UserServiceCreateManyResponse, error)
+	ReadOne(context.Context, *UserServiceReadOneRequest) (*UserServiceReadOneResponse, error)
+	ReadMany(context.Context, *UserServiceReadManyRequest) (*UserServiceReadManyResponse, error)
+	UpdateOne(context.Context, *UserServiceUpdateOneRequest) (*UserServiceUpdateOneResponse, error)
+	UpdateMany(context.Context, *UserServiceUpdateManyRequest) (*UserServiceUpdateManyResponse, error)
+	DeleteOne(context.Context, *UserServiceDeleteOneRequest) (*UserServiceDeleteOneResponse, error)
+	DeleteMany(context.Context, *UserServiceDeleteManyRequest) (*UserServiceDeleteManyResponse, error)
 	Echo(context.Context, *UserServiceEchoRequest) (*UserServiceEchoResponse, error)
-	Update(context.Context, *UserServiceUpdateRequest) (*UserServiceUpdateResponse, error)
-	Delete(context.Context, *UserServiceDeleteRequest) (*UserServiceDeleteResponse, error)
 }
 
 // UnimplementedUserServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedUserServiceServer struct {
 }
 
-func (UnimplementedUserServiceServer) Create(context.Context, *UserServiceCreateRequest) (*UserServiceCreateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+func (UnimplementedUserServiceServer) CreateOne(context.Context, *UserServiceCreateOneRequest) (*UserServiceCreateOneResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOne not implemented")
 }
-func (UnimplementedUserServiceServer) Read(context.Context, *UserServiceReadRequest) (*UserServiceReadResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Read not implemented")
+func (UnimplementedUserServiceServer) CreateMany(context.Context, *UserServiceCreateManyRequest) (*UserServiceCreateManyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateMany not implemented")
+}
+func (UnimplementedUserServiceServer) ReadOne(context.Context, *UserServiceReadOneRequest) (*UserServiceReadOneResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadOne not implemented")
+}
+func (UnimplementedUserServiceServer) ReadMany(context.Context, *UserServiceReadManyRequest) (*UserServiceReadManyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadMany not implemented")
+}
+func (UnimplementedUserServiceServer) UpdateOne(context.Context, *UserServiceUpdateOneRequest) (*UserServiceUpdateOneResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateOne not implemented")
+}
+func (UnimplementedUserServiceServer) UpdateMany(context.Context, *UserServiceUpdateManyRequest) (*UserServiceUpdateManyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateMany not implemented")
+}
+func (UnimplementedUserServiceServer) DeleteOne(context.Context, *UserServiceDeleteOneRequest) (*UserServiceDeleteOneResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteOne not implemented")
+}
+func (UnimplementedUserServiceServer) DeleteMany(context.Context, *UserServiceDeleteManyRequest) (*UserServiceDeleteManyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteMany not implemented")
 }
 func (UnimplementedUserServiceServer) Echo(context.Context, *UserServiceEchoRequest) (*UserServiceEchoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Echo not implemented")
-}
-func (UnimplementedUserServiceServer) Update(context.Context, *UserServiceUpdateRequest) (*UserServiceUpdateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
-}
-func (UnimplementedUserServiceServer) Delete(context.Context, *UserServiceDeleteRequest) (*UserServiceDeleteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 
 // UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -137,38 +201,146 @@ func RegisterUserServiceServer(s grpc.ServiceRegistrar, srv UserServiceServer) {
 	s.RegisterService(&UserService_ServiceDesc, srv)
 }
 
-func _UserService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserServiceCreateRequest)
+func _UserService_CreateOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserServiceCreateOneRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).Create(ctx, in)
+		return srv.(UserServiceServer).CreateOne(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserService_Create_FullMethodName,
+		FullMethod: UserService_CreateOne_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).Create(ctx, req.(*UserServiceCreateRequest))
+		return srv.(UserServiceServer).CreateOne(ctx, req.(*UserServiceCreateOneRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_Read_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserServiceReadRequest)
+func _UserService_CreateMany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserServiceCreateManyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).Read(ctx, in)
+		return srv.(UserServiceServer).CreateMany(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserService_Read_FullMethodName,
+		FullMethod: UserService_CreateMany_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).Read(ctx, req.(*UserServiceReadRequest))
+		return srv.(UserServiceServer).CreateMany(ctx, req.(*UserServiceCreateManyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ReadOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserServiceReadOneRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ReadOne(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ReadOne_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ReadOne(ctx, req.(*UserServiceReadOneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ReadMany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserServiceReadManyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ReadMany(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ReadMany_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ReadMany(ctx, req.(*UserServiceReadManyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UpdateOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserServiceUpdateOneRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateOne(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_UpdateOne_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateOne(ctx, req.(*UserServiceUpdateOneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UpdateMany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserServiceUpdateManyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateMany(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_UpdateMany_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateMany(ctx, req.(*UserServiceUpdateManyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_DeleteOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserServiceDeleteOneRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).DeleteOne(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_DeleteOne_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).DeleteOne(ctx, req.(*UserServiceDeleteOneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_DeleteMany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserServiceDeleteManyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).DeleteMany(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_DeleteMany_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).DeleteMany(ctx, req.(*UserServiceDeleteManyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -191,42 +363,6 @@ func _UserService_Echo_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserServiceUpdateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).Update(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: UserService_Update_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).Update(ctx, req.(*UserServiceUpdateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UserService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserServiceDeleteRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).Delete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: UserService_Delete_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).Delete(ctx, req.(*UserServiceDeleteRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -235,24 +371,40 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*UserServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Create",
-			Handler:    _UserService_Create_Handler,
+			MethodName: "CreateOne",
+			Handler:    _UserService_CreateOne_Handler,
 		},
 		{
-			MethodName: "Read",
-			Handler:    _UserService_Read_Handler,
+			MethodName: "CreateMany",
+			Handler:    _UserService_CreateMany_Handler,
+		},
+		{
+			MethodName: "ReadOne",
+			Handler:    _UserService_ReadOne_Handler,
+		},
+		{
+			MethodName: "ReadMany",
+			Handler:    _UserService_ReadMany_Handler,
+		},
+		{
+			MethodName: "UpdateOne",
+			Handler:    _UserService_UpdateOne_Handler,
+		},
+		{
+			MethodName: "UpdateMany",
+			Handler:    _UserService_UpdateMany_Handler,
+		},
+		{
+			MethodName: "DeleteOne",
+			Handler:    _UserService_DeleteOne_Handler,
+		},
+		{
+			MethodName: "DeleteMany",
+			Handler:    _UserService_DeleteMany_Handler,
 		},
 		{
 			MethodName: "Echo",
 			Handler:    _UserService_Echo_Handler,
-		},
-		{
-			MethodName: "Update",
-			Handler:    _UserService_Update_Handler,
-		},
-		{
-			MethodName: "Delete",
-			Handler:    _UserService_Delete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

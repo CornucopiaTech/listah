@@ -1,7 +1,6 @@
 package model
 
 import (
-	pb "cornucopia/listah/internal/pkg/proto/listah/v1"
 	v1 "cornucopia/listah/internal/pkg/proto/listah/v1"
 	"time"
 
@@ -23,8 +22,9 @@ type User struct {
 	Role          string
 	Audit         Audit
 }
+type Users []User
 
-func (u *User) CreateUserModelFromRequest(ctx context.Context, msg *pb.UserServiceCreateRequest) {
+func (u *User) CreateUserModelFromRequest(ctx context.Context, msg *v1.UserServiceCreateOneRequest) {
 	_, span := otel.Tracer("user-model").Start(ctx, "prep create request")
 	defer span.End()
 
@@ -45,8 +45,19 @@ func (u *User) CreateUserModelFromRequest(ctx context.Context, msg *pb.UserServi
 		DeletedAt: msg.Audit.GetDeletedAt().AsTime(),
 	}
 }
+func CreateManyUserModelFromRequest(ctx context.Context, msg *v1.UserServiceCreateManyRequest) *Users {
+	_, span := otel.Tracer("category-model").Start(ctx, "prep create many request")
+	defer span.End()
 
-func (u *User) UpdateUserModelFromRequest(ctx context.Context, msg *pb.UserServiceUpdateRequest, readUser *User) {
+	c := Users{}
+	for _, value := range msg.User {
+		aCat := new(User)
+		aCat.CreateUserModelFromRequest(ctx, value)
+		c = append(c, *aCat)
+	}
+	return &c
+}
+func (u *User) UpdateUserModelFromRequest(ctx context.Context, msg *v1.UserServiceUpdateOneRequest, readUser *User) {
 	_, span := otel.Tracer("user-model").Start(ctx, "prep update request")
 	defer span.End()
 
@@ -91,8 +102,65 @@ func (u *User) UpdateUserModelFromRequest(ctx context.Context, msg *pb.UserServi
 		u.Role = readUser.Role
 	}
 }
+func UpdateManyUserModelFromRequest(ctx context.Context, msgs *v1.UserServiceUpdateManyRequest, readUser *Users) *Users {
+	_, span := otel.Tracer("user-model").Start(ctx, "prep update request")
+	defer span.End()
 
-func (u *User) DeleteUserModelFromRequest(ctx context.Context, msg *pb.UserServiceDeleteRequest, readUser *User) {
+	users := Users{}
+
+	for _, valReq := range msgs.User {
+		for _, valRepo := range *readUser {
+			if valRepo.Id == valReq.Id {
+				u := User{}
+				u.Id = valReq.GetId()
+				u.FirstName = valReq.GetFirstName()
+				u.MiddleNames = valReq.GetMiddleNames()
+				u.LastName = valReq.GetLastName()
+				u.Username = valReq.GetUsername()
+				u.Email = valReq.GetEmail()
+				u.Role = valReq.GetRole()
+				u.Audit = Audit{
+					CreatedBy: valRepo.Audit.CreatedBy,
+					UpdatedBy: valReq.Audit.GetUpdatedBy(),
+					DeletedBy: valRepo.Audit.DeletedBy,
+					CreatedAt: valRepo.Audit.CreatedAt,
+					UpdatedAt: time.Now().UTC(),
+					DeletedAt: valRepo.Audit.DeletedAt,
+				}
+
+				// Set fields that were not included in the update request.
+				if u.FirstName == "" {
+					u.FirstName = valRepo.FirstName
+				}
+
+				if u.MiddleNames == "" {
+					u.MiddleNames = valRepo.MiddleNames
+				}
+
+				if u.LastName == "" {
+					u.LastName = valRepo.LastName
+				}
+
+				if u.Username == "" {
+					u.Username = valRepo.Username
+				}
+
+				if u.Email == "" {
+					u.Email = valRepo.Email
+				}
+
+				if u.Role == "" {
+					u.Role = valRepo.Role
+				}
+
+				users = append(users, u)
+			}
+		}
+	}
+	return &users
+}
+
+func (u *User) DeleteUserModelFromRequest(ctx context.Context, msg *v1.UserServiceDeleteOneRequest, readUser *User) {
 	_, span := otel.Tracer("user-model").Start(ctx, "prep delete request")
 	defer span.End()
 
@@ -114,10 +182,10 @@ func (u *User) DeleteUserModelFromRequest(ctx context.Context, msg *pb.UserServi
 	}
 }
 
-func (u *User) UserModelToResponse(ctx context.Context) *pb.UserServiceCreateResponse {
+func (u *User) UserModelToResponse(ctx context.Context) *v1.UserServiceCreateOneResponse {
 	_, span := otel.Tracer("user-model").Start(ctx, "user model to response")
 	defer span.End()
-	return &pb.UserServiceCreateResponse{
+	return &v1.UserServiceCreateOneResponse{
 		// req.Msg is a strongly-typed *pingv1.PingRequest, so we can access its
 		// fields without type assertions.
 		Id:          u.Id,
@@ -136,4 +204,32 @@ func (u *User) UserModelToResponse(ctx context.Context) *pb.UserServiceCreateRes
 			DeletedAt: timestamppb.New(u.Audit.DeletedAt),
 		},
 	}
+}
+
+func (us *Users) ManyUserModelToResponse(ctx context.Context) *v1.UserServiceCreateManyResponse {
+	_, span := otel.Tracer("category-model").Start(ctx, "user model to response")
+	defer span.End()
+
+	resValue := &v1.UserServiceCreateManyResponse{}
+	for _, u := range *us {
+		a := &v1.UserServiceCreateOneResponse{
+			Id:          u.Id,
+			FirstName:   u.FirstName,
+			MiddleNames: u.MiddleNames,
+			LastName:    u.LastName,
+			Username:    u.Username,
+			Email:       u.Email,
+			Role:        u.Role,
+			Audit: &v1.Audit{
+				CreatedBy: u.Audit.CreatedBy,
+				UpdatedBy: u.Audit.UpdatedBy,
+				DeletedBy: u.Audit.DeletedBy,
+				UpdatedAt: timestamppb.New(u.Audit.UpdatedAt),
+				CreatedAt: timestamppb.New(u.Audit.CreatedAt),
+				DeletedAt: timestamppb.New(u.Audit.DeletedAt),
+			},
+		}
+		resValue.User = append(resValue.User, a)
+	}
+	return resValue
 }

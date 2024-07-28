@@ -33,14 +33,29 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// CategoryServiceCreateProcedure is the fully-qualified name of the CategoryService's Create RPC.
-	CategoryServiceCreateProcedure = "/listah.v1.CategoryService/Create"
-	// CategoryServiceReadProcedure is the fully-qualified name of the CategoryService's Read RPC.
-	CategoryServiceReadProcedure = "/listah.v1.CategoryService/Read"
-	// CategoryServiceUpdateProcedure is the fully-qualified name of the CategoryService's Update RPC.
-	CategoryServiceUpdateProcedure = "/listah.v1.CategoryService/Update"
-	// CategoryServiceDeleteProcedure is the fully-qualified name of the CategoryService's Delete RPC.
-	CategoryServiceDeleteProcedure = "/listah.v1.CategoryService/Delete"
+	// CategoryServiceCreateOneProcedure is the fully-qualified name of the CategoryService's CreateOne
+	// RPC.
+	CategoryServiceCreateOneProcedure = "/listah.v1.CategoryService/CreateOne"
+	// CategoryServiceCreateManyProcedure is the fully-qualified name of the CategoryService's
+	// CreateMany RPC.
+	CategoryServiceCreateManyProcedure = "/listah.v1.CategoryService/CreateMany"
+	// CategoryServiceReadOneProcedure is the fully-qualified name of the CategoryService's ReadOne RPC.
+	CategoryServiceReadOneProcedure = "/listah.v1.CategoryService/ReadOne"
+	// CategoryServiceReadManyProcedure is the fully-qualified name of the CategoryService's ReadMany
+	// RPC.
+	CategoryServiceReadManyProcedure = "/listah.v1.CategoryService/ReadMany"
+	// CategoryServiceUpdateOneProcedure is the fully-qualified name of the CategoryService's UpdateOne
+	// RPC.
+	CategoryServiceUpdateOneProcedure = "/listah.v1.CategoryService/UpdateOne"
+	// CategoryServiceUpdateManyProcedure is the fully-qualified name of the CategoryService's
+	// UpdateMany RPC.
+	CategoryServiceUpdateManyProcedure = "/listah.v1.CategoryService/UpdateMany"
+	// CategoryServiceDeleteOneProcedure is the fully-qualified name of the CategoryService's DeleteOne
+	// RPC.
+	CategoryServiceDeleteOneProcedure = "/listah.v1.CategoryService/DeleteOne"
+	// CategoryServiceDeleteManyProcedure is the fully-qualified name of the CategoryService's
+	// DeleteMany RPC.
+	CategoryServiceDeleteManyProcedure = "/listah.v1.CategoryService/DeleteMany"
 	// CategoryServiceListItemsProcedure is the fully-qualified name of the CategoryService's ListItems
 	// RPC.
 	CategoryServiceListItemsProcedure = "/listah.v1.CategoryService/ListItems"
@@ -48,20 +63,28 @@ const (
 
 // These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
 var (
-	categoryServiceServiceDescriptor         = v1.File_listah_v1_category_proto.Services().ByName("CategoryService")
-	categoryServiceCreateMethodDescriptor    = categoryServiceServiceDescriptor.Methods().ByName("Create")
-	categoryServiceReadMethodDescriptor      = categoryServiceServiceDescriptor.Methods().ByName("Read")
-	categoryServiceUpdateMethodDescriptor    = categoryServiceServiceDescriptor.Methods().ByName("Update")
-	categoryServiceDeleteMethodDescriptor    = categoryServiceServiceDescriptor.Methods().ByName("Delete")
-	categoryServiceListItemsMethodDescriptor = categoryServiceServiceDescriptor.Methods().ByName("ListItems")
+	categoryServiceServiceDescriptor          = v1.File_listah_v1_category_proto.Services().ByName("CategoryService")
+	categoryServiceCreateOneMethodDescriptor  = categoryServiceServiceDescriptor.Methods().ByName("CreateOne")
+	categoryServiceCreateManyMethodDescriptor = categoryServiceServiceDescriptor.Methods().ByName("CreateMany")
+	categoryServiceReadOneMethodDescriptor    = categoryServiceServiceDescriptor.Methods().ByName("ReadOne")
+	categoryServiceReadManyMethodDescriptor   = categoryServiceServiceDescriptor.Methods().ByName("ReadMany")
+	categoryServiceUpdateOneMethodDescriptor  = categoryServiceServiceDescriptor.Methods().ByName("UpdateOne")
+	categoryServiceUpdateManyMethodDescriptor = categoryServiceServiceDescriptor.Methods().ByName("UpdateMany")
+	categoryServiceDeleteOneMethodDescriptor  = categoryServiceServiceDescriptor.Methods().ByName("DeleteOne")
+	categoryServiceDeleteManyMethodDescriptor = categoryServiceServiceDescriptor.Methods().ByName("DeleteMany")
+	categoryServiceListItemsMethodDescriptor  = categoryServiceServiceDescriptor.Methods().ByName("ListItems")
 )
 
 // CategoryServiceClient is a client for the listah.v1.CategoryService service.
 type CategoryServiceClient interface {
-	Create(context.Context, *connect.Request[v1.CategoryServiceCreateRequest]) (*connect.Response[v1.CategoryServiceCreateResponse], error)
-	Read(context.Context, *connect.Request[v1.CategoryServiceReadRequest]) (*connect.Response[v1.CategoryServiceReadResponse], error)
-	Update(context.Context, *connect.Request[v1.CategoryServiceUpdateRequest]) (*connect.Response[v1.CategoryServiceUpdateResponse], error)
-	Delete(context.Context, *connect.Request[v1.CategoryServiceDeleteRequest]) (*connect.Response[v1.CategoryServiceDeleteResponse], error)
+	CreateOne(context.Context, *connect.Request[v1.CategoryServiceCreateOneRequest]) (*connect.Response[v1.CategoryServiceCreateOneResponse], error)
+	CreateMany(context.Context, *connect.Request[v1.CategoryServiceCreateManyRequest]) (*connect.Response[v1.CategoryServiceCreateManyResponse], error)
+	ReadOne(context.Context, *connect.Request[v1.CategoryServiceReadOneRequest]) (*connect.Response[v1.CategoryServiceReadOneResponse], error)
+	ReadMany(context.Context, *connect.Request[v1.CategoryServiceReadManyRequest]) (*connect.Response[v1.CategoryServiceReadManyResponse], error)
+	UpdateOne(context.Context, *connect.Request[v1.CategoryServiceUpdateOneRequest]) (*connect.Response[v1.CategoryServiceUpdateOneResponse], error)
+	UpdateMany(context.Context, *connect.Request[v1.CategoryServiceUpdateManyRequest]) (*connect.Response[v1.CategoryServiceUpdateManyResponse], error)
+	DeleteOne(context.Context, *connect.Request[v1.CategoryServiceDeleteOneRequest]) (*connect.Response[v1.CategoryServiceDeleteOneResponse], error)
+	DeleteMany(context.Context, *connect.Request[v1.CategoryServiceDeleteManyRequest]) (*connect.Response[v1.CategoryServiceDeleteManyResponse], error)
 	ListItems(context.Context, *connect.Request[v1.CategoryServiceListItemsRequest]) (*connect.Response[v1.CategoryServiceListItemsResponse], error)
 }
 
@@ -75,28 +98,52 @@ type CategoryServiceClient interface {
 func NewCategoryServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) CategoryServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
 	return &categoryServiceClient{
-		create: connect.NewClient[v1.CategoryServiceCreateRequest, v1.CategoryServiceCreateResponse](
+		createOne: connect.NewClient[v1.CategoryServiceCreateOneRequest, v1.CategoryServiceCreateOneResponse](
 			httpClient,
-			baseURL+CategoryServiceCreateProcedure,
-			connect.WithSchema(categoryServiceCreateMethodDescriptor),
+			baseURL+CategoryServiceCreateOneProcedure,
+			connect.WithSchema(categoryServiceCreateOneMethodDescriptor),
 			connect.WithClientOptions(opts...),
 		),
-		read: connect.NewClient[v1.CategoryServiceReadRequest, v1.CategoryServiceReadResponse](
+		createMany: connect.NewClient[v1.CategoryServiceCreateManyRequest, v1.CategoryServiceCreateManyResponse](
 			httpClient,
-			baseURL+CategoryServiceReadProcedure,
-			connect.WithSchema(categoryServiceReadMethodDescriptor),
+			baseURL+CategoryServiceCreateManyProcedure,
+			connect.WithSchema(categoryServiceCreateManyMethodDescriptor),
 			connect.WithClientOptions(opts...),
 		),
-		update: connect.NewClient[v1.CategoryServiceUpdateRequest, v1.CategoryServiceUpdateResponse](
+		readOne: connect.NewClient[v1.CategoryServiceReadOneRequest, v1.CategoryServiceReadOneResponse](
 			httpClient,
-			baseURL+CategoryServiceUpdateProcedure,
-			connect.WithSchema(categoryServiceUpdateMethodDescriptor),
+			baseURL+CategoryServiceReadOneProcedure,
+			connect.WithSchema(categoryServiceReadOneMethodDescriptor),
 			connect.WithClientOptions(opts...),
 		),
-		delete: connect.NewClient[v1.CategoryServiceDeleteRequest, v1.CategoryServiceDeleteResponse](
+		readMany: connect.NewClient[v1.CategoryServiceReadManyRequest, v1.CategoryServiceReadManyResponse](
 			httpClient,
-			baseURL+CategoryServiceDeleteProcedure,
-			connect.WithSchema(categoryServiceDeleteMethodDescriptor),
+			baseURL+CategoryServiceReadManyProcedure,
+			connect.WithSchema(categoryServiceReadManyMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
+		updateOne: connect.NewClient[v1.CategoryServiceUpdateOneRequest, v1.CategoryServiceUpdateOneResponse](
+			httpClient,
+			baseURL+CategoryServiceUpdateOneProcedure,
+			connect.WithSchema(categoryServiceUpdateOneMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
+		updateMany: connect.NewClient[v1.CategoryServiceUpdateManyRequest, v1.CategoryServiceUpdateManyResponse](
+			httpClient,
+			baseURL+CategoryServiceUpdateManyProcedure,
+			connect.WithSchema(categoryServiceUpdateManyMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
+		deleteOne: connect.NewClient[v1.CategoryServiceDeleteOneRequest, v1.CategoryServiceDeleteOneResponse](
+			httpClient,
+			baseURL+CategoryServiceDeleteOneProcedure,
+			connect.WithSchema(categoryServiceDeleteOneMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
+		deleteMany: connect.NewClient[v1.CategoryServiceDeleteManyRequest, v1.CategoryServiceDeleteManyResponse](
+			httpClient,
+			baseURL+CategoryServiceDeleteManyProcedure,
+			connect.WithSchema(categoryServiceDeleteManyMethodDescriptor),
 			connect.WithClientOptions(opts...),
 		),
 		listItems: connect.NewClient[v1.CategoryServiceListItemsRequest, v1.CategoryServiceListItemsResponse](
@@ -110,31 +157,55 @@ func NewCategoryServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 
 // categoryServiceClient implements CategoryServiceClient.
 type categoryServiceClient struct {
-	create    *connect.Client[v1.CategoryServiceCreateRequest, v1.CategoryServiceCreateResponse]
-	read      *connect.Client[v1.CategoryServiceReadRequest, v1.CategoryServiceReadResponse]
-	update    *connect.Client[v1.CategoryServiceUpdateRequest, v1.CategoryServiceUpdateResponse]
-	delete    *connect.Client[v1.CategoryServiceDeleteRequest, v1.CategoryServiceDeleteResponse]
-	listItems *connect.Client[v1.CategoryServiceListItemsRequest, v1.CategoryServiceListItemsResponse]
+	createOne  *connect.Client[v1.CategoryServiceCreateOneRequest, v1.CategoryServiceCreateOneResponse]
+	createMany *connect.Client[v1.CategoryServiceCreateManyRequest, v1.CategoryServiceCreateManyResponse]
+	readOne    *connect.Client[v1.CategoryServiceReadOneRequest, v1.CategoryServiceReadOneResponse]
+	readMany   *connect.Client[v1.CategoryServiceReadManyRequest, v1.CategoryServiceReadManyResponse]
+	updateOne  *connect.Client[v1.CategoryServiceUpdateOneRequest, v1.CategoryServiceUpdateOneResponse]
+	updateMany *connect.Client[v1.CategoryServiceUpdateManyRequest, v1.CategoryServiceUpdateManyResponse]
+	deleteOne  *connect.Client[v1.CategoryServiceDeleteOneRequest, v1.CategoryServiceDeleteOneResponse]
+	deleteMany *connect.Client[v1.CategoryServiceDeleteManyRequest, v1.CategoryServiceDeleteManyResponse]
+	listItems  *connect.Client[v1.CategoryServiceListItemsRequest, v1.CategoryServiceListItemsResponse]
 }
 
-// Create calls listah.v1.CategoryService.Create.
-func (c *categoryServiceClient) Create(ctx context.Context, req *connect.Request[v1.CategoryServiceCreateRequest]) (*connect.Response[v1.CategoryServiceCreateResponse], error) {
-	return c.create.CallUnary(ctx, req)
+// CreateOne calls listah.v1.CategoryService.CreateOne.
+func (c *categoryServiceClient) CreateOne(ctx context.Context, req *connect.Request[v1.CategoryServiceCreateOneRequest]) (*connect.Response[v1.CategoryServiceCreateOneResponse], error) {
+	return c.createOne.CallUnary(ctx, req)
 }
 
-// Read calls listah.v1.CategoryService.Read.
-func (c *categoryServiceClient) Read(ctx context.Context, req *connect.Request[v1.CategoryServiceReadRequest]) (*connect.Response[v1.CategoryServiceReadResponse], error) {
-	return c.read.CallUnary(ctx, req)
+// CreateMany calls listah.v1.CategoryService.CreateMany.
+func (c *categoryServiceClient) CreateMany(ctx context.Context, req *connect.Request[v1.CategoryServiceCreateManyRequest]) (*connect.Response[v1.CategoryServiceCreateManyResponse], error) {
+	return c.createMany.CallUnary(ctx, req)
 }
 
-// Update calls listah.v1.CategoryService.Update.
-func (c *categoryServiceClient) Update(ctx context.Context, req *connect.Request[v1.CategoryServiceUpdateRequest]) (*connect.Response[v1.CategoryServiceUpdateResponse], error) {
-	return c.update.CallUnary(ctx, req)
+// ReadOne calls listah.v1.CategoryService.ReadOne.
+func (c *categoryServiceClient) ReadOne(ctx context.Context, req *connect.Request[v1.CategoryServiceReadOneRequest]) (*connect.Response[v1.CategoryServiceReadOneResponse], error) {
+	return c.readOne.CallUnary(ctx, req)
 }
 
-// Delete calls listah.v1.CategoryService.Delete.
-func (c *categoryServiceClient) Delete(ctx context.Context, req *connect.Request[v1.CategoryServiceDeleteRequest]) (*connect.Response[v1.CategoryServiceDeleteResponse], error) {
-	return c.delete.CallUnary(ctx, req)
+// ReadMany calls listah.v1.CategoryService.ReadMany.
+func (c *categoryServiceClient) ReadMany(ctx context.Context, req *connect.Request[v1.CategoryServiceReadManyRequest]) (*connect.Response[v1.CategoryServiceReadManyResponse], error) {
+	return c.readMany.CallUnary(ctx, req)
+}
+
+// UpdateOne calls listah.v1.CategoryService.UpdateOne.
+func (c *categoryServiceClient) UpdateOne(ctx context.Context, req *connect.Request[v1.CategoryServiceUpdateOneRequest]) (*connect.Response[v1.CategoryServiceUpdateOneResponse], error) {
+	return c.updateOne.CallUnary(ctx, req)
+}
+
+// UpdateMany calls listah.v1.CategoryService.UpdateMany.
+func (c *categoryServiceClient) UpdateMany(ctx context.Context, req *connect.Request[v1.CategoryServiceUpdateManyRequest]) (*connect.Response[v1.CategoryServiceUpdateManyResponse], error) {
+	return c.updateMany.CallUnary(ctx, req)
+}
+
+// DeleteOne calls listah.v1.CategoryService.DeleteOne.
+func (c *categoryServiceClient) DeleteOne(ctx context.Context, req *connect.Request[v1.CategoryServiceDeleteOneRequest]) (*connect.Response[v1.CategoryServiceDeleteOneResponse], error) {
+	return c.deleteOne.CallUnary(ctx, req)
+}
+
+// DeleteMany calls listah.v1.CategoryService.DeleteMany.
+func (c *categoryServiceClient) DeleteMany(ctx context.Context, req *connect.Request[v1.CategoryServiceDeleteManyRequest]) (*connect.Response[v1.CategoryServiceDeleteManyResponse], error) {
+	return c.deleteMany.CallUnary(ctx, req)
 }
 
 // ListItems calls listah.v1.CategoryService.ListItems.
@@ -144,10 +215,14 @@ func (c *categoryServiceClient) ListItems(ctx context.Context, req *connect.Requ
 
 // CategoryServiceHandler is an implementation of the listah.v1.CategoryService service.
 type CategoryServiceHandler interface {
-	Create(context.Context, *connect.Request[v1.CategoryServiceCreateRequest]) (*connect.Response[v1.CategoryServiceCreateResponse], error)
-	Read(context.Context, *connect.Request[v1.CategoryServiceReadRequest]) (*connect.Response[v1.CategoryServiceReadResponse], error)
-	Update(context.Context, *connect.Request[v1.CategoryServiceUpdateRequest]) (*connect.Response[v1.CategoryServiceUpdateResponse], error)
-	Delete(context.Context, *connect.Request[v1.CategoryServiceDeleteRequest]) (*connect.Response[v1.CategoryServiceDeleteResponse], error)
+	CreateOne(context.Context, *connect.Request[v1.CategoryServiceCreateOneRequest]) (*connect.Response[v1.CategoryServiceCreateOneResponse], error)
+	CreateMany(context.Context, *connect.Request[v1.CategoryServiceCreateManyRequest]) (*connect.Response[v1.CategoryServiceCreateManyResponse], error)
+	ReadOne(context.Context, *connect.Request[v1.CategoryServiceReadOneRequest]) (*connect.Response[v1.CategoryServiceReadOneResponse], error)
+	ReadMany(context.Context, *connect.Request[v1.CategoryServiceReadManyRequest]) (*connect.Response[v1.CategoryServiceReadManyResponse], error)
+	UpdateOne(context.Context, *connect.Request[v1.CategoryServiceUpdateOneRequest]) (*connect.Response[v1.CategoryServiceUpdateOneResponse], error)
+	UpdateMany(context.Context, *connect.Request[v1.CategoryServiceUpdateManyRequest]) (*connect.Response[v1.CategoryServiceUpdateManyResponse], error)
+	DeleteOne(context.Context, *connect.Request[v1.CategoryServiceDeleteOneRequest]) (*connect.Response[v1.CategoryServiceDeleteOneResponse], error)
+	DeleteMany(context.Context, *connect.Request[v1.CategoryServiceDeleteManyRequest]) (*connect.Response[v1.CategoryServiceDeleteManyResponse], error)
 	ListItems(context.Context, *connect.Request[v1.CategoryServiceListItemsRequest]) (*connect.Response[v1.CategoryServiceListItemsResponse], error)
 }
 
@@ -157,28 +232,52 @@ type CategoryServiceHandler interface {
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
 func NewCategoryServiceHandler(svc CategoryServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
-	categoryServiceCreateHandler := connect.NewUnaryHandler(
-		CategoryServiceCreateProcedure,
-		svc.Create,
-		connect.WithSchema(categoryServiceCreateMethodDescriptor),
+	categoryServiceCreateOneHandler := connect.NewUnaryHandler(
+		CategoryServiceCreateOneProcedure,
+		svc.CreateOne,
+		connect.WithSchema(categoryServiceCreateOneMethodDescriptor),
 		connect.WithHandlerOptions(opts...),
 	)
-	categoryServiceReadHandler := connect.NewUnaryHandler(
-		CategoryServiceReadProcedure,
-		svc.Read,
-		connect.WithSchema(categoryServiceReadMethodDescriptor),
+	categoryServiceCreateManyHandler := connect.NewUnaryHandler(
+		CategoryServiceCreateManyProcedure,
+		svc.CreateMany,
+		connect.WithSchema(categoryServiceCreateManyMethodDescriptor),
 		connect.WithHandlerOptions(opts...),
 	)
-	categoryServiceUpdateHandler := connect.NewUnaryHandler(
-		CategoryServiceUpdateProcedure,
-		svc.Update,
-		connect.WithSchema(categoryServiceUpdateMethodDescriptor),
+	categoryServiceReadOneHandler := connect.NewUnaryHandler(
+		CategoryServiceReadOneProcedure,
+		svc.ReadOne,
+		connect.WithSchema(categoryServiceReadOneMethodDescriptor),
 		connect.WithHandlerOptions(opts...),
 	)
-	categoryServiceDeleteHandler := connect.NewUnaryHandler(
-		CategoryServiceDeleteProcedure,
-		svc.Delete,
-		connect.WithSchema(categoryServiceDeleteMethodDescriptor),
+	categoryServiceReadManyHandler := connect.NewUnaryHandler(
+		CategoryServiceReadManyProcedure,
+		svc.ReadMany,
+		connect.WithSchema(categoryServiceReadManyMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
+	categoryServiceUpdateOneHandler := connect.NewUnaryHandler(
+		CategoryServiceUpdateOneProcedure,
+		svc.UpdateOne,
+		connect.WithSchema(categoryServiceUpdateOneMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
+	categoryServiceUpdateManyHandler := connect.NewUnaryHandler(
+		CategoryServiceUpdateManyProcedure,
+		svc.UpdateMany,
+		connect.WithSchema(categoryServiceUpdateManyMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
+	categoryServiceDeleteOneHandler := connect.NewUnaryHandler(
+		CategoryServiceDeleteOneProcedure,
+		svc.DeleteOne,
+		connect.WithSchema(categoryServiceDeleteOneMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
+	categoryServiceDeleteManyHandler := connect.NewUnaryHandler(
+		CategoryServiceDeleteManyProcedure,
+		svc.DeleteMany,
+		connect.WithSchema(categoryServiceDeleteManyMethodDescriptor),
 		connect.WithHandlerOptions(opts...),
 	)
 	categoryServiceListItemsHandler := connect.NewUnaryHandler(
@@ -189,14 +288,22 @@ func NewCategoryServiceHandler(svc CategoryServiceHandler, opts ...connect.Handl
 	)
 	return "/listah.v1.CategoryService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case CategoryServiceCreateProcedure:
-			categoryServiceCreateHandler.ServeHTTP(w, r)
-		case CategoryServiceReadProcedure:
-			categoryServiceReadHandler.ServeHTTP(w, r)
-		case CategoryServiceUpdateProcedure:
-			categoryServiceUpdateHandler.ServeHTTP(w, r)
-		case CategoryServiceDeleteProcedure:
-			categoryServiceDeleteHandler.ServeHTTP(w, r)
+		case CategoryServiceCreateOneProcedure:
+			categoryServiceCreateOneHandler.ServeHTTP(w, r)
+		case CategoryServiceCreateManyProcedure:
+			categoryServiceCreateManyHandler.ServeHTTP(w, r)
+		case CategoryServiceReadOneProcedure:
+			categoryServiceReadOneHandler.ServeHTTP(w, r)
+		case CategoryServiceReadManyProcedure:
+			categoryServiceReadManyHandler.ServeHTTP(w, r)
+		case CategoryServiceUpdateOneProcedure:
+			categoryServiceUpdateOneHandler.ServeHTTP(w, r)
+		case CategoryServiceUpdateManyProcedure:
+			categoryServiceUpdateManyHandler.ServeHTTP(w, r)
+		case CategoryServiceDeleteOneProcedure:
+			categoryServiceDeleteOneHandler.ServeHTTP(w, r)
+		case CategoryServiceDeleteManyProcedure:
+			categoryServiceDeleteManyHandler.ServeHTTP(w, r)
 		case CategoryServiceListItemsProcedure:
 			categoryServiceListItemsHandler.ServeHTTP(w, r)
 		default:
@@ -208,20 +315,36 @@ func NewCategoryServiceHandler(svc CategoryServiceHandler, opts ...connect.Handl
 // UnimplementedCategoryServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedCategoryServiceHandler struct{}
 
-func (UnimplementedCategoryServiceHandler) Create(context.Context, *connect.Request[v1.CategoryServiceCreateRequest]) (*connect.Response[v1.CategoryServiceCreateResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.CategoryService.Create is not implemented"))
+func (UnimplementedCategoryServiceHandler) CreateOne(context.Context, *connect.Request[v1.CategoryServiceCreateOneRequest]) (*connect.Response[v1.CategoryServiceCreateOneResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.CategoryService.CreateOne is not implemented"))
 }
 
-func (UnimplementedCategoryServiceHandler) Read(context.Context, *connect.Request[v1.CategoryServiceReadRequest]) (*connect.Response[v1.CategoryServiceReadResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.CategoryService.Read is not implemented"))
+func (UnimplementedCategoryServiceHandler) CreateMany(context.Context, *connect.Request[v1.CategoryServiceCreateManyRequest]) (*connect.Response[v1.CategoryServiceCreateManyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.CategoryService.CreateMany is not implemented"))
 }
 
-func (UnimplementedCategoryServiceHandler) Update(context.Context, *connect.Request[v1.CategoryServiceUpdateRequest]) (*connect.Response[v1.CategoryServiceUpdateResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.CategoryService.Update is not implemented"))
+func (UnimplementedCategoryServiceHandler) ReadOne(context.Context, *connect.Request[v1.CategoryServiceReadOneRequest]) (*connect.Response[v1.CategoryServiceReadOneResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.CategoryService.ReadOne is not implemented"))
 }
 
-func (UnimplementedCategoryServiceHandler) Delete(context.Context, *connect.Request[v1.CategoryServiceDeleteRequest]) (*connect.Response[v1.CategoryServiceDeleteResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.CategoryService.Delete is not implemented"))
+func (UnimplementedCategoryServiceHandler) ReadMany(context.Context, *connect.Request[v1.CategoryServiceReadManyRequest]) (*connect.Response[v1.CategoryServiceReadManyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.CategoryService.ReadMany is not implemented"))
+}
+
+func (UnimplementedCategoryServiceHandler) UpdateOne(context.Context, *connect.Request[v1.CategoryServiceUpdateOneRequest]) (*connect.Response[v1.CategoryServiceUpdateOneResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.CategoryService.UpdateOne is not implemented"))
+}
+
+func (UnimplementedCategoryServiceHandler) UpdateMany(context.Context, *connect.Request[v1.CategoryServiceUpdateManyRequest]) (*connect.Response[v1.CategoryServiceUpdateManyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.CategoryService.UpdateMany is not implemented"))
+}
+
+func (UnimplementedCategoryServiceHandler) DeleteOne(context.Context, *connect.Request[v1.CategoryServiceDeleteOneRequest]) (*connect.Response[v1.CategoryServiceDeleteOneResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.CategoryService.DeleteOne is not implemented"))
+}
+
+func (UnimplementedCategoryServiceHandler) DeleteMany(context.Context, *connect.Request[v1.CategoryServiceDeleteManyRequest]) (*connect.Response[v1.CategoryServiceDeleteManyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.CategoryService.DeleteMany is not implemented"))
 }
 
 func (UnimplementedCategoryServiceHandler) ListItems(context.Context, *connect.Request[v1.CategoryServiceListItemsRequest]) (*connect.Response[v1.CategoryServiceListItemsResponse], error) {

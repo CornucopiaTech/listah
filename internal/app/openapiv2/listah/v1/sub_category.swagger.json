@@ -80,7 +80,7 @@
       ],
       "default": "AUDIT_UPDATER_ENUM_UNSPECIFIED"
     },
-    "v1SubCategoryServiceCreateResponse": {
+    "v1SubCategoryServiceCreateOneResponse": {
       "type": "object",
       "properties": {
         "id": {
@@ -106,7 +106,7 @@
         }
       }
     },
-    "v1SubCategoryServiceDeleteResponse": {
+    "v1SubCategoryServiceDeleteOneResponse": {
       "type": "object",
       "properties": {
         "id": {
@@ -132,7 +132,7 @@
         }
       }
     },
-    "v1SubCategoryServiceReadResponse": {
+    "v1SubCategoryServiceReadOneResponse": {
       "type": "object",
       "properties": {
         "id": {
@@ -158,7 +158,7 @@
         }
       }
     },
-    "v1SubCategoryServiceUpdateResponse": {
+    "v1SubCategoryServiceUpdateOneResponse": {
       "type": "object",
       "properties": {
         "id": {

@@ -10,90 +10,109 @@ import "listah/v1/item.proto";
 import "google/protobuf/timestamp.proto";
 
 
-
-message CategoryServiceCreateRequest {
+message CategoryServiceCreateOneRequest {
     string id = 1;
     string name = 2;
     string description = 3;
     string note = 7;
     Audit audit = 50;
     }
-
-
-message CategoryServiceCreateResponse {
+message CategoryServiceCreateOneResponse {
     string id = 1;
     string name = 2;
     string description = 3;
     string note = 7;
     Audit audit = 50;
 }
+message CategoryServiceCreateManyRequest {
+    repeated CategoryServiceCreateOneRequest category = 1;
+}
+message CategoryServiceCreateManyResponse {
+    repeated CategoryServiceCreateOneResponse category = 1;
+}
 
 
-message CategoryServiceUpdateRequest {
+message CategoryServiceUpdateOneRequest {
     string id = 1;
     string name = 2;
     string description = 3;
     string note = 7;
     Audit audit = 50;
 }
-
-
-message CategoryServiceUpdateResponse {
+message CategoryServiceUpdateOneResponse {
     string id = 1;
     string name = 2;
     string description = 3;
     string note = 7;
     Audit audit = 50;
 }
-
-
-message CategoryServiceReadRequest {
-    string id = 1;
+message CategoryServiceUpdateManyRequest {
+    repeated CategoryServiceUpdateOneRequest category = 1;
+}
+message CategoryServiceUpdateManyResponse {
+    repeated CategoryServiceUpdateOneResponse category = 1;
 }
 
 
-message CategoryServiceReadResponse {
+message CategoryServiceReadOneRequest {
     string id = 1;
-    string name = 2;
-    string description = 3;
-    string note = 7;
-    Audit audit = 50;
 }
-
-message CategoryServiceDeleteRequest {
-    string id = 1;
-    Audit audit = 50;
-}
-
-
-message CategoryServiceDeleteResponse {
+message CategoryServiceReadOneResponse {
     string id = 1;
     string name = 2;
     string description = 3;
     string note = 7;
     Audit audit = 50;
 }
+message CategoryServiceReadManyRequest {
+    repeated CategoryServiceReadOneRequest category = 1;
+}
+message CategoryServiceReadManyResponse {
+    repeated CategoryServiceReadOneResponse category = 1;
+}
+
+
+message CategoryServiceDeleteOneRequest {
+    string id = 1;
+    Audit audit = 50;
+}
+message CategoryServiceDeleteOneResponse {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string note = 7;
+    Audit audit = 50;
+}
+message CategoryServiceDeleteManyRequest {
+    repeated CategoryServiceDeleteOneRequest category = 1;
+}
+message CategoryServiceDeleteManyResponse {
+    repeated CategoryServiceDeleteOneResponse category = 1;
+}
+
 
 message CategoryServiceListItemsRequest {
     string id = 1;
 }
-
-
 message CategoryServiceListItemsResponse {
     string id = 1;
     string name = 2;
     string description = 3;
     string note = 7;
     repeated string items = 20;
-    // repeated ItemServiceReadResponse items = 20;
+    // repeated ItemServiceReadOneResponse items = 20;
     Audit audit = 50;
 }
 
 
 service CategoryService {
-    rpc Create(CategoryServiceCreateRequest) returns (CategoryServiceCreateResponse){}
-    rpc Read(CategoryServiceReadRequest) returns (CategoryServiceReadResponse){}
-    rpc Update(CategoryServiceUpdateRequest) returns (CategoryServiceUpdateResponse){}
-    rpc Delete(CategoryServiceDeleteRequest) returns (CategoryServiceDeleteResponse){}
+    rpc CreateOne(CategoryServiceCreateOneRequest) returns (CategoryServiceCreateOneResponse){}
+    rpc CreateMany(CategoryServiceCreateManyRequest) returns (CategoryServiceCreateManyResponse){}
+    rpc ReadOne(CategoryServiceReadOneRequest) returns (CategoryServiceReadOneResponse){}
+    rpc ReadMany(CategoryServiceReadManyRequest) returns (CategoryServiceReadManyResponse){}
+    rpc UpdateOne(CategoryServiceUpdateOneRequest) returns (CategoryServiceUpdateOneResponse){}
+    rpc UpdateMany(CategoryServiceUpdateManyRequest) returns (CategoryServiceUpdateManyResponse){}
+    rpc DeleteOne(CategoryServiceDeleteOneRequest) returns (CategoryServiceDeleteOneResponse){}
+    rpc DeleteMany(CategoryServiceDeleteManyRequest) returns (CategoryServiceDeleteManyResponse){}
     rpc ListItems(CategoryServiceListItemsRequest) returns (CategoryServiceListItemsResponse){}
 }

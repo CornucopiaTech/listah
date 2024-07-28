@@ -19,21 +19,29 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	CategoryService_Create_FullMethodName    = "/listah.v1.CategoryService/Create"
-	CategoryService_Read_FullMethodName      = "/listah.v1.CategoryService/Read"
-	CategoryService_Update_FullMethodName    = "/listah.v1.CategoryService/Update"
-	CategoryService_Delete_FullMethodName    = "/listah.v1.CategoryService/Delete"
-	CategoryService_ListItems_FullMethodName = "/listah.v1.CategoryService/ListItems"
+	CategoryService_CreateOne_FullMethodName  = "/listah.v1.CategoryService/CreateOne"
+	CategoryService_CreateMany_FullMethodName = "/listah.v1.CategoryService/CreateMany"
+	CategoryService_ReadOne_FullMethodName    = "/listah.v1.CategoryService/ReadOne"
+	CategoryService_ReadMany_FullMethodName   = "/listah.v1.CategoryService/ReadMany"
+	CategoryService_UpdateOne_FullMethodName  = "/listah.v1.CategoryService/UpdateOne"
+	CategoryService_UpdateMany_FullMethodName = "/listah.v1.CategoryService/UpdateMany"
+	CategoryService_DeleteOne_FullMethodName  = "/listah.v1.CategoryService/DeleteOne"
+	CategoryService_DeleteMany_FullMethodName = "/listah.v1.CategoryService/DeleteMany"
+	CategoryService_ListItems_FullMethodName  = "/listah.v1.CategoryService/ListItems"
 )
 
 // CategoryServiceClient is the client API for CategoryService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CategoryServiceClient interface {
-	Create(ctx context.Context, in *CategoryServiceCreateRequest, opts ...grpc.CallOption) (*CategoryServiceCreateResponse, error)
-	Read(ctx context.Context, in *CategoryServiceReadRequest, opts ...grpc.CallOption) (*CategoryServiceReadResponse, error)
-	Update(ctx context.Context, in *CategoryServiceUpdateRequest, opts ...grpc.CallOption) (*CategoryServiceUpdateResponse, error)
-	Delete(ctx context.Context, in *CategoryServiceDeleteRequest, opts ...grpc.CallOption) (*CategoryServiceDeleteResponse, error)
+	CreateOne(ctx context.Context, in *CategoryServiceCreateOneRequest, opts ...grpc.CallOption) (*CategoryServiceCreateOneResponse, error)
+	CreateMany(ctx context.Context, in *CategoryServiceCreateManyRequest, opts ...grpc.CallOption) (*CategoryServiceCreateManyResponse, error)
+	ReadOne(ctx context.Context, in *CategoryServiceReadOneRequest, opts ...grpc.CallOption) (*CategoryServiceReadOneResponse, error)
+	ReadMany(ctx context.Context, in *CategoryServiceReadManyRequest, opts ...grpc.CallOption) (*CategoryServiceReadManyResponse, error)
+	UpdateOne(ctx context.Context, in *CategoryServiceUpdateOneRequest, opts ...grpc.CallOption) (*CategoryServiceUpdateOneResponse, error)
+	UpdateMany(ctx context.Context, in *CategoryServiceUpdateManyRequest, opts ...grpc.CallOption) (*CategoryServiceUpdateManyResponse, error)
+	DeleteOne(ctx context.Context, in *CategoryServiceDeleteOneRequest, opts ...grpc.CallOption) (*CategoryServiceDeleteOneResponse, error)
+	DeleteMany(ctx context.Context, in *CategoryServiceDeleteManyRequest, opts ...grpc.CallOption) (*CategoryServiceDeleteManyResponse, error)
 	ListItems(ctx context.Context, in *CategoryServiceListItemsRequest, opts ...grpc.CallOption) (*CategoryServiceListItemsResponse, error)
 }
 
@@ -45,40 +53,80 @@ func NewCategoryServiceClient(cc grpc.ClientConnInterface) CategoryServiceClient
 	return &categoryServiceClient{cc}
 }
 
-func (c *categoryServiceClient) Create(ctx context.Context, in *CategoryServiceCreateRequest, opts ...grpc.CallOption) (*CategoryServiceCreateResponse, error) {
+func (c *categoryServiceClient) CreateOne(ctx context.Context, in *CategoryServiceCreateOneRequest, opts ...grpc.CallOption) (*CategoryServiceCreateOneResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CategoryServiceCreateResponse)
-	err := c.cc.Invoke(ctx, CategoryService_Create_FullMethodName, in, out, cOpts...)
+	out := new(CategoryServiceCreateOneResponse)
+	err := c.cc.Invoke(ctx, CategoryService_CreateOne_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *categoryServiceClient) Read(ctx context.Context, in *CategoryServiceReadRequest, opts ...grpc.CallOption) (*CategoryServiceReadResponse, error) {
+func (c *categoryServiceClient) CreateMany(ctx context.Context, in *CategoryServiceCreateManyRequest, opts ...grpc.CallOption) (*CategoryServiceCreateManyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CategoryServiceReadResponse)
-	err := c.cc.Invoke(ctx, CategoryService_Read_FullMethodName, in, out, cOpts...)
+	out := new(CategoryServiceCreateManyResponse)
+	err := c.cc.Invoke(ctx, CategoryService_CreateMany_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *categoryServiceClient) Update(ctx context.Context, in *CategoryServiceUpdateRequest, opts ...grpc.CallOption) (*CategoryServiceUpdateResponse, error) {
+func (c *categoryServiceClient) ReadOne(ctx context.Context, in *CategoryServiceReadOneRequest, opts ...grpc.CallOption) (*CategoryServiceReadOneResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CategoryServiceUpdateResponse)
-	err := c.cc.Invoke(ctx, CategoryService_Update_FullMethodName, in, out, cOpts...)
+	out := new(CategoryServiceReadOneResponse)
+	err := c.cc.Invoke(ctx, CategoryService_ReadOne_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *categoryServiceClient) Delete(ctx context.Context, in *CategoryServiceDeleteRequest, opts ...grpc.CallOption) (*CategoryServiceDeleteResponse, error) {
+func (c *categoryServiceClient) ReadMany(ctx context.Context, in *CategoryServiceReadManyRequest, opts ...grpc.CallOption) (*CategoryServiceReadManyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CategoryServiceDeleteResponse)
-	err := c.cc.Invoke(ctx, CategoryService_Delete_FullMethodName, in, out, cOpts...)
+	out := new(CategoryServiceReadManyResponse)
+	err := c.cc.Invoke(ctx, CategoryService_ReadMany_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *categoryServiceClient) UpdateOne(ctx context.Context, in *CategoryServiceUpdateOneRequest, opts ...grpc.CallOption) (*CategoryServiceUpdateOneResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CategoryServiceUpdateOneResponse)
+	err := c.cc.Invoke(ctx, CategoryService_UpdateOne_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *categoryServiceClient) UpdateMany(ctx context.Context, in *CategoryServiceUpdateManyRequest, opts ...grpc.CallOption) (*CategoryServiceUpdateManyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CategoryServiceUpdateManyResponse)
+	err := c.cc.Invoke(ctx, CategoryService_UpdateMany_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *categoryServiceClient) DeleteOne(ctx context.Context, in *CategoryServiceDeleteOneRequest, opts ...grpc.CallOption) (*CategoryServiceDeleteOneResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CategoryServiceDeleteOneResponse)
+	err := c.cc.Invoke(ctx, CategoryService_DeleteOne_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *categoryServiceClient) DeleteMany(ctx context.Context, in *CategoryServiceDeleteManyRequest, opts ...grpc.CallOption) (*CategoryServiceDeleteManyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CategoryServiceDeleteManyResponse)
+	err := c.cc.Invoke(ctx, CategoryService_DeleteMany_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -99,10 +147,14 @@ func (c *categoryServiceClient) ListItems(ctx context.Context, in *CategoryServi
 // All implementations should embed UnimplementedCategoryServiceServer
 // for forward compatibility
 type CategoryServiceServer interface {
-	Create(context.Context, *CategoryServiceCreateRequest) (*CategoryServiceCreateResponse, error)
-	Read(context.Context, *CategoryServiceReadRequest) (*CategoryServiceReadResponse, error)
-	Update(context.Context, *CategoryServiceUpdateRequest) (*CategoryServiceUpdateResponse, error)
-	Delete(context.Context, *CategoryServiceDeleteRequest) (*CategoryServiceDeleteResponse, error)
+	CreateOne(context.Context, *CategoryServiceCreateOneRequest) (*CategoryServiceCreateOneResponse, error)
+	CreateMany(context.Context, *CategoryServiceCreateManyRequest) (*CategoryServiceCreateManyResponse, error)
+	ReadOne(context.Context, *CategoryServiceReadOneRequest) (*CategoryServiceReadOneResponse, error)
+	ReadMany(context.Context, *CategoryServiceReadManyRequest) (*CategoryServiceReadManyResponse, error)
+	UpdateOne(context.Context, *CategoryServiceUpdateOneRequest) (*CategoryServiceUpdateOneResponse, error)
+	UpdateMany(context.Context, *CategoryServiceUpdateManyRequest) (*CategoryServiceUpdateManyResponse, error)
+	DeleteOne(context.Context, *CategoryServiceDeleteOneRequest) (*CategoryServiceDeleteOneResponse, error)
+	DeleteMany(context.Context, *CategoryServiceDeleteManyRequest) (*CategoryServiceDeleteManyResponse, error)
 	ListItems(context.Context, *CategoryServiceListItemsRequest) (*CategoryServiceListItemsResponse, error)
 }
 
@@ -110,17 +162,29 @@ type CategoryServiceServer interface {
 type UnimplementedCategoryServiceServer struct {
 }
 
-func (UnimplementedCategoryServiceServer) Create(context.Context, *CategoryServiceCreateRequest) (*CategoryServiceCreateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+func (UnimplementedCategoryServiceServer) CreateOne(context.Context, *CategoryServiceCreateOneRequest) (*CategoryServiceCreateOneResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOne not implemented")
 }
-func (UnimplementedCategoryServiceServer) Read(context.Context, *CategoryServiceReadRequest) (*CategoryServiceReadResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Read not implemented")
+func (UnimplementedCategoryServiceServer) CreateMany(context.Context, *CategoryServiceCreateManyRequest) (*CategoryServiceCreateManyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateMany not implemented")
 }
-func (UnimplementedCategoryServiceServer) Update(context.Context, *CategoryServiceUpdateRequest) (*CategoryServiceUpdateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+func (UnimplementedCategoryServiceServer) ReadOne(context.Context, *CategoryServiceReadOneRequest) (*CategoryServiceReadOneResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadOne not implemented")
 }
-func (UnimplementedCategoryServiceServer) Delete(context.Context, *CategoryServiceDeleteRequest) (*CategoryServiceDeleteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+func (UnimplementedCategoryServiceServer) ReadMany(context.Context, *CategoryServiceReadManyRequest) (*CategoryServiceReadManyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadMany not implemented")
+}
+func (UnimplementedCategoryServiceServer) UpdateOne(context.Context, *CategoryServiceUpdateOneRequest) (*CategoryServiceUpdateOneResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateOne not implemented")
+}
+func (UnimplementedCategoryServiceServer) UpdateMany(context.Context, *CategoryServiceUpdateManyRequest) (*CategoryServiceUpdateManyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateMany not implemented")
+}
+func (UnimplementedCategoryServiceServer) DeleteOne(context.Context, *CategoryServiceDeleteOneRequest) (*CategoryServiceDeleteOneResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteOne not implemented")
+}
+func (UnimplementedCategoryServiceServer) DeleteMany(context.Context, *CategoryServiceDeleteManyRequest) (*CategoryServiceDeleteManyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteMany not implemented")
 }
 func (UnimplementedCategoryServiceServer) ListItems(context.Context, *CategoryServiceListItemsRequest) (*CategoryServiceListItemsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListItems not implemented")
@@ -137,74 +201,146 @@ func RegisterCategoryServiceServer(s grpc.ServiceRegistrar, srv CategoryServiceS
 	s.RegisterService(&CategoryService_ServiceDesc, srv)
 }
 
-func _CategoryService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CategoryServiceCreateRequest)
+func _CategoryService_CreateOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CategoryServiceCreateOneRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CategoryServiceServer).Create(ctx, in)
+		return srv.(CategoryServiceServer).CreateOne(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CategoryService_Create_FullMethodName,
+		FullMethod: CategoryService_CreateOne_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CategoryServiceServer).Create(ctx, req.(*CategoryServiceCreateRequest))
+		return srv.(CategoryServiceServer).CreateOne(ctx, req.(*CategoryServiceCreateOneRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CategoryService_Read_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CategoryServiceReadRequest)
+func _CategoryService_CreateMany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CategoryServiceCreateManyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CategoryServiceServer).Read(ctx, in)
+		return srv.(CategoryServiceServer).CreateMany(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CategoryService_Read_FullMethodName,
+		FullMethod: CategoryService_CreateMany_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CategoryServiceServer).Read(ctx, req.(*CategoryServiceReadRequest))
+		return srv.(CategoryServiceServer).CreateMany(ctx, req.(*CategoryServiceCreateManyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CategoryService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CategoryServiceUpdateRequest)
+func _CategoryService_ReadOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CategoryServiceReadOneRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CategoryServiceServer).Update(ctx, in)
+		return srv.(CategoryServiceServer).ReadOne(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CategoryService_Update_FullMethodName,
+		FullMethod: CategoryService_ReadOne_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CategoryServiceServer).Update(ctx, req.(*CategoryServiceUpdateRequest))
+		return srv.(CategoryServiceServer).ReadOne(ctx, req.(*CategoryServiceReadOneRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CategoryService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CategoryServiceDeleteRequest)
+func _CategoryService_ReadMany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CategoryServiceReadManyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CategoryServiceServer).Delete(ctx, in)
+		return srv.(CategoryServiceServer).ReadMany(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CategoryService_Delete_FullMethodName,
+		FullMethod: CategoryService_ReadMany_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CategoryServiceServer).Delete(ctx, req.(*CategoryServiceDeleteRequest))
+		return srv.(CategoryServiceServer).ReadMany(ctx, req.(*CategoryServiceReadManyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CategoryService_UpdateOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CategoryServiceUpdateOneRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CategoryServiceServer).UpdateOne(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CategoryService_UpdateOne_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CategoryServiceServer).UpdateOne(ctx, req.(*CategoryServiceUpdateOneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CategoryService_UpdateMany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CategoryServiceUpdateManyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CategoryServiceServer).UpdateMany(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CategoryService_UpdateMany_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CategoryServiceServer).UpdateMany(ctx, req.(*CategoryServiceUpdateManyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CategoryService_DeleteOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CategoryServiceDeleteOneRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CategoryServiceServer).DeleteOne(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CategoryService_DeleteOne_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CategoryServiceServer).DeleteOne(ctx, req.(*CategoryServiceDeleteOneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CategoryService_DeleteMany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CategoryServiceDeleteManyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CategoryServiceServer).DeleteMany(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CategoryService_DeleteMany_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CategoryServiceServer).DeleteMany(ctx, req.(*CategoryServiceDeleteManyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -235,20 +371,36 @@ var CategoryService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*CategoryServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Create",
-			Handler:    _CategoryService_Create_Handler,
+			MethodName: "CreateOne",
+			Handler:    _CategoryService_CreateOne_Handler,
 		},
 		{
-			MethodName: "Read",
-			Handler:    _CategoryService_Read_Handler,
+			MethodName: "CreateMany",
+			Handler:    _CategoryService_CreateMany_Handler,
 		},
 		{
-			MethodName: "Update",
-			Handler:    _CategoryService_Update_Handler,
+			MethodName: "ReadOne",
+			Handler:    _CategoryService_ReadOne_Handler,
 		},
 		{
-			MethodName: "Delete",
-			Handler:    _CategoryService_Delete_Handler,
+			MethodName: "ReadMany",
+			Handler:    _CategoryService_ReadMany_Handler,
+		},
+		{
+			MethodName: "UpdateOne",
+			Handler:    _CategoryService_UpdateOne_Handler,
+		},
+		{
+			MethodName: "UpdateMany",
+			Handler:    _CategoryService_UpdateMany_Handler,
+		},
+		{
+			MethodName: "DeleteOne",
+			Handler:    _CategoryService_DeleteOne_Handler,
+		},
+		{
+			MethodName: "DeleteMany",
+			Handler:    _CategoryService_DeleteMany_Handler,
 		},
 		{
 			MethodName: "ListItems",

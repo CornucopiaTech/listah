@@ -10,29 +10,34 @@ import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
 
-message UserServiceCreateRequest {
+message UserServiceCreateOneRequest {
     string id = 1;
     string first_name = 2 [json_name = "first_name"];
     string middle_names = 3 [json_name = "middle_names"];
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
     string email = 6;
-//    google.protobuf.Timestamp deleted_at = 7;
     string role = 20;
     Audit audit = 50;
+}
+message UserServiceCreateOneResponse {
+    string id = 1;
+    string first_name = 2 [json_name = "first_name"];
+    string middle_names = 3 [json_name = "middle_names"];
+    string last_name = 4 [json_name = "last_name"];
+    string username = 5;
+    string email = 6;
+    string role = 20;
+    Audit audit = 50;
+}
+message UserServiceCreateManyRequest {
+    repeated UserServiceCreateOneRequest user = 1;
+}
+message UserServiceCreateManyResponse {
+    repeated UserServiceCreateOneResponse user = 1;
 }
 
-message UserServiceCreateResponse {
-    string id = 1;
-    string first_name = 2 [json_name = "first_name"];
-    string middle_names = 3 [json_name = "middle_names"];
-    string last_name = 4 [json_name = "last_name"];
-    string username = 5;
-    string email = 6;
-//    google.protobuf.Timestamp deleted_at = 7;
-    string role = 20;
-    Audit audit = 50;
-}
+
 message UserServiceEchoRequest {
     string id = 1;
     string first_name = 2 [json_name = "first_name"];
@@ -40,11 +45,9 @@ message UserServiceEchoRequest {
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
     string email = 6;
-//    google.protobuf.Timestamp deleted_at = 7;
     string role = 20;
     Audit audit = 50;
 }
-
 message UserServiceEchoResponse {
     string id = 1;
     string first_name = 2 [json_name = "first_name"];
@@ -52,92 +55,94 @@ message UserServiceEchoResponse {
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
     string email = 6;
-//    google.protobuf.Timestamp deleted_at = 7;
     string role = 20;
     Audit audit = 50;
 }
 
-message UserServiceReadRequest {
+
+message UserServiceReadOneRequest {
     string id = 1;
 }
-
-message UserServiceReadResponse {
+message UserServiceReadOneResponse {
     string id = 1;
     string first_name = 2 [json_name = "first_name"];
     string middle_names = 3 [json_name = "middle_names"];
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
     string email = 6;
-//    google.protobuf.Timestamp deleted_at = 7;
     string role = 20;
     Audit audit = 50;
 }
+message UserServiceReadManyRequest {
+    repeated UserServiceReadOneRequest user = 1;
+}
+message UserServiceReadManyResponse {
+    repeated UserServiceReadOneResponse user = 1;
+}
 
-message UserServiceUpdateRequest {
+
+message UserServiceUpdateOneRequest {
     string id = 1;
     string first_name = 2 [json_name = "first_name"];
     string middle_names = 3 [json_name = "middle_names"];
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
     string email = 6;
-//    google.protobuf.Timestamp deleted_at = 7;
     string role = 20;
     Audit audit = 50;
 }
-
-message UserServiceUpdateResponse {
+message UserServiceUpdateOneResponse {
     string id = 1;
     string first_name = 2 [json_name = "first_name"];
     string middle_names = 3 [json_name = "middle_names"];
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
     string email = 6;
-//    google.protobuf.Timestamp deleted_at = 7;
     string role = 20;
     Audit audit = 50;
 }
+message UserServiceUpdateManyRequest {
+    repeated UserServiceUpdateOneRequest user = 1;
+}
+message UserServiceUpdateManyResponse {
+    repeated UserServiceUpdateOneResponse user = 1;
+}
 
-message UserServiceDeleteRequest {
+
+message UserServiceDeleteOneRequest {
     string id = 1;
     Audit audit = 50;
 }
-
-message UserServiceDeleteResponse {
+message UserServiceDeleteOneResponse {
     string id = 1;
     string first_name = 2 [json_name = "first_name"];
     string middle_names = 3 [json_name = "middle_names"];
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
     string email = 6;
-//    google.protobuf.Timestamp deleted_at = 7;
     string role = 20;
     Audit audit = 50;
+}
+message UserServiceDeleteManyRequest {
+    repeated UserServiceDeleteOneRequest user = 1;
+}
+message UserServiceDeleteManyResponse {
+    repeated UserServiceDeleteOneResponse user = 1;
 }
 
 
 service UserService {
-    rpc Create (UserServiceCreateRequest) returns (UserServiceCreateResponse) {
-        // option (google.api.http) = {
-        //     post: "/v1/user/create"
-        // };
-    }
+    rpc CreateOne(UserServiceCreateOneRequest) returns (UserServiceCreateOneResponse) {}
+    rpc CreateMany(UserServiceCreateManyRequest) returns (UserServiceCreateManyResponse) {}
 
-    rpc Read (UserServiceReadRequest) returns (UserServiceReadResponse) {
-        // option (google.api.http) = {
-        //     get: "/v1/user/read"
-        // };
-    }
+    rpc ReadOne (UserServiceReadOneRequest) returns (UserServiceReadOneResponse) {}
+    rpc ReadMany (UserServiceReadManyRequest) returns (UserServiceReadManyResponse) {}
 
-    rpc Echo (UserServiceEchoRequest) returns (UserServiceEchoResponse) {
-        // option (google.api.http) = {
-        //     get: "/v1/user/echo"
-        // };
-    }
-    rpc Update(UserServiceUpdateRequest) returns (UserServiceUpdateResponse) {
+    rpc UpdateOne(UserServiceUpdateOneRequest) returns (UserServiceUpdateOneResponse) {}
+    rpc UpdateMany(UserServiceUpdateManyRequest) returns (UserServiceUpdateManyResponse) {}
 
-    }
-    rpc Delete(UserServiceDeleteRequest) returns (UserServiceDeleteResponse) {
+    rpc DeleteOne(UserServiceDeleteOneRequest) returns (UserServiceDeleteOneResponse) {}
+    rpc DeleteMany(UserServiceDeleteManyRequest) returns (UserServiceDeleteManyResponse) {}
 
-    }
-
+    rpc Echo (UserServiceEchoRequest) returns (UserServiceEchoResponse) {}
 }

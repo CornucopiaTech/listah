@@ -10,41 +10,46 @@ datasource db {
 }
 
 model Category {
-  id               String        @id @db.Uuid
-  name             String
-  description      String        @db.Text
-  note             String        @db.Text
-  audit            Json          @db.Json
-  items            Item[]
-  sub_category_ids SubCategory[]
+  id          String  @id @db.Uuid
+  name        String
+  description String  @db.Text
+  note        String  @db.Text
+  audit       Json    @db.Json
+  Store       Store[]
+  Item        Item[]
 
   @@map("categories")
   @@schema("app")
 }
 
-model SubCategory {
-  id           String     @id @db.Uuid
-  name         String
-  description  String     @db.Text
-  note         String     @db.Text
-  audit        Json       @db.Json
-  category_ids Category[]
+model Store {
+  id          String   @id @db.Uuid
+  name        String
+  description String   @db.Text
+  note        String   @db.Text
+  audit       Json     @db.Json
+  category_id String   @db.Uuid
+  category    Category @relation(fields: [category_id], references: [id])
+  Item        Item[]
 
-  @@map("sub_categories")
+  @@map("stores")
   @@schema("app")
 }
 
 model Item {
-  id            String     @id @db.Uuid
+  id            String   @id @db.Uuid
   name          String
   description   String
   quantity      String
   location      String
   note          String
-  categories    Category[]
+  category_id   String   @db.Uuid
+  category      Category @relation(fields: [category_id], references: [id])
+  store_id      String   @db.Uuid
+  store         Store    @relation(fields: [store_id], references: [id])
   active        Boolean
   reactivate_at DateTime
-  audit         Json       @db.Json
+  audit         Json     @db.Json
 
   @@map("items")
   @@schema("app")

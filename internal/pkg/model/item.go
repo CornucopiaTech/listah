@@ -23,7 +23,7 @@ type Item struct {
 	Audit         Audit
 }
 
-func (i *Item) CreateItemModelFromRequest(ctx context.Context, msg *pb.ItemServiceCreateRequest) {
+func (i *Item) CreateItemModelFromRequest(ctx context.Context, msg *pb.ItemServiceCreateOneRequest) {
 	_, span := otel.Tracer("item-model").Start(ctx, "prep create request")
 	defer span.End()
 
@@ -45,7 +45,7 @@ func (i *Item) CreateItemModelFromRequest(ctx context.Context, msg *pb.ItemServi
 	}
 }
 
-func (i *Item) UpdateItemModelFromRequest(ctx context.Context, msg *pb.ItemServiceUpdateRequest, readItem *Item) {
+func (i *Item) UpdateItemModelFromRequest(ctx context.Context, msg *pb.ItemServiceUpdateOneRequest, readItem *Item) {
 	_, span := otel.Tracer("item-model").Start(ctx, "prep update request")
 	defer span.End()
 
@@ -92,7 +92,7 @@ func (i *Item) UpdateItemModelFromRequest(ctx context.Context, msg *pb.ItemServi
 
 }
 
-func (i *Item) DeleteItemModelFromRequest(ctx context.Context, msg *pb.ItemServiceDeleteRequest, readItem *Item) {
+func (i *Item) DeleteItemModelFromRequest(ctx context.Context, msg *pb.ItemServiceDeleteOneRequest, readItem *Item) {
 	_, span := otel.Tracer("item-model").Start(ctx, "prep delete request")
 	defer span.End()
 
@@ -114,10 +114,10 @@ func (i *Item) DeleteItemModelFromRequest(ctx context.Context, msg *pb.ItemServi
 	}
 }
 
-func (i *Item) ItemModelToResponse(ctx context.Context) *pb.ItemServiceCreateResponse {
+func (i *Item) ItemModelToResponse(ctx context.Context) *pb.ItemServiceCreateOneResponse {
 	_, span := otel.Tracer("item-model").Start(ctx, "item model to response")
 	defer span.End()
-	return &pb.ItemServiceCreateResponse{
+	return &pb.ItemServiceCreateOneResponse{
 		Id:           i.Id,
 		Name:         i.Name,
 		Description:  i.Description,

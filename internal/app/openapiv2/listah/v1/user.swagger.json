@@ -80,7 +80,19 @@
       ],
       "default": "AUDIT_UPDATER_ENUM_UNSPECIFIED"
     },
-    "v1UserServiceCreateResponse": {
+    "v1UserServiceCreateManyResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1UserServiceCreateOneResponse"
+          }
+        }
+      }
+    },
+    "v1UserServiceCreateOneRequest": {
       "type": "object",
       "properties": {
         "id": {
@@ -102,15 +114,14 @@
           "type": "string"
         },
         "role": {
-          "type": "string",
-          "title": "google.protobuf.Timestamp deleted_at = 7;"
+          "type": "string"
         },
         "audit": {
           "$ref": "#/definitions/v1Audit"
         }
       }
     },
-    "v1UserServiceDeleteResponse": {
+    "v1UserServiceCreateOneResponse": {
       "type": "object",
       "properties": {
         "id": {
@@ -132,8 +143,59 @@
           "type": "string"
         },
         "role": {
-          "type": "string",
-          "title": "google.protobuf.Timestamp deleted_at = 7;"
+          "type": "string"
+        },
+        "audit": {
+          "$ref": "#/definitions/v1Audit"
+        }
+      }
+    },
+    "v1UserServiceDeleteManyResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1UserServiceDeleteOneResponse"
+          }
+        }
+      }
+    },
+    "v1UserServiceDeleteOneRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "audit": {
+          "$ref": "#/definitions/v1Audit"
+        }
+      }
+    },
+    "v1UserServiceDeleteOneResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "middle_names": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
         },
         "audit": {
           "$ref": "#/definitions/v1Audit"
@@ -162,15 +224,34 @@
           "type": "string"
         },
         "role": {
-          "type": "string",
-          "title": "google.protobuf.Timestamp deleted_at = 7;"
+          "type": "string"
         },
         "audit": {
           "$ref": "#/definitions/v1Audit"
         }
       }
     },
-    "v1UserServiceReadResponse": {
+    "v1UserServiceReadManyResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1UserServiceReadOneResponse"
+          }
+        }
+      }
+    },
+    "v1UserServiceReadOneRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "v1UserServiceReadOneResponse": {
       "type": "object",
       "properties": {
         "id": {
@@ -192,15 +273,26 @@
           "type": "string"
         },
         "role": {
-          "type": "string",
-          "title": "google.protobuf.Timestamp deleted_at = 7;"
+          "type": "string"
         },
         "audit": {
           "$ref": "#/definitions/v1Audit"
         }
       }
     },
-    "v1UserServiceUpdateResponse": {
+    "v1UserServiceUpdateManyResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1UserServiceUpdateOneResponse"
+          }
+        }
+      }
+    },
+    "v1UserServiceUpdateOneRequest": {
       "type": "object",
       "properties": {
         "id": {
@@ -222,8 +314,36 @@
           "type": "string"
         },
         "role": {
-          "type": "string",
-          "title": "google.protobuf.Timestamp deleted_at = 7;"
+          "type": "string"
+        },
+        "audit": {
+          "$ref": "#/definitions/v1Audit"
+        }
+      }
+    },
+    "v1UserServiceUpdateOneResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "middle_names": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
         },
         "audit": {
           "$ref": "#/definitions/v1Audit"

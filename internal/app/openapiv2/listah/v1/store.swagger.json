@@ -1,12 +1,12 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "listah/v1/category.proto",
+    "title": "listah/v1/store.proto",
     "version": "version not set"
   },
   "tags": [
     {
-      "name": "CategoryService"
+      "name": "StoreService"
     }
   ],
   "consumes": [
@@ -80,19 +80,19 @@
       ],
       "default": "AUDIT_UPDATER_ENUM_UNSPECIFIED"
     },
-    "v1CategoryServiceCreateManyResponse": {
+    "v1StoreServiceCreateManyResponse": {
       "type": "object",
       "properties": {
-        "category": {
+        "store": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/v1CategoryServiceCreateOneResponse"
+            "$ref": "#/definitions/v1StoreServiceCreateOneResponse"
           }
         }
       }
     },
-    "v1CategoryServiceCreateOneRequest": {
+    "v1StoreServiceCreateOneRequest": {
       "type": "object",
       "properties": {
         "id": {
@@ -107,47 +107,7 @@
         "note": {
           "type": "string"
         },
-        "audit": {
-          "$ref": "#/definitions/v1Audit"
-        }
-      }
-    },
-    "v1CategoryServiceCreateOneResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "note": {
-          "type": "string"
-        },
-        "audit": {
-          "$ref": "#/definitions/v1Audit"
-        }
-      }
-    },
-    "v1CategoryServiceDeleteManyResponse": {
-      "type": "object",
-      "properties": {
         "category": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1CategoryServiceDeleteOneResponse"
-          }
-        }
-      }
-    },
-    "v1CategoryServiceDeleteOneRequest": {
-      "type": "object",
-      "properties": {
-        "id": {
           "type": "string"
         },
         "audit": {
@@ -155,7 +115,7 @@
         }
       }
     },
-    "v1CategoryServiceDeleteOneResponse": {
+    "v1StoreServiceCreateOneResponse": {
       "type": "object",
       "properties": {
         "id": {
@@ -170,12 +130,38 @@
         "note": {
           "type": "string"
         },
+        "category": {
+          "type": "string"
+        },
         "audit": {
           "$ref": "#/definitions/v1Audit"
         }
       }
     },
-    "v1CategoryServiceListItemsResponse": {
+    "v1StoreServiceDeleteOneResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "audit": {
+          "$ref": "#/definitions/v1Audit"
+        }
+      }
+    },
+    "v1StoreServiceListItemsResponse": {
       "type": "object",
       "properties": {
         "id": {
@@ -202,27 +188,7 @@
         }
       }
     },
-    "v1CategoryServiceReadManyResponse": {
-      "type": "object",
-      "properties": {
-        "category": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1CategoryServiceReadOneResponse"
-          }
-        }
-      }
-    },
-    "v1CategoryServiceReadOneRequest": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        }
-      }
-    },
-    "v1CategoryServiceReadOneResponse": {
+    "v1StoreServiceReadOneResponse": {
       "type": "object",
       "properties": {
         "id": {
@@ -235,6 +201,9 @@
           "type": "string"
         },
         "note": {
+          "type": "string"
+        },
+        "category": {
           "type": "string"
         },
         "audit": {
@@ -242,51 +211,22 @@
         }
       }
     },
-    "v1CategoryServiceUpdateManyResponse": {
+    "v1StoreServiceUpdateOneResponse": {
       "type": "object",
       "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
         "category": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1CategoryServiceUpdateOneResponse"
-          }
-        }
-      }
-    },
-    "v1CategoryServiceUpdateOneRequest": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "note": {
-          "type": "string"
-        },
-        "audit": {
-          "$ref": "#/definitions/v1Audit"
-        }
-      }
-    },
-    "v1CategoryServiceUpdateOneResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "note": {
           "type": "string"
         },
         "audit": {

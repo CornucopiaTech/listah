@@ -1,0 +1,107 @@
+syntax = "proto3";
+package listah.v1;
+
+
+option go_package = "cornucopia/listah/internal/pkg/proto/listah/v1";
+
+
+import "listah/v1/commons.proto";
+import "listah/v1/category.proto";
+import "listah/v1/item.proto";
+import "google/protobuf/timestamp.proto";
+
+
+
+message StoreServiceCreateOneRequest {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string note = 7;
+    string category = 8;
+    Audit audit = 50;
+    }
+message StoreServiceCreateOneResponse {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string note = 7;
+    string category = 8;
+    Audit audit = 50;
+}
+
+
+message StoreServiceCreateManyRequest {
+    repeated StoreServiceCreateOneRequest store = 1;
+}
+message StoreServiceCreateManyResponse {
+    repeated StoreServiceCreateOneResponse store = 1;
+}
+
+
+message StoreServiceUpdateOneRequest {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string note = 7;
+    string category = 8;
+    Audit audit = 50;
+}
+message StoreServiceUpdateOneResponse {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string note = 7;
+    string category = 8;
+    Audit audit = 50;
+}
+
+
+message StoreServiceReadOneRequest {
+    string id = 1;
+}
+message StoreServiceReadOneResponse {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string note = 7;
+    string category = 8;
+    Audit audit = 50;
+}
+
+
+message StoreServiceDeleteOneRequest {
+    string id = 1;
+    Audit audit = 50;
+}
+message StoreServiceDeleteOneResponse {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string note = 7;
+    string category = 8;
+    Audit audit = 50;
+}
+
+
+message StoreServiceListItemsRequest {
+    string id = 1;
+}
+message StoreServiceListItemsResponse {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string note = 7;
+    repeated string items = 20;
+    // repeated ItemServiceReadOneResponse items = 20;
+    Audit audit = 50;
+}
+
+
+service StoreService {
+    rpc Create(StoreServiceCreateOneRequest) returns (StoreServiceCreateOneResponse){}
+    rpc CreateMany(StoreServiceCreateManyRequest) returns (StoreServiceCreateManyResponse){}
+    rpc Read(StoreServiceReadOneRequest) returns (StoreServiceReadOneResponse){}
+    rpc Update(StoreServiceUpdateOneRequest) returns (StoreServiceUpdateOneResponse){}
+    rpc Delete(StoreServiceDeleteOneRequest) returns (StoreServiceDeleteOneResponse){}
+    rpc ListItems(StoreServiceListItemsRequest) returns (StoreServiceListItemsResponse){}
+}

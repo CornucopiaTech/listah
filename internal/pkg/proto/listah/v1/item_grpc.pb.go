@@ -26,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ItemServiceClient interface {
-	Read(ctx context.Context, in *ItemServiceReadRequest, opts ...grpc.CallOption) (*ItemServiceReadResponse, error)
+	Read(ctx context.Context, in *ItemServiceReadOneRequest, opts ...grpc.CallOption) (*ItemServiceReadOneResponse, error)
 }
 
 type itemServiceClient struct {
@@ -37,9 +37,9 @@ func NewItemServiceClient(cc grpc.ClientConnInterface) ItemServiceClient {
 	return &itemServiceClient{cc}
 }
 
-func (c *itemServiceClient) Read(ctx context.Context, in *ItemServiceReadRequest, opts ...grpc.CallOption) (*ItemServiceReadResponse, error) {
+func (c *itemServiceClient) Read(ctx context.Context, in *ItemServiceReadOneRequest, opts ...grpc.CallOption) (*ItemServiceReadOneResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ItemServiceReadResponse)
+	out := new(ItemServiceReadOneResponse)
 	err := c.cc.Invoke(ctx, ItemService_Read_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -51,14 +51,14 @@ func (c *itemServiceClient) Read(ctx context.Context, in *ItemServiceReadRequest
 // All implementations should embed UnimplementedItemServiceServer
 // for forward compatibility
 type ItemServiceServer interface {
-	Read(context.Context, *ItemServiceReadRequest) (*ItemServiceReadResponse, error)
+	Read(context.Context, *ItemServiceReadOneRequest) (*ItemServiceReadOneResponse, error)
 }
 
 // UnimplementedItemServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedItemServiceServer struct {
 }
 
-func (UnimplementedItemServiceServer) Read(context.Context, *ItemServiceReadRequest) (*ItemServiceReadResponse, error) {
+func (UnimplementedItemServiceServer) Read(context.Context, *ItemServiceReadOneRequest) (*ItemServiceReadOneResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Read not implemented")
 }
 
@@ -74,7 +74,7 @@ func RegisterItemServiceServer(s grpc.ServiceRegistrar, srv ItemServiceServer) {
 }
 
 func _ItemService_Read_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ItemServiceReadRequest)
+	in := new(ItemServiceReadOneRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -86,7 +86,7 @@ func _ItemService_Read_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: ItemService_Read_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItemServiceServer).Read(ctx, req.(*ItemServiceReadRequest))
+		return srv.(ItemServiceServer).Read(ctx, req.(*ItemServiceReadOneRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

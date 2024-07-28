@@ -12,7 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemServiceCreateRequest]) (*connect.Response[pb.ItemServiceCreateResponse], error) {
+func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemServiceCreateOneRequest]) (*connect.Response[pb.ItemServiceCreateOneResponse], error) {
 	ctx, span := otel.Tracer("item-service").Start(ctx, "create")
 	defer span.End()
 
@@ -23,12 +23,12 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemService
 	newItemModel.CreateItemModelFromRequest(ctx, req.Msg)
 
 	// Inser item model in repository
-	if err := s.Infra.Repository.Items.InsertOne(ctx, newItemModel); err != nil {
+	if err := s.Infra.Repository.Item.InsertOne(ctx, newItemModel); err != nil {
 		return nil, err
 	}
 
 	// Read created item model from repository
-	readItem, err := s.Infra.Repository.Items.SelectOne(ctx, newItemModel.Id)
+	readItem, err := s.Infra.Repository.Item.SelectOne(ctx, newItemModel.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -40,14 +40,14 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemService
 	return res, nil
 }
 
-func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceReadRequest]) (*connect.Response[pb.ItemServiceReadResponse], error) {
+func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceReadOneRequest]) (*connect.Response[pb.ItemServiceReadOneResponse], error) {
 	ctx, span := otel.Tracer("item-service").Start(ctx, "read")
 	defer span.End()
 
 	s.Infra.Logger.For(ctx).Info("Reading item", zap.String("item", req.Msg.Id))
 
 	// Read item model from repository
-	readItem, err := s.Infra.Repository.Items.SelectOne(ctx, req.Msg.Id)
+	readItem, err := s.Infra.Repository.Item.SelectOne(ctx, req.Msg.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 	genericResItem := readItem.ItemModelToResponse(ctx)
 
 	// Marshal copy from generic item response to read item response
-	resItem := new(pb.ItemServiceReadResponse)
+	resItem := new(pb.ItemServiceReadOneResponse)
 	utils.MarshalCopyProto(genericResItem, resItem)
 
 	res := connect.NewResponse(resItem)
@@ -64,14 +64,14 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 	return res, nil
 }
 
-func (s *Server) Update(ctx context.Context, req *connect.Request[pb.ItemServiceUpdateRequest]) (*connect.Response[pb.ItemServiceUpdateResponse], error) {
+func (s *Server) Update(ctx context.Context, req *connect.Request[pb.ItemServiceUpdateOneRequest]) (*connect.Response[pb.ItemServiceUpdateOneResponse], error) {
 	ctx, span := otel.Tracer("item-service").Start(ctx, "update")
 	defer span.End()
 
 	s.Infra.Logger.For(ctx).Info("Updating item", zap.String("item", req.Msg.Id))
 
 	// Read initial item model from repository
-	readItem, err := s.Infra.Repository.Items.SelectOne(ctx, req.Msg.Id)
+	readItem, err := s.Infra.Repository.Item.SelectOne(ctx, req.Msg.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -81,12 +81,12 @@ func (s *Server) Update(ctx context.Context, req *connect.Request[pb.ItemService
 	updateItemModel.UpdateItemModelFromRequest(ctx, req.Msg, readItem)
 
 	// Update Item model in repository
-	if err := s.Infra.Repository.Items.UpdateOne(ctx, updateItemModel); err != nil {
+	if err := s.Infra.Repository.Item.UpdateOne(ctx, updateItemModel); err != nil {
 		return nil, err
 	}
 
 	// Read item model from repository after update
-	readItem, err = s.Infra.Repository.Items.SelectOne(ctx, req.Msg.Id)
+	readItem, err = s.Infra.Repository.Item.SelectOne(ctx, req.Msg.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +95,7 @@ func (s *Server) Update(ctx context.Context, req *connect.Request[pb.ItemService
 	genericResItem := readItem.ItemModelToResponse(ctx)
 
 	// Marshal copy from generic (item create response) to update response proto message
-	resItem := new(pb.ItemServiceUpdateResponse)
+	resItem := new(pb.ItemServiceUpdateOneResponse)
 
 	utils.MarshalCopyProto(genericResItem, resItem)
 
@@ -103,14 +103,14 @@ func (s *Server) Update(ctx context.Context, req *connect.Request[pb.ItemService
 	return res, nil
 }
 
-func (s *Server) Delete(ctx context.Context, req *connect.Request[pb.ItemServiceDeleteRequest]) (*connect.Response[pb.ItemServiceDeleteResponse], error) {
+func (s *Server) Delete(ctx context.Context, req *connect.Request[pb.ItemServiceDeleteOneRequest]) (*connect.Response[pb.ItemServiceDeleteOneResponse], error) {
 	ctx, span := otel.Tracer("item-service").Start(ctx, "delete")
 	defer span.End()
 
 	s.Infra.Logger.For(ctx).Info("Deleting item", zap.String("item", req.Msg.Id))
 
 	// Read initial item model from repository
-	readItem, err := s.Infra.Repository.Items.SelectOne(ctx, req.Msg.Id)
+	readItem, err := s.Infra.Repository.Item.SelectOne(ctx, req.Msg.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -120,12 +120,12 @@ func (s *Server) Delete(ctx context.Context, req *connect.Request[pb.ItemService
 	updateItemModel.DeleteItemModelFromRequest(ctx, req.Msg, readItem)
 
 	// Update Item model in repository
-	if err := s.Infra.Repository.Items.SoftDeleteOne(ctx, updateItemModel); err != nil {
+	if err := s.Infra.Repository.Item.SoftDeleteOne(ctx, updateItemModel); err != nil {
 		return nil, err
 	}
 
 	// Read item model from repository after soft-delete
-	readItem, err = s.Infra.Repository.Items.SelectOne(ctx, req.Msg.Id)
+	readItem, err = s.Infra.Repository.Item.SelectOne(ctx, req.Msg.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +134,7 @@ func (s *Server) Delete(ctx context.Context, req *connect.Request[pb.ItemService
 	genericResItem := readItem.ItemModelToResponse(ctx)
 
 	// Marshal copy from generic (item create response) to update response proto message
-	resItem := new(pb.ItemServiceDeleteResponse)
+	resItem := new(pb.ItemServiceDeleteOneResponse)
 
 	utils.MarshalCopyProto(genericResItem, resItem)
 
@@ -142,11 +142,11 @@ func (s *Server) Delete(ctx context.Context, req *connect.Request[pb.ItemService
 	return res, nil
 }
 
-func (s *Server) Echo(ctx context.Context, req *connect.Request[pb.ItemServiceCreateRequest]) (*connect.Response[pb.ItemServiceCreateRequest], error) {
+func (s *Server) Echo(ctx context.Context, req *connect.Request[pb.ItemServiceCreateOneRequest]) (*connect.Response[pb.ItemServiceCreateOneRequest], error) {
 	// connect.Request and connect.Response give you direct access to headers and
 	// trailers. No context-based nonsense!
 	log.Println(req.Header().Get("Some-Header"))
-	res := connect.NewResponse(&pb.ItemServiceCreateRequest{})
+	res := connect.NewResponse(&pb.ItemServiceCreateOneRequest{})
 	res.Header().Set("Some-Other-Header", "hello!")
 	return res, nil
 }
