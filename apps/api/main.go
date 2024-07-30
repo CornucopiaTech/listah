@@ -34,4 +34,5 @@ func main() {
 		log.Fatal(err)
 		grpclog.Fatal(err)
 	}
+	defer os.Exit(0)
 }

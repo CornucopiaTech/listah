@@ -17,42 +17,24 @@ message StoreServiceCreateOneRequest {
     string name = 2;
     string description = 3;
     string note = 7;
-    string category = 8;
+    string category_id = 8;
+    string category_name = 9;
     Audit audit = 50;
-    }
+}
 message StoreServiceCreateOneResponse {
     string id = 1;
     string name = 2;
     string description = 3;
     string note = 7;
-    string category = 8;
+    string category_id = 8;
+    string category_name = 9;
     Audit audit = 50;
 }
-
-
 message StoreServiceCreateManyRequest {
     repeated StoreServiceCreateOneRequest store = 1;
 }
 message StoreServiceCreateManyResponse {
     repeated StoreServiceCreateOneResponse store = 1;
-}
-
-
-message StoreServiceUpdateOneRequest {
-    string id = 1;
-    string name = 2;
-    string description = 3;
-    string note = 7;
-    string category = 8;
-    Audit audit = 50;
-}
-message StoreServiceUpdateOneResponse {
-    string id = 1;
-    string name = 2;
-    string description = 3;
-    string note = 7;
-    string category = 8;
-    Audit audit = 50;
 }
 
 
@@ -64,8 +46,41 @@ message StoreServiceReadOneResponse {
     string name = 2;
     string description = 3;
     string note = 7;
-    string category = 8;
+    string category_id = 8;
+    string category_name = 9;
     Audit audit = 50;
+}
+message StoreServiceReadManyRequest {
+    repeated StoreServiceReadOneRequest store = 1;
+}
+message StoreServiceReadManyResponse {
+    repeated StoreServiceReadOneResponse store = 1;
+}
+
+
+message StoreServiceUpdateOneRequest {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string note = 7;
+    string category_id = 8;
+    string category_name = 9;
+    Audit audit = 50;
+}
+message StoreServiceUpdateOneResponse {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string note = 7;
+    string category_id = 8;
+    string category_name = 9;
+    Audit audit = 50;
+}
+message StoreServiceUpdateManyRequest {
+    repeated StoreServiceUpdateOneRequest store = 1;
+}
+message StoreServiceUpdateManyResponse {
+    repeated StoreServiceUpdateOneResponse store = 1;
 }
 
 
@@ -81,27 +96,45 @@ message StoreServiceDeleteOneResponse {
     string category = 8;
     Audit audit = 50;
 }
+message StoreServiceDeleteManyRequest {
+    repeated StoreServiceDeleteOneRequest store = 1;
+}
+message StoreServiceDeleteManyResponse {
+    repeated StoreServiceDeleteOneResponse store = 1;
+}
 
 
 message StoreServiceListItemsRequest {
     string id = 1;
 }
 message StoreServiceListItemsResponse {
-    string id = 1;
-    string name = 2;
-    string description = 3;
-    string note = 7;
+    // string id = 1;
+    // string name = 2;
+    // string description = 3;
+    // string note = 7;
     repeated string items = 20;
     // repeated ItemServiceReadOneResponse items = 20;
-    Audit audit = 50;
+    // Audit audit = 50;
+    // string id = 1;
+    // string name = 2;
+    // string description = 3;
+    // string note = 7;
+    // string category = 8;
+    //     string category_id = 8;
+    string category_name = 9;
+    // Audit audit = 50;
 }
 
 
+
 service StoreService {
-    rpc Create(StoreServiceCreateOneRequest) returns (StoreServiceCreateOneResponse){}
+    rpc CreateOne(StoreServiceCreateOneRequest) returns (StoreServiceCreateOneResponse){}
     rpc CreateMany(StoreServiceCreateManyRequest) returns (StoreServiceCreateManyResponse){}
-    rpc Read(StoreServiceReadOneRequest) returns (StoreServiceReadOneResponse){}
-    rpc Update(StoreServiceUpdateOneRequest) returns (StoreServiceUpdateOneResponse){}
-    rpc Delete(StoreServiceDeleteOneRequest) returns (StoreServiceDeleteOneResponse){}
+    rpc ReadOne(StoreServiceReadOneRequest) returns (StoreServiceReadOneResponse){}
+    rpc ReadMany(StoreServiceReadManyRequest) returns (StoreServiceReadManyResponse){}
+    rpc UpdateOne(StoreServiceUpdateOneRequest) returns (StoreServiceUpdateOneResponse){}
+    rpc UpdateMany(StoreServiceUpdateManyRequest) returns (StoreServiceUpdateManyResponse){}
+    rpc DeleteOne(StoreServiceDeleteOneRequest) returns (StoreServiceDeleteOneResponse){}
+    rpc DeleteMany(StoreServiceDeleteManyRequest) returns (StoreServiceDeleteManyResponse){}
     rpc ListItems(StoreServiceListItemsRequest) returns (StoreServiceListItemsResponse){}
 }

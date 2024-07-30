@@ -32,6 +32,24 @@ message CategoryServiceCreateManyResponse {
 }
 
 
+message CategoryServiceReadOneRequest {
+    string id = 1;
+}
+message CategoryServiceReadOneResponse {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string note = 7;
+    Audit audit = 50;
+}
+message CategoryServiceReadManyRequest {
+    repeated CategoryServiceReadOneRequest category = 1;
+}
+message CategoryServiceReadManyResponse {
+    repeated CategoryServiceReadOneResponse category = 1;
+}
+
+
 message CategoryServiceUpdateOneRequest {
     string id = 1;
     string name = 2;
@@ -51,24 +69,6 @@ message CategoryServiceUpdateManyRequest {
 }
 message CategoryServiceUpdateManyResponse {
     repeated CategoryServiceUpdateOneResponse category = 1;
-}
-
-
-message CategoryServiceReadOneRequest {
-    string id = 1;
-}
-message CategoryServiceReadOneResponse {
-    string id = 1;
-    string name = 2;
-    string description = 3;
-    string note = 7;
-    Audit audit = 50;
-}
-message CategoryServiceReadManyRequest {
-    repeated CategoryServiceReadOneRequest category = 1;
-}
-message CategoryServiceReadManyResponse {
-    repeated CategoryServiceReadOneResponse category = 1;
 }
 
 

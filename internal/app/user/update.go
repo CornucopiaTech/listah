@@ -23,7 +23,7 @@ func (s *Server) UpdateOne(ctx context.Context, req *connect.Request[v1.UserServ
 
 	// Create model for update from request
 	updateModel := new(model.User)
-	updateModel.UpdateUserModelFromRequest(ctx, req.Msg, &readModel)
+	updateModel.UpdateOneUserModelFromRequest(req.Msg, &readModel)
 
 	// Update model in repository
 	if err := s.Infra.Repository.User.UpdateOne(ctx, updateModel); err != nil {
@@ -37,7 +37,7 @@ func (s *Server) UpdateOne(ctx context.Context, req *connect.Request[v1.UserServ
 	}
 
 	// Convert model to generic (create response) proto message
-	genericResponse := afterUpdateRead.UserModelToResponse(ctx)
+	genericResponse := afterUpdateRead.UserModelToResponse()
 
 	// Marshal copy from generic (create response) to update response proto message
 	responseModel := new(v1.UserServiceUpdateOneResponse)
@@ -45,6 +45,7 @@ func (s *Server) UpdateOne(ctx context.Context, req *connect.Request[v1.UserServ
 
 	return connect.NewResponse(responseModel), nil
 }
+
 func (s *Server) UpdateMany(ctx context.Context, req *connect.Request[v1.UserServiceUpdateManyRequest]) (*connect.Response[v1.UserServiceUpdateManyResponse], error) {
 	ctx, span := otel.Tracer("user-service").Start(ctx, "update-many")
 	defer span.End()
@@ -53,14 +54,14 @@ func (s *Server) UpdateMany(ctx context.Context, req *connect.Request[v1.UserSer
 	// Read initial model from repository
 	readModels := model.Users{}
 	for _, val := range req.Msg.User {
-		readModels = append(readModels, model.User{Id: val.Id})
+		readModels = append(readModels, &model.User{Id: val.Id})
 	}
 	if err := s.Infra.Repository.User.SelectMany(ctx, &readModels, "id"); err != nil {
 		return nil, err
 	}
 
 	// Create model for update from request
-	updateModels := model.UpdateManyUserModelFromRequest(ctx, req.Msg, &readModels)
+	updateModels := model.UpdateManyUserModelFromRequest(req.Msg, &readModels)
 
 	// Update model in repository
 	if err := s.Infra.Repository.User.UpdateMany(ctx, updateModels); err != nil {
@@ -70,14 +71,14 @@ func (s *Server) UpdateMany(ctx context.Context, req *connect.Request[v1.UserSer
 	// Read model from repository after update
 	afterUpdateRead := model.Users{}
 	for _, val := range req.Msg.User {
-		afterUpdateRead = append(afterUpdateRead, model.User{Id: val.Id})
+		afterUpdateRead = append(afterUpdateRead, &model.User{Id: val.Id})
 	}
 	if err := s.Infra.Repository.User.SelectMany(ctx, &afterUpdateRead, "id"); err != nil {
 		return nil, err
 	}
 
 	// Convert model to generic (create response) proto message
-	genericResponse := afterUpdateRead.ManyUserModelToResponse(ctx)
+	genericResponse := afterUpdateRead.ManyUserModelToResponse()
 
 	// Marshal copy from generic (create response) to update response proto message
 	responseModel := new(v1.UserServiceUpdateManyResponse)

@@ -6,31 +6,40 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/uptrace/bun"
-	"go.opentelemetry.io/otel"
-	"golang.org/x/net/context"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-type Store struct {
-	bun.BaseModel `bun:"table:app.categories,alias:u"`
+type StoreWrite struct {
+	bun.BaseModel `bun:"table:app.stores,alias:s"`
 	Id            string `bun:",pk"`
 	Name          string
 	Description   string
 	Note          string
+	CategoryId    string
 	Audit         Audit
 }
 
-type Stores []*Store
+type StoreRead struct {
+	bun.BaseModel `bun:"table:app.stores,alias:s"`
+	Id            string `bun:",pk"`
+	Name          string
+	Description   string
+	Note          string
+	CategoryId    string
+	CategoryName  string
+	Audit         Audit
+}
 
-func (c *Store) CreateStoreModelFromRequest(ctx context.Context, msg *v1.StoreServiceCreateOneRequest) {
-	_, span := otel.Tracer("category-model").Start(ctx, "prep create request")
-	defer span.End()
+type StoresRead []*StoreRead
+type StoresWrite []*StoreWrite
 
+func (c *StoreWrite) CreateOneStoreModelFromRequest(msg *v1.StoreServiceCreateOneRequest) {
 	// Update category model
 	c.Id = uuid.Must(uuid.NewV7()).String()
 	c.Name = msg.GetName()
 	c.Description = msg.GetDescription()
 	c.Note = msg.GetNote()
+	c.CategoryId = msg.CategoryId
 	c.Audit = Audit{
 		CreatedBy: msg.Audit.GetCreatedBy(),
 		UpdatedBy: msg.Audit.GetUpdatedBy(),
@@ -41,77 +50,164 @@ func (c *Store) CreateStoreModelFromRequest(ctx context.Context, msg *v1.StoreSe
 	}
 }
 
-func CreateManyStoreModelFromRequest(ctx context.Context, msg *v1.StoreServiceCreateManyRequest) *Stores {
-	_, span := otel.Tracer("category-model").Start(ctx, "prep create many request")
-	defer span.End()
-
-	c := Stores{}
-	for _, value := range msg.Store {
-		aCat := new(Store)
-		aCat.CreateStoreModelFromRequest(ctx, value)
+func CreateManyStoreModelFromRequest(msg *v1.StoreServiceCreateManyRequest) *StoresWrite {
+	c := StoresWrite{}
+	for _, reqValue := range msg.Store {
+		aCat := new(StoreWrite)
+		aCat.CreateOneStoreModelFromRequest(reqValue)
 		c = append(c, aCat)
 	}
 	return &c
 }
 
-func (c *Store) UpdateStoreModelFromRequest(ctx context.Context, msg *v1.StoreServiceUpdateOneRequest, readStore *Store) {
-	_, span := otel.Tracer("category-model").Start(ctx, "prep update request")
-	defer span.End()
+// func (c *StoreRead) ReadOneStoreModelFromRequest(msg *v1.StoreServiceCreateOneRequest, repoModel *Category) {
+// 	// Update category model
+// 	c.Id = uuid.Must(uuid.NewV7()).String()
+// 	c.Name = msg.GetName()
+// 	c.Description = msg.GetDescription()
+// 	c.Note = msg.GetNote()
+// 	c.CategoryId = repoModel.Id
+// 	c.Audit = Audit{
+// 		CreatedBy: msg.Audit.GetCreatedBy(),
+// 		UpdatedBy: msg.Audit.GetUpdatedBy(),
+// 		DeletedBy: msg.Audit.GetDeletedBy(),
+// 		CreatedAt: time.Now().UTC(),
+// 		UpdatedAt: msg.Audit.GetUpdatedAt().AsTime(),
+// 		DeletedAt: msg.Audit.GetDeletedAt().AsTime(),
+// 	}
+// }
 
+func (c *StoreWrite) UpdateOneStoreModelFromRequest(msg *v1.StoreServiceUpdateOneRequest, readModel *StoreRead) {
 	c.Id = msg.GetId()
 	c.Name = msg.GetName()
 	c.Description = msg.GetDescription()
 	c.Note = msg.GetNote()
+	c.CategoryId = msg.GetCategoryId()
 	c.Audit = Audit{
-		// CreatedBy: msg.Audit.GetCreatedBy(),
-		CreatedBy: readStore.Audit.CreatedBy,
+		CreatedBy: readModel.Audit.CreatedBy,
 		UpdatedBy: msg.Audit.GetUpdatedBy(),
-		DeletedBy: readStore.Audit.DeletedBy,
-		CreatedAt: readStore.Audit.CreatedAt,
+		DeletedBy: readModel.Audit.DeletedBy,
+		CreatedAt: readModel.Audit.CreatedAt,
 		UpdatedAt: time.Now().UTC(),
-		DeletedAt: readStore.Audit.DeletedAt,
+		DeletedAt: readModel.Audit.DeletedAt,
 	}
 
 	// Set fields that were not included in the update request.
 	if c.Name == "" {
-		c.Name = readStore.Name
+		c.Name = readModel.Name
 	}
 
 	if c.Description == "" {
-		c.Description = readStore.Description
+		c.Description = readModel.Description
 	}
 
 	if c.Note == "" {
-		c.Note = readStore.Note
+		c.Note = readModel.Note
+	}
+
+	if c.CategoryId == "" {
+		c.CategoryId = readModel.CategoryId
 	}
 }
 
-func (c *Store) DeleteStoreModelFromRequest(ctx context.Context, msg *v1.StoreServiceDeleteOneRequest, readStore *Store) {
-	_, span := otel.Tracer("category-model").Start(ctx, "prep delete request")
-	defer span.End()
+func UpdateManyStoreModelFromRequest(msgs *v1.StoreServiceUpdateManyRequest, readModel *StoresRead) *StoresWrite {
+	stores := StoresWrite{}
 
-	c.Id = readStore.Id
-	c.Name = readStore.Name
-	c.Description = readStore.Description
-	c.Note = readStore.Note
+	for _, valReq := range msgs.Store {
+		for _, valRepo := range *readModel {
+			if valRepo.Id == valReq.Id {
+				c := StoreWrite{
+					Id:          valReq.GetId(),
+					Name:        valReq.GetName(),
+					Description: valReq.GetDescription(),
+					Note:        valReq.GetNote(),
+					CategoryId:  valReq.GetCategoryId(),
+					Audit: Audit{
+						CreatedBy: valRepo.Audit.CreatedBy,
+						UpdatedBy: valReq.Audit.GetUpdatedBy(),
+						DeletedBy: valRepo.Audit.DeletedBy,
+						CreatedAt: valRepo.Audit.CreatedAt,
+						UpdatedAt: time.Now().UTC(),
+						DeletedAt: valRepo.Audit.DeletedAt,
+					},
+				}
+
+				// Set fields that were not included in the update request.
+				if c.Name == "" {
+					c.Name = valRepo.Name
+				}
+
+				if c.Description == "" {
+					c.Description = valRepo.Description
+				}
+
+				if c.Note == "" {
+					c.Note = valRepo.Note
+				}
+
+				if c.CategoryId == "" {
+					c.CategoryId = valRepo.CategoryId
+				}
+
+				stores = append(stores, &c)
+			}
+		}
+	}
+	return &stores
+}
+
+func (c *StoreWrite) DeleteOneStoreModelFromRequest(msg *v1.StoreServiceDeleteOneRequest, readModel *StoreRead) {
+	c.Id = readModel.Id
+	c.Name = readModel.Name
+	c.Description = readModel.Description
+	c.Note = readModel.Note
+	c.CategoryId = readModel.CategoryId
 	c.Audit = Audit{
-		CreatedBy: readStore.Audit.CreatedBy,
+		CreatedBy: readModel.Audit.CreatedBy,
 		UpdatedBy: msg.Audit.DeletedBy, //Set the updater to who deleted the reocord
 		DeletedBy: msg.Audit.DeletedBy,
-		CreatedAt: readStore.Audit.CreatedAt,
+		CreatedAt: readModel.Audit.CreatedAt,
 		UpdatedAt: time.Now().UTC(), //Set the record to recently updated
 		DeletedAt: time.Now().UTC(),
 	}
 }
 
-func (c *Store) StoreModelToResponse(ctx context.Context) *v1.StoreServiceCreateOneResponse {
-	_, span := otel.Tracer("category-model").Start(ctx, "category model to response")
-	defer span.End()
+func DeleteManyStoreModelFromRequest(msgs *v1.StoreServiceDeleteManyRequest, readModel *StoresRead) *StoresWrite {
+	stores := StoresWrite{}
+
+	for _, valReq := range msgs.Store {
+		for _, valRepo := range *readModel {
+			if valRepo.Id == valReq.Id {
+				c := StoreWrite{
+					Id:          valReq.GetId(),
+					Name:        valRepo.Name,
+					Description: valRepo.Description,
+					Note:        valRepo.Note,
+					CategoryId:  valRepo.CategoryId,
+					Audit: Audit{
+						CreatedBy: valRepo.Audit.CreatedBy,
+						UpdatedBy: valReq.Audit.GetDeletedBy(),
+						DeletedBy: valReq.Audit.GetDeletedBy(),
+						CreatedAt: valRepo.Audit.CreatedAt,
+						UpdatedAt: time.Now().UTC(),
+						DeletedAt: time.Now().UTC(),
+					},
+				}
+				stores = append(stores, &c)
+			}
+		}
+	}
+	return &stores
+}
+
+func (c *StoreRead) StoreModelToResponse() *v1.StoreServiceCreateOneResponse {
 	return &v1.StoreServiceCreateOneResponse{
-		Id:          c.Id,
-		Name:        c.Name,
-		Description: c.Description,
-		Note:        c.Note,
+		Id:           c.Id,
+		Name:         c.Name,
+		Description:  c.Description,
+		Note:         c.Note,
+		CategoryId:   c.CategoryId,
+		CategoryName: c.CategoryName,
 		Audit: &v1.Audit{
 			CreatedBy: c.Audit.CreatedBy,
 			UpdatedBy: c.Audit.UpdatedBy,
@@ -123,17 +219,16 @@ func (c *Store) StoreModelToResponse(ctx context.Context) *v1.StoreServiceCreate
 	}
 }
 
-func (cs *Stores) ManyStoreModelToResponse(ctx context.Context) *v1.StoreServiceCreateManyResponse {
-	_, span := otel.Tracer("category-model").Start(ctx, "category model to response")
-	defer span.End()
-
+func (cs *StoresRead) ManyStoreModelToResponse() *v1.StoreServiceCreateManyResponse {
 	resValue := &v1.StoreServiceCreateManyResponse{}
 	for _, c := range *cs {
 		a := &v1.StoreServiceCreateOneResponse{
-			Id:          c.Id,
-			Name:        c.Name,
-			Description: c.Description,
-			Note:        c.Note,
+			Id:           c.Id,
+			Name:         c.Name,
+			Description:  c.Description,
+			Note:         c.Note,
+			CategoryId:   c.CategoryId,
+			CategoryName: c.CategoryName,
 			Audit: &v1.Audit{
 				CreatedBy: c.Audit.CreatedBy,
 				UpdatedBy: c.Audit.UpdatedBy,

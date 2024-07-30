@@ -107,7 +107,10 @@
         "note": {
           "type": "string"
         },
-        "category": {
+        "categoryId": {
+          "type": "string"
+        },
+        "categoryName": {
           "type": "string"
         },
         "audit": {
@@ -130,7 +133,33 @@
         "note": {
           "type": "string"
         },
-        "category": {
+        "categoryId": {
+          "type": "string"
+        },
+        "categoryName": {
+          "type": "string"
+        },
+        "audit": {
+          "$ref": "#/definitions/v1Audit"
+        }
+      }
+    },
+    "v1StoreServiceDeleteManyResponse": {
+      "type": "object",
+      "properties": {
+        "store": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1StoreServiceDeleteOneResponse"
+          }
+        }
+      }
+    },
+    "v1StoreServiceDeleteOneRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
           "type": "string"
         },
         "audit": {
@@ -164,27 +193,37 @@
     "v1StoreServiceListItemsResponse": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "note": {
-          "type": "string"
-        },
         "items": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "string id = 1;\nstring name = 2;\nstring description = 3;\nstring note = 7;"
         },
-        "audit": {
-          "$ref": "#/definitions/v1Audit",
-          "title": "repeated ItemServiceReadOneResponse items = 20;"
+        "categoryName": {
+          "type": "string",
+          "description": "Audit audit = 50;",
+          "title": "repeated ItemServiceReadOneResponse items = 20;\nAudit audit = 50;\nstring id = 1;\nstring name = 2;\nstring description = 3;\nstring note = 7;\nstring category = 8;\n    string category_id = 8;"
+        }
+      }
+    },
+    "v1StoreServiceReadManyResponse": {
+      "type": "object",
+      "properties": {
+        "store": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1StoreServiceReadOneResponse"
+          }
+        }
+      }
+    },
+    "v1StoreServiceReadOneRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
         }
       }
     },
@@ -203,7 +242,48 @@
         "note": {
           "type": "string"
         },
-        "category": {
+        "categoryId": {
+          "type": "string"
+        },
+        "categoryName": {
+          "type": "string"
+        },
+        "audit": {
+          "$ref": "#/definitions/v1Audit"
+        }
+      }
+    },
+    "v1StoreServiceUpdateManyResponse": {
+      "type": "object",
+      "properties": {
+        "store": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1StoreServiceUpdateOneResponse"
+          }
+        }
+      }
+    },
+    "v1StoreServiceUpdateOneRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "categoryId": {
+          "type": "string"
+        },
+        "categoryName": {
           "type": "string"
         },
         "audit": {
@@ -226,7 +306,10 @@
         "note": {
           "type": "string"
         },
-        "category": {
+        "categoryId": {
+          "type": "string"
+        },
+        "categoryName": {
           "type": "string"
         },
         "audit": {

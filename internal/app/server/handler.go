@@ -7,6 +7,7 @@ import (
 	"cornucopia/listah/internal/app/bootstrap"
 	"cornucopia/listah/internal/app/category"
 	"cornucopia/listah/internal/app/item"
+	"cornucopia/listah/internal/app/store"
 	"cornucopia/listah/internal/app/user"
 	v1connect "cornucopia/listah/internal/pkg/proto/listah/v1/v1connect"
 
@@ -52,6 +53,13 @@ func handle(infra *bootstrap.Infra) http.Handler {
 	// Handle Category Connect-go generated paths
 	path, handler = v1connect.NewCategoryServiceHandler(
 		category.NewServer(infra),
+		connect.WithInterceptors(intcpt))
+	mux.Handle(path, handler)
+
+	//
+	// Handle Store Connect-go generated paths
+	path, handler = v1connect.NewStoreServiceHandler(
+		store.NewServer(infra),
 		connect.WithInterceptors(intcpt))
 	mux.Handle(path, handler)
 

@@ -19,11 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	StoreService_Create_FullMethodName     = "/listah.v1.StoreService/Create"
+	StoreService_CreateOne_FullMethodName  = "/listah.v1.StoreService/CreateOne"
 	StoreService_CreateMany_FullMethodName = "/listah.v1.StoreService/CreateMany"
-	StoreService_Read_FullMethodName       = "/listah.v1.StoreService/Read"
-	StoreService_Update_FullMethodName     = "/listah.v1.StoreService/Update"
-	StoreService_Delete_FullMethodName     = "/listah.v1.StoreService/Delete"
+	StoreService_ReadOne_FullMethodName    = "/listah.v1.StoreService/ReadOne"
+	StoreService_ReadMany_FullMethodName   = "/listah.v1.StoreService/ReadMany"
+	StoreService_UpdateOne_FullMethodName  = "/listah.v1.StoreService/UpdateOne"
+	StoreService_UpdateMany_FullMethodName = "/listah.v1.StoreService/UpdateMany"
+	StoreService_DeleteOne_FullMethodName  = "/listah.v1.StoreService/DeleteOne"
+	StoreService_DeleteMany_FullMethodName = "/listah.v1.StoreService/DeleteMany"
 	StoreService_ListItems_FullMethodName  = "/listah.v1.StoreService/ListItems"
 )
 
@@ -31,11 +34,14 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StoreServiceClient interface {
-	Create(ctx context.Context, in *StoreServiceCreateOneRequest, opts ...grpc.CallOption) (*StoreServiceCreateOneResponse, error)
+	CreateOne(ctx context.Context, in *StoreServiceCreateOneRequest, opts ...grpc.CallOption) (*StoreServiceCreateOneResponse, error)
 	CreateMany(ctx context.Context, in *StoreServiceCreateManyRequest, opts ...grpc.CallOption) (*StoreServiceCreateManyResponse, error)
-	Read(ctx context.Context, in *StoreServiceReadOneRequest, opts ...grpc.CallOption) (*StoreServiceReadOneResponse, error)
-	Update(ctx context.Context, in *StoreServiceUpdateOneRequest, opts ...grpc.CallOption) (*StoreServiceUpdateOneResponse, error)
-	Delete(ctx context.Context, in *StoreServiceDeleteOneRequest, opts ...grpc.CallOption) (*StoreServiceDeleteOneResponse, error)
+	ReadOne(ctx context.Context, in *StoreServiceReadOneRequest, opts ...grpc.CallOption) (*StoreServiceReadOneResponse, error)
+	ReadMany(ctx context.Context, in *StoreServiceReadManyRequest, opts ...grpc.CallOption) (*StoreServiceReadManyResponse, error)
+	UpdateOne(ctx context.Context, in *StoreServiceUpdateOneRequest, opts ...grpc.CallOption) (*StoreServiceUpdateOneResponse, error)
+	UpdateMany(ctx context.Context, in *StoreServiceUpdateManyRequest, opts ...grpc.CallOption) (*StoreServiceUpdateManyResponse, error)
+	DeleteOne(ctx context.Context, in *StoreServiceDeleteOneRequest, opts ...grpc.CallOption) (*StoreServiceDeleteOneResponse, error)
+	DeleteMany(ctx context.Context, in *StoreServiceDeleteManyRequest, opts ...grpc.CallOption) (*StoreServiceDeleteManyResponse, error)
 	ListItems(ctx context.Context, in *StoreServiceListItemsRequest, opts ...grpc.CallOption) (*StoreServiceListItemsResponse, error)
 }
 
@@ -47,10 +53,10 @@ func NewStoreServiceClient(cc grpc.ClientConnInterface) StoreServiceClient {
 	return &storeServiceClient{cc}
 }
 
-func (c *storeServiceClient) Create(ctx context.Context, in *StoreServiceCreateOneRequest, opts ...grpc.CallOption) (*StoreServiceCreateOneResponse, error) {
+func (c *storeServiceClient) CreateOne(ctx context.Context, in *StoreServiceCreateOneRequest, opts ...grpc.CallOption) (*StoreServiceCreateOneResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(StoreServiceCreateOneResponse)
-	err := c.cc.Invoke(ctx, StoreService_Create_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, StoreService_CreateOne_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -67,30 +73,60 @@ func (c *storeServiceClient) CreateMany(ctx context.Context, in *StoreServiceCre
 	return out, nil
 }
 
-func (c *storeServiceClient) Read(ctx context.Context, in *StoreServiceReadOneRequest, opts ...grpc.CallOption) (*StoreServiceReadOneResponse, error) {
+func (c *storeServiceClient) ReadOne(ctx context.Context, in *StoreServiceReadOneRequest, opts ...grpc.CallOption) (*StoreServiceReadOneResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(StoreServiceReadOneResponse)
-	err := c.cc.Invoke(ctx, StoreService_Read_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, StoreService_ReadOne_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *storeServiceClient) Update(ctx context.Context, in *StoreServiceUpdateOneRequest, opts ...grpc.CallOption) (*StoreServiceUpdateOneResponse, error) {
+func (c *storeServiceClient) ReadMany(ctx context.Context, in *StoreServiceReadManyRequest, opts ...grpc.CallOption) (*StoreServiceReadManyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StoreServiceReadManyResponse)
+	err := c.cc.Invoke(ctx, StoreService_ReadMany_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *storeServiceClient) UpdateOne(ctx context.Context, in *StoreServiceUpdateOneRequest, opts ...grpc.CallOption) (*StoreServiceUpdateOneResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(StoreServiceUpdateOneResponse)
-	err := c.cc.Invoke(ctx, StoreService_Update_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, StoreService_UpdateOne_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *storeServiceClient) Delete(ctx context.Context, in *StoreServiceDeleteOneRequest, opts ...grpc.CallOption) (*StoreServiceDeleteOneResponse, error) {
+func (c *storeServiceClient) UpdateMany(ctx context.Context, in *StoreServiceUpdateManyRequest, opts ...grpc.CallOption) (*StoreServiceUpdateManyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StoreServiceUpdateManyResponse)
+	err := c.cc.Invoke(ctx, StoreService_UpdateMany_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *storeServiceClient) DeleteOne(ctx context.Context, in *StoreServiceDeleteOneRequest, opts ...grpc.CallOption) (*StoreServiceDeleteOneResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(StoreServiceDeleteOneResponse)
-	err := c.cc.Invoke(ctx, StoreService_Delete_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, StoreService_DeleteOne_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *storeServiceClient) DeleteMany(ctx context.Context, in *StoreServiceDeleteManyRequest, opts ...grpc.CallOption) (*StoreServiceDeleteManyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StoreServiceDeleteManyResponse)
+	err := c.cc.Invoke(ctx, StoreService_DeleteMany_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -111,11 +147,14 @@ func (c *storeServiceClient) ListItems(ctx context.Context, in *StoreServiceList
 // All implementations should embed UnimplementedStoreServiceServer
 // for forward compatibility
 type StoreServiceServer interface {
-	Create(context.Context, *StoreServiceCreateOneRequest) (*StoreServiceCreateOneResponse, error)
+	CreateOne(context.Context, *StoreServiceCreateOneRequest) (*StoreServiceCreateOneResponse, error)
 	CreateMany(context.Context, *StoreServiceCreateManyRequest) (*StoreServiceCreateManyResponse, error)
-	Read(context.Context, *StoreServiceReadOneRequest) (*StoreServiceReadOneResponse, error)
-	Update(context.Context, *StoreServiceUpdateOneRequest) (*StoreServiceUpdateOneResponse, error)
-	Delete(context.Context, *StoreServiceDeleteOneRequest) (*StoreServiceDeleteOneResponse, error)
+	ReadOne(context.Context, *StoreServiceReadOneRequest) (*StoreServiceReadOneResponse, error)
+	ReadMany(context.Context, *StoreServiceReadManyRequest) (*StoreServiceReadManyResponse, error)
+	UpdateOne(context.Context, *StoreServiceUpdateOneRequest) (*StoreServiceUpdateOneResponse, error)
+	UpdateMany(context.Context, *StoreServiceUpdateManyRequest) (*StoreServiceUpdateManyResponse, error)
+	DeleteOne(context.Context, *StoreServiceDeleteOneRequest) (*StoreServiceDeleteOneResponse, error)
+	DeleteMany(context.Context, *StoreServiceDeleteManyRequest) (*StoreServiceDeleteManyResponse, error)
 	ListItems(context.Context, *StoreServiceListItemsRequest) (*StoreServiceListItemsResponse, error)
 }
 
@@ -123,20 +162,29 @@ type StoreServiceServer interface {
 type UnimplementedStoreServiceServer struct {
 }
 
-func (UnimplementedStoreServiceServer) Create(context.Context, *StoreServiceCreateOneRequest) (*StoreServiceCreateOneResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+func (UnimplementedStoreServiceServer) CreateOne(context.Context, *StoreServiceCreateOneRequest) (*StoreServiceCreateOneResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOne not implemented")
 }
 func (UnimplementedStoreServiceServer) CreateMany(context.Context, *StoreServiceCreateManyRequest) (*StoreServiceCreateManyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateMany not implemented")
 }
-func (UnimplementedStoreServiceServer) Read(context.Context, *StoreServiceReadOneRequest) (*StoreServiceReadOneResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Read not implemented")
+func (UnimplementedStoreServiceServer) ReadOne(context.Context, *StoreServiceReadOneRequest) (*StoreServiceReadOneResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadOne not implemented")
 }
-func (UnimplementedStoreServiceServer) Update(context.Context, *StoreServiceUpdateOneRequest) (*StoreServiceUpdateOneResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+func (UnimplementedStoreServiceServer) ReadMany(context.Context, *StoreServiceReadManyRequest) (*StoreServiceReadManyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadMany not implemented")
 }
-func (UnimplementedStoreServiceServer) Delete(context.Context, *StoreServiceDeleteOneRequest) (*StoreServiceDeleteOneResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+func (UnimplementedStoreServiceServer) UpdateOne(context.Context, *StoreServiceUpdateOneRequest) (*StoreServiceUpdateOneResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateOne not implemented")
+}
+func (UnimplementedStoreServiceServer) UpdateMany(context.Context, *StoreServiceUpdateManyRequest) (*StoreServiceUpdateManyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateMany not implemented")
+}
+func (UnimplementedStoreServiceServer) DeleteOne(context.Context, *StoreServiceDeleteOneRequest) (*StoreServiceDeleteOneResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteOne not implemented")
+}
+func (UnimplementedStoreServiceServer) DeleteMany(context.Context, *StoreServiceDeleteManyRequest) (*StoreServiceDeleteManyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteMany not implemented")
 }
 func (UnimplementedStoreServiceServer) ListItems(context.Context, *StoreServiceListItemsRequest) (*StoreServiceListItemsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListItems not implemented")
@@ -153,20 +201,20 @@ func RegisterStoreServiceServer(s grpc.ServiceRegistrar, srv StoreServiceServer)
 	s.RegisterService(&StoreService_ServiceDesc, srv)
 }
 
-func _StoreService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _StoreService_CreateOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(StoreServiceCreateOneRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StoreServiceServer).Create(ctx, in)
+		return srv.(StoreServiceServer).CreateOne(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StoreService_Create_FullMethodName,
+		FullMethod: StoreService_CreateOne_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StoreServiceServer).Create(ctx, req.(*StoreServiceCreateOneRequest))
+		return srv.(StoreServiceServer).CreateOne(ctx, req.(*StoreServiceCreateOneRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -189,56 +237,110 @@ func _StoreService_CreateMany_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StoreService_Read_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _StoreService_ReadOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(StoreServiceReadOneRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StoreServiceServer).Read(ctx, in)
+		return srv.(StoreServiceServer).ReadOne(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StoreService_Read_FullMethodName,
+		FullMethod: StoreService_ReadOne_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StoreServiceServer).Read(ctx, req.(*StoreServiceReadOneRequest))
+		return srv.(StoreServiceServer).ReadOne(ctx, req.(*StoreServiceReadOneRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StoreService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _StoreService_ReadMany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StoreServiceReadManyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StoreServiceServer).ReadMany(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StoreService_ReadMany_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StoreServiceServer).ReadMany(ctx, req.(*StoreServiceReadManyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StoreService_UpdateOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(StoreServiceUpdateOneRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StoreServiceServer).Update(ctx, in)
+		return srv.(StoreServiceServer).UpdateOne(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StoreService_Update_FullMethodName,
+		FullMethod: StoreService_UpdateOne_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StoreServiceServer).Update(ctx, req.(*StoreServiceUpdateOneRequest))
+		return srv.(StoreServiceServer).UpdateOne(ctx, req.(*StoreServiceUpdateOneRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StoreService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _StoreService_UpdateMany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StoreServiceUpdateManyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StoreServiceServer).UpdateMany(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StoreService_UpdateMany_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StoreServiceServer).UpdateMany(ctx, req.(*StoreServiceUpdateManyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StoreService_DeleteOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(StoreServiceDeleteOneRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StoreServiceServer).Delete(ctx, in)
+		return srv.(StoreServiceServer).DeleteOne(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StoreService_Delete_FullMethodName,
+		FullMethod: StoreService_DeleteOne_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StoreServiceServer).Delete(ctx, req.(*StoreServiceDeleteOneRequest))
+		return srv.(StoreServiceServer).DeleteOne(ctx, req.(*StoreServiceDeleteOneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StoreService_DeleteMany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StoreServiceDeleteManyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StoreServiceServer).DeleteMany(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StoreService_DeleteMany_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StoreServiceServer).DeleteMany(ctx, req.(*StoreServiceDeleteManyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -269,24 +371,36 @@ var StoreService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*StoreServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Create",
-			Handler:    _StoreService_Create_Handler,
+			MethodName: "CreateOne",
+			Handler:    _StoreService_CreateOne_Handler,
 		},
 		{
 			MethodName: "CreateMany",
 			Handler:    _StoreService_CreateMany_Handler,
 		},
 		{
-			MethodName: "Read",
-			Handler:    _StoreService_Read_Handler,
+			MethodName: "ReadOne",
+			Handler:    _StoreService_ReadOne_Handler,
 		},
 		{
-			MethodName: "Update",
-			Handler:    _StoreService_Update_Handler,
+			MethodName: "ReadMany",
+			Handler:    _StoreService_ReadMany_Handler,
 		},
 		{
-			MethodName: "Delete",
-			Handler:    _StoreService_Delete_Handler,
+			MethodName: "UpdateOne",
+			Handler:    _StoreService_UpdateOne_Handler,
+		},
+		{
+			MethodName: "UpdateMany",
+			Handler:    _StoreService_UpdateMany_Handler,
+		},
+		{
+			MethodName: "DeleteOne",
+			Handler:    _StoreService_DeleteOne_Handler,
+		},
+		{
+			MethodName: "DeleteMany",
+			Handler:    _StoreService_DeleteMany_Handler,
 		},
 		{
 			MethodName: "ListItems",

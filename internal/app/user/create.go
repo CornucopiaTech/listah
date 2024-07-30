@@ -17,7 +17,7 @@ func (s *Server) CreateOne(ctx context.Context, req *connect.Request[v1.UserServ
 
 	// Create model for repository
 	newModel := new(model.User)
-	newModel.CreateUserModelFromRequest(ctx, req.Msg)
+	newModel.CreateOneUserModelFromRequest(req.Msg)
 
 	// Insert model in repository
 	if err := s.Infra.Repository.User.InsertOne(ctx, newModel); err != nil {
@@ -31,7 +31,7 @@ func (s *Server) CreateOne(ctx context.Context, req *connect.Request[v1.UserServ
 	}
 
 	// Convert created model to proto response
-	responseModel := readModel.UserModelToResponse(ctx)
+	responseModel := readModel.UserModelToResponse()
 
 	return connect.NewResponse(responseModel), nil
 }
@@ -42,7 +42,7 @@ func (s *Server) CreateMany(ctx context.Context, req *connect.Request[v1.UserSer
 	s.Infra.Logger.For(ctx).Info("CreateMany method in UserService called")
 
 	// Create model for repository
-	newModel := model.CreateManyUserModelFromRequest(ctx, req.Msg)
+	newModel := model.CreateManyUserModelFromRequest(req.Msg)
 
 	// Insert model in repository
 	if err := s.Infra.Repository.User.InsertMany(ctx, newModel); err != nil {
@@ -52,14 +52,14 @@ func (s *Server) CreateMany(ctx context.Context, req *connect.Request[v1.UserSer
 	// Read created model from repository
 	readModel := model.Users{}
 	for _, val := range *newModel {
-		readModel = append(readModel, model.User{Id: val.Id})
+		readModel = append(readModel, &model.User{Id: val.Id})
 	}
 	if err := s.Infra.Repository.User.SelectMany(ctx, &readModel, "id"); err != nil {
 		return nil, err
 	}
 
 	// Convert created model to proto response
-	resModel := readModel.ManyUserModelToResponse(ctx)
+	resModel := readModel.ManyUserModelToResponse()
 
 	return connect.NewResponse(resModel), nil
 }

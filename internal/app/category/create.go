@@ -16,7 +16,7 @@ func (s *Server) CreateOne(ctx context.Context, req *connect.Request[v1.Category
 
 	// Create model for repository
 	newModel := new(model.Category)
-	newModel.CreateCategoryModelFromRequest(ctx, req.Msg)
+	newModel.CreateOneCategoryModelFromRequest(req.Msg)
 
 	// Insert model in repository
 	if err := s.Infra.Repository.Category.InsertOne(ctx, newModel); err != nil {
@@ -24,13 +24,13 @@ func (s *Server) CreateOne(ctx context.Context, req *connect.Request[v1.Category
 	}
 
 	// Read created model from repository
-	readCategory := model.Category{Id: newModel.Id}
-	if err := s.Infra.Repository.Category.SelectOne(ctx, &readCategory, "id"); err != nil {
+	readModel := model.Category{Id: newModel.Id}
+	if err := s.Infra.Repository.Category.SelectOne(ctx, &readModel, "id"); err != nil {
 		return nil, err
 	}
 
 	// Convert created model to proto response
-	responseModel := readCategory.CategoryModelToResponse(ctx)
+	responseModel := readModel.CategoryModelToResponse()
 
 	return connect.NewResponse(responseModel), nil
 }
@@ -42,7 +42,7 @@ func (s *Server) CreateMany(ctx context.Context, req *connect.Request[v1.Categor
 	s.Infra.Logger.For(ctx).Info("CreateMany method in CategoryService called")
 
 	// Create model for repository
-	newModel := model.CreateManyCategoryModelFromRequest(ctx, req.Msg)
+	newModel := model.CreateManyCategoryModelFromRequest(req.Msg)
 
 	// Insert model in repository
 	if err := s.Infra.Repository.Category.InsertMany(ctx, newModel); err != nil {
@@ -59,7 +59,7 @@ func (s *Server) CreateMany(ctx context.Context, req *connect.Request[v1.Categor
 	}
 
 	// Convert created model to proto response
-	resModel := readModel.ManyCategoryModelToResponse(ctx)
+	resModel := readModel.ManyCategoryModelToResponse()
 
 	return connect.NewResponse(resModel), nil
 }

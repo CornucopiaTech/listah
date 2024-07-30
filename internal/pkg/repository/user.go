@@ -12,14 +12,15 @@ import (
 )
 
 type UserRepository interface {
-	SelectOne(ctx context.Context, user *model.User, col string) error
-	SelectMany(ctx context.Context, user *model.Users, col string) error
-	InsertOne(ctx context.Context, user *model.User) error
-	InsertMany(ctx context.Context, user *model.Users) error
-	UpdateOne(ctx context.Context, user *model.User) error
-	UpdateMany(ctx context.Context, user *model.Users) error
-	DeleteOne(ctx context.Context, user *model.User, col string) error
-	SoftDeleteOne(ctx context.Context, user *model.User) error
+	SelectOne(ctx context.Context, repoModel *model.User, col string) error
+	SelectMany(ctx context.Context, repoModel *model.Users, col string) error
+	InsertOne(ctx context.Context, repoModel *model.User) error
+	InsertMany(ctx context.Context, repoModel *model.Users) error
+	UpdateOne(ctx context.Context, repoModel *model.User) error
+	UpdateMany(ctx context.Context, repoModel *model.Users) error
+	DeleteOne(ctx context.Context, repoModel *model.User, col string) error
+	SoftDeleteOne(ctx context.Context, repoModel *model.User) error
+	SoftDeleteMany(ctx context.Context, repoModel *model.Users) error
 }
 
 type userRepositoryAgent struct {
@@ -27,36 +28,36 @@ type userRepositoryAgent struct {
 	logger *logging.Factory
 }
 
-func (a *userRepositoryAgent) SelectOne(ctx context.Context, user *model.User, col string) error {
+func (a *userRepositoryAgent) SelectOne(ctx context.Context, repoModel *model.User, col string) error {
 	ctx, span := otel.Tracer("user-repository").Start(ctx, "Select one")
 	defer span.End()
 	a.logger.For(ctx).Info("Selecting one from user by column", zap.String("column", col))
 
-	if err := a.db.NewSelect().Model(user).WherePK(col).Scan(ctx); err != nil {
+	if err := a.db.NewSelect().Model(repoModel).WherePK(col).Scan(ctx); err != nil {
 		a.logger.For(ctx).Error("Error occurred in repository while selecting one from user by column", zap.String("column", col), zap.String("cause", errors.Cause(err).Error()))
 		return err
 	}
 	return nil
 }
-func (a *userRepositoryAgent) SelectMany(ctx context.Context, user *model.Users, col string) error {
+func (a *userRepositoryAgent) SelectMany(ctx context.Context, repoModel *model.Users, col string) error {
 	ctx, span := otel.Tracer("user-repository").Start(ctx, "select many")
 	defer span.End()
 
 	a.logger.For(ctx).Info("Selecting many from user by column", zap.String("column", col))
 
-	if err := a.db.NewSelect().Model(user).WherePK(col).Scan(ctx); err != nil {
+	if err := a.db.NewSelect().Model(repoModel).WherePK(col).Scan(ctx); err != nil {
 		a.logger.For(ctx).Error("Error occurred in repository while selecting many from user by column", zap.String("column", col), zap.String("cause", errors.Cause(err).Error()))
 		return err
 	}
 	return nil
 }
 
-func (a *userRepositoryAgent) InsertOne(ctx context.Context, user *model.User) error {
+func (a *userRepositoryAgent) InsertOne(ctx context.Context, repoModel *model.User) error {
 	ctx, span := otel.Tracer("user-repository").Start(ctx, "insert-one")
 	defer span.End()
 	a.logger.For(ctx).Info("Inserting one into user")
 
-	_, err := a.db.NewInsert().Model(user).Exec(ctx)
+	_, err := a.db.NewInsert().Model(repoModel).Exec(ctx)
 	if err != nil {
 		a.logger.For(ctx).Error("Error occurred in repository while inserting one user", zap.String("cause", errors.Cause(err).Error()))
 		return err
@@ -64,12 +65,12 @@ func (a *userRepositoryAgent) InsertOne(ctx context.Context, user *model.User) e
 
 	return nil
 }
-func (a *userRepositoryAgent) InsertMany(ctx context.Context, user *model.Users) error {
+func (a *userRepositoryAgent) InsertMany(ctx context.Context, repoModel *model.Users) error {
 	ctx, span := otel.Tracer("user-repository").Start(ctx, "insert-many")
 	defer span.End()
 	a.logger.For(ctx).Info("Inserting many into user")
 
-	_, err := a.db.NewInsert().Model(user).Exec(ctx)
+	_, err := a.db.NewInsert().Model(repoModel).Exec(ctx)
 	if err != nil {
 		a.logger.For(ctx).Error("Error occurred in repository while inserting many into user", zap.String("cause", errors.Cause(err).Error()))
 		return err
@@ -78,12 +79,12 @@ func (a *userRepositoryAgent) InsertMany(ctx context.Context, user *model.Users)
 	return nil
 }
 
-func (a *userRepositoryAgent) UpdateOne(ctx context.Context, user *model.User) error {
+func (a *userRepositoryAgent) UpdateOne(ctx context.Context, repoModel *model.User) error {
 	ctx, span := otel.Tracer("user-repository").Start(ctx, "update-one")
 	defer span.End()
 	a.logger.For(ctx).Info("Updating user")
 
-	_, err := a.db.NewUpdate().Model(user).WherePK().Exec(ctx)
+	_, err := a.db.NewUpdate().Model(repoModel).WherePK().Exec(ctx)
 	if err != nil {
 		a.logger.For(ctx).Error("Error occurred in repository while updating one user", zap.String("cause", errors.Cause(err).Error()))
 		return err
@@ -91,12 +92,12 @@ func (a *userRepositoryAgent) UpdateOne(ctx context.Context, user *model.User) e
 
 	return nil
 }
-func (a *userRepositoryAgent) UpdateMany(ctx context.Context, user *model.Users) error {
+func (a *userRepositoryAgent) UpdateMany(ctx context.Context, repoModel *model.Users) error {
 	ctx, span := otel.Tracer("user-repository").Start(ctx, "update-many")
 	defer span.End()
 	a.logger.For(ctx).Info("Updating many user")
 
-	values := a.db.NewValues(user)
+	values := a.db.NewValues(repoModel)
 	_, err := a.db.NewUpdate().
 		With("_data", values).
 		Model((*model.User)(nil)).
@@ -119,12 +120,12 @@ func (a *userRepositoryAgent) UpdateMany(ctx context.Context, user *model.Users)
 	return nil
 }
 
-func (a *userRepositoryAgent) SoftDeleteOne(ctx context.Context, user *model.User) error {
+func (a *userRepositoryAgent) SoftDeleteOne(ctx context.Context, repoModel *model.User) error {
 	ctx, span := otel.Tracer("user-repository").Start(ctx, "soft-delete-one")
 	defer span.End()
 	a.logger.For(ctx).Info("soft-deleting one user")
 
-	_, err := a.db.NewUpdate().Model(user).WherePK().Exec(ctx)
+	_, err := a.db.NewUpdate().Model(repoModel).WherePK().Exec(ctx)
 	if err != nil {
 		a.logger.For(ctx).Error("Error occurred in repository while soft-deleting user", zap.String("cause", errors.Cause(err).Error()))
 		return err
@@ -132,12 +133,39 @@ func (a *userRepositoryAgent) SoftDeleteOne(ctx context.Context, user *model.Use
 	return nil
 }
 
-func (a *userRepositoryAgent) DeleteOne(ctx context.Context, user *model.User, col string) error {
+func (a *userRepositoryAgent) SoftDeleteMany(ctx context.Context, repoModel *model.Users) error {
+	ctx, span := otel.Tracer("user-repository").Start(ctx, "soft-delete-many")
+	defer span.End()
+	a.logger.For(ctx).Info("soft-deleting many user")
+
+	values := a.db.NewValues(repoModel)
+	_, err := a.db.NewUpdate().
+		With("_data", values).
+		Model((*model.User)(nil)).
+		TableExpr("_data").
+		Set("first_name = _data.first_name").
+		Set("middle_names = _data.middle_names").
+		Set("last_name = _data.last_name").
+		Set("username = _data.username").
+		Set("email = _data.email").
+		Set("role = _data.role").
+		Set("audit = _data.audit").
+		Where("u.id::VARCHAR = _data.id").
+		Exec(ctx)
+
+	if err != nil {
+		a.logger.For(ctx).Error("Error occurred in repository while soft-deleting many users", zap.String("cause", errors.Cause(err).Error()))
+		return err
+	}
+	return nil
+}
+
+func (a *userRepositoryAgent) DeleteOne(ctx context.Context, repoModel *model.User, col string) error {
 	ctx, span := otel.Tracer("user-repository").Start(ctx, "delete-one")
 	defer span.End()
 	a.logger.For(ctx).Info("Hard deleting user")
 
-	_, err := a.db.NewDelete().Model(user).Where("? = ?", bun.Ident(col), user.Id).Exec(ctx)
+	_, err := a.db.NewDelete().Model(repoModel).Where("? = ?", bun.Ident(col), repoModel.Id).Exec(ctx)
 	if err != nil {
 		a.logger.For(ctx).Error("Error occurred in repository while hard deleting user", zap.String("cause", errors.Cause(err).Error()))
 		return err

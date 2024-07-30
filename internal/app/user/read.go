@@ -22,7 +22,7 @@ func (s *Server) ReadOne(ctx context.Context, req *connect.Request[v1.UserServic
 	}
 
 	// Convert model to generic (create) proto response
-	genericResponse := readModel.UserModelToResponse(ctx)
+	genericResponse := readModel.UserModelToResponse()
 
 	// Marshal copy from generic response to read response
 	responseModel := new(v1.UserServiceReadOneResponse)
@@ -39,14 +39,14 @@ func (s *Server) ReadMany(ctx context.Context, req *connect.Request[v1.UserServi
 	// Read model from repository
 	readModels := model.Users{}
 	for _, val := range req.Msg.User {
-		readModels = append(readModels, model.User{Id: val.Id})
+		readModels = append(readModels, &model.User{Id: val.Id})
 	}
 	if err := s.Infra.Repository.User.SelectMany(ctx, &readModels, "id"); err != nil {
 		return nil, err
 	}
 
 	// Convert model to generic (create) proto response
-	genericResponse := readModels.ManyUserModelToResponse(ctx)
+	genericResponse := readModels.ManyUserModelToResponse()
 
 	// Marshal copy from generic response to read response
 	responseModel := new(v1.UserServiceReadManyResponse)

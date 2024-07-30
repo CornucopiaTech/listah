@@ -22,7 +22,7 @@ func (s *Server) ReadOne(ctx context.Context, req *connect.Request[v1.CategorySe
 	}
 
 	// Convert model to generic (create) proto response
-	genericResponse := readModel.CategoryModelToResponse(ctx)
+	genericResponse := readModel.CategoryModelToResponse()
 
 	// Marshal copy from generic response to read response
 	responseModel := new(v1.CategoryServiceReadOneResponse)
@@ -46,7 +46,7 @@ func (s *Server) ReadMany(ctx context.Context, req *connect.Request[v1.CategoryS
 	}
 
 	// Convert model to generic (create) proto response
-	genericResponse := readModels.ManyCategoryModelToResponse(ctx)
+	genericResponse := readModels.ManyCategoryModelToResponse()
 
 	// Marshal copy from generic response to read response
 	responseModel := new(v1.CategoryServiceReadManyResponse)

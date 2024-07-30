@@ -6,8 +6,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/uptrace/bun"
-	"go.opentelemetry.io/otel"
-	"golang.org/x/net/context"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -22,10 +20,7 @@ type Category struct {
 
 type Categories []*Category
 
-func (c *Category) CreateCategoryModelFromRequest(ctx context.Context, msg *v1.CategoryServiceCreateOneRequest) {
-	_, span := otel.Tracer("category-model").Start(ctx, "prep create request")
-	defer span.End()
-
+func (c *Category) CreateOneCategoryModelFromRequest(msg *v1.CategoryServiceCreateOneRequest) {
 	// Update category model
 	c.Id = uuid.Must(uuid.NewV7()).String()
 	c.Name = msg.GetName()
@@ -41,23 +36,17 @@ func (c *Category) CreateCategoryModelFromRequest(ctx context.Context, msg *v1.C
 	}
 }
 
-func CreateManyCategoryModelFromRequest(ctx context.Context, msg *v1.CategoryServiceCreateManyRequest) *Categories {
-	_, span := otel.Tracer("category-model").Start(ctx, "prep create many request")
-	defer span.End()
-
+func CreateManyCategoryModelFromRequest(msg *v1.CategoryServiceCreateManyRequest) *Categories {
 	c := Categories{}
 	for _, value := range msg.Category {
 		aCat := new(Category)
-		aCat.CreateCategoryModelFromRequest(ctx, value)
+		aCat.CreateOneCategoryModelFromRequest(value)
 		c = append(c, aCat)
 	}
 	return &c
 }
 
-func (c *Category) ReadCategoryModelFromRequest(ctx context.Context, msg *v1.CategoryServiceCreateOneRequest) {
-	_, span := otel.Tracer("category-model").Start(ctx, "prep create request")
-	defer span.End()
-
+func (c *Category) ReadOneCategoryModelFromRequest(msg *v1.CategoryServiceCreateOneRequest) {
 	// Update category model
 	c.Id = uuid.Must(uuid.NewV7()).String()
 	c.Name = msg.GetName()
@@ -73,59 +62,119 @@ func (c *Category) ReadCategoryModelFromRequest(ctx context.Context, msg *v1.Cat
 	}
 }
 
-func (c *Category) UpdateCategoryModelFromRequest(ctx context.Context, msg *v1.CategoryServiceUpdateOneRequest, readCategory *Category) {
-	_, span := otel.Tracer("category-model").Start(ctx, "prep update request")
-	defer span.End()
-
+func (c *Category) UpdateOneCategoryModelFromRequest(msg *v1.CategoryServiceUpdateOneRequest, repoModel *Category) {
 	c.Id = msg.GetId()
 	c.Name = msg.GetName()
 	c.Description = msg.GetDescription()
 	c.Note = msg.GetNote()
 	c.Audit = Audit{
 		// CreatedBy: msg.Audit.GetCreatedBy(),
-		CreatedBy: readCategory.Audit.CreatedBy,
+		CreatedBy: repoModel.Audit.CreatedBy,
 		UpdatedBy: msg.Audit.GetUpdatedBy(),
-		DeletedBy: readCategory.Audit.DeletedBy,
-		CreatedAt: readCategory.Audit.CreatedAt,
+		DeletedBy: repoModel.Audit.DeletedBy,
+		CreatedAt: repoModel.Audit.CreatedAt,
 		UpdatedAt: time.Now().UTC(),
-		DeletedAt: readCategory.Audit.DeletedAt,
+		DeletedAt: repoModel.Audit.DeletedAt,
 	}
 
 	// Set fields that were not included in the update request.
 	if c.Name == "" {
-		c.Name = readCategory.Name
+		c.Name = repoModel.Name
 	}
 
 	if c.Description == "" {
-		c.Description = readCategory.Description
+		c.Description = repoModel.Description
 	}
 
 	if c.Note == "" {
-		c.Note = readCategory.Note
+		c.Note = repoModel.Note
 	}
 }
 
-func (c *Category) DeleteCategoryModelFromRequest(ctx context.Context, msg *v1.CategoryServiceDeleteOneRequest, readCategory *Category) {
-	_, span := otel.Tracer("category-model").Start(ctx, "prep delete request")
-	defer span.End()
+func UpdateManyCategoryModelFromRequest(msgs *v1.CategoryServiceUpdateManyRequest, repoModel *Categories) *Categories {
+	categories := Categories{}
 
-	c.Id = readCategory.Id
-	c.Name = readCategory.Name
-	c.Description = readCategory.Description
-	c.Note = readCategory.Note
+	for _, valReq := range msgs.Category {
+		for _, valRepo := range *repoModel {
+			if valRepo.Id == valReq.Id {
+				c := Category{
+					Id:          valReq.GetId(),
+					Name:        valReq.GetName(),
+					Description: valReq.GetDescription(),
+					Note:        valReq.GetNote(),
+					Audit: Audit{
+						CreatedBy: valRepo.Audit.CreatedBy,
+						UpdatedBy: valReq.Audit.GetUpdatedBy(),
+						DeletedBy: valRepo.Audit.DeletedBy,
+						CreatedAt: valRepo.Audit.CreatedAt,
+						UpdatedAt: time.Now().UTC(),
+						DeletedAt: valRepo.Audit.DeletedAt,
+					},
+				}
+
+				// Set fields that were not included in the update request.
+				if c.Name == "" {
+					c.Name = valRepo.Name
+				}
+
+				if c.Description == "" {
+					c.Description = valRepo.Description
+				}
+
+				if c.Note == "" {
+					c.Note = valRepo.Note
+				}
+
+				categories = append(categories, &c)
+			}
+		}
+	}
+	return &categories
+}
+
+func (c *Category) DeleteOneCategoryModelFromRequest(msg *v1.CategoryServiceDeleteOneRequest, repoModel *Category) {
+	c.Id = repoModel.Id
+	c.Name = repoModel.Name
+	c.Description = repoModel.Description
+	c.Note = repoModel.Note
 	c.Audit = Audit{
-		CreatedBy: readCategory.Audit.CreatedBy,
+		CreatedBy: repoModel.Audit.CreatedBy,
 		UpdatedBy: msg.Audit.DeletedBy, //Set the updater to who deleted the reocord
 		DeletedBy: msg.Audit.DeletedBy,
-		CreatedAt: readCategory.Audit.CreatedAt,
+		CreatedAt: repoModel.Audit.CreatedAt,
 		UpdatedAt: time.Now().UTC(), //Set the record to recently updated
 		DeletedAt: time.Now().UTC(),
 	}
 }
 
-func (c *Category) CategoryModelToResponse(ctx context.Context) *v1.CategoryServiceCreateOneResponse {
-	_, span := otel.Tracer("category-model").Start(ctx, "category model to response")
-	defer span.End()
+func DeleteManyCategoryModelFromRequest(msgs *v1.CategoryServiceDeleteManyRequest, repoModel *Categories) *Categories {
+	categories := Categories{}
+
+	for _, valReq := range msgs.Category {
+		for _, valRepo := range *repoModel {
+			if valRepo.Id == valReq.Id {
+				c := Category{
+					Id:          valReq.GetId(),
+					Name:        valRepo.Name,
+					Description: valRepo.Description,
+					Note:        valRepo.Note,
+					Audit: Audit{
+						CreatedBy: valRepo.Audit.CreatedBy,
+						UpdatedBy: valReq.Audit.GetDeletedBy(),
+						DeletedBy: valReq.Audit.GetDeletedBy(),
+						CreatedAt: valRepo.Audit.CreatedAt,
+						UpdatedAt: time.Now().UTC(),
+						DeletedAt: time.Now().UTC(),
+					},
+				}
+				categories = append(categories, &c)
+			}
+		}
+	}
+	return &categories
+}
+
+func (c *Category) CategoryModelToResponse() *v1.CategoryServiceCreateOneResponse {
 	return &v1.CategoryServiceCreateOneResponse{
 		Id:          c.Id,
 		Name:        c.Name,
@@ -142,10 +191,7 @@ func (c *Category) CategoryModelToResponse(ctx context.Context) *v1.CategoryServ
 	}
 }
 
-func (cs *Categories) ManyCategoryModelToResponse(ctx context.Context) *v1.CategoryServiceCreateManyResponse {
-	_, span := otel.Tracer("category-model").Start(ctx, "category model to response")
-	defer span.End()
-
+func (cs *Categories) ManyCategoryModelToResponse() *v1.CategoryServiceCreateManyResponse {
 	resValue := &v1.CategoryServiceCreateManyResponse{}
 	for _, c := range *cs {
 		a := &v1.CategoryServiceCreateOneResponse{

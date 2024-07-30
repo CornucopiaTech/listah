@@ -12,21 +12,15 @@ import (
 )
 
 type StoreRepository interface {
-	SelectOne(ctx context.Context, id string) (*model.Store, error)
-	SelectMany(ctx context.Context, id *model.Categories) (*model.Categories, error)
-	Select(ctx context.Context, where_map map[string]string) (*model.Store, error)
-	InsertOne(ctx context.Context, store *model.Store) error
-	InsertMany(ctx context.Context, store *model.Categories) error
-	UpdateOne(ctx context.Context, store *model.Store) error
-	DeleteOne(ctx context.Context, id string) error
-	SoftDeleteOne(ctx context.Context, store *model.Store) error
-
-	// DeleteOne()
-	// SelectMany()
-	// InsertMany()
-	// CreateMany()
-	// UpdateMany()
-	// DeleteMany()
+	SelectOne(ctx context.Context, repoModel *model.StoreRead, col string) error
+	SelectMany(ctx context.Context, repoModel *model.StoresRead, col string) error
+	InsertOne(ctx context.Context, repoModel *model.StoreWrite) error
+	InsertMany(ctx context.Context, repoModel *model.StoresWrite) error
+	UpdateOne(ctx context.Context, repoModel *model.StoreWrite) error
+	UpdateMany(ctx context.Context, repoModel *model.StoresWrite) error
+	DeleteOne(ctx context.Context, repoModel *model.StoreWrite, col string) error
+	SoftDeleteOne(ctx context.Context, repoModel *model.StoreWrite) error
+	SoftDeleteMany(ctx context.Context, repoModel *model.StoresWrite) error
 }
 
 type storeRepositoryAgent struct {
@@ -34,72 +28,60 @@ type storeRepositoryAgent struct {
 	logger *logging.Factory
 }
 
-func (a *storeRepositoryAgent) SelectOne(ctx context.Context, id string) (*model.Store, error) {
-	ctx, span := otel.Tracer("store-repository").Start(ctx, "SelectOne")
+func (a *storeRepositoryAgent) SelectOne(ctx context.Context, repoModel *model.StoreRead, col string) error {
+	ctx, span := otel.Tracer("store-repository").Start(ctx, "Select one")
 	defer span.End()
+	a.logger.For(ctx).Info("Selecting one from store by column", zap.String("column", col))
 
-	a.logger.For(ctx).Info("Selecting store", zap.String("store", id))
-
-	store := new(model.Store)
-	err := a.db.NewSelect().Model(store).Where("id = ?", id).Scan(ctx)
-	if err != nil {
-		a.logger.For(ctx).Error("Error occurred in repository while selecting store", zap.String("store", id), zap.String("cause", errors.Cause(err).Error()))
-		return nil, err
+	if err := a.db.NewSelect().
+		Model(repoModel).
+		ColumnExpr("s.*").
+		ColumnExpr("c.name AS category_name").
+		Join("JOIN app.categories AS c ON c.id = s.category_id").
+		WherePK(col).Scan(ctx); err != nil {
+		a.logger.For(ctx).Error("Error occurred in repository while selecting many from store by column", zap.String("column", col), zap.String("cause", errors.Cause(err).Error()))
+		return err
 	}
-	return store, nil
-}
-func (a *storeRepositoryAgent) SelectMany(ctx context.Context, store *model.Categories) (*model.Categories, error) {
-	ctx, span := otel.Tracer("store-repository").Start(ctx, "select-many")
-	defer span.End()
-
-	a.logger.For(ctx).Info("Selecting many from store")
-
-	err := a.db.NewSelect().Model(store).WherePK("id").Scan(ctx)
-	if err != nil {
-		a.logger.For(ctx).Error("Error occurred in repository while selecting many from store", zap.String("cause", errors.Cause(err).Error()))
-		return nil, err
-	}
-	return store, nil
+	return nil
 }
 
-func (a *storeRepositoryAgent) Select(ctx context.Context, where_map map[string]string) (*model.Store, error) {
-	ctx, span := otel.Tracer("store-repository").Start(ctx, "SelectOne")
+func (a *storeRepositoryAgent) SelectMany(ctx context.Context, repoModel *model.StoresRead, col string) error {
+	ctx, span := otel.Tracer("store-repository").Start(ctx, "select many")
 	defer span.End()
 
-	a.logger.For(ctx).Info("Selecting store with where clause")
+	a.logger.For(ctx).Info("Selecting many from store by column", zap.String("column", col))
 
-	store := new(model.Store)
-	query := addWhere(a.db.NewSelect().Model(store).QueryBuilder(), where_map)
-	selectQuery := query.Unwrap().(*bun.SelectQuery)
-
-	err := selectQuery.Scan(ctx)
-	if err != nil {
-		a.logger.For(ctx).Error("Error occurred in repository while selecting store with where clause", zap.String("cause", errors.Cause(err).Error()))
-		return nil, err
+	if err := a.db.NewSelect().
+		Model(repoModel).
+		ColumnExpr("s.*").
+		ColumnExpr("c.name AS category_name").
+		Join("JOIN app.categories AS c ON c.id = s.category_id").
+		WherePK(col).Scan(ctx); err != nil {
+		a.logger.For(ctx).Error("Error occurred in repository while selecting many from store by column", zap.String("column", col), zap.String("cause", errors.Cause(err).Error()))
+		return err
 	}
-	return store, nil
+	return nil
 }
 
-func (a *storeRepositoryAgent) InsertOne(ctx context.Context, store *model.Store) error {
-	ctx, span := otel.Tracer("store-repository").Start(ctx, "InsertOne")
+func (a *storeRepositoryAgent) InsertOne(ctx context.Context, repoModel *model.StoreWrite) error {
+	ctx, span := otel.Tracer("store-repository").Start(ctx, "insert one")
 	defer span.End()
+	a.logger.For(ctx).Info("Inserting one into store")
 
-	a.logger.For(ctx).Info("Inserting store", zap.String("store", store.Id))
-	_, err := a.db.NewInsert().Model(store).Exec(ctx)
+	_, err := a.db.NewInsert().Model(repoModel).Exec(ctx)
 	if err != nil {
-		a.logger.For(ctx).Error("Error occurred in repository while inserting store", zap.String("store", store.Id), zap.String("cause", errors.Cause(err).Error()))
+		a.logger.For(ctx).Error("Error occurred in repository while inserting one store", zap.String("cause", errors.Cause(err).Error()))
 		return err
 	}
 
 	return nil
 }
-
-func (a *storeRepositoryAgent) InsertMany(ctx context.Context, store *model.Categories) error {
+func (a *storeRepositoryAgent) InsertMany(ctx context.Context, repoModel *model.StoresWrite) error {
 	ctx, span := otel.Tracer("store-repository").Start(ctx, "insert-many")
 	defer span.End()
-
 	a.logger.For(ctx).Info("Inserting many into store")
-	_, err := a.db.NewInsert().Model(store).Exec(ctx)
+
+	_, err := a.db.NewInsert().Model(repoModel).Exec(ctx)
 	if err != nil {
 		a.logger.For(ctx).Error("Error occurred in repository while inserting many into store", zap.String("cause", errors.Cause(err).Error()))
 		return err
@@ -108,44 +90,92 @@ func (a *storeRepositoryAgent) InsertMany(ctx context.Context, store *model.Cate
 	return nil
 }
 
-func (a *storeRepositoryAgent) UpdateOne(ctx context.Context, store *model.Store) error {
-	ctx, span := otel.Tracer("store-repository").Start(ctx, "UpdateOne")
+func (a *storeRepositoryAgent) UpdateOne(ctx context.Context, repoModel *model.StoreWrite) error {
+	ctx, span := otel.Tracer("store-repository").Start(ctx, "update-one")
 	defer span.End()
+	a.logger.For(ctx).Info("Updating store")
 
-	a.logger.For(ctx).Info("Updating store", zap.String("store", store.Id))
-	_, err := a.db.NewUpdate().Model(store).WherePK().Exec(ctx)
+	_, err := a.db.NewUpdate().Model(repoModel).WherePK().Exec(ctx)
 	if err != nil {
-		a.logger.For(ctx).Error("Error occurred in repository while updating store", zap.String("store", store.Id), zap.String("cause", errors.Cause(err).Error()))
+		a.logger.For(ctx).Error("Error occurred in repository while updating one store", zap.String("cause", errors.Cause(err).Error()))
+		return err
+	}
+
+	return nil
+}
+func (a *storeRepositoryAgent) UpdateMany(ctx context.Context, repoModel *model.StoresWrite) error {
+	ctx, span := otel.Tracer("store-repository").Start(ctx, "update-many")
+	defer span.End()
+	a.logger.For(ctx).Info("Updating many store")
+
+	values := a.db.NewValues(repoModel)
+	_, err := a.db.NewUpdate().
+		With("_data", values).
+		Model((*model.StoreWrite)(nil)).
+		TableExpr("_data").
+		Set("name = _data.name").
+		Set("description = _data.description").
+		Set("note = _data.note").
+		Set("category_id = _data.category_id::UUID").
+		Set("audit = _data.audit").
+		Where("s.id::VARCHAR = _data.id").
+		Exec(ctx)
+
+	if err != nil {
+		a.logger.For(ctx).Error("Error occurred in repository while updating many store", zap.String("cause", errors.Cause(err).Error()))
 		return err
 	}
 
 	return nil
 }
 
-func (a *storeRepositoryAgent) SoftDeleteOne(ctx context.Context, store *model.Store) error {
-	ctx, span := otel.Tracer("store-repository").Start(ctx, "SoftDeleteOne")
+func (a *storeRepositoryAgent) SoftDeleteOne(ctx context.Context, repoModel *model.StoreWrite) error {
+	ctx, span := otel.Tracer("store-repository").Start(ctx, "soft-delete-one")
 	defer span.End()
+	a.logger.For(ctx).Info("soft-deleting one store")
 
-	a.logger.For(ctx).Info("soft-deleting store", zap.String("store", store.Id))
-	_, err := a.db.NewUpdate().Model(store).WherePK().Exec(ctx)
+	_, err := a.db.NewUpdate().Model(repoModel).WherePK().Exec(ctx)
 	if err != nil {
-		a.logger.For(ctx).Error("Error occurred in repository while soft-deleting store", zap.String("store", store.Id), zap.String("cause", errors.Cause(err).Error()))
+		a.logger.For(ctx).Error("Error occurred in repository while soft-deleting store", zap.String("cause", errors.Cause(err).Error()))
 		return err
 	}
 	return nil
-
 }
 
-func (a *storeRepositoryAgent) DeleteOne(ctx context.Context, id string) error {
-	ctx, span := otel.Tracer("store-repository").Start(ctx, "DeleteOne")
+func (a *storeRepositoryAgent) SoftDeleteMany(ctx context.Context, repoModel *model.StoresWrite) error {
+	ctx, span := otel.Tracer("store-repository").Start(ctx, "soft-delete-many")
 	defer span.End()
+	a.logger.For(ctx).Info("Soft-deleting many store")
 
-	a.logger.For(ctx).Info("Selecting store", zap.String("store", id))
+	values := a.db.NewValues(repoModel)
+	_, err := a.db.NewUpdate().
+		With("_data", values).
+		Model((*model.StoreWrite)(nil)).
+		TableExpr("_data").
+		Set("name = _data.name").
+		Set("description = _data.description").
+		Set("note = _data.note").
+		Set("category_id = _data.category_id::UUID").
+		Set("audit = _data.audit").
+		Where("s.id::VARCHAR = _data.id").
+		Exec(ctx)
 
-	store := new(model.Store)
-	_, err := a.db.NewDelete().Model(store).Where("id = ?", id).Exec(ctx)
 	if err != nil {
-		a.logger.For(ctx).Error("Error occurred in repository while deleting store", zap.String("store", id), zap.String("cause", errors.Cause(err).Error()))
+		a.logger.For(ctx).Error("Error occurred in repository while soft-deleting many store", zap.String("cause", errors.Cause(err).Error()))
+		return err
+	}
+
+	return nil
+}
+
+func (a *storeRepositoryAgent) DeleteOne(ctx context.Context, repoModel *model.StoreWrite, col string) error {
+	ctx, span := otel.Tracer("store-repository").Start(ctx, "delete-one")
+	defer span.End()
+	a.logger.For(ctx).Info("Hard deleting store")
+
+	_, err := a.db.NewDelete().Model(repoModel).Where("? = ?", bun.Ident(col), repoModel.Id).Exec(ctx)
+	if err != nil {
+		a.logger.For(ctx).Error("Error occurred in repository while deleting store", zap.String("cause", errors.Cause(err).Error()))
 		return err
 	}
 	return nil

@@ -273,6 +273,226 @@ func (x *CategoryServiceCreateManyResponse) GetCategory() []*CategoryServiceCrea
 	return nil
 }
 
+type CategoryServiceReadOneRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *CategoryServiceReadOneRequest) Reset() {
+	*x = CategoryServiceReadOneRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_listah_v1_category_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CategoryServiceReadOneRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CategoryServiceReadOneRequest) ProtoMessage() {}
+
+func (x *CategoryServiceReadOneRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_listah_v1_category_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CategoryServiceReadOneRequest.ProtoReflect.Descriptor instead.
+func (*CategoryServiceReadOneRequest) Descriptor() ([]byte, []int) {
+	return file_listah_v1_category_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *CategoryServiceReadOneRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type CategoryServiceReadOneResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id          string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name        string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Note        string `protobuf:"bytes,7,opt,name=note,proto3" json:"note,omitempty"`
+	Audit       *Audit `protobuf:"bytes,50,opt,name=audit,proto3" json:"audit,omitempty"`
+}
+
+func (x *CategoryServiceReadOneResponse) Reset() {
+	*x = CategoryServiceReadOneResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_listah_v1_category_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CategoryServiceReadOneResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CategoryServiceReadOneResponse) ProtoMessage() {}
+
+func (x *CategoryServiceReadOneResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_listah_v1_category_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CategoryServiceReadOneResponse.ProtoReflect.Descriptor instead.
+func (*CategoryServiceReadOneResponse) Descriptor() ([]byte, []int) {
+	return file_listah_v1_category_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *CategoryServiceReadOneResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *CategoryServiceReadOneResponse) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CategoryServiceReadOneResponse) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *CategoryServiceReadOneResponse) GetNote() string {
+	if x != nil {
+		return x.Note
+	}
+	return ""
+}
+
+func (x *CategoryServiceReadOneResponse) GetAudit() *Audit {
+	if x != nil {
+		return x.Audit
+	}
+	return nil
+}
+
+type CategoryServiceReadManyRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Category []*CategoryServiceReadOneRequest `protobuf:"bytes,1,rep,name=category,proto3" json:"category,omitempty"`
+}
+
+func (x *CategoryServiceReadManyRequest) Reset() {
+	*x = CategoryServiceReadManyRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_listah_v1_category_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CategoryServiceReadManyRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CategoryServiceReadManyRequest) ProtoMessage() {}
+
+func (x *CategoryServiceReadManyRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_listah_v1_category_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CategoryServiceReadManyRequest.ProtoReflect.Descriptor instead.
+func (*CategoryServiceReadManyRequest) Descriptor() ([]byte, []int) {
+	return file_listah_v1_category_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *CategoryServiceReadManyRequest) GetCategory() []*CategoryServiceReadOneRequest {
+	if x != nil {
+		return x.Category
+	}
+	return nil
+}
+
+type CategoryServiceReadManyResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Category []*CategoryServiceReadOneResponse `protobuf:"bytes,1,rep,name=category,proto3" json:"category,omitempty"`
+}
+
+func (x *CategoryServiceReadManyResponse) Reset() {
+	*x = CategoryServiceReadManyResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_listah_v1_category_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CategoryServiceReadManyResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CategoryServiceReadManyResponse) ProtoMessage() {}
+
+func (x *CategoryServiceReadManyResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_listah_v1_category_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CategoryServiceReadManyResponse.ProtoReflect.Descriptor instead.
+func (*CategoryServiceReadManyResponse) Descriptor() ([]byte, []int) {
+	return file_listah_v1_category_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *CategoryServiceReadManyResponse) GetCategory() []*CategoryServiceReadOneResponse {
+	if x != nil {
+		return x.Category
+	}
+	return nil
+}
+
 type CategoryServiceUpdateOneRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -288,7 +508,7 @@ type CategoryServiceUpdateOneRequest struct {
 func (x *CategoryServiceUpdateOneRequest) Reset() {
 	*x = CategoryServiceUpdateOneRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_listah_v1_category_proto_msgTypes[4]
+		mi := &file_listah_v1_category_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -301,7 +521,7 @@ func (x *CategoryServiceUpdateOneRequest) String() string {
 func (*CategoryServiceUpdateOneRequest) ProtoMessage() {}
 
 func (x *CategoryServiceUpdateOneRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_listah_v1_category_proto_msgTypes[4]
+	mi := &file_listah_v1_category_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -314,7 +534,7 @@ func (x *CategoryServiceUpdateOneRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CategoryServiceUpdateOneRequest.ProtoReflect.Descriptor instead.
 func (*CategoryServiceUpdateOneRequest) Descriptor() ([]byte, []int) {
-	return file_listah_v1_category_proto_rawDescGZIP(), []int{4}
+	return file_listah_v1_category_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *CategoryServiceUpdateOneRequest) GetId() string {
@@ -367,7 +587,7 @@ type CategoryServiceUpdateOneResponse struct {
 func (x *CategoryServiceUpdateOneResponse) Reset() {
 	*x = CategoryServiceUpdateOneResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_listah_v1_category_proto_msgTypes[5]
+		mi := &file_listah_v1_category_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -380,7 +600,7 @@ func (x *CategoryServiceUpdateOneResponse) String() string {
 func (*CategoryServiceUpdateOneResponse) ProtoMessage() {}
 
 func (x *CategoryServiceUpdateOneResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_listah_v1_category_proto_msgTypes[5]
+	mi := &file_listah_v1_category_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -393,7 +613,7 @@ func (x *CategoryServiceUpdateOneResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CategoryServiceUpdateOneResponse.ProtoReflect.Descriptor instead.
 func (*CategoryServiceUpdateOneResponse) Descriptor() ([]byte, []int) {
-	return file_listah_v1_category_proto_rawDescGZIP(), []int{5}
+	return file_listah_v1_category_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *CategoryServiceUpdateOneResponse) GetId() string {
@@ -442,7 +662,7 @@ type CategoryServiceUpdateManyRequest struct {
 func (x *CategoryServiceUpdateManyRequest) Reset() {
 	*x = CategoryServiceUpdateManyRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_listah_v1_category_proto_msgTypes[6]
+		mi := &file_listah_v1_category_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -455,7 +675,7 @@ func (x *CategoryServiceUpdateManyRequest) String() string {
 func (*CategoryServiceUpdateManyRequest) ProtoMessage() {}
 
 func (x *CategoryServiceUpdateManyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_listah_v1_category_proto_msgTypes[6]
+	mi := &file_listah_v1_category_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -468,7 +688,7 @@ func (x *CategoryServiceUpdateManyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CategoryServiceUpdateManyRequest.ProtoReflect.Descriptor instead.
 func (*CategoryServiceUpdateManyRequest) Descriptor() ([]byte, []int) {
-	return file_listah_v1_category_proto_rawDescGZIP(), []int{6}
+	return file_listah_v1_category_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *CategoryServiceUpdateManyRequest) GetCategory() []*CategoryServiceUpdateOneRequest {
@@ -489,7 +709,7 @@ type CategoryServiceUpdateManyResponse struct {
 func (x *CategoryServiceUpdateManyResponse) Reset() {
 	*x = CategoryServiceUpdateManyResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_listah_v1_category_proto_msgTypes[7]
+		mi := &file_listah_v1_category_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -502,7 +722,7 @@ func (x *CategoryServiceUpdateManyResponse) String() string {
 func (*CategoryServiceUpdateManyResponse) ProtoMessage() {}
 
 func (x *CategoryServiceUpdateManyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_listah_v1_category_proto_msgTypes[7]
+	mi := &file_listah_v1_category_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -515,230 +735,10 @@ func (x *CategoryServiceUpdateManyResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use CategoryServiceUpdateManyResponse.ProtoReflect.Descriptor instead.
 func (*CategoryServiceUpdateManyResponse) Descriptor() ([]byte, []int) {
-	return file_listah_v1_category_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *CategoryServiceUpdateManyResponse) GetCategory() []*CategoryServiceUpdateOneResponse {
-	if x != nil {
-		return x.Category
-	}
-	return nil
-}
-
-type CategoryServiceReadOneRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-}
-
-func (x *CategoryServiceReadOneRequest) Reset() {
-	*x = CategoryServiceReadOneRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_listah_v1_category_proto_msgTypes[8]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CategoryServiceReadOneRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CategoryServiceReadOneRequest) ProtoMessage() {}
-
-func (x *CategoryServiceReadOneRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_listah_v1_category_proto_msgTypes[8]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CategoryServiceReadOneRequest.ProtoReflect.Descriptor instead.
-func (*CategoryServiceReadOneRequest) Descriptor() ([]byte, []int) {
-	return file_listah_v1_category_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *CategoryServiceReadOneRequest) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-type CategoryServiceReadOneResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Id          string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name        string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	Note        string `protobuf:"bytes,7,opt,name=note,proto3" json:"note,omitempty"`
-	Audit       *Audit `protobuf:"bytes,50,opt,name=audit,proto3" json:"audit,omitempty"`
-}
-
-func (x *CategoryServiceReadOneResponse) Reset() {
-	*x = CategoryServiceReadOneResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_listah_v1_category_proto_msgTypes[9]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CategoryServiceReadOneResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CategoryServiceReadOneResponse) ProtoMessage() {}
-
-func (x *CategoryServiceReadOneResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_listah_v1_category_proto_msgTypes[9]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CategoryServiceReadOneResponse.ProtoReflect.Descriptor instead.
-func (*CategoryServiceReadOneResponse) Descriptor() ([]byte, []int) {
-	return file_listah_v1_category_proto_rawDescGZIP(), []int{9}
-}
-
-func (x *CategoryServiceReadOneResponse) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *CategoryServiceReadOneResponse) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *CategoryServiceReadOneResponse) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
-}
-
-func (x *CategoryServiceReadOneResponse) GetNote() string {
-	if x != nil {
-		return x.Note
-	}
-	return ""
-}
-
-func (x *CategoryServiceReadOneResponse) GetAudit() *Audit {
-	if x != nil {
-		return x.Audit
-	}
-	return nil
-}
-
-type CategoryServiceReadManyRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Category []*CategoryServiceReadOneRequest `protobuf:"bytes,1,rep,name=category,proto3" json:"category,omitempty"`
-}
-
-func (x *CategoryServiceReadManyRequest) Reset() {
-	*x = CategoryServiceReadManyRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_listah_v1_category_proto_msgTypes[10]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CategoryServiceReadManyRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CategoryServiceReadManyRequest) ProtoMessage() {}
-
-func (x *CategoryServiceReadManyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_listah_v1_category_proto_msgTypes[10]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CategoryServiceReadManyRequest.ProtoReflect.Descriptor instead.
-func (*CategoryServiceReadManyRequest) Descriptor() ([]byte, []int) {
-	return file_listah_v1_category_proto_rawDescGZIP(), []int{10}
-}
-
-func (x *CategoryServiceReadManyRequest) GetCategory() []*CategoryServiceReadOneRequest {
-	if x != nil {
-		return x.Category
-	}
-	return nil
-}
-
-type CategoryServiceReadManyResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Category []*CategoryServiceReadOneResponse `protobuf:"bytes,1,rep,name=category,proto3" json:"category,omitempty"`
-}
-
-func (x *CategoryServiceReadManyResponse) Reset() {
-	*x = CategoryServiceReadManyResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_listah_v1_category_proto_msgTypes[11]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CategoryServiceReadManyResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CategoryServiceReadManyResponse) ProtoMessage() {}
-
-func (x *CategoryServiceReadManyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_listah_v1_category_proto_msgTypes[11]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CategoryServiceReadManyResponse.ProtoReflect.Descriptor instead.
-func (*CategoryServiceReadManyResponse) Descriptor() ([]byte, []int) {
 	return file_listah_v1_category_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *CategoryServiceReadManyResponse) GetCategory() []*CategoryServiceReadOneResponse {
+func (x *CategoryServiceUpdateManyResponse) GetCategory() []*CategoryServiceUpdateOneResponse {
 	if x != nil {
 		return x.Category
 	}
@@ -1152,9 +1152,12 @@ var file_listah_v1_category_proto_rawDesc = []byte{
 	0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2b, 0x2e, 0x6c, 0x69, 0x73, 0x74, 0x61, 0x68, 0x2e, 0x76,
 	0x31, 0x2e, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63,
 	0x65, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x4f, 0x6e, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x52, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x22, 0xa3, 0x01, 0x0a,
-	0x1f, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
-	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4f, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x73, 0x65, 0x52, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x22, 0x2f, 0x0a, 0x1d,
+	0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x52,
+	0x65, 0x61, 0x64, 0x4f, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a,
+	0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0xa2, 0x01,
+	0x0a, 0x1e, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63,
+	0x65, 0x52, 0x65, 0x61, 0x64, 0x4f, 0x6e, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
 	0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64,
 	0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04,
 	0x6e, 0x61, 0x6d, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74,
@@ -1163,56 +1166,53 @@ var file_listah_v1_category_proto_rawDesc = []byte{
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x6f, 0x74, 0x65, 0x12, 0x26, 0x0a, 0x05, 0x61, 0x75,
 	0x64, 0x69, 0x74, 0x18, 0x32, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x10, 0x2e, 0x6c, 0x69, 0x73, 0x74,
 	0x61, 0x68, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x75, 0x64, 0x69, 0x74, 0x52, 0x05, 0x61, 0x75, 0x64,
-	0x69, 0x74, 0x22, 0xa4, 0x01, 0x0a, 0x20, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x53,
-	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4f, 0x6e, 0x65, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18,
-	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x64,
-	0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x12, 0x0a,
-	0x04, 0x6e, 0x6f, 0x74, 0x65, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x6f, 0x74,
-	0x65, 0x12, 0x26, 0x0a, 0x05, 0x61, 0x75, 0x64, 0x69, 0x74, 0x18, 0x32, 0x20, 0x01, 0x28, 0x0b,
-	0x32, 0x10, 0x2e, 0x6c, 0x69, 0x73, 0x74, 0x61, 0x68, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x75, 0x64,
-	0x69, 0x74, 0x52, 0x05, 0x61, 0x75, 0x64, 0x69, 0x74, 0x22, 0x6a, 0x0a, 0x20, 0x43, 0x61, 0x74,
-	0x65, 0x67, 0x6f, 0x72, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x55, 0x70, 0x64, 0x61,
-	0x74, 0x65, 0x4d, 0x61, 0x6e, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x46, 0x0a,
-	0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32,
-	0x2a, 0x2e, 0x6c, 0x69, 0x73, 0x74, 0x61, 0x68, 0x2e, 0x76, 0x31, 0x2e, 0x43, 0x61, 0x74, 0x65,
-	0x67, 0x6f, 0x72, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x55, 0x70, 0x64, 0x61, 0x74,
-	0x65, 0x4f, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x52, 0x08, 0x63, 0x61, 0x74,
-	0x65, 0x67, 0x6f, 0x72, 0x79, 0x22, 0x6c, 0x0a, 0x21, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72,
-	0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4d, 0x61,
-	0x6e, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x47, 0x0a, 0x08, 0x63, 0x61,
-	0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2b, 0x2e, 0x6c,
-	0x69, 0x73, 0x74, 0x61, 0x68, 0x2e, 0x76, 0x31, 0x2e, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72,
-	0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4f, 0x6e,
-	0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x52, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67,
-	0x6f, 0x72, 0x79, 0x22, 0x2f, 0x0a, 0x1d, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x53,
-	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x52, 0x65, 0x61, 0x64, 0x4f, 0x6e, 0x65, 0x52, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x02, 0x69, 0x64, 0x22, 0xa2, 0x01, 0x0a, 0x1e, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72,
-	0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x52, 0x65, 0x61, 0x64, 0x4f, 0x6e, 0x65, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18,
-	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x64,
-	0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x12, 0x0a,
-	0x04, 0x6e, 0x6f, 0x74, 0x65, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x6f, 0x74,
-	0x65, 0x12, 0x26, 0x0a, 0x05, 0x61, 0x75, 0x64, 0x69, 0x74, 0x18, 0x32, 0x20, 0x01, 0x28, 0x0b,
-	0x32, 0x10, 0x2e, 0x6c, 0x69, 0x73, 0x74, 0x61, 0x68, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x75, 0x64,
-	0x69, 0x74, 0x52, 0x05, 0x61, 0x75, 0x64, 0x69, 0x74, 0x22, 0x66, 0x0a, 0x1e, 0x43, 0x61, 0x74,
-	0x65, 0x67, 0x6f, 0x72, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x52, 0x65, 0x61, 0x64,
-	0x4d, 0x61, 0x6e, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x44, 0x0a, 0x08, 0x63,
-	0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x28, 0x2e,
-	0x6c, 0x69, 0x73, 0x74, 0x61, 0x68, 0x2e, 0x76, 0x31, 0x2e, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f,
-	0x72, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x52, 0x65, 0x61, 0x64, 0x4f, 0x6e, 0x65,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x52, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72,
-	0x79, 0x22, 0x68, 0x0a, 0x1f, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x53, 0x65, 0x72,
-	0x76, 0x69, 0x63, 0x65, 0x52, 0x65, 0x61, 0x64, 0x4d, 0x61, 0x6e, 0x79, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x45, 0x0a, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79,
-	0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x29, 0x2e, 0x6c, 0x69, 0x73, 0x74, 0x61, 0x68, 0x2e,
+	0x69, 0x74, 0x22, 0x66, 0x0a, 0x1e, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x53, 0x65,
+	0x72, 0x76, 0x69, 0x63, 0x65, 0x52, 0x65, 0x61, 0x64, 0x4d, 0x61, 0x6e, 0x79, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x12, 0x44, 0x0a, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79,
+	0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x28, 0x2e, 0x6c, 0x69, 0x73, 0x74, 0x61, 0x68, 0x2e,
 	0x76, 0x31, 0x2e, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69,
-	0x63, 0x65, 0x52, 0x65, 0x61, 0x64, 0x4f, 0x6e, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x63, 0x65, 0x52, 0x65, 0x61, 0x64, 0x4f, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x52, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x22, 0x68, 0x0a, 0x1f, 0x43, 0x61,
+	0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x52, 0x65, 0x61,
+	0x64, 0x4d, 0x61, 0x6e, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x45, 0x0a,
+	0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32,
+	0x29, 0x2e, 0x6c, 0x69, 0x73, 0x74, 0x61, 0x68, 0x2e, 0x76, 0x31, 0x2e, 0x43, 0x61, 0x74, 0x65,
+	0x67, 0x6f, 0x72, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x52, 0x65, 0x61, 0x64, 0x4f,
+	0x6e, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x52, 0x08, 0x63, 0x61, 0x74, 0x65,
+	0x67, 0x6f, 0x72, 0x79, 0x22, 0xa3, 0x01, 0x0a, 0x1f, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72,
+	0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4f, 0x6e,
+	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x20, 0x0a, 0x0b,
+	0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x12,
+	0x0a, 0x04, 0x6e, 0x6f, 0x74, 0x65, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x6f,
+	0x74, 0x65, 0x12, 0x26, 0x0a, 0x05, 0x61, 0x75, 0x64, 0x69, 0x74, 0x18, 0x32, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x10, 0x2e, 0x6c, 0x69, 0x73, 0x74, 0x61, 0x68, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x75,
+	0x64, 0x69, 0x74, 0x52, 0x05, 0x61, 0x75, 0x64, 0x69, 0x74, 0x22, 0xa4, 0x01, 0x0a, 0x20, 0x43,
+	0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x55, 0x70,
+	0x64, 0x61, 0x74, 0x65, 0x4f, 0x6e, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12,
+	0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e,
+	0x61, 0x6d, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69,
+	0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69,
+	0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x6f, 0x74, 0x65, 0x18, 0x07, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x6f, 0x74, 0x65, 0x12, 0x26, 0x0a, 0x05, 0x61, 0x75, 0x64,
+	0x69, 0x74, 0x18, 0x32, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x10, 0x2e, 0x6c, 0x69, 0x73, 0x74, 0x61,
+	0x68, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x75, 0x64, 0x69, 0x74, 0x52, 0x05, 0x61, 0x75, 0x64, 0x69,
+	0x74, 0x22, 0x6a, 0x0a, 0x20, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x53, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4d, 0x61, 0x6e, 0x79, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x46, 0x0a, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72,
+	0x79, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2a, 0x2e, 0x6c, 0x69, 0x73, 0x74, 0x61, 0x68,
+	0x2e, 0x76, 0x31, 0x2e, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x53, 0x65, 0x72, 0x76,
+	0x69, 0x63, 0x65, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4f, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x52, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x22, 0x6c, 0x0a,
+	0x21, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4d, 0x61, 0x6e, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x12, 0x47, 0x0a, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x18, 0x01,
+	0x20, 0x03, 0x28, 0x0b, 0x32, 0x2b, 0x2e, 0x6c, 0x69, 0x73, 0x74, 0x61, 0x68, 0x2e, 0x76, 0x31,
+	0x2e, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4f, 0x6e, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
 	0x65, 0x52, 0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x22, 0x59, 0x0a, 0x1f, 0x43,
 	0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x44, 0x65,
 	0x6c, 0x65, 0x74, 0x65, 0x4f, 0x6e, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e,
@@ -1342,14 +1342,14 @@ var file_listah_v1_category_proto_goTypes = []any{
 	(*CategoryServiceCreateOneResponse)(nil),  // 1: listah.v1.CategoryServiceCreateOneResponse
 	(*CategoryServiceCreateManyRequest)(nil),  // 2: listah.v1.CategoryServiceCreateManyRequest
 	(*CategoryServiceCreateManyResponse)(nil), // 3: listah.v1.CategoryServiceCreateManyResponse
-	(*CategoryServiceUpdateOneRequest)(nil),   // 4: listah.v1.CategoryServiceUpdateOneRequest
-	(*CategoryServiceUpdateOneResponse)(nil),  // 5: listah.v1.CategoryServiceUpdateOneResponse
-	(*CategoryServiceUpdateManyRequest)(nil),  // 6: listah.v1.CategoryServiceUpdateManyRequest
-	(*CategoryServiceUpdateManyResponse)(nil), // 7: listah.v1.CategoryServiceUpdateManyResponse
-	(*CategoryServiceReadOneRequest)(nil),     // 8: listah.v1.CategoryServiceReadOneRequest
-	(*CategoryServiceReadOneResponse)(nil),    // 9: listah.v1.CategoryServiceReadOneResponse
-	(*CategoryServiceReadManyRequest)(nil),    // 10: listah.v1.CategoryServiceReadManyRequest
-	(*CategoryServiceReadManyResponse)(nil),   // 11: listah.v1.CategoryServiceReadManyResponse
+	(*CategoryServiceReadOneRequest)(nil),     // 4: listah.v1.CategoryServiceReadOneRequest
+	(*CategoryServiceReadOneResponse)(nil),    // 5: listah.v1.CategoryServiceReadOneResponse
+	(*CategoryServiceReadManyRequest)(nil),    // 6: listah.v1.CategoryServiceReadManyRequest
+	(*CategoryServiceReadManyResponse)(nil),   // 7: listah.v1.CategoryServiceReadManyResponse
+	(*CategoryServiceUpdateOneRequest)(nil),   // 8: listah.v1.CategoryServiceUpdateOneRequest
+	(*CategoryServiceUpdateOneResponse)(nil),  // 9: listah.v1.CategoryServiceUpdateOneResponse
+	(*CategoryServiceUpdateManyRequest)(nil),  // 10: listah.v1.CategoryServiceUpdateManyRequest
+	(*CategoryServiceUpdateManyResponse)(nil), // 11: listah.v1.CategoryServiceUpdateManyResponse
 	(*CategoryServiceDeleteOneRequest)(nil),   // 12: listah.v1.CategoryServiceDeleteOneRequest
 	(*CategoryServiceDeleteOneResponse)(nil),  // 13: listah.v1.CategoryServiceDeleteOneResponse
 	(*CategoryServiceDeleteManyRequest)(nil),  // 14: listah.v1.CategoryServiceDeleteManyRequest
@@ -1363,13 +1363,13 @@ var file_listah_v1_category_proto_depIdxs = []int32{
 	18, // 1: listah.v1.CategoryServiceCreateOneResponse.audit:type_name -> listah.v1.Audit
 	0,  // 2: listah.v1.CategoryServiceCreateManyRequest.category:type_name -> listah.v1.CategoryServiceCreateOneRequest
 	1,  // 3: listah.v1.CategoryServiceCreateManyResponse.category:type_name -> listah.v1.CategoryServiceCreateOneResponse
-	18, // 4: listah.v1.CategoryServiceUpdateOneRequest.audit:type_name -> listah.v1.Audit
-	18, // 5: listah.v1.CategoryServiceUpdateOneResponse.audit:type_name -> listah.v1.Audit
-	4,  // 6: listah.v1.CategoryServiceUpdateManyRequest.category:type_name -> listah.v1.CategoryServiceUpdateOneRequest
-	5,  // 7: listah.v1.CategoryServiceUpdateManyResponse.category:type_name -> listah.v1.CategoryServiceUpdateOneResponse
-	18, // 8: listah.v1.CategoryServiceReadOneResponse.audit:type_name -> listah.v1.Audit
-	8,  // 9: listah.v1.CategoryServiceReadManyRequest.category:type_name -> listah.v1.CategoryServiceReadOneRequest
-	9,  // 10: listah.v1.CategoryServiceReadManyResponse.category:type_name -> listah.v1.CategoryServiceReadOneResponse
+	18, // 4: listah.v1.CategoryServiceReadOneResponse.audit:type_name -> listah.v1.Audit
+	4,  // 5: listah.v1.CategoryServiceReadManyRequest.category:type_name -> listah.v1.CategoryServiceReadOneRequest
+	5,  // 6: listah.v1.CategoryServiceReadManyResponse.category:type_name -> listah.v1.CategoryServiceReadOneResponse
+	18, // 7: listah.v1.CategoryServiceUpdateOneRequest.audit:type_name -> listah.v1.Audit
+	18, // 8: listah.v1.CategoryServiceUpdateOneResponse.audit:type_name -> listah.v1.Audit
+	8,  // 9: listah.v1.CategoryServiceUpdateManyRequest.category:type_name -> listah.v1.CategoryServiceUpdateOneRequest
+	9,  // 10: listah.v1.CategoryServiceUpdateManyResponse.category:type_name -> listah.v1.CategoryServiceUpdateOneResponse
 	18, // 11: listah.v1.CategoryServiceDeleteOneRequest.audit:type_name -> listah.v1.Audit
 	18, // 12: listah.v1.CategoryServiceDeleteOneResponse.audit:type_name -> listah.v1.Audit
 	12, // 13: listah.v1.CategoryServiceDeleteManyRequest.category:type_name -> listah.v1.CategoryServiceDeleteOneRequest
@@ -1377,19 +1377,19 @@ var file_listah_v1_category_proto_depIdxs = []int32{
 	18, // 15: listah.v1.CategoryServiceListItemsResponse.audit:type_name -> listah.v1.Audit
 	0,  // 16: listah.v1.CategoryService.CreateOne:input_type -> listah.v1.CategoryServiceCreateOneRequest
 	2,  // 17: listah.v1.CategoryService.CreateMany:input_type -> listah.v1.CategoryServiceCreateManyRequest
-	8,  // 18: listah.v1.CategoryService.ReadOne:input_type -> listah.v1.CategoryServiceReadOneRequest
-	10, // 19: listah.v1.CategoryService.ReadMany:input_type -> listah.v1.CategoryServiceReadManyRequest
-	4,  // 20: listah.v1.CategoryService.UpdateOne:input_type -> listah.v1.CategoryServiceUpdateOneRequest
-	6,  // 21: listah.v1.CategoryService.UpdateMany:input_type -> listah.v1.CategoryServiceUpdateManyRequest
+	4,  // 18: listah.v1.CategoryService.ReadOne:input_type -> listah.v1.CategoryServiceReadOneRequest
+	6,  // 19: listah.v1.CategoryService.ReadMany:input_type -> listah.v1.CategoryServiceReadManyRequest
+	8,  // 20: listah.v1.CategoryService.UpdateOne:input_type -> listah.v1.CategoryServiceUpdateOneRequest
+	10, // 21: listah.v1.CategoryService.UpdateMany:input_type -> listah.v1.CategoryServiceUpdateManyRequest
 	12, // 22: listah.v1.CategoryService.DeleteOne:input_type -> listah.v1.CategoryServiceDeleteOneRequest
 	14, // 23: listah.v1.CategoryService.DeleteMany:input_type -> listah.v1.CategoryServiceDeleteManyRequest
 	16, // 24: listah.v1.CategoryService.ListItems:input_type -> listah.v1.CategoryServiceListItemsRequest
 	1,  // 25: listah.v1.CategoryService.CreateOne:output_type -> listah.v1.CategoryServiceCreateOneResponse
 	3,  // 26: listah.v1.CategoryService.CreateMany:output_type -> listah.v1.CategoryServiceCreateManyResponse
-	9,  // 27: listah.v1.CategoryService.ReadOne:output_type -> listah.v1.CategoryServiceReadOneResponse
-	11, // 28: listah.v1.CategoryService.ReadMany:output_type -> listah.v1.CategoryServiceReadManyResponse
-	5,  // 29: listah.v1.CategoryService.UpdateOne:output_type -> listah.v1.CategoryServiceUpdateOneResponse
-	7,  // 30: listah.v1.CategoryService.UpdateMany:output_type -> listah.v1.CategoryServiceUpdateManyResponse
+	5,  // 27: listah.v1.CategoryService.ReadOne:output_type -> listah.v1.CategoryServiceReadOneResponse
+	7,  // 28: listah.v1.CategoryService.ReadMany:output_type -> listah.v1.CategoryServiceReadManyResponse
+	9,  // 29: listah.v1.CategoryService.UpdateOne:output_type -> listah.v1.CategoryServiceUpdateOneResponse
+	11, // 30: listah.v1.CategoryService.UpdateMany:output_type -> listah.v1.CategoryServiceUpdateManyResponse
 	13, // 31: listah.v1.CategoryService.DeleteOne:output_type -> listah.v1.CategoryServiceDeleteOneResponse
 	15, // 32: listah.v1.CategoryService.DeleteMany:output_type -> listah.v1.CategoryServiceDeleteManyResponse
 	17, // 33: listah.v1.CategoryService.ListItems:output_type -> listah.v1.CategoryServiceListItemsResponse
@@ -1457,54 +1457,6 @@ func file_listah_v1_category_proto_init() {
 			}
 		}
 		file_listah_v1_category_proto_msgTypes[4].Exporter = func(v any, i int) any {
-			switch v := v.(*CategoryServiceUpdateOneRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_listah_v1_category_proto_msgTypes[5].Exporter = func(v any, i int) any {
-			switch v := v.(*CategoryServiceUpdateOneResponse); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_listah_v1_category_proto_msgTypes[6].Exporter = func(v any, i int) any {
-			switch v := v.(*CategoryServiceUpdateManyRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_listah_v1_category_proto_msgTypes[7].Exporter = func(v any, i int) any {
-			switch v := v.(*CategoryServiceUpdateManyResponse); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_listah_v1_category_proto_msgTypes[8].Exporter = func(v any, i int) any {
 			switch v := v.(*CategoryServiceReadOneRequest); i {
 			case 0:
 				return &v.state
@@ -1516,7 +1468,7 @@ func file_listah_v1_category_proto_init() {
 				return nil
 			}
 		}
-		file_listah_v1_category_proto_msgTypes[9].Exporter = func(v any, i int) any {
+		file_listah_v1_category_proto_msgTypes[5].Exporter = func(v any, i int) any {
 			switch v := v.(*CategoryServiceReadOneResponse); i {
 			case 0:
 				return &v.state
@@ -1528,7 +1480,7 @@ func file_listah_v1_category_proto_init() {
 				return nil
 			}
 		}
-		file_listah_v1_category_proto_msgTypes[10].Exporter = func(v any, i int) any {
+		file_listah_v1_category_proto_msgTypes[6].Exporter = func(v any, i int) any {
 			switch v := v.(*CategoryServiceReadManyRequest); i {
 			case 0:
 				return &v.state
@@ -1540,8 +1492,56 @@ func file_listah_v1_category_proto_init() {
 				return nil
 			}
 		}
-		file_listah_v1_category_proto_msgTypes[11].Exporter = func(v any, i int) any {
+		file_listah_v1_category_proto_msgTypes[7].Exporter = func(v any, i int) any {
 			switch v := v.(*CategoryServiceReadManyResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_listah_v1_category_proto_msgTypes[8].Exporter = func(v any, i int) any {
+			switch v := v.(*CategoryServiceUpdateOneRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_listah_v1_category_proto_msgTypes[9].Exporter = func(v any, i int) any {
+			switch v := v.(*CategoryServiceUpdateOneResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_listah_v1_category_proto_msgTypes[10].Exporter = func(v any, i int) any {
+			switch v := v.(*CategoryServiceUpdateManyRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_listah_v1_category_proto_msgTypes[11].Exporter = func(v any, i int) any {
+			switch v := v.(*CategoryServiceUpdateManyResponse); i {
 			case 0:
 				return &v.state
 			case 1:
