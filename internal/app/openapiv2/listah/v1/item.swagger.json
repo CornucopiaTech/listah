@@ -80,6 +80,198 @@
       ],
       "default": "AUDIT_UPDATER_ENUM_UNSPECIFIED"
     },
+    "v1ItemServiceCreateManyResponse": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1ItemServiceCreateOneResponse"
+          }
+        }
+      }
+    },
+    "v1ItemServiceCreateOneRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "category_name": {
+          "type": "string"
+        },
+        "category_id": {
+          "type": "string"
+        },
+        "store_name": {
+          "type": "string"
+        },
+        "store_id": {
+          "type": "string"
+        },
+        "reactivate_at": {
+          "type": "string",
+          "format": "date-time",
+          "title": "purchase_history = 9; //ToDo: Determine if purchase history is needed\nbool active = 20;"
+        },
+        "audit": {
+          "$ref": "#/definitions/v1Audit"
+        }
+      }
+    },
+    "v1ItemServiceCreateOneResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "category_name": {
+          "type": "string"
+        },
+        "category_id": {
+          "type": "string"
+        },
+        "store_name": {
+          "type": "string"
+        },
+        "store_id": {
+          "type": "string"
+        },
+        "reactivate_at": {
+          "type": "string",
+          "format": "date-time",
+          "title": "purchase_history = 9; //ToDo: Determine if purchase history is needed\nbool active = 20;"
+        },
+        "audit": {
+          "$ref": "#/definitions/v1Audit"
+        }
+      }
+    },
+    "v1ItemServiceDeleteManyResponse": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1ItemServiceDeleteOneResponse"
+          }
+        }
+      }
+    },
+    "v1ItemServiceDeleteOneRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "audit": {
+          "$ref": "#/definitions/v1Audit"
+        }
+      }
+    },
+    "v1ItemServiceDeleteOneResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "category_name": {
+          "type": "string"
+        },
+        "category_id": {
+          "type": "string"
+        },
+        "store_name": {
+          "type": "string"
+        },
+        "store_id": {
+          "type": "string"
+        },
+        "reactivate_at": {
+          "type": "string",
+          "format": "date-time",
+          "title": "purchase_history = 9; //ToDo: Determine if purchase history is needed\nbool active = 20;"
+        },
+        "audit": {
+          "$ref": "#/definitions/v1Audit"
+        }
+      }
+    },
+    "v1ItemServiceListItemsResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "string id = 1;\nstring name = 2;\nstring description = 3;\nstring note = 7;"
+        },
+        "categoryName": {
+          "type": "string",
+          "description": "Audit audit = 50;",
+          "title": "repeated ItemServiceReadOneResponse items = 20;\nAudit audit = 50;\nstring id = 1;\nstring name = 2;\nstring description = 3;\nstring note = 7;\nstring category = 8;\n    string category_id = 8;"
+        }
+      }
+    },
+    "v1ItemServiceReadManyResponse": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1ItemServiceReadOneResponse"
+          }
+        }
+      }
+    },
+    "v1ItemServiceReadOneRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
     "v1ItemServiceReadOneResponse": {
       "type": "object",
       "properties": {
@@ -98,11 +290,109 @@
         "note": {
           "type": "string"
         },
+        "category_name": {
+          "type": "string"
+        },
         "category_id": {
+          "type": "string"
+        },
+        "store_name": {
+          "type": "string"
+        },
+        "store_id": {
+          "type": "string"
+        },
+        "reactivate_at": {
+          "type": "string",
+          "format": "date-time",
+          "title": "purchase_history = 9; //ToDo: Determine if purchase history is needed\nbool active = 20;"
+        },
+        "audit": {
+          "$ref": "#/definitions/v1Audit"
+        }
+      }
+    },
+    "v1ItemServiceUpdateManyResponse": {
+      "type": "object",
+      "properties": {
+        "item": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "object",
+            "$ref": "#/definitions/v1ItemServiceUpdateOneResponse"
           }
+        }
+      }
+    },
+    "v1ItemServiceUpdateOneRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "category_name": {
+          "type": "string"
+        },
+        "category_id": {
+          "type": "string"
+        },
+        "store_name": {
+          "type": "string"
+        },
+        "store_id": {
+          "type": "string"
+        },
+        "reactivate_at": {
+          "type": "string",
+          "format": "date-time",
+          "title": "purchase_history = 9; //ToDo: Determine if purchase history is needed\nbool active = 20;"
+        },
+        "audit": {
+          "$ref": "#/definitions/v1Audit"
+        }
+      }
+    },
+    "v1ItemServiceUpdateOneResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "category_name": {
+          "type": "string"
+        },
+        "category_id": {
+          "type": "string"
+        },
+        "store_name": {
+          "type": "string"
+        },
+        "store_id": {
+          "type": "string"
         },
         "reactivate_at": {
           "type": "string",

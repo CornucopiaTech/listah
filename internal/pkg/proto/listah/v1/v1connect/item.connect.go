@@ -33,19 +33,51 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// ItemServiceReadProcedure is the fully-qualified name of the ItemService's Read RPC.
-	ItemServiceReadProcedure = "/listah.v1.ItemService/Read"
+	// ItemServiceCreateOneProcedure is the fully-qualified name of the ItemService's CreateOne RPC.
+	ItemServiceCreateOneProcedure = "/listah.v1.ItemService/CreateOne"
+	// ItemServiceCreateManyProcedure is the fully-qualified name of the ItemService's CreateMany RPC.
+	ItemServiceCreateManyProcedure = "/listah.v1.ItemService/CreateMany"
+	// ItemServiceReadOneProcedure is the fully-qualified name of the ItemService's ReadOne RPC.
+	ItemServiceReadOneProcedure = "/listah.v1.ItemService/ReadOne"
+	// ItemServiceReadManyProcedure is the fully-qualified name of the ItemService's ReadMany RPC.
+	ItemServiceReadManyProcedure = "/listah.v1.ItemService/ReadMany"
+	// ItemServiceUpdateOneProcedure is the fully-qualified name of the ItemService's UpdateOne RPC.
+	ItemServiceUpdateOneProcedure = "/listah.v1.ItemService/UpdateOne"
+	// ItemServiceUpdateManyProcedure is the fully-qualified name of the ItemService's UpdateMany RPC.
+	ItemServiceUpdateManyProcedure = "/listah.v1.ItemService/UpdateMany"
+	// ItemServiceDeleteOneProcedure is the fully-qualified name of the ItemService's DeleteOne RPC.
+	ItemServiceDeleteOneProcedure = "/listah.v1.ItemService/DeleteOne"
+	// ItemServiceDeleteManyProcedure is the fully-qualified name of the ItemService's DeleteMany RPC.
+	ItemServiceDeleteManyProcedure = "/listah.v1.ItemService/DeleteMany"
+	// ItemServiceListItemsProcedure is the fully-qualified name of the ItemService's ListItems RPC.
+	ItemServiceListItemsProcedure = "/listah.v1.ItemService/ListItems"
 )
 
 // These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
 var (
-	itemServiceServiceDescriptor    = v1.File_listah_v1_item_proto.Services().ByName("ItemService")
-	itemServiceReadMethodDescriptor = itemServiceServiceDescriptor.Methods().ByName("Read")
+	itemServiceServiceDescriptor          = v1.File_listah_v1_item_proto.Services().ByName("ItemService")
+	itemServiceCreateOneMethodDescriptor  = itemServiceServiceDescriptor.Methods().ByName("CreateOne")
+	itemServiceCreateManyMethodDescriptor = itemServiceServiceDescriptor.Methods().ByName("CreateMany")
+	itemServiceReadOneMethodDescriptor    = itemServiceServiceDescriptor.Methods().ByName("ReadOne")
+	itemServiceReadManyMethodDescriptor   = itemServiceServiceDescriptor.Methods().ByName("ReadMany")
+	itemServiceUpdateOneMethodDescriptor  = itemServiceServiceDescriptor.Methods().ByName("UpdateOne")
+	itemServiceUpdateManyMethodDescriptor = itemServiceServiceDescriptor.Methods().ByName("UpdateMany")
+	itemServiceDeleteOneMethodDescriptor  = itemServiceServiceDescriptor.Methods().ByName("DeleteOne")
+	itemServiceDeleteManyMethodDescriptor = itemServiceServiceDescriptor.Methods().ByName("DeleteMany")
+	itemServiceListItemsMethodDescriptor  = itemServiceServiceDescriptor.Methods().ByName("ListItems")
 )
 
 // ItemServiceClient is a client for the listah.v1.ItemService service.
 type ItemServiceClient interface {
-	Read(context.Context, *connect.Request[v1.ItemServiceReadOneRequest]) (*connect.Response[v1.ItemServiceReadOneResponse], error)
+	CreateOne(context.Context, *connect.Request[v1.ItemServiceCreateOneRequest]) (*connect.Response[v1.ItemServiceCreateOneResponse], error)
+	CreateMany(context.Context, *connect.Request[v1.ItemServiceCreateManyRequest]) (*connect.Response[v1.ItemServiceCreateManyResponse], error)
+	ReadOne(context.Context, *connect.Request[v1.ItemServiceReadOneRequest]) (*connect.Response[v1.ItemServiceReadOneResponse], error)
+	ReadMany(context.Context, *connect.Request[v1.ItemServiceReadManyRequest]) (*connect.Response[v1.ItemServiceReadManyResponse], error)
+	UpdateOne(context.Context, *connect.Request[v1.ItemServiceUpdateOneRequest]) (*connect.Response[v1.ItemServiceUpdateOneResponse], error)
+	UpdateMany(context.Context, *connect.Request[v1.ItemServiceUpdateManyRequest]) (*connect.Response[v1.ItemServiceUpdateManyResponse], error)
+	DeleteOne(context.Context, *connect.Request[v1.ItemServiceDeleteOneRequest]) (*connect.Response[v1.ItemServiceDeleteOneResponse], error)
+	DeleteMany(context.Context, *connect.Request[v1.ItemServiceDeleteManyRequest]) (*connect.Response[v1.ItemServiceDeleteManyResponse], error)
+	ListItems(context.Context, *connect.Request[v1.ItemServiceListItemsRequest]) (*connect.Response[v1.ItemServiceListItemsResponse], error)
 }
 
 // NewItemServiceClient constructs a client for the listah.v1.ItemService service. By default, it
@@ -58,10 +90,58 @@ type ItemServiceClient interface {
 func NewItemServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) ItemServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
 	return &itemServiceClient{
-		read: connect.NewClient[v1.ItemServiceReadOneRequest, v1.ItemServiceReadOneResponse](
+		createOne: connect.NewClient[v1.ItemServiceCreateOneRequest, v1.ItemServiceCreateOneResponse](
 			httpClient,
-			baseURL+ItemServiceReadProcedure,
-			connect.WithSchema(itemServiceReadMethodDescriptor),
+			baseURL+ItemServiceCreateOneProcedure,
+			connect.WithSchema(itemServiceCreateOneMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
+		createMany: connect.NewClient[v1.ItemServiceCreateManyRequest, v1.ItemServiceCreateManyResponse](
+			httpClient,
+			baseURL+ItemServiceCreateManyProcedure,
+			connect.WithSchema(itemServiceCreateManyMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
+		readOne: connect.NewClient[v1.ItemServiceReadOneRequest, v1.ItemServiceReadOneResponse](
+			httpClient,
+			baseURL+ItemServiceReadOneProcedure,
+			connect.WithSchema(itemServiceReadOneMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
+		readMany: connect.NewClient[v1.ItemServiceReadManyRequest, v1.ItemServiceReadManyResponse](
+			httpClient,
+			baseURL+ItemServiceReadManyProcedure,
+			connect.WithSchema(itemServiceReadManyMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
+		updateOne: connect.NewClient[v1.ItemServiceUpdateOneRequest, v1.ItemServiceUpdateOneResponse](
+			httpClient,
+			baseURL+ItemServiceUpdateOneProcedure,
+			connect.WithSchema(itemServiceUpdateOneMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
+		updateMany: connect.NewClient[v1.ItemServiceUpdateManyRequest, v1.ItemServiceUpdateManyResponse](
+			httpClient,
+			baseURL+ItemServiceUpdateManyProcedure,
+			connect.WithSchema(itemServiceUpdateManyMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
+		deleteOne: connect.NewClient[v1.ItemServiceDeleteOneRequest, v1.ItemServiceDeleteOneResponse](
+			httpClient,
+			baseURL+ItemServiceDeleteOneProcedure,
+			connect.WithSchema(itemServiceDeleteOneMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
+		deleteMany: connect.NewClient[v1.ItemServiceDeleteManyRequest, v1.ItemServiceDeleteManyResponse](
+			httpClient,
+			baseURL+ItemServiceDeleteManyProcedure,
+			connect.WithSchema(itemServiceDeleteManyMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
+		listItems: connect.NewClient[v1.ItemServiceListItemsRequest, v1.ItemServiceListItemsResponse](
+			httpClient,
+			baseURL+ItemServiceListItemsProcedure,
+			connect.WithSchema(itemServiceListItemsMethodDescriptor),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -69,17 +149,73 @@ func NewItemServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 
 // itemServiceClient implements ItemServiceClient.
 type itemServiceClient struct {
-	read *connect.Client[v1.ItemServiceReadOneRequest, v1.ItemServiceReadOneResponse]
+	createOne  *connect.Client[v1.ItemServiceCreateOneRequest, v1.ItemServiceCreateOneResponse]
+	createMany *connect.Client[v1.ItemServiceCreateManyRequest, v1.ItemServiceCreateManyResponse]
+	readOne    *connect.Client[v1.ItemServiceReadOneRequest, v1.ItemServiceReadOneResponse]
+	readMany   *connect.Client[v1.ItemServiceReadManyRequest, v1.ItemServiceReadManyResponse]
+	updateOne  *connect.Client[v1.ItemServiceUpdateOneRequest, v1.ItemServiceUpdateOneResponse]
+	updateMany *connect.Client[v1.ItemServiceUpdateManyRequest, v1.ItemServiceUpdateManyResponse]
+	deleteOne  *connect.Client[v1.ItemServiceDeleteOneRequest, v1.ItemServiceDeleteOneResponse]
+	deleteMany *connect.Client[v1.ItemServiceDeleteManyRequest, v1.ItemServiceDeleteManyResponse]
+	listItems  *connect.Client[v1.ItemServiceListItemsRequest, v1.ItemServiceListItemsResponse]
 }
 
-// Read calls listah.v1.ItemService.Read.
-func (c *itemServiceClient) Read(ctx context.Context, req *connect.Request[v1.ItemServiceReadOneRequest]) (*connect.Response[v1.ItemServiceReadOneResponse], error) {
-	return c.read.CallUnary(ctx, req)
+// CreateOne calls listah.v1.ItemService.CreateOne.
+func (c *itemServiceClient) CreateOne(ctx context.Context, req *connect.Request[v1.ItemServiceCreateOneRequest]) (*connect.Response[v1.ItemServiceCreateOneResponse], error) {
+	return c.createOne.CallUnary(ctx, req)
+}
+
+// CreateMany calls listah.v1.ItemService.CreateMany.
+func (c *itemServiceClient) CreateMany(ctx context.Context, req *connect.Request[v1.ItemServiceCreateManyRequest]) (*connect.Response[v1.ItemServiceCreateManyResponse], error) {
+	return c.createMany.CallUnary(ctx, req)
+}
+
+// ReadOne calls listah.v1.ItemService.ReadOne.
+func (c *itemServiceClient) ReadOne(ctx context.Context, req *connect.Request[v1.ItemServiceReadOneRequest]) (*connect.Response[v1.ItemServiceReadOneResponse], error) {
+	return c.readOne.CallUnary(ctx, req)
+}
+
+// ReadMany calls listah.v1.ItemService.ReadMany.
+func (c *itemServiceClient) ReadMany(ctx context.Context, req *connect.Request[v1.ItemServiceReadManyRequest]) (*connect.Response[v1.ItemServiceReadManyResponse], error) {
+	return c.readMany.CallUnary(ctx, req)
+}
+
+// UpdateOne calls listah.v1.ItemService.UpdateOne.
+func (c *itemServiceClient) UpdateOne(ctx context.Context, req *connect.Request[v1.ItemServiceUpdateOneRequest]) (*connect.Response[v1.ItemServiceUpdateOneResponse], error) {
+	return c.updateOne.CallUnary(ctx, req)
+}
+
+// UpdateMany calls listah.v1.ItemService.UpdateMany.
+func (c *itemServiceClient) UpdateMany(ctx context.Context, req *connect.Request[v1.ItemServiceUpdateManyRequest]) (*connect.Response[v1.ItemServiceUpdateManyResponse], error) {
+	return c.updateMany.CallUnary(ctx, req)
+}
+
+// DeleteOne calls listah.v1.ItemService.DeleteOne.
+func (c *itemServiceClient) DeleteOne(ctx context.Context, req *connect.Request[v1.ItemServiceDeleteOneRequest]) (*connect.Response[v1.ItemServiceDeleteOneResponse], error) {
+	return c.deleteOne.CallUnary(ctx, req)
+}
+
+// DeleteMany calls listah.v1.ItemService.DeleteMany.
+func (c *itemServiceClient) DeleteMany(ctx context.Context, req *connect.Request[v1.ItemServiceDeleteManyRequest]) (*connect.Response[v1.ItemServiceDeleteManyResponse], error) {
+	return c.deleteMany.CallUnary(ctx, req)
+}
+
+// ListItems calls listah.v1.ItemService.ListItems.
+func (c *itemServiceClient) ListItems(ctx context.Context, req *connect.Request[v1.ItemServiceListItemsRequest]) (*connect.Response[v1.ItemServiceListItemsResponse], error) {
+	return c.listItems.CallUnary(ctx, req)
 }
 
 // ItemServiceHandler is an implementation of the listah.v1.ItemService service.
 type ItemServiceHandler interface {
-	Read(context.Context, *connect.Request[v1.ItemServiceReadOneRequest]) (*connect.Response[v1.ItemServiceReadOneResponse], error)
+	CreateOne(context.Context, *connect.Request[v1.ItemServiceCreateOneRequest]) (*connect.Response[v1.ItemServiceCreateOneResponse], error)
+	CreateMany(context.Context, *connect.Request[v1.ItemServiceCreateManyRequest]) (*connect.Response[v1.ItemServiceCreateManyResponse], error)
+	ReadOne(context.Context, *connect.Request[v1.ItemServiceReadOneRequest]) (*connect.Response[v1.ItemServiceReadOneResponse], error)
+	ReadMany(context.Context, *connect.Request[v1.ItemServiceReadManyRequest]) (*connect.Response[v1.ItemServiceReadManyResponse], error)
+	UpdateOne(context.Context, *connect.Request[v1.ItemServiceUpdateOneRequest]) (*connect.Response[v1.ItemServiceUpdateOneResponse], error)
+	UpdateMany(context.Context, *connect.Request[v1.ItemServiceUpdateManyRequest]) (*connect.Response[v1.ItemServiceUpdateManyResponse], error)
+	DeleteOne(context.Context, *connect.Request[v1.ItemServiceDeleteOneRequest]) (*connect.Response[v1.ItemServiceDeleteOneResponse], error)
+	DeleteMany(context.Context, *connect.Request[v1.ItemServiceDeleteManyRequest]) (*connect.Response[v1.ItemServiceDeleteManyResponse], error)
+	ListItems(context.Context, *connect.Request[v1.ItemServiceListItemsRequest]) (*connect.Response[v1.ItemServiceListItemsResponse], error)
 }
 
 // NewItemServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -88,16 +224,80 @@ type ItemServiceHandler interface {
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
 func NewItemServiceHandler(svc ItemServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
-	itemServiceReadHandler := connect.NewUnaryHandler(
-		ItemServiceReadProcedure,
-		svc.Read,
-		connect.WithSchema(itemServiceReadMethodDescriptor),
+	itemServiceCreateOneHandler := connect.NewUnaryHandler(
+		ItemServiceCreateOneProcedure,
+		svc.CreateOne,
+		connect.WithSchema(itemServiceCreateOneMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
+	itemServiceCreateManyHandler := connect.NewUnaryHandler(
+		ItemServiceCreateManyProcedure,
+		svc.CreateMany,
+		connect.WithSchema(itemServiceCreateManyMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
+	itemServiceReadOneHandler := connect.NewUnaryHandler(
+		ItemServiceReadOneProcedure,
+		svc.ReadOne,
+		connect.WithSchema(itemServiceReadOneMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
+	itemServiceReadManyHandler := connect.NewUnaryHandler(
+		ItemServiceReadManyProcedure,
+		svc.ReadMany,
+		connect.WithSchema(itemServiceReadManyMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
+	itemServiceUpdateOneHandler := connect.NewUnaryHandler(
+		ItemServiceUpdateOneProcedure,
+		svc.UpdateOne,
+		connect.WithSchema(itemServiceUpdateOneMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
+	itemServiceUpdateManyHandler := connect.NewUnaryHandler(
+		ItemServiceUpdateManyProcedure,
+		svc.UpdateMany,
+		connect.WithSchema(itemServiceUpdateManyMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
+	itemServiceDeleteOneHandler := connect.NewUnaryHandler(
+		ItemServiceDeleteOneProcedure,
+		svc.DeleteOne,
+		connect.WithSchema(itemServiceDeleteOneMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
+	itemServiceDeleteManyHandler := connect.NewUnaryHandler(
+		ItemServiceDeleteManyProcedure,
+		svc.DeleteMany,
+		connect.WithSchema(itemServiceDeleteManyMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
+	itemServiceListItemsHandler := connect.NewUnaryHandler(
+		ItemServiceListItemsProcedure,
+		svc.ListItems,
+		connect.WithSchema(itemServiceListItemsMethodDescriptor),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/listah.v1.ItemService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case ItemServiceReadProcedure:
-			itemServiceReadHandler.ServeHTTP(w, r)
+		case ItemServiceCreateOneProcedure:
+			itemServiceCreateOneHandler.ServeHTTP(w, r)
+		case ItemServiceCreateManyProcedure:
+			itemServiceCreateManyHandler.ServeHTTP(w, r)
+		case ItemServiceReadOneProcedure:
+			itemServiceReadOneHandler.ServeHTTP(w, r)
+		case ItemServiceReadManyProcedure:
+			itemServiceReadManyHandler.ServeHTTP(w, r)
+		case ItemServiceUpdateOneProcedure:
+			itemServiceUpdateOneHandler.ServeHTTP(w, r)
+		case ItemServiceUpdateManyProcedure:
+			itemServiceUpdateManyHandler.ServeHTTP(w, r)
+		case ItemServiceDeleteOneProcedure:
+			itemServiceDeleteOneHandler.ServeHTTP(w, r)
+		case ItemServiceDeleteManyProcedure:
+			itemServiceDeleteManyHandler.ServeHTTP(w, r)
+		case ItemServiceListItemsProcedure:
+			itemServiceListItemsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -107,6 +307,38 @@ func NewItemServiceHandler(svc ItemServiceHandler, opts ...connect.HandlerOption
 // UnimplementedItemServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedItemServiceHandler struct{}
 
-func (UnimplementedItemServiceHandler) Read(context.Context, *connect.Request[v1.ItemServiceReadOneRequest]) (*connect.Response[v1.ItemServiceReadOneResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.Read is not implemented"))
+func (UnimplementedItemServiceHandler) CreateOne(context.Context, *connect.Request[v1.ItemServiceCreateOneRequest]) (*connect.Response[v1.ItemServiceCreateOneResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.CreateOne is not implemented"))
+}
+
+func (UnimplementedItemServiceHandler) CreateMany(context.Context, *connect.Request[v1.ItemServiceCreateManyRequest]) (*connect.Response[v1.ItemServiceCreateManyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.CreateMany is not implemented"))
+}
+
+func (UnimplementedItemServiceHandler) ReadOne(context.Context, *connect.Request[v1.ItemServiceReadOneRequest]) (*connect.Response[v1.ItemServiceReadOneResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.ReadOne is not implemented"))
+}
+
+func (UnimplementedItemServiceHandler) ReadMany(context.Context, *connect.Request[v1.ItemServiceReadManyRequest]) (*connect.Response[v1.ItemServiceReadManyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.ReadMany is not implemented"))
+}
+
+func (UnimplementedItemServiceHandler) UpdateOne(context.Context, *connect.Request[v1.ItemServiceUpdateOneRequest]) (*connect.Response[v1.ItemServiceUpdateOneResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.UpdateOne is not implemented"))
+}
+
+func (UnimplementedItemServiceHandler) UpdateMany(context.Context, *connect.Request[v1.ItemServiceUpdateManyRequest]) (*connect.Response[v1.ItemServiceUpdateManyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.UpdateMany is not implemented"))
+}
+
+func (UnimplementedItemServiceHandler) DeleteOne(context.Context, *connect.Request[v1.ItemServiceDeleteOneRequest]) (*connect.Response[v1.ItemServiceDeleteOneResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.DeleteOne is not implemented"))
+}
+
+func (UnimplementedItemServiceHandler) DeleteMany(context.Context, *connect.Request[v1.ItemServiceDeleteManyRequest]) (*connect.Response[v1.ItemServiceDeleteManyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.DeleteMany is not implemented"))
+}
+
+func (UnimplementedItemServiceHandler) ListItems(context.Context, *connect.Request[v1.ItemServiceListItemsRequest]) (*connect.Response[v1.ItemServiceListItemsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.ListItems is not implemented"))
 }
