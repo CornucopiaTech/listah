@@ -49,8 +49,6 @@ const (
 	UserServiceDeleteOneProcedure = "/listah.v1.UserService/DeleteOne"
 	// UserServiceDeleteManyProcedure is the fully-qualified name of the UserService's DeleteMany RPC.
 	UserServiceDeleteManyProcedure = "/listah.v1.UserService/DeleteMany"
-	// UserServiceEchoProcedure is the fully-qualified name of the UserService's Echo RPC.
-	UserServiceEchoProcedure = "/listah.v1.UserService/Echo"
 )
 
 // These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
@@ -64,7 +62,6 @@ var (
 	userServiceUpdateManyMethodDescriptor = userServiceServiceDescriptor.Methods().ByName("UpdateMany")
 	userServiceDeleteOneMethodDescriptor  = userServiceServiceDescriptor.Methods().ByName("DeleteOne")
 	userServiceDeleteManyMethodDescriptor = userServiceServiceDescriptor.Methods().ByName("DeleteMany")
-	userServiceEchoMethodDescriptor       = userServiceServiceDescriptor.Methods().ByName("Echo")
 )
 
 // UserServiceClient is a client for the listah.v1.UserService service.
@@ -77,7 +74,6 @@ type UserServiceClient interface {
 	UpdateMany(context.Context, *connect.Request[v1.UserServiceUpdateManyRequest]) (*connect.Response[v1.UserServiceUpdateManyResponse], error)
 	DeleteOne(context.Context, *connect.Request[v1.UserServiceDeleteOneRequest]) (*connect.Response[v1.UserServiceDeleteOneResponse], error)
 	DeleteMany(context.Context, *connect.Request[v1.UserServiceDeleteManyRequest]) (*connect.Response[v1.UserServiceDeleteManyResponse], error)
-	Echo(context.Context, *connect.Request[v1.UserServiceEchoRequest]) (*connect.Response[v1.UserServiceEchoResponse], error)
 }
 
 // NewUserServiceClient constructs a client for the listah.v1.UserService service. By default, it
@@ -106,12 +102,14 @@ func NewUserServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 			httpClient,
 			baseURL+UserServiceReadOneProcedure,
 			connect.WithSchema(userServiceReadOneMethodDescriptor),
+			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
 		readMany: connect.NewClient[v1.UserServiceReadManyRequest, v1.UserServiceReadManyResponse](
 			httpClient,
 			baseURL+UserServiceReadManyProcedure,
 			connect.WithSchema(userServiceReadManyMethodDescriptor),
+			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
 		updateOne: connect.NewClient[v1.UserServiceUpdateOneRequest, v1.UserServiceUpdateOneResponse](
@@ -138,12 +136,6 @@ func NewUserServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 			connect.WithSchema(userServiceDeleteManyMethodDescriptor),
 			connect.WithClientOptions(opts...),
 		),
-		echo: connect.NewClient[v1.UserServiceEchoRequest, v1.UserServiceEchoResponse](
-			httpClient,
-			baseURL+UserServiceEchoProcedure,
-			connect.WithSchema(userServiceEchoMethodDescriptor),
-			connect.WithClientOptions(opts...),
-		),
 	}
 }
 
@@ -157,7 +149,6 @@ type userServiceClient struct {
 	updateMany *connect.Client[v1.UserServiceUpdateManyRequest, v1.UserServiceUpdateManyResponse]
 	deleteOne  *connect.Client[v1.UserServiceDeleteOneRequest, v1.UserServiceDeleteOneResponse]
 	deleteMany *connect.Client[v1.UserServiceDeleteManyRequest, v1.UserServiceDeleteManyResponse]
-	echo       *connect.Client[v1.UserServiceEchoRequest, v1.UserServiceEchoResponse]
 }
 
 // CreateOne calls listah.v1.UserService.CreateOne.
@@ -200,11 +191,6 @@ func (c *userServiceClient) DeleteMany(ctx context.Context, req *connect.Request
 	return c.deleteMany.CallUnary(ctx, req)
 }
 
-// Echo calls listah.v1.UserService.Echo.
-func (c *userServiceClient) Echo(ctx context.Context, req *connect.Request[v1.UserServiceEchoRequest]) (*connect.Response[v1.UserServiceEchoResponse], error) {
-	return c.echo.CallUnary(ctx, req)
-}
-
 // UserServiceHandler is an implementation of the listah.v1.UserService service.
 type UserServiceHandler interface {
 	CreateOne(context.Context, *connect.Request[v1.UserServiceCreateOneRequest]) (*connect.Response[v1.UserServiceCreateOneResponse], error)
@@ -215,7 +201,6 @@ type UserServiceHandler interface {
 	UpdateMany(context.Context, *connect.Request[v1.UserServiceUpdateManyRequest]) (*connect.Response[v1.UserServiceUpdateManyResponse], error)
 	DeleteOne(context.Context, *connect.Request[v1.UserServiceDeleteOneRequest]) (*connect.Response[v1.UserServiceDeleteOneResponse], error)
 	DeleteMany(context.Context, *connect.Request[v1.UserServiceDeleteManyRequest]) (*connect.Response[v1.UserServiceDeleteManyResponse], error)
-	Echo(context.Context, *connect.Request[v1.UserServiceEchoRequest]) (*connect.Response[v1.UserServiceEchoResponse], error)
 }
 
 // NewUserServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -240,12 +225,14 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect.HandlerOption
 		UserServiceReadOneProcedure,
 		svc.ReadOne,
 		connect.WithSchema(userServiceReadOneMethodDescriptor),
+		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
 	userServiceReadManyHandler := connect.NewUnaryHandler(
 		UserServiceReadManyProcedure,
 		svc.ReadMany,
 		connect.WithSchema(userServiceReadManyMethodDescriptor),
+		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
 	userServiceUpdateOneHandler := connect.NewUnaryHandler(
@@ -272,12 +259,6 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect.HandlerOption
 		connect.WithSchema(userServiceDeleteManyMethodDescriptor),
 		connect.WithHandlerOptions(opts...),
 	)
-	userServiceEchoHandler := connect.NewUnaryHandler(
-		UserServiceEchoProcedure,
-		svc.Echo,
-		connect.WithSchema(userServiceEchoMethodDescriptor),
-		connect.WithHandlerOptions(opts...),
-	)
 	return "/listah.v1.UserService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case UserServiceCreateOneProcedure:
@@ -296,8 +277,6 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect.HandlerOption
 			userServiceDeleteOneHandler.ServeHTTP(w, r)
 		case UserServiceDeleteManyProcedure:
 			userServiceDeleteManyHandler.ServeHTTP(w, r)
-		case UserServiceEchoProcedure:
-			userServiceEchoHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -337,8 +316,4 @@ func (UnimplementedUserServiceHandler) DeleteOne(context.Context, *connect.Reque
 
 func (UnimplementedUserServiceHandler) DeleteMany(context.Context, *connect.Request[v1.UserServiceDeleteManyRequest]) (*connect.Response[v1.UserServiceDeleteManyResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.UserService.DeleteMany is not implemented"))
-}
-
-func (UnimplementedUserServiceHandler) Echo(context.Context, *connect.Request[v1.UserServiceEchoRequest]) (*connect.Response[v1.UserServiceEchoResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.UserService.Echo is not implemented"))
 }

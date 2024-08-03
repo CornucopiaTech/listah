@@ -49,8 +49,8 @@ const (
 	StoreServiceDeleteOneProcedure = "/listah.v1.StoreService/DeleteOne"
 	// StoreServiceDeleteManyProcedure is the fully-qualified name of the StoreService's DeleteMany RPC.
 	StoreServiceDeleteManyProcedure = "/listah.v1.StoreService/DeleteMany"
-	// StoreServiceListItemsProcedure is the fully-qualified name of the StoreService's ListItems RPC.
-	StoreServiceListItemsProcedure = "/listah.v1.StoreService/ListItems"
+	// StoreServiceListProcedure is the fully-qualified name of the StoreService's List RPC.
+	StoreServiceListProcedure = "/listah.v1.StoreService/List"
 )
 
 // These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
@@ -64,7 +64,7 @@ var (
 	storeServiceUpdateManyMethodDescriptor = storeServiceServiceDescriptor.Methods().ByName("UpdateMany")
 	storeServiceDeleteOneMethodDescriptor  = storeServiceServiceDescriptor.Methods().ByName("DeleteOne")
 	storeServiceDeleteManyMethodDescriptor = storeServiceServiceDescriptor.Methods().ByName("DeleteMany")
-	storeServiceListItemsMethodDescriptor  = storeServiceServiceDescriptor.Methods().ByName("ListItems")
+	storeServiceListMethodDescriptor       = storeServiceServiceDescriptor.Methods().ByName("List")
 )
 
 // StoreServiceClient is a client for the listah.v1.StoreService service.
@@ -77,7 +77,7 @@ type StoreServiceClient interface {
 	UpdateMany(context.Context, *connect.Request[v1.StoreServiceUpdateManyRequest]) (*connect.Response[v1.StoreServiceUpdateManyResponse], error)
 	DeleteOne(context.Context, *connect.Request[v1.StoreServiceDeleteOneRequest]) (*connect.Response[v1.StoreServiceDeleteOneResponse], error)
 	DeleteMany(context.Context, *connect.Request[v1.StoreServiceDeleteManyRequest]) (*connect.Response[v1.StoreServiceDeleteManyResponse], error)
-	ListItems(context.Context, *connect.Request[v1.StoreServiceListItemsRequest]) (*connect.Response[v1.StoreServiceListItemsResponse], error)
+	List(context.Context, *connect.Request[v1.StoreServiceListRequest]) (*connect.Response[v1.StoreServiceListResponse], error)
 }
 
 // NewStoreServiceClient constructs a client for the listah.v1.StoreService service. By default, it
@@ -106,12 +106,14 @@ func NewStoreServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			httpClient,
 			baseURL+StoreServiceReadOneProcedure,
 			connect.WithSchema(storeServiceReadOneMethodDescriptor),
+			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
 		readMany: connect.NewClient[v1.StoreServiceReadManyRequest, v1.StoreServiceReadManyResponse](
 			httpClient,
 			baseURL+StoreServiceReadManyProcedure,
 			connect.WithSchema(storeServiceReadManyMethodDescriptor),
+			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
 		updateOne: connect.NewClient[v1.StoreServiceUpdateOneRequest, v1.StoreServiceUpdateOneResponse](
@@ -138,10 +140,11 @@ func NewStoreServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(storeServiceDeleteManyMethodDescriptor),
 			connect.WithClientOptions(opts...),
 		),
-		listItems: connect.NewClient[v1.StoreServiceListItemsRequest, v1.StoreServiceListItemsResponse](
+		list: connect.NewClient[v1.StoreServiceListRequest, v1.StoreServiceListResponse](
 			httpClient,
-			baseURL+StoreServiceListItemsProcedure,
-			connect.WithSchema(storeServiceListItemsMethodDescriptor),
+			baseURL+StoreServiceListProcedure,
+			connect.WithSchema(storeServiceListMethodDescriptor),
+			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -157,7 +160,7 @@ type storeServiceClient struct {
 	updateMany *connect.Client[v1.StoreServiceUpdateManyRequest, v1.StoreServiceUpdateManyResponse]
 	deleteOne  *connect.Client[v1.StoreServiceDeleteOneRequest, v1.StoreServiceDeleteOneResponse]
 	deleteMany *connect.Client[v1.StoreServiceDeleteManyRequest, v1.StoreServiceDeleteManyResponse]
-	listItems  *connect.Client[v1.StoreServiceListItemsRequest, v1.StoreServiceListItemsResponse]
+	list       *connect.Client[v1.StoreServiceListRequest, v1.StoreServiceListResponse]
 }
 
 // CreateOne calls listah.v1.StoreService.CreateOne.
@@ -200,9 +203,9 @@ func (c *storeServiceClient) DeleteMany(ctx context.Context, req *connect.Reques
 	return c.deleteMany.CallUnary(ctx, req)
 }
 
-// ListItems calls listah.v1.StoreService.ListItems.
-func (c *storeServiceClient) ListItems(ctx context.Context, req *connect.Request[v1.StoreServiceListItemsRequest]) (*connect.Response[v1.StoreServiceListItemsResponse], error) {
-	return c.listItems.CallUnary(ctx, req)
+// List calls listah.v1.StoreService.List.
+func (c *storeServiceClient) List(ctx context.Context, req *connect.Request[v1.StoreServiceListRequest]) (*connect.Response[v1.StoreServiceListResponse], error) {
+	return c.list.CallUnary(ctx, req)
 }
 
 // StoreServiceHandler is an implementation of the listah.v1.StoreService service.
@@ -215,7 +218,7 @@ type StoreServiceHandler interface {
 	UpdateMany(context.Context, *connect.Request[v1.StoreServiceUpdateManyRequest]) (*connect.Response[v1.StoreServiceUpdateManyResponse], error)
 	DeleteOne(context.Context, *connect.Request[v1.StoreServiceDeleteOneRequest]) (*connect.Response[v1.StoreServiceDeleteOneResponse], error)
 	DeleteMany(context.Context, *connect.Request[v1.StoreServiceDeleteManyRequest]) (*connect.Response[v1.StoreServiceDeleteManyResponse], error)
-	ListItems(context.Context, *connect.Request[v1.StoreServiceListItemsRequest]) (*connect.Response[v1.StoreServiceListItemsResponse], error)
+	List(context.Context, *connect.Request[v1.StoreServiceListRequest]) (*connect.Response[v1.StoreServiceListResponse], error)
 }
 
 // NewStoreServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -240,12 +243,14 @@ func NewStoreServiceHandler(svc StoreServiceHandler, opts ...connect.HandlerOpti
 		StoreServiceReadOneProcedure,
 		svc.ReadOne,
 		connect.WithSchema(storeServiceReadOneMethodDescriptor),
+		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
 	storeServiceReadManyHandler := connect.NewUnaryHandler(
 		StoreServiceReadManyProcedure,
 		svc.ReadMany,
 		connect.WithSchema(storeServiceReadManyMethodDescriptor),
+		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
 	storeServiceUpdateOneHandler := connect.NewUnaryHandler(
@@ -272,10 +277,11 @@ func NewStoreServiceHandler(svc StoreServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(storeServiceDeleteManyMethodDescriptor),
 		connect.WithHandlerOptions(opts...),
 	)
-	storeServiceListItemsHandler := connect.NewUnaryHandler(
-		StoreServiceListItemsProcedure,
-		svc.ListItems,
-		connect.WithSchema(storeServiceListItemsMethodDescriptor),
+	storeServiceListHandler := connect.NewUnaryHandler(
+		StoreServiceListProcedure,
+		svc.List,
+		connect.WithSchema(storeServiceListMethodDescriptor),
+		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/listah.v1.StoreService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -296,8 +302,8 @@ func NewStoreServiceHandler(svc StoreServiceHandler, opts ...connect.HandlerOpti
 			storeServiceDeleteOneHandler.ServeHTTP(w, r)
 		case StoreServiceDeleteManyProcedure:
 			storeServiceDeleteManyHandler.ServeHTTP(w, r)
-		case StoreServiceListItemsProcedure:
-			storeServiceListItemsHandler.ServeHTTP(w, r)
+		case StoreServiceListProcedure:
+			storeServiceListHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -339,6 +345,6 @@ func (UnimplementedStoreServiceHandler) DeleteMany(context.Context, *connect.Req
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.StoreService.DeleteMany is not implemented"))
 }
 
-func (UnimplementedStoreServiceHandler) ListItems(context.Context, *connect.Request[v1.StoreServiceListItemsRequest]) (*connect.Response[v1.StoreServiceListItemsResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.StoreService.ListItems is not implemented"))
+func (UnimplementedStoreServiceHandler) List(context.Context, *connect.Request[v1.StoreServiceListRequest]) (*connect.Response[v1.StoreServiceListResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.StoreService.List is not implemented"))
 }

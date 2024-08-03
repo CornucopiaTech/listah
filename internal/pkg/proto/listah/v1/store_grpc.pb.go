@@ -27,7 +27,7 @@ const (
 	StoreService_UpdateMany_FullMethodName = "/listah.v1.StoreService/UpdateMany"
 	StoreService_DeleteOne_FullMethodName  = "/listah.v1.StoreService/DeleteOne"
 	StoreService_DeleteMany_FullMethodName = "/listah.v1.StoreService/DeleteMany"
-	StoreService_ListItems_FullMethodName  = "/listah.v1.StoreService/ListItems"
+	StoreService_List_FullMethodName       = "/listah.v1.StoreService/List"
 )
 
 // StoreServiceClient is the client API for StoreService service.
@@ -42,7 +42,7 @@ type StoreServiceClient interface {
 	UpdateMany(ctx context.Context, in *StoreServiceUpdateManyRequest, opts ...grpc.CallOption) (*StoreServiceUpdateManyResponse, error)
 	DeleteOne(ctx context.Context, in *StoreServiceDeleteOneRequest, opts ...grpc.CallOption) (*StoreServiceDeleteOneResponse, error)
 	DeleteMany(ctx context.Context, in *StoreServiceDeleteManyRequest, opts ...grpc.CallOption) (*StoreServiceDeleteManyResponse, error)
-	ListItems(ctx context.Context, in *StoreServiceListItemsRequest, opts ...grpc.CallOption) (*StoreServiceListItemsResponse, error)
+	List(ctx context.Context, in *StoreServiceListRequest, opts ...grpc.CallOption) (*StoreServiceListResponse, error)
 }
 
 type storeServiceClient struct {
@@ -133,10 +133,10 @@ func (c *storeServiceClient) DeleteMany(ctx context.Context, in *StoreServiceDel
 	return out, nil
 }
 
-func (c *storeServiceClient) ListItems(ctx context.Context, in *StoreServiceListItemsRequest, opts ...grpc.CallOption) (*StoreServiceListItemsResponse, error) {
+func (c *storeServiceClient) List(ctx context.Context, in *StoreServiceListRequest, opts ...grpc.CallOption) (*StoreServiceListResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(StoreServiceListItemsResponse)
-	err := c.cc.Invoke(ctx, StoreService_ListItems_FullMethodName, in, out, cOpts...)
+	out := new(StoreServiceListResponse)
+	err := c.cc.Invoke(ctx, StoreService_List_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -155,7 +155,7 @@ type StoreServiceServer interface {
 	UpdateMany(context.Context, *StoreServiceUpdateManyRequest) (*StoreServiceUpdateManyResponse, error)
 	DeleteOne(context.Context, *StoreServiceDeleteOneRequest) (*StoreServiceDeleteOneResponse, error)
 	DeleteMany(context.Context, *StoreServiceDeleteManyRequest) (*StoreServiceDeleteManyResponse, error)
-	ListItems(context.Context, *StoreServiceListItemsRequest) (*StoreServiceListItemsResponse, error)
+	List(context.Context, *StoreServiceListRequest) (*StoreServiceListResponse, error)
 }
 
 // UnimplementedStoreServiceServer should be embedded to have forward compatible implementations.
@@ -186,8 +186,8 @@ func (UnimplementedStoreServiceServer) DeleteOne(context.Context, *StoreServiceD
 func (UnimplementedStoreServiceServer) DeleteMany(context.Context, *StoreServiceDeleteManyRequest) (*StoreServiceDeleteManyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMany not implemented")
 }
-func (UnimplementedStoreServiceServer) ListItems(context.Context, *StoreServiceListItemsRequest) (*StoreServiceListItemsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListItems not implemented")
+func (UnimplementedStoreServiceServer) List(context.Context, *StoreServiceListRequest) (*StoreServiceListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
 
 // UnsafeStoreServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -345,20 +345,20 @@ func _StoreService_DeleteMany_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StoreService_ListItems_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(StoreServiceListItemsRequest)
+func _StoreService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StoreServiceListRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StoreServiceServer).ListItems(ctx, in)
+		return srv.(StoreServiceServer).List(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StoreService_ListItems_FullMethodName,
+		FullMethod: StoreService_List_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StoreServiceServer).ListItems(ctx, req.(*StoreServiceListItemsRequest))
+		return srv.(StoreServiceServer).List(ctx, req.(*StoreServiceListRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -403,8 +403,8 @@ var StoreService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _StoreService_DeleteMany_Handler,
 		},
 		{
-			MethodName: "ListItems",
-			Handler:    _StoreService_ListItems_Handler,
+			MethodName: "List",
+			Handler:    _StoreService_List_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

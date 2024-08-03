@@ -27,7 +27,7 @@ const (
 	CategoryService_UpdateMany_FullMethodName = "/listah.v1.CategoryService/UpdateMany"
 	CategoryService_DeleteOne_FullMethodName  = "/listah.v1.CategoryService/DeleteOne"
 	CategoryService_DeleteMany_FullMethodName = "/listah.v1.CategoryService/DeleteMany"
-	CategoryService_ListItems_FullMethodName  = "/listah.v1.CategoryService/ListItems"
+	CategoryService_List_FullMethodName       = "/listah.v1.CategoryService/List"
 )
 
 // CategoryServiceClient is the client API for CategoryService service.
@@ -42,7 +42,7 @@ type CategoryServiceClient interface {
 	UpdateMany(ctx context.Context, in *CategoryServiceUpdateManyRequest, opts ...grpc.CallOption) (*CategoryServiceUpdateManyResponse, error)
 	DeleteOne(ctx context.Context, in *CategoryServiceDeleteOneRequest, opts ...grpc.CallOption) (*CategoryServiceDeleteOneResponse, error)
 	DeleteMany(ctx context.Context, in *CategoryServiceDeleteManyRequest, opts ...grpc.CallOption) (*CategoryServiceDeleteManyResponse, error)
-	ListItems(ctx context.Context, in *CategoryServiceListItemsRequest, opts ...grpc.CallOption) (*CategoryServiceListItemsResponse, error)
+	List(ctx context.Context, in *CategoryServiceListRequest, opts ...grpc.CallOption) (*CategoryServiceListResponse, error)
 }
 
 type categoryServiceClient struct {
@@ -133,10 +133,10 @@ func (c *categoryServiceClient) DeleteMany(ctx context.Context, in *CategoryServ
 	return out, nil
 }
 
-func (c *categoryServiceClient) ListItems(ctx context.Context, in *CategoryServiceListItemsRequest, opts ...grpc.CallOption) (*CategoryServiceListItemsResponse, error) {
+func (c *categoryServiceClient) List(ctx context.Context, in *CategoryServiceListRequest, opts ...grpc.CallOption) (*CategoryServiceListResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CategoryServiceListItemsResponse)
-	err := c.cc.Invoke(ctx, CategoryService_ListItems_FullMethodName, in, out, cOpts...)
+	out := new(CategoryServiceListResponse)
+	err := c.cc.Invoke(ctx, CategoryService_List_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -155,7 +155,7 @@ type CategoryServiceServer interface {
 	UpdateMany(context.Context, *CategoryServiceUpdateManyRequest) (*CategoryServiceUpdateManyResponse, error)
 	DeleteOne(context.Context, *CategoryServiceDeleteOneRequest) (*CategoryServiceDeleteOneResponse, error)
 	DeleteMany(context.Context, *CategoryServiceDeleteManyRequest) (*CategoryServiceDeleteManyResponse, error)
-	ListItems(context.Context, *CategoryServiceListItemsRequest) (*CategoryServiceListItemsResponse, error)
+	List(context.Context, *CategoryServiceListRequest) (*CategoryServiceListResponse, error)
 }
 
 // UnimplementedCategoryServiceServer should be embedded to have forward compatible implementations.
@@ -186,8 +186,8 @@ func (UnimplementedCategoryServiceServer) DeleteOne(context.Context, *CategorySe
 func (UnimplementedCategoryServiceServer) DeleteMany(context.Context, *CategoryServiceDeleteManyRequest) (*CategoryServiceDeleteManyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMany not implemented")
 }
-func (UnimplementedCategoryServiceServer) ListItems(context.Context, *CategoryServiceListItemsRequest) (*CategoryServiceListItemsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListItems not implemented")
+func (UnimplementedCategoryServiceServer) List(context.Context, *CategoryServiceListRequest) (*CategoryServiceListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
 
 // UnsafeCategoryServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -345,20 +345,20 @@ func _CategoryService_DeleteMany_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CategoryService_ListItems_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CategoryServiceListItemsRequest)
+func _CategoryService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CategoryServiceListRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CategoryServiceServer).ListItems(ctx, in)
+		return srv.(CategoryServiceServer).List(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CategoryService_ListItems_FullMethodName,
+		FullMethod: CategoryService_List_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CategoryServiceServer).ListItems(ctx, req.(*CategoryServiceListItemsRequest))
+		return srv.(CategoryServiceServer).List(ctx, req.(*CategoryServiceListRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -403,8 +403,8 @@ var CategoryService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _CategoryService_DeleteMany_Handler,
 		},
 		{
-			MethodName: "ListItems",
-			Handler:    _CategoryService_ListItems_Handler,
+			MethodName: "List",
+			Handler:    _CategoryService_List_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"path/filepath"
 )
 
 const appName string = "Listah"
@@ -34,12 +35,13 @@ type TelemetryConfig struct {
 }
 
 type Config struct {
-	AppName   string
-	Env       string
-	App       AppConfig
-	Api       ApiConfig
-	Database  DatabaseConfig
-	Telemetry TelemetryConfig
+	AppName     string
+	Env         string
+	ProjectRoot string
+	App         AppConfig
+	Api         ApiConfig
+	Database    DatabaseConfig
+	Telemetry   TelemetryConfig
 }
 
 func Init() (*Config, error) {
@@ -49,12 +51,13 @@ func Init() (*Config, error) {
 	telemetryConfig := loadTelemetry()
 
 	return &Config{
-		AppName:   appName,
-		Env:       loadEnv(),
-		Api:       *apiConfig,
-		App:       *appConfig,
-		Database:  *dbConfig,
-		Telemetry: *telemetryConfig,
+		AppName:     appName,
+		Env:         loadEnv(),
+		ProjectRoot: loadProjectRoot(),
+		Api:         *apiConfig,
+		App:         *appConfig,
+		Database:    *dbConfig,
+		Telemetry:   *telemetryConfig,
 	}, nil
 
 }
@@ -68,6 +71,13 @@ func loadEnv() string {
 	}
 	fmt.Printf("Environment is: %v\n", env)
 	return env
+}
+func loadProjectRoot() string {
+	fileAbsPath, err := filepath.Abs("../../")
+	if err != nil {
+		log.Fatalf("could not load project root")
+	}
+	return fileAbsPath
 }
 
 func loadApi() *ApiConfig {

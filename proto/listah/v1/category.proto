@@ -8,6 +8,7 @@ option go_package = "cornucopia/listah/internal/pkg/proto/listah/v1";
 import "listah/v1/commons.proto";
 import "listah/v1/item.proto";
 import "google/protobuf/timestamp.proto";
+import "gnostic/openapi/v3/annotations.proto";
 
 
 message CategoryServiceCreateOneRequest {
@@ -91,10 +92,10 @@ message CategoryServiceDeleteManyResponse {
 }
 
 
-message CategoryServiceListItemsRequest {
+message CategoryServiceListRequest {
     string id = 1;
 }
-message CategoryServiceListItemsResponse {
+message CategoryServiceListResponse {
     string id = 1;
     string name = 2;
     string description = 3;
@@ -106,13 +107,34 @@ message CategoryServiceListItemsResponse {
 
 
 service CategoryService {
-    rpc CreateOne(CategoryServiceCreateOneRequest) returns (CategoryServiceCreateOneResponse){}
-    rpc CreateMany(CategoryServiceCreateManyRequest) returns (CategoryServiceCreateManyResponse){}
-    rpc ReadOne(CategoryServiceReadOneRequest) returns (CategoryServiceReadOneResponse){}
-    rpc ReadMany(CategoryServiceReadManyRequest) returns (CategoryServiceReadManyResponse){}
-    rpc UpdateOne(CategoryServiceUpdateOneRequest) returns (CategoryServiceUpdateOneResponse){}
-    rpc UpdateMany(CategoryServiceUpdateManyRequest) returns (CategoryServiceUpdateManyResponse){}
-    rpc DeleteOne(CategoryServiceDeleteOneRequest) returns (CategoryServiceDeleteOneResponse){}
-    rpc DeleteMany(CategoryServiceDeleteManyRequest) returns (CategoryServiceDeleteManyResponse){}
-    rpc ListItems(CategoryServiceListItemsRequest) returns (CategoryServiceListItemsResponse){}
+    rpc CreateOne(CategoryServiceCreateOneRequest) returns (CategoryServiceCreateOneResponse){
+        option (gnostic.openapi.v3.operation).description = "Create One Category";
+    }
+    rpc CreateMany(CategoryServiceCreateManyRequest) returns (CategoryServiceCreateManyResponse){
+        option (gnostic.openapi.v3.operation).description = "Create Many Categories";
+    }
+    rpc ReadOne(CategoryServiceReadOneRequest) returns (CategoryServiceReadOneResponse){
+        option idempotency_level = NO_SIDE_EFFECTS;
+        option (gnostic.openapi.v3.operation).description = "Read One Category";
+    }
+    rpc ReadMany(CategoryServiceReadManyRequest) returns (CategoryServiceReadManyResponse){
+        option idempotency_level=NO_SIDE_EFFECTS;
+        option (gnostic.openapi.v3.operation).description = "Read Many Categories";
+    }
+    rpc UpdateOne(CategoryServiceUpdateOneRequest) returns (CategoryServiceUpdateOneResponse){
+        option (gnostic.openapi.v3.operation).description = "Update One Category";
+    }
+    rpc UpdateMany(CategoryServiceUpdateManyRequest) returns (CategoryServiceUpdateManyResponse){
+        option (gnostic.openapi.v3.operation).description = "Update Many Categories";
+    }
+    rpc DeleteOne(CategoryServiceDeleteOneRequest) returns (CategoryServiceDeleteOneResponse){
+        option (gnostic.openapi.v3.operation).description = "Delete One Category";
+    }
+    rpc DeleteMany(CategoryServiceDeleteManyRequest) returns (CategoryServiceDeleteManyResponse){
+        option (gnostic.openapi.v3.operation).description = "Delete Many Categories";
+    }
+    rpc List(CategoryServiceListRequest) returns (CategoryServiceListResponse){
+        option idempotency_level=NO_SIDE_EFFECTS;
+        option (gnostic.openapi.v3.operation).description = "List Categories";
+    }
 }

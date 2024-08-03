@@ -56,9 +56,8 @@ const (
 	// CategoryServiceDeleteManyProcedure is the fully-qualified name of the CategoryService's
 	// DeleteMany RPC.
 	CategoryServiceDeleteManyProcedure = "/listah.v1.CategoryService/DeleteMany"
-	// CategoryServiceListItemsProcedure is the fully-qualified name of the CategoryService's ListItems
-	// RPC.
-	CategoryServiceListItemsProcedure = "/listah.v1.CategoryService/ListItems"
+	// CategoryServiceListProcedure is the fully-qualified name of the CategoryService's List RPC.
+	CategoryServiceListProcedure = "/listah.v1.CategoryService/List"
 )
 
 // These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
@@ -72,7 +71,7 @@ var (
 	categoryServiceUpdateManyMethodDescriptor = categoryServiceServiceDescriptor.Methods().ByName("UpdateMany")
 	categoryServiceDeleteOneMethodDescriptor  = categoryServiceServiceDescriptor.Methods().ByName("DeleteOne")
 	categoryServiceDeleteManyMethodDescriptor = categoryServiceServiceDescriptor.Methods().ByName("DeleteMany")
-	categoryServiceListItemsMethodDescriptor  = categoryServiceServiceDescriptor.Methods().ByName("ListItems")
+	categoryServiceListMethodDescriptor       = categoryServiceServiceDescriptor.Methods().ByName("List")
 )
 
 // CategoryServiceClient is a client for the listah.v1.CategoryService service.
@@ -85,7 +84,7 @@ type CategoryServiceClient interface {
 	UpdateMany(context.Context, *connect.Request[v1.CategoryServiceUpdateManyRequest]) (*connect.Response[v1.CategoryServiceUpdateManyResponse], error)
 	DeleteOne(context.Context, *connect.Request[v1.CategoryServiceDeleteOneRequest]) (*connect.Response[v1.CategoryServiceDeleteOneResponse], error)
 	DeleteMany(context.Context, *connect.Request[v1.CategoryServiceDeleteManyRequest]) (*connect.Response[v1.CategoryServiceDeleteManyResponse], error)
-	ListItems(context.Context, *connect.Request[v1.CategoryServiceListItemsRequest]) (*connect.Response[v1.CategoryServiceListItemsResponse], error)
+	List(context.Context, *connect.Request[v1.CategoryServiceListRequest]) (*connect.Response[v1.CategoryServiceListResponse], error)
 }
 
 // NewCategoryServiceClient constructs a client for the listah.v1.CategoryService service. By
@@ -114,12 +113,14 @@ func NewCategoryServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			httpClient,
 			baseURL+CategoryServiceReadOneProcedure,
 			connect.WithSchema(categoryServiceReadOneMethodDescriptor),
+			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
 		readMany: connect.NewClient[v1.CategoryServiceReadManyRequest, v1.CategoryServiceReadManyResponse](
 			httpClient,
 			baseURL+CategoryServiceReadManyProcedure,
 			connect.WithSchema(categoryServiceReadManyMethodDescriptor),
+			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
 		updateOne: connect.NewClient[v1.CategoryServiceUpdateOneRequest, v1.CategoryServiceUpdateOneResponse](
@@ -146,10 +147,11 @@ func NewCategoryServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(categoryServiceDeleteManyMethodDescriptor),
 			connect.WithClientOptions(opts...),
 		),
-		listItems: connect.NewClient[v1.CategoryServiceListItemsRequest, v1.CategoryServiceListItemsResponse](
+		list: connect.NewClient[v1.CategoryServiceListRequest, v1.CategoryServiceListResponse](
 			httpClient,
-			baseURL+CategoryServiceListItemsProcedure,
-			connect.WithSchema(categoryServiceListItemsMethodDescriptor),
+			baseURL+CategoryServiceListProcedure,
+			connect.WithSchema(categoryServiceListMethodDescriptor),
+			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -165,7 +167,7 @@ type categoryServiceClient struct {
 	updateMany *connect.Client[v1.CategoryServiceUpdateManyRequest, v1.CategoryServiceUpdateManyResponse]
 	deleteOne  *connect.Client[v1.CategoryServiceDeleteOneRequest, v1.CategoryServiceDeleteOneResponse]
 	deleteMany *connect.Client[v1.CategoryServiceDeleteManyRequest, v1.CategoryServiceDeleteManyResponse]
-	listItems  *connect.Client[v1.CategoryServiceListItemsRequest, v1.CategoryServiceListItemsResponse]
+	list       *connect.Client[v1.CategoryServiceListRequest, v1.CategoryServiceListResponse]
 }
 
 // CreateOne calls listah.v1.CategoryService.CreateOne.
@@ -208,9 +210,9 @@ func (c *categoryServiceClient) DeleteMany(ctx context.Context, req *connect.Req
 	return c.deleteMany.CallUnary(ctx, req)
 }
 
-// ListItems calls listah.v1.CategoryService.ListItems.
-func (c *categoryServiceClient) ListItems(ctx context.Context, req *connect.Request[v1.CategoryServiceListItemsRequest]) (*connect.Response[v1.CategoryServiceListItemsResponse], error) {
-	return c.listItems.CallUnary(ctx, req)
+// List calls listah.v1.CategoryService.List.
+func (c *categoryServiceClient) List(ctx context.Context, req *connect.Request[v1.CategoryServiceListRequest]) (*connect.Response[v1.CategoryServiceListResponse], error) {
+	return c.list.CallUnary(ctx, req)
 }
 
 // CategoryServiceHandler is an implementation of the listah.v1.CategoryService service.
@@ -223,7 +225,7 @@ type CategoryServiceHandler interface {
 	UpdateMany(context.Context, *connect.Request[v1.CategoryServiceUpdateManyRequest]) (*connect.Response[v1.CategoryServiceUpdateManyResponse], error)
 	DeleteOne(context.Context, *connect.Request[v1.CategoryServiceDeleteOneRequest]) (*connect.Response[v1.CategoryServiceDeleteOneResponse], error)
 	DeleteMany(context.Context, *connect.Request[v1.CategoryServiceDeleteManyRequest]) (*connect.Response[v1.CategoryServiceDeleteManyResponse], error)
-	ListItems(context.Context, *connect.Request[v1.CategoryServiceListItemsRequest]) (*connect.Response[v1.CategoryServiceListItemsResponse], error)
+	List(context.Context, *connect.Request[v1.CategoryServiceListRequest]) (*connect.Response[v1.CategoryServiceListResponse], error)
 }
 
 // NewCategoryServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -248,12 +250,14 @@ func NewCategoryServiceHandler(svc CategoryServiceHandler, opts ...connect.Handl
 		CategoryServiceReadOneProcedure,
 		svc.ReadOne,
 		connect.WithSchema(categoryServiceReadOneMethodDescriptor),
+		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
 	categoryServiceReadManyHandler := connect.NewUnaryHandler(
 		CategoryServiceReadManyProcedure,
 		svc.ReadMany,
 		connect.WithSchema(categoryServiceReadManyMethodDescriptor),
+		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
 	categoryServiceUpdateOneHandler := connect.NewUnaryHandler(
@@ -280,10 +284,11 @@ func NewCategoryServiceHandler(svc CategoryServiceHandler, opts ...connect.Handl
 		connect.WithSchema(categoryServiceDeleteManyMethodDescriptor),
 		connect.WithHandlerOptions(opts...),
 	)
-	categoryServiceListItemsHandler := connect.NewUnaryHandler(
-		CategoryServiceListItemsProcedure,
-		svc.ListItems,
-		connect.WithSchema(categoryServiceListItemsMethodDescriptor),
+	categoryServiceListHandler := connect.NewUnaryHandler(
+		CategoryServiceListProcedure,
+		svc.List,
+		connect.WithSchema(categoryServiceListMethodDescriptor),
+		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/listah.v1.CategoryService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -304,8 +309,8 @@ func NewCategoryServiceHandler(svc CategoryServiceHandler, opts ...connect.Handl
 			categoryServiceDeleteOneHandler.ServeHTTP(w, r)
 		case CategoryServiceDeleteManyProcedure:
 			categoryServiceDeleteManyHandler.ServeHTTP(w, r)
-		case CategoryServiceListItemsProcedure:
-			categoryServiceListItemsHandler.ServeHTTP(w, r)
+		case CategoryServiceListProcedure:
+			categoryServiceListHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -347,6 +352,6 @@ func (UnimplementedCategoryServiceHandler) DeleteMany(context.Context, *connect.
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.CategoryService.DeleteMany is not implemented"))
 }
 
-func (UnimplementedCategoryServiceHandler) ListItems(context.Context, *connect.Request[v1.CategoryServiceListItemsRequest]) (*connect.Response[v1.CategoryServiceListItemsResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.CategoryService.ListItems is not implemented"))
+func (UnimplementedCategoryServiceHandler) List(context.Context, *connect.Request[v1.CategoryServiceListRequest]) (*connect.Response[v1.CategoryServiceListResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.CategoryService.List is not implemented"))
 }

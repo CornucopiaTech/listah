@@ -7,7 +7,7 @@ option go_package = "cornucopia/listah/internal/pkg/proto/listah/v1";
 
 
 import "listah/v1/user.proto";
-import "listah/v1/list.proto";
+
 
 message FamilyCreateRequest {
     string id = 1;

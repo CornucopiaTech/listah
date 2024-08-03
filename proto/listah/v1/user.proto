@@ -8,6 +8,7 @@ option go_package = "cornucopia/listah/internal/pkg/proto/listah/v1";
 import "listah/v1/commons.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
+import "gnostic/openapi/v3/annotations.proto";
 
 
 message UserServiceCreateOneRequest {
@@ -132,17 +133,30 @@ message UserServiceDeleteManyResponse {
 
 
 service UserService {
-    rpc CreateOne(UserServiceCreateOneRequest) returns (UserServiceCreateOneResponse) {}
-    rpc CreateMany(UserServiceCreateManyRequest) returns (UserServiceCreateManyResponse) {}
-
-    rpc ReadOne (UserServiceReadOneRequest) returns (UserServiceReadOneResponse) {}
-    rpc ReadMany (UserServiceReadManyRequest) returns (UserServiceReadManyResponse) {}
-
-    rpc UpdateOne(UserServiceUpdateOneRequest) returns (UserServiceUpdateOneResponse) {}
-    rpc UpdateMany(UserServiceUpdateManyRequest) returns (UserServiceUpdateManyResponse) {}
-
-    rpc DeleteOne(UserServiceDeleteOneRequest) returns (UserServiceDeleteOneResponse) {}
-    rpc DeleteMany(UserServiceDeleteManyRequest) returns (UserServiceDeleteManyResponse) {}
-
-    rpc Echo (UserServiceEchoRequest) returns (UserServiceEchoResponse) {}
+    rpc CreateOne(UserServiceCreateOneRequest) returns (UserServiceCreateOneResponse){
+        option (gnostic.openapi.v3.operation).description = "Create One User";
+    }
+    rpc CreateMany(UserServiceCreateManyRequest) returns (UserServiceCreateManyResponse){
+        option (gnostic.openapi.v3.operation).description = "Create Many Users";
+    }
+    rpc ReadOne(UserServiceReadOneRequest) returns (UserServiceReadOneResponse){
+        option idempotency_level = NO_SIDE_EFFECTS;
+        option (gnostic.openapi.v3.operation).description = "Read One User";
+    }
+    rpc ReadMany(UserServiceReadManyRequest) returns (UserServiceReadManyResponse){
+        option idempotency_level=NO_SIDE_EFFECTS;
+        option (gnostic.openapi.v3.operation).description = "Read Many Users";
+    }
+    rpc UpdateOne(UserServiceUpdateOneRequest) returns (UserServiceUpdateOneResponse){
+        option (gnostic.openapi.v3.operation).description = "Update One User";
+    }
+    rpc UpdateMany(UserServiceUpdateManyRequest) returns (UserServiceUpdateManyResponse){
+        option (gnostic.openapi.v3.operation).description = "Update Many Users";
+    }
+    rpc DeleteOne(UserServiceDeleteOneRequest) returns (UserServiceDeleteOneResponse){
+        option (gnostic.openapi.v3.operation).description = "Delete One User";
+    }
+    rpc DeleteMany(UserServiceDeleteManyRequest) returns (UserServiceDeleteManyResponse){
+        option (gnostic.openapi.v3.operation).description = "Delete Many Users";
+    }
 }

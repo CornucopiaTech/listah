@@ -7,6 +7,7 @@ go 1.22.4
 require (
 	connectrpc.com/connect v1.16.2
 	connectrpc.com/otelconnect v0.7.0
+	github.com/google/gnostic v0.7.0
 	github.com/google/uuid v1.6.0
 	github.com/jaegertracing/jaeger v1.58.1
 	github.com/opentracing/opentracing-go v1.2.0
@@ -44,6 +45,7 @@ require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
+	github.com/google/gnostic-models v0.6.9-0.20230804172637-c7be7c783f49 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.20.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect

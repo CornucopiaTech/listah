@@ -7,6 +7,8 @@ option go_package = "cornucopia/listah/internal/pkg/proto/listah/v1";
 
 import "listah/v1/commons.proto";
 import "google/protobuf/timestamp.proto";
+import "gnostic/openapi/v3/annotations.proto";
+
 
 
 
@@ -127,7 +129,6 @@ message ItemServiceDeleteOneResponse {
     string store_name = 8 [json_name = "store_name"];
     string store_id = 9 [json_name = "store_id"];
     // purchase_history = 9; //ToDo: Determine if purchase history is needed
-    // bool active = 20;
     google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivate_at"];
     Audit audit = 50;
 }
@@ -139,37 +140,46 @@ message ItemServiceDeleteManyResponse {
 }
 
 
-message ItemServiceListItemsRequest {
+message ItemServiceListRequest {
     string id = 1;
 }
-message ItemServiceListItemsResponse {
-    // string id = 1;
-    // string name = 2;
-    // string description = 3;
-    // string note = 7;
+message ItemServiceListResponse {
     repeated string items = 20;
-    // repeated ItemServiceReadOneResponse items = 20;
-    // Audit audit = 50;
-    // string id = 1;
-    // string name = 2;
-    // string description = 3;
-    // string note = 7;
-    // string category = 8;
-    //     string category_id = 8;
     string category_name = 9;
-    // Audit audit = 50;
 }
+
+
 
 
 service ItemService {
-    rpc CreateOne(ItemServiceCreateOneRequest) returns (ItemServiceCreateOneResponse){}
-    rpc CreateMany(ItemServiceCreateManyRequest) returns (ItemServiceCreateManyResponse){}
-    rpc ReadOne(ItemServiceReadOneRequest) returns (ItemServiceReadOneResponse){}
-    rpc ReadMany(ItemServiceReadManyRequest) returns (ItemServiceReadManyResponse){}
-    rpc UpdateOne(ItemServiceUpdateOneRequest) returns (ItemServiceUpdateOneResponse){}
-    rpc UpdateMany(ItemServiceUpdateManyRequest) returns (ItemServiceUpdateManyResponse){}
-    rpc DeleteOne(ItemServiceDeleteOneRequest) returns (ItemServiceDeleteOneResponse){}
-    rpc DeleteMany(ItemServiceDeleteManyRequest) returns (ItemServiceDeleteManyResponse){}
-    rpc ListItems(ItemServiceListItemsRequest) returns (ItemServiceListItemsResponse){}
-
+    rpc CreateOne(ItemServiceCreateOneRequest) returns (ItemServiceCreateOneResponse){
+        option (gnostic.openapi.v3.operation).description = "Create One Item";
+    }
+    rpc CreateMany(ItemServiceCreateManyRequest) returns (ItemServiceCreateManyResponse){
+        option (gnostic.openapi.v3.operation).description = "Create Many Items";
+    }
+    rpc ReadOne(ItemServiceReadOneRequest) returns (ItemServiceReadOneResponse){
+        option idempotency_level = NO_SIDE_EFFECTS;
+        option (gnostic.openapi.v3.operation).description = "Read One Item";
+    }
+    rpc ReadMany(ItemServiceReadManyRequest) returns (ItemServiceReadManyResponse){
+        option idempotency_level=NO_SIDE_EFFECTS;
+        option (gnostic.openapi.v3.operation).description = "Read Many Items";
+    }
+    rpc UpdateOne(ItemServiceUpdateOneRequest) returns (ItemServiceUpdateOneResponse){
+        option (gnostic.openapi.v3.operation).description = "Update One Item";
+    }
+    rpc UpdateMany(ItemServiceUpdateManyRequest) returns (ItemServiceUpdateManyResponse){
+        option (gnostic.openapi.v3.operation).description = "Update Many Items";
+    }
+    rpc DeleteOne(ItemServiceDeleteOneRequest) returns (ItemServiceDeleteOneResponse){
+        option (gnostic.openapi.v3.operation).description = "Delete One Item";
+    }
+    rpc DeleteMany(ItemServiceDeleteManyRequest) returns (ItemServiceDeleteManyResponse){
+        option (gnostic.openapi.v3.operation).description = "Delete Many Items";
+    }
+    rpc List(ItemServiceListRequest) returns (ItemServiceListResponse){
+        option idempotency_level=NO_SIDE_EFFECTS;
+        option (gnostic.openapi.v3.operation).description = "List Items";
+    }
 }

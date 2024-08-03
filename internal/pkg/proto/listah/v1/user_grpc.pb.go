@@ -27,7 +27,6 @@ const (
 	UserService_UpdateMany_FullMethodName = "/listah.v1.UserService/UpdateMany"
 	UserService_DeleteOne_FullMethodName  = "/listah.v1.UserService/DeleteOne"
 	UserService_DeleteMany_FullMethodName = "/listah.v1.UserService/DeleteMany"
-	UserService_Echo_FullMethodName       = "/listah.v1.UserService/Echo"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -42,7 +41,6 @@ type UserServiceClient interface {
 	UpdateMany(ctx context.Context, in *UserServiceUpdateManyRequest, opts ...grpc.CallOption) (*UserServiceUpdateManyResponse, error)
 	DeleteOne(ctx context.Context, in *UserServiceDeleteOneRequest, opts ...grpc.CallOption) (*UserServiceDeleteOneResponse, error)
 	DeleteMany(ctx context.Context, in *UserServiceDeleteManyRequest, opts ...grpc.CallOption) (*UserServiceDeleteManyResponse, error)
-	Echo(ctx context.Context, in *UserServiceEchoRequest, opts ...grpc.CallOption) (*UserServiceEchoResponse, error)
 }
 
 type userServiceClient struct {
@@ -133,16 +131,6 @@ func (c *userServiceClient) DeleteMany(ctx context.Context, in *UserServiceDelet
 	return out, nil
 }
 
-func (c *userServiceClient) Echo(ctx context.Context, in *UserServiceEchoRequest, opts ...grpc.CallOption) (*UserServiceEchoResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UserServiceEchoResponse)
-	err := c.cc.Invoke(ctx, UserService_Echo_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // UserServiceServer is the server API for UserService service.
 // All implementations should embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -155,7 +143,6 @@ type UserServiceServer interface {
 	UpdateMany(context.Context, *UserServiceUpdateManyRequest) (*UserServiceUpdateManyResponse, error)
 	DeleteOne(context.Context, *UserServiceDeleteOneRequest) (*UserServiceDeleteOneResponse, error)
 	DeleteMany(context.Context, *UserServiceDeleteManyRequest) (*UserServiceDeleteManyResponse, error)
-	Echo(context.Context, *UserServiceEchoRequest) (*UserServiceEchoResponse, error)
 }
 
 // UnimplementedUserServiceServer should be embedded to have forward compatible implementations.
@@ -185,9 +172,6 @@ func (UnimplementedUserServiceServer) DeleteOne(context.Context, *UserServiceDel
 }
 func (UnimplementedUserServiceServer) DeleteMany(context.Context, *UserServiceDeleteManyRequest) (*UserServiceDeleteManyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMany not implemented")
-}
-func (UnimplementedUserServiceServer) Echo(context.Context, *UserServiceEchoRequest) (*UserServiceEchoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Echo not implemented")
 }
 
 // UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -345,24 +329,6 @@ func _UserService_DeleteMany_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_Echo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserServiceEchoRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).Echo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: UserService_Echo_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).Echo(ctx, req.(*UserServiceEchoRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -401,10 +367,6 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteMany",
 			Handler:    _UserService_DeleteMany_Handler,
-		},
-		{
-			MethodName: "Echo",
-			Handler:    _UserService_Echo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
