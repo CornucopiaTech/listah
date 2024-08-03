@@ -3,9 +3,12 @@ package server
 import (
 	"log"
 	"net/http"
+	"path"
 
 	"cornucopia/listah/internal/app/bootstrap"
+	"cornucopia/listah/internal/app/category"
 	"cornucopia/listah/internal/app/item"
+	"cornucopia/listah/internal/app/store"
 	"cornucopia/listah/internal/app/user"
 	v1connect "cornucopia/listah/internal/pkg/proto/listah/v1/v1connect"
 
@@ -35,21 +38,38 @@ func handle(infra *bootstrap.Infra) http.Handler {
 
 	//
 	// Handle User connect-go generated paths
-	path, handler := v1connect.NewUserServiceHandler(
+	userPath, userHandler := v1connect.NewUserServiceHandler(
 		user.NewServer(infra),
 		connect.WithInterceptors(intcpt))
-	mux.Handle(path, handler)
+	mux.Handle(userPath, userHandler)
 
 	//
 	// Handle Item Connect-go generated paths
-	path, handler = v1connect.NewItemServiceHandler(
+	itemPath, itemHandler := v1connect.NewItemServiceHandler(
 		item.NewServer(infra),
 		connect.WithInterceptors(intcpt))
-	mux.Handle(path, handler)
+	mux.Handle(itemPath, itemHandler)
 
 	//
-	// Handle Swagger json files
-	fs := http.FileServer(http.Dir("openapiv2/"))
-	mux.Handle("/openapiv2/", http.StripPrefix("/openapiv2/", fs))
+	// Handle Category Connect-go generated paths
+	categoryPath, categoryHandler := v1connect.NewCategoryServiceHandler(
+		category.NewServer(infra),
+		connect.WithInterceptors(intcpt))
+	mux.Handle(categoryPath, categoryHandler)
+
+	//
+	// Handle Store Connect-go generated paths
+	storePath, storeHandler := v1connect.NewStoreServiceHandler(
+		store.NewServer(infra),
+		connect.WithInterceptors(intcpt))
+	mux.Handle(storePath, storeHandler)
+
+	//
+	// Handle OpenAPI docs files
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		p := path.Join(infra.Config.ProjectRoot, "public", "index.html")
+		http.ServeFile(w, r, p)
+	})
+
 	return h2c.NewHandler(mux, &http2.Server{})
 }

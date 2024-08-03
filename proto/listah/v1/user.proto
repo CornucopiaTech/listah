@@ -8,113 +8,155 @@ option go_package = "cornucopia/listah/internal/pkg/proto/listah/v1";
 import "listah/v1/commons.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
+import "gnostic/openapi/v3/annotations.proto";
 
 
-message UserServiceCreateRequest {
+message UserServiceCreateOneRequest {
     string id = 1;
     string first_name = 2 [json_name = "first_name"];
     string middle_names = 3 [json_name = "middle_names"];
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
     string email = 6;
-//    google.protobuf.Timestamp deleted_at = 7;
     string role = 20;
     Audit audit = 50;
 }
-
-message UserServiceCreateResponse {
+message UserServiceCreateOneResponse {
     string id = 1;
     string first_name = 2 [json_name = "first_name"];
     string middle_names = 3 [json_name = "middle_names"];
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
     string email = 6;
-//    google.protobuf.Timestamp deleted_at = 7;
     string role = 20;
     Audit audit = 50;
 }
-
-message UserServiceReadRequest {
-    string id = 1;
+message UserServiceCreateManyRequest {
+    repeated UserServiceCreateOneRequest user = 1;
+}
+message UserServiceCreateManyResponse {
+    repeated UserServiceCreateOneResponse user = 1;
 }
 
-message UserServiceReadResponse {
+
+message UserServiceEchoRequest {
     string id = 1;
     string first_name = 2 [json_name = "first_name"];
     string middle_names = 3 [json_name = "middle_names"];
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
     string email = 6;
-//    google.protobuf.Timestamp deleted_at = 7;
     string role = 20;
     Audit audit = 50;
 }
-
-message UserServiceUpdateRequest {
+message UserServiceEchoResponse {
     string id = 1;
     string first_name = 2 [json_name = "first_name"];
     string middle_names = 3 [json_name = "middle_names"];
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
     string email = 6;
-//    google.protobuf.Timestamp deleted_at = 7;
     string role = 20;
     Audit audit = 50;
 }
 
-message UserServiceUpdateResponse {
+
+message UserServiceReadOneRequest {
+    string id = 1;
+}
+message UserServiceReadOneResponse {
     string id = 1;
     string first_name = 2 [json_name = "first_name"];
     string middle_names = 3 [json_name = "middle_names"];
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
     string email = 6;
-//    google.protobuf.Timestamp deleted_at = 7;
     string role = 20;
     Audit audit = 50;
 }
-
-message UserServiceDeleteRequest {
-    string id = 1;
-    Audit audit = 50;
+message UserServiceReadManyRequest {
+    repeated UserServiceReadOneRequest user = 1;
+}
+message UserServiceReadManyResponse {
+    repeated UserServiceReadOneResponse user = 1;
 }
 
-message UserServiceDeleteResponse {
+
+message UserServiceUpdateOneRequest {
     string id = 1;
     string first_name = 2 [json_name = "first_name"];
     string middle_names = 3 [json_name = "middle_names"];
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
     string email = 6;
-//    google.protobuf.Timestamp deleted_at = 7;
     string role = 20;
     Audit audit = 50;
+}
+message UserServiceUpdateOneResponse {
+    string id = 1;
+    string first_name = 2 [json_name = "first_name"];
+    string middle_names = 3 [json_name = "middle_names"];
+    string last_name = 4 [json_name = "last_name"];
+    string username = 5;
+    string email = 6;
+    string role = 20;
+    Audit audit = 50;
+}
+message UserServiceUpdateManyRequest {
+    repeated UserServiceUpdateOneRequest user = 1;
+}
+message UserServiceUpdateManyResponse {
+    repeated UserServiceUpdateOneResponse user = 1;
+}
+
+
+message UserServiceDeleteOneRequest {
+    string id = 1;
+    Audit audit = 50;
+}
+message UserServiceDeleteOneResponse {
+    string id = 1;
+    string first_name = 2 [json_name = "first_name"];
+    string middle_names = 3 [json_name = "middle_names"];
+    string last_name = 4 [json_name = "last_name"];
+    string username = 5;
+    string email = 6;
+    string role = 20;
+    Audit audit = 50;
+}
+message UserServiceDeleteManyRequest {
+    repeated UserServiceDeleteOneRequest user = 1;
+}
+message UserServiceDeleteManyResponse {
+    repeated UserServiceDeleteOneResponse user = 1;
 }
 
 
 service UserService {
-    rpc Create (UserServiceCreateRequest) returns (UserServiceCreateResponse) {
-        // option (google.api.http) = {
-        //     post: "/v1/user/create"
-        // };
+    rpc CreateOne(UserServiceCreateOneRequest) returns (UserServiceCreateOneResponse){
+        option (gnostic.openapi.v3.operation).description = "Create One User";
     }
-
-    rpc Read (UserServiceReadRequest) returns (UserServiceReadResponse) {
-        // option (google.api.http) = {
-        //     get: "/v1/user/read"
-        // };
+    rpc CreateMany(UserServiceCreateManyRequest) returns (UserServiceCreateManyResponse){
+        option (gnostic.openapi.v3.operation).description = "Create Many Users";
     }
-
-    rpc Echo (UserServiceCreateRequest) returns (UserServiceCreateRequest) {
-        // option (google.api.http) = {
-        //     get: "/v1/user/echo"
-        // };
+    rpc ReadOne(UserServiceReadOneRequest) returns (UserServiceReadOneResponse){
+        option idempotency_level = NO_SIDE_EFFECTS;
+        option (gnostic.openapi.v3.operation).description = "Read One User";
     }
-    rpc Update(UserServiceUpdateRequest) returns (UserServiceUpdateResponse) {
-
+    rpc ReadMany(UserServiceReadManyRequest) returns (UserServiceReadManyResponse){
+        option idempotency_level=NO_SIDE_EFFECTS;
+        option (gnostic.openapi.v3.operation).description = "Read Many Users";
     }
-    rpc Delete(UserServiceDeleteRequest) returns (UserServiceDeleteResponse) {
-
+    rpc UpdateOne(UserServiceUpdateOneRequest) returns (UserServiceUpdateOneResponse){
+        option (gnostic.openapi.v3.operation).description = "Update One User";
     }
-
+    rpc UpdateMany(UserServiceUpdateManyRequest) returns (UserServiceUpdateManyResponse){
+        option (gnostic.openapi.v3.operation).description = "Update Many Users";
+    }
+    rpc DeleteOne(UserServiceDeleteOneRequest) returns (UserServiceDeleteOneResponse){
+        option (gnostic.openapi.v3.operation).description = "Delete One User";
+    }
+    rpc DeleteMany(UserServiceDeleteManyRequest) returns (UserServiceDeleteManyResponse){
+        option (gnostic.openapi.v3.operation).description = "Delete Many Users";
+    }
 }

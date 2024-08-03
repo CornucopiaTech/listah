@@ -18,8 +18,11 @@ import (
 )
 
 type Repository struct {
-	Db    *bun.DB
-	Users UserRepository
+	Db       *bun.DB
+	User     UserRepository
+	Item     ItemRepository
+	Category CategoryRepository
+	Store    StoreRepository
 }
 
 func Init(cfg *config.Config, logger *logging.Factory) *Repository {
@@ -59,8 +62,11 @@ func Init(cfg *config.Config, logger *logging.Factory) *Repository {
 	}
 
 	return &Repository{
-		Db:    db,
-		Users: &userRepositoryAgent{db: db, logger: logger},
+		Db:       db,
+		User:     &userRepositoryAgent{db: db, logger: logger},
+		Item:     &itemRepositoryAgent{db: db, logger: logger},
+		Category: &categoryRepositoryAgent{db: db, logger: logger},
+		Store:    &storeRepositoryAgent{db: db, logger: logger},
 	}
 
 }

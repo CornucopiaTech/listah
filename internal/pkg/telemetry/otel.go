@@ -90,8 +90,8 @@ func InitSDK() (shutdown func(context.Context) error, err error) {
 	// // Set up HTTP meter provider
 	// meterProviderHttp, err := initHttpMeterProvider(ctx, res)
 	// if err != nil {
-	// 	handleErr(err, "Failed to create a meter provider for Otel")
-	// 	log.Fatalf("Failed to create a meter provider for Otel: %v", err)
+	//     handleErr(err, "Failed to create a meter provider for Otel")
+	//     log.Fatalf("Failed to create a meter provider for Otel: %v", err)
 	// }
 	// shutdownFuncs = append(shutdownFuncs, meterProviderHttp.Shutdown)
 	// otel.SetMeterProvider(meterProviderHttp)
@@ -100,8 +100,8 @@ func InitSDK() (shutdown func(context.Context) error, err error) {
 	// // Set up gRPC meter provider
 	// meterProviderGrpc, err := initGrpcMeterProvider(ctx, res, conn)
 	// if err != nil {
-	// 	handleErr(err, "Failed to create a meter provider for Otel")
-	// 	log.Fatalf("Failed to create a meter provider for Otel: %v", err)
+	//     handleErr(err, "Failed to create a meter provider for Otel")
+	//     log.Fatalf("Failed to create a meter provider for Otel: %v", err)
 	// }
 	// shutdownFuncs = append(shutdownFuncs, meterProviderGrpc.Shutdown)
 	// otel.SetMeterProvider(meterProviderGrpc)

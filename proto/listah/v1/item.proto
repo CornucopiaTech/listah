@@ -7,98 +7,179 @@ option go_package = "cornucopia/listah/internal/pkg/proto/listah/v1";
 
 import "listah/v1/commons.proto";
 import "google/protobuf/timestamp.proto";
+import "gnostic/openapi/v3/annotations.proto";
 
 
 
-message ItemServiceCreateRequest {
+
+message ItemServiceCreateOneRequest {
     string id = 1;
-    string title = 2;
-	string description = 3;
+    string name = 2;
+    string description = 3;
     string quantity = 4;
-    string location = 5;
-    string category = 6;
-    string note = 7;
-	string parentListId = 8;
-	bool active = 20;
-	google.protobuf.Timestamp reactivateAt = 21;
-	Audit audit = 50;
+    string note = 5;
+    string category_name = 6 [json_name = "category_name"];
+    string category_id = 7 [json_name = "category_id"];
+    string store_name = 8 [json_name = "store_name"];
+    string store_id = 9 [json_name = "store_id"];
+    // purchase_history = 9; //ToDo: Determine if purchase history is needed
+    // bool active = 20;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivate_at"];
+    Audit audit = 50;
 }
-
-
-message ItemServiceCreateResponse {
+message ItemServiceCreateOneResponse {
     string id = 1;
-    string title = 2;
-	string description = 3;
+    string name = 2;
+    string description = 3;
     string quantity = 4;
-    string location = 5;
-    string category = 6;
-    string note = 7;
-	string parentListId = 8;
-	bool active = 20;
-	google.protobuf.Timestamp reactivateAt = 21;
-	Audit audit = 50;
+    string note = 5;
+    string category_name = 6 [json_name = "category_name"];
+    string category_id = 7 [json_name = "category_id"];
+    string store_name = 8 [json_name = "store_name"];
+    string store_id = 9 [json_name = "store_id"];
+    // purchase_history = 9; //ToDo: Determine if purchase history is needed
+    // bool active = 20;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivate_at"];
+    Audit audit = 50;
+}
+message ItemServiceCreateManyRequest {
+    repeated ItemServiceCreateOneRequest item = 1;
+}
+message ItemServiceCreateManyResponse {
+    repeated ItemServiceCreateOneResponse item = 1;
 }
 
 
-message ItemServiceUpdateRequest {
+message ItemServiceReadOneRequest {
     string id = 1;
-    string title = 2;
-	string description = 3;
+}
+message ItemServiceReadOneResponse {
+    string id = 1;
+    string name = 2;
+    string description = 3;
     string quantity = 4;
-    string location = 5;
-    string category = 6;
-    string note = 7;
-	string parentListId = 8;
-	bool active = 20;
-	google.protobuf.Timestamp reactivateAt = 21;
-	Audit audit = 50;
+    string note = 5;
+    string category_name = 6 [json_name = "category_name"];
+    string category_id = 7 [json_name = "category_id"];
+    string store_name = 8 [json_name = "store_name"];
+    string store_id = 9 [json_name = "store_id"];
+    // purchase_history = 9; //ToDo: Determine if purchase history is needed
+    // bool active = 20;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivate_at"];
+    Audit audit = 50;
+}
+message ItemServiceReadManyRequest {
+    repeated ItemServiceReadOneRequest item = 1;
+}
+message ItemServiceReadManyResponse {
+    repeated ItemServiceReadOneResponse item = 1;
 }
 
 
-message ItemServiceUpdateResponse {
+message ItemServiceUpdateOneRequest {
     string id = 1;
-    string title = 2;
-	string description = 3;
+    string name = 2;
+    string description = 3;
     string quantity = 4;
-    string location = 5;
-    string category = 6;
-    string note = 7;
-	string parentListId = 8;
-	bool active = 20;
-	google.protobuf.Timestamp reactivateAt = 21;
-	Audit audit = 50;
+    string note = 5;
+    string category_name = 6 [json_name = "category_name"];
+    string category_id = 7 [json_name = "category_id"];
+    string store_name = 8 [json_name = "store_name"];
+    string store_id = 9 [json_name = "store_id"];
+    // purchase_history = 9; //ToDo: Determine if purchase history is needed
+    // bool active = 20;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivate_at"];
+    Audit audit = 50;
 }
-
-
-message ItemServiceReadRequest {
+message ItemServiceUpdateOneResponse {
     string id = 1;
-}
-
-
-message ItemServiceReadResponse {
-    string id = 1;
-    string title = 2;
-	string description = 3;
+    string name = 2;
+    string description = 3;
     string quantity = 4;
-    string location = 5;
-    string category = 6;
-    string note = 7;
-	string parentListId = 8;
-	bool active = 20;
-	google.protobuf.Timestamp reactivateAt = 21;
-	Audit audit = 50;
+    string note = 5;
+    string category_name = 6 [json_name = "category_name"];
+    string category_id = 7 [json_name = "category_id"];
+    string store_name = 8 [json_name = "store_name"];
+    string store_id = 9 [json_name = "store_id"];
+    // purchase_history = 9; //ToDo: Determine if purchase history is needed
+    // bool active = 20;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivate_at"];
+    Audit audit = 50;
+}
+message ItemServiceUpdateManyRequest {
+    repeated ItemServiceUpdateOneRequest item = 1;
+}
+message ItemServiceUpdateManyResponse {
+    repeated ItemServiceUpdateOneResponse item = 1;
 }
 
-message ItemServiceDeleteRequest {
+
+message ItemServiceDeleteOneRequest {
+    string id = 1;
+    Audit audit = 50;
+}
+message ItemServiceDeleteOneResponse {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string quantity = 4;
+    string note = 5;
+    string category_name = 6 [json_name = "category_name"];
+    string category_id = 7 [json_name = "category_id"];
+    string store_name = 8 [json_name = "store_name"];
+    string store_id = 9 [json_name = "store_id"];
+    // purchase_history = 9; //ToDo: Determine if purchase history is needed
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivate_at"];
+    Audit audit = 50;
+}
+message ItemServiceDeleteManyRequest {
+    repeated ItemServiceDeleteOneRequest item = 1;
+}
+message ItemServiceDeleteManyResponse {
+    repeated ItemServiceDeleteOneResponse item = 1;
+}
+
+
+message ItemServiceListRequest {
     string id = 1;
 }
+message ItemServiceListResponse {
+    repeated string items = 20;
+    string category_name = 9;
+}
 
 
-message ItemServiceDeleteResponse {}
 
 
 service ItemService {
-    rpc Read(ItemServiceReadRequest) returns (ItemServiceReadResponse){
-
+    rpc CreateOne(ItemServiceCreateOneRequest) returns (ItemServiceCreateOneResponse){
+        option (gnostic.openapi.v3.operation).description = "Create One Item";
+    }
+    rpc CreateMany(ItemServiceCreateManyRequest) returns (ItemServiceCreateManyResponse){
+        option (gnostic.openapi.v3.operation).description = "Create Many Items";
+    }
+    rpc ReadOne(ItemServiceReadOneRequest) returns (ItemServiceReadOneResponse){
+        option idempotency_level = NO_SIDE_EFFECTS;
+        option (gnostic.openapi.v3.operation).description = "Read One Item";
+    }
+    rpc ReadMany(ItemServiceReadManyRequest) returns (ItemServiceReadManyResponse){
+        option idempotency_level=NO_SIDE_EFFECTS;
+        option (gnostic.openapi.v3.operation).description = "Read Many Items";
+    }
+    rpc UpdateOne(ItemServiceUpdateOneRequest) returns (ItemServiceUpdateOneResponse){
+        option (gnostic.openapi.v3.operation).description = "Update One Item";
+    }
+    rpc UpdateMany(ItemServiceUpdateManyRequest) returns (ItemServiceUpdateManyResponse){
+        option (gnostic.openapi.v3.operation).description = "Update Many Items";
+    }
+    rpc DeleteOne(ItemServiceDeleteOneRequest) returns (ItemServiceDeleteOneResponse){
+        option (gnostic.openapi.v3.operation).description = "Delete One Item";
+    }
+    rpc DeleteMany(ItemServiceDeleteManyRequest) returns (ItemServiceDeleteManyResponse){
+        option (gnostic.openapi.v3.operation).description = "Delete Many Items";
+    }
+    rpc List(ItemServiceListRequest) returns (ItemServiceListResponse){
+        option idempotency_level=NO_SIDE_EFFECTS;
+        option (gnostic.openapi.v3.operation).description = "List Items";
     }
 }
