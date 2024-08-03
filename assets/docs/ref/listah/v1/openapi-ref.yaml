@@ -1,3640 +1,2494 @@
-{
-  "openapi": "3.1.0",
-  "info": {},
-  "paths": {
-    "/listah.v1.ItemService/CreateOne": {
-      "post": {
-        "tags": [
-          "listah.v1.ItemService"
-        ],
-        "description": "Create One Item",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.ItemServiceCreateOneRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.ItemServiceCreateOneResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.ItemService/CreateMany": {
-      "post": {
-        "tags": [
-          "listah.v1.ItemService"
-        ],
-        "description": "Create Many Items",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.ItemServiceCreateManyRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.ItemServiceCreateManyResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.ItemService/ReadOne": {
-      "get": {
-        "tags": [
-          "listah.v1.ItemService"
-        ],
-        "description": "Read One Item",
-        "parameters": [
-          {
-            "name": "message",
-            "in": "query",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.ItemServiceReadOneRequest"
-                }
-              },
-              "application/proto": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.ItemServiceReadOneRequest"
-                }
-              }
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/encoding"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/base64"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/compression"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/connect"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.ItemServiceReadOneResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.ItemService/ReadMany": {
-      "get": {
-        "tags": [
-          "listah.v1.ItemService"
-        ],
-        "description": "Read Many Items",
-        "parameters": [
-          {
-            "name": "message",
-            "in": "query",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.ItemServiceReadManyRequest"
-                }
-              },
-              "application/proto": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.ItemServiceReadManyRequest"
-                }
-              }
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/encoding"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/base64"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/compression"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/connect"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.ItemServiceReadManyResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.ItemService/UpdateOne": {
-      "post": {
-        "tags": [
-          "listah.v1.ItemService"
-        ],
-        "description": "Update One Item",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.ItemServiceUpdateOneRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.ItemServiceUpdateOneResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.ItemService/UpdateMany": {
-      "post": {
-        "tags": [
-          "listah.v1.ItemService"
-        ],
-        "description": "Update Many Items",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.ItemServiceUpdateManyRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.ItemServiceUpdateManyResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.ItemService/DeleteOne": {
-      "post": {
-        "tags": [
-          "listah.v1.ItemService"
-        ],
-        "description": "Delete One Item",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.ItemServiceDeleteOneRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.ItemServiceDeleteOneResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.ItemService/DeleteMany": {
-      "post": {
-        "tags": [
-          "listah.v1.ItemService"
-        ],
-        "description": "Delete Many Items",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.ItemServiceDeleteManyRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.ItemServiceDeleteManyResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.ItemService/List": {
-      "get": {
-        "tags": [
-          "listah.v1.ItemService"
-        ],
-        "description": "List Items",
-        "parameters": [
-          {
-            "name": "message",
-            "in": "query",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.ItemServiceListRequest"
-                }
-              },
-              "application/proto": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.ItemServiceListRequest"
-                }
-              }
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/encoding"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/base64"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/compression"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/connect"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.ItemServiceListResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.CategoryService/CreateOne": {
-      "post": {
-        "tags": [
-          "listah.v1.CategoryService"
-        ],
-        "description": "Create One Category",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.CategoryServiceCreateOneRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.CategoryServiceCreateOneResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.CategoryService/CreateMany": {
-      "post": {
-        "tags": [
-          "listah.v1.CategoryService"
-        ],
-        "description": "Create Many Categories",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.CategoryServiceCreateManyRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.CategoryServiceCreateManyResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.CategoryService/ReadOne": {
-      "get": {
-        "tags": [
-          "listah.v1.CategoryService"
-        ],
-        "description": "Read One Category",
-        "parameters": [
-          {
-            "name": "message",
-            "in": "query",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.CategoryServiceReadOneRequest"
-                }
-              },
-              "application/proto": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.CategoryServiceReadOneRequest"
-                }
-              }
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/encoding"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/base64"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/compression"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/connect"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.CategoryServiceReadOneResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.CategoryService/ReadMany": {
-      "get": {
-        "tags": [
-          "listah.v1.CategoryService"
-        ],
-        "description": "Read Many Categories",
-        "parameters": [
-          {
-            "name": "message",
-            "in": "query",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.CategoryServiceReadManyRequest"
-                }
-              },
-              "application/proto": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.CategoryServiceReadManyRequest"
-                }
-              }
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/encoding"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/base64"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/compression"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/connect"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.CategoryServiceReadManyResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.CategoryService/UpdateOne": {
-      "post": {
-        "tags": [
-          "listah.v1.CategoryService"
-        ],
-        "description": "Update One Category",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.CategoryServiceUpdateOneRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.CategoryServiceUpdateOneResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.CategoryService/UpdateMany": {
-      "post": {
-        "tags": [
-          "listah.v1.CategoryService"
-        ],
-        "description": "Update Many Categories",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.CategoryServiceUpdateManyRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.CategoryServiceUpdateManyResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.CategoryService/DeleteOne": {
-      "post": {
-        "tags": [
-          "listah.v1.CategoryService"
-        ],
-        "description": "Delete One Category",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.CategoryServiceDeleteOneRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.CategoryServiceDeleteOneResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.CategoryService/DeleteMany": {
-      "post": {
-        "tags": [
-          "listah.v1.CategoryService"
-        ],
-        "description": "Delete Many Categories",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.CategoryServiceDeleteManyRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.CategoryServiceDeleteManyResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.CategoryService/List": {
-      "get": {
-        "tags": [
-          "listah.v1.CategoryService"
-        ],
-        "description": "List Categories",
-        "parameters": [
-          {
-            "name": "message",
-            "in": "query",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.CategoryServiceListRequest"
-                }
-              },
-              "application/proto": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.CategoryServiceListRequest"
-                }
-              }
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/encoding"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/base64"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/compression"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/connect"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.CategoryServiceListResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.UserService/CreateOne": {
-      "post": {
-        "tags": [
-          "listah.v1.UserService"
-        ],
-        "description": "Create One User",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.UserServiceCreateOneRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.UserServiceCreateOneResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.UserService/CreateMany": {
-      "post": {
-        "tags": [
-          "listah.v1.UserService"
-        ],
-        "description": "Create Many Users",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.UserServiceCreateManyRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.UserServiceCreateManyResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.UserService/ReadOne": {
-      "get": {
-        "tags": [
-          "listah.v1.UserService"
-        ],
-        "description": "Read One User",
-        "parameters": [
-          {
-            "name": "message",
-            "in": "query",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.UserServiceReadOneRequest"
-                }
-              },
-              "application/proto": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.UserServiceReadOneRequest"
-                }
-              }
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/encoding"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/base64"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/compression"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/connect"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.UserServiceReadOneResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.UserService/ReadMany": {
-      "get": {
-        "tags": [
-          "listah.v1.UserService"
-        ],
-        "description": "Read Many Users",
-        "parameters": [
-          {
-            "name": "message",
-            "in": "query",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.UserServiceReadManyRequest"
-                }
-              },
-              "application/proto": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.UserServiceReadManyRequest"
-                }
-              }
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/encoding"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/base64"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/compression"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/connect"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.UserServiceReadManyResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.UserService/UpdateOne": {
-      "post": {
-        "tags": [
-          "listah.v1.UserService"
-        ],
-        "description": "Update One User",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.UserServiceUpdateOneRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.UserServiceUpdateOneResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.UserService/UpdateMany": {
-      "post": {
-        "tags": [
-          "listah.v1.UserService"
-        ],
-        "description": "Update Many Users",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.UserServiceUpdateManyRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.UserServiceUpdateManyResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.UserService/DeleteOne": {
-      "post": {
-        "tags": [
-          "listah.v1.UserService"
-        ],
-        "description": "Delete One User",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.UserServiceDeleteOneRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.UserServiceDeleteOneResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.UserService/DeleteMany": {
-      "post": {
-        "tags": [
-          "listah.v1.UserService"
-        ],
-        "description": "Delete Many Users",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.UserServiceDeleteManyRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.UserServiceDeleteManyResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.StoreService/CreateOne": {
-      "post": {
-        "tags": [
-          "listah.v1.StoreService"
-        ],
-        "description": "Create One Store",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.StoreServiceCreateOneRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.StoreServiceCreateOneResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.StoreService/CreateMany": {
-      "post": {
-        "tags": [
-          "listah.v1.StoreService"
-        ],
-        "description": "Create Many Stores",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.StoreServiceCreateManyRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.StoreServiceCreateManyResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.StoreService/ReadOne": {
-      "get": {
-        "tags": [
-          "listah.v1.StoreService"
-        ],
-        "description": "Read One Store",
-        "parameters": [
-          {
-            "name": "message",
-            "in": "query",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.StoreServiceReadOneRequest"
-                }
-              },
-              "application/proto": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.StoreServiceReadOneRequest"
-                }
-              }
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/encoding"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/base64"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/compression"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/connect"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.StoreServiceReadOneResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.StoreService/ReadMany": {
-      "get": {
-        "tags": [
-          "listah.v1.StoreService"
-        ],
-        "description": "Read Many Stores",
-        "parameters": [
-          {
-            "name": "message",
-            "in": "query",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.StoreServiceReadManyRequest"
-                }
-              },
-              "application/proto": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.StoreServiceReadManyRequest"
-                }
-              }
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/encoding"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/base64"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/compression"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/connect"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.StoreServiceReadManyResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.StoreService/UpdateOne": {
-      "post": {
-        "tags": [
-          "listah.v1.StoreService"
-        ],
-        "description": "Update One Store",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.StoreServiceUpdateOneRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.StoreServiceUpdateOneResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.StoreService/UpdateMany": {
-      "post": {
-        "tags": [
-          "listah.v1.StoreService"
-        ],
-        "description": "Update Many Stores",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.StoreServiceUpdateManyRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.StoreServiceUpdateManyResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.StoreService/DeleteOne": {
-      "post": {
-        "tags": [
-          "listah.v1.StoreService"
-        ],
-        "description": "Delete One Store",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.StoreServiceDeleteOneRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.StoreServiceDeleteOneResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.StoreService/DeleteMany": {
-      "post": {
-        "tags": [
-          "listah.v1.StoreService"
-        ],
-        "description": "Delete Many Stores",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/listah.v1.StoreServiceDeleteManyRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.StoreServiceDeleteManyResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/listah.v1.StoreService/List": {
-      "get": {
-        "tags": [
-          "listah.v1.StoreService"
-        ],
-        "description": "List Stores",
-        "parameters": [
-          {
-            "name": "message",
-            "in": "query",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.StoreServiceListRequest"
-                }
-              },
-              "application/proto": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.StoreServiceListRequest"
-                }
-              }
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/encoding"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/base64"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/compression"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/parameters/connect"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/connect.error"
-                }
-              }
-            }
-          },
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/listah.v1.StoreServiceListResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "listah.v1.AuditUpdaterEnum": {
-        "type": "string",
-        "title": "AuditUpdaterEnum",
-        "enum": [
-          "AUDIT_UPDATER_ENUM_UNSPECIFIED",
-          "AUDIT_UPDATER_ENUM_FRONTEND",
-          "AUDIT_UPDATER_ENUM_SYSOPS"
-        ]
-      },
-      "google.protobuf.Timestamp": {
-        "type": "string",
-        "format": "date-time",
-        "additionalProperties": false,
-        "description": "A Timestamp represents a point in time independent of any time zone or local\n calendar, encoded as a count of seconds and fractions of seconds at\n nanosecond resolution. The count is relative to an epoch at UTC midnight on\n January 1, 1970, in the proleptic Gregorian calendar which extends the\n Gregorian calendar backwards to year one.\n\n All minutes are 60 seconds long. Leap seconds are \"smeared\" so that no leap\n second table is needed for interpretation, using a [24-hour linear\n smear](https://developers.google.com/time/smear).\n\n The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By\n restricting to that range, we ensure that we can convert to and from [RFC\n 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.\n\n # Examples\n\n Example 1: Compute Timestamp from POSIX `time()`.\n\n     Timestamp timestamp;\n     timestamp.set_seconds(time(NULL));\n     timestamp.set_nanos(0);\n\n Example 2: Compute Timestamp from POSIX `gettimeofday()`.\n\n     struct timeval tv;\n     gettimeofday(\u0026tv, NULL);\n\n     Timestamp timestamp;\n     timestamp.set_seconds(tv.tv_sec);\n     timestamp.set_nanos(tv.tv_usec * 1000);\n\n Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.\n\n     FILETIME ft;\n     GetSystemTimeAsFileTime(\u0026ft);\n     UINT64 ticks = (((UINT64)ft.dwHighDateTime) \u003c\u003c 32) | ft.dwLowDateTime;\n\n     // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z\n     // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.\n     Timestamp timestamp;\n     timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));\n     timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));\n\n Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.\n\n     long millis = System.currentTimeMillis();\n\n     Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)\n         .setNanos((int) ((millis % 1000) * 1000000)).build();\n\n Example 5: Compute Timestamp from Java `Instant.now()`.\n\n     Instant now = Instant.now();\n\n     Timestamp timestamp =\n         Timestamp.newBuilder().setSeconds(now.getEpochSecond())\n             .setNanos(now.getNano()).build();\n\n Example 6: Compute Timestamp from current time in Python.\n\n     timestamp = Timestamp()\n     timestamp.GetCurrentTime()\n\n # JSON Mapping\n\n In JSON format, the Timestamp type is encoded as a string in the\n [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the\n format is \"{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z\"\n where {year} is always expressed using four digits while {month}, {day},\n {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional\n seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),\n are optional. The \"Z\" suffix indicates the timezone (\"UTC\"); the timezone\n is required. A proto3 JSON serializer should always use UTC (as indicated by\n \"Z\") when printing the Timestamp type and a proto3 JSON parser should be\n able to accept both UTC and other timezones (as indicated by an offset).\n\n For example, \"2017-01-15T01:30:15.01Z\" encodes 15.01 seconds past\n 01:30 UTC on January 15, 2017.\n\n In JavaScript, one can convert a Date object to this format using the\n standard\n [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)\n method. In Python, a standard `datetime.datetime` object can be converted\n to this format using\n [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with\n the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use\n the Joda Time's [`ISODateTimeFormat.dateTime()`](\n http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()\n ) to obtain a formatter capable of generating timestamps in this format."
-      },
-      "listah.v1.Audit": {
-        "type": "object",
-        "properties": {
-          "created_by": {
-            "$ref": "#/components/schemas/listah.v1.AuditUpdaterEnum"
-          },
-          "created_at": {
-            "$ref": "#/components/schemas/google.protobuf.Timestamp"
-          },
-          "updated_by": {
-            "$ref": "#/components/schemas/listah.v1.AuditUpdaterEnum"
-          },
-          "updated_at": {
-            "$ref": "#/components/schemas/google.protobuf.Timestamp"
-          },
-          "deleted_by": {
-            "$ref": "#/components/schemas/listah.v1.AuditUpdaterEnum"
-          },
-          "deleted_at": {
-            "$ref": "#/components/schemas/google.protobuf.Timestamp"
-          }
-        },
-        "title": "Audit",
-        "additionalProperties": false
-      },
-      "connect.error": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string",
-            "examples": [
-              "CodeNotFound"
-            ],
-            "enum": [
-              "CodeCanceled",
-              "CodeUnknown",
-              "CodeInvalidArgument",
-              "CodeDeadlineExceeded",
-              "CodeNotFound",
-              "CodeAlreadyExists",
-              "CodePermissionDenied",
-              "CodeResourceExhausted",
-              "CodeFailedPrecondition",
-              "CodeAborted",
-              "CodeOutOfRange",
-              "CodeInternal",
-              "CodeUnavailable",
-              "CodeDataLoss",
-              "CodeUnauthenticated"
-            ],
-            "description": "The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code]."
-          },
-          "message": {
-            "type": "string",
-            "description": "A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client."
-          },
-          "detail": {
-            "$ref": "#/components/schemas/google.protobuf.Any"
-          }
-        },
-        "title": "Connect Error",
-        "additionalProperties": true,
-        "description": "Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation"
-      },
-      "google.protobuf.Any": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "value": {
-            "type": "string",
-            "format": "binary"
-          },
-          "debug": {
-            "type": "object",
-            "additionalProperties": true
-          }
-        },
-        "additionalProperties": true,
-        "description": "Contains an arbitrary serialized message along with a @type that describes the type of the serialized message."
-      },
-      "listah.v1.ItemServiceCreateManyRequest": {
-        "type": "object",
-        "properties": {
-          "item": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.ItemServiceCreateOneRequest"
-            }
-          }
-        },
-        "title": "ItemServiceCreateManyRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.ItemServiceCreateManyResponse": {
-        "type": "object",
-        "properties": {
-          "item": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.ItemServiceCreateOneResponse"
-            }
-          }
-        },
-        "title": "ItemServiceCreateManyResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.ItemServiceCreateOneRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "name": {
-            "type": "string",
-            "title": "name",
-            "additionalProperties": false
-          },
-          "description": {
-            "type": "string",
-            "title": "description",
-            "additionalProperties": false
-          },
-          "quantity": {
-            "type": "string",
-            "title": "quantity",
-            "additionalProperties": false
-          },
-          "note": {
-            "type": "string",
-            "title": "note",
-            "additionalProperties": false
-          },
-          "category_name": {
-            "type": "string",
-            "title": "category_name",
-            "additionalProperties": false
-          },
-          "category_id": {
-            "type": "string",
-            "title": "category_id",
-            "additionalProperties": false
-          },
-          "store_name": {
-            "type": "string",
-            "title": "store_name",
-            "additionalProperties": false
-          },
-          "store_id": {
-            "type": "string",
-            "title": "store_id",
-            "additionalProperties": false
-          },
-          "reactivate_at": {
-            "$ref": "#/components/schemas/google.protobuf.Timestamp"
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "ItemServiceCreateOneRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.ItemServiceCreateOneResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "name": {
-            "type": "string",
-            "title": "name",
-            "additionalProperties": false
-          },
-          "description": {
-            "type": "string",
-            "title": "description",
-            "additionalProperties": false
-          },
-          "quantity": {
-            "type": "string",
-            "title": "quantity",
-            "additionalProperties": false
-          },
-          "note": {
-            "type": "string",
-            "title": "note",
-            "additionalProperties": false
-          },
-          "category_name": {
-            "type": "string",
-            "title": "category_name",
-            "additionalProperties": false
-          },
-          "category_id": {
-            "type": "string",
-            "title": "category_id",
-            "additionalProperties": false
-          },
-          "store_name": {
-            "type": "string",
-            "title": "store_name",
-            "additionalProperties": false
-          },
-          "store_id": {
-            "type": "string",
-            "title": "store_id",
-            "additionalProperties": false
-          },
-          "reactivate_at": {
-            "$ref": "#/components/schemas/google.protobuf.Timestamp"
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "ItemServiceCreateOneResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.ItemServiceDeleteManyRequest": {
-        "type": "object",
-        "properties": {
-          "item": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.ItemServiceDeleteOneRequest"
-            }
-          }
-        },
-        "title": "ItemServiceDeleteManyRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.ItemServiceDeleteManyResponse": {
-        "type": "object",
-        "properties": {
-          "item": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.ItemServiceDeleteOneResponse"
-            }
-          }
-        },
-        "title": "ItemServiceDeleteManyResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.ItemServiceDeleteOneRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "ItemServiceDeleteOneRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.ItemServiceDeleteOneResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "name": {
-            "type": "string",
-            "title": "name",
-            "additionalProperties": false
-          },
-          "description": {
-            "type": "string",
-            "title": "description",
-            "additionalProperties": false
-          },
-          "quantity": {
-            "type": "string",
-            "title": "quantity",
-            "additionalProperties": false
-          },
-          "note": {
-            "type": "string",
-            "title": "note",
-            "additionalProperties": false
-          },
-          "category_name": {
-            "type": "string",
-            "title": "category_name",
-            "additionalProperties": false
-          },
-          "category_id": {
-            "type": "string",
-            "title": "category_id",
-            "additionalProperties": false
-          },
-          "store_name": {
-            "type": "string",
-            "title": "store_name",
-            "additionalProperties": false
-          },
-          "store_id": {
-            "type": "string",
-            "title": "store_id",
-            "additionalProperties": false
-          },
-          "reactivate_at": {
-            "$ref": "#/components/schemas/google.protobuf.Timestamp"
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "ItemServiceDeleteOneResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.ItemServiceListRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          }
-        },
-        "title": "ItemServiceListRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.ItemServiceListResponse": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "title": "items",
-              "additionalProperties": false
-            }
-          },
-          "categoryName": {
-            "type": "string",
-            "title": "category_name",
-            "additionalProperties": false
-          }
-        },
-        "title": "ItemServiceListResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.ItemServiceReadManyRequest": {
-        "type": "object",
-        "properties": {
-          "item": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.ItemServiceReadOneRequest"
-            }
-          }
-        },
-        "title": "ItemServiceReadManyRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.ItemServiceReadManyResponse": {
-        "type": "object",
-        "properties": {
-          "item": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.ItemServiceReadOneResponse"
-            }
-          }
-        },
-        "title": "ItemServiceReadManyResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.ItemServiceReadOneRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          }
-        },
-        "title": "ItemServiceReadOneRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.ItemServiceReadOneResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "name": {
-            "type": "string",
-            "title": "name",
-            "additionalProperties": false
-          },
-          "description": {
-            "type": "string",
-            "title": "description",
-            "additionalProperties": false
-          },
-          "quantity": {
-            "type": "string",
-            "title": "quantity",
-            "additionalProperties": false
-          },
-          "note": {
-            "type": "string",
-            "title": "note",
-            "additionalProperties": false
-          },
-          "category_name": {
-            "type": "string",
-            "title": "category_name",
-            "additionalProperties": false
-          },
-          "category_id": {
-            "type": "string",
-            "title": "category_id",
-            "additionalProperties": false
-          },
-          "store_name": {
-            "type": "string",
-            "title": "store_name",
-            "additionalProperties": false
-          },
-          "store_id": {
-            "type": "string",
-            "title": "store_id",
-            "additionalProperties": false
-          },
-          "reactivate_at": {
-            "$ref": "#/components/schemas/google.protobuf.Timestamp"
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "ItemServiceReadOneResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.ItemServiceUpdateManyRequest": {
-        "type": "object",
-        "properties": {
-          "item": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.ItemServiceUpdateOneRequest"
-            }
-          }
-        },
-        "title": "ItemServiceUpdateManyRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.ItemServiceUpdateManyResponse": {
-        "type": "object",
-        "properties": {
-          "item": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.ItemServiceUpdateOneResponse"
-            }
-          }
-        },
-        "title": "ItemServiceUpdateManyResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.ItemServiceUpdateOneRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "name": {
-            "type": "string",
-            "title": "name",
-            "additionalProperties": false
-          },
-          "description": {
-            "type": "string",
-            "title": "description",
-            "additionalProperties": false
-          },
-          "quantity": {
-            "type": "string",
-            "title": "quantity",
-            "additionalProperties": false
-          },
-          "note": {
-            "type": "string",
-            "title": "note",
-            "additionalProperties": false
-          },
-          "category_name": {
-            "type": "string",
-            "title": "category_name",
-            "additionalProperties": false
-          },
-          "category_id": {
-            "type": "string",
-            "title": "category_id",
-            "additionalProperties": false
-          },
-          "store_name": {
-            "type": "string",
-            "title": "store_name",
-            "additionalProperties": false
-          },
-          "store_id": {
-            "type": "string",
-            "title": "store_id",
-            "additionalProperties": false
-          },
-          "reactivate_at": {
-            "$ref": "#/components/schemas/google.protobuf.Timestamp"
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "ItemServiceUpdateOneRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.ItemServiceUpdateOneResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "name": {
-            "type": "string",
-            "title": "name",
-            "additionalProperties": false
-          },
-          "description": {
-            "type": "string",
-            "title": "description",
-            "additionalProperties": false
-          },
-          "quantity": {
-            "type": "string",
-            "title": "quantity",
-            "additionalProperties": false
-          },
-          "note": {
-            "type": "string",
-            "title": "note",
-            "additionalProperties": false
-          },
-          "category_name": {
-            "type": "string",
-            "title": "category_name",
-            "additionalProperties": false
-          },
-          "category_id": {
-            "type": "string",
-            "title": "category_id",
-            "additionalProperties": false
-          },
-          "store_name": {
-            "type": "string",
-            "title": "store_name",
-            "additionalProperties": false
-          },
-          "store_id": {
-            "type": "string",
-            "title": "store_id",
-            "additionalProperties": false
-          },
-          "reactivate_at": {
-            "$ref": "#/components/schemas/google.protobuf.Timestamp"
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "ItemServiceUpdateOneResponse",
-        "additionalProperties": false
-      },
-      "encoding": {
-        "title": "encoding",
-        "enum": [
-          "proto",
-          "json"
-        ],
-        "description": "Define which encoding or 'Message-Codec' to use"
-      },
-      "base64": {
-        "type": "boolean",
-        "title": "base64",
-        "description": "Specifies if the message query param is base64 encoded, which may be required for binary data"
-      },
-      "compression": {
-        "title": "compression",
-        "enum": [
-          "identity",
-          "gzip",
-          "br",
-          "gzip"
-        ],
-        "description": "Which compression algorithm to use for this request"
-      },
-      "connect": {
-        "title": "connect",
-        "enum": [
-          "1"
-        ],
-        "description": "Which version of connect to use."
-      },
-      "listah.v1.CategoryServiceCreateManyRequest": {
-        "type": "object",
-        "properties": {
-          "category": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.CategoryServiceCreateOneRequest"
-            }
-          }
-        },
-        "title": "CategoryServiceCreateManyRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.CategoryServiceCreateManyResponse": {
-        "type": "object",
-        "properties": {
-          "category": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.CategoryServiceCreateOneResponse"
-            }
-          }
-        },
-        "title": "CategoryServiceCreateManyResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.CategoryServiceCreateOneRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "name": {
-            "type": "string",
-            "title": "name",
-            "additionalProperties": false
-          },
-          "description": {
-            "type": "string",
-            "title": "description",
-            "additionalProperties": false
-          },
-          "note": {
-            "type": "string",
-            "title": "note",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "CategoryServiceCreateOneRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.CategoryServiceCreateOneResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "name": {
-            "type": "string",
-            "title": "name",
-            "additionalProperties": false
-          },
-          "description": {
-            "type": "string",
-            "title": "description",
-            "additionalProperties": false
-          },
-          "note": {
-            "type": "string",
-            "title": "note",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "CategoryServiceCreateOneResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.CategoryServiceDeleteManyRequest": {
-        "type": "object",
-        "properties": {
-          "category": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.CategoryServiceDeleteOneRequest"
-            }
-          }
-        },
-        "title": "CategoryServiceDeleteManyRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.CategoryServiceDeleteManyResponse": {
-        "type": "object",
-        "properties": {
-          "category": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.CategoryServiceDeleteOneResponse"
-            }
-          }
-        },
-        "title": "CategoryServiceDeleteManyResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.CategoryServiceDeleteOneRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "CategoryServiceDeleteOneRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.CategoryServiceDeleteOneResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "name": {
-            "type": "string",
-            "title": "name",
-            "additionalProperties": false
-          },
-          "description": {
-            "type": "string",
-            "title": "description",
-            "additionalProperties": false
-          },
-          "note": {
-            "type": "string",
-            "title": "note",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "CategoryServiceDeleteOneResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.CategoryServiceListRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          }
-        },
-        "title": "CategoryServiceListRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.CategoryServiceListResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "name": {
-            "type": "string",
-            "title": "name",
-            "additionalProperties": false
-          },
-          "description": {
-            "type": "string",
-            "title": "description",
-            "additionalProperties": false
-          },
-          "note": {
-            "type": "string",
-            "title": "note",
-            "additionalProperties": false
-          },
-          "items": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "title": "items",
-              "additionalProperties": false
-            }
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "CategoryServiceListResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.CategoryServiceReadManyRequest": {
-        "type": "object",
-        "properties": {
-          "category": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.CategoryServiceReadOneRequest"
-            }
-          }
-        },
-        "title": "CategoryServiceReadManyRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.CategoryServiceReadManyResponse": {
-        "type": "object",
-        "properties": {
-          "category": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.CategoryServiceReadOneResponse"
-            }
-          }
-        },
-        "title": "CategoryServiceReadManyResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.CategoryServiceReadOneRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          }
-        },
-        "title": "CategoryServiceReadOneRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.CategoryServiceReadOneResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "name": {
-            "type": "string",
-            "title": "name",
-            "additionalProperties": false
-          },
-          "description": {
-            "type": "string",
-            "title": "description",
-            "additionalProperties": false
-          },
-          "note": {
-            "type": "string",
-            "title": "note",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "CategoryServiceReadOneResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.CategoryServiceUpdateManyRequest": {
-        "type": "object",
-        "properties": {
-          "category": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.CategoryServiceUpdateOneRequest"
-            }
-          }
-        },
-        "title": "CategoryServiceUpdateManyRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.CategoryServiceUpdateManyResponse": {
-        "type": "object",
-        "properties": {
-          "category": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.CategoryServiceUpdateOneResponse"
-            }
-          }
-        },
-        "title": "CategoryServiceUpdateManyResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.CategoryServiceUpdateOneRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "name": {
-            "type": "string",
-            "title": "name",
-            "additionalProperties": false
-          },
-          "description": {
-            "type": "string",
-            "title": "description",
-            "additionalProperties": false
-          },
-          "note": {
-            "type": "string",
-            "title": "note",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "CategoryServiceUpdateOneRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.CategoryServiceUpdateOneResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "name": {
-            "type": "string",
-            "title": "name",
-            "additionalProperties": false
-          },
-          "description": {
-            "type": "string",
-            "title": "description",
-            "additionalProperties": false
-          },
-          "note": {
-            "type": "string",
-            "title": "note",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "CategoryServiceUpdateOneResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.UserServiceCreateManyRequest": {
-        "type": "object",
-        "properties": {
-          "user": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.UserServiceCreateOneRequest"
-            }
-          }
-        },
-        "title": "UserServiceCreateManyRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.UserServiceCreateManyResponse": {
-        "type": "object",
-        "properties": {
-          "user": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.UserServiceCreateOneResponse"
-            }
-          }
-        },
-        "title": "UserServiceCreateManyResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.UserServiceCreateOneRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "first_name": {
-            "type": "string",
-            "title": "first_name",
-            "additionalProperties": false
-          },
-          "middle_names": {
-            "type": "string",
-            "title": "middle_names",
-            "additionalProperties": false
-          },
-          "last_name": {
-            "type": "string",
-            "title": "last_name",
-            "additionalProperties": false
-          },
-          "username": {
-            "type": "string",
-            "title": "username",
-            "additionalProperties": false
-          },
-          "email": {
-            "type": "string",
-            "title": "email",
-            "additionalProperties": false
-          },
-          "role": {
-            "type": "string",
-            "title": "role",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "UserServiceCreateOneRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.UserServiceCreateOneResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "first_name": {
-            "type": "string",
-            "title": "first_name",
-            "additionalProperties": false
-          },
-          "middle_names": {
-            "type": "string",
-            "title": "middle_names",
-            "additionalProperties": false
-          },
-          "last_name": {
-            "type": "string",
-            "title": "last_name",
-            "additionalProperties": false
-          },
-          "username": {
-            "type": "string",
-            "title": "username",
-            "additionalProperties": false
-          },
-          "email": {
-            "type": "string",
-            "title": "email",
-            "additionalProperties": false
-          },
-          "role": {
-            "type": "string",
-            "title": "role",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "UserServiceCreateOneResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.UserServiceDeleteManyRequest": {
-        "type": "object",
-        "properties": {
-          "user": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.UserServiceDeleteOneRequest"
-            }
-          }
-        },
-        "title": "UserServiceDeleteManyRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.UserServiceDeleteManyResponse": {
-        "type": "object",
-        "properties": {
-          "user": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.UserServiceDeleteOneResponse"
-            }
-          }
-        },
-        "title": "UserServiceDeleteManyResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.UserServiceDeleteOneRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "UserServiceDeleteOneRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.UserServiceDeleteOneResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "first_name": {
-            "type": "string",
-            "title": "first_name",
-            "additionalProperties": false
-          },
-          "middle_names": {
-            "type": "string",
-            "title": "middle_names",
-            "additionalProperties": false
-          },
-          "last_name": {
-            "type": "string",
-            "title": "last_name",
-            "additionalProperties": false
-          },
-          "username": {
-            "type": "string",
-            "title": "username",
-            "additionalProperties": false
-          },
-          "email": {
-            "type": "string",
-            "title": "email",
-            "additionalProperties": false
-          },
-          "role": {
-            "type": "string",
-            "title": "role",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "UserServiceDeleteOneResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.UserServiceEchoRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "first_name": {
-            "type": "string",
-            "title": "first_name",
-            "additionalProperties": false
-          },
-          "middle_names": {
-            "type": "string",
-            "title": "middle_names",
-            "additionalProperties": false
-          },
-          "last_name": {
-            "type": "string",
-            "title": "last_name",
-            "additionalProperties": false
-          },
-          "username": {
-            "type": "string",
-            "title": "username",
-            "additionalProperties": false
-          },
-          "email": {
-            "type": "string",
-            "title": "email",
-            "additionalProperties": false
-          },
-          "role": {
-            "type": "string",
-            "title": "role",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "UserServiceEchoRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.UserServiceEchoResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "first_name": {
-            "type": "string",
-            "title": "first_name",
-            "additionalProperties": false
-          },
-          "middle_names": {
-            "type": "string",
-            "title": "middle_names",
-            "additionalProperties": false
-          },
-          "last_name": {
-            "type": "string",
-            "title": "last_name",
-            "additionalProperties": false
-          },
-          "username": {
-            "type": "string",
-            "title": "username",
-            "additionalProperties": false
-          },
-          "email": {
-            "type": "string",
-            "title": "email",
-            "additionalProperties": false
-          },
-          "role": {
-            "type": "string",
-            "title": "role",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "UserServiceEchoResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.UserServiceReadManyRequest": {
-        "type": "object",
-        "properties": {
-          "user": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.UserServiceReadOneRequest"
-            }
-          }
-        },
-        "title": "UserServiceReadManyRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.UserServiceReadManyResponse": {
-        "type": "object",
-        "properties": {
-          "user": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.UserServiceReadOneResponse"
-            }
-          }
-        },
-        "title": "UserServiceReadManyResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.UserServiceReadOneRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          }
-        },
-        "title": "UserServiceReadOneRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.UserServiceReadOneResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "first_name": {
-            "type": "string",
-            "title": "first_name",
-            "additionalProperties": false
-          },
-          "middle_names": {
-            "type": "string",
-            "title": "middle_names",
-            "additionalProperties": false
-          },
-          "last_name": {
-            "type": "string",
-            "title": "last_name",
-            "additionalProperties": false
-          },
-          "username": {
-            "type": "string",
-            "title": "username",
-            "additionalProperties": false
-          },
-          "email": {
-            "type": "string",
-            "title": "email",
-            "additionalProperties": false
-          },
-          "role": {
-            "type": "string",
-            "title": "role",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "UserServiceReadOneResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.UserServiceUpdateManyRequest": {
-        "type": "object",
-        "properties": {
-          "user": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.UserServiceUpdateOneRequest"
-            }
-          }
-        },
-        "title": "UserServiceUpdateManyRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.UserServiceUpdateManyResponse": {
-        "type": "object",
-        "properties": {
-          "user": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.UserServiceUpdateOneResponse"
-            }
-          }
-        },
-        "title": "UserServiceUpdateManyResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.UserServiceUpdateOneRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "first_name": {
-            "type": "string",
-            "title": "first_name",
-            "additionalProperties": false
-          },
-          "middle_names": {
-            "type": "string",
-            "title": "middle_names",
-            "additionalProperties": false
-          },
-          "last_name": {
-            "type": "string",
-            "title": "last_name",
-            "additionalProperties": false
-          },
-          "username": {
-            "type": "string",
-            "title": "username",
-            "additionalProperties": false
-          },
-          "email": {
-            "type": "string",
-            "title": "email",
-            "additionalProperties": false
-          },
-          "role": {
-            "type": "string",
-            "title": "role",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "UserServiceUpdateOneRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.UserServiceUpdateOneResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "first_name": {
-            "type": "string",
-            "title": "first_name",
-            "additionalProperties": false
-          },
-          "middle_names": {
-            "type": "string",
-            "title": "middle_names",
-            "additionalProperties": false
-          },
-          "last_name": {
-            "type": "string",
-            "title": "last_name",
-            "additionalProperties": false
-          },
-          "username": {
-            "type": "string",
-            "title": "username",
-            "additionalProperties": false
-          },
-          "email": {
-            "type": "string",
-            "title": "email",
-            "additionalProperties": false
-          },
-          "role": {
-            "type": "string",
-            "title": "role",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "UserServiceUpdateOneResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.FamilyCreateRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "memberId": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "title": "member_id",
-              "additionalProperties": false
-            }
-          }
-        },
-        "title": "FamilyCreateRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.StoreServiceCreateManyRequest": {
-        "type": "object",
-        "properties": {
-          "store": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.StoreServiceCreateOneRequest"
-            }
-          }
-        },
-        "title": "StoreServiceCreateManyRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.StoreServiceCreateManyResponse": {
-        "type": "object",
-        "properties": {
-          "store": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.StoreServiceCreateOneResponse"
-            }
-          }
-        },
-        "title": "StoreServiceCreateManyResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.StoreServiceCreateOneRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "name": {
-            "type": "string",
-            "title": "name",
-            "additionalProperties": false
-          },
-          "description": {
-            "type": "string",
-            "title": "description",
-            "additionalProperties": false
-          },
-          "note": {
-            "type": "string",
-            "title": "note",
-            "additionalProperties": false
-          },
-          "categoryId": {
-            "type": "string",
-            "title": "category_id",
-            "additionalProperties": false
-          },
-          "categoryName": {
-            "type": "string",
-            "title": "category_name",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "StoreServiceCreateOneRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.StoreServiceCreateOneResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "name": {
-            "type": "string",
-            "title": "name",
-            "additionalProperties": false
-          },
-          "description": {
-            "type": "string",
-            "title": "description",
-            "additionalProperties": false
-          },
-          "note": {
-            "type": "string",
-            "title": "note",
-            "additionalProperties": false
-          },
-          "categoryId": {
-            "type": "string",
-            "title": "category_id",
-            "additionalProperties": false
-          },
-          "categoryName": {
-            "type": "string",
-            "title": "category_name",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "StoreServiceCreateOneResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.StoreServiceDeleteManyRequest": {
-        "type": "object",
-        "properties": {
-          "store": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.StoreServiceDeleteOneRequest"
-            }
-          }
-        },
-        "title": "StoreServiceDeleteManyRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.StoreServiceDeleteManyResponse": {
-        "type": "object",
-        "properties": {
-          "store": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.StoreServiceDeleteOneResponse"
-            }
-          }
-        },
-        "title": "StoreServiceDeleteManyResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.StoreServiceDeleteOneRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "StoreServiceDeleteOneRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.StoreServiceDeleteOneResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "name": {
-            "type": "string",
-            "title": "name",
-            "additionalProperties": false
-          },
-          "description": {
-            "type": "string",
-            "title": "description",
-            "additionalProperties": false
-          },
-          "note": {
-            "type": "string",
-            "title": "note",
-            "additionalProperties": false
-          },
-          "category": {
-            "type": "string",
-            "title": "category",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "StoreServiceDeleteOneResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.StoreServiceListRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          }
-        },
-        "title": "StoreServiceListRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.StoreServiceListResponse": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "title": "items",
-              "additionalProperties": false,
-              "description": "string id = 1;\n string name = 2;\n string description = 3;\n string note = 7;"
-            }
-          },
-          "categoryName": {
-            "type": "string",
-            "title": "category_name",
-            "additionalProperties": false,
-            "description": "repeated ItemServiceReadOneResponse items = 20;\n Audit audit = 50;\n string id = 1;\n string name = 2;\n string description = 3;\n string note = 7;\n string category = 8;\n     string category_id = 8; Audit audit = 50;"
-          }
-        },
-        "title": "StoreServiceListResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.StoreServiceReadManyRequest": {
-        "type": "object",
-        "properties": {
-          "store": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.StoreServiceReadOneRequest"
-            }
-          }
-        },
-        "title": "StoreServiceReadManyRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.StoreServiceReadManyResponse": {
-        "type": "object",
-        "properties": {
-          "store": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.StoreServiceReadOneResponse"
-            }
-          }
-        },
-        "title": "StoreServiceReadManyResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.StoreServiceReadOneRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          }
-        },
-        "title": "StoreServiceReadOneRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.StoreServiceReadOneResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "name": {
-            "type": "string",
-            "title": "name",
-            "additionalProperties": false
-          },
-          "description": {
-            "type": "string",
-            "title": "description",
-            "additionalProperties": false
-          },
-          "note": {
-            "type": "string",
-            "title": "note",
-            "additionalProperties": false
-          },
-          "categoryId": {
-            "type": "string",
-            "title": "category_id",
-            "additionalProperties": false
-          },
-          "categoryName": {
-            "type": "string",
-            "title": "category_name",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "StoreServiceReadOneResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.StoreServiceUpdateManyRequest": {
-        "type": "object",
-        "properties": {
-          "store": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.StoreServiceUpdateOneRequest"
-            }
-          }
-        },
-        "title": "StoreServiceUpdateManyRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.StoreServiceUpdateManyResponse": {
-        "type": "object",
-        "properties": {
-          "store": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/listah.v1.StoreServiceUpdateOneResponse"
-            }
-          }
-        },
-        "title": "StoreServiceUpdateManyResponse",
-        "additionalProperties": false
-      },
-      "listah.v1.StoreServiceUpdateOneRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "name": {
-            "type": "string",
-            "title": "name",
-            "additionalProperties": false
-          },
-          "description": {
-            "type": "string",
-            "title": "description",
-            "additionalProperties": false
-          },
-          "note": {
-            "type": "string",
-            "title": "note",
-            "additionalProperties": false
-          },
-          "categoryId": {
-            "type": "string",
-            "title": "category_id",
-            "additionalProperties": false
-          },
-          "categoryName": {
-            "type": "string",
-            "title": "category_name",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "StoreServiceUpdateOneRequest",
-        "additionalProperties": false
-      },
-      "listah.v1.StoreServiceUpdateOneResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "id",
-            "additionalProperties": false
-          },
-          "name": {
-            "type": "string",
-            "title": "name",
-            "additionalProperties": false
-          },
-          "description": {
-            "type": "string",
-            "title": "description",
-            "additionalProperties": false
-          },
-          "note": {
-            "type": "string",
-            "title": "note",
-            "additionalProperties": false
-          },
-          "categoryId": {
-            "type": "string",
-            "title": "category_id",
-            "additionalProperties": false
-          },
-          "categoryName": {
-            "type": "string",
-            "title": "category_name",
-            "additionalProperties": false
-          },
-          "audit": {
-            "$ref": "#/components/schemas/listah.v1.Audit"
-          }
-        },
-        "title": "StoreServiceUpdateOneResponse",
-        "additionalProperties": false
-      }
-    },
-    "parameters": {
-      "encoding": {
-        "name": "encoding",
-        "in": "query",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/encoding"
-            }
-          },
-          "application/proto": {
-            "schema": {
-              "$ref": "#/components/schemas/encoding"
-            }
-          }
-        }
-      },
-      "base64": {
-        "name": "base64",
-        "in": "query",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/base64"
-            }
-          },
-          "application/proto": {
-            "schema": {
-              "$ref": "#/components/schemas/base64"
-            }
-          }
-        }
-      },
-      "compression": {
-        "name": "compression",
-        "in": "query",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/compression"
-            }
-          },
-          "application/proto": {
-            "schema": {
-              "$ref": "#/components/schemas/compression"
-            }
-          }
-        }
-      },
-      "connect": {
-        "name": "connect",
-        "in": "query",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/connect"
-            }
-          },
-          "application/proto": {
-            "schema": {
-              "$ref": "#/components/schemas/connect"
-            }
-          }
-        }
-      }
-    }
-  },
-  "security": [],
-  "tags": [
-    {
-      "name": "listah.v1.ItemService"
-    },
-    {
-      "name": "listah.v1.CategoryService"
-    },
-    {
-      "name": "listah.v1.UserService"
-    },
-    {
-      "name": "listah.v1.StoreService"
-    }
-  ],
-  "externalDocs": {}
-}
+openapi: 3.1.0
+info: {}
+paths:
+  /listah.v1.ItemService/CreateOne:
+    post:
+      tags:
+        - listah.v1.ItemService
+      description: Create One Item
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.ItemServiceCreateOneRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceCreateOneResponse'
+  /listah.v1.ItemService/CreateMany:
+    post:
+      tags:
+        - listah.v1.ItemService
+      description: Create Many Items
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.ItemServiceCreateManyRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceCreateManyResponse'
+  /listah.v1.ItemService/ReadOne:
+    get:
+      tags:
+        - listah.v1.ItemService
+      description: Read One Item
+      parameters:
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadOneRequest'
+            application/proto:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadOneRequest'
+        - schema:
+            $ref: '#/components/parameters/encoding'
+        - schema:
+            $ref: '#/components/parameters/base64'
+        - schema:
+            $ref: '#/components/parameters/compression'
+        - schema:
+            $ref: '#/components/parameters/connect'
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadOneResponse'
+  /listah.v1.ItemService/ReadMany:
+    get:
+      tags:
+        - listah.v1.ItemService
+      description: Read Many Items
+      parameters:
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadManyRequest'
+            application/proto:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadManyRequest'
+        - schema:
+            $ref: '#/components/parameters/encoding'
+        - schema:
+            $ref: '#/components/parameters/base64'
+        - schema:
+            $ref: '#/components/parameters/compression'
+        - schema:
+            $ref: '#/components/parameters/connect'
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadManyResponse'
+  /listah.v1.ItemService/UpdateOne:
+    post:
+      tags:
+        - listah.v1.ItemService
+      description: Update One Item
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.ItemServiceUpdateOneRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceUpdateOneResponse'
+  /listah.v1.ItemService/UpdateMany:
+    post:
+      tags:
+        - listah.v1.ItemService
+      description: Update Many Items
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.ItemServiceUpdateManyRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceUpdateManyResponse'
+  /listah.v1.ItemService/DeleteOne:
+    post:
+      tags:
+        - listah.v1.ItemService
+      description: Delete One Item
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.ItemServiceDeleteOneRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceDeleteOneResponse'
+  /listah.v1.ItemService/DeleteMany:
+    post:
+      tags:
+        - listah.v1.ItemService
+      description: Delete Many Items
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.ItemServiceDeleteManyRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceDeleteManyResponse'
+  /listah.v1.ItemService/List:
+    get:
+      tags:
+        - listah.v1.ItemService
+      description: List Items
+      parameters:
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceListRequest'
+            application/proto:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceListRequest'
+        - schema:
+            $ref: '#/components/parameters/encoding'
+        - schema:
+            $ref: '#/components/parameters/base64'
+        - schema:
+            $ref: '#/components/parameters/compression'
+        - schema:
+            $ref: '#/components/parameters/connect'
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceListResponse'
+  /listah.v1.CategoryService/CreateOne:
+    post:
+      tags:
+        - listah.v1.CategoryService
+      description: Create One Category
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.CategoryServiceCreateOneRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceCreateOneResponse'
+  /listah.v1.CategoryService/CreateMany:
+    post:
+      tags:
+        - listah.v1.CategoryService
+      description: Create Many Categories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.CategoryServiceCreateManyRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceCreateManyResponse'
+  /listah.v1.CategoryService/ReadOne:
+    get:
+      tags:
+        - listah.v1.CategoryService
+      description: Read One Category
+      parameters:
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceReadOneRequest'
+            application/proto:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceReadOneRequest'
+        - schema:
+            $ref: '#/components/parameters/encoding'
+        - schema:
+            $ref: '#/components/parameters/base64'
+        - schema:
+            $ref: '#/components/parameters/compression'
+        - schema:
+            $ref: '#/components/parameters/connect'
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceReadOneResponse'
+  /listah.v1.CategoryService/ReadMany:
+    get:
+      tags:
+        - listah.v1.CategoryService
+      description: Read Many Categories
+      parameters:
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceReadManyRequest'
+            application/proto:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceReadManyRequest'
+        - schema:
+            $ref: '#/components/parameters/encoding'
+        - schema:
+            $ref: '#/components/parameters/base64'
+        - schema:
+            $ref: '#/components/parameters/compression'
+        - schema:
+            $ref: '#/components/parameters/connect'
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceReadManyResponse'
+  /listah.v1.CategoryService/UpdateOne:
+    post:
+      tags:
+        - listah.v1.CategoryService
+      description: Update One Category
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.CategoryServiceUpdateOneRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceUpdateOneResponse'
+  /listah.v1.CategoryService/UpdateMany:
+    post:
+      tags:
+        - listah.v1.CategoryService
+      description: Update Many Categories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.CategoryServiceUpdateManyRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceUpdateManyResponse'
+  /listah.v1.CategoryService/DeleteOne:
+    post:
+      tags:
+        - listah.v1.CategoryService
+      description: Delete One Category
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.CategoryServiceDeleteOneRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceDeleteOneResponse'
+  /listah.v1.CategoryService/DeleteMany:
+    post:
+      tags:
+        - listah.v1.CategoryService
+      description: Delete Many Categories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.CategoryServiceDeleteManyRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceDeleteManyResponse'
+  /listah.v1.CategoryService/List:
+    get:
+      tags:
+        - listah.v1.CategoryService
+      description: List Categories
+      parameters:
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceListRequest'
+            application/proto:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceListRequest'
+        - schema:
+            $ref: '#/components/parameters/encoding'
+        - schema:
+            $ref: '#/components/parameters/base64'
+        - schema:
+            $ref: '#/components/parameters/compression'
+        - schema:
+            $ref: '#/components/parameters/connect'
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceListResponse'
+  /listah.v1.UserService/CreateOne:
+    post:
+      tags:
+        - listah.v1.UserService
+      description: Create One User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.UserServiceCreateOneRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.UserServiceCreateOneResponse'
+  /listah.v1.UserService/CreateMany:
+    post:
+      tags:
+        - listah.v1.UserService
+      description: Create Many Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.UserServiceCreateManyRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.UserServiceCreateManyResponse'
+  /listah.v1.UserService/ReadOne:
+    get:
+      tags:
+        - listah.v1.UserService
+      description: Read One User
+      parameters:
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.UserServiceReadOneRequest'
+            application/proto:
+              schema:
+                $ref: '#/components/schemas/listah.v1.UserServiceReadOneRequest'
+        - schema:
+            $ref: '#/components/parameters/encoding'
+        - schema:
+            $ref: '#/components/parameters/base64'
+        - schema:
+            $ref: '#/components/parameters/compression'
+        - schema:
+            $ref: '#/components/parameters/connect'
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.UserServiceReadOneResponse'
+  /listah.v1.UserService/ReadMany:
+    get:
+      tags:
+        - listah.v1.UserService
+      description: Read Many Users
+      parameters:
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.UserServiceReadManyRequest'
+            application/proto:
+              schema:
+                $ref: '#/components/schemas/listah.v1.UserServiceReadManyRequest'
+        - schema:
+            $ref: '#/components/parameters/encoding'
+        - schema:
+            $ref: '#/components/parameters/base64'
+        - schema:
+            $ref: '#/components/parameters/compression'
+        - schema:
+            $ref: '#/components/parameters/connect'
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.UserServiceReadManyResponse'
+  /listah.v1.UserService/UpdateOne:
+    post:
+      tags:
+        - listah.v1.UserService
+      description: Update One User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.UserServiceUpdateOneRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.UserServiceUpdateOneResponse'
+  /listah.v1.UserService/UpdateMany:
+    post:
+      tags:
+        - listah.v1.UserService
+      description: Update Many Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.UserServiceUpdateManyRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.UserServiceUpdateManyResponse'
+  /listah.v1.UserService/DeleteOne:
+    post:
+      tags:
+        - listah.v1.UserService
+      description: Delete One User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.UserServiceDeleteOneRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.UserServiceDeleteOneResponse'
+  /listah.v1.UserService/DeleteMany:
+    post:
+      tags:
+        - listah.v1.UserService
+      description: Delete Many Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.UserServiceDeleteManyRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.UserServiceDeleteManyResponse'
+  /listah.v1.StoreService/CreateOne:
+    post:
+      tags:
+        - listah.v1.StoreService
+      description: Create One Store
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.StoreServiceCreateOneRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.StoreServiceCreateOneResponse'
+  /listah.v1.StoreService/CreateMany:
+    post:
+      tags:
+        - listah.v1.StoreService
+      description: Create Many Stores
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.StoreServiceCreateManyRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.StoreServiceCreateManyResponse'
+  /listah.v1.StoreService/ReadOne:
+    get:
+      tags:
+        - listah.v1.StoreService
+      description: Read One Store
+      parameters:
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.StoreServiceReadOneRequest'
+            application/proto:
+              schema:
+                $ref: '#/components/schemas/listah.v1.StoreServiceReadOneRequest'
+        - schema:
+            $ref: '#/components/parameters/encoding'
+        - schema:
+            $ref: '#/components/parameters/base64'
+        - schema:
+            $ref: '#/components/parameters/compression'
+        - schema:
+            $ref: '#/components/parameters/connect'
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.StoreServiceReadOneResponse'
+  /listah.v1.StoreService/ReadMany:
+    get:
+      tags:
+        - listah.v1.StoreService
+      description: Read Many Stores
+      parameters:
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.StoreServiceReadManyRequest'
+            application/proto:
+              schema:
+                $ref: '#/components/schemas/listah.v1.StoreServiceReadManyRequest'
+        - schema:
+            $ref: '#/components/parameters/encoding'
+        - schema:
+            $ref: '#/components/parameters/base64'
+        - schema:
+            $ref: '#/components/parameters/compression'
+        - schema:
+            $ref: '#/components/parameters/connect'
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.StoreServiceReadManyResponse'
+  /listah.v1.StoreService/UpdateOne:
+    post:
+      tags:
+        - listah.v1.StoreService
+      description: Update One Store
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.StoreServiceUpdateOneRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.StoreServiceUpdateOneResponse'
+  /listah.v1.StoreService/UpdateMany:
+    post:
+      tags:
+        - listah.v1.StoreService
+      description: Update Many Stores
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.StoreServiceUpdateManyRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.StoreServiceUpdateManyResponse'
+  /listah.v1.StoreService/DeleteOne:
+    post:
+      tags:
+        - listah.v1.StoreService
+      description: Delete One Store
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.StoreServiceDeleteOneRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.StoreServiceDeleteOneResponse'
+  /listah.v1.StoreService/DeleteMany:
+    post:
+      tags:
+        - listah.v1.StoreService
+      description: Delete Many Stores
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.StoreServiceDeleteManyRequest'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.StoreServiceDeleteManyResponse'
+  /listah.v1.StoreService/List:
+    get:
+      tags:
+        - listah.v1.StoreService
+      description: List Stores
+      parameters:
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.StoreServiceListRequest'
+            application/proto:
+              schema:
+                $ref: '#/components/schemas/listah.v1.StoreServiceListRequest'
+        - schema:
+            $ref: '#/components/parameters/encoding'
+        - schema:
+            $ref: '#/components/parameters/base64'
+        - schema:
+            $ref: '#/components/parameters/compression'
+        - schema:
+            $ref: '#/components/parameters/connect'
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.StoreServiceListResponse'
+components:
+  schemas:
+    listah.v1.AuditUpdaterEnum:
+      type: string
+      title: AuditUpdaterEnum
+      enum:
+        - AUDIT_UPDATER_ENUM_UNSPECIFIED
+        - AUDIT_UPDATER_ENUM_FRONTEND
+        - AUDIT_UPDATER_ENUM_SYSOPS
+    google.protobuf.Timestamp:
+      type: string
+      format: date-time
+      additionalProperties: false
+      description: |-
+        A Timestamp represents a point in time independent of any time zone or local
+         calendar, encoded as a count of seconds and fractions of seconds at
+         nanosecond resolution. The count is relative to an epoch at UTC midnight on
+         January 1, 1970, in the proleptic Gregorian calendar which extends the
+         Gregorian calendar backwards to year one.
+
+         All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+         second table is needed for interpretation, using a [24-hour linear
+         smear](https://developers.google.com/time/smear).
+
+         The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+         restricting to that range, we ensure that we can convert to and from [RFC
+         3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+
+         # Examples
+
+         Example 1: Compute Timestamp from POSIX `time()`.
+
+             Timestamp timestamp;
+             timestamp.set_seconds(time(NULL));
+             timestamp.set_nanos(0);
+
+         Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+
+             struct timeval tv;
+             gettimeofday(&tv, NULL);
+
+             Timestamp timestamp;
+             timestamp.set_seconds(tv.tv_sec);
+             timestamp.set_nanos(tv.tv_usec * 1000);
+
+         Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+
+             FILETIME ft;
+             GetSystemTimeAsFileTime(&ft);
+             UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+
+             // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+             // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+             Timestamp timestamp;
+             timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+             timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+
+         Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+
+             long millis = System.currentTimeMillis();
+
+             Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+                 .setNanos((int) ((millis % 1000) * 1000000)).build();
+
+         Example 5: Compute Timestamp from Java `Instant.now()`.
+
+             Instant now = Instant.now();
+
+             Timestamp timestamp =
+                 Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+                     .setNanos(now.getNano()).build();
+
+         Example 6: Compute Timestamp from current time in Python.
+
+             timestamp = Timestamp()
+             timestamp.GetCurrentTime()
+
+         # JSON Mapping
+
+         In JSON format, the Timestamp type is encoded as a string in the
+         [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
+         format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
+         where {year} is always expressed using four digits while {month}, {day},
+         {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
+         seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
+         are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
+         is required. A proto3 JSON serializer should always use UTC (as indicated by
+         "Z") when printing the Timestamp type and a proto3 JSON parser should be
+         able to accept both UTC and other timezones (as indicated by an offset).
+
+         For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
+         01:30 UTC on January 15, 2017.
+
+         In JavaScript, one can convert a Date object to this format using the
+         standard
+         [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+         method. In Python, a standard `datetime.datetime` object can be converted
+         to this format using
+         [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
+         the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
+         the Joda Time's [`ISODateTimeFormat.dateTime()`](
+         http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
+         ) to obtain a formatter capable of generating timestamps in this format.
+    listah.v1.Audit:
+      type: object
+      properties:
+        created_by:
+          $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
+        created_at:
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
+        updated_by:
+          $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
+        updated_at:
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
+        deleted_by:
+          $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
+        deleted_at:
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
+      title: Audit
+      additionalProperties: false
+    connect.error:
+      type: object
+      properties:
+        code:
+          type: string
+          examples:
+            - CodeNotFound
+          enum:
+            - CodeCanceled
+            - CodeUnknown
+            - CodeInvalidArgument
+            - CodeDeadlineExceeded
+            - CodeNotFound
+            - CodeAlreadyExists
+            - CodePermissionDenied
+            - CodeResourceExhausted
+            - CodeFailedPrecondition
+            - CodeAborted
+            - CodeOutOfRange
+            - CodeInternal
+            - CodeUnavailable
+            - CodeDataLoss
+            - CodeUnauthenticated
+          description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
+        message:
+          type: string
+          description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
+        detail:
+          $ref: '#/components/schemas/google.protobuf.Any'
+      title: Connect Error
+      additionalProperties: true
+      description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
+    google.protobuf.Any:
+      type: object
+      properties:
+        type:
+          type: string
+        value:
+          type: string
+          format: binary
+        debug:
+          type: object
+          additionalProperties: true
+      additionalProperties: true
+      description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+    listah.v1.ItemServiceCreateManyRequest:
+      type: object
+      properties:
+        item:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.ItemServiceCreateOneRequest'
+      title: ItemServiceCreateManyRequest
+      additionalProperties: false
+    listah.v1.ItemServiceCreateManyResponse:
+      type: object
+      properties:
+        item:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.ItemServiceCreateOneResponse'
+      title: ItemServiceCreateManyResponse
+      additionalProperties: false
+    listah.v1.ItemServiceCreateOneRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        name:
+          type: string
+          title: name
+          additionalProperties: false
+        description:
+          type: string
+          title: description
+          additionalProperties: false
+        quantity:
+          type: string
+          title: quantity
+          additionalProperties: false
+        note:
+          type: string
+          title: note
+          additionalProperties: false
+        category_name:
+          type: string
+          title: category_name
+          additionalProperties: false
+        category_id:
+          type: string
+          title: category_id
+          additionalProperties: false
+        store_name:
+          type: string
+          title: store_name
+          additionalProperties: false
+        store_id:
+          type: string
+          title: store_id
+          additionalProperties: false
+        reactivate_at:
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: ItemServiceCreateOneRequest
+      additionalProperties: false
+    listah.v1.ItemServiceCreateOneResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        name:
+          type: string
+          title: name
+          additionalProperties: false
+        description:
+          type: string
+          title: description
+          additionalProperties: false
+        quantity:
+          type: string
+          title: quantity
+          additionalProperties: false
+        note:
+          type: string
+          title: note
+          additionalProperties: false
+        category_name:
+          type: string
+          title: category_name
+          additionalProperties: false
+        category_id:
+          type: string
+          title: category_id
+          additionalProperties: false
+        store_name:
+          type: string
+          title: store_name
+          additionalProperties: false
+        store_id:
+          type: string
+          title: store_id
+          additionalProperties: false
+        reactivate_at:
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: ItemServiceCreateOneResponse
+      additionalProperties: false
+    listah.v1.ItemServiceDeleteManyRequest:
+      type: object
+      properties:
+        item:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.ItemServiceDeleteOneRequest'
+      title: ItemServiceDeleteManyRequest
+      additionalProperties: false
+    listah.v1.ItemServiceDeleteManyResponse:
+      type: object
+      properties:
+        item:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.ItemServiceDeleteOneResponse'
+      title: ItemServiceDeleteManyResponse
+      additionalProperties: false
+    listah.v1.ItemServiceDeleteOneRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: ItemServiceDeleteOneRequest
+      additionalProperties: false
+    listah.v1.ItemServiceDeleteOneResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        name:
+          type: string
+          title: name
+          additionalProperties: false
+        description:
+          type: string
+          title: description
+          additionalProperties: false
+        quantity:
+          type: string
+          title: quantity
+          additionalProperties: false
+        note:
+          type: string
+          title: note
+          additionalProperties: false
+        category_name:
+          type: string
+          title: category_name
+          additionalProperties: false
+        category_id:
+          type: string
+          title: category_id
+          additionalProperties: false
+        store_name:
+          type: string
+          title: store_name
+          additionalProperties: false
+        store_id:
+          type: string
+          title: store_id
+          additionalProperties: false
+        reactivate_at:
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: ItemServiceDeleteOneResponse
+      additionalProperties: false
+    listah.v1.ItemServiceListRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+      title: ItemServiceListRequest
+      additionalProperties: false
+    listah.v1.ItemServiceListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: string
+            title: items
+            additionalProperties: false
+        categoryName:
+          type: string
+          title: category_name
+          additionalProperties: false
+      title: ItemServiceListResponse
+      additionalProperties: false
+    listah.v1.ItemServiceReadManyRequest:
+      type: object
+      properties:
+        item:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.ItemServiceReadOneRequest'
+      title: ItemServiceReadManyRequest
+      additionalProperties: false
+    listah.v1.ItemServiceReadManyResponse:
+      type: object
+      properties:
+        item:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.ItemServiceReadOneResponse'
+      title: ItemServiceReadManyResponse
+      additionalProperties: false
+    listah.v1.ItemServiceReadOneRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+      title: ItemServiceReadOneRequest
+      additionalProperties: false
+    listah.v1.ItemServiceReadOneResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        name:
+          type: string
+          title: name
+          additionalProperties: false
+        description:
+          type: string
+          title: description
+          additionalProperties: false
+        quantity:
+          type: string
+          title: quantity
+          additionalProperties: false
+        note:
+          type: string
+          title: note
+          additionalProperties: false
+        category_name:
+          type: string
+          title: category_name
+          additionalProperties: false
+        category_id:
+          type: string
+          title: category_id
+          additionalProperties: false
+        store_name:
+          type: string
+          title: store_name
+          additionalProperties: false
+        store_id:
+          type: string
+          title: store_id
+          additionalProperties: false
+        reactivate_at:
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: ItemServiceReadOneResponse
+      additionalProperties: false
+    listah.v1.ItemServiceUpdateManyRequest:
+      type: object
+      properties:
+        item:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.ItemServiceUpdateOneRequest'
+      title: ItemServiceUpdateManyRequest
+      additionalProperties: false
+    listah.v1.ItemServiceUpdateManyResponse:
+      type: object
+      properties:
+        item:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.ItemServiceUpdateOneResponse'
+      title: ItemServiceUpdateManyResponse
+      additionalProperties: false
+    listah.v1.ItemServiceUpdateOneRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        name:
+          type: string
+          title: name
+          additionalProperties: false
+        description:
+          type: string
+          title: description
+          additionalProperties: false
+        quantity:
+          type: string
+          title: quantity
+          additionalProperties: false
+        note:
+          type: string
+          title: note
+          additionalProperties: false
+        category_name:
+          type: string
+          title: category_name
+          additionalProperties: false
+        category_id:
+          type: string
+          title: category_id
+          additionalProperties: false
+        store_name:
+          type: string
+          title: store_name
+          additionalProperties: false
+        store_id:
+          type: string
+          title: store_id
+          additionalProperties: false
+        reactivate_at:
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: ItemServiceUpdateOneRequest
+      additionalProperties: false
+    listah.v1.ItemServiceUpdateOneResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        name:
+          type: string
+          title: name
+          additionalProperties: false
+        description:
+          type: string
+          title: description
+          additionalProperties: false
+        quantity:
+          type: string
+          title: quantity
+          additionalProperties: false
+        note:
+          type: string
+          title: note
+          additionalProperties: false
+        category_name:
+          type: string
+          title: category_name
+          additionalProperties: false
+        category_id:
+          type: string
+          title: category_id
+          additionalProperties: false
+        store_name:
+          type: string
+          title: store_name
+          additionalProperties: false
+        store_id:
+          type: string
+          title: store_id
+          additionalProperties: false
+        reactivate_at:
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: ItemServiceUpdateOneResponse
+      additionalProperties: false
+    encoding:
+      title: encoding
+      enum:
+        - proto
+        - json
+      description: Define which encoding or 'Message-Codec' to use
+    base64:
+      type: boolean
+      title: base64
+      description: Specifies if the message query param is base64 encoded, which may be required for binary data
+    compression:
+      title: compression
+      enum:
+        - identity
+        - gzip
+        - br
+        - gzip
+      description: Which compression algorithm to use for this request
+    connect:
+      title: connect
+      enum:
+        - "1"
+      description: Which version of connect to use.
+    listah.v1.CategoryServiceCreateManyRequest:
+      type: object
+      properties:
+        category:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.CategoryServiceCreateOneRequest'
+      title: CategoryServiceCreateManyRequest
+      additionalProperties: false
+    listah.v1.CategoryServiceCreateManyResponse:
+      type: object
+      properties:
+        category:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.CategoryServiceCreateOneResponse'
+      title: CategoryServiceCreateManyResponse
+      additionalProperties: false
+    listah.v1.CategoryServiceCreateOneRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        name:
+          type: string
+          title: name
+          additionalProperties: false
+        description:
+          type: string
+          title: description
+          additionalProperties: false
+        note:
+          type: string
+          title: note
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: CategoryServiceCreateOneRequest
+      additionalProperties: false
+    listah.v1.CategoryServiceCreateOneResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        name:
+          type: string
+          title: name
+          additionalProperties: false
+        description:
+          type: string
+          title: description
+          additionalProperties: false
+        note:
+          type: string
+          title: note
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: CategoryServiceCreateOneResponse
+      additionalProperties: false
+    listah.v1.CategoryServiceDeleteManyRequest:
+      type: object
+      properties:
+        category:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.CategoryServiceDeleteOneRequest'
+      title: CategoryServiceDeleteManyRequest
+      additionalProperties: false
+    listah.v1.CategoryServiceDeleteManyResponse:
+      type: object
+      properties:
+        category:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.CategoryServiceDeleteOneResponse'
+      title: CategoryServiceDeleteManyResponse
+      additionalProperties: false
+    listah.v1.CategoryServiceDeleteOneRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: CategoryServiceDeleteOneRequest
+      additionalProperties: false
+    listah.v1.CategoryServiceDeleteOneResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        name:
+          type: string
+          title: name
+          additionalProperties: false
+        description:
+          type: string
+          title: description
+          additionalProperties: false
+        note:
+          type: string
+          title: note
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: CategoryServiceDeleteOneResponse
+      additionalProperties: false
+    listah.v1.CategoryServiceListRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+      title: CategoryServiceListRequest
+      additionalProperties: false
+    listah.v1.CategoryServiceListResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        name:
+          type: string
+          title: name
+          additionalProperties: false
+        description:
+          type: string
+          title: description
+          additionalProperties: false
+        note:
+          type: string
+          title: note
+          additionalProperties: false
+        items:
+          type: array
+          items:
+            type: string
+            title: items
+            additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: CategoryServiceListResponse
+      additionalProperties: false
+    listah.v1.CategoryServiceReadManyRequest:
+      type: object
+      properties:
+        category:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.CategoryServiceReadOneRequest'
+      title: CategoryServiceReadManyRequest
+      additionalProperties: false
+    listah.v1.CategoryServiceReadManyResponse:
+      type: object
+      properties:
+        category:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.CategoryServiceReadOneResponse'
+      title: CategoryServiceReadManyResponse
+      additionalProperties: false
+    listah.v1.CategoryServiceReadOneRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+      title: CategoryServiceReadOneRequest
+      additionalProperties: false
+    listah.v1.CategoryServiceReadOneResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        name:
+          type: string
+          title: name
+          additionalProperties: false
+        description:
+          type: string
+          title: description
+          additionalProperties: false
+        note:
+          type: string
+          title: note
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: CategoryServiceReadOneResponse
+      additionalProperties: false
+    listah.v1.CategoryServiceUpdateManyRequest:
+      type: object
+      properties:
+        category:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.CategoryServiceUpdateOneRequest'
+      title: CategoryServiceUpdateManyRequest
+      additionalProperties: false
+    listah.v1.CategoryServiceUpdateManyResponse:
+      type: object
+      properties:
+        category:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.CategoryServiceUpdateOneResponse'
+      title: CategoryServiceUpdateManyResponse
+      additionalProperties: false
+    listah.v1.CategoryServiceUpdateOneRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        name:
+          type: string
+          title: name
+          additionalProperties: false
+        description:
+          type: string
+          title: description
+          additionalProperties: false
+        note:
+          type: string
+          title: note
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: CategoryServiceUpdateOneRequest
+      additionalProperties: false
+    listah.v1.CategoryServiceUpdateOneResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        name:
+          type: string
+          title: name
+          additionalProperties: false
+        description:
+          type: string
+          title: description
+          additionalProperties: false
+        note:
+          type: string
+          title: note
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: CategoryServiceUpdateOneResponse
+      additionalProperties: false
+    listah.v1.UserServiceCreateManyRequest:
+      type: object
+      properties:
+        user:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.UserServiceCreateOneRequest'
+      title: UserServiceCreateManyRequest
+      additionalProperties: false
+    listah.v1.UserServiceCreateManyResponse:
+      type: object
+      properties:
+        user:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.UserServiceCreateOneResponse'
+      title: UserServiceCreateManyResponse
+      additionalProperties: false
+    listah.v1.UserServiceCreateOneRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        first_name:
+          type: string
+          title: first_name
+          additionalProperties: false
+        middle_names:
+          type: string
+          title: middle_names
+          additionalProperties: false
+        last_name:
+          type: string
+          title: last_name
+          additionalProperties: false
+        username:
+          type: string
+          title: username
+          additionalProperties: false
+        email:
+          type: string
+          title: email
+          additionalProperties: false
+        role:
+          type: string
+          title: role
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: UserServiceCreateOneRequest
+      additionalProperties: false
+    listah.v1.UserServiceCreateOneResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        first_name:
+          type: string
+          title: first_name
+          additionalProperties: false
+        middle_names:
+          type: string
+          title: middle_names
+          additionalProperties: false
+        last_name:
+          type: string
+          title: last_name
+          additionalProperties: false
+        username:
+          type: string
+          title: username
+          additionalProperties: false
+        email:
+          type: string
+          title: email
+          additionalProperties: false
+        role:
+          type: string
+          title: role
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: UserServiceCreateOneResponse
+      additionalProperties: false
+    listah.v1.UserServiceDeleteManyRequest:
+      type: object
+      properties:
+        user:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.UserServiceDeleteOneRequest'
+      title: UserServiceDeleteManyRequest
+      additionalProperties: false
+    listah.v1.UserServiceDeleteManyResponse:
+      type: object
+      properties:
+        user:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.UserServiceDeleteOneResponse'
+      title: UserServiceDeleteManyResponse
+      additionalProperties: false
+    listah.v1.UserServiceDeleteOneRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: UserServiceDeleteOneRequest
+      additionalProperties: false
+    listah.v1.UserServiceDeleteOneResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        first_name:
+          type: string
+          title: first_name
+          additionalProperties: false
+        middle_names:
+          type: string
+          title: middle_names
+          additionalProperties: false
+        last_name:
+          type: string
+          title: last_name
+          additionalProperties: false
+        username:
+          type: string
+          title: username
+          additionalProperties: false
+        email:
+          type: string
+          title: email
+          additionalProperties: false
+        role:
+          type: string
+          title: role
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: UserServiceDeleteOneResponse
+      additionalProperties: false
+    listah.v1.UserServiceEchoRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        first_name:
+          type: string
+          title: first_name
+          additionalProperties: false
+        middle_names:
+          type: string
+          title: middle_names
+          additionalProperties: false
+        last_name:
+          type: string
+          title: last_name
+          additionalProperties: false
+        username:
+          type: string
+          title: username
+          additionalProperties: false
+        email:
+          type: string
+          title: email
+          additionalProperties: false
+        role:
+          type: string
+          title: role
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: UserServiceEchoRequest
+      additionalProperties: false
+    listah.v1.UserServiceEchoResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        first_name:
+          type: string
+          title: first_name
+          additionalProperties: false
+        middle_names:
+          type: string
+          title: middle_names
+          additionalProperties: false
+        last_name:
+          type: string
+          title: last_name
+          additionalProperties: false
+        username:
+          type: string
+          title: username
+          additionalProperties: false
+        email:
+          type: string
+          title: email
+          additionalProperties: false
+        role:
+          type: string
+          title: role
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: UserServiceEchoResponse
+      additionalProperties: false
+    listah.v1.UserServiceReadManyRequest:
+      type: object
+      properties:
+        user:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.UserServiceReadOneRequest'
+      title: UserServiceReadManyRequest
+      additionalProperties: false
+    listah.v1.UserServiceReadManyResponse:
+      type: object
+      properties:
+        user:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.UserServiceReadOneResponse'
+      title: UserServiceReadManyResponse
+      additionalProperties: false
+    listah.v1.UserServiceReadOneRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+      title: UserServiceReadOneRequest
+      additionalProperties: false
+    listah.v1.UserServiceReadOneResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        first_name:
+          type: string
+          title: first_name
+          additionalProperties: false
+        middle_names:
+          type: string
+          title: middle_names
+          additionalProperties: false
+        last_name:
+          type: string
+          title: last_name
+          additionalProperties: false
+        username:
+          type: string
+          title: username
+          additionalProperties: false
+        email:
+          type: string
+          title: email
+          additionalProperties: false
+        role:
+          type: string
+          title: role
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: UserServiceReadOneResponse
+      additionalProperties: false
+    listah.v1.UserServiceUpdateManyRequest:
+      type: object
+      properties:
+        user:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.UserServiceUpdateOneRequest'
+      title: UserServiceUpdateManyRequest
+      additionalProperties: false
+    listah.v1.UserServiceUpdateManyResponse:
+      type: object
+      properties:
+        user:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.UserServiceUpdateOneResponse'
+      title: UserServiceUpdateManyResponse
+      additionalProperties: false
+    listah.v1.UserServiceUpdateOneRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        first_name:
+          type: string
+          title: first_name
+          additionalProperties: false
+        middle_names:
+          type: string
+          title: middle_names
+          additionalProperties: false
+        last_name:
+          type: string
+          title: last_name
+          additionalProperties: false
+        username:
+          type: string
+          title: username
+          additionalProperties: false
+        email:
+          type: string
+          title: email
+          additionalProperties: false
+        role:
+          type: string
+          title: role
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: UserServiceUpdateOneRequest
+      additionalProperties: false
+    listah.v1.UserServiceUpdateOneResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        first_name:
+          type: string
+          title: first_name
+          additionalProperties: false
+        middle_names:
+          type: string
+          title: middle_names
+          additionalProperties: false
+        last_name:
+          type: string
+          title: last_name
+          additionalProperties: false
+        username:
+          type: string
+          title: username
+          additionalProperties: false
+        email:
+          type: string
+          title: email
+          additionalProperties: false
+        role:
+          type: string
+          title: role
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: UserServiceUpdateOneResponse
+      additionalProperties: false
+    listah.v1.FamilyCreateRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        memberId:
+          type: array
+          items:
+            type: string
+            title: member_id
+            additionalProperties: false
+      title: FamilyCreateRequest
+      additionalProperties: false
+    listah.v1.StoreServiceCreateManyRequest:
+      type: object
+      properties:
+        store:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.StoreServiceCreateOneRequest'
+      title: StoreServiceCreateManyRequest
+      additionalProperties: false
+    listah.v1.StoreServiceCreateManyResponse:
+      type: object
+      properties:
+        store:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.StoreServiceCreateOneResponse'
+      title: StoreServiceCreateManyResponse
+      additionalProperties: false
+    listah.v1.StoreServiceCreateOneRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        name:
+          type: string
+          title: name
+          additionalProperties: false
+        description:
+          type: string
+          title: description
+          additionalProperties: false
+        note:
+          type: string
+          title: note
+          additionalProperties: false
+        categoryId:
+          type: string
+          title: category_id
+          additionalProperties: false
+        categoryName:
+          type: string
+          title: category_name
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: StoreServiceCreateOneRequest
+      additionalProperties: false
+    listah.v1.StoreServiceCreateOneResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        name:
+          type: string
+          title: name
+          additionalProperties: false
+        description:
+          type: string
+          title: description
+          additionalProperties: false
+        note:
+          type: string
+          title: note
+          additionalProperties: false
+        categoryId:
+          type: string
+          title: category_id
+          additionalProperties: false
+        categoryName:
+          type: string
+          title: category_name
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: StoreServiceCreateOneResponse
+      additionalProperties: false
+    listah.v1.StoreServiceDeleteManyRequest:
+      type: object
+      properties:
+        store:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.StoreServiceDeleteOneRequest'
+      title: StoreServiceDeleteManyRequest
+      additionalProperties: false
+    listah.v1.StoreServiceDeleteManyResponse:
+      type: object
+      properties:
+        store:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.StoreServiceDeleteOneResponse'
+      title: StoreServiceDeleteManyResponse
+      additionalProperties: false
+    listah.v1.StoreServiceDeleteOneRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: StoreServiceDeleteOneRequest
+      additionalProperties: false
+    listah.v1.StoreServiceDeleteOneResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        name:
+          type: string
+          title: name
+          additionalProperties: false
+        description:
+          type: string
+          title: description
+          additionalProperties: false
+        note:
+          type: string
+          title: note
+          additionalProperties: false
+        category:
+          type: string
+          title: category
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: StoreServiceDeleteOneResponse
+      additionalProperties: false
+    listah.v1.StoreServiceListRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+      title: StoreServiceListRequest
+      additionalProperties: false
+    listah.v1.StoreServiceListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: string
+            title: items
+            additionalProperties: false
+            description: |-
+              string id = 1;
+               string name = 2;
+               string description = 3;
+               string note = 7;
+        categoryName:
+          type: string
+          title: category_name
+          additionalProperties: false
+          description: |-
+            repeated ItemServiceReadOneResponse items = 20;
+             Audit audit = 50;
+             string id = 1;
+             string name = 2;
+             string description = 3;
+             string note = 7;
+             string category = 8;
+                 string category_id = 8; Audit audit = 50;
+      title: StoreServiceListResponse
+      additionalProperties: false
+    listah.v1.StoreServiceReadManyRequest:
+      type: object
+      properties:
+        store:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.StoreServiceReadOneRequest'
+      title: StoreServiceReadManyRequest
+      additionalProperties: false
+    listah.v1.StoreServiceReadManyResponse:
+      type: object
+      properties:
+        store:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.StoreServiceReadOneResponse'
+      title: StoreServiceReadManyResponse
+      additionalProperties: false
+    listah.v1.StoreServiceReadOneRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+      title: StoreServiceReadOneRequest
+      additionalProperties: false
+    listah.v1.StoreServiceReadOneResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        name:
+          type: string
+          title: name
+          additionalProperties: false
+        description:
+          type: string
+          title: description
+          additionalProperties: false
+        note:
+          type: string
+          title: note
+          additionalProperties: false
+        categoryId:
+          type: string
+          title: category_id
+          additionalProperties: false
+        categoryName:
+          type: string
+          title: category_name
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: StoreServiceReadOneResponse
+      additionalProperties: false
+    listah.v1.StoreServiceUpdateManyRequest:
+      type: object
+      properties:
+        store:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.StoreServiceUpdateOneRequest'
+      title: StoreServiceUpdateManyRequest
+      additionalProperties: false
+    listah.v1.StoreServiceUpdateManyResponse:
+      type: object
+      properties:
+        store:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.StoreServiceUpdateOneResponse'
+      title: StoreServiceUpdateManyResponse
+      additionalProperties: false
+    listah.v1.StoreServiceUpdateOneRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        name:
+          type: string
+          title: name
+          additionalProperties: false
+        description:
+          type: string
+          title: description
+          additionalProperties: false
+        note:
+          type: string
+          title: note
+          additionalProperties: false
+        categoryId:
+          type: string
+          title: category_id
+          additionalProperties: false
+        categoryName:
+          type: string
+          title: category_name
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: StoreServiceUpdateOneRequest
+      additionalProperties: false
+    listah.v1.StoreServiceUpdateOneResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+          additionalProperties: false
+        name:
+          type: string
+          title: name
+          additionalProperties: false
+        description:
+          type: string
+          title: description
+          additionalProperties: false
+        note:
+          type: string
+          title: note
+          additionalProperties: false
+        categoryId:
+          type: string
+          title: category_id
+          additionalProperties: false
+        categoryName:
+          type: string
+          title: category_name
+          additionalProperties: false
+        audit:
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: StoreServiceUpdateOneResponse
+      additionalProperties: false
+  parameters:
+    encoding:
+      name: encoding
+      in: query
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/encoding'
+        application/proto:
+          schema:
+            $ref: '#/components/schemas/encoding'
+    base64:
+      name: base64
+      in: query
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/base64'
+        application/proto:
+          schema:
+            $ref: '#/components/schemas/base64'
+    compression:
+      name: compression
+      in: query
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/compression'
+        application/proto:
+          schema:
+            $ref: '#/components/schemas/compression'
+    connect:
+      name: connect
+      in: query
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/connect'
+        application/proto:
+          schema:
+            $ref: '#/components/schemas/connect'
+security: []
+tags:
+  - name: listah.v1.ItemService
+  - name: listah.v1.CategoryService
+  - name: listah.v1.UserService
+  - name: listah.v1.StoreService
+externalDocs: {}

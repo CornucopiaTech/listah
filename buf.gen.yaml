@@ -18,7 +18,7 @@ plugins:
     strategy: all
     opt:
     - allow-get
-    - format=json
+    - format=yaml
     - path=listah/v1/openapi-ref.yaml
 inputs:
   - directory: proto
