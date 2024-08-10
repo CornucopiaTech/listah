@@ -1,0 +1,7 @@
+model ApiLog {
+  id          String  @id @db.Uuid
+  request       Json    @db.Json
+
+  @@map("api_logs")
+  @@schema("logs")
+}
