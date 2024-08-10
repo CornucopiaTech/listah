@@ -20,21 +20,13 @@ func handle(infra *bootstrap.Infra) http.Handler {
 
 	mux := http.NewServeMux()
 
-	// // The generated constructors return a path and a plain net/http
-	// // handler.
-	// intcpt, err := otelconnect.NewInterceptor()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	interceptors := middleware.GetInterceptors(infra)
-
 	// otelconnect.NewInterceptor provides an interceptor that adds tracing and
 	// metrics to both clients and handlers. By default, it uses OpenTelemetry's
 	// global TracerProvider and MeterProvider, which you can configure by
 	// following the OpenTelemetry documentation. If you'd prefer to avoid
 	// globals, use otelconnect.WithTracerProvider and
 	// otelconnect.WithMeterProvider.
+	interceptors := middleware.GetInterceptors(infra)
 
 	//
 	// Handle User connect-go generated paths
