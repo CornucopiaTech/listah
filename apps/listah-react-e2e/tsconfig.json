@@ -4,13 +4,7 @@
     "allowJs": true,
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
-    "sourceMap": false,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    "sourceMap": false
   },
   "include": [
     "**/*.ts",
