@@ -1,7 +1,6 @@
 package server
 
 import (
-	"log"
 	"net/http"
 	"path"
 
@@ -10,10 +9,9 @@ import (
 	"cornucopia/listah/internal/app/item"
 	"cornucopia/listah/internal/app/store"
 	"cornucopia/listah/internal/app/user"
+	"cornucopia/listah/internal/pkg/middleware"
 	v1connect "cornucopia/listah/internal/pkg/proto/listah/v1/v1connect"
 
-	"connectrpc.com/connect"
-	"connectrpc.com/otelconnect"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 )
@@ -22,12 +20,14 @@ func handle(infra *bootstrap.Infra) http.Handler {
 
 	mux := http.NewServeMux()
 
-	// The generated constructors return a path and a plain net/http
-	// handler.
-	intcpt, err := otelconnect.NewInterceptor()
-	if err != nil {
-		log.Fatal(err)
-	}
+	// // The generated constructors return a path and a plain net/http
+	// // handler.
+	// intcpt, err := otelconnect.NewInterceptor()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	interceptors := middleware.GetInterceptors(infra)
 
 	// otelconnect.NewInterceptor provides an interceptor that adds tracing and
 	// metrics to both clients and handlers. By default, it uses OpenTelemetry's
@@ -38,30 +38,22 @@ func handle(infra *bootstrap.Infra) http.Handler {
 
 	//
 	// Handle User connect-go generated paths
-	userPath, userHandler := v1connect.NewUserServiceHandler(
-		user.NewServer(infra),
-		connect.WithInterceptors(intcpt))
+	userPath, userHandler := v1connect.NewUserServiceHandler(user.NewServer(infra), interceptors)
 	mux.Handle(userPath, userHandler)
 
 	//
 	// Handle Item Connect-go generated paths
-	itemPath, itemHandler := v1connect.NewItemServiceHandler(
-		item.NewServer(infra),
-		connect.WithInterceptors(intcpt))
+	itemPath, itemHandler := v1connect.NewItemServiceHandler(item.NewServer(infra), interceptors)
 	mux.Handle(itemPath, itemHandler)
 
 	//
 	// Handle Category Connect-go generated paths
-	categoryPath, categoryHandler := v1connect.NewCategoryServiceHandler(
-		category.NewServer(infra),
-		connect.WithInterceptors(intcpt))
+	categoryPath, categoryHandler := v1connect.NewCategoryServiceHandler(category.NewServer(infra), interceptors)
 	mux.Handle(categoryPath, categoryHandler)
 
 	//
 	// Handle Store Connect-go generated paths
-	storePath, storeHandler := v1connect.NewStoreServiceHandler(
-		store.NewServer(infra),
-		connect.WithInterceptors(intcpt))
+	storePath, storeHandler := v1connect.NewStoreServiceHandler(store.NewServer(infra), interceptors)
 	mux.Handle(storePath, storeHandler)
 
 	//

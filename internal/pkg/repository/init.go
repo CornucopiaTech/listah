@@ -23,6 +23,7 @@ type Repository struct {
 	Item     ItemRepository
 	Category CategoryRepository
 	Store    StoreRepository
+	ApiLog   ApiLogRepository
 }
 
 func Init(cfg *config.Config, logger *logging.Factory) *Repository {
@@ -67,6 +68,7 @@ func Init(cfg *config.Config, logger *logging.Factory) *Repository {
 		Item:     &itemRepositoryAgent{db: db, logger: logger},
 		Category: &categoryRepositoryAgent{db: db, logger: logger},
 		Store:    &storeRepositoryAgent{db: db, logger: logger},
+		ApiLog:   &apiLogRepositoryAgent{db: db, logger: logger},
 	}
 
 }

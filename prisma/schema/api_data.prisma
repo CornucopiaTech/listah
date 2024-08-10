@@ -1,5 +1,7 @@
 model ApiLog {
   id          String  @id @db.Uuid
+  trace_id          String
+  span_id          String
   request       Json    @db.Json
 
   @@map("api_logs")

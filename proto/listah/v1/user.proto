@@ -9,6 +9,7 @@ import "listah/v1/commons.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 import "gnostic/openapi/v3/annotations.proto";
+import "buf/validate/validate.proto";
 
 
 message UserServiceCreateOneRequest {
@@ -17,7 +18,7 @@ message UserServiceCreateOneRequest {
     string middle_names = 3 [json_name = "middle_names"];
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
-    string email = 6;
+    string email = 6 [(buf.validate.field).string.email = true];
     string role = 20;
     Audit audit = 50;
 }
@@ -27,7 +28,7 @@ message UserServiceCreateOneResponse {
     string middle_names = 3 [json_name = "middle_names"];
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
-    string email = 6;
+    string email = 6 [(buf.validate.field).string.email = true];
     string role = 20;
     Audit audit = 50;
 }
@@ -45,7 +46,7 @@ message UserServiceEchoRequest {
     string middle_names = 3 [json_name = "middle_names"];
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
-    string email = 6;
+    string email = 6 [(buf.validate.field).string.email = true];
     string role = 20;
     Audit audit = 50;
 }
@@ -55,7 +56,7 @@ message UserServiceEchoResponse {
     string middle_names = 3 [json_name = "middle_names"];
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
-    string email = 6;
+    string email = 6 [(buf.validate.field).string.email = true];
     string role = 20;
     Audit audit = 50;
 }
@@ -70,7 +71,7 @@ message UserServiceReadOneResponse {
     string middle_names = 3 [json_name = "middle_names"];
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
-    string email = 6;
+    string email = 6 [(buf.validate.field).string.email = true];
     string role = 20;
     Audit audit = 50;
 }
@@ -88,7 +89,7 @@ message UserServiceUpdateOneRequest {
     string middle_names = 3 [json_name = "middle_names"];
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
-    string email = 6;
+    string email = 6 [(buf.validate.field).string.email = true];
     string role = 20;
     Audit audit = 50;
 }
@@ -98,7 +99,7 @@ message UserServiceUpdateOneResponse {
     string middle_names = 3 [json_name = "middle_names"];
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
-    string email = 6;
+    string email = 6 [(buf.validate.field).string.email = true];
     string role = 20;
     Audit audit = 50;
 }
@@ -120,7 +121,7 @@ message UserServiceDeleteOneResponse {
     string middle_names = 3 [json_name = "middle_names"];
     string last_name = 4 [json_name = "last_name"];
     string username = 5;
-    string email = 6;
+    string email = 6 [(buf.validate.field).string.email = true];
     string role = 20;
     Audit audit = 50;
 }
