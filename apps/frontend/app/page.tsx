@@ -1,14 +1,12 @@
-// Unique UI of a route and make routes publicly accessible
+"use client"
+import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
+import { Welcome } from '../components/Welcome/Welcome';
+import {AppNavbar} from '../components/Navbar/AppNav'
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="">
-      <main className="">
-      <h1>This is the home page</h1>
-      </main>
-      <footer className="">
-
-      </footer>
-    </div>
+    <>
+    <AppNavbar/>
+    </>
   );
 }
