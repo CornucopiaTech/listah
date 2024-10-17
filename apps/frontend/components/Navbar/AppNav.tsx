@@ -1,56 +1,49 @@
 import { Group, Code, ScrollArea, rem } from '@mantine/core';
 import {
-  IconNotes,
-  IconCalendarStats,
-  IconGauge,
-  IconPresentationAnalytics,
-  IconFileAnalytics,
+  IconSalad,
+  IconClipboardList,
   IconAdjustments,
-  IconLock,
+  IconShoppingCart,
 } from '@tabler/icons-react';
 import { UserButton } from '../UserButton/UserButton';
 import { LinksGroup } from '../LinksGroup/LinksGroup';
 import { Logo } from './Logo';
 import classes from './AppNav.module.css';
 
-const mockdata = [
-  { label: 'Dashboard', icon: IconGauge },
+const appCategories = [
   {
-    label: 'Market news',
-    icon: IconNotes,
+    label: 'Groceries',
+    icon: IconShoppingCart,
     initiallyOpened: true,
     links: [
-      { label: 'Overview', link: '/' },
-      { label: 'Forecasts', link: '/' },
-      { label: 'Outlook', link: '/' },
-      { label: 'Real time', link: '/' },
+      { label: 'Stores', link: '/grocery/stores' },
+      { label: 'Items', link: '/grocery/items' },
+      { label: 'Categories', link: '/grocery/category' },
     ],
   },
   {
-    label: 'Releases',
-    icon: IconCalendarStats,
+    label: 'Recipes',
+    icon: IconSalad,
     links: [
-      { label: 'Upcoming releases', link: '/' },
-      { label: 'Previous releases', link: '/' },
-      { label: 'Releases schedule', link: '/' },
+      { label: 'Nigerian', link: '/recipes/nigerian' },
+      { label: 'Indian', link: '/recipes/indian' },
+      { label: 'Mexican', link: '/recipes/mexican' },
     ],
   },
-  { label: 'Analytics', icon: IconPresentationAnalytics },
-  { label: 'Contracts', icon: IconFileAnalytics },
+  {
+    label: 'To-Do',
+    icon: IconClipboardList,
+    links: [
+      { label: 'Nigerian', link: '/recipes/nigerian' },
+      { label: 'Indian', link: '/recipes/indian' },
+      { label: 'Mexican', link: '/recipes/mexican' },
+    ],
+  },
   { label: 'Settings', icon: IconAdjustments },
-  {
-    label: 'Security',
-    icon: IconLock,
-    links: [
-      { label: 'Enable 2FA', link: '/' },
-      { label: 'Change password', link: '/' },
-      { label: 'Recovery codes', link: '/' },
-    ],
-  },
 ];
 
 export function AppNavbar() {
-  const links = mockdata.map((item) => <LinksGroup {...item} key={item.label} />);
+  const links = appCategories.map((item) => <LinksGroup {...item} key={item.label} />);
 
   return (
     <nav className={classes.navbar}>
