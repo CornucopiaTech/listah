@@ -1,60 +1,54 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
 
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid2';
-import { BasicCardBlock } from '@/components/Card/BasicCard';
 import ResponsiveGrid from '@/components/Grid/ResponsiveGrid';
-import MediaCard from '@/components/Card/Mediacard';
+import MediaCard, { ImgMediaCard } from '@/components/Card/MediaCard';
+
+// Images for services cards.
+import groceries from './../../../public/assets/groceries.jpeg';
+import toDo from './../../../public/assets/todo.jpeg';
 
 
-const services = [
-	{title: 'Grocery', url: "", actions: []},
-	{title: 'To-Do', url: "", actions: []}
+const servicesObj = [
+	{
+		title: 'Grocery',
+		url: groceries.src,
+		actions: ["Learn More", "See More"],
+		height: "240",
+		altText: "Image of groceries",
+		mainAction: "/grocery"
+	},
+	{
+		title: 'To-Do',
+		url: toDo.src,
+		actions: ["Learn More", "See More"],
+		height: "240",
+		altText: "Image of a to-do list",
+		mainAction: "/to-do"
+	}
 ]
 
 export default function HomeCard() {
-	const listServices = services.map((item) => (
-		<BasicCardBlock >
-			<Typography variant="h5" component="div">
-				{item}
-			</Typography>
-		</BasicCardBlock>
-	));
-	const servicesCards = services.map((item) => (
-		<MediaCard imageUrl=""/>
-	));
+	console.log(`Groceries: ${groceries.src}`);
+	console.log(groceries);
 
-	const listServicesInline = services.map((item) => (
-			<Grid key={item}
-			      size={{ xs: 2, sm: 4, md: 4 }}
-						rowSpacing={{ xs: 4, md: 6 }}
-						columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-						sx={{mx: 8, my: 4 }}>
-				<Typography variant="h5" component="div"
-										sx={{ color: 'text.secondary',
-											textAlign: 'center',
-											letterSpacing: 1.5}}
-				>
-					{item}
-				</Typography>
-			</Grid>
 
+	const servicesImageCards = servicesObj.map((item) => (
+		<ImgMediaCard key={item.title}
+				   	  imageUrl={item.url}
+					  imageAltText={item.altText}
+					  imageTitle="" //{item.title}
+					  imageHeight={item.height}
+					  cardMainAction={item.mainAction}
+					  cardHeading={item.title}
+					  cardContent="" //{item.title}
+					  cardActions={item.actions}
+
+		/>
 	));
-
 
 	return (
 	<>
-		{/* <ResponsiveGrid>
-			{listServices}
-		</ResponsiveGrid> */}
-
 		<ResponsiveGrid>
-			{listServicesInline}
+			{servicesImageCards}
 		</ResponsiveGrid>
 
 

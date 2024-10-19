@@ -1,4 +1,3 @@
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
 import styles from "./page.module.css";
@@ -14,7 +13,9 @@ export default function Home() {
 			<ResponsiveGrid>
 				<div className={styles.page}>
 					<main className={styles.main}>
-						<Box sx={{ bgcolor: '#cfe8fc', height: '100%' }}>
+						<Box sx={{ bgcolor: '#cfe8fc', height: '100%',
+						     justifyContent: 'center',
+							 }}>
 							<HeroTypography content='Which list would you like' />
 							<HomeCard />
 						</Box>
