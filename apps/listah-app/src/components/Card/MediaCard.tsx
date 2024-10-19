@@ -35,9 +35,10 @@ export default function MediaCard(props) {
 
 
 export function ImgMediaCard(props) {
-  const cardActions = props.cardActions.map((item) => (
-		<Button key={item} size="small">{item}</Button>
+	const cardActions = props.cardActions.map((item) => (
+		<CardButton key={item} label={item} />
 	));
+
   return (
     <Card sx={{ maxWidth: 345 }}>
        <CardActionArea href={props.cardMainAction}>

@@ -13,12 +13,20 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ChevronUpIcon from '@mui/icons-material/ChevronUp';
+import ChevronDownIcon from '@mui/icons-material/ChevronDown';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+
+import {DefaultListServices, DefaultListSubItems} from '@/model/defaultData';
+import BasicAccordion from '../Accordion/Basic';
+
+
+
 
 const drawerWidth = 240;
 
@@ -137,7 +145,7 @@ export default function PersistentDrawerLeft( { children }) {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+          {DefaultListServices.map((text, index) => (
             <ListItem key={text} disablePadding>
               <ListItemButton>
                 <ListItemIcon>
@@ -149,6 +157,19 @@ export default function PersistentDrawerLeft( { children }) {
           ))}
         </List>
         <Divider />
+        {/* <List>
+          {DefaultListServices.map((text, index) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton>
+              <ListItemText primary={text} />
+                <ListItemIcon>
+                {theme.direction === 'ltr' ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                </ListItemIcon>
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+        <Divider /> */}
         <List>
           {['All mail', 'Trash', 'Spam'].map((text, index) => (
             <ListItem key={text} disablePadding>
