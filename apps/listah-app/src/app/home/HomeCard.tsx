@@ -1,6 +1,7 @@
 
-import ResponsiveGrid from '@/components/Grid/ResponsiveGrid';
-import MediaCard, { ImgMediaCard } from '@/components/Card/MediaCard';
+import ResponsiveGrid from '@/components/Grid/Responsive';
+import MediaCard, { ImgMediaCard } from '@/components/Card/Media';
+import BasicGrid from '@/components/Grid/Basic';
 
 // Images for services cards.
 import groceries from './../../../public/assets/groceries.jpeg';
@@ -32,7 +33,8 @@ export default function HomeCard() {
 
 
 	const servicesImageCards = servicesObj.map((item) => (
-		<ImgMediaCard key={item.title}
+		<BasicGrid>
+			<ImgMediaCard key={item.title}
 				   	  imageUrl={item.url}
 					  imageAltText={item.altText}
 					  imageTitle="" //{item.title}
@@ -43,14 +45,19 @@ export default function HomeCard() {
 					  cardActions={item.actions}
 
 		/>
+		</BasicGrid>
+
 	));
 
 	return (
-	<>
-		<ResponsiveGrid>
+		// <ResponsiveGrid spacing={{ xs: 2, md: 3 }} flexGrow={1}
+		// 				columns={{ xs: 4, sm: 8, md: 12 }} flexWrap='wrap'
+		// 				justifyContent='space-evenly' alignItems='center'
+		// 				padding={{ xs: 4, md: 8 }}
+		// 				height='100%' width='100%'>
+			<>
 			{servicesImageCards}
-		</ResponsiveGrid>
-
-
-	</>);
+			</>
+		// {/* </ResponsiveGrid> */}
+	);
 }

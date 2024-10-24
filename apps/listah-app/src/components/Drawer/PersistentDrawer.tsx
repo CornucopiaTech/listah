@@ -13,8 +13,8 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ChevronUpIcon from '@mui/icons-material/ChevronUp';
-import ChevronDownIcon from '@mui/icons-material/ChevronDown';
+// import ChevronUpIcon from '@mui/icons-material/ChevronUp';
+// import ChevronDownIcon from '@mui/icons-material/ChevronDown';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -24,15 +24,16 @@ import MailIcon from '@mui/icons-material/Mail';
 
 import {DefaultListServices, DefaultListSubItems} from '@/model/defaultData';
 import BasicAccordion from '../Accordion/Basic';
+import SimpleContainer from '../Container/FluidContainer';
 
 
 
 
 const drawerWidth = 240;
 
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
-  open?: boolean;
-}>(({ theme }) => ({
+const Main = styled('main', {
+    shouldForwardProp: (prop) => prop !== 'open'
+  }) <{ open?: boolean; }> (({ theme }) => ({
   flexGrow: 1,
   padding: theme.spacing(3),
   transition: theme.transitions.create('margin', {
@@ -102,7 +103,8 @@ export default function PersistentDrawerLeft( { children }) {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    // <Box sx={{ display: 'flex' }}>
+    <SimpleContainer sx={{ display: 'flex', width:'fit-content', height: '100%'}}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar>
@@ -136,8 +138,7 @@ export default function PersistentDrawerLeft( { children }) {
         }}
         variant="persistent"
         anchor="left"
-        open={open}
-      >
+        open={open}>
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
@@ -183,10 +184,25 @@ export default function PersistentDrawerLeft( { children }) {
           ))}
         </List>
       </Drawer>
-      <Main open={open}>
+      {/* <Main open={open}>
         <DrawerHeader />
         { children }
-      </Main>
-    </Box>
+      </Main> */}
+      <Box sx={{ bgcolor: '#cfe8fc',
+                       justifyContent: 'center',
+                       alignItems: 'center',
+                       px: { xs: 2, md: 3 },
+                       height: '100vh',
+                      //  width: { xs: '300', md: '600', lg: '800' },
+							   width: '100dvh',
+							  //  width: 'fit-content',
+							// width: '100%',
+							}}>
+        <DrawerHeader />
+        { children }
+      </Box>
+    </SimpleContainer>
+
+    // </Box>
   );
 }
