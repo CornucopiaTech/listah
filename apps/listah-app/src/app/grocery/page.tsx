@@ -1,37 +1,44 @@
-'use client'
-
-import * as React from 'react';
-
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import styles from "../page.module.css";
-import PersistentDrawerLeft from "@/components/Drawer/PersistentDrawer";
-import CardContent from '@mui/material/CardContent';
+
+import styles from "./page.module.css";
 import HomeCard from "@/app/home/HomeCard";
 import ResponsiveGrid from '@/components/Grid/Responsive';
 import HeroTypography from '@/components/Typography/Hero';
+import SimpleContainer from '@/components/Container/FluidContainer';
 import ResponsiveDrawer from '@/components/Drawer/ResponsiveDrawer';
-import Collapse from '@mui/material/Collapse';
-import ComplexInteraction from '@/components/Card/ComplexInteraction';
 
-
-export default function Home() {
-	const [expanded, setExpanded] = React.useState(false);
-
-	const handleExpandClick = () => {
-	  setExpanded(!expanded);
-	};
+export default function Grocery() {
 
 	return (
-		<PersistentDrawerLeft>
-			<ResponsiveGrid>
-			<Box sx={{ bgcolor: '#cfe8fc', height: '100%',
-						     justifyContent: 'center',
-					}}>
-				<HeroTypography content='Which list would you like' />
-				<HomeCard />
-			</Box>
-			</ResponsiveGrid>
-		</PersistentDrawerLeft>
+		<SimpleContainer>
+			<ResponsiveDrawer>
+				<ResponsiveGrid style={{flexGrow: 1,
+										justifyContent: 'space-evenly',
+										alignItems: 'center', flexWrap: 'wrap',
+										p: { xs: 4, md: 6 },
+										height: '100%',
+										width: '100%', bgcolor: '#cfffff'}}
+								spacing={{ xs: 2, md: 3 }}
+								columns={{ xs: 4, sm: 8, md: 12 }}>
+				<Box sx={{flexGrow: 1,
+							justifyContent: 'space-evenly', display: 'inline',
+							alignItems: 'center', flexWrap: 'wrap',
+							m: { xs: 2, md: 3 }, height: '100%',
+							width: '100%', bgcolor: '#efffff'}}>
+
+						<HeroTypography content='Which list would you like' />
+				</Box>
+
+				<Box sx={{
+							flexGrow: 1, justifyContent: 'space-evenly', display: 'flex',
+							alignItems: 'center', flexWrap: 'wrap', p: { xs: 2, md: 3 },
+							height: '100%', width: '100%', bgcolor: '#cfffff'
+						}}>
+					<HomeCard/>
+				</Box>
+				</ResponsiveGrid>
+			</ResponsiveDrawer>
+		</SimpleContainer>
+
 	);
 }

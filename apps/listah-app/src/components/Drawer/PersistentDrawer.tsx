@@ -103,8 +103,9 @@ export default function PersistentDrawerLeft( { children }) {
   };
 
   return (
-    // <Box sx={{ display: 'flex' }}>
-    <SimpleContainer sx={{ display: 'flex', width:'fit-content', height: '100%'}}>
+
+    <SimpleContainer>
+      <Box  sx={{ display: 'flex', width:'100%', height: '100%'}}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar>
@@ -192,17 +193,16 @@ export default function PersistentDrawerLeft( { children }) {
                        justifyContent: 'center',
                        alignItems: 'center',
                        px: { xs: 2, md: 3 },
-                       height: '100vh',
-                      //  width: { xs: '300', md: '600', lg: '800' },
-							   width: '100dvh',
-							  //  width: 'fit-content',
-							// width: '100%',
+                       height: '100%',
+							   width: '100%',
 							}}>
         <DrawerHeader />
         { children }
       </Box>
+
+      </Box>
     </SimpleContainer>
 
-    // </Box>
+
   );
 }

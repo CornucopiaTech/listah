@@ -6,17 +6,12 @@ import Grid from '@mui/material/Grid2';
 // export default function ResponsiveGrid(props, { children }) {
 export default function ResponsiveGrid(props) {
 	return (
-		<Box sx={{ flexGrow: props.flexGrow,
-				   flexWrap: props.flexWrap,
-				   justifyContent: props.justifyContent,
-				   alignItems: props.alignItems,
-				   p: props.padding,
-				   height: props.height, width: props.width}}>
-		<Grid container
-			  spacing={props.spacing}
-			  columns={props.columns}>
-			{ props.children }
-		</Grid>
+		<Box sx={props.style}>
+			<Grid container
+				spacing={props.spacing}
+				columns={props.columns}>
+				{ props.children }
+			</Grid>
 		</Box>
 	);
   }

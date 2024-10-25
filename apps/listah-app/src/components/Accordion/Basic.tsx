@@ -5,9 +5,12 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Button from '@mui/material/Button';
-import AccordionButton from '../Button/Accordion';
+import AccordionButton from '@/components/Button/Accordion';
 
-export default function BasicAccordion (props, { children }) {
+
+
+
+export default function BasicAccordion (props) {
 	const accordionActions = props.accordionActions.map((item) => (
 		<AccordionButton key={item} label={item} />
 	));
@@ -24,7 +27,7 @@ export default function BasicAccordion (props, { children }) {
           {props.accordionSummary}
         </AccordionSummary>
         <AccordionDetails>
-          {children}
+          {props.children}
         </AccordionDetails>
 		<AccordionActions>
 		{accordionActions}
