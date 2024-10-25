@@ -2,6 +2,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import Person3Icon from '@mui/icons-material/Person3';
 import LocalGroceryStoreIcon from '@mui/icons-material/LocalGroceryStore';
 import TaskIcon from '@mui/icons-material/Task';
+import NewspaperIcon from '@mui/icons-material/Newspaper';
+
 
 
 // Images for services cards.
@@ -29,6 +31,11 @@ export const ServicesNav = [
 			{title: 'Home', link: '/grocery/home'},
 			{title: 'Passion', link: '/grocery/passion'},
 		]
+	},
+	{
+		title: 'Article',
+		icon: <NewspaperIcon/>,
+		link: '/article'
 	}
 ]
 

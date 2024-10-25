@@ -5,13 +5,14 @@ import HomeCard from "@/app/home/HomeCard";
 import ResponsiveGrid from '@/components/Grid/Responsive';
 import HeroTypography from '@/components/Typography/Hero';
 import SimpleContainer from '@/components/Container/FluidContainer';
-import ResponsiveDrawer from '@/components/Drawer/ResponsiveDrawer';
+import MainDrawer from '@/components/NavBar/MainDrawer';
+
 
 export default function Home() {
 
 	return (
 		<SimpleContainer>
-			<ResponsiveDrawer>
+			< MainDrawer>
 				<ResponsiveGrid style={{flexGrow: 1,
 										justifyContent: 'space-evenly',
 										alignItems: 'center', flexWrap: 'wrap',
@@ -37,7 +38,7 @@ export default function Home() {
 					<HomeCard/>
 				</Box>
 				</ResponsiveGrid>
-			</ResponsiveDrawer>
+			</ MainDrawer>
 		</SimpleContainer>
 
 	);

@@ -16,15 +16,24 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { styled, useTheme } from '@mui/material/styles';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import Collapse from '@mui/material/Collapse';
+import StarBorder from '@mui/icons-material/StarBorder';
 
 
+// import { GroceryDrawer, TaskDrawer } from './ServicesDrawer';
 import UnderlineLink from '../Link/Underline';
+import ServiceAccordion from './ServiceAccordion.tsx.bkup.2024-10-24-2310';
 import {ServicesNav, DrawerWidth, SubDividerMenuItems} from '@/model/defaultData';
 
 
 
-export default function ResponsiveDrawer({ children }) {
+
+
+
+export default function MainDrawer({ children }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
 
@@ -43,17 +52,50 @@ export default function ResponsiveDrawer({ children }) {
     }
   };
 
+  const [openGrocery, setOpenGrocery] = React.useState(false);
+  const handleClickGrocery = () => {
+    setOpenGrocery(!openGrocery);
+  };
 
-  const servicesList = ServicesNav.map((arrayObj) => (
-    <ListItem key={arrayObj.title} disablePadding>
-      <ListItemButton>
-        <ListItemIcon>
-          {arrayObj.icon}
-        </ListItemIcon>
-        <ListItemText primary={arrayObj.title} />
-      </ListItemButton>
-    </ListItem>
-  ))
+
+  const [openTask, setOpenTask] = React.useState(false);
+  const handleClickTask = () => {
+    setOpenTask(!openTask);
+  };
+
+
+  const servicesList = (
+	<>
+		<ListItemButton onClick={handleClickGrocery}>
+			<ListItemText primary={ServicesNav[0].title} />
+			{openGrocery ? <ExpandLess /> : <ExpandMore />}
+		</ListItemButton>
+		<Collapse in={openGrocery} timeout="auto" unmountOnExit>
+			<List component="div" disablePadding>
+				{ServicesNav[0].subitems.map((item) => (
+					<ListItemButton sx={{ pl: 4 }}>
+						<ListItemText primary={item.title} />
+					</ListItemButton>
+				))}
+			</List>
+		</Collapse>
+
+		<ListItemButton onClick={handleClickTask}>
+			<ListItemText primary={ServicesNav[1].title} />
+			{openTask ? <ExpandLess /> : <ExpandMore />}
+		</ListItemButton>
+		<Collapse in={openTask} timeout="auto" unmountOnExit>
+			<List component="div" disablePadding>
+				{ServicesNav[1].subitems.map((item) => (
+					<ListItemButton sx={{ pl: 4 }}>
+						<ListItemText primary={item.title} />
+					</ListItemButton>
+				))}
+			</List>
+		</Collapse>
+	</>
+  )
+
 
   const subMenuList = SubDividerMenuItems.map((arrayObj) => (
     <ListItem key={arrayObj.title} disablePadding>
@@ -70,7 +112,7 @@ export default function ResponsiveDrawer({ children }) {
     <div>
       <Toolbar />
       <Divider />
-      <List>{servicesList}</List>
+     {servicesList}
       <Divider />
       <List>{subMenuList}</List>
     </div>
