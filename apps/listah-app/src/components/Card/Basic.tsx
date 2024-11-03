@@ -1,53 +1,25 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
+
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 
-const bull = (
-  <Box
-    component="span"
-    sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
-  >
-    •
-  </Box>
-);
 
-export default function BasicCard() {
+import CardButton from '../Button/Card';
+import { CardHeadingTypography, CardContentTypography } from '../Typography/Card';
+
+
+export default function BasicCard(props) {
+  const cardActions = props.cardActions.map((item) => (
+		<CardButton key={item} label={item} />
+	));
+
   return (
-    <Card sx={{ minWidth: 275 }}>
+    <Card sx={props.style}>
       <CardContent>
-        <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
-          Word of the Day
-        </Typography>
-        <Typography variant="h5" component="div">
-          be{bull}nev{bull}o{bull}lent
-        </Typography>
-        <Typography sx={{ color: 'text.secondary', mb: 1.5 }}>adjective</Typography>
-        <Typography variant="body2">
-          well meaning and kindly.
-          <br />
-          {'"a benevolent smile"'}
-        </Typography>
+        <CardHeadingTypography content={props.cardHeading} />
+        <CardContentTypography content={props.cardContent} />
       </CardContent>
-      <CardActions>
-        <Button size="small">Learn More</Button>
-      </CardActions>
-    </Card>
-  );
-}
-
-export function BasicCardBlock({ children }) {
-  return (
-    <Card sx={{ minWidth: 275 }}>
-      <CardContent sx={{ m: 0, p: 4 }}>
-        { children }
-      </CardContent>
-      <CardActions>
-        <Button size="small">Learn More</Button>
-      </CardActions>
+      <CardActions>{cardActions}</CardActions>
     </Card>
   );
 }

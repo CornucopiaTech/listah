@@ -21,15 +21,20 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
 import StarBorder from '@mui/icons-material/StarBorder';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
+
 
 
 // import { GroceryDrawer, TaskDrawer } from './ServicesDrawer';
 import UnderlineLink from '../Link/Underline';
-import ServiceAccordion from './ServiceAccordion.tsx.bkup.2024-10-24-2310';
 import {ServicesNav, DrawerWidth, SubDividerMenuItems} from '@/model/defaultData';
-
-
-
 
 
 
@@ -62,6 +67,20 @@ export default function MainDrawer({ children }) {
   const handleClickTask = () => {
     setOpenTask(!openTask);
   };
+
+
+  const [openGroceryDialog, setOpenGroceryDialog] = React.useState(false);
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  const handleClickOpenGroceryDialog = () => {
+    setOpenGroceryDialog(true);
+  };
+
+  const handleCloseGroceryDialog = () => {
+    setOpenGroceryDialog(false);
+  };
+
 
 
   const servicesList = (
@@ -171,6 +190,16 @@ export default function MainDrawer({ children }) {
             display: { xs: 'block', sm: 'none' },
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DrawerWidth },
           }}
+        >
+          {drawer}
+        </Drawer>
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: 'none', sm: 'block' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DrawerWidth },
+          }}
+          open
         >
           {drawer}
         </Drawer>

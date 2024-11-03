@@ -13,6 +13,16 @@ import toDo from '../../public/assets/todo.jpeg';
 
 export const ServicesNav = [
 	{
+		title: 'Items',
+		icon: <LocalGroceryStoreIcon/>,
+		link: '/grocery',
+		subitems: [
+			{title: 'Category', link: '/grocery/category'},
+			{title: 'Store', link: '/grocery/store'},
+			{title: 'Item', link: '/grocery/item'},
+		]
+	},
+	{
 		title: 'Grocery',
 		icon: <LocalGroceryStoreIcon/>,
 		link: '/grocery',
@@ -40,6 +50,26 @@ export const ServicesNav = [
 ]
 
 export const ServiceCard = [
+	{
+		title: 'Items',
+		actions: ["Create New", "View All"],
+		content: "",
+		mainAction: "/items"
+	},
+	{
+		title: 'Tags',
+		actions: ["Create New", "View All"],
+		mainAction: "/tags"
+	},
+	{
+		title: 'Curated Tags',
+		actions: ["Create New", "View All"],
+		mainAction: "/curated-tags"
+	}
+]
+
+
+export const ServiceMediaCard = [
 	{
 		title: 'Grocery',
 		url: groceries.src,
