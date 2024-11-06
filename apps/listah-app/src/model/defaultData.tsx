@@ -45,7 +45,12 @@ export const ServicesNav = [
 	{
 		title: 'Article',
 		icon: <NewspaperIcon/>,
-		link: '/article'
+		link: '/article',
+		subitems: [
+			{title: 'Work', link: '/grocery/work'},
+			{title: 'Home', link: '/grocery/home'},
+			{title: 'Passion', link: '/grocery/passion'},
+		]
 	}
 ]
 

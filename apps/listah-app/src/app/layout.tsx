@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { StrictMode } from 'react';
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -18,15 +19,14 @@ export const metadata: Metadata = {
   description: "List making application",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({children,}: Readonly<{children: React.ReactNode;}>) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <StrictMode>
         {children}
+        </StrictMode>
+
       </body>
     </html>
   );

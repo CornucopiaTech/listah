@@ -29,8 +29,8 @@ export default function HomeCard() {
 									spacing={{ xs: 3, md: 4 }}
 									columns={{ xs: 4, sm: 8, md: 12 }}>
 				{servicesImageCards}
-				{servicesImageCards}
-				{servicesImageCards}
+				{/* {servicesImageCards} */}
+				{/* {servicesImageCards} */}
 			</ResponsiveGrid>
 		</>
 	);

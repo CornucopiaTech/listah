@@ -20,16 +20,11 @@ import { styled, useTheme } from '@mui/material/styles';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
-import StarBorder from '@mui/icons-material/StarBorder';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 
 
+
+import MainDrawerList from './DrawerList';
 
 
 // import { GroceryDrawer, TaskDrawer } from './ServicesDrawer';
@@ -38,7 +33,7 @@ import {ServicesNav, DrawerWidth, SubDividerMenuItems} from '@/model/defaultData
 
 
 
-export default function MainDrawer({ children }) {
+export default function MainDrawer() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
 
@@ -57,75 +52,32 @@ export default function MainDrawer({ children }) {
     }
   };
 
-  const [openGrocery, setOpenGrocery] = React.useState(false);
-  const handleClickGrocery = () => {
-    setOpenGrocery(!openGrocery);
-  };
 
-
-  const [openTask, setOpenTask] = React.useState(false);
-  const handleClickTask = () => {
-    setOpenTask(!openTask);
-  };
-
-
-  const [openGroceryDialog, setOpenGroceryDialog] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
-  const handleClickOpenGroceryDialog = () => {
-    setOpenGroceryDialog(true);
-  };
-
-  const handleCloseGroceryDialog = () => {
-    setOpenGroceryDialog(false);
-  };
 
 
-
-  const servicesList = (
-	<>
-		<ListItemButton onClick={handleClickGrocery}>
-			<ListItemText primary={ServicesNav[0].title} />
-			{openGrocery ? <ExpandLess /> : <ExpandMore />}
-		</ListItemButton>
-		<Collapse in={openGrocery} timeout="auto" unmountOnExit>
-			<List component="div" disablePadding>
-				{ServicesNav[0].subitems.map((item) => (
-					<ListItemButton sx={{ pl: 4 }}>
-						<ListItemText primary={item.title} />
-					</ListItemButton>
-				))}
-			</List>
-		</Collapse>
-
-		<ListItemButton onClick={handleClickTask}>
-			<ListItemText primary={ServicesNav[1].title} />
-			{openTask ? <ExpandLess /> : <ExpandMore />}
-		</ListItemButton>
-		<Collapse in={openTask} timeout="auto" unmountOnExit>
-			<List component="div" disablePadding>
-				{ServicesNav[1].subitems.map((item) => (
-					<ListItemButton sx={{ pl: 4 }}>
-						<ListItemText primary={item.title} />
-					</ListItemButton>
-				))}
-			</List>
-		</Collapse>
-	</>
-  )
-
-
-  const subMenuList = SubDividerMenuItems.map((arrayObj) => (
-    <ListItem key={arrayObj.title} disablePadding>
-      <ListItemButton>
-        <ListItemIcon>
-        {arrayObj.icon}
-        </ListItemIcon>
-        <ListItemText primary={arrayObj.title} />
-      </ListItemButton>
-    </ListItem>
+  const servicesList = ServicesNav.map((anItem) =>  (
+    <MainDrawerList listTitle={anItem.title} subItems={anItem.subitems} />
   ));
+
+
+  const subMenuList = (<List>
+    {
+      SubDividerMenuItems.map((arrayObj) => (
+        <ListItem key={arrayObj.title} disablePadding>
+          <ListItemButton key={`${arrayObj.title}-button`}>
+            <ListItemIcon>
+            {arrayObj.icon}
+            </ListItemIcon>
+            <ListItemText primary={arrayObj.title} />
+          </ListItemButton>
+        </ListItem>
+      ))
+    }
+
+  </List>);
 
   const drawer = (
     <div>
@@ -133,14 +85,14 @@ export default function MainDrawer({ children }) {
       <Divider />
      {servicesList}
       <Divider />
-      <List>{subMenuList}</List>
+      {subMenuList}
     </div>
   );
 
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
+    {/* <CssBaseline /> */}
       <AppBar
         position="fixed"
         sx={{
@@ -203,25 +155,6 @@ export default function MainDrawer({ children }) {
         >
           {drawer}
         </Drawer>
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DrawerWidth },
-          }}
-          open
-        >
-          {drawer}
-        </Drawer>
-      </Box>
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, p: 3,
-              width: { sm: `calc(100% - ${DrawerWidth}px)` },
-              bgcolor: '#cfe8fc',
-                       justifyContent: 'center',
-                       alignItems: 'center',}}>
-        { children }
       </Box>
     </Box>
   );

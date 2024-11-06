@@ -18,7 +18,7 @@ export default function BasicAccordion (props) {
 
   return (
     <div>
-      <Accordion>
+      <Accordion key={props.accordionSummary}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls={`panel${props.accordionIndex}-content`}

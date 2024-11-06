@@ -7,6 +7,9 @@
   "license": "MIT",
   "scripts": {
     "app:dev": "next dev ./apps/listah-app --port 5050",
+    "app:build": "next build ./apps/listah-app",
+    "app:start": "next start ./apps/listah-app",
+    "app:lint": "next lint ./apps/listah-app",
     "buf:generate": "buf generate",
     "buf:lint": "buf lint",
     "buf:prune": "buf dep prune",
@@ -28,7 +31,6 @@
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^6.1.4",
-    "@mui/joy": "^5.0.0-beta.48",
     "@mui/material": "^6.1.4",
     "@next/bundle-analyzer": "^14.2.14",
     "@prisma/client": "^5.20.0",
@@ -42,5 +44,14 @@
     "tslib": "^2.7.0",
     "webpack": "^5.95.0"
   },
-  "packageManager": "npm@10.9.0"
+  "packageManager": "npm@10.9.0",
+  "devDependencies": {
+    "@faker-js/faker": "^9.1.0",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.15",
+    "typescript": "5.6.3"
+  }
 }

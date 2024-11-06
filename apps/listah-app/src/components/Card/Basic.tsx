@@ -10,7 +10,7 @@ import { CardHeadingTypography, CardContentTypography } from '../Typography/Card
 
 export default function BasicCard(props) {
   const cardActions = props.cardActions.map((item) => (
-		<CardButton key={item} label={item} />
+		<CardButton key={item + 'Button'} label={item} />
 	));
 
   return (
