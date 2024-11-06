@@ -21,7 +21,7 @@ import {DrawerWidth} from '@/model/defaultData';
 
 export default function Items() {
 
-	let data = getCommerce(100);
+	let data = getCommerce(5);
 
 	let accordionDetails = data.map((item, index) => (
 		<ItemAccordion key={item.summary + '-ItemAccordion'}
@@ -36,7 +36,7 @@ export default function Items() {
 				<Box sx={{ display: 'flex' }}>
 					<NavBar/>
 					<Box component="main"
-						sx={{ flexGrow: 1, p: 1,
+						sx={{ flexGrow: 1, p: 3, display: 'inline-flex',
 							width: { sm: `calc(100% - ${DrawerWidth}px)` },
 							bgcolor: '#cfe8fc',
 							justifyContent: 'center',
@@ -48,10 +48,10 @@ export default function Items() {
 												p: { xs: 4, md: 6 },
 												height: '100%',
 												width: '100%', bgcolor: '#cfffff'}}
-										spacing={{ xs: 2, md: 3 }}
-										columns={{ xs: 4, sm: 8, md: 12 }}>
+										spacing={{ xs: 1, sm: 2, md: 2 }}
+										columns={{ xs: 1, sm: 2, md: 2 }}>
 							<Box sx={{
-										flexGrow: 1, justifyContent: 'space-evenly', display: 'flex',
+										flexGrow: 1, justifyContent: 'space-between', display: 'flex', alignContent: 'flex-start',
 										alignItems: 'center', flexWrap: 'wrap', p: { xs: 2, md: 3 },
 										height: '100%', width: '100%', bgcolor: '#cfffff'
 									}}>

@@ -9,9 +9,9 @@ export function getCommerce(arraySize: number) {
 			isbn: faker.commerce.isbn(),
 			price: faker.commerce.price(),
 			product: faker.commerce.product(),
-			productAdjective: faker.commerce.productAdjective(),
-			productDescription: faker.commerce.productDescription(),
-			productName: faker.commerce.productName(),
+			adjective: faker.commerce.productAdjective(),
+			description: faker.commerce.productDescription(),
+			name: faker.commerce.productName(),
 			summary: faker.commerce.productName(),
 		});
 	}

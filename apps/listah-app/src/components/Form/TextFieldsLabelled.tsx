@@ -14,7 +14,7 @@ export default function TextFields(props) {
 		return (
 			<TextField
 			  required
-			  id="outlined-required"
+			  multiline
 			  key={'TextField-' + props.value}
 			  label={props.label}
 			  value={text}
@@ -27,7 +27,7 @@ export default function TextFields(props) {
 			<TextField
 			  required
 			  disabled
-			  id="outlined-required"
+			  multiline
 			  key={'TextField-' + props.value}
 			  label={props.label}
 			  value={text}

@@ -49,7 +49,8 @@ export default function ItemAccordion(props) {
 
 
 	return (
-	<Accordion key={props.summary + '-Accordion'}>
+	<Accordion key={props.summary + '-Accordion'} sx={{ width: '48%', m: 1 }}
+			   >
 		<AccordionSummary
 			expandIcon={<ExpandMoreIcon />}
 			aria-controls={`panel${props.index}-content`}
@@ -58,16 +59,14 @@ export default function ItemAccordion(props) {
 			{props.summary}
 		</AccordionSummary>
 		<AccordionDetails key={props.summary + '-AccordionDetails'}>
-			{
-				<Box key={props.summary + '-Box'} component="form"
-				sx={{ '& .MuiTextField-root': { m: 1, width: '25ch' } }}
+			<Box key={props.summary + '-Box'} component="form"
+				sx={{ '& .MuiTextField-root': { m: 1, width: '20ch' } }}
 				noValidate
 				autoComplete="off">
 					{
 						createAccordionForm(props.item)
 					}
 				</Box>
-			}
 		</AccordionDetails>
 		<AccordionActions>
 			<Button key='edit' size="small"
