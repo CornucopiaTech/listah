@@ -39,7 +39,7 @@ export default function ItemAccordion(props) {
 		let result = [];
 		Object.entries(givenItem).forEach(([key, value]) => {
 			result.push(
-				<TextFieldsFormProps key={value + '-formField'} status='editing'
+				<TextFieldsFormProps key={key + '-' + value + '-formField'} status='editing'
 									 label={key} value={value} size='small'/>);
 
 		})

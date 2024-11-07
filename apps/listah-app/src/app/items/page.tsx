@@ -10,6 +10,8 @@ import ResponsiveGrid from '@/components/Grid/Responsive';
 import SimpleContainer from '@/components/Container/FluidContainer';
 import NavBar from '@/components/NavBar/NavBar';
 import ItemAccordion from './ItemAccordion';
+import ItemPopper from './ItemsPopover';
+import ItemPopperButton from './ItemsPopoverButtons';
 
 
 import { getCommerce } from '@/repository/faker';
@@ -22,9 +24,15 @@ import {DrawerWidth} from '@/model/defaultData';
 export default function Items() {
 
 	let data = getCommerce(5);
+	// console.log(data);
 
 	let accordionDetails = data.map((item, index) => (
 		<ItemAccordion key={item.summary + '-ItemAccordion'}
+					   summary={item.summary} index={index} item={item}/>
+	));
+
+	let popoverDetails = data.map((item, index) => (
+		<ItemPopper key={item.summary + '-IItemPopper'}
 					   summary={item.summary} index={index} item={item}/>
 	));
 
@@ -50,12 +58,20 @@ export default function Items() {
 												width: '100%', bgcolor: '#cfffff'}}
 										spacing={{ xs: 1, sm: 2, md: 2 }}
 										columns={{ xs: 1, sm: 2, md: 2 }}>
+							<ItemPopperButton data={data} />
 							<Box sx={{
 										flexGrow: 1, justifyContent: 'space-between', display: 'flex', alignContent: 'flex-start',
 										alignItems: 'center', flexWrap: 'wrap', p: { xs: 2, md: 3 },
 										height: '100%', width: '100%', bgcolor: '#cfffff'
 									}}>
 								{accordionDetails}
+							</Box>
+							<Box sx={{
+										flexGrow: 1, justifyContent: 'space-between', display: 'flex', alignContent: 'flex-start',
+										alignItems: 'center', flexWrap: 'wrap', p: { xs: 2, md: 3 },
+										height: '100%', width: '100%', bgcolor: '#cfffff'
+									}}>
+								{popoverDetails}
 							</Box>
 						</ResponsiveGrid>
 					</Box>

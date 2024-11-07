@@ -5,6 +5,7 @@ export function getCommerce(arraySize: number) {
 	let fakeCommerce = [];
 	for (let i: number = 0; i < arraySize; i++){
 		fakeCommerce.push({
+			id: faker.string.uuid(),
 			deparment: faker.commerce.department(),
 			isbn: faker.commerce.isbn(),
 			price: faker.commerce.price(),
