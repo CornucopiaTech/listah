@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { StrictMode } from 'react';
 import localFont from "next/font/local";
+import { ThemeProvider } from '@mui/material/styles';
+
+
 import "./globals.css";
 
 const geistSans = localFont({
@@ -24,8 +27,20 @@ export default function RootLayout({children,}: Readonly<{children: React.ReactN
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <StrictMode>
+        {/* <ThemeProvider
+          theme={{
+            palette: {
+              primary: {
+                main: '#007FFF',
+                dark: '#0066CC',
+              },
+            },
+          }}
+        > */}
         {children}
+        {/* </ThemeProvider> */}
         </StrictMode>
+
 
       </body>
     </html>

@@ -9,89 +9,26 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid2';
+import Typography from '@mui/material/Typography';
 
 
 
-import TextFieldsFormProps from '@/components/Form/TextFieldsLabelled';
+import TextFieldsLabelled from '@/components/Form/TextFieldsLabelled';
+import ItemForm from './ItemForm';
+import ItemFilters from './ItemFilter';
 
 
-function ItemPopper(props){
-	const [status, setStatus] = React.useState('viewing');
-
-
-	function handleDelete(e){
-		alert('Delete Button Clicked');
-		setStatus('deleting');
-	}
-
-	function handleSave(e){
-		alert('Save Button Clicked');
-		setStatus('viewing');
-	}
-
-	function handleEdit(e){
-		alert('Edit Button Clicked');
-		setStatus('editing');
-	}
-
-	function createForm(givenItem){
-		let result = [];
-		Object.entries(givenItem).forEach(([key, value]) => {
-			if (key !== 'id'){
-				result.push(<TextFieldsFormProps
-						key={key + '-' + value + '-formField'}
-						status={status}
-						label={key} value={value} size='small'/>);
-
-			}});
-		return result;
-	}
-
+function ItemListItem(props){
 	return (
-		<Box 	sx={{ 	border: 1, bgcolor: 'pink',
-						width: '100%',
-					}}>
-			<Box 	key={props.summary + '-Box'} component="form"
-					sx={{ 	'& .MuiTextField-root': { m: 1, width: '25ch' },
-							width: '100%', border: 1, p:1,
-							bgcolor: 'background.paper',
-						}}
-					noValidate
-					autoComplete="off">
-				{createForm(props.item)}
-			</Box>
-			<Stack spacing={2} direction="row" key={props.summary + '-Buttons'}
-					sx={{ 	width: '100%', justifyContent: 'space-around',
-							bgcolor: 'purple', dislay:'inline-flex', p:1,
-						}}>
-				<Button key='edit' size="small"
-						sx={{display: status == 'viewing' ? 'block' : 'none'}}
-						onClick={handleEdit}>
-					Edit
-				</Button>
-				<Button key='save' size="small"
-						sx={{display: status == 'editing' ? 'block' : 'none'}}
-						onClick={handleSave}>
-					Save
-				</Button>
-				<Button key='delete'
-						size="small" onClick={handleDelete}>
-					Delete
-				</Button>
-			</Stack>
-		</Box>
-	);
-}
-
-function PopperButtons(props){
-	return (
-		<ListItem 	 aria-describedby={props.id} disablePadding
+		<ListItem 	aria-describedby={props.id}
 					onClick={props.onClick} size='large'>
 			<ListItemButton>
-			<ListItemIcon>
-				{props.isSelected && <ExpandLessIcon/>}
-			</ListItemIcon>
-			<ListItemText primary={props.label} />
+				<ListItemIcon>
+					{props.isSelected && <ExpandLessIcon/>}
+				</ListItemIcon>
+				<ListItemText primary={props.label} />
 			</ListItemButton>
 		</ListItem>
 	);
@@ -104,11 +41,11 @@ export default function ItemsDisplay(props) {
 
 
 	function handleClick(clickedItem) {
-		if (popperInfo){
-			console.log(`Prerender Anchor: ${popperInfo.summary}   Clicked: ${clickedItem.summary}  `);
-		} else {
-			console.log(`Prerender Anchor: ${popperInfo}   Clicked: ${clickedItem.summary}  `);
-		}
+		// if (popperInfo){
+		// 	console.log(`Prerender Anchor: ${popperInfo.summary}   Clicked: ${clickedItem.summary}  `);
+		// } else {
+		// 	console.log(`Prerender Anchor: ${popperInfo}   Clicked: ${clickedItem.summary}  `);
+		// }
 
 		if (popperInfo && popperInfo.id == clickedItem.id){
 			setPopperInfo( null)
@@ -117,6 +54,12 @@ export default function ItemsDisplay(props) {
 		}
 	};
 
+	function handleSubmitSearch(e){
+		e.preventDefault();
+		// alert('Form submitted! Remove me in prod');
+		console.log(e.target[0].value);
+	}
+
 
 	return (
 		<>
@@ -124,51 +67,84 @@ export default function ItemsDisplay(props) {
 							width: '100%',
 							height: '100%',
 							bgcolor: '#7F4FD4',
-							justifyContent: 'center',
-							alignItems: 'center',
+							p: 3,
+							flexWrap: 'wrap',
 						}}
 				>
-				<List 		sx={{ 	width: '100%', p:1,
-									maxHeight: {'xs':180, 'sm': 300, md: 420, 'lg': 540},
-									overflow: 'auto',
-									bgcolor: 'cyan',
-									justifyContent: "center",
-									alignItems: "flex-start",
-						}}>
-					{
-						// ToDo: Make a vertical stack where the summary contains selected columns for the category
-						// ToDo: Have a ticker button at the start of the list
-						// ToDO: Long press should bring a menu with quick options for editing an item (for example. removing it temporarily)
-						props.data.map((item) => (
-							<PopperButtons 	variant="outlined"
-											key={item.id}
-											aria-describedby={id}
-											sx={{}}
-											onClick={() => handleClick(item)} size='large'
-											isSelected={popperInfo && item.id == popperInfo.id}
-											label={item.summary}
-							/>
-						))
-					}
-				</List>
-				<Box 	sx={{
-							flexGrow: 1, p: 3, display: 'inline-flex',
-							width: '100%',
-							maxHeight: 300,
-							overflow: 'auto',
-							bgcolor: 'yellow',
-							justifyContent: 'center',
-							alignItems: 'center',
-						}}
-						>
-					{
-						popperInfo &&
-						<ItemPopper key='ItemPopper' open={Boolean(popperInfo)}
-									id={id}
-									item={props.data.find((item) => item.id == popperInfo.id)} />
 
-					}
+				<Box 	sx={{ 	width: '100%',
+								height: '100%',
+								bgcolor: 'pink',
+								justifyContent: 'center',
+								alignItems: 'center',
+								p: 3,
+							}}
+					>
+
+						<Typography variant="h3"  gutterBottom
+									sx={{
+											justifyContent: 'center',
+											alignItems: 'center',
+											alignContent: 'center',
+											pt:6,
+										}}>
+							Items
+						</Typography>
 				</Box>
+
+
+				<Grid 	container
+						spacing={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 3 }}
+						columns={{ xs: 2, sm: 6, md: 12 }}
+					>
+					<Grid size={{xs:12, sm:12,  md: 12, lg:3, xl: 3 }} >
+						{/* ToDO: Filter data result with search fields */}
+						<ItemFilters 	searchSubmit={handleSubmitSearch}
+										style={{	border: 1, p: 2,
+													borderColor: 'rgba(50,50,50,0.3)',
+													maxHeight: {xs:360, sm: 480, md: 600, lg: 720, xl: 840},
+
+												}}/>
+					</Grid>
+					<Grid size='grow'>
+						<List 		sx={{ 	width: '100%', p:2,
+											maxHeight: {xs:360, sm: 480, md: 600, lg: 720, xl: 840},
+											overflow: 'auto',
+											bgcolor: 'cyan',
+											justifyContent: "center",
+											alignItems: "flex-start",
+											border: 1,
+											borderColor: 'rgba(50,50,50,0.3)',
+								}}>
+							{
+								// ToDo: Make a vertical stack where the summary contains selected columns for the category
+								// ToDo: Have a ticker button at the start of the list
+								// ToDO: Long press should bring a menu with quick options for editing an item (for example. removing it temporarily)
+								props.data.map((item) => (
+									<ItemListItem 	variant="outlined"
+													key={item.id}
+													aria-describedby={id}
+													sx={{}}
+													onClick={() => handleClick(item)} size='large'
+													isSelected={popperInfo && item.id == popperInfo.id}
+													label={item.summary}
+									/>
+								))
+							}
+						</List>
+					</Grid>
+					<Grid size={{xs:12, sm:12,  md: 12, lg:4, xl: 4 }}>
+						{
+							popperInfo &&
+							<ItemForm 	key='ItemPopper'
+										open={Boolean(popperInfo)}
+										id={id}
+										item={props.data.find((item) => item.id == popperInfo.id)}
+							/>
+						}
+
+					</Grid>
+				</Grid>
 			</Box>
 		</>
 
