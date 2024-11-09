@@ -4,7 +4,7 @@ import { faker } from '@faker-js/faker';
 export function getCommerce(arraySize: number) {
 	let fakeCommerce = [];
 	for (let i: number = 0; i < arraySize; i++){
-		fakeCommerce.push({
+		let generatedObj = {
 			id: faker.string.uuid(),
 			deparment: faker.commerce.department(),
 			isbn: faker.commerce.isbn(),
@@ -13,8 +13,8 @@ export function getCommerce(arraySize: number) {
 			adjective: faker.commerce.productAdjective(),
 			description: faker.commerce.productDescription(),
 			name: faker.commerce.productName(),
-			summary: faker.commerce.productName(),
-		});
+		};
+		fakeCommerce.push({...generatedObj, summary: generatedObj.name });
 	}
 	return fakeCommerce
 }

@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Popover from '@mui/material/Popover';
+import Popper from '@mui/material/Popper';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid2';
 import StarIcon from '@mui/icons-material/Star';
@@ -11,7 +11,7 @@ import TextFieldsFormProps from '@/components/Form/TextFieldsLabelled';
 import {DrawerWidth} from '@/model/defaultData';
 
 
-function ItemPopover(props){
+function ItemPopper(props){
 	const [status, setStatus] = React.useState('viewing');
 
 
@@ -44,7 +44,7 @@ function ItemPopover(props){
 	}
 
 	return (
-		<Popover id={props.id} open={props.open} anchorEl={props.anchor}
+		<Popper id={props.id} open={props.open} anchorEl={props.anchor}
 				sx={{	bgcolor: '#FFB5C0',
 						width: { sm: `calc(90% - ${DrawerWidth}px)` },
 						ml: {DrawerWidth}
@@ -78,11 +78,11 @@ function ItemPopover(props){
 					Delete
 				</Button>
 			</Box>
-	</Popover>
+	</Popper>
 	);
 }
 
-function PopoverButtons(props){
+function PopperButtons(props){
 	return (
 		<Button variant="outlined"
 				// key={props.id}
@@ -97,7 +97,7 @@ function PopoverButtons(props){
 }
 
 
-export default function ItemPopoverButton(props) {
+export default function ItemPopperButton(props) {
 	const [popperInfo, setPopperInfo] = React.useState<HTMLButtonElement | null>(null);
 	const id = popperInfo ? 'simple-popper' : undefined;
 
@@ -135,7 +135,7 @@ export default function ItemPopoverButton(props) {
 						columns={6}>
 					{
 						props.data.map((item) => (
-							<PopoverButtons 	variant="outlined"
+							<PopperButtons 	variant="outlined"
 											key={item.id}
 											aria-describedby={id}
 											sx={{}}
@@ -152,7 +152,7 @@ export default function ItemPopoverButton(props) {
 						columns={6}>
 					{
 						popperInfo &&
-						<ItemPopover key='ItemPopper' open={Boolean(popperInfo)}
+						<ItemPopper key='ItemPopper' open={Boolean(popperInfo)}
 									id={id}
 									item={props.data.find((item) => item.summary = popperInfo.id)} />
 
