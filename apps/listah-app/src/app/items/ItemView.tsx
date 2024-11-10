@@ -3,13 +3,14 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid2';
 
 
 import TextFieldsLabelled from '@/components/Form/TextFieldsLabelled';
 
 
 
-export default function ItemForm(props){
+export default function ItemView(props){
 	const [status, setStatus] = React.useState('viewing');
 
 
@@ -42,8 +43,9 @@ export default function ItemForm(props){
 	}
 
 	return (
+
 		<Box 	sx={{
-						// border: 1,
+					// border: 1,
 						bgcolor: 'pink',
 						width: '100%',
 						flexGrow: 1,
@@ -52,7 +54,7 @@ export default function ItemForm(props){
 						justifyContent: 'center',
 						alignItems: 'center',
 					}}>
-			<Box 	key={props.summary + '-Box'} component="form"
+			<Box 	key={props.item.summary + '-Box'} component="form"
 					sx={{ 	'& .MuiTextField-root': { m: 1, width: '100%', maxWidth: 300, },
 							width: '100%', border: 1, p:2,
 							borderColor: 'rgba(50,50,50,0.3)',
@@ -64,7 +66,7 @@ export default function ItemForm(props){
 					autoComplete="off">
 				{createForm(props.item)}
 			</Box>
-			<Stack spacing={2} direction="row" key={props.summary + '-Buttons'}
+			<Stack spacing={2} direction="row" key={props.item.summary + '-Buttons'}
 					sx={{ 	width: '100%', justifyContent: 'space-around',
 							bgcolor: 'purple', dislay:'inline-flex', p:1,
 						}}>
@@ -84,5 +86,6 @@ export default function ItemForm(props){
 				</Button>
 			</Stack>
 		</Box>
+
 	);
 }

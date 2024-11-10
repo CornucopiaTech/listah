@@ -60,36 +60,19 @@ export function ItemCheckboxLabels() {
 }
 
 
-export default function ItemFilters(props) {
+export default function ItemSearch(props) {
   return (
-	<Box sx={props.style}>
-		<Box 	component='form' sx={{p: 1, m: 1}}
-				onSubmit={props.searchSubmit}>
-			<TextFieldsLabelled
-						key='Search-Items'
-						status='editing'
-						label='Search Field' size='normal'
-						style={{width: '70%'}}/>
-			<Button variant="outlined" size="small" type='submit'
-					sx={{maxWidth: 100,}}>
-						Search
-			</Button>
-		</Box>
-
-		<Box sx={{maxWidth: 300, m: 1,}}>
-			<ItemCheckboxLabels/>
-		</Box>
-
-
-		<Box>
-			<Button variant="outlined" size="small"
-					sx={{maxWidth: 100, ml: 3,}}
-					onClick={props.handleReset}
-				>
-						Reset
-			</Button>
-		</Box>
-
+	<Box 	component='form' sx={{p: 1, m: 1}}
+			onSubmit={props.searchSubmit}>
+		<TextFieldsLabelled
+					key='Search-Items'
+					status='editing'
+					label='Search Field' size='normal'
+					style={{width: '70%'}}/>
+		<Button variant="outlined" size="small" type='submit'
+				sx={{maxWidth: 100,}}>
+					Search
+		</Button>
 	</Box>
   );
 }

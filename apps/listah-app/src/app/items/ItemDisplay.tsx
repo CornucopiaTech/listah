@@ -16,23 +16,11 @@ import Typography from '@mui/material/Typography';
 
 
 import TextFieldsLabelled from '@/components/Form/TextFieldsLabelled';
-import ItemForm from './ItemForm';
+import ItemView from './ItemView';
 import ItemFilters from './ItemFilter';
+import ItemsList from './ItemList';
 
 
-function ItemListItem(props){
-	return (
-		<ListItem 	aria-describedby={props.id}
-					onClick={props.onClick} size='large'>
-			<ListItemButton>
-				<ListItemIcon>
-					{props.isSelected && <ExpandLessIcon/>}
-				</ListItemIcon>
-				<ListItemText primary={props.label} />
-			</ListItemButton>
-		</ListItem>
-	);
-}
 
 
 export default function ItemsDisplay(props) {
@@ -40,7 +28,7 @@ export default function ItemsDisplay(props) {
 	const id = popperInfo ? 'simple-popper' : undefined;
 
 
-	function handleClick(clickedItem) {
+	function handleListClick(clickedItem) {
 		// if (popperInfo){
 		// 	console.log(`Prerender Anchor: ${popperInfo.summary}   Clicked: ${clickedItem.summary}  `);
 		// } else {
@@ -62,7 +50,7 @@ export default function ItemsDisplay(props) {
 
 
 	return (
-		<>
+		<React.Fragment>
 			<Box 	sx={{ 	flexGrow: 1, display: 'block',
 							width: '100%',
 							height: '100%',
@@ -107,46 +95,24 @@ export default function ItemsDisplay(props) {
 												}}/>
 					</Grid>
 					<Grid size='grow'>
-						<List 		sx={{ 	width: '100%', p:2,
-											maxHeight: {xs:360, sm: 480, md: 600, lg: 720, xl: 840},
-											overflow: 'auto',
-											bgcolor: 'cyan',
-											justifyContent: "center",
-											alignItems: "flex-start",
-											border: 1,
-											borderColor: 'rgba(50,50,50,0.3)',
-								}}>
-							{
-								// ToDo: Make a vertical stack where the summary contains selected columns for the category
-								// ToDo: Have a ticker button at the start of the list
-								// ToDO: Long press should bring a menu with quick options for editing an item (for example. removing it temporarily)
-								props.data.map((item) => (
-									<ItemListItem 	variant="outlined"
-													key={item.id}
-													aria-describedby={id}
-													sx={{}}
-													onClick={() => handleClick(item)} size='large'
-													isSelected={popperInfo && item.id == popperInfo.id}
-													label={item.summary}
-									/>
-								))
-							}
-						</List>
+						<ItemsList 	data={props.data} onClick={handleListClick}
+									popperInfo={popperInfo}/>
 					</Grid>
-					<Grid size={{xs:12, sm:12,  md: 12, lg:4, xl: 4 }}>
+					<Grid size={{xs:12, sm:12,  md: 12, lg:3, xl: 3 }}>
 						{
 							popperInfo &&
-							<ItemForm 	key='ItemPopper'
-										open={Boolean(popperInfo)}
-										id={id}
-										item={props.data.find((item) => item.id == popperInfo.id)}
-							/>
+								<ItemView 	key='ItemPopper'
+											open={Boolean(popperInfo)}
+											id={id}
+											popperInfo={popperInfo}
+											item={props.data.find((item) => item.id == popperInfo.id)}
+								/>
 						}
-
 					</Grid>
+
 				</Grid>
 			</Box>
-		</>
+		</React.Fragment>
 
 	);
 }
