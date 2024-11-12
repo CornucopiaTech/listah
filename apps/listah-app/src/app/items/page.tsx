@@ -14,7 +14,7 @@ import ItemsDisplay from './ItemDisplay';
 
 
 
-import { getCommerce } from '@/repository/faker';
+import { getData } from '@/repository/faker';
 
 
 import {DrawerWidth} from '@/model/defaultData';
@@ -23,7 +23,7 @@ import {DrawerWidth} from '@/model/defaultData';
 
 export default function Items() {
 
-	let data = getCommerce(100);
+	let data = getData(100);
 
 	return (
 		<React.Fragment>
@@ -43,7 +43,7 @@ export default function Items() {
 								spacing={{ xs: 1, sm: 2, md: 2 }}
 								// columns={{ xs: 1, sm: 2, md: 2 }}
 							>
-							<ItemsDisplay data={data} />
+							<ItemsDisplay data={data.data} tags={data.tags}/>
 						</Grid>
 					</Box>
 				</Box>
