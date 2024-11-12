@@ -36,27 +36,9 @@ function ListItems(props){
 
 
 export default function ItemsList(props) {
-	// const [popperInfo, setPopperInfo] = React.useState(null);
 	const id = props.popperInfo ? 'simple-popper' : undefined;
 
-
-	// function handleClick(clickedItem) {
-	// 	// if (popperInfo){
-	// 	// 	console.log(`Prerender Anchor: ${popperInfo.summary}   Clicked: ${clickedItem.summary}  `);
-	// 	// } else {
-	// 	// 	console.log(`Prerender Anchor: ${popperInfo}   Clicked: ${clickedItem.summary}  `);
-	// 	// }
-
-	// 	if (popperInfo && popperInfo.id == clickedItem.id){
-	// 		setPopperInfo( null)
-	// 	} else {
-	// 		setPopperInfo(clickedItem)
-	// 	}
-	// };
-
-
 	return (
-
 
 		<List 		sx={{ 	width: '100%', p:2,
 							maxHeight: {xs:360, sm: 480, md: 600, lg: 720, xl: 840},
@@ -83,6 +65,5 @@ export default function ItemsList(props) {
 				))
 			}
 		</List>
-
 	);
 }
