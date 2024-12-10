@@ -27,8 +27,15 @@ export default function FilterItems(props) {
 		item.current.focus();
 	}
 
+	function handleSubmit(event){
+		event.preventDefault();
+		toggleDrawer(false);
+		console.log('Submitted Event: ');
+		console.log(event.target);
+	}
+
 	const DrawerList = (
-	<Box component='form' sx={{ width: 250, p:2, my: 6}} role="presentation" >
+	<Box component='form' sx={{ width: 250, p:2, my: 6}} role="presentation"  onSubmit={handleSubmit}>
 		<Accordion ref={tagsRef} sx={{ boxShadow: 0}} onClick={() => focusAccordion(tagsRef)}>
 			<AccordionSummary
 				expandIcon={<ArrowDropDownIcon />}
@@ -65,7 +72,7 @@ export default function FilterItems(props) {
 				</FormGroup>
 			</AccordionDetails>
 		</Accordion>
-		<Button onClick={toggleDrawer(false)}>Apply</Button>
+		<Button onClick={toggleDrawer(false)}  type="submit" >Apply</Button>
 	</Box>
   );
 
