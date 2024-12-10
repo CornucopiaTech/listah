@@ -3,42 +3,55 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid2';
+
 
 
 import TextFieldsLabelled from '@/components/Form/TextFieldsLabelled';
 
-
+type ListItemType = {}
 
 export default function ItemView(props){
 	const [status, setStatus] = React.useState('viewing');
 
 
-	function handleDelete(e){
+	function handleDelete(e: React.MouseEvent<HTMLButtonElement>){
 		alert('Delete Button Clicked');
 		setStatus('deleting');
 	}
 
-	function handleSave(e){
+	function handleSave(e: React.MouseEvent<HTMLButtonElement>){
 		alert('Save Button Clicked');
 		setStatus('viewing');
 	}
 
-	function handleEdit(e){
+	function handleEdit(e: React.MouseEvent<HTMLButtonElement>){
 		alert('Edit Button Clicked');
 		setStatus('editing');
 	}
 
-	function createForm(givenItem){
-		let result = [];
-		Object.entries(givenItem).forEach(([key, value]) => {
-			if (key !== 'id'){
-				result.push(<TextFieldsLabelled
-						key={key + '-' + value + '-formField'}
+	function createForm(givenItem: ListItemType){
+		let result: React.ReactNode[] = [];
+		Object.entries(givenItem).forEach(([akey, avalue]) => {
+			if (akey == 'tags'){
+				result.push(
+					<TextFieldsLabelled
+						key={akey + '-' +'tags-formField'}
 						status={status}
-						label={key} value={value} size='small'/>);
+						label='comma separated tags'
+						value={avalue.join(',')}
+						size='small'/>
+				);
+			}
+			else if (akey !== 'id'){
+				result.push(<TextFieldsLabelled
+						key={akey + '-' + avalue + '-formField'}
+						status={status}
+						label={akey.toLowerCase()}
+						value={avalue}
+						size='small'/>);
 
 			}});
+
 		return result;
 	}
 
@@ -50,11 +63,11 @@ export default function ItemView(props){
 						width: '100%',
 						flexGrow: 1,
 						height: '100%',
-
 						justifyContent: 'center',
 						alignItems: 'center',
 					}}>
-			<Box 	key={props.item.summary + '-Box'} component="form"
+			<Box 	component="form"
+					key={props.selected.summary + '-Box'}
 					sx={{ 	'& .MuiTextField-root': { m: 1, width: '100%', maxWidth: 300, },
 							width: '100%', border: 1, p:2,
 							borderColor: 'rgba(50,50,50,0.3)',
@@ -64,9 +77,9 @@ export default function ItemView(props){
 						}}
 					noValidate
 					autoComplete="off">
-				{createForm(props.item)}
+				{createForm(props.selected)}
 			</Box>
-			<Stack spacing={2} direction="row" key={props.item.summary + '-Buttons'}
+			<Stack spacing={2} direction="row" key={props.selected.summary + '-Buttons'}
 					sx={{ 	width: '100%', justifyContent: 'space-around',
 							bgcolor: 'purple', dislay:'inline-flex', p:1,
 						}}>

@@ -20,7 +20,24 @@ import ItemForm from './ItemView';
 import ItemFilters from './ItemFilter';
 
 
-function ListItems(props){
+function EachListItem(props){
+	/**
+	 * Component that lists out the items within the /items page.
+	 * When an item from this list is clicked, the details of the items will populate the div component under or beside the list, depending on the viewport.
+	 */
+	// if (props.isSelected){
+	// 	return (
+	// 		<ListItem 	aria-describedby={props.id}
+	// 					onClick={props.onClick} size='large'>
+	// 			<ListItemButton>
+	// 				<ListItemIcon>
+	// 					{props.isSelected && <ExpandLessIcon/>}
+	// 				</ListItemIcon>
+	// 				<ListItemText primary={props.label} />
+	// 			</ListItemButton>
+	// 		</ListItem>
+	// 	);
+	// }
 	return (
 		<ListItem 	aria-describedby={props.id}
 					onClick={props.onClick} size='large'>
@@ -37,11 +54,13 @@ function ListItems(props){
 
 export default function ItemsList(props) {
 	const id = props.popperInfo ? 'simple-popper' : undefined;
+	const clickedItem = React.useRef(null);
+	// const clickedItem = React.useContext(ClickedItemContext);
 
 	return (
 
 		<List 		sx={{ 	width: '100%', p:2,
-							maxHeight: {xs:360, sm: 480, md: 600, lg: 720, xl: 840},
+							maxHeight: {xs:240, sm: 240, md: 360, lg: 720, xl: 840},
 							overflow: 'auto',
 							bgcolor: 'cyan',
 							justifyContent: "center",
@@ -54,7 +73,7 @@ export default function ItemsList(props) {
 				// ToDo: Have a ticker button at the start of the list
 				// ToDO: Long press should bring a menu with quick options for editing an item (for example. removing it temporarily)
 				props.data.map((item) => (
-					<ListItems 	variant="outlined"
+					<EachListItem 	variant="outlined"
 									key={item.id}
 									aria-describedby={id}
 									sx={{}}

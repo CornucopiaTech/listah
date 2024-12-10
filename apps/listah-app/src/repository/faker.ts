@@ -9,6 +9,7 @@ interface Airline {
 	"record Locator": string;
 	seat: string;
 	summary: string;
+	category: string;
 	tags: Array<string>;
 }
 
@@ -21,6 +22,7 @@ interface Book {
 	series: string;
 	title: string;
 	summary: string;
+	category: string;
 	tags: Array<string>;
 }
 
@@ -34,6 +36,7 @@ interface Commerce {
 	description: string;
 	name: string;
 	summary: string;
+	category: string;
 	tags: Array<string>;
 }
 
@@ -55,6 +58,7 @@ interface Finance {
 	'transaction Description': string;
 	'transaction Type': string;
 	summary: string;
+	category: string;
 	tags: Array<string>;
 }
 
@@ -69,14 +73,21 @@ interface Categories {
 interface FakeData {
 	data: Array<Airline> | Array<Book> | Array<Commerce> | Array<Finance>;
 	tags: Array<string>;
+	categories: Array<string>;
 }
 
 
 
 export function getAirline(numRecords: number, possibleTags: Array<string>):  Array<Airline> {
 	let faked: Array<Airline> = new Array(numRecords);
-	let currentTags: Array<string> = new Array(Math.ceil(possibleTags.length / 5));
+	let numTags: number = Math.ceil(possibleTags.length / 5);
+
 	for (let i: number = 0; i < numRecords; i++){
+		let currentTags: Array<string> = new Array(numTags);
+		for (let i: number = 0; i < numTags; i++){
+			currentTags[i] = possibleTags[Math.floor(possibleTags.length * Math.random())];
+		}
+
 		let generatedObj: Airline = {
 			id: faker.string.uuid(),
 			"aircraft Type": faker.airline.aircraftType(),
@@ -85,7 +96,8 @@ export function getAirline(numRecords: number, possibleTags: Array<string>):  Ar
 			"flight Number": faker.airline.flightNumber(),
 			"record Locator": faker.airline.recordLocator(),
 			seat: faker.airline.seat(),
-			tags: currentTags.map(() => (possibleTags[Math.floor(possibleTags.length * Math.random())])),
+			tags: currentTags,
+			category: 'Airline',
 			summary: "",
 		};
 		faked[i] = {...generatedObj, summary: generatedObj['flight Number'] +
@@ -96,9 +108,14 @@ export function getAirline(numRecords: number, possibleTags: Array<string>):  Ar
 
 export function getBook(numRecords: number, possibleTags: Array<string>): Array<Book> {
 	let faked: Array<Book> = new Array(numRecords);
-	let currentTags: Array<string> = new Array(Math.ceil(possibleTags.length / 5));
+	let numTags: number = Math.ceil(possibleTags.length / 5);
 
 	for (let i: number = 0; i < numRecords; i++){
+		let currentTags: Array<string> = new Array(numTags);
+		for (let i: number = 0; i < numTags; i++){
+			currentTags[i] = possibleTags[Math.floor(possibleTags.length * Math.random())];
+		}
+
 		let generatedObj: Book = {
 			id: faker.string.uuid(),
 			author: faker.book.author(),
@@ -107,18 +124,28 @@ export function getBook(numRecords: number, possibleTags: Array<string>): Array<
 			publisher: faker.book.publisher(),
 			series: faker.book.series(),
 			title: faker.book.title(),
-			tags: currentTags.map(() => (possibleTags[Math.floor(possibleTags.length * Math.random())])),
+			tags: currentTags,
+			category: 'Books',
 			summary: ""
 		};
 		faked[i] = {...generatedObj, summary: generatedObj.title };
 	}
+
+	// console.log(faked[0]);
 	return faked
 }
 
 export function getCommerce(numRecords: number, possibleTags: Array<string>): Array<Commerce> {
 	let faked: Array<Commerce> = new Array(numRecords);
-	let currentTags: Array<string> = new Array(Math.ceil(possibleTags.length / 5));
+	let numTags: number = Math.ceil(possibleTags.length / 5);
+
+
 	for (let i: number = 0; i < numRecords; i++){
+		let currentTags: Array<string> = new Array(numTags);
+		for (let i: number = 0; i < numTags; i++){
+			currentTags[i] = possibleTags[Math.floor(possibleTags.length * Math.random())];
+		}
+
 		let generatedObj: Commerce = {
 			id: faker.string.uuid(),
 			department: faker.commerce.department(),
@@ -128,8 +155,9 @@ export function getCommerce(numRecords: number, possibleTags: Array<string>): Ar
 			adjective: faker.commerce.productAdjective(),
 			description: faker.commerce.productDescription(),
 			name: faker.commerce.productName(),
-			tags: currentTags.map(() => (possibleTags[Math.floor(possibleTags.length * Math.random())])),
+			tags: currentTags,
 			summary: "",
+			category: 'Commerce',
 		};
 		faked[i] = {...generatedObj, summary: generatedObj.name };
 	}
@@ -138,8 +166,14 @@ export function getCommerce(numRecords: number, possibleTags: Array<string>): Ar
 
 export function getFinance(numRecords: number, possibleTags: Array<string>): Array<Finance>{
 	let faked: Array<Finance> = new Array(numRecords);
-	let currentTags: Array<string> = new Array(Math.ceil(possibleTags.length / 5));
+	let numTags: number = Math.ceil(possibleTags.length / 5);
+
 	for (let i: number = 0; i < numRecords; i++){
+		let currentTags: Array<string> = new Array(numTags);
+		for (let i: number = 0; i < numTags; i++){
+			currentTags[i] = possibleTags[Math.floor(possibleTags.length * Math.random())];
+		}
+
 		let generatedObj: Finance = {
 			id: faker.string.uuid(),
 			'account name': faker.finance.accountName(),
@@ -157,7 +191,8 @@ export function getFinance(numRecords: number, possibleTags: Array<string>): Arr
 			'routing Number': faker.finance.routingNumber(),
 			'transaction Description': faker.finance.transactionDescription(),
 			'transaction Type': faker.finance.transactionType(),
-			tags: currentTags.map(() => (possibleTags[Math.floor(possibleTags.length * Math.random())])),
+			tags: currentTags,
+			category: 'Finance',
 			summary: "",
 		};
 		faked[i] = {
@@ -168,30 +203,6 @@ export function getFinance(numRecords: number, possibleTags: Array<string>): Arr
 	return faked
 }
 
-export function prevGetData(arraySize: number, possibleTags: Array<string>): [] {
-	let fakedCommerce: Array<Commerce> = getCommerce(arraySize);
-	let commerceCategories: Array<string> = fakedCommerce.map((item: Commerce) => (item.department));
-	let setCommerceCategories: Set<string> = new Set(commerceCategories);
-	commerceCategories = Array.from(setCommerceCategories.values())
-
-	let fakedAirline: Array<Airline> = getAirline(arraySize);
-	let airlineCategories: Array<string> = fakedAirline.map((item: Airline) => (item.department));
-	let setAirlineCategories: Set<string> = new Set(airlineCategories);
-	airlineCategories = Array.from(setAirlineCategories.values())
-
-
-	return {
-		data: fakedCommerce.concat(fakedAirline),
-		categories:{
-			commerce: commerceCategories,
-
-	}}.concat(
-		getAirline(arraySize),
-		getFinance(arraySize),
-		getBook(arraySize),
-	)
-}
-
 export function getData(arraySize: number): FakeData {
 	let allTags: Array<string> = new Array(Math.ceil(arraySize / 2));
 	for (let i:number = 0; i < allTags.length; i++){
@@ -199,9 +210,15 @@ export function getData(arraySize: number): FakeData {
 	}
 
 	return {
-		data: getAirline(arraySize, allTags).concat(getBook(arraySize, allTags), getCommerce(arraySize, allTags), getFinance(arraySize, allTags)),
+		data: getBook(arraySize, allTags),
 		tags: allTags,
+		categories: ['Airline', 'Book', 'Commerce', 'Finance']
 	}
+
+	// return {
+	// 	data: getAirline(arraySize, allTags).concat(getBook(arraySize, allTags), getCommerce(arraySize, allTags), getFinance(arraySize, allTags)),
+	// 	tags: allTags,
+	// }
 }
 
 
