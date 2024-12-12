@@ -81,12 +81,13 @@ interface FakeData {
 export function getAirline(numRecords: number, possibleTags: Array<string>):  Array<Airline> {
 	let faked: Array<Airline> = new Array(numRecords);
 	let numTags: number = Math.ceil(possibleTags.length / 5);
+	let j = 0;
 
 	for (let i: number = 0; i < numRecords; i++){
-		let currentTags: Array<string> = new Array(numTags);
-		for (let i: number = 0; i < numTags; i++){
-			currentTags[i] = possibleTags[Math.floor(possibleTags.length * Math.random())];
+		if (++j >= possibleTags.length - numTags ){
+			j = 0;
 		}
+		let currentTags = possibleTags.slice(j, numTags);
 
 		let generatedObj: Airline = {
 			id: faker.string.uuid(),
@@ -110,11 +111,13 @@ export function getBook(numRecords: number, possibleTags: Array<string>): Array<
 	let faked: Array<Book> = new Array(numRecords);
 	let numTags: number = Math.ceil(possibleTags.length / 5);
 
+	let j = 0;
+
 	for (let i: number = 0; i < numRecords; i++){
-		let currentTags: Array<string> = new Array(numTags);
-		for (let i: number = 0; i < numTags; i++){
-			currentTags[i] = possibleTags[Math.floor(possibleTags.length * Math.random())];
+		if (++j >= possibleTags.length - numTags ){
+			j = 0;
 		}
+		let currentTags = possibleTags.slice(j, numTags);
 
 		let generatedObj: Book = {
 			id: faker.string.uuid(),
@@ -138,13 +141,13 @@ export function getBook(numRecords: number, possibleTags: Array<string>): Array<
 export function getCommerce(numRecords: number, possibleTags: Array<string>): Array<Commerce> {
 	let faked: Array<Commerce> = new Array(numRecords);
 	let numTags: number = Math.ceil(possibleTags.length / 5);
-
+	let j = 0;
 
 	for (let i: number = 0; i < numRecords; i++){
-		let currentTags: Array<string> = new Array(numTags);
-		for (let i: number = 0; i < numTags; i++){
-			currentTags[i] = possibleTags[Math.floor(possibleTags.length * Math.random())];
+		if (++j >= possibleTags.length - numTags ){
+			j = 0;
 		}
+		let currentTags = possibleTags.slice(j, numTags);
 
 		let generatedObj: Commerce = {
 			id: faker.string.uuid(),
@@ -168,11 +171,13 @@ export function getFinance(numRecords: number, possibleTags: Array<string>): Arr
 	let faked: Array<Finance> = new Array(numRecords);
 	let numTags: number = Math.ceil(possibleTags.length / 5);
 
+	let j = 0;
+
 	for (let i: number = 0; i < numRecords; i++){
-		let currentTags: Array<string> = new Array(numTags);
-		for (let i: number = 0; i < numTags; i++){
-			currentTags[i] = possibleTags[Math.floor(possibleTags.length * Math.random())];
+		if (++j >= possibleTags.length - numTags ){
+			j = 0;
 		}
+		let currentTags = possibleTags.slice(j, numTags);
 
 		let generatedObj: Finance = {
 			id: faker.string.uuid(),
@@ -223,3 +228,18 @@ export function getData(arraySize: number): FakeData {
 
 
 // console.log(getCommerce(3))
+
+
+// Requiring fs module in which
+// writeFile function is defined.
+import * as fs from 'fs';
+
+// Data which will write in a file.
+let data = getData(500)
+
+// Write data in 'Output.txt' .
+fs.writeFile('./fake_data.json', JSON.stringify(data), (err) => {
+
+    // In case of a error throw err.
+    if (err) throw err;
+})

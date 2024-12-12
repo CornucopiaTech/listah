@@ -15,79 +15,80 @@ import TuneIcon from '@mui/icons-material/Tune';
 
 
 export default function FilterItems(props) {
-	const [open, setOpen] = React.useState(false);
 	const tagsRef = React.useRef(null);
 	const categoryRef = React.useRef(null);
-
-	const toggleDrawer = (newOpen: boolean) => () => {
-		setOpen(newOpen);
-	};
 
 	function focusAccordion(item){
 		item.current.focus();
 	}
 
-	function handleSubmit(event){
-		event.preventDefault();
-		toggleDrawer(false);
-		console.log('Submitted Event: ');
-		console.log(event.target);
-	}
 
 	const DrawerList = (
-	<Box component='form' sx={{ width: 250, p:2, my: 6}} role="presentation"  onSubmit={handleSubmit}>
-		<Accordion ref={tagsRef} sx={{ boxShadow: 0}} onClick={() => focusAccordion(tagsRef)}>
-			<AccordionSummary
-				expandIcon={<ArrowDropDownIcon />}
-				aria-controls="panel1-content"
-				id="panel1-header"
-			>
-				<Typography>Category</Typography>
-			</AccordionSummary>
-			<AccordionDetails sx={{ maxHeight: 300, overflow: 'auto',}}>
-				<FormGroup>
-					{props.categories.map((item) => (
-							<FormControlLabel 	key={item + '-formControlLabel'}
+		// ToDo: Add a count for the number of items that fall under a particular filter option.
+		<Box component='form' sx={{ width: 250, p:2, my: 6}} role="presentation"  onSubmit={props.handleSubmit}>
+			<Accordion ref={tagsRef} sx={{ boxShadow: 0}} onClick={() => focusAccordion(tagsRef)}>
+				<AccordionSummary
+					expandIcon={<ArrowDropDownIcon />}
+					aria-controls="panel1-content"
+					id="panel1-header"
+				>
+					<Typography>Category</Typography>
+				</AccordionSummary>
+				<AccordionDetails sx={{ maxHeight: 300, overflow: 'auto',}}>
+					<FormGroup>
+						{props.categories.map((item) => (
+							<FormControlLabel 	key={item + '-checkBoxFormControlLabel'}
 												control={<Checkbox />}
-												label={item} />
-						))}
-				</FormGroup>
-			</AccordionDetails>
-		</Accordion>
-		<Accordion ref={categoryRef} sx={{ boxShadow: 0}} onClick={() => focusAccordion(categoryRef)}>
-			<AccordionSummary
-				expandIcon={<ArrowDropDownIcon />}
-				aria-controls="panel2-content"
-				id="panel2-header"
-			>
-				<Typography>Tags</Typography>
-			</AccordionSummary>
-			<AccordionDetails sx={{ maxHeight: 300, overflow: 'auto',}}>
-				<FormGroup>
-					{props.tags.map((item) => (
-						<FormControlLabel 	key={item + '-formControlLabel'}
-											control={<Checkbox />}
-											label={item} />
-						))}
-				</FormGroup>
-			</AccordionDetails>
-		</Accordion>
-		<Button onClick={toggleDrawer(false)}  type="submit" >Apply</Button>
-	</Box>
-  );
+												label={item}
+												checked={props.checkStatus.get(item)}
+												value={props.checkStatus.get(item)}
+												name={item}
+												onChange={props.handleCheckStatus}
+							/>
+							))}
+					</FormGroup>
+				</AccordionDetails>
+			</Accordion>
+			<Accordion ref={categoryRef} sx={{ boxShadow: 0}} onClick={() => focusAccordion(categoryRef)}>
+				<AccordionSummary
+					expandIcon={<ArrowDropDownIcon />}
+					aria-controls="panel2-content"
+					id="panel2-header"
+				>
+					<Typography>Tags</Typography>
+				</AccordionSummary>
+				<AccordionDetails sx={{ maxHeight: 300, overflow: 'auto',}}>
+					<FormGroup>
+						{props.tags.map((item) => (
+							<FormControlLabel 	key={item + '-checkBoxFormControlLabel'}
+												control={<Checkbox />}
+												label={item}
+												checked={props.checkStatus.get(item)}
+												value={props.checkStatus.get(item)}
+												name={item}
+												onChange={props.handleCheckStatus}
+							/>
+							))}
+					</FormGroup>
+				</AccordionDetails>
+			</Accordion>
+			<Button type="submit" >Apply</Button>
+		</Box>
+	);
 
-  return (
-	<Box
-		sx={{
-				mx: 3,
-			}}>
-      <Button onClick={toggleDrawer(true)} startIcon={<TuneIcon />}>
-		Filter
+	return (
+		<Box
+			sx={{
+					mx: 3,
+				}}>
+			<Button onClick={props.toggleDrawer(true)} startIcon={<TuneIcon />}>
+				Filter
+			</Button>
 
-	  </Button>
-      <Drawer open={open} onClose={toggleDrawer(false)}>
-        {DrawerList}
-      </Drawer>
-	  </Box>
-  );
+			<Drawer open={props.open} onClose={props.toggleDrawer(false)}>
+				{DrawerList}
+			</Drawer>
+
+		</Box>
+	);
 }

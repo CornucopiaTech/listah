@@ -12,9 +12,6 @@ import ItemsListings from './ItemListing';
 import { ItemStyleContext } from '@/hooks/context/itemStylingContext';
 
 
-
-
-
 // Application Reducers
 
 type ListItemType = {}
@@ -70,15 +67,18 @@ export default function ItemsDisplay(props) {
 
 				</Grid>
 				<Grid size={{xs:12, sm:12,  md: 12, lg:5, xl: 5 }}>
-					{/* Item Display list */}
+					{/* Item Display list.
+						This renders only if an item has been selected and the selected item was not filtered out by the most recent filter.
+					*/}
 
 					{
 						selectedItem &&
-							<ItemView 	key='ItemPopper'
-										open={Boolean(selectedItem)}
-										id={id}
-										selected={selectedItem}
-							/>
+						props.data.filter((item) => item.id == selectedItem.id).length != 0  &&
+						<ItemView 	key='ItemPopper'
+									open={Boolean(selectedItem)}
+									id={id}
+									selected={selectedItem}
+						/>
 					}
 				</Grid>
 

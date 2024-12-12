@@ -16,7 +16,7 @@ export default function SortItems() {
 		setSorter(event.target.value as string);
 	};
 
-	// console.log(`Value of soerter: ${sorter}`);
+	// console.log(`Value of sorter: ${sorter}`);
 
 	return (
 		<Box sx={{ maxWidth: 300, width: 150 }}>
