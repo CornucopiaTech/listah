@@ -25,7 +25,7 @@ export default function FilterItems(props) {
 
 	const DrawerList = (
 		// ToDo: Add a count for the number of items that fall under a particular filter option.
-		<Box component='form' sx={{ width: 250, p:2, my: 6}} role="presentation"  onSubmit={props.handleSubmit}>
+		<Box component='form' sx={{ width: 250, p:2, my: 6}} role="presentation" >
 			<Accordion ref={tagsRef} sx={{ boxShadow: 0}} onClick={() => focusAccordion(tagsRef)}>
 				<AccordionSummary
 					expandIcon={<ArrowDropDownIcon />}
@@ -72,7 +72,9 @@ export default function FilterItems(props) {
 					</FormGroup>
 				</AccordionDetails>
 			</Accordion>
-			<Button type="submit" >Apply</Button>
+			<Button onClick={props.handleSubmit} >Apply</Button>
+			<Button onClick={props.handleReset} >Reset</Button>
+			<Button sx={{ display: 'block'}} onClick={props.closeDrawer} >Close</Button>
 		</Box>
 	);
 

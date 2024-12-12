@@ -26,18 +26,24 @@ import { getData } from '@/repository/fetcher';
 export default function Items() {
 	const styling = React.useContext(ItemStyleContext);
 	let data = getData([''], '');
-	const [drawerOpen, setDrawerOpen] = React.useState(false);
-	const [givenFilters, setGivenFilters] = React.useState([]);
-	const visibleData = filterData().slice(0, 200);
-
-	let categories = Array.from( new Set(visibleData.map((item) => item.category)));
-	let tags = Array.from(new Set(visibleData.map((item) => item.tags).flat()));
+	let categories = Array.from( new Set(data.map((item) => item.category)));
+	let tags = Array.from(new Set(data.map((item) => item.tags).flat()));
 
 	// Define initial state of the filter boxes
 	let initialCheckStatus = new Map();
 	categories.forEach((item) => initialCheckStatus.set(item, false));
 	tags.forEach((item) => initialCheckStatus.set(item, false));
 	const [checkStatus, updateCheckStatus] = useImmer(initialCheckStatus);
+	const givenFilters = new Array();
+	checkStatus.forEach((avalue, akey, map) => {
+		if (avalue){
+			givenFilters.push(akey);
+		}
+	});
+	const visibleData = filterData().slice(0, 200);
+	const [drawerOpen, setDrawerOpen] = React.useState(false);
+
+
 
 
 	function filterData(){
@@ -59,13 +65,14 @@ export default function Items() {
 	function handleSubmit(event){
 		event.preventDefault();
 		setDrawerOpen(false);
-		let parsedValues = new Array();
-		checkStatus.forEach((avalue, akey, map) => {
-			if (avalue){
-				parsedValues.push(akey);
-			}
+	}
+
+	function handleReset(event){
+		updateCheckStatus(draft => {
+			initialCheckStatus.forEach((value, key, map) => {
+				draft.set(key, value);
+			})
 		});
-		setGivenFilters(parsedValues);
 	}
 
 
@@ -89,8 +96,10 @@ export default function Items() {
 								<FilterItems 	tags={tags}
 												categories={categories}
 												handleSubmit={handleSubmit}
+												handleReset={handleReset}
 												handleCheckStatus={handleCheckStatus}
 												open={drawerOpen}
+												closeDrawer={() => {setDrawerOpen(false)}}
 												toggleDrawer={toggleDrawer}
 												checkStatus={checkStatus}/>
 								<SortItems />
