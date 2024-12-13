@@ -1,5 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
+  // output   = "../../apps/frontend/app/lib/models/clients"
   previewFeatures = ["prismaSchemaFolder", "multiSchema"]
 }
 
@@ -8,3 +9,5 @@ datasource db {
   url      = env("DATABASE_CONNECTION_URL")
   schemas  = ["app_logs", "api_logs", "logs", "app"]
 }
+
+// listah/prisma/schema/config.prisma
