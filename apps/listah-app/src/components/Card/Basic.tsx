@@ -4,13 +4,16 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 
 
-import CardButton from '../Button/Card';
-import { CardHeadingTypography, CardContentTypography } from '../Typography/Card';
+import Button from '@mui/material/Button';import { CardHeadingTypography, CardContentTypography } from '../Typography/Card';
 
 
 export default function BasicCard(props) {
   const cardActions = props.cardActions.map((item) => (
-		<CardButton key={item + 'Button'} label={item} />
+    <Button key={item + 'Button'}
+        size="small">{item}
+    </Button>
+
+
 	));
 
   return (

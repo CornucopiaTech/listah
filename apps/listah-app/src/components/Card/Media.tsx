@@ -4,7 +4,6 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import CardActionArea from '@mui/material/CardActionArea';
 import Button from '@mui/material/Button';
-import CardButton from '../Button/Card';
 
 import { CardHeadingTypography, CardContentTypography } from '../Typography/Card';
 
@@ -12,7 +11,9 @@ import { CardHeadingTypography, CardContentTypography } from '../Typography/Card
 
 export default function MediaCard(props) {
 	const cardActions = props.cardActions.map((item) => (
-		<CardButton key={item} label={item} />
+    <Button key={item}
+        size="small">{item}
+    </Button>
 	));
 
   console.log(props.imageHeight);
@@ -36,8 +37,10 @@ export default function MediaCard(props) {
 
 export function ImgMediaCard(props) {
 	const cardActions = props.cardActions.map((item) => (
-		<CardButton key={item} label={item} />
-	));
+    <Button key={item}
+        size="small">{item}
+    </Button>
+    ));
 
   return (
     <Card sx={{ maxWidth: 345 }}>

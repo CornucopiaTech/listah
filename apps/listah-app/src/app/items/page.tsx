@@ -119,6 +119,35 @@ export default function Items() {
 		}
 	};
 
+	// const [selectedItem, updateSelectedItem] = useImmer<ListItemType | null>(null);
+	// const id = selectedItem ? 'simple-popper' : undefined;
+	// function handleListClick(clicked: ListItemType) {
+	// 	if (selectedItem && selectedItem.id == clicked.id){
+	// 		updateSelectedItem(draft => null);
+	// 	} else {
+	// 		updateSelectedItem(draft => {
+	// 			if (draft){
+	// 				clicked.forEach((value, key, map) => {
+	// 					draft.set(key, value);
+	// 				})
+	// 			} else {
+	// 				draft = {}
+	// 				clicked.forEach((value, key, map) => {
+	// 					draft.set(key, value);
+	// 				})
+	// 			}
+	// 		});
+	// 	}
+	// };
+
+
+
+	// ##################################################################
+	// ########### Viewing evolution ####################################
+	// ##################################################################
+	const [itemViewMode, setItemViewMode] = React.useState<string>('viewing');
+	function handleitemViewTextChange(event, itemAttributeLabel, )
+
 
 	return (
 		<React.Fragment>

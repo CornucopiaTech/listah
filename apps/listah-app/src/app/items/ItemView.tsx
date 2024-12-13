@@ -20,6 +20,7 @@ import AddIcon from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Grid from '@mui/material/Grid2';
+import TextField from '@mui/material/TextField';
 
 
 import TextFieldsLabelled from '@/components/Form/TextFieldsLabelled';
@@ -56,6 +57,28 @@ export default function ItemView(props){
 	}
 
 	function addFormField(itemLabel: string, itemValue: string){
+		return 	(
+			<TextField
+						required
+						disabled
+						multiline
+						key={'TextField-' + props.value}
+						label={props.label}
+						value={text}
+						onChange={handleFieldChange}
+						size={props.size}
+						sx={props.style}
+			/>
+		);
+		return <TextFieldsLabelled
+					key={itemLabel + '-' + itemValue + '-formField'}
+					status={status}
+					label={itemLabel.toLowerCase()}
+					value={itemValue}
+					size='small'/>
+	}
+
+	function prevAddFormField(itemLabel: string, itemValue: string){
 		return <TextFieldsLabelled
 					key={itemLabel + '-' + itemValue + '-formField'}
 					status={status}
