@@ -6,6 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid2';
 
 import {enableMapSet} from "immer"
 
@@ -16,6 +17,9 @@ import NavAppBar from '@/components/NavBar/AppBar';
 import ItemsDisplay from './ItemDisplay';
 import SortItems from './ItemSort';
 import FilterItems from './ItemFiltering';
+import ItemHeading from './ItemHeading';
+import ItemView from './ItemView';
+import ItemsListings from './ItemListing';
 
 
 // Defined Reducers
@@ -23,29 +27,63 @@ import { ItemStyleContext } from '@/hooks/context/itemStylingContext';
 import { getData } from '@/repository/fetcher';
 
 
+type ListItemType = {}
+
+
 export default function Items() {
 	const styling = React.useContext(ItemStyleContext);
+
+
+	// ##################################################################
+	// ########## Initial data, tags and categories #####################
+	// ##################################################################
 	let data = getData([''], '');
 	let categories = Array.from( new Set(data.map((item) => item.category)));
 	let tags = Array.from(new Set(data.map((item) => item.tags).flat()));
 
-	// Define initial state of the filter boxes
-	let initialCheckStatus = new Map();
-	categories.forEach((item) => initialCheckStatus.set(item, false));
-	tags.forEach((item) => initialCheckStatus.set(item, false));
-	const [checkStatus, updateCheckStatus] = useImmer(initialCheckStatus);
+
+	// ##################################################################
+	// ########### Filter checkboxes evolution ##########################
+	// ##################################################################
+	let initialFilterChecked = new Map();
+	categories.forEach((item) => initialFilterChecked.set(item, false));
+	tags.forEach((item) => initialFilterChecked.set(item, false));
+
+	const [filterChecked, updateFilterChecked] = useImmer(initialFilterChecked);
 	const givenFilters = new Array();
-	checkStatus.forEach((avalue, akey, map) => {
+	filterChecked.forEach((avalue, akey, map) => {
 		if (avalue){
 			givenFilters.push(akey);
 		}
 	});
-	const visibleData = filterData().slice(0, 200);
-	const [drawerOpen, setDrawerOpen] = React.useState(false);
+
+	function handleFilterChecked(event: React.MouseEvent<HTMLInputElement>) {
+		updateFilterChecked(draft => draft.set(event.target.name, event.target.checked));
+		setSelectedItem(null);
+	}
+
+	function handleFilterApply(event: React.MouseEvent<HTMLButtonElement>){
+		event.preventDefault();
+		setFilterDrawerOpen(false);
+		// Clear the selected item
+		setSelectedItem(null);
+	}
+
+	function handleFilterReset(event: React.MouseEvent<HTMLButtonElement>){
+		updateFilterChecked(draft => {
+			initialFilterChecked.forEach((value, key, map) => {
+				draft.set(key, value);
+			})
+		});
+		// Clear the selected item
+		setSelectedItem(null);
+	}
 
 
-
-
+	// ##################################################################
+	// ########### Page data evolution ##################################
+	// ##################################################################
+	const visibleData = filterData().slice(0, 20);
 	function filterData(){
 		if (givenFilters.length == 0){
 			return data;
@@ -58,26 +96,27 @@ export default function Items() {
 		return finalData
 	}
 
-	function handleCheckStatus(event) {
-		updateCheckStatus(draft => draft.set(event.target.name, event.target.checked));
-	}
 
-	function handleSubmit(event){
-		event.preventDefault();
-		setDrawerOpen(false);
-	}
-
-	function handleReset(event){
-		updateCheckStatus(draft => {
-			initialCheckStatus.forEach((value, key, map) => {
-				draft.set(key, value);
-			})
-		});
-	}
+	// ##################################################################
+	// ########### Drawer evolution #####################################
+	// ##################################################################
+	const [filterDrawerOpen, setFilterDrawerOpen] = React.useState(false);
+	function toggleFilterDrawer(newOpen: boolean) {
+		setFilterDrawerOpen(newOpen);
+	};
 
 
-	const toggleDrawer = (newOpen: boolean) => () => {
-		setDrawerOpen(newOpen);
+	// ##################################################################
+	// ########### Listing evolution ####################################
+	// ##################################################################
+	const [selectedItem, setSelectedItem] = React.useState<ListItemType | null>(null);
+	const id = selectedItem ? 'simple-popper' : undefined;
+	function handleListClick(clicked: ListItemType) {
+		if (selectedItem && selectedItem.id == clicked.id){
+			setSelectedItem(null);
+		} else {
+			setSelectedItem(clicked);
+		}
 	};
 
 
@@ -88,24 +127,36 @@ export default function Items() {
 				<Box sx={styling.mainPage.baseContainerBox}>
 					<NavAppBar />
 					<Box component="main" sx={styling.mainPage.mainBox}>
-						<Box sx={styling.mainPage.headingBox}>
-							{/* Page heading with title, sorting and filers*/}
-							<Typography variant="h6" gutterBottom sx={styling.mainPage.headingTypography}>Items</Typography>
-							<Box sx={styling.mainPage.filterSortBox}>
-								{/* Page filter and sort */}
-								<FilterItems 	tags={tags}
-												categories={categories}
-												handleSubmit={handleSubmit}
-												handleReset={handleReset}
-												handleCheckStatus={handleCheckStatus}
-												open={drawerOpen}
-												closeDrawer={() => {setDrawerOpen(false)}}
-												toggleDrawer={toggleDrawer}
-												checkStatus={checkStatus}/>
-								<SortItems />
-							</Box>
-						</Box>
-						<ItemsDisplay data={visibleData}/>
+						<ItemHeading 	tags={tags}
+										categories={categories}
+										handleFilterApply={handleFilterApply}
+										handleFilterReset={handleFilterReset}
+										handleFilterChecked={handleFilterChecked}
+										filterDrawerOpen={filterDrawerOpen}
+										closeFilterDrawer={() => {setFilterDrawerOpen(false)}}
+										toggleFilterDrawer={toggleFilterDrawer}
+										filterChecked={filterChecked}/>
+						<Grid 	container
+								spacing={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 3 }}
+								columns={{ xs: 2, sm: 6, md: 12 }}>
+							<ItemsListings 	data={visibleData}
+											handleListClick={handleListClick}
+											selectedItem={selectedItem}/>
+							{/* Item Display list.
+								This renders only if an item has been selected and the selected item was not filtered out by the most recent filter.
+							*/}
+							{
+								selectedItem &&
+								visibleData.filter((item) => item.id == selectedItem.id).length != 0 &&
+								<ItemView 	key='ItemPopper'
+											open={Boolean(selectedItem)}
+											id={id}
+											selected={selectedItem}
+								/>
+							}
+
+						</Grid>
+						{/* <ItemsDisplay data={visibleData}/> */}
 					</Box>
 				</Box>
 			</Container>

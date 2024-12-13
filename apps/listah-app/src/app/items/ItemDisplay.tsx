@@ -57,15 +57,13 @@ export default function ItemsDisplay(props) {
 					spacing={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 3 }}
 					columns={{ xs: 2, sm: 6, md: 12 }}
 				>
-				<Grid size='grow'>
-					{/* Item list grid */}
 
-					<ItemsListings
-									data={props.data}
-									onClick={handleListClick}
-									selected={selectedItem}/>
 
-				</Grid>
+				<ItemsListings
+								data={props.data}
+								onClick={handleListClick}
+								selected={selectedItem}/>
+
 				<Grid size={{xs:12, sm:12,  md: 12, lg:5, xl: 5 }}>
 					{/* Item Display list.
 						This renders only if an item has been selected and the selected item was not filtered out by the most recent filter.

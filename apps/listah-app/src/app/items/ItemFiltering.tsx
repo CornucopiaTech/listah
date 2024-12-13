@@ -15,18 +15,10 @@ import TuneIcon from '@mui/icons-material/Tune';
 
 
 export default function FilterItems(props) {
-	const tagsRef = React.useRef(null);
-	const categoryRef = React.useRef(null);
-
-	function focusAccordion(item){
-		item.current.focus();
-	}
-
 
 	const DrawerList = (
-		// ToDo: Add a count for the number of items that fall under a particular filter option.
 		<Box component='form' sx={{ width: 250, p:2, my: 6}} role="presentation" >
-			<Accordion ref={tagsRef} sx={{ boxShadow: 0}} onClick={() => focusAccordion(tagsRef)}>
+			<Accordion defaultExpanded sx={{ boxShadow: 1,}}>
 				<AccordionSummary
 					expandIcon={<ArrowDropDownIcon />}
 					aria-controls="panel1-content"
@@ -40,16 +32,16 @@ export default function FilterItems(props) {
 							<FormControlLabel 	key={item + '-checkBoxFormControlLabel'}
 												control={<Checkbox />}
 												label={item}
-												checked={props.checkStatus.get(item)}
-												value={props.checkStatus.get(item)}
+												checked={props.filterChecked.get(item)}
+												value={props.filterChecked.get(item)}
 												name={item}
-												onChange={props.handleCheckStatus}
+												onChange={props.handleFilterChecked}
 							/>
 							))}
 					</FormGroup>
 				</AccordionDetails>
 			</Accordion>
-			<Accordion ref={categoryRef} sx={{ boxShadow: 0}} onClick={() => focusAccordion(categoryRef)}>
+			<Accordion defaultExpanded sx={{ boxShadow: 1}}>
 				<AccordionSummary
 					expandIcon={<ArrowDropDownIcon />}
 					aria-controls="panel2-content"
@@ -63,18 +55,20 @@ export default function FilterItems(props) {
 							<FormControlLabel 	key={item + '-checkBoxFormControlLabel'}
 												control={<Checkbox />}
 												label={item}
-												checked={props.checkStatus.get(item)}
-												value={props.checkStatus.get(item)}
+												checked={props.filterChecked.get(item)}
+												value={props.filterChecked.get(item)}
 												name={item}
-												onChange={props.handleCheckStatus}
+												onChange={props.handleFilterChecked}
 							/>
 							))}
 					</FormGroup>
 				</AccordionDetails>
 			</Accordion>
-			<Button onClick={props.handleSubmit} >Apply</Button>
-			<Button onClick={props.handleReset} >Reset</Button>
-			<Button sx={{ display: 'block'}} onClick={props.closeDrawer} >Close</Button>
+			<Box sx={{width: '100', my: 6, justifyContent: 'space-around',}}>
+				<Button sx={{justifyContent: 'space-around', mx:2,}} onClick={props.handleFilterReset} >Reset</Button>
+				<Button sx={{justifyContent: 'space-around', mx:2,}} onClick={props.closeFilterDrawer} >Close</Button>
+			</Box>
+
 		</Box>
 	);
 
@@ -83,11 +77,13 @@ export default function FilterItems(props) {
 			sx={{
 					mx: 3,
 				}}>
-			<Button onClick={props.toggleDrawer(true)} startIcon={<TuneIcon />}>
+			<Button 	onClick={() => props.toggleFilterDrawer(true)}
+						startIcon={<TuneIcon />}>
 				Filter
 			</Button>
 
-			<Drawer open={props.open} onClose={props.toggleDrawer(false)}>
+			<Drawer 	open={props.filterDrawerOpen}
+						onClose={() => props.toggleFilterDrawer(false)}>
 				{DrawerList}
 			</Drawer>
 
