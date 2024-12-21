@@ -5,24 +5,10 @@ model Category {
   description String  @db.Text
   note        String  @db.Text
   audit       Json    @db.Json
-  Store       Store[]
-  Item        Item[]
+  Attributes  String[]
+  SummaryAttributes  String[]
 
   @@map("categories")
-  @@schema("app")
-}
-
-model Store {
-  id          String   @id @db.Uuid
-  name        String
-  description String   @db.Text
-  note        String   @db.Text
-  audit       Json     @db.Json
-  category_id String   @db.Uuid
-  category    Category @relation(fields: [category_id], references: [id])
-  Item        Item[]
-
-  @@map("stores")
   @@schema("app")
 }
 

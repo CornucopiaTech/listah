@@ -57,28 +57,6 @@ export default function ItemView(props){
 	}
 
 	function addFormField(itemLabel: string, itemValue: string){
-		return 	(
-			<TextField
-						required
-						disabled
-						multiline
-						key={'TextField-' + props.value}
-						label={props.label}
-						value={text}
-						onChange={handleFieldChange}
-						size={props.size}
-						sx={props.style}
-			/>
-		);
-		return <TextFieldsLabelled
-					key={itemLabel + '-' + itemValue + '-formField'}
-					status={status}
-					label={itemLabel.toLowerCase()}
-					value={itemValue}
-					size='small'/>
-	}
-
-	function prevAddFormField(itemLabel: string, itemValue: string){
 		return <TextFieldsLabelled
 					key={itemLabel + '-' + itemValue + '-formField'}
 					status={status}
