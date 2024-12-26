@@ -12,12 +12,11 @@ import (
 type ItemWrite struct {
 	bun.BaseModel `bun:"table:app.items,alias:i"`
 	Id            string `bun:",pk"`
-	Name          string
+	Title         string
 	Description   string
-	Quantity      string
 	Note          string
-	CategoryId    string
-	StoreId       string
+	Tags          []string
+	Properties    map[string]string
 	ReactivateAt  time.Time
 	Audit         Audit
 }
@@ -25,14 +24,11 @@ type ItemWrite struct {
 type ItemRead struct {
 	bun.BaseModel `bun:"table:app.items,alias:i"`
 	Id            string `bun:",pk"`
-	Name          string
+	Title         string
 	Description   string
-	Quantity      string
 	Note          string
-	CategoryId    string
-	CategoryName  string
-	StoreId       string
-	StoreName     string
+	Tags          []string
+	Properties    map[string]string
 	ReactivateAt  time.Time
 	Audit         Audit
 }
@@ -43,12 +39,11 @@ type ItemsWrite []*ItemWrite
 func (c *ItemWrite) CreateOneItemModelFromRequest(msg *v1.ItemServiceCreateOneRequest) {
 	// Update category model
 	c.Id = uuid.Must(uuid.NewV7()).String()
-	c.Name = msg.GetName()
+	c.Title = msg.GetTitle()
 	c.Description = msg.GetDescription()
-	c.Quantity = msg.GetQuantity()
 	c.Note = msg.GetNote()
-	c.CategoryId = msg.GetCategoryId()
-	c.StoreId = msg.GetStoreId()
+	c.Tags = msg.GetTags()
+	c.Properties = msg.GetProperties()
 	c.ReactivateAt = msg.GetReactivateAt().AsTime()
 	c.Audit = Audit{
 		CreatedBy: msg.Audit.GetCreatedBy(),
@@ -72,12 +67,11 @@ func CreateManyItemModelFromRequest(msg *v1.ItemServiceCreateManyRequest) *Items
 
 func (c *ItemWrite) UpdateOneItemModelFromRequest(msg *v1.ItemServiceUpdateOneRequest, readModel *ItemRead) {
 	c.Id = msg.GetId()
-	c.Name = msg.GetName()
+	c.Title = msg.GetTitle()
 	c.Description = msg.GetDescription()
-	c.Quantity = msg.GetQuantity()
 	c.Note = msg.GetNote()
-	c.CategoryId = msg.GetCategoryId()
-	c.StoreId = msg.GetStoreId()
+	c.Tags = msg.GetTags()
+	c.Properties = msg.GetProperties()
 	c.ReactivateAt = msg.GetReactivateAt().AsTime()
 	c.Audit = Audit{
 		CreatedBy: readModel.Audit.CreatedBy,
@@ -89,28 +83,24 @@ func (c *ItemWrite) UpdateOneItemModelFromRequest(msg *v1.ItemServiceUpdateOneRe
 	}
 
 	// Set fields that were not included in the update request.
-	if c.Name == "" {
-		c.Name = readModel.Name
+	if c.Title == "" {
+		c.Title = readModel.Title
 	}
 
 	if c.Description == "" {
 		c.Description = readModel.Description
 	}
 
-	if c.Quantity == "" {
-		c.Quantity = readModel.Quantity
-	}
-
 	if c.Note == "" {
 		c.Note = readModel.Note
 	}
 
-	if c.CategoryId == "" {
-		c.CategoryId = readModel.CategoryId
+	if len(c.Tags) == 0 {
+		c.Tags = readModel.Tags
 	}
 
-	if c.StoreId == "" {
-		c.StoreId = readModel.StoreId
+	if len(c.Properties) == 0 {
+		c.Properties = readModel.Properties
 	}
 
 	if c.ReactivateAt.String() == "" {
@@ -126,12 +116,11 @@ func UpdateManyItemModelFromRequest(msgs *v1.ItemServiceUpdateManyRequest, readM
 			if valRepo.Id == valReq.Id {
 				c := ItemWrite{
 					Id:           valReq.GetId(),
-					Name:         valReq.GetName(),
+					Title:        valReq.GetTitle(),
 					Description:  valReq.GetDescription(),
-					Quantity:     valReq.GetQuantity(),
 					Note:         valReq.GetNote(),
-					CategoryId:   valReq.GetCategoryId(),
-					StoreId:      valReq.GetStoreId(),
+					Tags:         valReq.GetTags(),
+					Properties:   valReq.GetProperties(),
 					ReactivateAt: valReq.GetReactivateAt().AsTime(),
 					Audit: Audit{
 						CreatedBy: valRepo.Audit.CreatedBy,
@@ -144,27 +133,24 @@ func UpdateManyItemModelFromRequest(msgs *v1.ItemServiceUpdateManyRequest, readM
 				}
 
 				// Set fields that were not included in the update request.
-				if c.Name == "" {
-					c.Name = valRepo.Name
+				if c.Title == "" {
+					c.Title = valRepo.Title
 				}
 
 				if c.Description == "" {
 					c.Description = valRepo.Description
 				}
 
-				if c.Quantity == "" {
-					c.Quantity = valRepo.Quantity
-				}
-
 				if c.Note == "" {
 					c.Note = valRepo.Note
 				}
 
-				if c.CategoryId == "" {
-					c.CategoryId = valRepo.CategoryId
+				if len(c.Tags) == 0 {
+					c.Tags = valRepo.Tags
 				}
-				if c.StoreId == "" {
-					c.StoreId = valRepo.StoreId
+
+				if len(c.Properties) == 0 {
+					c.Properties = valRepo.Properties
 				}
 
 				if c.ReactivateAt.String() == "" {
@@ -179,12 +165,11 @@ func UpdateManyItemModelFromRequest(msgs *v1.ItemServiceUpdateManyRequest, readM
 
 func (c *ItemWrite) DeleteOneItemModelFromRequest(msg *v1.ItemServiceDeleteOneRequest, readModel *ItemRead) {
 	c.Id = readModel.Id
-	c.Name = readModel.Name
+	c.Title = readModel.Title
 	c.Description = readModel.Description
-	c.Quantity = readModel.Quantity
 	c.Note = readModel.Note
-	c.CategoryId = readModel.CategoryId
-	c.StoreId = readModel.StoreId
+	c.Tags = readModel.Tags
+	c.Properties = readModel.Properties
 	c.ReactivateAt = readModel.ReactivateAt
 	c.Audit = Audit{
 		CreatedBy: readModel.Audit.CreatedBy,
@@ -204,12 +189,11 @@ func DeleteManyItemModelFromRequest(msgs *v1.ItemServiceDeleteManyRequest, readM
 			if valRepo.Id == valReq.Id {
 				c := ItemWrite{
 					Id:           valReq.GetId(),
-					Name:         valRepo.Name,
+					Title:        valRepo.Title,
 					Description:  valRepo.Description,
-					Quantity:     valRepo.Quantity,
 					Note:         valRepo.Note,
-					CategoryId:   valRepo.CategoryId,
-					StoreId:      valRepo.StoreId,
+					Tags:         valRepo.Tags,
+					Properties:   valRepo.Properties,
 					ReactivateAt: valRepo.ReactivateAt,
 					Audit: Audit{
 						CreatedBy: valRepo.Audit.CreatedBy,
@@ -230,14 +214,11 @@ func DeleteManyItemModelFromRequest(msgs *v1.ItemServiceDeleteManyRequest, readM
 func (c *ItemRead) ItemModelToResponse() *v1.ItemServiceCreateOneResponse {
 	return &v1.ItemServiceCreateOneResponse{
 		Id:           c.Id,
-		Name:         c.Name,
+		Title:        c.Title,
 		Description:  c.Description,
-		Quantity:     c.Quantity,
 		Note:         c.Note,
-		CategoryId:   c.CategoryId,
-		CategoryName: c.CategoryName,
-		StoreId:      c.StoreId,
-		StoreName:    c.StoreName,
+		Tags:         c.Tags,
+		Properties:   c.Properties,
 		ReactivateAt: timestamppb.New(c.ReactivateAt),
 		Audit: &v1.Audit{
 			CreatedBy: c.Audit.CreatedBy,
@@ -255,14 +236,11 @@ func (cs *ItemsRead) ManyItemModelToResponse() *v1.ItemServiceCreateManyResponse
 	for _, c := range *cs {
 		a := &v1.ItemServiceCreateOneResponse{
 			Id:           c.Id,
-			Name:         c.Name,
+			Title:        c.Title,
 			Description:  c.Description,
-			Quantity:     c.Quantity,
 			Note:         c.Note,
-			CategoryId:   c.CategoryId,
-			CategoryName: c.CategoryName,
-			StoreId:      c.StoreId,
-			StoreName:    c.StoreName,
+			Tags:         c.Tags,
+			Properties:   c.Properties,
 			ReactivateAt: timestamppb.New(c.ReactivateAt),
 			Audit: &v1.Audit{
 				CreatedBy: c.Audit.CreatedBy,

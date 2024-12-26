@@ -14,6 +14,36 @@
 
 
 ## Development Application Deployment
+- Set environment variable for working directory as root of project.
+```bash
+    export WORK_DIR="$(cd "$(dirname . )"  &> /dev/null && pwd)"
+```
+- Install api dependencies
+```bash
+    cd "$WORK_DIR/apps/api"
+    go mod download
+
+    cd "$WORK_DIR/internal"
+    go mod download
+
+```
+
+- Install app dependencies
+```bash
+    cd "$WORK_DIR" && npm i
+```
+
+- Generate protobuf stubs as needed
+```bash
+    cd "$WORK_DIR" && npm run buf:generate
+```
+
+- Generate api doc files as needed
+```bash
+    cd "$WORK_DIR" && npm run doc:bundle && npm run doc:gen
+```
+
+
 
 ##
 

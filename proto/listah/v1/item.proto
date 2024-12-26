@@ -14,32 +14,22 @@ import "gnostic/openapi/v3/annotations.proto";
 
 message ItemServiceCreateOneRequest {
     string id = 1;
-    string name = 2;
+    string title = 2;
     string description = 3;
-    string quantity = 4;
-    string note = 5;
-    string category_name = 6 [json_name = "category_name"];
-    string category_id = 7 [json_name = "category_id"];
-    string store_name = 8 [json_name = "store_name"];
-    string store_id = 9 [json_name = "store_id"];
-    // purchase_history = 9; //ToDo: Determine if purchase history is needed
-    // bool active = 20;
-    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivate_at"];
+    string note = 4;
+    repeated string tags = 5;
+    map<string,string> properties = 6;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
     Audit audit = 50;
 }
 message ItemServiceCreateOneResponse {
     string id = 1;
-    string name = 2;
+    string title = 2;
     string description = 3;
-    string quantity = 4;
-    string note = 5;
-    string category_name = 6 [json_name = "category_name"];
-    string category_id = 7 [json_name = "category_id"];
-    string store_name = 8 [json_name = "store_name"];
-    string store_id = 9 [json_name = "store_id"];
-    // purchase_history = 9; //ToDo: Determine if purchase history is needed
-    // bool active = 20;
-    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivate_at"];
+    string note = 4;
+    repeated string tags = 5;
+    map<string,string> properties = 6;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
     Audit audit = 50;
 }
 message ItemServiceCreateManyRequest {
@@ -55,17 +45,12 @@ message ItemServiceReadOneRequest {
 }
 message ItemServiceReadOneResponse {
     string id = 1;
-    string name = 2;
+    string title = 2;
     string description = 3;
-    string quantity = 4;
-    string note = 5;
-    string category_name = 6 [json_name = "category_name"];
-    string category_id = 7 [json_name = "category_id"];
-    string store_name = 8 [json_name = "store_name"];
-    string store_id = 9 [json_name = "store_id"];
-    // purchase_history = 9; //ToDo: Determine if purchase history is needed
-    // bool active = 20;
-    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivate_at"];
+    string note = 4;
+    repeated string tags = 5;
+    map<string,string> properties = 6;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
     Audit audit = 50;
 }
 message ItemServiceReadManyRequest {
@@ -78,32 +63,22 @@ message ItemServiceReadManyResponse {
 
 message ItemServiceUpdateOneRequest {
     string id = 1;
-    string name = 2;
+    string title = 2;
     string description = 3;
-    string quantity = 4;
-    string note = 5;
-    string category_name = 6 [json_name = "category_name"];
-    string category_id = 7 [json_name = "category_id"];
-    string store_name = 8 [json_name = "store_name"];
-    string store_id = 9 [json_name = "store_id"];
-    // purchase_history = 9; //ToDo: Determine if purchase history is needed
-    // bool active = 20;
-    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivate_at"];
+    string note = 4;
+    repeated string tags = 5;
+    map<string,string> properties = 6;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
     Audit audit = 50;
 }
 message ItemServiceUpdateOneResponse {
     string id = 1;
-    string name = 2;
+    string title = 2;
     string description = 3;
-    string quantity = 4;
-    string note = 5;
-    string category_name = 6 [json_name = "category_name"];
-    string category_id = 7 [json_name = "category_id"];
-    string store_name = 8 [json_name = "store_name"];
-    string store_id = 9 [json_name = "store_id"];
-    // purchase_history = 9; //ToDo: Determine if purchase history is needed
-    // bool active = 20;
-    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivate_at"];
+    string note = 4;
+    repeated string tags = 5;
+    map<string,string> properties = 6;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
     Audit audit = 50;
 }
 message ItemServiceUpdateManyRequest {
@@ -120,16 +95,12 @@ message ItemServiceDeleteOneRequest {
 }
 message ItemServiceDeleteOneResponse {
     string id = 1;
-    string name = 2;
+    string title = 2;
     string description = 3;
-    string quantity = 4;
-    string note = 5;
-    string category_name = 6 [json_name = "category_name"];
-    string category_id = 7 [json_name = "category_id"];
-    string store_name = 8 [json_name = "store_name"];
-    string store_id = 9 [json_name = "store_id"];
-    // purchase_history = 9; //ToDo: Determine if purchase history is needed
-    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivate_at"];
+    string note = 4;
+    repeated string tags = 5;
+    map<string,string> properties = 6;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
     Audit audit = 50;
 }
 message ItemServiceDeleteManyRequest {

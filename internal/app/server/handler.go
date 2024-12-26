@@ -5,9 +5,7 @@ import (
 	"path"
 
 	"cornucopia/listah/internal/app/bootstrap"
-	"cornucopia/listah/internal/app/category"
 	"cornucopia/listah/internal/app/item"
-	"cornucopia/listah/internal/app/store"
 	"cornucopia/listah/internal/app/user"
 	"cornucopia/listah/internal/pkg/middleware"
 	v1connect "cornucopia/listah/internal/pkg/proto/listah/v1/v1connect"
@@ -46,15 +44,15 @@ func handle(infra *bootstrap.Infra) http.Handler {
 	itemPath, itemHandler := v1connect.NewItemServiceHandler(item.NewServer(infra), interceptors)
 	mux.Handle(itemPath, itemHandler)
 
-	//
-	// Handle Category Connect-go generated paths
-	categoryPath, categoryHandler := v1connect.NewCategoryServiceHandler(category.NewServer(infra), interceptors)
-	mux.Handle(categoryPath, categoryHandler)
+	// //
+	// // Handle Category Connect-go generated paths
+	// categoryPath, categoryHandler := v1connect.NewCategoryServiceHandler(category.NewServer(infra), interceptors)
+	// mux.Handle(categoryPath, categoryHandler)
 
-	//
-	// Handle Store Connect-go generated paths
-	storePath, storeHandler := v1connect.NewStoreServiceHandler(store.NewServer(infra), interceptors)
-	mux.Handle(storePath, storeHandler)
+	// //
+	// // Handle Store Connect-go generated paths
+	// storePath, storeHandler := v1connect.NewStoreServiceHandler(store.NewServer(infra), interceptors)
+	// mux.Handle(storePath, storeHandler)
 
 	//
 	// Handle OpenAPI docs files

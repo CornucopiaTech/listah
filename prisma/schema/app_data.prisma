@@ -1,46 +1,58 @@
-
-model Category {
-  id          String  @id @db.Uuid
-  name        String
-  description String  @db.Text
-  note        String  @db.Text
-  audit       Json    @db.Json
-  Attributes  String[]
-  SummaryAttributes  String[]
-
-  @@map("categories")
-  @@schema("app")
-}
-
 model Item {
-  id            String   @id @db.Uuid
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
   name          String
   description   String
-  quantity      String
-  location      String
-  note          String
-  category_id   String   @db.Uuid
-  category      Category @relation(fields: [category_id], references: [id])
-  store_id      String   @db.Uuid
-  store         Store    @relation(fields: [store_id], references: [id])
-  active        Boolean
+  category_ids  String[]   @db.ObjectId
+  category      Category[] @relation(fields: [category_ids], references: [id])
+  folder_ids    String[]   @db.ObjectId
+  folder        Folder[]   @relation(fields: [folder_ids], references: [id])
   reactivate_at DateTime
-  audit         Json     @db.Json
+  audit         Json       @db.Json
 
   @@map("items")
-  @@schema("app")
+}
+
+model Category {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  item_ids    String[] @db.ObjectId
+  items       Item[]   @relation(fields: [item_ids], references: [id])
+  audit       Json     @db.Json
+
+  @@map("categories")
+}
+
+model Folder {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  item_ids    String[] @db.ObjectId
+  items       Item[]   @relation(fields: [item_ids], references: [id])
+  audit       Json     @db.Json
+
+  @@map("folders")
 }
 
 model User {
-  id           String @id @db.Uuid
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
   first_name   String
   middle_names String
   last_name    String
   username     String
   email        String
   role         String
-  audit        Json   @db.Json
+  audit        Json        @db.Json
+  group_ids    String[]    @db.ObjectId
+  groups       UserGroup[] @relation(fields: [group_ids], references: [id])
 
   @@map("users")
-  @@schema("app")
+}
+
+model UserGroup {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  user_ids String[] @db.ObjectId
+  users    User[]   @relation(fields: [user_ids], references: [id])
+
+  @@map("user_groups")
 }
