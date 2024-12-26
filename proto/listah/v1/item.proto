@@ -14,21 +14,23 @@ import "gnostic/openapi/v3/annotations.proto";
 
 message ItemServiceCreateOneRequest {
     string id = 1;
-    string title = 2;
-    string description = 3;
-    string note = 4;
-    repeated string tags = 5;
-    map<string,string> properties = 6;
+    string user_id = 2 [json_name = "userId"];
+    string title = 3;
+    string description = 4;
+    string note = 5;
+    repeated string tags = 6;
+    map<string,string> properties = 7;
     google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
     Audit audit = 50;
 }
 message ItemServiceCreateOneResponse {
     string id = 1;
-    string title = 2;
-    string description = 3;
-    string note = 4;
-    repeated string tags = 5;
-    map<string,string> properties = 6;
+    string user_id = 2 [json_name = "userId"];
+    string title = 3;
+    string description = 4;
+    string note = 5;
+    repeated string tags = 6;
+    map<string,string> properties = 7;
     google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
     Audit audit = 50;
 }
@@ -45,11 +47,12 @@ message ItemServiceReadOneRequest {
 }
 message ItemServiceReadOneResponse {
     string id = 1;
-    string title = 2;
-    string description = 3;
-    string note = 4;
-    repeated string tags = 5;
-    map<string,string> properties = 6;
+    string user_id = 2 [json_name = "userId"];
+    string title = 3;
+    string description = 4;
+    string note = 5;
+    repeated string tags = 6;
+    map<string,string> properties = 7;
     google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
     Audit audit = 50;
 }
@@ -63,21 +66,23 @@ message ItemServiceReadManyResponse {
 
 message ItemServiceUpdateOneRequest {
     string id = 1;
-    string title = 2;
-    string description = 3;
-    string note = 4;
-    repeated string tags = 5;
-    map<string,string> properties = 6;
+    string user_id = 2 [json_name = "userId"];
+    string title = 3;
+    string description = 4;
+    string note = 5;
+    repeated string tags = 6;
+    map<string,string> properties = 7;
     google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
     Audit audit = 50;
 }
 message ItemServiceUpdateOneResponse {
     string id = 1;
-    string title = 2;
-    string description = 3;
-    string note = 4;
-    repeated string tags = 5;
-    map<string,string> properties = 6;
+    string user_id = 2 [json_name = "userId"];
+    string title = 3;
+    string description = 4;
+    string note = 5;
+    repeated string tags = 6;
+    map<string,string> properties = 7;
     google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
     Audit audit = 50;
 }
@@ -95,11 +100,12 @@ message ItemServiceDeleteOneRequest {
 }
 message ItemServiceDeleteOneResponse {
     string id = 1;
-    string title = 2;
-    string description = 3;
-    string note = 4;
-    repeated string tags = 5;
-    map<string,string> properties = 6;
+    string user_id = 2 [json_name = "userId"];
+    string title = 3;
+    string description = 4;
+    string note = 5;
+    repeated string tags = 6;
+    map<string,string> properties = 7;
     google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
     Audit audit = 50;
 }

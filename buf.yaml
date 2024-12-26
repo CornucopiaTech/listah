@@ -9,7 +9,7 @@ deps:
   - buf.build/protocolbuffers/wellknowntypes
 lint:
   use:
-    - DEFAULT
+    - STANDARD
 modules:
   - path: proto
 breaking:

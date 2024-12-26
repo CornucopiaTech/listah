@@ -138,7 +138,7 @@ func loadApp() *AppConfig {
 func loadDatabase() *DatabaseConfig {
 	// This parses through environmental variables and env file to get
 	//    database config.
-	// Connection string format: mongodb://listah:1_a_safe_password_2@localhost/listah?ssl=false&connectTimeoutMS=5000&maxPoolSize=50
+	// Connection string format: mongodb://username:password@host:port/databaseName?ssl=false&connectTimeoutMS=5000&maxPoolSize=50
 
 	// Get database host in environmental variables
 	dbHost := os.Getenv("DATABASE_HOST")
@@ -243,17 +243,6 @@ func loadDatabase() *DatabaseConfig {
 		}
 	}
 
-	// if dbAuthMechanism == "SCRAM" {
-	// 	dbAuthSource := os.Getenv("DATABASE_AUTHSOURCE")
-	// 	if dbAuthSource == "" {
-	// 		log.Fatalf("environmental variable for database auth source is not set")
-	// 	}
-	// 	dbConnectionString = fmt.Sprintf("%v?authSource=%v", dbConnectionString, dbAuthSource)
-	// }
-
-	// dbConnectionString := fmt.Sprintf("mongodb://%v:%v@%v/%v?ssl=%v&connectTimeoutMS=%v&maxPoolSize=%v&authSource=admin", dbUser, dbPassword, dbAddress, dbName, dbUseSSL, dbTimeoutMilliSeconds, dbMaxPoolSize)
-
-	// fmt.Fprintln("Db connection string is %v", dbConnectionString)
 	fmt.Printf("Db connection string is %v \n", dbConnectionString)
 
 	return &DatabaseConfig{
