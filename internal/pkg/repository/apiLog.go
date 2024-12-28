@@ -14,19 +14,14 @@ type ApiLogRepository interface {
 	InsertOne(ctx context.Context, repoModel *model.ApiLog) (*mongo.InsertOneResult, error)
 }
 
-// type apiLogRepositoryAgent struct {
-// 	db     *bun.DB
-// 	logger *logging.Factory
-// }
+type apiLogRepositoryAgent struct {
+	context        *context.Context
+	client         *mongo.Client
+	collectionName string
+	collection     *mongo.Collection
+}
 
-// type repositoryAgent struct {
-// 	context        *context.Context
-// 	client         *mongo.Client
-// 	collectionName string
-// 	collection     *mongo.Collection
-// }
-
-func (a *repositoryAgent) InsertOne(ctx context.Context, repoModel *model.ApiLog) (*mongo.InsertOneResult, error) {
+func (a *apiLogRepositoryAgent) InsertOne(ctx context.Context, repoModel *model.ApiLog) (*mongo.InsertOneResult, error) {
 	ctx, span := otel.Tracer("apiLog-repository").Start(ctx, "insert one")
 	defer span.End()
 	a.logger.For(ctx).Info("Inserting one into apiLog")

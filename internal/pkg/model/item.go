@@ -9,8 +9,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-type ItemWrite struct {
-	bun.BaseModel `bun:"table:app.items,alias:i"`
+type Item struct {
 	Id            string `bun:",pk"`
 	Title         string
 	Description   string
@@ -20,23 +19,9 @@ type ItemWrite struct {
 	ReactivateAt  time.Time
 	Audit         Audit
 }
+type Items []*Item
 
-type ItemRead struct {
-	bun.BaseModel `bun:"table:app.items,alias:i"`
-	Id            string `bun:",pk"`
-	Title         string
-	Description   string
-	Note          string
-	Tags          []string
-	Properties    map[string]string
-	ReactivateAt  time.Time
-	Audit         Audit
-}
-
-type ItemsRead []*ItemRead
-type ItemsWrite []*ItemWrite
-
-func (c *ItemWrite) CreateOneItemModelFromRequest(msg *v1.ItemServiceCreateOneRequest) {
+func (c *Item) CreateOneItemModelFromRequest(msg *v1.ItemServiceCreateOneRequest) {
 	// Update category model
 	c.Id = uuid.Must(uuid.NewV7()).String()
 	c.Title = msg.GetTitle()
@@ -55,17 +40,17 @@ func (c *ItemWrite) CreateOneItemModelFromRequest(msg *v1.ItemServiceCreateOneRe
 	}
 }
 
-func CreateManyItemModelFromRequest(msg *v1.ItemServiceCreateManyRequest) *ItemsWrite {
-	c := ItemsWrite{}
+func CreateManyItemModelFromRequest(msg *v1.ItemServiceCreateManyRequest) *Items {
+	c := Items{}
 	for _, reqValue := range msg.Item {
-		aCat := new(ItemWrite)
+		aCat := new(Item)
 		aCat.CreateOneItemModelFromRequest(reqValue)
 		c = append(c, aCat)
 	}
 	return &c
 }
 
-func (c *ItemWrite) UpdateOneItemModelFromRequest(msg *v1.ItemServiceUpdateOneRequest, readModel *ItemRead) {
+func (c *Item) UpdateOneItemModelFromRequest(msg *v1.ItemServiceUpdateOneRequest, readModel *Item) {
 	c.Id = msg.GetId()
 	c.Title = msg.GetTitle()
 	c.Description = msg.GetDescription()
@@ -108,13 +93,13 @@ func (c *ItemWrite) UpdateOneItemModelFromRequest(msg *v1.ItemServiceUpdateOneRe
 	}
 }
 
-func UpdateManyItemModelFromRequest(msgs *v1.ItemServiceUpdateManyRequest, readModel *ItemsRead) *ItemsWrite {
-	items := ItemsWrite{}
+func UpdateManyItemModelFromRequest(msgs *v1.ItemServiceUpdateManyRequest, readModel *Items) *Items {
+	items := Items{}
 
 	for _, valReq := range msgs.Item {
 		for _, valRepo := range *readModel {
 			if valRepo.Id == valReq.Id {
-				c := ItemWrite{
+				c := Item{
 					Id:           valReq.GetId(),
 					Title:        valReq.GetTitle(),
 					Description:  valReq.GetDescription(),
@@ -163,7 +148,7 @@ func UpdateManyItemModelFromRequest(msgs *v1.ItemServiceUpdateManyRequest, readM
 	return &items
 }
 
-func (c *ItemWrite) DeleteOneItemModelFromRequest(msg *v1.ItemServiceDeleteOneRequest, readModel *ItemRead) {
+func (c *Item) DeleteOneItemModelFromRequest(msg *v1.ItemServiceDeleteOneRequest, readModel *Item) {
 	c.Id = readModel.Id
 	c.Title = readModel.Title
 	c.Description = readModel.Description
@@ -181,13 +166,13 @@ func (c *ItemWrite) DeleteOneItemModelFromRequest(msg *v1.ItemServiceDeleteOneRe
 	}
 }
 
-func DeleteManyItemModelFromRequest(msgs *v1.ItemServiceDeleteManyRequest, readModel *ItemsRead) *ItemsWrite {
-	items := ItemsWrite{}
+func DeleteManyItemModelFromRequest(msgs *v1.ItemServiceDeleteManyRequest, readModel *Items) *Items {
+	items := Items{}
 
 	for _, valReq := range msgs.Item {
 		for _, valRepo := range *readModel {
 			if valRepo.Id == valReq.Id {
-				c := ItemWrite{
+				c := Item{
 					Id:           valReq.GetId(),
 					Title:        valRepo.Title,
 					Description:  valRepo.Description,
@@ -211,7 +196,7 @@ func DeleteManyItemModelFromRequest(msgs *v1.ItemServiceDeleteManyRequest, readM
 	return &items
 }
 
-func (c *ItemRead) ItemModelToResponse() *v1.ItemServiceCreateOneResponse {
+func (c *Item) ItemModelToResponse() *v1.ItemServiceCreateOneResponse {
 	return &v1.ItemServiceCreateOneResponse{
 		Id:           c.Id,
 		Title:        c.Title,
@@ -231,7 +216,7 @@ func (c *ItemRead) ItemModelToResponse() *v1.ItemServiceCreateOneResponse {
 	}
 }
 
-func (cs *ItemsRead) ManyItemModelToResponse() *v1.ItemServiceCreateManyResponse {
+func (cs *Items) ManyItemModelToResponse() *v1.ItemServiceCreateManyResponse {
 	resValue := &v1.ItemServiceCreateManyResponse{}
 	for _, c := range *cs {
 		a := &v1.ItemServiceCreateOneResponse{

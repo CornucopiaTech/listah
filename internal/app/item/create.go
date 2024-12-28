@@ -35,30 +35,30 @@ func (s *Server) CreateOne(ctx context.Context, req *connect.Request[v1.ItemServ
 	return connect.NewResponse(responseModel), nil
 }
 
-// func (s *Server) CreateMany(ctx context.Context, req *connect.Request[v1.ItemServiceCreateManyRequest]) (*connect.Response[v1.ItemServiceCreateManyResponse], error) {
-// 	ctx, span := otel.Tracer("item-service").Start(ctx, "create-many")
-// 	defer span.End()
-// 	s.Infra.Logger.For(ctx).Info("CreateMany method in ItemService called")
+func (s *Server) CreateMany(ctx context.Context, req *connect.Request[v1.ItemServiceCreateManyRequest]) (*connect.Response[v1.ItemServiceCreateManyResponse], error) {
+	ctx, span := otel.Tracer("item-service").Start(ctx, "create-many")
+	defer span.End()
+	s.Infra.Logger.For(ctx).Info("CreateMany method in ItemService called")
 
-// 	// Create model for repository
-// 	newModel := model.CreateManyItemModelFromRequest(req.Msg)
+	// Create model for repository
+	newModel := model.CreateManyItemModelFromRequest(req.Msg)
 
-// 	// Insert model in repository
-// 	if err := s.Infra.Repository.Item.InsertMany(ctx, newModel); err != nil {
-// 		return nil, err
-// 	}
+	// Insert model in repository
+	if err := s.Infra.Repository.Item.InsertMany(ctx, newModel); err != nil {
+		return nil, err
+	}
 
-// 	// Read created model from repository
-// 	readModel := model.ItemsRead{}
-// 	for _, val := range *newModel {
-// 		readModel = append(readModel, &model.ItemRead{Id: val.Id})
-// 	}
-// 	if err := s.Infra.Repository.Item.SelectMany(ctx, &readModel, "id"); err != nil {
-// 		return nil, err
-// 	}
+	// Read created model from repository
+	readModel := model.ItemsRead{}
+	for _, val := range *newModel {
+		readModel = append(readModel, &model.ItemRead{Id: val.Id})
+	}
+	if err := s.Infra.Repository.Item.SelectMany(ctx, &readModel, "id"); err != nil {
+		return nil, err
+	}
 
-// 	// Convert created model to proto response
-// 	resModel := readModel.ManyItemModelToResponse()
+	// Convert created model to proto response
+	resModel := readModel.ManyItemModelToResponse()
 
-// 	return connect.NewResponse(resModel), nil
-// }
+	return connect.NewResponse(resModel), nil
+}

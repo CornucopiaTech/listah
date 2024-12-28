@@ -97,7 +97,7 @@ func Init(cfg *config.Config, logger *logging.Factory) *Repository {
 		// 	ctx:        &ctx,
 		// 	collection: &client.Collection("Tags"),
 		// },
-		ApiLog: &repositoryAgent{
+		ApiLog: &apiLogRepositoryAgent{
 			client:     client,
 			logger:     logger,
 			collection: client.Database(cfg.Database.DatabaseName).Collection("ApiLogs"),

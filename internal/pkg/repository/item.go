@@ -68,7 +68,7 @@ type itemRepositoryAgent struct {
 // 	return nil
 // }
 
-func (a *itemRepositoryAgent) InsertOne(ctx context.Context, repoModel *model.ItemWrite) error {
+func (a *itemRepositoryAgent) InsertOne(ctx context.Context, repoModel *model.Item) error {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "insert one")
 	defer span.End()
 	a.logger.For(ctx).Info("Inserting one into item")
@@ -76,6 +76,21 @@ func (a *itemRepositoryAgent) InsertOne(ctx context.Context, repoModel *model.It
 	_, err := a.collection.InsertOne(ctx, repoModel)
 	if err != nil {
 		a.logger.For(ctx).Error("Error occurred in repository while inserting one into item", zap.String("cause", errors.Cause(err).Error()))
+		return err
+	}
+
+	return nil
+}
+
+func (a *itemRepositoryAgent) InsertMany(ctx context.Context, repoModel *model.Items) error {
+	ctx, span := otel.Tracer("item-repository").Start(ctx, "insert many")
+	defer span.End()
+	a.logger.For(ctx).Info("Inserting many into item")
+
+	queryOpts := options.InsertMany().SetOrdered(false)
+	_, err := coll.InsertMany(ctx, repoModel, queryOpts)
+	if err != nil {
+		a.logger.For(ctx).Error("Error occurred in repository while inserting many into item", zap.String("cause", errors.Cause(err).Error()))
 		return err
 	}
 
