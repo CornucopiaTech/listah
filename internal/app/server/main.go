@@ -9,8 +9,6 @@ import (
 	"os/signal"
 	"time"
 
-	pkgErrors "github.com/pkg/errors"
-
 	"cornucopia/listah/internal/app/bootstrap"
 	"cornucopia/listah/internal/pkg/telemetry"
 
@@ -18,13 +16,13 @@ import (
 )
 
 func Run() error {
-	//
+	//Following server setup guide in Otel docs: https://opentelemetry.io/docs/languages/go/getting-started/
 	// Run application bootstrapping
 	infra := bootstrap.InitInfra()
 
-	//
+	// //
 	// Handle SIGINT (CTRL+C) gracefully.
-	_, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 
 	//
@@ -33,6 +31,7 @@ func Run() error {
 	if err != nil {
 		return err
 	}
+
 	// Handle shutdown properly so nothing leaks.
 	defer func() {
 		err = errors.Join(err, otelShutdown(context.Background()))
@@ -60,6 +59,7 @@ func Run() error {
 		Handler:      handler,
 	}
 
+	// Start  HTTP server
 	srvErr := make(chan error, 1)
 	go func() {
 		srvErr <- srv.Serve(lis)
@@ -69,13 +69,8 @@ func Run() error {
 	select {
 	case err = <-srvErr:
 		// Error when starting HTTP server.
-		if err != nil && !pkgErrors.Is(err, http.ErrServerClosed) {
-			infra.OtelLogger.Fatal("server failed to serve", zap.Error(pkgErrors.WithStack(err)))
-			infra.Logger.Bg().Fatal("server failed to serve", zap.Error(pkgErrors.WithStack(err)))
-		}
-
 		return err
-	case <-context.Background().Done():
+	case <-ctx.Done():
 		// Wait for first CTRL+C.
 		// Stop receiving signal notifications as soon as possible.
 		stop()

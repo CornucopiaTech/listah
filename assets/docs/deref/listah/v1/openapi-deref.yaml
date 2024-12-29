@@ -40,6 +40,9 @@ paths:
                 id:
                   type: string
                   title: id
+                userId:
+                  type: string
+                  title: user_id
                 title:
                   type: string
                   title: title
@@ -482,6 +485,9 @@ paths:
                   id:
                     type: string
                     title: id
+                  userId:
+                    type: string
+                    title: user_id
                   title:
                     type: string
                     title: title
@@ -806,6 +812,9 @@ paths:
                   id:
                     type: string
                     title: id
+                  userId:
+                    type: string
+                    title: user_id
                   title:
                     type: string
                     title: title
@@ -1176,6 +1185,9 @@ paths:
                 id:
                   type: string
                   title: id
+                userId:
+                  type: string
+                  title: user_id
                 title:
                   type: string
                   title: title
@@ -1312,6 +1324,9 @@ paths:
                   id:
                     type: string
                     title: id
+                  userId:
+                    type: string
+                    title: user_id
                   title:
                     type: string
                     title: title
@@ -1567,6 +1582,9 @@ paths:
                   id:
                     type: string
                     title: id
+                  userId:
+                    type: string
+                    title: user_id
                   title:
                     type: string
                     title: title

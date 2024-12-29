@@ -5,21 +5,26 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/uptrace/bun"
+	"go.uber.org/zap/zapcore"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Item struct {
-	Id            string `bun:",pk"`
-	Title         string
-	Description   string
-	Note          string
-	Tags          []string
-	Properties    map[string]string
-	ReactivateAt  time.Time
-	Audit         Audit
+	Id           string `bson:"_id"`
+	Title        string
+	Description  string
+	Note         string
+	Tags         []string
+	Properties   map[string]string
+	ReactivateAt time.Time
+	Audit        Audit
 }
 type Items []*Item
+
+func (i *Item) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+	enc.AddString("id", i.Id)
+	return nil
+}
 
 func (c *Item) CreateOneItemModelFromRequest(msg *v1.ItemServiceCreateOneRequest) {
 	// Update category model
@@ -50,7 +55,7 @@ func CreateManyItemModelFromRequest(msg *v1.ItemServiceCreateManyRequest) *Items
 	return &c
 }
 
-func (c *Item) UpdateOneItemModelFromRequest(msg *v1.ItemServiceUpdateOneRequest, readModel *Item) {
+func (c *Item) UpdateOneItemModelFromRequest(msg *v1.ItemServiceUpdateOneRequest, readModel *Item) error {
 	c.Id = msg.GetId()
 	c.Title = msg.GetTitle()
 	c.Description = msg.GetDescription()
@@ -91,16 +96,17 @@ func (c *Item) UpdateOneItemModelFromRequest(msg *v1.ItemServiceUpdateOneRequest
 	if c.ReactivateAt.String() == "" {
 		c.ReactivateAt = readModel.ReactivateAt
 	}
+	return nil
 }
 
-func UpdateManyItemModelFromRequest(msgs *v1.ItemServiceUpdateManyRequest, readModel *Items) *Items {
+func UpdateManyItemModelFromRequest(msgs *v1.ItemServiceUpdateManyRequest, readModel *Items) (*Items, error) {
 	items := Items{}
 
 	for _, valReq := range msgs.Item {
 		for _, valRepo := range *readModel {
 			if valRepo.Id == valReq.Id {
 				c := Item{
-					Id:           valReq.GetId(),
+					Id:           valRepo.Id,
 					Title:        valReq.GetTitle(),
 					Description:  valReq.GetDescription(),
 					Note:         valReq.GetNote(),
@@ -145,7 +151,7 @@ func UpdateManyItemModelFromRequest(msgs *v1.ItemServiceUpdateManyRequest, readM
 			}
 		}
 	}
-	return &items
+	return &items, nil
 }
 
 func (c *Item) DeleteOneItemModelFromRequest(msg *v1.ItemServiceDeleteOneRequest, readModel *Item) {
@@ -173,7 +179,7 @@ func DeleteManyItemModelFromRequest(msgs *v1.ItemServiceDeleteManyRequest, readM
 		for _, valRepo := range *readModel {
 			if valRepo.Id == valReq.Id {
 				c := Item{
-					Id:           valReq.GetId(),
+					Id:           valRepo.Id,
 					Title:        valRepo.Title,
 					Description:  valRepo.Description,
 					Note:         valRepo.Note,

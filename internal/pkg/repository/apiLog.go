@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"cornucopia/listah/internal/pkg/logging"
 	"cornucopia/listah/internal/pkg/model"
 
 	"github.com/pkg/errors"
@@ -15,10 +16,9 @@ type ApiLogRepository interface {
 }
 
 type apiLogRepositoryAgent struct {
-	context        *context.Context
-	client         *mongo.Client
-	collectionName string
-	collection     *mongo.Collection
+	logger     *logging.Factory
+	client     *mongo.Client
+	collection *mongo.Collection
 }
 
 func (a *apiLogRepositoryAgent) InsertOne(ctx context.Context, repoModel *model.ApiLog) (*mongo.InsertOneResult, error) {
