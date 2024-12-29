@@ -26,6 +26,13 @@ func (i *Item) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	return nil
 }
 
+func (i *Items) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+	for _, val := range *i {
+		enc.AddString("id", val.Id)
+	}
+	return nil
+}
+
 func (c *Item) CreateOneItemModelFromRequest(msg *v1.ItemServiceCreateOneRequest) {
 	// Update category model
 	c.Id = uuid.Must(uuid.NewV7()).String()

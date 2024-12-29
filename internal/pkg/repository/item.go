@@ -2,21 +2,30 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"cornucopia/listah/internal/pkg/logging"
 	"cornucopia/listah/internal/pkg/model"
 
 	"github.com/pkg/errors"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/v2/mongo"
-	"go.mongodb.org/mongo-driver/v2/mongo/options"
+	// "go.mongodb.org/mongo-driver/bson"
+	// "go.mongodb.org/mongo-driver/bson/primitive"
+	// "go.mongodb.org/mongo-driver/v2/mongo"
+	// "go.mongodb.org/mongo-driver/v2/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.opentelemetry.io/otel"
 	"go.uber.org/zap"
 )
 
+type EmptyInterface []interface{}
+
 type ItemRepository interface {
-	ReadOne(ctx context.Context, repoModel *model.Item, readFilter primitive.D) error
-	// SelectMany(ctx context.Context, repoModel *model.ItemsRead, col string) error
+	ReadOne(ctx context.Context, repoModel *model.Item, readFilter map[string]string) error
+	ReadMany(ctx context.Context, repoModel *model.Items, readFilter map[string][]string) error
+
 	InsertOne(ctx context.Context, repoModel *model.Item) (string, error)
+	InsertMany(ctx context.Context, repoModel *model.Items) (*mongo.InsertManyResult, error)
+
 	// InsertMany(ctx context.Context, repoModel *model.ItemsWrite) error
 	// UpdateOne(ctx context.Context, repoModel *model.ItemWrite) error
 	// UpdateMany(ctx context.Context, repoModel *model.ItemsWrite) error
@@ -31,14 +40,12 @@ type itemRepositoryAgent struct {
 	collection *mongo.Collection
 }
 
-func (a *itemRepositoryAgent) ReadOne(ctx context.Context, repoModel *model.Item, readFilter primitive.D) error {
+func (a *itemRepositoryAgent) ReadOne(ctx context.Context, repoModel *model.Item, readFilter map[string]string) error {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "Read one")
 	defer span.End()
 	a.logger.For(ctx).Info("Reading one from item by filter", zap.Object("filter", repoModel))
 
-	// readFilter := bson.D{repoModel}
 	err := a.collection.FindOne(ctx, readFilter).Decode(repoModel)
-
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		a.logger.For(ctx).Error("Document could not be found for given filter", zap.Object("filter", repoModel), zap.String("cause", errors.Cause(err).Error()))
 		return err
@@ -49,25 +56,21 @@ func (a *itemRepositoryAgent) ReadOne(ctx context.Context, repoModel *model.Item
 	return nil
 }
 
-// func (a *itemRepositoryAgent) SelectMany(ctx context.Context, repoModel *model.ItemsRead, col string) error {
-// 	ctx, span := otel.Tracer("item-repository").Start(ctx, "select many")
-// 	defer span.End()
+func (a *itemRepositoryAgent) ReadMany(ctx context.Context, repoModel *model.Items, readFilter map[string][]string) error {
+	ctx, span := otel.Tracer("item-repository").Start(ctx, "Read many")
+	defer span.End()
+	a.logger.For(ctx).Info("Reading many from item by filter", zap.Object("filter", repoModel))
 
-// 	a.logger.For(ctx).Info("Selecting many from item by column", zap.String("column", col))
-
-// 	if err := a.db.NewSelect().
-// 		Model(repoModel).
-// 		ColumnExpr("i.*").
-// 		ColumnExpr("c.name AS category_name").
-// 		ColumnExpr("s.name AS store_name").
-// 		Join("JOIN app.categories AS c ON c.id = i.category_id").
-// 		Join("JOIN app.stores AS s ON s.id = i.store_id").
-// 		WherePK(col).Scan(ctx); err != nil {
-// 		a.logger.For(ctx).Error("Error occurred in repository while selecting many from item by column", zap.String("column", col), zap.String("cause", errors.Cause(err).Error()))
-// 		return err
-// 	}
-// 	return nil
-// }
+	err := a.collection.FindOne(ctx, readFilter).Decode(repoModel)
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		a.logger.For(ctx).Error("Document could not be found for given filter", zap.Object("filter", repoModel), zap.String("cause", errors.Cause(err).Error()))
+		return err
+	} else if err != nil {
+		a.logger.For(ctx).Error("Error occurred in repository while reading many from item using filter", zap.Object("filter", repoModel), zap.String("cause", errors.Cause(err).Error()))
+		return err
+	}
+	return nil
+}
 
 func (a *itemRepositoryAgent) InsertOne(ctx context.Context, repoModel *model.Item) (string, error) {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "insert one")
@@ -89,19 +92,29 @@ func (a *itemRepositoryAgent) InsertOne(ctx context.Context, repoModel *model.It
 	return insertedId, nil
 }
 
-func (a *itemRepositoryAgent) InsertMany(ctx context.Context, repoModel *model.Items) error {
+func (a *itemRepositoryAgent) InsertMany(ctx context.Context, repoModel *model.Items)  (*mongo.InsertManyResult, error) {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "insert many")
 	defer span.End()
 	a.logger.For(ctx).Info("Inserting many into item")
 
 	queryOpts := options.InsertMany().SetOrdered(false)
-	_, err := a.collection.InsertMany(ctx, repoModel, queryOpts)
+
+	// var j []interface{} = &i
+	// var recastModel []interface{} = *repoModel
+	recastModel := EmptyInterface(repoModel)
+	res, err := a.collection.InsertMany(ctx, recastModel, queryOpts)
+
+
+	// res, err := a.collection.InsertMany(ctx, repoModel, queryOpts)
+
 	if err != nil {
 		a.logger.For(ctx).Error("Error occurred in repository while inserting many into item", zap.String("cause", errors.Cause(err).Error()))
-		return err
+		return nil, err
 	}
 
-	return nil
+	fmt.Println(res)
+
+	return res, nil
 }
 
 // func (a *itemRepositoryAgent) InsertMany(ctx context.Context, repoModel *model.ItemsWrite) error {

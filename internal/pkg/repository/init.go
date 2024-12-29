@@ -10,9 +10,16 @@ import (
 
 	"log"
 
-	"go.mongodb.org/mongo-driver/v2/mongo"
-	"go.mongodb.org/mongo-driver/v2/mongo/options"
-	"go.mongodb.org/mongo-driver/v2/mongo/readpref"
+	// "go.mongodb.org/mongo-driver/v2/mongo"
+	// "go.mongodb.org/mongo-driver/v2/mongo/options"
+	// "go.mongodb.org/mongo-driver/v2/mongo/readpref"
+
+	// "go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
+
+	"go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
 )
 
 type Repository struct {
@@ -24,11 +31,13 @@ type Repository struct {
 	ApiLog ApiLogRepository
 }
 
+
 type repositoryAgent struct {
 	logger     *logging.Factory
 	client     *mongo.Client
 	collection *mongo.Collection
 }
+
 
 func Init(cfg *config.Config, logger *logging.Factory) *Repository {
 	var enableTls bool
@@ -50,10 +59,13 @@ func Init(cfg *config.Config, logger *logging.Factory) *Repository {
 
 	// Create client connection
 	// connectOpts := options.Client().ApplyURI(cfg.Database.ConnectionString).SetAuth(cfg.Database.AuthCredentials)
-	clientOpts := options.Client().ApplyURI(cfg.Database.ConnectionString).
-		SetAuth(cfg.Database.AuthCredentials)
+	clientOpts := options.Client()
+	clientOpts.Monitor = otelmongo.NewMonitor()
+	clientOpts.ApplyURI(cfg.Database.ConnectionString)
+	clientOpts.SetAuth(cfg.Database.AuthCredentials)
 
-	client, err := mongo.Connect(clientOpts)
+
+	client, err := mongo.Connect(ctx, clientOpts)
 	if err != nil {
 		log.Printf("unable to ping database.")
 		log.Fatal(errors.Cause(err))

@@ -22,6 +22,17 @@ export function getData(arraySize) {
                         { count: faker.helpers.arrayElement([...Array(maxProps).keys()]) }
                     )
                 ),
+                reactivate_at: faker.helpers.arrayElement([faker.date.future(), null]),
+                audit: {
+
+                    "created_by": faker.helpers.arrayElement(["AUDIT_UPDATER_ENUM_UNSPECIFIED", "AUDIT_UPDATER_ENUM_FRONTEND", "AUDIT_UPDATER_ENUM_SYSOPS"]),
+                    "created_at": faker.date.past(),
+                    "updated_by": faker.helpers.arrayElement(["AUDIT_UPDATER_ENUM_UNSPECIFIED", "AUDIT_UPDATER_ENUM_FRONTEND", "AUDIT_UPDATER_ENUM_SYSOPS"]),
+                    "updated_at": faker.helpers.arrayElement([faker.date.past(), null]),
+                    "deleted_by": faker.helpers.arrayElement(["AUDIT_UPDATER_ENUM_UNSPECIFIED", "AUDIT_UPDATER_ENUM_FRONTEND", "AUDIT_UPDATER_ENUM_SYSOPS"]),
+                    "deleted_at": faker.helpers.arrayElement([faker.date.past(), null]),
+
+                }
             }),
         { count: arraySize }
     );
