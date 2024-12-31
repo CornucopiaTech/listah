@@ -1,0 +1,13 @@
+# Use root/example as user/password credentials
+services:
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      ENV: local
+    env_file: ../.env
+    volumes:
+       - ./local/db_data:/var/lib/mongodb/
+    ports:
+      - "27017:27017"

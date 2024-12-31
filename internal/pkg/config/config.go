@@ -6,6 +6,11 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"strconv"
+	"time"
+
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
+	// "go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const appName string = "Listah"
@@ -20,14 +25,29 @@ type ApiConfig struct {
 	Port    string
 	Address string
 }
+
 type DatabaseConfig struct {
 	Host             string
 	DatabaseName     string
 	Port             string
 	User             string
 	Password         string
-	ConnectionString string
 	Address          string
+	TimeoutDuration  time.Duration
+	UseSSL           bool
+	MaxPoolSize      string
+	AuthCredentials  options.Credential
+	ConnectionString string
+}
+
+type PgsqlDatabaseConfig struct {
+	Host             string
+	DatabaseName     string
+	Port             string
+	User             string
+	Password         string
+	Address          string
+	ConnectionString string
 }
 
 type TelemetryConfig struct {
@@ -117,6 +137,131 @@ func loadApp() *AppConfig {
 }
 
 func loadDatabase() *DatabaseConfig {
+	// This parses through environmental variables and env file to get
+	//    database config.
+	// Connection string format: mongodb://username:password@host:port/databaseName?ssl=false&connectTimeoutMS=5000&maxPoolSize=50
+
+	// Get database host in environmental variables
+	dbHost := os.Getenv("DATABASE_HOST")
+	if dbHost == "" {
+		log.Fatalf("environmental variable for database host is not set")
+	}
+
+	// Get database port in environmental variables
+	dbPort := os.Getenv("DATABASE_PORT")
+	if dbPort == "" {
+		log.Fatalf("environmental variable for database port is not set")
+	}
+
+	// Get database name in environmental variables
+	dbName := os.Getenv("DATABASE_NAME")
+	if dbName == "" {
+		log.Fatalf("environmental variable for database name is not set")
+	}
+
+	// Get database timeout in environmental variables
+	dbTimeoutMilliSeconds, err := strconv.Atoi(os.Getenv("DATABASE_TIMEOUT_MILLISECONDS"))
+	if err != nil {
+		log.Fatalf("environmental variable for database timeout is not set")
+	}
+	dbTimeoutDuration := time.Duration(dbTimeoutMilliSeconds) * time.Millisecond
+
+	// Get database use SSL in environmental variables
+	dbUseSSL, err := strconv.ParseBool(os.Getenv("DATABASE_USE_SSL"))
+	if err != nil {
+		log.Fatalf("environmental variable for database use SSL is not set")
+	}
+
+	// Get database max pool size in environmental variables
+	dbMaxPoolSize := os.Getenv("DATABASE_MAX_POOL_SIZE")
+	if dbName == "" {
+		log.Fatalf("environmental variable for database max pool size is not set")
+	}
+
+	// Get database auth mechanism in environmental variables
+	dbAuthMechanism := os.Getenv("DATABASE_AUTH_MECHANISM")
+	if dbName == "" {
+		log.Fatalf("environmental variable for database auth mechanism is not set")
+	}
+
+	// Get database username and password in environmental variables
+	userNamePasswordIsRequired := dbAuthMechanism == "SCRAM" || dbAuthMechanism == "PLAIN" || dbAuthMechanism == "MONGODB-AWS"
+	dbUser := os.Getenv("DATABASE_USERNAME")
+	if userNamePasswordIsRequired && dbUser == "" {
+		log.Fatalf("environmental variable for database user is not set")
+	}
+	// Get database password in environmental variables
+	dbPassword := os.Getenv("DATABASE_PASSWORD")
+	if userNamePasswordIsRequired && dbPassword == "" {
+		log.Fatalf("environmental variable for database password is not set")
+	}
+
+	// Get database OIDC environment in environmental variables
+	dbOidcEnv := os.Getenv("DATABASE_OIDC_ENVIRONMENT")
+	if dbAuthMechanism == "MONGODB-OIDC" && dbOidcEnv == "" {
+		log.Fatalf("environmental variable for database OIDC environment is not set")
+	}
+
+	// Get database token resource in environmental variables
+	dbTokenResource := os.Getenv("DATABASE_OIDC_TOKEN_RESOURCE")
+	if dbAuthMechanism == "MONGODB-OIDC" && dbTokenResource == "" {
+		log.Fatalf("environmental variable for database token resource is not set")
+	}
+
+	// Get database address
+	dbAddress := net.JoinHostPort(dbHost, dbPort)
+
+	// Get database connection string
+	dbConnectionString := fmt.Sprintf("mongodb://%v/%v", dbAddress, dbName)
+
+	// Get database credentials
+	var dbCredential options.Credential
+	if userNamePasswordIsRequired && dbAuthMechanism != "SCRAM" {
+		dbCredential = options.Credential{
+			AuthMechanism: dbAuthMechanism,
+			Username:      dbUser,
+			Password:      dbPassword,
+		}
+	} else if dbAuthMechanism == "SCRAM" {
+		dbAuthSource := os.Getenv("DATABASE_AUTHSOURCE")
+		if dbAuthSource == "" {
+			log.Fatalf("environmental variable for database auth source is not set")
+		}
+		dbCredential = options.Credential{
+			Username:   dbUser,
+			Password:   dbPassword,
+			AuthSource: dbAuthSource,
+		}
+	} else if dbAuthMechanism == "MONGODB-OIDC" {
+		props := map[string]string{
+			"ENVIRONMENT":    dbOidcEnv,
+			"TOKEN_RESOURCE": dbTokenResource,
+		}
+
+		dbCredential = options.Credential{
+			AuthMechanism:           dbAuthMechanism,
+			AuthMechanismProperties: props,
+		}
+	}
+
+	fmt.Printf("Db connection string is %v \n", dbConnectionString)
+
+	return &DatabaseConfig{
+		Host:             dbHost,
+		Port:             dbPort,
+		User:             dbUser,
+		Password:         dbPassword,
+		DatabaseName:     dbName,
+		Address:          dbAddress,
+		TimeoutDuration:  dbTimeoutDuration,
+		UseSSL:           dbUseSSL,
+		MaxPoolSize:      dbMaxPoolSize,
+		AuthCredentials:  dbCredential,
+		ConnectionString: dbConnectionString,
+	}
+}
+
+func loadPgDatabase() *PgsqlDatabaseConfig {
 	dbHost := os.Getenv("DATABASE_HOST")
 	if dbHost == "" {
 		log.Fatalf("environmental variable for database host is not set")
@@ -147,7 +292,7 @@ func loadDatabase() *DatabaseConfig {
 		log.Fatalf("Unable to get connection string for database")
 	}
 
-	return &DatabaseConfig{
+	return &PgsqlDatabaseConfig{
 		Host:             dbHost,
 		Port:             dbPort,
 		User:             dbUser,

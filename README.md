@@ -14,6 +14,47 @@
 
 
 ## Development Application Deployment
+- Set environment variable for working directory as root of project.
+```bash
+    export WORK_DIR="$(cd "$(dirname . )"  &> /dev/null && pwd)"
+```
+- Install api dependencies
+```bash
+    cd "$WORK_DIR/internal"
+    go install google.golang.org/protobuf@v1.36.1
+    go install google.golang.org/protobuf@v1.34.1
+    go install github.com/bufbuild/buf/cmd/buf@latest
+    go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest
+    go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+    go install connectrpc.com/connect/cmd/protoc-gen-connect-go@latest
+    go install connectrpc.com/connect/cmd/protoc-gen-connect-go@v1.17.0
+    go install github.com/sudorandom/protoc-gen-connect-openapi@main
+
+
+    cd "$WORK_DIR/apps/api"
+    go mod download
+
+    cd "$WORK_DIR/internal"
+    go mod download
+
+```
+
+- Install app dependencies
+```bash
+    cd "$WORK_DIR" && npm i
+```
+
+- Generate protobuf stubs as needed
+```bash
+    cd "$WORK_DIR" && npm run buf:generate
+```
+
+- Generate api doc files as needed
+```bash
+    cd "$WORK_DIR" && npm run doc:bundle && npm run doc:gen
+```
+
+
 
 ##
 

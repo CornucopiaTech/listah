@@ -5,7 +5,19 @@ paths:
     post:
       tags:
         - listah.v1.ItemService
+      summary: CreateOne
       description: Create One Item
+      operationId: listah.v1.ItemService.CreateOne
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -14,11 +26,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -27,7 +41,19 @@ paths:
     post:
       tags:
         - listah.v1.ItemService
+      summary: CreateMany
       description: Create Many Items
+      operationId: listah.v1.ItemService.CreateMany
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -36,11 +62,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -49,32 +77,93 @@ paths:
     get:
       tags:
         - listah.v1.ItemService
+      summary: ReadOne
       description: Read One Item
+      operationId: listah.v1.ItemService.ReadOne.get
       parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
         - name: message
           in: query
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/listah.v1.ItemServiceReadOneRequest'
-            application/proto:
+        - name: encoding
+          in: query
+          content:
+            application/json:
               schema:
-                $ref: '#/components/schemas/listah.v1.ItemServiceReadOneRequest'
-        - schema:
-            $ref: '#/components/parameters/encoding'
-        - schema:
-            $ref: '#/components/parameters/base64'
-        - schema:
-            $ref: '#/components/parameters/compression'
-        - schema:
-            $ref: '#/components/parameters/connect'
+                $ref: '#/components/schemas/encoding'
+        - name: base64
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/base64'
+        - name: compression
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/compression'
+        - name: connect
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect-protocol-version'
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadOneResponse'
+    post:
+      tags:
+        - listah.v1.ItemService
+      summary: ReadOne
+      description: Read One Item
+      operationId: listah.v1.ItemService.ReadOne
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.ItemServiceReadOneRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -83,32 +172,93 @@ paths:
     get:
       tags:
         - listah.v1.ItemService
+      summary: ReadMany
       description: Read Many Items
+      operationId: listah.v1.ItemService.ReadMany.get
       parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
         - name: message
           in: query
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/listah.v1.ItemServiceReadManyRequest'
-            application/proto:
+        - name: encoding
+          in: query
+          content:
+            application/json:
               schema:
-                $ref: '#/components/schemas/listah.v1.ItemServiceReadManyRequest'
-        - schema:
-            $ref: '#/components/parameters/encoding'
-        - schema:
-            $ref: '#/components/parameters/base64'
-        - schema:
-            $ref: '#/components/parameters/compression'
-        - schema:
-            $ref: '#/components/parameters/connect'
+                $ref: '#/components/schemas/encoding'
+        - name: base64
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/base64'
+        - name: compression
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/compression'
+        - name: connect
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect-protocol-version'
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadManyResponse'
+    post:
+      tags:
+        - listah.v1.ItemService
+      summary: ReadMany
+      description: Read Many Items
+      operationId: listah.v1.ItemService.ReadMany
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.ItemServiceReadManyRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -117,7 +267,19 @@ paths:
     post:
       tags:
         - listah.v1.ItemService
+      summary: UpdateOne
       description: Update One Item
+      operationId: listah.v1.ItemService.UpdateOne
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -126,11 +288,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -139,7 +303,19 @@ paths:
     post:
       tags:
         - listah.v1.ItemService
+      summary: UpdateMany
       description: Update Many Items
+      operationId: listah.v1.ItemService.UpdateMany
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -148,11 +324,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -161,7 +339,19 @@ paths:
     post:
       tags:
         - listah.v1.ItemService
+      summary: DeleteOne
       description: Delete One Item
+      operationId: listah.v1.ItemService.DeleteOne
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -170,11 +360,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -183,7 +375,19 @@ paths:
     post:
       tags:
         - listah.v1.ItemService
+      summary: DeleteMany
       description: Delete Many Items
+      operationId: listah.v1.ItemService.DeleteMany
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -192,11 +396,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -205,32 +411,93 @@ paths:
     get:
       tags:
         - listah.v1.ItemService
+      summary: List
       description: List Items
+      operationId: listah.v1.ItemService.List.get
       parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
         - name: message
           in: query
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/listah.v1.ItemServiceListRequest'
-            application/proto:
+        - name: encoding
+          in: query
+          content:
+            application/json:
               schema:
-                $ref: '#/components/schemas/listah.v1.ItemServiceListRequest'
-        - schema:
-            $ref: '#/components/parameters/encoding'
-        - schema:
-            $ref: '#/components/parameters/base64'
-        - schema:
-            $ref: '#/components/parameters/compression'
-        - schema:
-            $ref: '#/components/parameters/connect'
+                $ref: '#/components/schemas/encoding'
+        - name: base64
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/base64'
+        - name: compression
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/compression'
+        - name: connect
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect-protocol-version'
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceListResponse'
+    post:
+      tags:
+        - listah.v1.ItemService
+      summary: List
+      description: List Items
+      operationId: listah.v1.ItemService.List
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.ItemServiceListRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -239,7 +506,19 @@ paths:
     post:
       tags:
         - listah.v1.CategoryService
+      summary: CreateOne
       description: Create One Category
+      operationId: listah.v1.CategoryService.CreateOne
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -248,11 +527,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -261,7 +542,19 @@ paths:
     post:
       tags:
         - listah.v1.CategoryService
+      summary: CreateMany
       description: Create Many Categories
+      operationId: listah.v1.CategoryService.CreateMany
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -270,11 +563,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -283,32 +578,93 @@ paths:
     get:
       tags:
         - listah.v1.CategoryService
+      summary: ReadOne
       description: Read One Category
+      operationId: listah.v1.CategoryService.ReadOne.get
       parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
         - name: message
           in: query
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/listah.v1.CategoryServiceReadOneRequest'
-            application/proto:
+        - name: encoding
+          in: query
+          content:
+            application/json:
               schema:
-                $ref: '#/components/schemas/listah.v1.CategoryServiceReadOneRequest'
-        - schema:
-            $ref: '#/components/parameters/encoding'
-        - schema:
-            $ref: '#/components/parameters/base64'
-        - schema:
-            $ref: '#/components/parameters/compression'
-        - schema:
-            $ref: '#/components/parameters/connect'
+                $ref: '#/components/schemas/encoding'
+        - name: base64
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/base64'
+        - name: compression
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/compression'
+        - name: connect
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect-protocol-version'
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceReadOneResponse'
+    post:
+      tags:
+        - listah.v1.CategoryService
+      summary: ReadOne
+      description: Read One Category
+      operationId: listah.v1.CategoryService.ReadOne
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.CategoryServiceReadOneRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -317,32 +673,93 @@ paths:
     get:
       tags:
         - listah.v1.CategoryService
+      summary: ReadMany
       description: Read Many Categories
+      operationId: listah.v1.CategoryService.ReadMany.get
       parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
         - name: message
           in: query
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/listah.v1.CategoryServiceReadManyRequest'
-            application/proto:
+        - name: encoding
+          in: query
+          content:
+            application/json:
               schema:
-                $ref: '#/components/schemas/listah.v1.CategoryServiceReadManyRequest'
-        - schema:
-            $ref: '#/components/parameters/encoding'
-        - schema:
-            $ref: '#/components/parameters/base64'
-        - schema:
-            $ref: '#/components/parameters/compression'
-        - schema:
-            $ref: '#/components/parameters/connect'
+                $ref: '#/components/schemas/encoding'
+        - name: base64
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/base64'
+        - name: compression
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/compression'
+        - name: connect
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect-protocol-version'
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceReadManyResponse'
+    post:
+      tags:
+        - listah.v1.CategoryService
+      summary: ReadMany
+      description: Read Many Categories
+      operationId: listah.v1.CategoryService.ReadMany
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.CategoryServiceReadManyRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -351,7 +768,19 @@ paths:
     post:
       tags:
         - listah.v1.CategoryService
+      summary: UpdateOne
       description: Update One Category
+      operationId: listah.v1.CategoryService.UpdateOne
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -360,11 +789,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -373,7 +804,19 @@ paths:
     post:
       tags:
         - listah.v1.CategoryService
+      summary: UpdateMany
       description: Update Many Categories
+      operationId: listah.v1.CategoryService.UpdateMany
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -382,11 +825,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -395,7 +840,19 @@ paths:
     post:
       tags:
         - listah.v1.CategoryService
+      summary: DeleteOne
       description: Delete One Category
+      operationId: listah.v1.CategoryService.DeleteOne
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -404,11 +861,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -417,7 +876,19 @@ paths:
     post:
       tags:
         - listah.v1.CategoryService
+      summary: DeleteMany
       description: Delete Many Categories
+      operationId: listah.v1.CategoryService.DeleteMany
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -426,11 +897,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -439,32 +912,93 @@ paths:
     get:
       tags:
         - listah.v1.CategoryService
+      summary: List
       description: List Categories
+      operationId: listah.v1.CategoryService.List.get
       parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
         - name: message
           in: query
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/listah.v1.CategoryServiceListRequest'
-            application/proto:
+        - name: encoding
+          in: query
+          content:
+            application/json:
               schema:
-                $ref: '#/components/schemas/listah.v1.CategoryServiceListRequest'
-        - schema:
-            $ref: '#/components/parameters/encoding'
-        - schema:
-            $ref: '#/components/parameters/base64'
-        - schema:
-            $ref: '#/components/parameters/compression'
-        - schema:
-            $ref: '#/components/parameters/connect'
+                $ref: '#/components/schemas/encoding'
+        - name: base64
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/base64'
+        - name: compression
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/compression'
+        - name: connect
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect-protocol-version'
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceListResponse'
+    post:
+      tags:
+        - listah.v1.CategoryService
+      summary: List
+      description: List Categories
+      operationId: listah.v1.CategoryService.List
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.CategoryServiceListRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -473,7 +1007,19 @@ paths:
     post:
       tags:
         - listah.v1.UserService
+      summary: CreateOne
       description: Create One User
+      operationId: listah.v1.UserService.CreateOne
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -482,11 +1028,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -495,7 +1043,19 @@ paths:
     post:
       tags:
         - listah.v1.UserService
+      summary: CreateMany
       description: Create Many Users
+      operationId: listah.v1.UserService.CreateMany
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -504,11 +1064,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -517,32 +1079,93 @@ paths:
     get:
       tags:
         - listah.v1.UserService
+      summary: ReadOne
       description: Read One User
+      operationId: listah.v1.UserService.ReadOne.get
       parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
         - name: message
           in: query
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/listah.v1.UserServiceReadOneRequest'
-            application/proto:
+        - name: encoding
+          in: query
+          content:
+            application/json:
               schema:
-                $ref: '#/components/schemas/listah.v1.UserServiceReadOneRequest'
-        - schema:
-            $ref: '#/components/parameters/encoding'
-        - schema:
-            $ref: '#/components/parameters/base64'
-        - schema:
-            $ref: '#/components/parameters/compression'
-        - schema:
-            $ref: '#/components/parameters/connect'
+                $ref: '#/components/schemas/encoding'
+        - name: base64
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/base64'
+        - name: compression
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/compression'
+        - name: connect
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect-protocol-version'
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.UserServiceReadOneResponse'
+    post:
+      tags:
+        - listah.v1.UserService
+      summary: ReadOne
+      description: Read One User
+      operationId: listah.v1.UserService.ReadOne
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.UserServiceReadOneRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -551,32 +1174,93 @@ paths:
     get:
       tags:
         - listah.v1.UserService
+      summary: ReadMany
       description: Read Many Users
+      operationId: listah.v1.UserService.ReadMany.get
       parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
         - name: message
           in: query
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/listah.v1.UserServiceReadManyRequest'
-            application/proto:
+        - name: encoding
+          in: query
+          content:
+            application/json:
               schema:
-                $ref: '#/components/schemas/listah.v1.UserServiceReadManyRequest'
-        - schema:
-            $ref: '#/components/parameters/encoding'
-        - schema:
-            $ref: '#/components/parameters/base64'
-        - schema:
-            $ref: '#/components/parameters/compression'
-        - schema:
-            $ref: '#/components/parameters/connect'
+                $ref: '#/components/schemas/encoding'
+        - name: base64
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/base64'
+        - name: compression
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/compression'
+        - name: connect
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect-protocol-version'
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.UserServiceReadManyResponse'
+    post:
+      tags:
+        - listah.v1.UserService
+      summary: ReadMany
+      description: Read Many Users
+      operationId: listah.v1.UserService.ReadMany
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.UserServiceReadManyRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -585,7 +1269,19 @@ paths:
     post:
       tags:
         - listah.v1.UserService
+      summary: UpdateOne
       description: Update One User
+      operationId: listah.v1.UserService.UpdateOne
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -594,11 +1290,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -607,7 +1305,19 @@ paths:
     post:
       tags:
         - listah.v1.UserService
+      summary: UpdateMany
       description: Update Many Users
+      operationId: listah.v1.UserService.UpdateMany
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -616,11 +1326,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -629,7 +1341,19 @@ paths:
     post:
       tags:
         - listah.v1.UserService
+      summary: DeleteOne
       description: Delete One User
+      operationId: listah.v1.UserService.DeleteOne
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -638,11 +1362,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -651,7 +1377,19 @@ paths:
     post:
       tags:
         - listah.v1.UserService
+      summary: DeleteMany
       description: Delete Many Users
+      operationId: listah.v1.UserService.DeleteMany
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -660,11 +1398,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -673,7 +1413,19 @@ paths:
     post:
       tags:
         - listah.v1.StoreService
+      summary: CreateOne
       description: Create One Store
+      operationId: listah.v1.StoreService.CreateOne
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -682,11 +1434,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -695,7 +1449,19 @@ paths:
     post:
       tags:
         - listah.v1.StoreService
+      summary: CreateMany
       description: Create Many Stores
+      operationId: listah.v1.StoreService.CreateMany
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -704,11 +1470,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -717,32 +1485,93 @@ paths:
     get:
       tags:
         - listah.v1.StoreService
+      summary: ReadOne
       description: Read One Store
+      operationId: listah.v1.StoreService.ReadOne.get
       parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
         - name: message
           in: query
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/listah.v1.StoreServiceReadOneRequest'
-            application/proto:
+        - name: encoding
+          in: query
+          content:
+            application/json:
               schema:
-                $ref: '#/components/schemas/listah.v1.StoreServiceReadOneRequest'
-        - schema:
-            $ref: '#/components/parameters/encoding'
-        - schema:
-            $ref: '#/components/parameters/base64'
-        - schema:
-            $ref: '#/components/parameters/compression'
-        - schema:
-            $ref: '#/components/parameters/connect'
+                $ref: '#/components/schemas/encoding'
+        - name: base64
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/base64'
+        - name: compression
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/compression'
+        - name: connect
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect-protocol-version'
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.StoreServiceReadOneResponse'
+    post:
+      tags:
+        - listah.v1.StoreService
+      summary: ReadOne
+      description: Read One Store
+      operationId: listah.v1.StoreService.ReadOne
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.StoreServiceReadOneRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -751,32 +1580,93 @@ paths:
     get:
       tags:
         - listah.v1.StoreService
+      summary: ReadMany
       description: Read Many Stores
+      operationId: listah.v1.StoreService.ReadMany.get
       parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
         - name: message
           in: query
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/listah.v1.StoreServiceReadManyRequest'
-            application/proto:
+        - name: encoding
+          in: query
+          content:
+            application/json:
               schema:
-                $ref: '#/components/schemas/listah.v1.StoreServiceReadManyRequest'
-        - schema:
-            $ref: '#/components/parameters/encoding'
-        - schema:
-            $ref: '#/components/parameters/base64'
-        - schema:
-            $ref: '#/components/parameters/compression'
-        - schema:
-            $ref: '#/components/parameters/connect'
+                $ref: '#/components/schemas/encoding'
+        - name: base64
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/base64'
+        - name: compression
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/compression'
+        - name: connect
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect-protocol-version'
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.StoreServiceReadManyResponse'
+    post:
+      tags:
+        - listah.v1.StoreService
+      summary: ReadMany
+      description: Read Many Stores
+      operationId: listah.v1.StoreService.ReadMany
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.StoreServiceReadManyRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -785,7 +1675,19 @@ paths:
     post:
       tags:
         - listah.v1.StoreService
+      summary: UpdateOne
       description: Update One Store
+      operationId: listah.v1.StoreService.UpdateOne
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -794,11 +1696,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -807,7 +1711,19 @@ paths:
     post:
       tags:
         - listah.v1.StoreService
+      summary: UpdateMany
       description: Update Many Stores
+      operationId: listah.v1.StoreService.UpdateMany
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -816,11 +1732,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -829,7 +1747,19 @@ paths:
     post:
       tags:
         - listah.v1.StoreService
+      summary: DeleteOne
       description: Delete One Store
+      operationId: listah.v1.StoreService.DeleteOne
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -838,11 +1768,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -851,7 +1783,19 @@ paths:
     post:
       tags:
         - listah.v1.StoreService
+      summary: DeleteMany
       description: Delete Many Stores
+      operationId: listah.v1.StoreService.DeleteMany
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
@@ -860,11 +1804,13 @@ paths:
         required: true
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -873,32 +1819,93 @@ paths:
     get:
       tags:
         - listah.v1.StoreService
+      summary: List
       description: List Stores
+      operationId: listah.v1.StoreService.List.get
       parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
         - name: message
           in: query
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/listah.v1.StoreServiceListRequest'
-            application/proto:
+        - name: encoding
+          in: query
+          content:
+            application/json:
               schema:
-                $ref: '#/components/schemas/listah.v1.StoreServiceListRequest'
-        - schema:
-            $ref: '#/components/parameters/encoding'
-        - schema:
-            $ref: '#/components/parameters/base64'
-        - schema:
-            $ref: '#/components/parameters/compression'
-        - schema:
-            $ref: '#/components/parameters/connect'
+                $ref: '#/components/schemas/encoding'
+        - name: base64
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/base64'
+        - name: compression
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/compression'
+        - name: connect
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect-protocol-version'
       responses:
         default:
+          description: Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/connect.error'
         "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.StoreServiceListResponse'
+    post:
+      tags:
+        - listah.v1.StoreService
+      summary: List
+      description: List Stores
+      operationId: listah.v1.StoreService.List
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.StoreServiceListRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
           content:
             application/json:
               schema:
@@ -915,7 +1922,6 @@ components:
     google.protobuf.Timestamp:
       type: string
       format: date-time
-      additionalProperties: false
       description: |-
         A Timestamp represents a point in time independent of any time zone or local
          calendar, encoded as a count of seconds and fractions of seconds at
@@ -1010,19 +2016,480 @@ components:
       type: object
       properties:
         created_by:
-          $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
+          title: created_by
         created_at:
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: created_at
         updated_by:
-          $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
+          title: updated_by
         updated_at:
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: updated_at
         deleted_by:
-          $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
+          title: deleted_by
         deleted_at:
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: deleted_at
       title: Audit
       additionalProperties: false
+    listah.v1.ItemServiceCreateManyRequest:
+      type: object
+      properties:
+        item:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.ItemServiceCreateOneRequest'
+          title: item
+      title: ItemServiceCreateManyRequest
+      additionalProperties: false
+    listah.v1.ItemServiceCreateManyResponse:
+      type: object
+      properties:
+        item:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.ItemServiceCreateOneResponse'
+          title: item
+      title: ItemServiceCreateManyResponse
+      additionalProperties: false
+    listah.v1.ItemServiceCreateOneRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+        userId:
+          type: string
+          title: user_id
+        title:
+          type: string
+          title: title
+        description:
+          type: string
+          title: description
+        note:
+          type: string
+          title: note
+        tags:
+          type: array
+          items:
+            type: string
+          title: tags
+        properties:
+          type: object
+          title: properties
+          additionalProperties:
+            type: string
+            title: value
+        reactivateAt:
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: reactivate_at
+        audit:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
+      title: ItemServiceCreateOneRequest
+      additionalProperties: false
+    listah.v1.ItemServiceCreateOneRequest.PropertiesEntry:
+      type: object
+      properties:
+        key:
+          type: string
+          title: key
+        value:
+          type: string
+          title: value
+      title: PropertiesEntry
+      additionalProperties: false
+    listah.v1.ItemServiceCreateOneResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+        userId:
+          type: string
+          title: user_id
+        title:
+          type: string
+          title: title
+        description:
+          type: string
+          title: description
+        note:
+          type: string
+          title: note
+        tags:
+          type: array
+          items:
+            type: string
+          title: tags
+        properties:
+          type: object
+          title: properties
+          additionalProperties:
+            type: string
+            title: value
+        reactivateAt:
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: reactivate_at
+        audit:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
+      title: ItemServiceCreateOneResponse
+      additionalProperties: false
+    listah.v1.ItemServiceCreateOneResponse.PropertiesEntry:
+      type: object
+      properties:
+        key:
+          type: string
+          title: key
+        value:
+          type: string
+          title: value
+      title: PropertiesEntry
+      additionalProperties: false
+    listah.v1.ItemServiceDeleteManyRequest:
+      type: object
+      properties:
+        item:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.ItemServiceDeleteOneRequest'
+          title: item
+      title: ItemServiceDeleteManyRequest
+      additionalProperties: false
+    listah.v1.ItemServiceDeleteManyResponse:
+      type: object
+      properties:
+        item:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.ItemServiceDeleteOneResponse'
+          title: item
+      title: ItemServiceDeleteManyResponse
+      additionalProperties: false
+    listah.v1.ItemServiceDeleteOneRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+        audit:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
+      title: ItemServiceDeleteOneRequest
+      additionalProperties: false
+    listah.v1.ItemServiceDeleteOneResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+        userId:
+          type: string
+          title: user_id
+        title:
+          type: string
+          title: title
+        description:
+          type: string
+          title: description
+        note:
+          type: string
+          title: note
+        tags:
+          type: array
+          items:
+            type: string
+          title: tags
+        properties:
+          type: object
+          title: properties
+          additionalProperties:
+            type: string
+            title: value
+        reactivateAt:
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: reactivate_at
+        audit:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
+      title: ItemServiceDeleteOneResponse
+      additionalProperties: false
+    listah.v1.ItemServiceDeleteOneResponse.PropertiesEntry:
+      type: object
+      properties:
+        key:
+          type: string
+          title: key
+        value:
+          type: string
+          title: value
+      title: PropertiesEntry
+      additionalProperties: false
+    listah.v1.ItemServiceListRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+      title: ItemServiceListRequest
+      additionalProperties: false
+    listah.v1.ItemServiceListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: string
+          title: items
+        categoryName:
+          type: string
+          title: category_name
+      title: ItemServiceListResponse
+      additionalProperties: false
+    listah.v1.ItemServiceReadManyRequest:
+      type: object
+      properties:
+        item:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.ItemServiceReadOneRequest'
+          title: item
+      title: ItemServiceReadManyRequest
+      additionalProperties: false
+    listah.v1.ItemServiceReadManyResponse:
+      type: object
+      properties:
+        item:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.ItemServiceReadOneResponse'
+          title: item
+      title: ItemServiceReadManyResponse
+      additionalProperties: false
+    listah.v1.ItemServiceReadOneRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+      title: ItemServiceReadOneRequest
+      additionalProperties: false
+    listah.v1.ItemServiceReadOneResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+        userId:
+          type: string
+          title: user_id
+        title:
+          type: string
+          title: title
+        description:
+          type: string
+          title: description
+        note:
+          type: string
+          title: note
+        tags:
+          type: array
+          items:
+            type: string
+          title: tags
+        properties:
+          type: object
+          title: properties
+          additionalProperties:
+            type: string
+            title: value
+        reactivateAt:
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: reactivate_at
+        audit:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
+      title: ItemServiceReadOneResponse
+      additionalProperties: false
+    listah.v1.ItemServiceReadOneResponse.PropertiesEntry:
+      type: object
+      properties:
+        key:
+          type: string
+          title: key
+        value:
+          type: string
+          title: value
+      title: PropertiesEntry
+      additionalProperties: false
+    listah.v1.ItemServiceUpdateManyRequest:
+      type: object
+      properties:
+        item:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.ItemServiceUpdateOneRequest'
+          title: item
+      title: ItemServiceUpdateManyRequest
+      additionalProperties: false
+    listah.v1.ItemServiceUpdateManyResponse:
+      type: object
+      properties:
+        item:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.ItemServiceUpdateOneResponse'
+          title: item
+      title: ItemServiceUpdateManyResponse
+      additionalProperties: false
+    listah.v1.ItemServiceUpdateOneRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+        userId:
+          type: string
+          title: user_id
+        title:
+          type: string
+          title: title
+        description:
+          type: string
+          title: description
+        note:
+          type: string
+          title: note
+        tags:
+          type: array
+          items:
+            type: string
+          title: tags
+        properties:
+          type: object
+          title: properties
+          additionalProperties:
+            type: string
+            title: value
+        reactivateAt:
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: reactivate_at
+        audit:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
+      title: ItemServiceUpdateOneRequest
+      additionalProperties: false
+    listah.v1.ItemServiceUpdateOneRequest.PropertiesEntry:
+      type: object
+      properties:
+        key:
+          type: string
+          title: key
+        value:
+          type: string
+          title: value
+      title: PropertiesEntry
+      additionalProperties: false
+    listah.v1.ItemServiceUpdateOneResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+        userId:
+          type: string
+          title: user_id
+        title:
+          type: string
+          title: title
+        description:
+          type: string
+          title: description
+        note:
+          type: string
+          title: note
+        tags:
+          type: array
+          items:
+            type: string
+          title: tags
+        properties:
+          type: object
+          title: properties
+          additionalProperties:
+            type: string
+            title: value
+        reactivateAt:
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: reactivate_at
+        audit:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
+      title: ItemServiceUpdateOneResponse
+      additionalProperties: false
+    listah.v1.ItemServiceUpdateOneResponse.PropertiesEntry:
+      type: object
+      properties:
+        key:
+          type: string
+          title: key
+        value:
+          type: string
+          title: value
+      title: PropertiesEntry
+      additionalProperties: false
+    encoding:
+      title: encoding
+      enum:
+        - proto
+        - json
+      description: Define which encoding or 'Message-Codec' to use
+    base64:
+      type: boolean
+      title: base64
+      description: Specifies if the message query param is base64 encoded, which may be required for binary data
+    compression:
+      title: compression
+      enum:
+        - identity
+        - gzip
+        - br
+      description: Which compression algorithm to use for this request
+    connect-protocol-version:
+      type: number
+      title: Connect-Protocol-Version
+      enum:
+        - 1
+      description: Define the version of the Connect protocol
+      const: 1
+    connect-timeout-header:
+      type: number
+      title: Connect-Timeout-Ms
+      description: Define the timeout, in ms
     connect.error:
       type: object
       properties:
@@ -1068,415 +2535,6 @@ components:
           additionalProperties: true
       additionalProperties: true
       description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
-    listah.v1.ItemServiceCreateManyRequest:
-      type: object
-      properties:
-        item:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.ItemServiceCreateOneRequest'
-      title: ItemServiceCreateManyRequest
-      additionalProperties: false
-    listah.v1.ItemServiceCreateManyResponse:
-      type: object
-      properties:
-        item:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.ItemServiceCreateOneResponse'
-      title: ItemServiceCreateManyResponse
-      additionalProperties: false
-    listah.v1.ItemServiceCreateOneRequest:
-      type: object
-      properties:
-        id:
-          type: string
-          title: id
-          additionalProperties: false
-        name:
-          type: string
-          title: name
-          additionalProperties: false
-        description:
-          type: string
-          title: description
-          additionalProperties: false
-        quantity:
-          type: string
-          title: quantity
-          additionalProperties: false
-        note:
-          type: string
-          title: note
-          additionalProperties: false
-        category_name:
-          type: string
-          title: category_name
-          additionalProperties: false
-        category_id:
-          type: string
-          title: category_id
-          additionalProperties: false
-        store_name:
-          type: string
-          title: store_name
-          additionalProperties: false
-        store_id:
-          type: string
-          title: store_id
-          additionalProperties: false
-        reactivate_at:
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
-        audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
-      title: ItemServiceCreateOneRequest
-      additionalProperties: false
-    listah.v1.ItemServiceCreateOneResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          title: id
-          additionalProperties: false
-        name:
-          type: string
-          title: name
-          additionalProperties: false
-        description:
-          type: string
-          title: description
-          additionalProperties: false
-        quantity:
-          type: string
-          title: quantity
-          additionalProperties: false
-        note:
-          type: string
-          title: note
-          additionalProperties: false
-        category_name:
-          type: string
-          title: category_name
-          additionalProperties: false
-        category_id:
-          type: string
-          title: category_id
-          additionalProperties: false
-        store_name:
-          type: string
-          title: store_name
-          additionalProperties: false
-        store_id:
-          type: string
-          title: store_id
-          additionalProperties: false
-        reactivate_at:
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
-        audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
-      title: ItemServiceCreateOneResponse
-      additionalProperties: false
-    listah.v1.ItemServiceDeleteManyRequest:
-      type: object
-      properties:
-        item:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.ItemServiceDeleteOneRequest'
-      title: ItemServiceDeleteManyRequest
-      additionalProperties: false
-    listah.v1.ItemServiceDeleteManyResponse:
-      type: object
-      properties:
-        item:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.ItemServiceDeleteOneResponse'
-      title: ItemServiceDeleteManyResponse
-      additionalProperties: false
-    listah.v1.ItemServiceDeleteOneRequest:
-      type: object
-      properties:
-        id:
-          type: string
-          title: id
-          additionalProperties: false
-        audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
-      title: ItemServiceDeleteOneRequest
-      additionalProperties: false
-    listah.v1.ItemServiceDeleteOneResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          title: id
-          additionalProperties: false
-        name:
-          type: string
-          title: name
-          additionalProperties: false
-        description:
-          type: string
-          title: description
-          additionalProperties: false
-        quantity:
-          type: string
-          title: quantity
-          additionalProperties: false
-        note:
-          type: string
-          title: note
-          additionalProperties: false
-        category_name:
-          type: string
-          title: category_name
-          additionalProperties: false
-        category_id:
-          type: string
-          title: category_id
-          additionalProperties: false
-        store_name:
-          type: string
-          title: store_name
-          additionalProperties: false
-        store_id:
-          type: string
-          title: store_id
-          additionalProperties: false
-        reactivate_at:
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
-        audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
-      title: ItemServiceDeleteOneResponse
-      additionalProperties: false
-    listah.v1.ItemServiceListRequest:
-      type: object
-      properties:
-        id:
-          type: string
-          title: id
-          additionalProperties: false
-      title: ItemServiceListRequest
-      additionalProperties: false
-    listah.v1.ItemServiceListResponse:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            type: string
-            title: items
-            additionalProperties: false
-        categoryName:
-          type: string
-          title: category_name
-          additionalProperties: false
-      title: ItemServiceListResponse
-      additionalProperties: false
-    listah.v1.ItemServiceReadManyRequest:
-      type: object
-      properties:
-        item:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.ItemServiceReadOneRequest'
-      title: ItemServiceReadManyRequest
-      additionalProperties: false
-    listah.v1.ItemServiceReadManyResponse:
-      type: object
-      properties:
-        item:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.ItemServiceReadOneResponse'
-      title: ItemServiceReadManyResponse
-      additionalProperties: false
-    listah.v1.ItemServiceReadOneRequest:
-      type: object
-      properties:
-        id:
-          type: string
-          title: id
-          additionalProperties: false
-      title: ItemServiceReadOneRequest
-      additionalProperties: false
-    listah.v1.ItemServiceReadOneResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          title: id
-          additionalProperties: false
-        name:
-          type: string
-          title: name
-          additionalProperties: false
-        description:
-          type: string
-          title: description
-          additionalProperties: false
-        quantity:
-          type: string
-          title: quantity
-          additionalProperties: false
-        note:
-          type: string
-          title: note
-          additionalProperties: false
-        category_name:
-          type: string
-          title: category_name
-          additionalProperties: false
-        category_id:
-          type: string
-          title: category_id
-          additionalProperties: false
-        store_name:
-          type: string
-          title: store_name
-          additionalProperties: false
-        store_id:
-          type: string
-          title: store_id
-          additionalProperties: false
-        reactivate_at:
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
-        audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
-      title: ItemServiceReadOneResponse
-      additionalProperties: false
-    listah.v1.ItemServiceUpdateManyRequest:
-      type: object
-      properties:
-        item:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.ItemServiceUpdateOneRequest'
-      title: ItemServiceUpdateManyRequest
-      additionalProperties: false
-    listah.v1.ItemServiceUpdateManyResponse:
-      type: object
-      properties:
-        item:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.ItemServiceUpdateOneResponse'
-      title: ItemServiceUpdateManyResponse
-      additionalProperties: false
-    listah.v1.ItemServiceUpdateOneRequest:
-      type: object
-      properties:
-        id:
-          type: string
-          title: id
-          additionalProperties: false
-        name:
-          type: string
-          title: name
-          additionalProperties: false
-        description:
-          type: string
-          title: description
-          additionalProperties: false
-        quantity:
-          type: string
-          title: quantity
-          additionalProperties: false
-        note:
-          type: string
-          title: note
-          additionalProperties: false
-        category_name:
-          type: string
-          title: category_name
-          additionalProperties: false
-        category_id:
-          type: string
-          title: category_id
-          additionalProperties: false
-        store_name:
-          type: string
-          title: store_name
-          additionalProperties: false
-        store_id:
-          type: string
-          title: store_id
-          additionalProperties: false
-        reactivate_at:
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
-        audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
-      title: ItemServiceUpdateOneRequest
-      additionalProperties: false
-    listah.v1.ItemServiceUpdateOneResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          title: id
-          additionalProperties: false
-        name:
-          type: string
-          title: name
-          additionalProperties: false
-        description:
-          type: string
-          title: description
-          additionalProperties: false
-        quantity:
-          type: string
-          title: quantity
-          additionalProperties: false
-        note:
-          type: string
-          title: note
-          additionalProperties: false
-        category_name:
-          type: string
-          title: category_name
-          additionalProperties: false
-        category_id:
-          type: string
-          title: category_id
-          additionalProperties: false
-        store_name:
-          type: string
-          title: store_name
-          additionalProperties: false
-        store_id:
-          type: string
-          title: store_id
-          additionalProperties: false
-        reactivate_at:
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
-        audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
-      title: ItemServiceUpdateOneResponse
-      additionalProperties: false
-    encoding:
-      title: encoding
-      enum:
-        - proto
-        - json
-      description: Define which encoding or 'Message-Codec' to use
-    base64:
-      type: boolean
-      title: base64
-      description: Specifies if the message query param is base64 encoded, which may be required for binary data
-    compression:
-      title: compression
-      enum:
-        - identity
-        - gzip
-        - br
-        - gzip
-      description: Which compression algorithm to use for this request
-    connect:
-      title: connect
-      enum:
-        - "1"
-      description: Which version of connect to use.
     listah.v1.CategoryServiceCreateManyRequest:
       type: object
       properties:
@@ -1484,6 +2542,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.CategoryServiceCreateOneRequest'
+          title: category
       title: CategoryServiceCreateManyRequest
       additionalProperties: false
     listah.v1.CategoryServiceCreateManyResponse:
@@ -1493,6 +2552,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.CategoryServiceCreateOneResponse'
+          title: category
       title: CategoryServiceCreateManyResponse
       additionalProperties: false
     listah.v1.CategoryServiceCreateOneRequest:
@@ -1501,21 +2561,19 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         name:
           type: string
           title: name
-          additionalProperties: false
         description:
           type: string
           title: description
-          additionalProperties: false
         note:
           type: string
           title: note
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: CategoryServiceCreateOneRequest
       additionalProperties: false
     listah.v1.CategoryServiceCreateOneResponse:
@@ -1524,21 +2582,19 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         name:
           type: string
           title: name
-          additionalProperties: false
         description:
           type: string
           title: description
-          additionalProperties: false
         note:
           type: string
           title: note
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: CategoryServiceCreateOneResponse
       additionalProperties: false
     listah.v1.CategoryServiceDeleteManyRequest:
@@ -1548,6 +2604,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.CategoryServiceDeleteOneRequest'
+          title: category
       title: CategoryServiceDeleteManyRequest
       additionalProperties: false
     listah.v1.CategoryServiceDeleteManyResponse:
@@ -1557,6 +2614,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.CategoryServiceDeleteOneResponse'
+          title: category
       title: CategoryServiceDeleteManyResponse
       additionalProperties: false
     listah.v1.CategoryServiceDeleteOneRequest:
@@ -1565,9 +2623,10 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: CategoryServiceDeleteOneRequest
       additionalProperties: false
     listah.v1.CategoryServiceDeleteOneResponse:
@@ -1576,21 +2635,19 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         name:
           type: string
           title: name
-          additionalProperties: false
         description:
           type: string
           title: description
-          additionalProperties: false
         note:
           type: string
           title: note
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: CategoryServiceDeleteOneResponse
       additionalProperties: false
     listah.v1.CategoryServiceListRequest:
@@ -1599,7 +2656,6 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
       title: CategoryServiceListRequest
       additionalProperties: false
     listah.v1.CategoryServiceListResponse:
@@ -1608,27 +2664,25 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         name:
           type: string
           title: name
-          additionalProperties: false
         description:
           type: string
           title: description
-          additionalProperties: false
         note:
           type: string
           title: note
-          additionalProperties: false
         items:
           type: array
           items:
             type: string
-            title: items
-            additionalProperties: false
+          title: items
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
+          description: repeated ItemServiceReadOneResponse items = 20;
       title: CategoryServiceListResponse
       additionalProperties: false
     listah.v1.CategoryServiceReadManyRequest:
@@ -1638,6 +2692,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.CategoryServiceReadOneRequest'
+          title: category
       title: CategoryServiceReadManyRequest
       additionalProperties: false
     listah.v1.CategoryServiceReadManyResponse:
@@ -1647,6 +2702,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.CategoryServiceReadOneResponse'
+          title: category
       title: CategoryServiceReadManyResponse
       additionalProperties: false
     listah.v1.CategoryServiceReadOneRequest:
@@ -1655,7 +2711,6 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
       title: CategoryServiceReadOneRequest
       additionalProperties: false
     listah.v1.CategoryServiceReadOneResponse:
@@ -1664,21 +2719,19 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         name:
           type: string
           title: name
-          additionalProperties: false
         description:
           type: string
           title: description
-          additionalProperties: false
         note:
           type: string
           title: note
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: CategoryServiceReadOneResponse
       additionalProperties: false
     listah.v1.CategoryServiceUpdateManyRequest:
@@ -1688,6 +2741,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.CategoryServiceUpdateOneRequest'
+          title: category
       title: CategoryServiceUpdateManyRequest
       additionalProperties: false
     listah.v1.CategoryServiceUpdateManyResponse:
@@ -1697,6 +2751,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.CategoryServiceUpdateOneResponse'
+          title: category
       title: CategoryServiceUpdateManyResponse
       additionalProperties: false
     listah.v1.CategoryServiceUpdateOneRequest:
@@ -1705,21 +2760,19 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         name:
           type: string
           title: name
-          additionalProperties: false
         description:
           type: string
           title: description
-          additionalProperties: false
         note:
           type: string
           title: note
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: CategoryServiceUpdateOneRequest
       additionalProperties: false
     listah.v1.CategoryServiceUpdateOneResponse:
@@ -1728,21 +2781,19 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         name:
           type: string
           title: name
-          additionalProperties: false
         description:
           type: string
           title: description
-          additionalProperties: false
         note:
           type: string
           title: note
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: CategoryServiceUpdateOneResponse
       additionalProperties: false
     listah.v1.UserServiceCreateManyRequest:
@@ -1752,6 +2803,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.UserServiceCreateOneRequest'
+          title: user
       title: UserServiceCreateManyRequest
       additionalProperties: false
     listah.v1.UserServiceCreateManyResponse:
@@ -1761,6 +2813,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.UserServiceCreateOneResponse'
+          title: user
       title: UserServiceCreateManyResponse
       additionalProperties: false
     listah.v1.UserServiceCreateOneRequest:
@@ -1769,33 +2822,29 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         first_name:
           type: string
           title: first_name
-          additionalProperties: false
         middle_names:
           type: string
           title: middle_names
-          additionalProperties: false
         last_name:
           type: string
           title: last_name
-          additionalProperties: false
         username:
           type: string
           title: username
-          additionalProperties: false
         email:
           type: string
           title: email
-          additionalProperties: false
+          format: email
         role:
           type: string
           title: role
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: UserServiceCreateOneRequest
       additionalProperties: false
     listah.v1.UserServiceCreateOneResponse:
@@ -1804,33 +2853,29 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         first_name:
           type: string
           title: first_name
-          additionalProperties: false
         middle_names:
           type: string
           title: middle_names
-          additionalProperties: false
         last_name:
           type: string
           title: last_name
-          additionalProperties: false
         username:
           type: string
           title: username
-          additionalProperties: false
         email:
           type: string
           title: email
-          additionalProperties: false
+          format: email
         role:
           type: string
           title: role
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: UserServiceCreateOneResponse
       additionalProperties: false
     listah.v1.UserServiceDeleteManyRequest:
@@ -1840,6 +2885,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.UserServiceDeleteOneRequest'
+          title: user
       title: UserServiceDeleteManyRequest
       additionalProperties: false
     listah.v1.UserServiceDeleteManyResponse:
@@ -1849,6 +2895,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.UserServiceDeleteOneResponse'
+          title: user
       title: UserServiceDeleteManyResponse
       additionalProperties: false
     listah.v1.UserServiceDeleteOneRequest:
@@ -1857,9 +2904,10 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: UserServiceDeleteOneRequest
       additionalProperties: false
     listah.v1.UserServiceDeleteOneResponse:
@@ -1868,33 +2916,29 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         first_name:
           type: string
           title: first_name
-          additionalProperties: false
         middle_names:
           type: string
           title: middle_names
-          additionalProperties: false
         last_name:
           type: string
           title: last_name
-          additionalProperties: false
         username:
           type: string
           title: username
-          additionalProperties: false
         email:
           type: string
           title: email
-          additionalProperties: false
+          format: email
         role:
           type: string
           title: role
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: UserServiceDeleteOneResponse
       additionalProperties: false
     listah.v1.UserServiceEchoRequest:
@@ -1903,33 +2947,29 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         first_name:
           type: string
           title: first_name
-          additionalProperties: false
         middle_names:
           type: string
           title: middle_names
-          additionalProperties: false
         last_name:
           type: string
           title: last_name
-          additionalProperties: false
         username:
           type: string
           title: username
-          additionalProperties: false
         email:
           type: string
           title: email
-          additionalProperties: false
+          format: email
         role:
           type: string
           title: role
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: UserServiceEchoRequest
       additionalProperties: false
     listah.v1.UserServiceEchoResponse:
@@ -1938,33 +2978,29 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         first_name:
           type: string
           title: first_name
-          additionalProperties: false
         middle_names:
           type: string
           title: middle_names
-          additionalProperties: false
         last_name:
           type: string
           title: last_name
-          additionalProperties: false
         username:
           type: string
           title: username
-          additionalProperties: false
         email:
           type: string
           title: email
-          additionalProperties: false
+          format: email
         role:
           type: string
           title: role
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: UserServiceEchoResponse
       additionalProperties: false
     listah.v1.UserServiceReadManyRequest:
@@ -1974,6 +3010,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.UserServiceReadOneRequest'
+          title: user
       title: UserServiceReadManyRequest
       additionalProperties: false
     listah.v1.UserServiceReadManyResponse:
@@ -1983,6 +3020,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.UserServiceReadOneResponse'
+          title: user
       title: UserServiceReadManyResponse
       additionalProperties: false
     listah.v1.UserServiceReadOneRequest:
@@ -1991,7 +3029,6 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
       title: UserServiceReadOneRequest
       additionalProperties: false
     listah.v1.UserServiceReadOneResponse:
@@ -2000,33 +3037,29 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         first_name:
           type: string
           title: first_name
-          additionalProperties: false
         middle_names:
           type: string
           title: middle_names
-          additionalProperties: false
         last_name:
           type: string
           title: last_name
-          additionalProperties: false
         username:
           type: string
           title: username
-          additionalProperties: false
         email:
           type: string
           title: email
-          additionalProperties: false
+          format: email
         role:
           type: string
           title: role
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: UserServiceReadOneResponse
       additionalProperties: false
     listah.v1.UserServiceUpdateManyRequest:
@@ -2036,6 +3069,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.UserServiceUpdateOneRequest'
+          title: user
       title: UserServiceUpdateManyRequest
       additionalProperties: false
     listah.v1.UserServiceUpdateManyResponse:
@@ -2045,6 +3079,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.UserServiceUpdateOneResponse'
+          title: user
       title: UserServiceUpdateManyResponse
       additionalProperties: false
     listah.v1.UserServiceUpdateOneRequest:
@@ -2053,33 +3088,29 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         first_name:
           type: string
           title: first_name
-          additionalProperties: false
         middle_names:
           type: string
           title: middle_names
-          additionalProperties: false
         last_name:
           type: string
           title: last_name
-          additionalProperties: false
         username:
           type: string
           title: username
-          additionalProperties: false
         email:
           type: string
           title: email
-          additionalProperties: false
+          format: email
         role:
           type: string
           title: role
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: UserServiceUpdateOneRequest
       additionalProperties: false
     listah.v1.UserServiceUpdateOneResponse:
@@ -2088,33 +3119,29 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         first_name:
           type: string
           title: first_name
-          additionalProperties: false
         middle_names:
           type: string
           title: middle_names
-          additionalProperties: false
         last_name:
           type: string
           title: last_name
-          additionalProperties: false
         username:
           type: string
           title: username
-          additionalProperties: false
         email:
           type: string
           title: email
-          additionalProperties: false
+          format: email
         role:
           type: string
           title: role
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: UserServiceUpdateOneResponse
       additionalProperties: false
     listah.v1.FamilyCreateRequest:
@@ -2123,13 +3150,11 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         memberId:
           type: array
           items:
             type: string
-            title: member_id
-            additionalProperties: false
+          title: member_id
       title: FamilyCreateRequest
       additionalProperties: false
     listah.v1.StoreServiceCreateManyRequest:
@@ -2139,6 +3164,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.StoreServiceCreateOneRequest'
+          title: store
       title: StoreServiceCreateManyRequest
       additionalProperties: false
     listah.v1.StoreServiceCreateManyResponse:
@@ -2148,6 +3174,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.StoreServiceCreateOneResponse'
+          title: store
       title: StoreServiceCreateManyResponse
       additionalProperties: false
     listah.v1.StoreServiceCreateOneRequest:
@@ -2156,29 +3183,25 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         name:
           type: string
           title: name
-          additionalProperties: false
         description:
           type: string
           title: description
-          additionalProperties: false
         note:
           type: string
           title: note
-          additionalProperties: false
         categoryId:
           type: string
           title: category_id
-          additionalProperties: false
         categoryName:
           type: string
           title: category_name
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: StoreServiceCreateOneRequest
       additionalProperties: false
     listah.v1.StoreServiceCreateOneResponse:
@@ -2187,29 +3210,25 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         name:
           type: string
           title: name
-          additionalProperties: false
         description:
           type: string
           title: description
-          additionalProperties: false
         note:
           type: string
           title: note
-          additionalProperties: false
         categoryId:
           type: string
           title: category_id
-          additionalProperties: false
         categoryName:
           type: string
           title: category_name
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: StoreServiceCreateOneResponse
       additionalProperties: false
     listah.v1.StoreServiceDeleteManyRequest:
@@ -2219,6 +3238,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.StoreServiceDeleteOneRequest'
+          title: store
       title: StoreServiceDeleteManyRequest
       additionalProperties: false
     listah.v1.StoreServiceDeleteManyResponse:
@@ -2228,6 +3248,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.StoreServiceDeleteOneResponse'
+          title: store
       title: StoreServiceDeleteManyResponse
       additionalProperties: false
     listah.v1.StoreServiceDeleteOneRequest:
@@ -2236,9 +3257,10 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: StoreServiceDeleteOneRequest
       additionalProperties: false
     listah.v1.StoreServiceDeleteOneResponse:
@@ -2247,25 +3269,22 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         name:
           type: string
           title: name
-          additionalProperties: false
         description:
           type: string
           title: description
-          additionalProperties: false
         note:
           type: string
           title: note
-          additionalProperties: false
         category:
           type: string
           title: category
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: StoreServiceDeleteOneResponse
       additionalProperties: false
     listah.v1.StoreServiceListRequest:
@@ -2274,7 +3293,6 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
       title: StoreServiceListRequest
       additionalProperties: false
     listah.v1.StoreServiceListResponse:
@@ -2284,17 +3302,15 @@ components:
           type: array
           items:
             type: string
-            title: items
-            additionalProperties: false
-            description: |-
-              string id = 1;
-               string name = 2;
-               string description = 3;
-               string note = 7;
+          title: items
+          description: |-
+            string id = 1;
+             string name = 2;
+             string description = 3;
+             string note = 7;
         categoryName:
           type: string
           title: category_name
-          additionalProperties: false
           description: |-
             repeated ItemServiceReadOneResponse items = 20;
              Audit audit = 50;
@@ -2313,6 +3329,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.StoreServiceReadOneRequest'
+          title: store
       title: StoreServiceReadManyRequest
       additionalProperties: false
     listah.v1.StoreServiceReadManyResponse:
@@ -2322,6 +3339,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.StoreServiceReadOneResponse'
+          title: store
       title: StoreServiceReadManyResponse
       additionalProperties: false
     listah.v1.StoreServiceReadOneRequest:
@@ -2330,7 +3348,6 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
       title: StoreServiceReadOneRequest
       additionalProperties: false
     listah.v1.StoreServiceReadOneResponse:
@@ -2339,29 +3356,25 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         name:
           type: string
           title: name
-          additionalProperties: false
         description:
           type: string
           title: description
-          additionalProperties: false
         note:
           type: string
           title: note
-          additionalProperties: false
         categoryId:
           type: string
           title: category_id
-          additionalProperties: false
         categoryName:
           type: string
           title: category_name
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: StoreServiceReadOneResponse
       additionalProperties: false
     listah.v1.StoreServiceUpdateManyRequest:
@@ -2371,6 +3384,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.StoreServiceUpdateOneRequest'
+          title: store
       title: StoreServiceUpdateManyRequest
       additionalProperties: false
     listah.v1.StoreServiceUpdateManyResponse:
@@ -2380,6 +3394,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.StoreServiceUpdateOneResponse'
+          title: store
       title: StoreServiceUpdateManyResponse
       additionalProperties: false
     listah.v1.StoreServiceUpdateOneRequest:
@@ -2388,29 +3403,25 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         name:
           type: string
           title: name
-          additionalProperties: false
         description:
           type: string
           title: description
-          additionalProperties: false
         note:
           type: string
           title: note
-          additionalProperties: false
         categoryId:
           type: string
           title: category_id
-          additionalProperties: false
         categoryName:
           type: string
           title: category_name
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: StoreServiceUpdateOneRequest
       additionalProperties: false
     listah.v1.StoreServiceUpdateOneResponse:
@@ -2419,76 +3430,30 @@ components:
         id:
           type: string
           title: id
-          additionalProperties: false
         name:
           type: string
           title: name
-          additionalProperties: false
         description:
           type: string
           title: description
-          additionalProperties: false
         note:
           type: string
           title: note
-          additionalProperties: false
         categoryId:
           type: string
           title: category_id
-          additionalProperties: false
         categoryName:
           type: string
           title: category_name
-          additionalProperties: false
         audit:
-          $ref: '#/components/schemas/listah.v1.Audit'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
       title: StoreServiceUpdateOneResponse
       additionalProperties: false
-  parameters:
-    encoding:
-      name: encoding
-      in: query
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/encoding'
-        application/proto:
-          schema:
-            $ref: '#/components/schemas/encoding'
-    base64:
-      name: base64
-      in: query
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/base64'
-        application/proto:
-          schema:
-            $ref: '#/components/schemas/base64'
-    compression:
-      name: compression
-      in: query
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/compression'
-        application/proto:
-          schema:
-            $ref: '#/components/schemas/compression'
-    connect:
-      name: connect
-      in: query
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/connect'
-        application/proto:
-          schema:
-            $ref: '#/components/schemas/connect'
 security: []
 tags:
   - name: listah.v1.ItemService
   - name: listah.v1.CategoryService
   - name: listah.v1.UserService
   - name: listah.v1.StoreService
-externalDocs: {}

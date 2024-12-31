@@ -4,15 +4,18 @@ plugins:
   - local: protoc-gen-go
     out: internal/pkg/proto
     opt: paths=source_relative
+
   - local: protoc-gen-go-grpc
     out: internal/pkg/proto
     opt:
       - paths=source_relative
       - require_unimplemented_servers=false
+
   - local: protoc-gen-connect-go
     out: internal/pkg/proto
     opt:
       - paths=source_relative
+
   - local: protoc-gen-connect-openapi
     out: assets/docs/ref
     strategy: all

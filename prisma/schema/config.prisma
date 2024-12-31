@@ -1,13 +1,9 @@
 generator client {
   provider        = "prisma-client-js"
-  // output   = "../../apps/frontend/app/lib/models/clients"
   previewFeatures = ["prismaSchemaFolder", "multiSchema"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_CONNECTION_URL")
-  schemas  = ["app_logs", "api_logs", "logs", "app"]
+  provider = "mongodb"
+  url      = env("LOCAL_MONGO_CONNECTION_URL")
 }
-
-// listah/prisma/schema/config.prisma

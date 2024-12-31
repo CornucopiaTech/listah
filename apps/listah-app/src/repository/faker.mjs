@@ -164,7 +164,7 @@ let sorted_data = fake_data.sort((a, b) => {
 
 
 // Write data in 'Output.txt' .
-fs.writeFile('./apps/listah-app/src/repository/fake_data.json', JSON.stringify(sorted_data), (err) => {
+fs.writeFile('./apps/listah-app/src/repository/fake_data_w_props.json', JSON.stringify(sorted_data), (err) => {
 
     // In case of a error throw err.
     if (err) throw err;
