@@ -2,13 +2,10 @@ package item
 
 import (
 	"context"
-	// "strings"
-	// "fmt"
 	"cornucopia/listah/internal/pkg/model"
 	v1 "cornucopia/listah/internal/pkg/proto/listah/v1"
 
 	"connectrpc.com/connect"
-	// "go.mongodb.org/mongo-driver/bson"
 	"go.opentelemetry.io/otel"
 )
 
