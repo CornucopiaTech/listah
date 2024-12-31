@@ -3,7 +3,7 @@ package item
 import (
 	"context"
 	// "strings"
-	"fmt"
+	// "fmt"
 	"cornucopia/listah/internal/pkg/model"
 	v1 "cornucopia/listah/internal/pkg/proto/listah/v1"
 
@@ -54,39 +54,32 @@ func (s *Server) CreateMany(ctx context.Context, req *connect.Request[v1.ItemSer
 	s.Infra.Logger.For(ctx).Info("CreateMany method in ItemService called")
 
 	// Create model for repository
-	newModel := model.CreateManyItemModelFromRequest(req.Msg)
-	fmt.Printf("Value of new model: %v", newModel)
+	newModel := model.CreateManyItemModelInterfacesFromRequest(req.Msg)
 
 
 	// Read created model from repository
 	readModel := new(model.Items)
 
 	// Insert model in repository
-	insertedIDs, err := s.Infra.Repository.Item.InsertMany(ctx, newModel)
-	fmt.Printf("Value of insertedIds %v and %T", insertedIDs, insertedIDs)
-	if err != nil {
+	insertedIDs, _ := s.Infra.Repository.Item.InsertMany(ctx, newModel)
+	if insertedIDs == nil {
 		s.Infra.Logger.For(ctx).Info("Writing response after erroneous insertion")
 		resModel := readModel.ManyItemModelToResponse()
 		return connect.NewResponse(resModel), nil
 	}
 
-	// if strings.Join(insertedIDs, "") == "" {
-	// 	s.Infra.Logger.For(ctx).Info("Writing response after erroneous insertion")
-	// 	responseModel := readModel.ManyItemModelToResponse()
-	// 	return connect.NewResponse(responseModel), nil
-	// }
-	// readFilter := make(map[string][]string)
 
-	// // Read recently added document into database
-	// for _, val := range *newModel {
-	// 	readModel = append(readModel, &model.Item{Id: val.Id})
-	// 	readFilter["_id"] = append(readFilter["_id"], val.Id)
-	// }
-	// if err := s.Infra.Repository.Item.ReadOne(ctx, readModel, readFilter); err != nil {
-	// 	s.Infra.Logger.For(ctx).Info("Writing response after erroneous reading after successful insertion")
-	// 	responseModel := readModel.ManyItemModelToResponse()
-	// 	return connect.NewResponse(responseModel), nil
-	// }
+	// Read recently added document into database
+	readFilter := map[string] map[string] []string{
+		"_id": {"$in": insertedIDs},
+	}
+
+
+	if err := s.Infra.Repository.Item.ReadMany(ctx, readModel, readFilter); err != nil {
+		s.Infra.Logger.For(ctx).Info("Writing response after erroneous reading after successful insertion")
+		responseModel := readModel.ManyItemModelToResponse()
+		return connect.NewResponse(responseModel), nil
+	}
 
 
 	// Convert created model to proto response

@@ -10,16 +10,16 @@ import (
 
 	"log"
 
-	// "go.mongodb.org/mongo-driver/v2/mongo"
-	// "go.mongodb.org/mongo-driver/v2/mongo/options"
-	// "go.mongodb.org/mongo-driver/v2/mongo/readpref"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/mongo/readpref"
 
 	// "go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
+	// "go.mongodb.org/mongo-driver/mongo"
+	// "go.mongodb.org/mongo-driver/mongo/options"
+	// "go.mongodb.org/mongo-driver/mongo/readpref"
 
-	"go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
+	// "go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
 )
 
 type Repository struct {
@@ -52,34 +52,20 @@ func Init(cfg *config.Config, logger *logging.Factory) *Repository {
 	}
 	fmt.Printf("Enable TLS is: %v\n", enableTls)
 
-	// Retrieve context
-	ctx := context.Background()
-	// ctx, cancel := context.WithTimeout(context.Background(), cfg.Database.TimeoutDuration)
-	// defer cancel()
-
 	// Create client connection
-	// connectOpts := options.Client().ApplyURI(cfg.Database.ConnectionString).SetAuth(cfg.Database.AuthCredentials)
 	clientOpts := options.Client()
-	clientOpts.Monitor = otelmongo.NewMonitor()
 	clientOpts.ApplyURI(cfg.Database.ConnectionString)
 	clientOpts.SetAuth(cfg.Database.AuthCredentials)
 
 
-	client, err := mongo.Connect(ctx, clientOpts)
+	client, err := mongo.Connect(clientOpts)
 	if err != nil {
 		log.Printf("unable to ping database.")
 		log.Fatal(errors.Cause(err))
 	}
-	// // Close database connection on app exit.
-	// defer func() {
-	// 	if err := client.Disconnect(ctx); err != nil {
-	// 		log.Printf("unable to disconnect from database.")
-	// 		panic(err)
-	// 	}
-	// }()
 
 	// Ping database to test connection
-	if err := client.Ping(ctx, readpref.Primary()); err != nil {
+	if err := client.Ping(context.Background(), readpref.Primary()); err != nil {
 		log.Printf("unable to ping database.")
 		log.Fatal(errors.Cause(err))
 	}

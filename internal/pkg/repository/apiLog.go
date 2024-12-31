@@ -6,8 +6,8 @@ import (
 	"cornucopia/listah/internal/pkg/model"
 
 	"github.com/pkg/errors"
-	// "go.mongodb.org/mongo-driver/v2/mongo"
-	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	// "go.mongodb.org/mongo-driver/mongo"
 	"go.opentelemetry.io/otel"
 	"go.uber.org/zap"
 )

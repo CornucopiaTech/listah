@@ -3,6 +3,7 @@ package model
 import (
 	v1 "cornucopia/listah/internal/pkg/proto/listah/v1"
 	"time"
+	// "fmt"
 
 	"github.com/google/uuid"
 	"go.uber.org/zap/zapcore"
@@ -54,6 +55,16 @@ func (c *Item) CreateOneItemModelFromRequest(msg *v1.ItemServiceCreateOneRequest
 
 func CreateManyItemModelFromRequest(msg *v1.ItemServiceCreateManyRequest) *Items {
 	c := Items{}
+	for _, reqValue := range msg.Item {
+		aCat := new(Item)
+		aCat.CreateOneItemModelFromRequest(reqValue)
+		c = append(c, aCat)
+	}
+	return &c
+}
+
+func CreateManyItemModelInterfacesFromRequest(msg *v1.ItemServiceCreateManyRequest) *[]interface{} {
+	var c []interface{}
 	for _, reqValue := range msg.Item {
 		aCat := new(Item)
 		aCat.CreateOneItemModelFromRequest(reqValue)

@@ -35,10 +35,10 @@ message ItemServiceCreateOneResponse {
     Audit audit = 50;
 }
 message ItemServiceCreateManyRequest {
-    repeated ItemServiceCreateOneRequest item = 1;
+    repeated ItemServiceCreateOneRequest items = 1;
 }
 message ItemServiceCreateManyResponse {
-    repeated ItemServiceCreateOneResponse item = 1;
+    repeated ItemServiceCreateOneResponse items = 1;
 }
 
 
@@ -57,10 +57,10 @@ message ItemServiceReadOneResponse {
     Audit audit = 50;
 }
 message ItemServiceReadManyRequest {
-    repeated ItemServiceReadOneRequest item = 1;
+    repeated ItemServiceReadOneRequest items = 1;
 }
 message ItemServiceReadManyResponse {
-    repeated ItemServiceReadOneResponse item = 1;
+    repeated ItemServiceReadOneResponse items = 1;
 }
 
 
@@ -87,10 +87,10 @@ message ItemServiceUpdateOneResponse {
     Audit audit = 50;
 }
 message ItemServiceUpdateManyRequest {
-    repeated ItemServiceUpdateOneRequest item = 1;
+    repeated ItemServiceUpdateOneRequest items = 1;
 }
 message ItemServiceUpdateManyResponse {
-    repeated ItemServiceUpdateOneResponse item = 1;
+    repeated ItemServiceUpdateOneResponse items = 1;
 }
 
 
@@ -110,10 +110,10 @@ message ItemServiceDeleteOneResponse {
     Audit audit = 50;
 }
 message ItemServiceDeleteManyRequest {
-    repeated ItemServiceDeleteOneRequest item = 1;
+    repeated ItemServiceDeleteOneRequest items = 1;
 }
 message ItemServiceDeleteManyResponse {
-    repeated ItemServiceDeleteOneResponse item = 1;
+    repeated ItemServiceDeleteOneResponse items = 1;
 }
 
 
