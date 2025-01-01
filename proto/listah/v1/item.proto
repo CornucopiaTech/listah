@@ -57,7 +57,7 @@ message ItemServiceReadOneResponse {
     Audit audit = 50;
 }
 message ItemServiceReadManyRequest {
-    repeated ItemServiceReadOneRequest items = 1;
+    repeated string ids = 1;
 }
 message ItemServiceReadManyResponse {
     repeated ItemServiceReadOneResponse items = 1;

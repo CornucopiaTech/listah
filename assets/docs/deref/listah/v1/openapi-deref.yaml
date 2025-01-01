@@ -688,14 +688,14 @@ paths:
             schema:
               type: object
               properties: &ref_52
-                item:
+                items:
                   type: array
                   items:
                     type: object
                     properties: *ref_3
                     title: ItemServiceCreateOneRequest
                     additionalProperties: false
-                  title: item
+                  title: items
               title: ItemServiceCreateManyRequest
               additionalProperties: false
         required: true
@@ -707,14 +707,14 @@ paths:
               schema:
                 type: object
                 properties: &ref_53
-                  item:
+                  items:
                     type: array
                     items:
                       type: object
                       properties: *ref_4
                       title: ItemServiceCreateOneResponse
                       additionalProperties: false
-                    title: item
+                    title: items
                 title: ItemServiceCreateManyResponse
                 additionalProperties: false
         default:
@@ -1030,14 +1030,11 @@ paths:
               schema:
                 type: object
                 properties: &ref_10
-                  item:
+                  ids:
                     type: array
                     items:
-                      type: object
-                      properties: *ref_6
-                      title: ItemServiceReadOneRequest
-                      additionalProperties: false
-                    title: item
+                      type: string
+                    title: ids
                 title: ItemServiceReadManyRequest
                 additionalProperties: false
         - name: encoding
@@ -1082,14 +1079,14 @@ paths:
               schema:
                 type: object
                 properties: &ref_11
-                  item:
+                  items:
                     type: array
                     items:
                       type: object
                       properties: *ref_7
                       title: ItemServiceReadOneResponse
                       additionalProperties: false
-                    title: item
+                    title: items
                 title: ItemServiceReadManyResponse
                 additionalProperties: false
         default:
@@ -1490,14 +1487,14 @@ paths:
             schema:
               type: object
               properties: &ref_56
-                item:
+                items:
                   type: array
                   items:
                     type: object
                     properties: *ref_12
                     title: ItemServiceUpdateOneRequest
                     additionalProperties: false
-                  title: item
+                  title: items
               title: ItemServiceUpdateManyRequest
               additionalProperties: false
         required: true
@@ -1509,14 +1506,14 @@ paths:
               schema:
                 type: object
                 properties: &ref_57
-                  item:
+                  items:
                     type: array
                     items:
                       type: object
                       properties: *ref_13
                       title: ItemServiceUpdateOneResponse
                       additionalProperties: false
-                    title: item
+                    title: items
                 title: ItemServiceUpdateManyResponse
                 additionalProperties: false
         default:
@@ -1748,14 +1745,14 @@ paths:
             schema:
               type: object
               properties: &ref_54
-                item:
+                items:
                   type: array
                   items:
                     type: object
                     properties: *ref_14
                     title: ItemServiceDeleteOneRequest
                     additionalProperties: false
-                  title: item
+                  title: items
               title: ItemServiceDeleteManyRequest
               additionalProperties: false
         required: true
@@ -1767,14 +1764,14 @@ paths:
               schema:
                 type: object
                 properties: &ref_55
-                  item:
+                  items:
                     type: array
                     items:
                       type: object
                       properties: *ref_15
                       title: ItemServiceDeleteOneResponse
                       additionalProperties: false
-                    title: item
+                    title: items
                 title: ItemServiceDeleteManyResponse
                 additionalProperties: false
         default:

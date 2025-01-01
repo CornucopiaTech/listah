@@ -55,7 +55,7 @@ func (c *Item) CreateOneItemModelFromRequest(msg *v1.ItemServiceCreateOneRequest
 
 func CreateManyItemModelFromRequest(msg *v1.ItemServiceCreateManyRequest) *Items {
 	c := Items{}
-	for _, reqValue := range msg.Item {
+	for _, reqValue := range msg.Items {
 		aCat := new(Item)
 		aCat.CreateOneItemModelFromRequest(reqValue)
 		c = append(c, aCat)
@@ -65,7 +65,7 @@ func CreateManyItemModelFromRequest(msg *v1.ItemServiceCreateManyRequest) *Items
 
 func CreateManyItemModelInterfacesFromRequest(msg *v1.ItemServiceCreateManyRequest) *[]interface{} {
 	var c []interface{}
-	for _, reqValue := range msg.Item {
+	for _, reqValue := range msg.Items {
 		aCat := new(Item)
 		aCat.CreateOneItemModelFromRequest(reqValue)
 		c = append(c, aCat)
@@ -120,7 +120,7 @@ func (c *Item) UpdateOneItemModelFromRequest(msg *v1.ItemServiceUpdateOneRequest
 func UpdateManyItemModelFromRequest(msgs *v1.ItemServiceUpdateManyRequest, readModel *Items) (*Items, error) {
 	items := Items{}
 
-	for _, valReq := range msgs.Item {
+	for _, valReq := range msgs.Items {
 		for _, valRepo := range *readModel {
 			if valRepo.Id == valReq.Id {
 				c := Item{
@@ -193,7 +193,7 @@ func (c *Item) DeleteOneItemModelFromRequest(msg *v1.ItemServiceDeleteOneRequest
 func DeleteManyItemModelFromRequest(msgs *v1.ItemServiceDeleteManyRequest, readModel *Items) *Items {
 	items := Items{}
 
-	for _, valReq := range msgs.Item {
+	for _, valReq := range msgs.Items {
 		for _, valRepo := range *readModel {
 			if valRepo.Id == valReq.Id {
 				c := Item{
@@ -260,7 +260,7 @@ func (cs *Items) ManyItemModelToResponse() *v1.ItemServiceCreateManyResponse {
 				DeletedAt: timestamppb.New(c.Audit.DeletedAt),
 			},
 		}
-		resValue.Item = append(resValue.Item, a)
+		resValue.Items = append(resValue.Items, a)
 	}
 	return resValue
 }

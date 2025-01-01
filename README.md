@@ -54,6 +54,10 @@
     cd "$WORK_DIR" && npm run doc:bundle && npm run doc:gen
 ```
 
+- Disable telemetry:
+```bash
+    npx next telemetry disable
+```
 
 
 ##

@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "api:dev": "clear && cd ./apps/api && nodemon -e go --watch '*.go' --watch '../../internal/**/**/*.go' --signal SIGTERM --exec 'go' run .",
-    "app:dev": "next dev ./apps/listah-app --port 5050",
+    "app:dev": "clear && export NEXT_TELEMETRY_DEBUG=1 && next dev ./apps/listah-app --port 5050",
     "app:build": "next build ./apps/listah-app",
     "app:start": "next start ./apps/listah-app",
     "app:lint": "next lint ./apps/listah-app",

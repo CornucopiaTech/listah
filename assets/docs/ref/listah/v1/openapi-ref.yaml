@@ -2044,21 +2044,21 @@ components:
     listah.v1.ItemServiceCreateManyRequest:
       type: object
       properties:
-        item:
+        items:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.ItemServiceCreateOneRequest'
-          title: item
+          title: items
       title: ItemServiceCreateManyRequest
       additionalProperties: false
     listah.v1.ItemServiceCreateManyResponse:
       type: object
       properties:
-        item:
+        items:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.ItemServiceCreateOneResponse'
-          title: item
+          title: items
       title: ItemServiceCreateManyResponse
       additionalProperties: false
     listah.v1.ItemServiceCreateOneRequest:
@@ -2164,21 +2164,21 @@ components:
     listah.v1.ItemServiceDeleteManyRequest:
       type: object
       properties:
-        item:
+        items:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.ItemServiceDeleteOneRequest'
-          title: item
+          title: items
       title: ItemServiceDeleteManyRequest
       additionalProperties: false
     listah.v1.ItemServiceDeleteManyResponse:
       type: object
       properties:
-        item:
+        items:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.ItemServiceDeleteOneResponse'
-          title: item
+          title: items
       title: ItemServiceDeleteManyResponse
       additionalProperties: false
     listah.v1.ItemServiceDeleteOneRequest:
@@ -2267,21 +2267,21 @@ components:
     listah.v1.ItemServiceReadManyRequest:
       type: object
       properties:
-        item:
+        ids:
           type: array
           items:
-            $ref: '#/components/schemas/listah.v1.ItemServiceReadOneRequest'
-          title: item
+            type: string
+          title: ids
       title: ItemServiceReadManyRequest
       additionalProperties: false
     listah.v1.ItemServiceReadManyResponse:
       type: object
       properties:
-        item:
+        items:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.ItemServiceReadOneResponse'
-          title: item
+          title: items
       title: ItemServiceReadManyResponse
       additionalProperties: false
     listah.v1.ItemServiceReadOneRequest:
@@ -2345,21 +2345,21 @@ components:
     listah.v1.ItemServiceUpdateManyRequest:
       type: object
       properties:
-        item:
+        items:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.ItemServiceUpdateOneRequest'
-          title: item
+          title: items
       title: ItemServiceUpdateManyRequest
       additionalProperties: false
     listah.v1.ItemServiceUpdateManyResponse:
       type: object
       properties:
-        item:
+        items:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.ItemServiceUpdateOneResponse'
-          title: item
+          title: items
       title: ItemServiceUpdateManyResponse
       additionalProperties: false
     listah.v1.ItemServiceUpdateOneRequest:

@@ -13,21 +13,11 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"go.mongodb.org/mongo-driver/v2/mongo/readpref"
-
-	// "go.mongodb.org/mongo-driver/bson"
-	// "go.mongodb.org/mongo-driver/mongo"
-	// "go.mongodb.org/mongo-driver/mongo/options"
-	// "go.mongodb.org/mongo-driver/mongo/readpref"
-
-	// "go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
 )
 
 type Repository struct {
 	Client *mongo.Client
-	// User     UserRepository
 	Item ItemRepository
-	// Category CategoryRepository
-	// Store    StoreRepository
 	ApiLog ApiLogRepository
 }
 
@@ -72,29 +62,11 @@ func Init(cfg *config.Config, logger *logging.Factory) *Repository {
 
 	return &Repository{
 		Client: client,
-		// User: &repositoryAgent{
-		// 	client:     &client,
-		// 	logger:     logger,
-		// 	ctx:        &ctx,
-		// 	collection: &client.Collection("Users"),
-		// },
 		Item: &itemRepositoryAgent{
 			client:     client,
 			logger:     logger,
 			collection: client.Database(cfg.Database.DatabaseName).Collection("Items"),
 		},
-		// Category: &repositoryAgent{
-		// 	client:     &client,
-		// 	logger:     logger,
-		// 	ctx:        &ctx,
-		// 	collection: &client.Collection("Categories"),
-		// },
-		// Tag: &repositoryAgent{
-		// 	client:     &client,
-		// 	logger:     logger,
-		// 	ctx:        &ctx,
-		// 	collection: &client.Collection("Tags"),
-		// },
 		ApiLog: &apiLogRepositoryAgent{
 			client:     client,
 			logger:     logger,
