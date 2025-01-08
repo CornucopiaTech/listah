@@ -263,6 +263,101 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/listah.v1.ItemServiceReadManyResponse'
+  /listah.v1.ItemService/ReadFilter:
+    get:
+      tags:
+        - listah.v1.ItemService
+      summary: ReadFilter
+      description: Read Filtered Items
+      operationId: listah.v1.ItemService.ReadFilter.get
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadFilterRequest'
+        - name: encoding
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/encoding'
+        - name: base64
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/base64'
+        - name: compression
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/compression'
+        - name: connect
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect-protocol-version'
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadFilterResponse'
+    post:
+      tags:
+        - listah.v1.ItemService
+      summary: ReadFilter
+      description: Read Filtered Items
+      operationId: listah.v1.ItemService.ReadFilter
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.ItemServiceReadFilterRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadFilterResponse'
   /listah.v1.ItemService/UpdateOne:
     post:
       tags:
@@ -2243,6 +2338,56 @@ components:
           title: value
       title: PropertiesEntry
       additionalProperties: false
+    listah.v1.ItemServiceItem:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+        userId:
+          type: string
+          title: user_id
+        title:
+          type: string
+          title: title
+        description:
+          type: string
+          title: description
+        note:
+          type: string
+          title: note
+        tags:
+          type: array
+          items:
+            type: string
+          title: tags
+        properties:
+          type: object
+          title: properties
+          additionalProperties:
+            type: string
+            title: value
+        reactivateAt:
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: reactivate_at
+        audit:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
+      title: ItemServiceItem
+      additionalProperties: false
+    listah.v1.ItemServiceItem.PropertiesEntry:
+      type: object
+      properties:
+        key:
+          type: string
+          title: key
+        value:
+          type: string
+          title: value
+      title: PropertiesEntry
+      additionalProperties: false
     listah.v1.ItemServiceListRequest:
       type: object
       properties:
@@ -2263,6 +2408,36 @@ components:
           type: string
           title: category_name
       title: ItemServiceListResponse
+      additionalProperties: false
+    listah.v1.ItemServiceReadFilterRequest:
+      type: object
+      properties:
+        userFilter:
+          type: array
+          items:
+            type: string
+          title: user_filter
+        tagFilter:
+          type: array
+          items:
+            type: string
+          title: tag_filter
+        categoryFilter:
+          type: array
+          items:
+            type: string
+          title: category_filter
+      title: ItemServiceReadFilterRequest
+      additionalProperties: false
+    listah.v1.ItemServiceReadFilterResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.ItemServiceItem'
+          title: items
+      title: ItemServiceReadFilterResponse
       additionalProperties: false
     listah.v1.ItemServiceReadManyRequest:
       type: object

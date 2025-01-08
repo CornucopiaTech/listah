@@ -10,6 +10,7 @@ import (
 	"go.opentelemetry.io/otel"
 )
 
+
 func (s *Server) ReadOne(ctx context.Context, req *connect.Request[v1.ItemServiceReadOneRequest]) (*connect.Response[v1.ItemServiceReadOneResponse], error) {
 	ctx, span := otel.Tracer("item-service").Start(ctx, "read-one")
 	defer span.End()
@@ -70,6 +71,33 @@ func (s *Server) ReadMany(ctx context.Context, req *connect.Request[v1.ItemServi
 
 	// Marshal copy from generic response to read response
 	responseModel := new(v1.ItemServiceReadManyResponse)
+	utils.MarshalCopyProto(genericResponse, responseModel)
+
+	return connect.NewResponse(responseModel), nil
+}
+
+func (s *Server) ReadFilter(ctx context.Context, req *connect.Request[v1.ItemServiceReadFilterRequest]) (*connect.Response[v1.ItemServiceReadFilterResponse], error) {
+	ctx, span := otel.Tracer("item-service").Start(ctx, "read-filter")
+	defer span.End()
+	s.Infra.Logger.For(ctx).Info("ReadFilter method in ItemService called")
+
+	// Read model from repository
+	readModel := new(model.Items)
+
+
+	readFilter := model.GetReadFilterObject(req.Msg)
+
+	if err := s.Infra.Repository.Item.ReadMany(ctx, readModel, readFilter); err != nil {
+		s.Infra.Logger.For(ctx).Info("Writing response after erroneous reading")
+	} else {
+			s.Infra.Logger.For(ctx).Info("Writing response after successful reading")
+	}
+
+	// Convert model to generic (create) proto response
+	genericResponse := readModel.ManyItemModelToResponse()
+
+	// Marshal copy from generic response to read response
+	responseModel := new(v1.ItemServiceReadFilterResponse)
 	utils.MarshalCopyProto(genericResponse, responseModel)
 
 	return connect.NewResponse(responseModel), nil

@@ -1,12 +1,14 @@
 package repository
 
 import (
+	// "fmt"
 	"context"
 	"strings"
 	"cornucopia/listah/internal/pkg/logging"
 	"cornucopia/listah/internal/pkg/model"
 
 	"github.com/pkg/errors"
+	// "go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"go.opentelemetry.io/otel"
@@ -17,7 +19,7 @@ type EmptyInterface []interface{}
 
 type ItemRepository interface {
 	ReadOne(ctx context.Context, repoModel *model.Item, readFilter map[string]string) error
-	ReadMany(ctx context.Context, repoModel *model.Items, readFilter map[string] map[string] []string) error
+	ReadMany(ctx context.Context, repoModel *model.Items, readFilter any) error
 	InsertOne(ctx context.Context, repoModel *model.Item) (string, error)
 	InsertMany(ctx context.Context, repoModel *[]interface{}) ([]string, error)
 
@@ -45,7 +47,7 @@ func (a *itemRepositoryAgent) ReadOne(ctx context.Context, repoModel *model.Item
 	return nil
 }
 
-func (a *itemRepositoryAgent) ReadMany(ctx context.Context, repoModel *model.Items, readFilter map[string] map[string] []string) error {
+func (a *itemRepositoryAgent) ReadMany(ctx context.Context, repoModel *model.Items, readFilter any) error {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "Read many")
 	defer span.End()
 	a.logger.For(ctx).Info("Reading many from item by filter", zap.Object("filter", repoModel))
@@ -93,6 +95,8 @@ func (a *itemRepositoryAgent) InsertMany(ctx context.Context, repoModel *[]inter
 	a.logger.For(ctx).Info("Inserting many into item")
 
 
+	// fmt.Print("\n\nData to be inserted: ")
+	// fmt.Print(*repoModel)
 	queryOpts := options.InsertMany().SetOrdered(false)
 	res, err := a.collection.InsertMany(ctx, *repoModel, queryOpts)
 

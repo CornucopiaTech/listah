@@ -645,7 +645,7 @@ paths:
                     description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
                   detail:
                     type: object
-                    properties: &ref_58
+                    properties: &ref_61
                       type:
                         type: string
                       value:
@@ -687,7 +687,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_52
+              properties: &ref_54
                 items:
                   type: array
                   items:
@@ -706,7 +706,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_53
+                properties: &ref_55
                   items:
                     type: array
                     items:
@@ -1150,6 +1150,294 @@ paths:
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
+  /listah.v1.ItemService/ReadFilter:
+    get:
+      tags:
+        - listah.v1.ItemService
+      summary: ReadFilter
+      description: Read Filtered Items
+      operationId: listah.v1.ItemService.ReadFilter.get
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            type: number
+            title: Connect-Protocol-Version
+            enum: *ref_2
+            description: Define the version of the Connect protocol
+            const: 1
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            type: number
+            title: Connect-Timeout-Ms
+            description: Define the timeout, in ms
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: &ref_12
+                  userFilter:
+                    type: array
+                    items:
+                      type: string
+                    title: user_filter
+                  tagFilter:
+                    type: array
+                    items:
+                      type: string
+                    title: tag_filter
+                  categoryFilter:
+                    type: array
+                    items:
+                      type: string
+                    title: category_filter
+                title: ItemServiceReadFilterRequest
+                additionalProperties: false
+        - name: encoding
+          in: query
+          content:
+            application/json:
+              schema:
+                title: encoding
+                enum: *ref_8
+                description: Define which encoding or 'Message-Codec' to use
+        - name: base64
+          in: query
+          content:
+            application/json:
+              schema:
+                type: boolean
+                title: base64
+                description: Specifies if the message query param is base64 encoded, which may be required for binary data
+        - name: compression
+          in: query
+          content:
+            application/json:
+              schema:
+                title: compression
+                enum: *ref_9
+                description: Which compression algorithm to use for this request
+        - name: connect
+          in: query
+          content:
+            application/json:
+              schema:
+                type: number
+                title: Connect-Protocol-Version
+                enum: *ref_2
+                description: Define the version of the Connect protocol
+                const: 1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: &ref_13
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties: &ref_58
+                        id:
+                          type: string
+                          title: id
+                        userId:
+                          type: string
+                          title: user_id
+                        title:
+                          type: string
+                          title: title
+                        description:
+                          type: string
+                          title: description
+                        note:
+                          type: string
+                          title: note
+                        tags:
+                          type: array
+                          items:
+                            type: string
+                          title: tags
+                        properties:
+                          type: object
+                          title: properties
+                          additionalProperties:
+                            type: string
+                            title: value
+                        reactivateAt:
+                          allOf:
+                            - type: string
+                              format: date-time
+                              description: |-
+                                A Timestamp represents a point in time independent of any time zone or local
+                                 calendar, encoded as a count of seconds and fractions of seconds at
+                                 nanosecond resolution. The count is relative to an epoch at UTC midnight on
+                                 January 1, 1970, in the proleptic Gregorian calendar which extends the
+                                 Gregorian calendar backwards to year one.
+
+                                 All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+                                 second table is needed for interpretation, using a [24-hour linear
+                                 smear](https://developers.google.com/time/smear).
+
+                                 The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+                                 restricting to that range, we ensure that we can convert to and from [RFC
+                                 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+
+                                 # Examples
+
+                                 Example 1: Compute Timestamp from POSIX `time()`.
+
+                                     Timestamp timestamp;
+                                     timestamp.set_seconds(time(NULL));
+                                     timestamp.set_nanos(0);
+
+                                 Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+
+                                     struct timeval tv;
+                                     gettimeofday(&tv, NULL);
+
+                                     Timestamp timestamp;
+                                     timestamp.set_seconds(tv.tv_sec);
+                                     timestamp.set_nanos(tv.tv_usec * 1000);
+
+                                 Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+
+                                     FILETIME ft;
+                                     GetSystemTimeAsFileTime(&ft);
+                                     UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+
+                                     // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+                                     // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+                                     Timestamp timestamp;
+                                     timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+                                     timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+
+                                 Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+
+                                     long millis = System.currentTimeMillis();
+
+                                     Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+                                         .setNanos((int) ((millis % 1000) * 1000000)).build();
+
+                                 Example 5: Compute Timestamp from Java `Instant.now()`.
+
+                                     Instant now = Instant.now();
+
+                                     Timestamp timestamp =
+                                         Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+                                             .setNanos(now.getNano()).build();
+
+                                 Example 6: Compute Timestamp from current time in Python.
+
+                                     timestamp = Timestamp()
+                                     timestamp.GetCurrentTime()
+
+                                 # JSON Mapping
+
+                                 In JSON format, the Timestamp type is encoded as a string in the
+                                 [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
+                                 format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
+                                 where {year} is always expressed using four digits while {month}, {day},
+                                 {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
+                                 seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
+                                 are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
+                                 is required. A proto3 JSON serializer should always use UTC (as indicated by
+                                 "Z") when printing the Timestamp type and a proto3 JSON parser should be
+                                 able to accept both UTC and other timezones (as indicated by an offset).
+
+                                 For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
+                                 01:30 UTC on January 15, 2017.
+
+                                 In JavaScript, one can convert a Date object to this format using the
+                                 standard
+                                 [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+                                 method. In Python, a standard `datetime.datetime` object can be converted
+                                 to this format using
+                                 [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
+                                 the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
+                                 the Joda Time's [`ISODateTimeFormat.dateTime()`](
+                                 http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
+                                 ) to obtain a formatter capable of generating timestamps in this format.
+                          title: reactivate_at
+                        audit:
+                          allOf:
+                            - type: object
+                              properties: *ref_1
+                              title: Audit
+                              additionalProperties: false
+                          title: audit
+                      title: ItemServiceItem
+                      additionalProperties: false
+                    title: items
+                title: ItemServiceReadFilterResponse
+                additionalProperties: false
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: *ref_5
+                title: Connect Error
+                additionalProperties: true
+                description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
+    post:
+      tags:
+        - listah.v1.ItemService
+      summary: ReadFilter
+      description: Read Filtered Items
+      operationId: listah.v1.ItemService.ReadFilter
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            type: number
+            title: Connect-Protocol-Version
+            enum: *ref_2
+            description: Define the version of the Connect protocol
+            const: 1
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            type: number
+            title: Connect-Timeout-Ms
+            description: Define the timeout, in ms
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: *ref_12
+              title: ItemServiceReadFilterRequest
+              additionalProperties: false
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: *ref_13
+                title: ItemServiceReadFilterResponse
+                additionalProperties: false
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: *ref_5
+                title: Connect Error
+                additionalProperties: true
+                description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
   /listah.v1.ItemService/UpdateOne:
     post:
       tags:
@@ -1178,7 +1466,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_12
+              properties: &ref_14
                 id:
                   type: string
                   title: id
@@ -1317,7 +1605,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_13
+                properties: &ref_15
                   id:
                     type: string
                     title: id
@@ -1486,12 +1774,12 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_56
+              properties: &ref_59
                 items:
                   type: array
                   items:
                     type: object
-                    properties: *ref_12
+                    properties: *ref_14
                     title: ItemServiceUpdateOneRequest
                     additionalProperties: false
                   title: items
@@ -1505,12 +1793,12 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_57
+                properties: &ref_60
                   items:
                     type: array
                     items:
                       type: object
-                      properties: *ref_13
+                      properties: *ref_15
                       title: ItemServiceUpdateOneResponse
                       additionalProperties: false
                     title: items
@@ -1554,7 +1842,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_14
+              properties: &ref_16
                 id:
                   type: string
                   title: id
@@ -1575,7 +1863,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_15
+                properties: &ref_17
                   id:
                     type: string
                     title: id
@@ -1744,12 +2032,12 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_54
+              properties: &ref_56
                 items:
                   type: array
                   items:
                     type: object
-                    properties: *ref_14
+                    properties: *ref_16
                     title: ItemServiceDeleteOneRequest
                     additionalProperties: false
                   title: items
@@ -1763,12 +2051,12 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_55
+                properties: &ref_57
                   items:
                     type: array
                     items:
                       type: object
-                      properties: *ref_15
+                      properties: *ref_17
                       title: ItemServiceDeleteOneResponse
                       additionalProperties: false
                     title: items
@@ -1813,7 +2101,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_16
+                properties: &ref_18
                   id:
                     type: string
                     title: id
@@ -1860,7 +2148,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_17
+                properties: &ref_19
                   items:
                     type: array
                     items:
@@ -1908,7 +2196,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: *ref_16
+              properties: *ref_18
               title: ItemServiceListRequest
               additionalProperties: false
         required: true
@@ -1919,7 +2207,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_17
+                properties: *ref_19
                 title: ItemServiceListResponse
                 additionalProperties: false
         default:
@@ -1960,7 +2248,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_18
+              properties: &ref_20
                 id:
                   type: string
                   title: id
@@ -1990,7 +2278,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_19
+                properties: &ref_21
                   id:
                     type: string
                     title: id
@@ -2050,12 +2338,12 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_59
+              properties: &ref_62
                 category:
                   type: array
                   items:
                     type: object
-                    properties: *ref_18
+                    properties: *ref_20
                     title: CategoryServiceCreateOneRequest
                     additionalProperties: false
                   title: category
@@ -2069,12 +2357,12 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_60
+                properties: &ref_63
                   category:
                     type: array
                     items:
                       type: object
-                      properties: *ref_19
+                      properties: *ref_21
                       title: CategoryServiceCreateOneResponse
                       additionalProperties: false
                     title: category
@@ -2119,7 +2407,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_20
+                properties: &ref_22
                   id:
                     type: string
                     title: id
@@ -2166,7 +2454,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_21
+                properties: &ref_23
                   id:
                     type: string
                     title: id
@@ -2225,7 +2513,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: *ref_20
+              properties: *ref_22
               title: CategoryServiceReadOneRequest
               additionalProperties: false
         required: true
@@ -2236,7 +2524,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_21
+                properties: *ref_23
                 title: CategoryServiceReadOneResponse
                 additionalProperties: false
         default:
@@ -2278,12 +2566,12 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_22
+                properties: &ref_24
                   category:
                     type: array
                     items:
                       type: object
-                      properties: *ref_20
+                      properties: *ref_22
                       title: CategoryServiceReadOneRequest
                       additionalProperties: false
                     title: category
@@ -2330,12 +2618,12 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_23
+                properties: &ref_25
                   category:
                     type: array
                     items:
                       type: object
-                      properties: *ref_21
+                      properties: *ref_23
                       title: CategoryServiceReadOneResponse
                       additionalProperties: false
                     title: category
@@ -2378,7 +2666,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: *ref_22
+              properties: *ref_24
               title: CategoryServiceReadManyRequest
               additionalProperties: false
         required: true
@@ -2389,7 +2677,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_23
+                properties: *ref_25
                 title: CategoryServiceReadManyResponse
                 additionalProperties: false
         default:
@@ -2430,7 +2718,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_24
+              properties: &ref_26
                 id:
                   type: string
                   title: id
@@ -2460,7 +2748,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_25
+                properties: &ref_27
                   id:
                     type: string
                     title: id
@@ -2520,12 +2808,12 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_63
+              properties: &ref_66
                 category:
                   type: array
                   items:
                     type: object
-                    properties: *ref_24
+                    properties: *ref_26
                     title: CategoryServiceUpdateOneRequest
                     additionalProperties: false
                   title: category
@@ -2539,12 +2827,12 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_64
+                properties: &ref_67
                   category:
                     type: array
                     items:
                       type: object
-                      properties: *ref_25
+                      properties: *ref_27
                       title: CategoryServiceUpdateOneResponse
                       additionalProperties: false
                     title: category
@@ -2588,7 +2876,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_26
+              properties: &ref_28
                 id:
                   type: string
                   title: id
@@ -2609,7 +2897,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_27
+                properties: &ref_29
                   id:
                     type: string
                     title: id
@@ -2669,12 +2957,12 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_61
+              properties: &ref_64
                 category:
                   type: array
                   items:
                     type: object
-                    properties: *ref_26
+                    properties: *ref_28
                     title: CategoryServiceDeleteOneRequest
                     additionalProperties: false
                   title: category
@@ -2688,12 +2976,12 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_62
+                properties: &ref_65
                   category:
                     type: array
                     items:
                       type: object
-                      properties: *ref_27
+                      properties: *ref_29
                       title: CategoryServiceDeleteOneResponse
                       additionalProperties: false
                     title: category
@@ -2738,7 +3026,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_28
+                properties: &ref_30
                   id:
                     type: string
                     title: id
@@ -2785,7 +3073,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_29
+                properties: &ref_31
                   id:
                     type: string
                     title: id
@@ -2850,7 +3138,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: *ref_28
+              properties: *ref_30
               title: CategoryServiceListRequest
               additionalProperties: false
         required: true
@@ -2861,7 +3149,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_29
+                properties: *ref_31
                 title: CategoryServiceListResponse
                 additionalProperties: false
         default:
@@ -2902,7 +3190,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_30
+              properties: &ref_32
                 id:
                   type: string
                   title: id
@@ -2942,7 +3230,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_31
+                properties: &ref_33
                   id:
                     type: string
                     title: id
@@ -3012,12 +3300,12 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_65
+              properties: &ref_68
                 user:
                   type: array
                   items:
                     type: object
-                    properties: *ref_30
+                    properties: *ref_32
                     title: UserServiceCreateOneRequest
                     additionalProperties: false
                   title: user
@@ -3031,12 +3319,12 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_66
+                properties: &ref_69
                   user:
                     type: array
                     items:
                       type: object
-                      properties: *ref_31
+                      properties: *ref_33
                       title: UserServiceCreateOneResponse
                       additionalProperties: false
                     title: user
@@ -3081,7 +3369,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_32
+                properties: &ref_34
                   id:
                     type: string
                     title: id
@@ -3128,7 +3416,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_33
+                properties: &ref_35
                   id:
                     type: string
                     title: id
@@ -3197,7 +3485,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: *ref_32
+              properties: *ref_34
               title: UserServiceReadOneRequest
               additionalProperties: false
         required: true
@@ -3208,7 +3496,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_33
+                properties: *ref_35
                 title: UserServiceReadOneResponse
                 additionalProperties: false
         default:
@@ -3250,12 +3538,12 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_34
+                properties: &ref_36
                   user:
                     type: array
                     items:
                       type: object
-                      properties: *ref_32
+                      properties: *ref_34
                       title: UserServiceReadOneRequest
                       additionalProperties: false
                     title: user
@@ -3302,12 +3590,12 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_35
+                properties: &ref_37
                   user:
                     type: array
                     items:
                       type: object
-                      properties: *ref_33
+                      properties: *ref_35
                       title: UserServiceReadOneResponse
                       additionalProperties: false
                     title: user
@@ -3350,7 +3638,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: *ref_34
+              properties: *ref_36
               title: UserServiceReadManyRequest
               additionalProperties: false
         required: true
@@ -3361,7 +3649,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_35
+                properties: *ref_37
                 title: UserServiceReadManyResponse
                 additionalProperties: false
         default:
@@ -3402,7 +3690,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_36
+              properties: &ref_38
                 id:
                   type: string
                   title: id
@@ -3442,7 +3730,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_37
+                properties: &ref_39
                   id:
                     type: string
                     title: id
@@ -3512,12 +3800,12 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_69
+              properties: &ref_72
                 user:
                   type: array
                   items:
                     type: object
-                    properties: *ref_36
+                    properties: *ref_38
                     title: UserServiceUpdateOneRequest
                     additionalProperties: false
                   title: user
@@ -3531,12 +3819,12 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_70
+                properties: &ref_73
                   user:
                     type: array
                     items:
                       type: object
-                      properties: *ref_37
+                      properties: *ref_39
                       title: UserServiceUpdateOneResponse
                       additionalProperties: false
                     title: user
@@ -3580,7 +3868,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_38
+              properties: &ref_40
                 id:
                   type: string
                   title: id
@@ -3601,7 +3889,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_39
+                properties: &ref_41
                   id:
                     type: string
                     title: id
@@ -3671,12 +3959,12 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_67
+              properties: &ref_70
                 user:
                   type: array
                   items:
                     type: object
-                    properties: *ref_38
+                    properties: *ref_40
                     title: UserServiceDeleteOneRequest
                     additionalProperties: false
                   title: user
@@ -3690,12 +3978,12 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_68
+                properties: &ref_71
                   user:
                     type: array
                     items:
                       type: object
-                      properties: *ref_39
+                      properties: *ref_41
                       title: UserServiceDeleteOneResponse
                       additionalProperties: false
                     title: user
@@ -3739,7 +4027,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_40
+              properties: &ref_42
                 id:
                   type: string
                   title: id
@@ -3775,7 +4063,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_41
+                properties: &ref_43
                   id:
                     type: string
                     title: id
@@ -3841,12 +4129,12 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_71
+              properties: &ref_74
                 store:
                   type: array
                   items:
                     type: object
-                    properties: *ref_40
+                    properties: *ref_42
                     title: StoreServiceCreateOneRequest
                     additionalProperties: false
                   title: store
@@ -3860,12 +4148,12 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_72
+                properties: &ref_75
                   store:
                     type: array
                     items:
                       type: object
-                      properties: *ref_41
+                      properties: *ref_43
                       title: StoreServiceCreateOneResponse
                       additionalProperties: false
                     title: store
@@ -3910,7 +4198,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_42
+                properties: &ref_44
                   id:
                     type: string
                     title: id
@@ -3957,7 +4245,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_43
+                properties: &ref_45
                   id:
                     type: string
                     title: id
@@ -4022,7 +4310,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: *ref_42
+              properties: *ref_44
               title: StoreServiceReadOneRequest
               additionalProperties: false
         required: true
@@ -4033,7 +4321,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_43
+                properties: *ref_45
                 title: StoreServiceReadOneResponse
                 additionalProperties: false
         default:
@@ -4075,12 +4363,12 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_44
+                properties: &ref_46
                   store:
                     type: array
                     items:
                       type: object
-                      properties: *ref_42
+                      properties: *ref_44
                       title: StoreServiceReadOneRequest
                       additionalProperties: false
                     title: store
@@ -4127,12 +4415,12 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_45
+                properties: &ref_47
                   store:
                     type: array
                     items:
                       type: object
-                      properties: *ref_43
+                      properties: *ref_45
                       title: StoreServiceReadOneResponse
                       additionalProperties: false
                     title: store
@@ -4175,7 +4463,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: *ref_44
+              properties: *ref_46
               title: StoreServiceReadManyRequest
               additionalProperties: false
         required: true
@@ -4186,7 +4474,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_45
+                properties: *ref_47
                 title: StoreServiceReadManyResponse
                 additionalProperties: false
         default:
@@ -4227,7 +4515,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_46
+              properties: &ref_48
                 id:
                   type: string
                   title: id
@@ -4263,7 +4551,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_47
+                properties: &ref_49
                   id:
                     type: string
                     title: id
@@ -4329,12 +4617,12 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_75
+              properties: &ref_78
                 store:
                   type: array
                   items:
                     type: object
-                    properties: *ref_46
+                    properties: *ref_48
                     title: StoreServiceUpdateOneRequest
                     additionalProperties: false
                   title: store
@@ -4348,12 +4636,12 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_76
+                properties: &ref_79
                   store:
                     type: array
                     items:
                       type: object
-                      properties: *ref_47
+                      properties: *ref_49
                       title: StoreServiceUpdateOneResponse
                       additionalProperties: false
                     title: store
@@ -4397,7 +4685,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_48
+              properties: &ref_50
                 id:
                   type: string
                   title: id
@@ -4418,7 +4706,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_49
+                properties: &ref_51
                   id:
                     type: string
                     title: id
@@ -4481,12 +4769,12 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_73
+              properties: &ref_76
                 store:
                   type: array
                   items:
                     type: object
-                    properties: *ref_48
+                    properties: *ref_50
                     title: StoreServiceDeleteOneRequest
                     additionalProperties: false
                   title: store
@@ -4500,12 +4788,12 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_74
+                properties: &ref_77
                   store:
                     type: array
                     items:
                       type: object
-                      properties: *ref_49
+                      properties: *ref_51
                       title: StoreServiceDeleteOneResponse
                       additionalProperties: false
                     title: store
@@ -4550,7 +4838,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_50
+                properties: &ref_52
                   id:
                     type: string
                     title: id
@@ -4597,7 +4885,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_51
+                properties: &ref_53
                   items:
                     type: array
                     items:
@@ -4659,7 +4947,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: *ref_50
+              properties: *ref_52
               title: StoreServiceListRequest
               additionalProperties: false
         required: true
@@ -4670,7 +4958,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_51
+                properties: *ref_53
                 title: StoreServiceListResponse
                 additionalProperties: false
         default:
@@ -4789,12 +5077,12 @@ components:
       additionalProperties: false
     listah.v1.ItemServiceCreateManyRequest:
       type: object
-      properties: *ref_52
+      properties: *ref_54
       title: ItemServiceCreateManyRequest
       additionalProperties: false
     listah.v1.ItemServiceCreateManyResponse:
       type: object
-      properties: *ref_53
+      properties: *ref_55
       title: ItemServiceCreateManyResponse
       additionalProperties: false
     listah.v1.ItemServiceCreateOneRequest:
@@ -4831,22 +5119,22 @@ components:
       additionalProperties: false
     listah.v1.ItemServiceDeleteManyRequest:
       type: object
-      properties: *ref_54
+      properties: *ref_56
       title: ItemServiceDeleteManyRequest
       additionalProperties: false
     listah.v1.ItemServiceDeleteManyResponse:
       type: object
-      properties: *ref_55
+      properties: *ref_57
       title: ItemServiceDeleteManyResponse
       additionalProperties: false
     listah.v1.ItemServiceDeleteOneRequest:
       type: object
-      properties: *ref_14
+      properties: *ref_16
       title: ItemServiceDeleteOneRequest
       additionalProperties: false
     listah.v1.ItemServiceDeleteOneResponse:
       type: object
-      properties: *ref_15
+      properties: *ref_17
       title: ItemServiceDeleteOneResponse
       additionalProperties: false
     listah.v1.ItemServiceDeleteOneResponse.PropertiesEntry:
@@ -4860,15 +5148,41 @@ components:
           title: value
       title: PropertiesEntry
       additionalProperties: false
+    listah.v1.ItemServiceItem:
+      type: object
+      properties: *ref_58
+      title: ItemServiceItem
+      additionalProperties: false
+    listah.v1.ItemServiceItem.PropertiesEntry:
+      type: object
+      properties:
+        key:
+          type: string
+          title: key
+        value:
+          type: string
+          title: value
+      title: PropertiesEntry
+      additionalProperties: false
     listah.v1.ItemServiceListRequest:
       type: object
-      properties: *ref_16
+      properties: *ref_18
       title: ItemServiceListRequest
       additionalProperties: false
     listah.v1.ItemServiceListResponse:
       type: object
-      properties: *ref_17
+      properties: *ref_19
       title: ItemServiceListResponse
+      additionalProperties: false
+    listah.v1.ItemServiceReadFilterRequest:
+      type: object
+      properties: *ref_12
+      title: ItemServiceReadFilterRequest
+      additionalProperties: false
+    listah.v1.ItemServiceReadFilterResponse:
+      type: object
+      properties: *ref_13
+      title: ItemServiceReadFilterResponse
       additionalProperties: false
     listah.v1.ItemServiceReadManyRequest:
       type: object
@@ -4903,17 +5217,17 @@ components:
       additionalProperties: false
     listah.v1.ItemServiceUpdateManyRequest:
       type: object
-      properties: *ref_56
+      properties: *ref_59
       title: ItemServiceUpdateManyRequest
       additionalProperties: false
     listah.v1.ItemServiceUpdateManyResponse:
       type: object
-      properties: *ref_57
+      properties: *ref_60
       title: ItemServiceUpdateManyResponse
       additionalProperties: false
     listah.v1.ItemServiceUpdateOneRequest:
       type: object
-      properties: *ref_12
+      properties: *ref_14
       title: ItemServiceUpdateOneRequest
       additionalProperties: false
     listah.v1.ItemServiceUpdateOneRequest.PropertiesEntry:
@@ -4929,7 +5243,7 @@ components:
       additionalProperties: false
     listah.v1.ItemServiceUpdateOneResponse:
       type: object
-      properties: *ref_13
+      properties: *ref_15
       title: ItemServiceUpdateOneResponse
       additionalProperties: false
     listah.v1.ItemServiceUpdateOneResponse.PropertiesEntry:
@@ -4973,137 +5287,137 @@ components:
       description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
     google.protobuf.Any:
       type: object
-      properties: *ref_58
+      properties: *ref_61
       additionalProperties: true
       description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
     listah.v1.CategoryServiceCreateManyRequest:
       type: object
-      properties: *ref_59
+      properties: *ref_62
       title: CategoryServiceCreateManyRequest
       additionalProperties: false
     listah.v1.CategoryServiceCreateManyResponse:
       type: object
-      properties: *ref_60
+      properties: *ref_63
       title: CategoryServiceCreateManyResponse
       additionalProperties: false
     listah.v1.CategoryServiceCreateOneRequest:
       type: object
-      properties: *ref_18
+      properties: *ref_20
       title: CategoryServiceCreateOneRequest
       additionalProperties: false
     listah.v1.CategoryServiceCreateOneResponse:
       type: object
-      properties: *ref_19
+      properties: *ref_21
       title: CategoryServiceCreateOneResponse
       additionalProperties: false
     listah.v1.CategoryServiceDeleteManyRequest:
       type: object
-      properties: *ref_61
+      properties: *ref_64
       title: CategoryServiceDeleteManyRequest
       additionalProperties: false
     listah.v1.CategoryServiceDeleteManyResponse:
       type: object
-      properties: *ref_62
+      properties: *ref_65
       title: CategoryServiceDeleteManyResponse
       additionalProperties: false
     listah.v1.CategoryServiceDeleteOneRequest:
       type: object
-      properties: *ref_26
+      properties: *ref_28
       title: CategoryServiceDeleteOneRequest
       additionalProperties: false
     listah.v1.CategoryServiceDeleteOneResponse:
       type: object
-      properties: *ref_27
+      properties: *ref_29
       title: CategoryServiceDeleteOneResponse
       additionalProperties: false
     listah.v1.CategoryServiceListRequest:
       type: object
-      properties: *ref_28
+      properties: *ref_30
       title: CategoryServiceListRequest
       additionalProperties: false
     listah.v1.CategoryServiceListResponse:
       type: object
-      properties: *ref_29
+      properties: *ref_31
       title: CategoryServiceListResponse
       additionalProperties: false
     listah.v1.CategoryServiceReadManyRequest:
       type: object
-      properties: *ref_22
+      properties: *ref_24
       title: CategoryServiceReadManyRequest
       additionalProperties: false
     listah.v1.CategoryServiceReadManyResponse:
       type: object
-      properties: *ref_23
+      properties: *ref_25
       title: CategoryServiceReadManyResponse
       additionalProperties: false
     listah.v1.CategoryServiceReadOneRequest:
       type: object
-      properties: *ref_20
+      properties: *ref_22
       title: CategoryServiceReadOneRequest
       additionalProperties: false
     listah.v1.CategoryServiceReadOneResponse:
       type: object
-      properties: *ref_21
+      properties: *ref_23
       title: CategoryServiceReadOneResponse
       additionalProperties: false
     listah.v1.CategoryServiceUpdateManyRequest:
       type: object
-      properties: *ref_63
+      properties: *ref_66
       title: CategoryServiceUpdateManyRequest
       additionalProperties: false
     listah.v1.CategoryServiceUpdateManyResponse:
       type: object
-      properties: *ref_64
+      properties: *ref_67
       title: CategoryServiceUpdateManyResponse
       additionalProperties: false
     listah.v1.CategoryServiceUpdateOneRequest:
       type: object
-      properties: *ref_24
+      properties: *ref_26
       title: CategoryServiceUpdateOneRequest
       additionalProperties: false
     listah.v1.CategoryServiceUpdateOneResponse:
       type: object
-      properties: *ref_25
+      properties: *ref_27
       title: CategoryServiceUpdateOneResponse
       additionalProperties: false
     listah.v1.UserServiceCreateManyRequest:
       type: object
-      properties: *ref_65
+      properties: *ref_68
       title: UserServiceCreateManyRequest
       additionalProperties: false
     listah.v1.UserServiceCreateManyResponse:
       type: object
-      properties: *ref_66
+      properties: *ref_69
       title: UserServiceCreateManyResponse
       additionalProperties: false
     listah.v1.UserServiceCreateOneRequest:
       type: object
-      properties: *ref_30
+      properties: *ref_32
       title: UserServiceCreateOneRequest
       additionalProperties: false
     listah.v1.UserServiceCreateOneResponse:
       type: object
-      properties: *ref_31
+      properties: *ref_33
       title: UserServiceCreateOneResponse
       additionalProperties: false
     listah.v1.UserServiceDeleteManyRequest:
       type: object
-      properties: *ref_67
+      properties: *ref_70
       title: UserServiceDeleteManyRequest
       additionalProperties: false
     listah.v1.UserServiceDeleteManyResponse:
       type: object
-      properties: *ref_68
+      properties: *ref_71
       title: UserServiceDeleteManyResponse
       additionalProperties: false
     listah.v1.UserServiceDeleteOneRequest:
       type: object
-      properties: *ref_38
+      properties: *ref_40
       title: UserServiceDeleteOneRequest
       additionalProperties: false
     listah.v1.UserServiceDeleteOneResponse:
       type: object
-      properties: *ref_39
+      properties: *ref_41
       title: UserServiceDeleteOneResponse
       additionalProperties: false
     listah.v1.UserServiceEchoRequest:
@@ -5176,42 +5490,42 @@ components:
       additionalProperties: false
     listah.v1.UserServiceReadManyRequest:
       type: object
-      properties: *ref_34
+      properties: *ref_36
       title: UserServiceReadManyRequest
       additionalProperties: false
     listah.v1.UserServiceReadManyResponse:
       type: object
-      properties: *ref_35
+      properties: *ref_37
       title: UserServiceReadManyResponse
       additionalProperties: false
     listah.v1.UserServiceReadOneRequest:
       type: object
-      properties: *ref_32
+      properties: *ref_34
       title: UserServiceReadOneRequest
       additionalProperties: false
     listah.v1.UserServiceReadOneResponse:
       type: object
-      properties: *ref_33
+      properties: *ref_35
       title: UserServiceReadOneResponse
       additionalProperties: false
     listah.v1.UserServiceUpdateManyRequest:
       type: object
-      properties: *ref_69
+      properties: *ref_72
       title: UserServiceUpdateManyRequest
       additionalProperties: false
     listah.v1.UserServiceUpdateManyResponse:
       type: object
-      properties: *ref_70
+      properties: *ref_73
       title: UserServiceUpdateManyResponse
       additionalProperties: false
     listah.v1.UserServiceUpdateOneRequest:
       type: object
-      properties: *ref_36
+      properties: *ref_38
       title: UserServiceUpdateOneRequest
       additionalProperties: false
     listah.v1.UserServiceUpdateOneResponse:
       type: object
-      properties: *ref_37
+      properties: *ref_39
       title: UserServiceUpdateOneResponse
       additionalProperties: false
     listah.v1.FamilyCreateRequest:
@@ -5229,91 +5543,91 @@ components:
       additionalProperties: false
     listah.v1.StoreServiceCreateManyRequest:
       type: object
-      properties: *ref_71
+      properties: *ref_74
       title: StoreServiceCreateManyRequest
       additionalProperties: false
     listah.v1.StoreServiceCreateManyResponse:
       type: object
-      properties: *ref_72
+      properties: *ref_75
       title: StoreServiceCreateManyResponse
       additionalProperties: false
     listah.v1.StoreServiceCreateOneRequest:
       type: object
-      properties: *ref_40
+      properties: *ref_42
       title: StoreServiceCreateOneRequest
       additionalProperties: false
     listah.v1.StoreServiceCreateOneResponse:
       type: object
-      properties: *ref_41
+      properties: *ref_43
       title: StoreServiceCreateOneResponse
       additionalProperties: false
     listah.v1.StoreServiceDeleteManyRequest:
       type: object
-      properties: *ref_73
+      properties: *ref_76
       title: StoreServiceDeleteManyRequest
       additionalProperties: false
     listah.v1.StoreServiceDeleteManyResponse:
       type: object
-      properties: *ref_74
+      properties: *ref_77
       title: StoreServiceDeleteManyResponse
       additionalProperties: false
     listah.v1.StoreServiceDeleteOneRequest:
       type: object
-      properties: *ref_48
+      properties: *ref_50
       title: StoreServiceDeleteOneRequest
       additionalProperties: false
     listah.v1.StoreServiceDeleteOneResponse:
       type: object
-      properties: *ref_49
+      properties: *ref_51
       title: StoreServiceDeleteOneResponse
       additionalProperties: false
     listah.v1.StoreServiceListRequest:
       type: object
-      properties: *ref_50
+      properties: *ref_52
       title: StoreServiceListRequest
       additionalProperties: false
     listah.v1.StoreServiceListResponse:
       type: object
-      properties: *ref_51
+      properties: *ref_53
       title: StoreServiceListResponse
       additionalProperties: false
     listah.v1.StoreServiceReadManyRequest:
       type: object
-      properties: *ref_44
+      properties: *ref_46
       title: StoreServiceReadManyRequest
       additionalProperties: false
     listah.v1.StoreServiceReadManyResponse:
       type: object
-      properties: *ref_45
+      properties: *ref_47
       title: StoreServiceReadManyResponse
       additionalProperties: false
     listah.v1.StoreServiceReadOneRequest:
       type: object
-      properties: *ref_42
+      properties: *ref_44
       title: StoreServiceReadOneRequest
       additionalProperties: false
     listah.v1.StoreServiceReadOneResponse:
       type: object
-      properties: *ref_43
+      properties: *ref_45
       title: StoreServiceReadOneResponse
       additionalProperties: false
     listah.v1.StoreServiceUpdateManyRequest:
       type: object
-      properties: *ref_75
+      properties: *ref_78
       title: StoreServiceUpdateManyRequest
       additionalProperties: false
     listah.v1.StoreServiceUpdateManyResponse:
       type: object
-      properties: *ref_76
+      properties: *ref_79
       title: StoreServiceUpdateManyResponse
       additionalProperties: false
     listah.v1.StoreServiceUpdateOneRequest:
       type: object
-      properties: *ref_46
+      properties: *ref_48
       title: StoreServiceUpdateOneRequest
       additionalProperties: false
     listah.v1.StoreServiceUpdateOneResponse:
       type: object
-      properties: *ref_47
+      properties: *ref_49
       title: StoreServiceUpdateOneResponse
       additionalProperties: false

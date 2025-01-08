@@ -12,6 +12,7 @@ import (
 
 type Item struct {
 	Id           string `bson:"_id"`
+	UserId string
 	Title        string
 	Description  string
 	Note         string
@@ -37,6 +38,7 @@ func (i *Items) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 func (c *Item) CreateOneItemModelFromRequest(msg *v1.ItemServiceCreateOneRequest) {
 	// Update category model
 	c.Id = uuid.Must(uuid.NewV7()).String()
+	c.UserId = msg.GetUserId()
 	c.Title = msg.GetTitle()
 	c.Description = msg.GetDescription()
 	c.Note = msg.GetNote()
@@ -69,12 +71,15 @@ func CreateManyItemModelInterfacesFromRequest(msg *v1.ItemServiceCreateManyReque
 		aCat := new(Item)
 		aCat.CreateOneItemModelFromRequest(reqValue)
 		c = append(c, aCat)
+		// fmt.Print("\n\nIn CreateManyItemModelFromRequest: ")
+		// fmt.Print(aCat)
 	}
 	return &c
 }
 
 func (c *Item) UpdateOneItemModelFromRequest(msg *v1.ItemServiceUpdateOneRequest, readModel *Item) error {
 	c.Id = msg.GetId()
+	c.UserId = msg.GetUserId()
 	c.Title = msg.GetTitle()
 	c.Description = msg.GetDescription()
 	c.Note = msg.GetNote()
@@ -125,6 +130,7 @@ func UpdateManyItemModelFromRequest(msgs *v1.ItemServiceUpdateManyRequest, readM
 			if valRepo.Id == valReq.Id {
 				c := Item{
 					Id:           valRepo.Id,
+					UserId:        valReq.GetUserId(),
 					Title:        valReq.GetTitle(),
 					Description:  valReq.GetDescription(),
 					Note:         valReq.GetNote(),
@@ -139,6 +145,11 @@ func UpdateManyItemModelFromRequest(msgs *v1.ItemServiceUpdateManyRequest, readM
 						UpdatedAt: time.Now().UTC(),
 						DeletedAt: valRepo.Audit.DeletedAt,
 					},
+				}
+
+				// Set fields that were not included in the update request.
+				if c.UserId == "" {
+					c.UserId = valRepo.UserId
 				}
 
 				// Set fields that were not included in the update request.
@@ -174,6 +185,7 @@ func UpdateManyItemModelFromRequest(msgs *v1.ItemServiceUpdateManyRequest, readM
 
 func (c *Item) DeleteOneItemModelFromRequest(msg *v1.ItemServiceDeleteOneRequest, readModel *Item) {
 	c.Id = readModel.Id
+	c.UserId = readModel.UserId
 	c.Title = readModel.Title
 	c.Description = readModel.Description
 	c.Note = readModel.Note
@@ -198,6 +210,7 @@ func DeleteManyItemModelFromRequest(msgs *v1.ItemServiceDeleteManyRequest, readM
 			if valRepo.Id == valReq.Id {
 				c := Item{
 					Id:           valRepo.Id,
+					UserId:           valRepo.UserId,
 					Title:        valRepo.Title,
 					Description:  valRepo.Description,
 					Note:         valRepo.Note,
@@ -223,6 +236,7 @@ func DeleteManyItemModelFromRequest(msgs *v1.ItemServiceDeleteManyRequest, readM
 func (c *Item) ItemModelToResponse() *v1.ItemServiceCreateOneResponse {
 	return &v1.ItemServiceCreateOneResponse{
 		Id:           c.Id,
+		UserId:           c.UserId,
 		Title:        c.Title,
 		Description:  c.Description,
 		Note:         c.Note,
@@ -245,6 +259,7 @@ func (cs *Items) ManyItemModelToResponse() *v1.ItemServiceCreateManyResponse {
 	for _, c := range *cs {
 		a := &v1.ItemServiceCreateOneResponse{
 			Id:           c.Id,
+			UserId:           c.UserId,
 			Title:        c.Title,
 			Description:  c.Description,
 			Note:         c.Note,
@@ -263,4 +278,32 @@ func (cs *Items) ManyItemModelToResponse() *v1.ItemServiceCreateManyResponse {
 		resValue.Items = append(resValue.Items, a)
 	}
 	return resValue
+}
+
+func GetReadFilterObject(msg *v1.ItemServiceReadFilterRequest) *map[string] any {
+	userInFilter := make(InFilterStringType)
+	userInFilter["$in"] = msg.UserFilter
+
+
+	// tagInFilter := make(InFilterStringType)
+	// tagInFilter["$in"] = req.Msg.TagFilter
+	tagFilter := make(PostInFilterStringType)
+	tagFilter["tags"] = make(InFilterStringType)
+	tagFilter["tags"]["$in"] = msg.TagFilter
+
+
+	// categoryInFilter := make(InFilterStringType)
+	// categoryInFilter["$in"] = msg.CategoryFilter
+	categoryFilter := make(PostInFilterStringType)
+	categoryFilter["category"] = make(InFilterStringType)
+	categoryFilter["category"]["$in"] = msg.CategoryFilter
+
+
+	orFilter := []PostInFilterStringType{tagFilter, categoryFilter}
+
+	readFilter := map[string] any {
+		"userid": userInFilter,
+		"$or": orFilter,
+	}
+	return &readFilter
 }

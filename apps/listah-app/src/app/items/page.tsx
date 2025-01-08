@@ -24,7 +24,8 @@ import ItemsListings from './ItemListing';
 
 // Defined Reducers
 import { ItemStyleContext } from '@/hooks/context/itemStylingContext';
-import { getData } from '@/repository/fetcher';
+import { get_items, getData } from '@/repository/fetcher';
+
 
 
 type ListItemType = {}
@@ -37,7 +38,10 @@ export default function Items() {
 	// ##################################################################
 	// ########## Initial data, tags and categories #####################
 	// ##################################################################
-	let data = getData([''], '');
+	// let data = get_items([], [], []);
+	let data = getData([], "");
+	console.log("Returned data is:");
+	console.log(data);
 	let categories = Array.from( new Set(data.map((item) => item.category)));
 	let tags = Array.from(new Set(data.map((item) => item.tags).flat()));
 
