@@ -23,7 +23,9 @@ type ListItemType = {}
 
 
 
-export default function ItemsListings(props) {
+export default async function ItemsListings(props) {
+	const data = await fetch('https://api.vercel.app/blog')
+	const posts = await data.json()
 	const id = props.selectedItem ? 'simple-popper' : undefined;
 
 	return (

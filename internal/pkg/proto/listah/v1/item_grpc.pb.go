@@ -23,6 +23,7 @@ const (
 	ItemService_CreateMany_FullMethodName = "/listah.v1.ItemService/CreateMany"
 	ItemService_ReadOne_FullMethodName    = "/listah.v1.ItemService/ReadOne"
 	ItemService_ReadMany_FullMethodName   = "/listah.v1.ItemService/ReadMany"
+	ItemService_ReadFilter_FullMethodName = "/listah.v1.ItemService/ReadFilter"
 	ItemService_UpdateOne_FullMethodName  = "/listah.v1.ItemService/UpdateOne"
 	ItemService_UpdateMany_FullMethodName = "/listah.v1.ItemService/UpdateMany"
 	ItemService_DeleteOne_FullMethodName  = "/listah.v1.ItemService/DeleteOne"
@@ -38,6 +39,7 @@ type ItemServiceClient interface {
 	CreateMany(ctx context.Context, in *ItemServiceCreateManyRequest, opts ...grpc.CallOption) (*ItemServiceCreateManyResponse, error)
 	ReadOne(ctx context.Context, in *ItemServiceReadOneRequest, opts ...grpc.CallOption) (*ItemServiceReadOneResponse, error)
 	ReadMany(ctx context.Context, in *ItemServiceReadManyRequest, opts ...grpc.CallOption) (*ItemServiceReadManyResponse, error)
+	ReadFilter(ctx context.Context, in *ItemServiceReadFilterRequest, opts ...grpc.CallOption) (*ItemServiceReadFilterResponse, error)
 	UpdateOne(ctx context.Context, in *ItemServiceUpdateOneRequest, opts ...grpc.CallOption) (*ItemServiceUpdateOneResponse, error)
 	UpdateMany(ctx context.Context, in *ItemServiceUpdateManyRequest, opts ...grpc.CallOption) (*ItemServiceUpdateManyResponse, error)
 	DeleteOne(ctx context.Context, in *ItemServiceDeleteOneRequest, opts ...grpc.CallOption) (*ItemServiceDeleteOneResponse, error)
@@ -87,6 +89,16 @@ func (c *itemServiceClient) ReadMany(ctx context.Context, in *ItemServiceReadMan
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ItemServiceReadManyResponse)
 	err := c.cc.Invoke(ctx, ItemService_ReadMany_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *itemServiceClient) ReadFilter(ctx context.Context, in *ItemServiceReadFilterRequest, opts ...grpc.CallOption) (*ItemServiceReadFilterResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ItemServiceReadFilterResponse)
+	err := c.cc.Invoke(ctx, ItemService_ReadFilter_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -151,6 +163,7 @@ type ItemServiceServer interface {
 	CreateMany(context.Context, *ItemServiceCreateManyRequest) (*ItemServiceCreateManyResponse, error)
 	ReadOne(context.Context, *ItemServiceReadOneRequest) (*ItemServiceReadOneResponse, error)
 	ReadMany(context.Context, *ItemServiceReadManyRequest) (*ItemServiceReadManyResponse, error)
+	ReadFilter(context.Context, *ItemServiceReadFilterRequest) (*ItemServiceReadFilterResponse, error)
 	UpdateOne(context.Context, *ItemServiceUpdateOneRequest) (*ItemServiceUpdateOneResponse, error)
 	UpdateMany(context.Context, *ItemServiceUpdateManyRequest) (*ItemServiceUpdateManyResponse, error)
 	DeleteOne(context.Context, *ItemServiceDeleteOneRequest) (*ItemServiceDeleteOneResponse, error)
@@ -176,6 +189,9 @@ func (UnimplementedItemServiceServer) ReadOne(context.Context, *ItemServiceReadO
 }
 func (UnimplementedItemServiceServer) ReadMany(context.Context, *ItemServiceReadManyRequest) (*ItemServiceReadManyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReadMany not implemented")
+}
+func (UnimplementedItemServiceServer) ReadFilter(context.Context, *ItemServiceReadFilterRequest) (*ItemServiceReadFilterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadFilter not implemented")
 }
 func (UnimplementedItemServiceServer) UpdateOne(context.Context, *ItemServiceUpdateOneRequest) (*ItemServiceUpdateOneResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateOne not implemented")
@@ -280,6 +296,24 @@ func _ItemService_ReadMany_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ItemServiceServer).ReadMany(ctx, req.(*ItemServiceReadManyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ItemService_ReadFilter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ItemServiceReadFilterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ItemServiceServer).ReadFilter(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ItemService_ReadFilter_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ItemServiceServer).ReadFilter(ctx, req.(*ItemServiceReadFilterRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -396,6 +430,10 @@ var ItemService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ReadMany",
 			Handler:    _ItemService_ReadMany_Handler,
+		},
+		{
+			MethodName: "ReadFilter",
+			Handler:    _ItemService_ReadFilter_Handler,
 		},
 		{
 			MethodName: "UpdateOne",

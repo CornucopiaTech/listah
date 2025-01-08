@@ -5,13 +5,16 @@ import * as fs from 'fs';
 export function getData(arraySize) {
     let numTags = 5;
     let maxProps = 10;
+    let maxUsers = 50;
     let allTags = faker.helpers.multiple(() => faker.word.noun(), { count: arraySize });
+    let userIds = faker.helpers.multiple(() => faker.string.uuid(), { count: maxUsers });
+
     allTags = faker.helpers.uniqueArray(allTags, arraySize);
 
     let faked = faker.helpers.multiple(
         () => (
             {
-                userId: faker.string.uuid(),
+                userId: faker.helpers.arrayElement(userIds),
                 title: faker.lorem.sentence(),
                 description: faker.lorem.paragraphs(),
                 note: faker.lorem.sentence(),
@@ -46,4 +49,4 @@ export function getData(arraySize) {
     );
 }
 
-getData(500);
+getData(1000);

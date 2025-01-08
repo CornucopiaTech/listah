@@ -1,12 +1,14 @@
 package item
 
 import (
+	// "fmt"
 	"context"
 	"cornucopia/listah/internal/pkg/model"
 	v1 "cornucopia/listah/internal/pkg/proto/listah/v1"
 
 	"connectrpc.com/connect"
 	"go.opentelemetry.io/otel"
+	// "go.mongodb.org/mongo-driver/v2/bson"
 )
 
 
@@ -52,7 +54,6 @@ func (s *Server) CreateMany(ctx context.Context, req *connect.Request[v1.ItemSer
 
 	// Create model for repository
 	newModel := model.CreateManyItemModelInterfacesFromRequest(req.Msg)
-
 
 	// Read created model from repository
 	readModel := new(model.Items)

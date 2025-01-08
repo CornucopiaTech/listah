@@ -41,6 +41,8 @@ const (
 	ItemServiceReadOneProcedure = "/listah.v1.ItemService/ReadOne"
 	// ItemServiceReadManyProcedure is the fully-qualified name of the ItemService's ReadMany RPC.
 	ItemServiceReadManyProcedure = "/listah.v1.ItemService/ReadMany"
+	// ItemServiceReadFilterProcedure is the fully-qualified name of the ItemService's ReadFilter RPC.
+	ItemServiceReadFilterProcedure = "/listah.v1.ItemService/ReadFilter"
 	// ItemServiceUpdateOneProcedure is the fully-qualified name of the ItemService's UpdateOne RPC.
 	ItemServiceUpdateOneProcedure = "/listah.v1.ItemService/UpdateOne"
 	// ItemServiceUpdateManyProcedure is the fully-qualified name of the ItemService's UpdateMany RPC.
@@ -60,6 +62,7 @@ var (
 	itemServiceCreateManyMethodDescriptor = itemServiceServiceDescriptor.Methods().ByName("CreateMany")
 	itemServiceReadOneMethodDescriptor    = itemServiceServiceDescriptor.Methods().ByName("ReadOne")
 	itemServiceReadManyMethodDescriptor   = itemServiceServiceDescriptor.Methods().ByName("ReadMany")
+	itemServiceReadFilterMethodDescriptor = itemServiceServiceDescriptor.Methods().ByName("ReadFilter")
 	itemServiceUpdateOneMethodDescriptor  = itemServiceServiceDescriptor.Methods().ByName("UpdateOne")
 	itemServiceUpdateManyMethodDescriptor = itemServiceServiceDescriptor.Methods().ByName("UpdateMany")
 	itemServiceDeleteOneMethodDescriptor  = itemServiceServiceDescriptor.Methods().ByName("DeleteOne")
@@ -73,6 +76,7 @@ type ItemServiceClient interface {
 	CreateMany(context.Context, *connect.Request[v1.ItemServiceCreateManyRequest]) (*connect.Response[v1.ItemServiceCreateManyResponse], error)
 	ReadOne(context.Context, *connect.Request[v1.ItemServiceReadOneRequest]) (*connect.Response[v1.ItemServiceReadOneResponse], error)
 	ReadMany(context.Context, *connect.Request[v1.ItemServiceReadManyRequest]) (*connect.Response[v1.ItemServiceReadManyResponse], error)
+	ReadFilter(context.Context, *connect.Request[v1.ItemServiceReadFilterRequest]) (*connect.Response[v1.ItemServiceReadFilterResponse], error)
 	UpdateOne(context.Context, *connect.Request[v1.ItemServiceUpdateOneRequest]) (*connect.Response[v1.ItemServiceUpdateOneResponse], error)
 	UpdateMany(context.Context, *connect.Request[v1.ItemServiceUpdateManyRequest]) (*connect.Response[v1.ItemServiceUpdateManyResponse], error)
 	DeleteOne(context.Context, *connect.Request[v1.ItemServiceDeleteOneRequest]) (*connect.Response[v1.ItemServiceDeleteOneResponse], error)
@@ -116,6 +120,13 @@ func NewItemServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
+		readFilter: connect.NewClient[v1.ItemServiceReadFilterRequest, v1.ItemServiceReadFilterResponse](
+			httpClient,
+			baseURL+ItemServiceReadFilterProcedure,
+			connect.WithSchema(itemServiceReadFilterMethodDescriptor),
+			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
+			connect.WithClientOptions(opts...),
+		),
 		updateOne: connect.NewClient[v1.ItemServiceUpdateOneRequest, v1.ItemServiceUpdateOneResponse](
 			httpClient,
 			baseURL+ItemServiceUpdateOneProcedure,
@@ -156,6 +167,7 @@ type itemServiceClient struct {
 	createMany *connect.Client[v1.ItemServiceCreateManyRequest, v1.ItemServiceCreateManyResponse]
 	readOne    *connect.Client[v1.ItemServiceReadOneRequest, v1.ItemServiceReadOneResponse]
 	readMany   *connect.Client[v1.ItemServiceReadManyRequest, v1.ItemServiceReadManyResponse]
+	readFilter *connect.Client[v1.ItemServiceReadFilterRequest, v1.ItemServiceReadFilterResponse]
 	updateOne  *connect.Client[v1.ItemServiceUpdateOneRequest, v1.ItemServiceUpdateOneResponse]
 	updateMany *connect.Client[v1.ItemServiceUpdateManyRequest, v1.ItemServiceUpdateManyResponse]
 	deleteOne  *connect.Client[v1.ItemServiceDeleteOneRequest, v1.ItemServiceDeleteOneResponse]
@@ -181,6 +193,11 @@ func (c *itemServiceClient) ReadOne(ctx context.Context, req *connect.Request[v1
 // ReadMany calls listah.v1.ItemService.ReadMany.
 func (c *itemServiceClient) ReadMany(ctx context.Context, req *connect.Request[v1.ItemServiceReadManyRequest]) (*connect.Response[v1.ItemServiceReadManyResponse], error) {
 	return c.readMany.CallUnary(ctx, req)
+}
+
+// ReadFilter calls listah.v1.ItemService.ReadFilter.
+func (c *itemServiceClient) ReadFilter(ctx context.Context, req *connect.Request[v1.ItemServiceReadFilterRequest]) (*connect.Response[v1.ItemServiceReadFilterResponse], error) {
+	return c.readFilter.CallUnary(ctx, req)
 }
 
 // UpdateOne calls listah.v1.ItemService.UpdateOne.
@@ -214,6 +231,7 @@ type ItemServiceHandler interface {
 	CreateMany(context.Context, *connect.Request[v1.ItemServiceCreateManyRequest]) (*connect.Response[v1.ItemServiceCreateManyResponse], error)
 	ReadOne(context.Context, *connect.Request[v1.ItemServiceReadOneRequest]) (*connect.Response[v1.ItemServiceReadOneResponse], error)
 	ReadMany(context.Context, *connect.Request[v1.ItemServiceReadManyRequest]) (*connect.Response[v1.ItemServiceReadManyResponse], error)
+	ReadFilter(context.Context, *connect.Request[v1.ItemServiceReadFilterRequest]) (*connect.Response[v1.ItemServiceReadFilterResponse], error)
 	UpdateOne(context.Context, *connect.Request[v1.ItemServiceUpdateOneRequest]) (*connect.Response[v1.ItemServiceUpdateOneResponse], error)
 	UpdateMany(context.Context, *connect.Request[v1.ItemServiceUpdateManyRequest]) (*connect.Response[v1.ItemServiceUpdateManyResponse], error)
 	DeleteOne(context.Context, *connect.Request[v1.ItemServiceDeleteOneRequest]) (*connect.Response[v1.ItemServiceDeleteOneResponse], error)
@@ -250,6 +268,13 @@ func NewItemServiceHandler(svc ItemServiceHandler, opts ...connect.HandlerOption
 		ItemServiceReadManyProcedure,
 		svc.ReadMany,
 		connect.WithSchema(itemServiceReadManyMethodDescriptor),
+		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
+		connect.WithHandlerOptions(opts...),
+	)
+	itemServiceReadFilterHandler := connect.NewUnaryHandler(
+		ItemServiceReadFilterProcedure,
+		svc.ReadFilter,
+		connect.WithSchema(itemServiceReadFilterMethodDescriptor),
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
@@ -294,6 +319,8 @@ func NewItemServiceHandler(svc ItemServiceHandler, opts ...connect.HandlerOption
 			itemServiceReadOneHandler.ServeHTTP(w, r)
 		case ItemServiceReadManyProcedure:
 			itemServiceReadManyHandler.ServeHTTP(w, r)
+		case ItemServiceReadFilterProcedure:
+			itemServiceReadFilterHandler.ServeHTTP(w, r)
 		case ItemServiceUpdateOneProcedure:
 			itemServiceUpdateOneHandler.ServeHTTP(w, r)
 		case ItemServiceUpdateManyProcedure:
@@ -327,6 +354,10 @@ func (UnimplementedItemServiceHandler) ReadOne(context.Context, *connect.Request
 
 func (UnimplementedItemServiceHandler) ReadMany(context.Context, *connect.Request[v1.ItemServiceReadManyRequest]) (*connect.Response[v1.ItemServiceReadManyResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.ReadMany is not implemented"))
+}
+
+func (UnimplementedItemServiceHandler) ReadFilter(context.Context, *connect.Request[v1.ItemServiceReadFilterRequest]) (*connect.Response[v1.ItemServiceReadFilterResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.ReadFilter is not implemented"))
 }
 
 func (UnimplementedItemServiceHandler) UpdateOne(context.Context, *connect.Request[v1.ItemServiceUpdateOneRequest]) (*connect.Response[v1.ItemServiceUpdateOneResponse], error) {
