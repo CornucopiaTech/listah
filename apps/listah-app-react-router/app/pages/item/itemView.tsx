@@ -25,6 +25,10 @@ import {
     Add,
 } from '@mui/icons-material';
 
+import {
+	useSelector,
+	useDispatch
+} from 'react-redux'
 
 
 import TextFieldsLabelled from '../../components/Form/TextFieldsLabelled';
@@ -36,19 +40,15 @@ export default function ItemView(props){
 	const [open, setOpen] = React.useState(true);
 
     const itemViewState = useSelector(state => state.itemFilter.value)
+	const itemListingState = useSelector(state => state.itemListing.value)
+
     const dispatch = useDispatch()
 
-
-
-	const handleClick = () => {
-	  setOpen(!open);
-	};
 
 	function handleTagAdd(){
 		alert('Tag add button clicked');
 		setStatus('editing');
 	}
-
 
 	function handleDelete(e: React.MouseEvent<HTMLButtonElement>){
 		alert('Delete Button Clicked');
@@ -74,59 +74,6 @@ export default function ItemView(props){
 					size='small'/>
 	}
 
-	function addFormNestedList(itemLabel: string, itemValue: string){
-		return <TextFieldsLabelled
-					key={itemLabel + '-' + itemValue + '-formField'}
-					status={status}
-					label={itemLabel.toLowerCase()}
-					value={itemValue}
-					size='small'/>
-	}
-
-	function createForm(givenItem: ListItemType){
-		let result: React.ReactNode[] = [];
-		// Add summary field.
-		result.push(addFormField('summary', givenItem['summary']));
-
-		// Add other fields.
-		Object.entries(givenItem).forEach(([akey, avalue]) => {
-			if (!['id', 'summary', 'tags'].includes(akey)){
-				result.push(addFormField(akey, avalue));
-			}
-		});
-
-		// Add tags field.
-		result.push(
-			<Collapse in={open} timeout="auto" unmountOnExit>
-				<List
-						sx={{
-							width: '100%',
-							maxWidth: 360,
-							bgcolor: 'background.paper'
-						}}
-						component="nav"
-						aria-labelledby="nested-list-subheader"
-						subheader={
-							<ListSubheader 	component="div"
-											id="nested-list-subheader">
-								Tags
-							</ListSubheader>
-						}>
-					{givenItem['tags'].map((item) => (
-						<ListItemButton>
-							<ListItemIcon>
-							<SendIcon />
-							</ListItemIcon>
-							<ListItemText primary={item} />
-						</ListItemButton>
-					))}
-
-				</List>
-			</Collapse>
-		);
-
-		return result;
-	}
 	function createTagList(givenItem: ListItemType){
 		// Add tags field.
 		return (
@@ -207,7 +154,7 @@ export default function ItemView(props){
 							alignItems: 'center',
 						}}>
 				<Box 	component="form"
-                    key={itemViewState.selected.summary + '-Box'}
+					key={itemListingState.selectedItem.title + '-Box'}
 						sx={{ 	'& .MuiTextField-root': { m: 1, width: '100%', maxWidth: 300, },
 								width: '100%', border: 1, p:2,
 								borderColor: 'rgba(50,50,50,0.3)',
@@ -218,20 +165,20 @@ export default function ItemView(props){
 						noValidate
 						autoComplete="off">
 					{
-						// Add summary field.
-                        addFormField('summary', itemViewState.selected.summary)
+						// Add title field.
+						addFormField('title', itemListingState.selectedItem.title)
 					}
 					{
 						// Add other fields.
-                        createMidItems(itemViewState.selected)
+						createMidItems(itemListingState.selectedItem)
 					}
 					{
 						// Add tags field.
-                        createTagList(itemViewState.selected)
+						createTagList(itemListingState.selectedItem)
 					}
 				</Box>
 				<Stack 	spacing={2} direction="row"
-                    key={itemViewState.selected.summary + '-Buttons'}
+						key={itemListingState.selectedItem.title + '-Buttons'}
 						sx={{
 								width: '100%',
 								justifyContent: 'space-around',

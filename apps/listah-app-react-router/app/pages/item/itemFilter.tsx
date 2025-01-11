@@ -3,7 +3,7 @@
 import {
 	useSelector,
 	useDispatch
-} from 'react-redux'
+} from 'react-redux';
 
 // Components
 import {
@@ -18,6 +18,7 @@ import {
 	FormControlLabel,
 	Checkbox
 } from '@mui/material';
+
 import {
 	ArrowDropDown,
 	Tune

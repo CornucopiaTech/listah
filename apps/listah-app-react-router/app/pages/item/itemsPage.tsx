@@ -30,7 +30,7 @@ import { getData } from '../../repository/fetcher';
 type ListItemType = {}
 
 
-export function ItemsDisplay() {
+export function ItemsPage() {
 	const styling = useContext(ItemStyleContext);
 
 

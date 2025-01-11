@@ -1,8 +1,9 @@
-'use client'
 import * as React from 'react';
+
 import {
     ExpandLess
 } from '@mui/icons-material';
+
 import {
     List,
     ListItem,
@@ -12,8 +13,13 @@ import {
     Grid2 as Grid
 } from '@mui/material';
 
+import {
+	useSelector,
+	useDispatch
+} from 'react-redux';
 
 
+import { itemListingClickItem } from '~/hooks/reducers/items/itemListSlice';
 
 
 
@@ -32,7 +38,10 @@ type ListItemType = {}
 
 
 export default async function ItemsListings(props) {
-	const id = props.selectedItem ? 'simple-popper' : undefined;
+	const itemListingState = useSelector(state => state.itemListing.value)
+	const dispatch = useDispatch()
+
+	const id = itemListingState.selectedItem ? 'simple-popper' : undefined;
 
 	return (
 		<Grid size='grow'>
@@ -55,13 +64,13 @@ export default async function ItemsListings(props) {
 									key={item.id}
 									variant="outlined"
 									aria-describedby={id}
-									onClick={() => props.handleListClick(item)}
+							onClick={() => dispatch(itemListingClickItem(item))}
 									size='large'>
 							<ListItemButton>
 								<ListItemIcon>
 									{
-										props.selectedItem &&
-										item.id == props.selectedItem.id &&
+										itemListingState.selectedItem &&
+										item.id == itemListingState.selectedItem.id &&
 										<ExpandLess/>}
 								</ListItemIcon>
 								<ListItemText primary={item.summary} />

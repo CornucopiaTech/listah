@@ -12,8 +12,8 @@ import {
 
 export default [
     // index("./home.tsx"),
-    index("routes/homePage.tsx"),
-    route("items", "./routes/item/itemsPage.tsx"),
+    index("./routes/home.tsx"),
+    route("items", "./routes/items.tsx"),
 
     // layout("./auth/layout.tsx", [
     //     route("login", "./auth/login.tsx"),
