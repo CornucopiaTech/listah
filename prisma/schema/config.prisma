@@ -1,9 +1,0 @@
-generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["prismaSchemaFolder", "multiSchema"]
-}
-
-datasource db {
-  provider = "mongodb"
-  url      = env("LOCAL_MONGO_CONNECTION_URL")
-}

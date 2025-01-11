@@ -1,9 +1,0 @@
-model ApiLog {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  trace_id String
-  span_id  String
-  request  Json   @db.Json
-  // @@schema("logs")
-
-  @@map("api_logs")
-}
