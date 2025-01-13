@@ -6,15 +6,20 @@ export function getData(arraySize) {
     let numTags = 5;
     let maxProps = 10;
     let maxUsers = 50;
+    let maxCategories = 50;
     let allTags = faker.helpers.multiple(() => faker.word.noun(), { count: arraySize });
-    let userIds = faker.helpers.multiple(() => faker.string.uuid(), { count: maxUsers });
+    let allCategory = faker.helpers.multiple(() => faker.word.noun(), { count: arraySize });
+	let userIds = faker.helpers.multiple(() => faker.string.uuid(), { count: maxCategories });
 
     allTags = faker.helpers.uniqueArray(allTags, arraySize);
+	allCategory = faker.helpers.uniqueArray(allCategory, arraySize);
 
     let faked = faker.helpers.multiple(
         () => (
             {
-                userId: faker.helpers.arrayElement(userIds),
+				id: faker.string.uuid(),
+				userId: faker.helpers.arrayElement(userIds),
+				category: faker.helpers.arrayElement(allCategory),
                 title: faker.lorem.sentence(),
                 description: faker.lorem.paragraphs(),
                 note: faker.lorem.sentence(),
@@ -40,7 +45,7 @@ export function getData(arraySize) {
         { count: arraySize }
     );
 
-    fs.writeFile('./listah/apps/listah-app/src/repository/fake_data_w_props.json',
+	fs.writeFile('./listah/apps/listah-app-react-router/app/repository/fake_data_w_props.json',
         JSON.stringify(faked),
         (err) => {
             // In case of a error throw err.

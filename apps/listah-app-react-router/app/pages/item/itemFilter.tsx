@@ -1,10 +1,4 @@
 
-// import * as React from 'react';
-import {
-	useSelector,
-	useDispatch
-} from 'react-redux';
-
 // Components
 import {
 	Box,
@@ -33,16 +27,23 @@ import {
 	toggleDrawer
 } from '../../hooks/reducers/items/itemDrawerSlice';
 
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '~/store';
 
 import {
-	filterChecked, filterApply, filterReset
+	filterChecked, filterApply, filterReset, selectItemFilter
 } from '../../hooks/reducers/items/itemFilterSlice';
+import { selectItemDrawer } from '../../hooks/reducers/items/itemDrawerSlice';
+
 
 
 export function FilterItems(props) {
-	const drawerState = useSelector(state => state.itemDrawer.value)
-	const filterState = useSelector(state => state.itemFilter.value)
-	const dispatch = useDispatch()
+	const useAppDispatch = useDispatch.withTypes<AppDispatch>()
+	const useAppSelector = useSelector.withTypes<RootState>()
+	const dispatch = useAppDispatch();
+
+	const drawerState = useAppSelector(selectItemDrawer);
+	const filterState = useAppSelector(selectItemFilter);
 
 
 	const DrawerList = (
@@ -57,7 +58,7 @@ export function FilterItems(props) {
 				</AccordionSummary>
 				<AccordionDetails sx={{ maxHeight: 300, overflow: 'auto',}}>
 					<FormGroup>
-						{props.categories.map((item) => (
+						{props.categories.map((item: string) => (
 							<FormControlLabel
 									key={item + '-checkBoxFormControlLabel'}
 									control={<Checkbox />}
@@ -81,7 +82,7 @@ export function FilterItems(props) {
 				</AccordionSummary>
 				<AccordionDetails sx={{ maxHeight: 300, overflow: 'auto',}}>
 					<FormGroup>
-						{props.tags.map((item) => (
+						{props.tags.map((item: string) => (
 							<FormControlLabel
 								key={item + '-checkBoxFormControlLabel'}
 								control={<Checkbox />}

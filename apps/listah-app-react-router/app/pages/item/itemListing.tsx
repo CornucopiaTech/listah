@@ -19,7 +19,7 @@ import {
 } from 'react-redux';
 
 
-import { itemListingClickItem } from '~/hooks/reducers/items/itemListSlice';
+import { itemViewClickItem } from '~/hooks/reducers/items/itemViewSlice';
 
 
 
@@ -38,10 +38,10 @@ type ListItemType = {}
 
 
 export default async function ItemsListings(props) {
-	const itemListingState = useSelector(state => state.itemListing.value)
+	const itemViewState = useSelector(state => state.itemView.value)
 	const dispatch = useDispatch()
 
-	const id = itemListingState.selectedItem ? 'simple-popper' : undefined;
+	const id = itemViewState.selectedItem ? 'simple-popper' : undefined;
 
 	return (
 		<Grid size='grow'>
@@ -64,13 +64,13 @@ export default async function ItemsListings(props) {
 									key={item.id}
 									variant="outlined"
 									aria-describedby={id}
-							onClick={() => dispatch(itemListingClickItem(item))}
+							onClick={() => dispatch(itemViewClickItem(item))}
 									size='large'>
 							<ListItemButton>
 								<ListItemIcon>
 									{
-										itemListingState.selectedItem &&
-										item.id == itemListingState.selectedItem.id &&
+										itemViewState.selectedItem &&
+										item.id == itemViewState.selectedItem.id &&
 										<ExpandLess/>}
 								</ListItemIcon>
 								<ListItemText primary={item.summary} />
