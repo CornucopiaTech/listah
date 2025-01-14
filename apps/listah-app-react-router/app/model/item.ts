@@ -17,6 +17,7 @@ export type ItemModel = {
     id: string;
     userId: string;
     title: string;
+    category: string;
     description: string;
     note: string;
     tags: string[];

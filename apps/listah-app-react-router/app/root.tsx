@@ -9,7 +9,7 @@ import {
 
 import type { Route } from "./+types/root";
 import stylesheet from "./app.css?url";
-import store from "./store.ts";
+import { store } from "./store";
 import { Provider } from 'react-redux';
 import { StrictMode } from 'react';
 
