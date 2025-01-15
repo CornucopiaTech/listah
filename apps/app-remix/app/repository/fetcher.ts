@@ -46,8 +46,7 @@ export function saveUpdatesToItem(updatedItem: ItemModelInterface) {
   setAppData();
   try{
     let itemIndex: number = AppData.findIndex((anItem: ItemModelInterface) => anItem.id === updatedItem.id);
-    AppData[itemIndex] = updatedItem
-    // Object.assign(AppData.find((anItem: ItemModelInterface) => anItem.id === updatedItem.id), updatedItem);
+    AppData[itemIndex] = updatedItem;
   } catch (error) {
     console.log(error);
   }
