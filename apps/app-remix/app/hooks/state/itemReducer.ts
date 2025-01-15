@@ -17,7 +17,7 @@ export function ChooseSelectedItemReducer(state, action: PayloadAction<ItemModel
 	}
 	state.value.selectedItem = newSelected;
 	state.value.newTag = "";
-	state.value.status = 'viewing';
+	state.value.editStatus = 'viewing';
 }
 
 export function ChangeSelectedItemTagsReducer(state, action: PayloadAction<TagChangePayloadInterface>){
@@ -66,7 +66,7 @@ export function SaveUpdatedItemReducer (state) {
 		}
 		state.value.selectedItem = newSelected;
 		state.value.newTag = "";
-		state.value.status = 'viewing';
+		state.value.editStatus = 'viewing';
 	}
 }
 

@@ -16,6 +16,7 @@ import { AppNavBar } from '../components/AppNavBar';
 import { ItemFilter } from './itemFilter';
 import { ItemSort } from './itemSort';
 import { ItemListing } from './itemListing';
+import { ItemDetails }from './itemDetails';
 
 export function ItemsPage() {
   return (
@@ -56,7 +57,7 @@ export function ItemsPage() {
                             spacing={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 3 }}
                             columns={{ xs: 2, sm: 6, md: 12 }}>
                         <ItemListing />
-                        {/* <ItemDetails /> */}
+                        <ItemDetails />
                     </Grid>
             </Box>
           </Box>
