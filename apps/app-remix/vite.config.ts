@@ -11,4 +11,12 @@ export default defineConfig({
     },
   },
   plugins: [reactRouter(), tsconfigPaths()],
+  ssr: {
+    // Necessary for createSVG import
+    noExternal: ['@mui/icons-material'],
+  },
+  optimizeDeps: {
+     // Necessary for createSVG import
+    include: ['@mui/icons-material'],
+  },
 });

@@ -35,10 +35,12 @@ const initialState: ItemStateReduxInterface = {
         newTag: "",
         definedFilters: []
     }
-}
+};
 
 export const itemSlice = createSlice({
     name: 'item',
+    initialState,
+    reducers: {
         AddFilter: AddFilterReducer,
         ChangeEditStatus: ChangeEditStatusReducer,
         ChangeSelectedItemDescription: ChangeSelectedItemDescriptionReducer,
@@ -55,14 +57,12 @@ export const itemSlice = createSlice({
         SaveUpdatedItem: SaveUpdatedItemReducer,
         ToggleCollapseTags: ToggleCollapseTagsReducer,
         ToggleFilterDrawer: ToggleFilterDrawerReducer,
-    initialState,
-    reducers: {
     }
-})
+});
 
 // Action creators are generated for each case reducer function
 export const {
-    AddFilter,
+    AddFilter, //Add logic to take care of removing or adding filters.
     ChangeEditStatus,
     ChangeSelectedItemDescription,
     ChangeSelectedItemNote,
@@ -78,7 +78,7 @@ export const {
     SaveUpdatedItem,
     ToggleCollapseTags,
     ToggleFilterDrawer,
-} = itemSlice.actions
+} = itemSlice.actions;
 
-export default itemSlice.reducer
+export default itemSlice.reducer;
 export const selectItem = (state: RootState) => state.item.value;
