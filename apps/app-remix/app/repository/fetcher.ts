@@ -1,5 +1,4 @@
 
-// import MyData from './fake_data.json';
 import MyData from './fake_data_w_props.json';
 import type { ItemModelInterface } from '~/model/items';
 

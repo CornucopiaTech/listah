@@ -17,12 +17,6 @@ import {
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import TuneIcon from '@mui/icons-material/Tune';
 
-// import {
-//   ArrowDropDown,
-//   Tune
-// } from '@mui/icons-material';
-
-
 import type {
   AppDispatch,
   RootState
@@ -38,9 +32,6 @@ import {
 import type { ItemStateInterface } from '~/model/items';
 
 import {
-  getItems,
-  getSelectedItem,
-  addTagstoItem,
   getAllCategories,
   getAllTags
 } from 'app/repository/fetcher';
@@ -56,12 +47,6 @@ export function ItemFilter() {
 
   const tags: string [] = getAllTags();
   const categories: string [] = getAllCategories();
-
-  // console.log("Tags: ");
-  // console.log(tags);
-  // console.log("Categories: ");
-  // console.log(categories);
-
 
   const DrawerList = (
     <Box  component='form' sx={{ width: 250, p:2, my: 6}}
@@ -106,7 +91,7 @@ export function ItemFilter() {
                   checked={itemState.definedFilters.includes(item)}
                   value={itemState.definedFilters.includes(item)}
                   name={item}
-                  onChange={() => dispatch(filterChecked(item))}
+                  onChange={() => dispatch(AddFilter(item))}
                 />
             ))
           }</FormGroup>
