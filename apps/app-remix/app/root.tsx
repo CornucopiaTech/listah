@@ -6,13 +6,12 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import { Provider } from 'react-redux';
 
+
+import { store } from "./store";
 import type { Route } from "./+types/root";
 import stylesheet from "./app.css?url";
-import { store } from "./store";
-import { Provider } from 'react-redux';
-import { StrictMode } from 'react';
-
 
 
 export const links: Route.LinksFunction = () => [
@@ -39,14 +38,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <StrictMode>
-          <Provider store={store}>
-            {children}
-            <ScrollRestoration />
-            <Scripts />
-          </Provider>
-
-        </StrictMode>
+      <Provider store={store}>
+          {children}
+          <ScrollRestoration />
+          <Scripts />
+        </Provider>
       </body>
     </html>
   );
