@@ -9,6 +9,10 @@
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.0",
+    "@mui/material": "^6.4.0",
     "@react-router/node": "^7.1.1",
     "@react-router/serve": "^7.1.1",
     "@reduxjs/toolkit": "^2.5.0",
