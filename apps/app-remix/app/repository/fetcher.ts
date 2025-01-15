@@ -45,7 +45,9 @@ export function addTagstoItem(itemId: string, tags: string | string[]) {
 export function saveUpdatesToItem(updatedItem: ItemModelInterface) {
   setAppData();
   try{
-    Object.assign(AppData.find((anItem: ItemModelInterface) => anItem.id === updatedItem.id), updatedItem);
+    let itemIndex: number = AppData.findIndex((anItem: ItemModelInterface) => anItem.id === updatedItem.id);
+    AppData[itemIndex] = updatedItem
+    // Object.assign(AppData.find((anItem: ItemModelInterface) => anItem.id === updatedItem.id), updatedItem);
   } catch (error) {
     console.log(error);
   }

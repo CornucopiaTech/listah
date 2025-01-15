@@ -24,6 +24,7 @@ export function getData(arraySize) {
       userId: faker.helpers.arrayElement(allUserIds),
       category: faker.helpers.arrayElement(allCategory),
       title: faker.lorem.sentence(),
+      summary: faker.lorem.sentence(),
       description: faker.lorem.paragraphs(),
       note: faker.lorem.sentence(),
       tags: faker.helpers.arrayElements(allTags, numTags),
