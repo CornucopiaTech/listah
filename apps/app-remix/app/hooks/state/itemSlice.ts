@@ -22,6 +22,8 @@ import {
     SaveUpdatedItemReducer,
     ToggleCollapseTagsReducer,
     ToggleFilterDrawerReducer,
+    AddNewTagToSelectedItemReducer,
+    SetStateAfterItemSaveReducer,
 
 } from './itemReducer';
 
@@ -57,6 +59,8 @@ export const itemSlice = createSlice({
         SaveUpdatedItem: SaveUpdatedItemReducer,
         ToggleCollapseTags: ToggleCollapseTagsReducer,
         ToggleFilterDrawer: ToggleFilterDrawerReducer,
+        AddNewTagToSelectedItem: AddNewTagToSelectedItemReducer,
+        SetStateAfterItemSave: SetStateAfterItemSaveReducer,
     }
 });
 
@@ -78,6 +82,8 @@ export const {
     SaveUpdatedItem,
     ToggleCollapseTags,
     ToggleFilterDrawer,
+    AddNewTagToSelectedItem,
+    SetStateAfterItemSave,
 } = itemSlice.actions;
 
 export default itemSlice.reducer;
