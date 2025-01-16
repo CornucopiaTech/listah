@@ -21,7 +21,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 
 
-import type { AppDispatch, RootState } from '~/store';
+import type { AppDispatch, RootState, AppThunk } from '~/store';
+import { store } from '~/store';
 import {
   selectItem,
   AddFilter, //Add logic to take care of removing or adding filters.
@@ -40,6 +41,8 @@ import {
   SaveUpdatedItem,
   ToggleCollapseTags,
   ToggleFilterDrawer,
+  AddNewTagToSelectedItem,
+  SetStateAfterItemSave,
 } from '~/hooks/state/itemSlice';
 import {
   saveUpdatesToItem,
@@ -56,6 +59,24 @@ export function ItemDetails(){
   function handleDelete(e: React.MouseEvent<HTMLButtonElement>){
     alert('Delete Button Clicked');
   }
+
+
+  const saveandRefresh = (providedItem: ItemStateInterface): AppThunk => {
+    return (dispatch: AppDispatch, getState: () => RootState) => {
+      if (providedItem){
+        dispatch(AddNewTagToSelectedItem());
+        saveUpdatesToItem(providedItem);
+        dispatch(SetStateAfterItemSave());
+      }
+    }
+  }
+
+  if (itemState.selectedItem){
+    console.log("\n\n\nSelected Item.tag:");
+    console.log(itemState.selectedItem.tags);
+  }
+
+
 
   return (
     <Fragment>
@@ -92,9 +113,12 @@ export function ItemDetails(){
                 <Button key='save' size="small"
                         sx={{ display: itemState.editStatus == 'editing' ? 'block' : 'none' }}
                         onClick={() => {
-                            dispatch(SaveUpdatedItem());
-                            saveUpdatesToItem(itemState.selectedItem);
+
                             // ToDo: Make thunk that allows for saving the selected item before displaying the newly updated selected item.
+                            // store.dispatch(saveandRefresh)
+                            dispatch(AddNewTagToSelectedItem());
+                            saveUpdatesToItem(itemState.selectedItem);
+                            dispatch(SetStateAfterItemSave());
                           }}>
                   Save
                 </Button>
