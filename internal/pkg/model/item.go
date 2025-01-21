@@ -301,26 +301,32 @@ func GetReadFilterObject(msg *v1.ItemServiceReadFilterRequest) *map[string] any 
 	userInFilter := make(InFilterStringType)
 	userInFilter["$in"] = msg.UserFilter
 
+	var addTag bool = len(msg.TagFilter) != 0
+	var addCategory bool = len(msg.CategoryFilter) != 0
+	var orFilter []PostInFilterStringType
 
-	// tagInFilter := make(InFilterStringType)
-	// tagInFilter["$in"] = req.Msg.TagFilter
-	tagFilter := make(PostInFilterStringType)
-	tagFilter["tags"] = make(InFilterStringType)
-	tagFilter["tags"]["$in"] = msg.TagFilter
-
-
-	// categoryInFilter := make(InFilterStringType)
-	// categoryInFilter["$in"] = msg.CategoryFilter
-	categoryFilter := make(PostInFilterStringType)
-	categoryFilter["category"] = make(InFilterStringType)
-	categoryFilter["category"]["$in"] = msg.CategoryFilter
-
-
-	orFilter := []PostInFilterStringType{tagFilter, categoryFilter}
-
-	readFilter := map[string] any {
-		"userid": userInFilter,
-		"$or": orFilter,
+	if (addTag){
+		tagFilter := make(PostInFilterStringType)
+		tagFilter["tags"] = make(InFilterStringType)
+		tagFilter["tags"]["$in"] = msg.TagFilter
+		orFilter = append(orFilter, tagFilter)
 	}
+
+
+	if (addCategory){
+		categoryFilter := make(PostInFilterStringType)
+		categoryFilter["category"] = make(InFilterStringType)
+		categoryFilter["category"]["$in"] = msg.CategoryFilter
+		orFilter = append(orFilter, categoryFilter)
+	}
+
+	var readFilter = map[string] any {
+		"userid": userInFilter,
+	}
+
+	if (len(orFilter) != 0){
+		readFilter["$or"] = orFilter
+	}
+
 	return &readFilter
 }

@@ -19,7 +19,7 @@ import {
   ChooseSelectedItem,
   selectItem,
 } from '~/hooks/state/itemSlice';
-import { getItems} from '~/repository/fetcher';
+import { getItems } from '~/repository/fetcher';
 import type { ItemModelInterface } from '~/model/items';
 
 export function ItemListing(){
@@ -44,7 +44,7 @@ export function ItemListing(){
           }}>
             <Suspense fallback={<Skeleton animation="wave" />}>
               <Await
-                resolve={getItems(["devastation"], ["secrecy", "role"], ["4b4b6b2d-f453-496c-bbb2-4371362f386d"])}
+                resolve={getItems(itemState.categoryFilters, itemState.tagFilters, ["4b4b6b2d-f453-496c-bbb2-4371362f386d"])}
                 errorElement={
                     <Typography variant="h6" gutterBottom
                                 sx={{justifyContent: 'center', alignContent: 'center', p:4,}}>

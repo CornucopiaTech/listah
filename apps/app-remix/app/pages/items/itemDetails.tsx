@@ -60,24 +60,6 @@ export function ItemDetails(){
     alert('Delete Button Clicked');
   }
 
-
-  // const saveandRefresh = (providedItem: ItemStateInterface): AppThunk => {
-  //   return (dispatch: AppDispatch, getState: () => RootState) => {
-  //     if (providedItem){
-  //       dispatch(AddNewTagToSelectedItem());
-  //       saveUpdatesToItem(providedItem);
-  //       dispatch(SetStateAfterItemSave());
-  //     }
-  //   }
-  // }
-
-  if (itemState.selectedItem){
-    console.log("\n\n\nSelected Item.tag:");
-    console.log(itemState.selectedItem.tags);
-  }
-
-
-
   return (
     <Fragment>
       {
@@ -161,6 +143,15 @@ export function ItemDetails(){
                   <TextField
                       required
                       multiline
+                      key={itemState.selectedItem.id + '-category-TextField'}
+                      label="Category"
+                      value={ itemState.selectedItem.category }
+                      onChange={ (e) => {dispatch(() => {})} } //ToDo: dispatch for changing category
+                      size='small'
+                  />
+                  <TextField
+                      required
+                      multiline
                       key={itemState.selectedItem.id + '-note-TextField'}
                       label="Note"
                       value={ itemState.selectedItem.note }
@@ -189,6 +180,15 @@ export function ItemDetails(){
                       key={itemState.selectedItem.id + '-summary-TextField'}
                       label="Summary"
                       value={ itemState.selectedItem.summary }
+                      size='small'
+                  />
+                  <TextField
+                      disabled
+                      required
+                      multiline
+                      key={itemState.selectedItem.id + '-category-TextField'}
+                      label="Category"
+                      value={ itemState.selectedItem.category }
                       size='small'
                   />
                   <TextField
