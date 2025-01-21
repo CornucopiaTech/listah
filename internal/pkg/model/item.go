@@ -298,12 +298,18 @@ func (cs *Items) ManyItemModelToResponse() *v1.ItemServiceCreateManyResponse {
 }
 
 func GetReadFilterObject(msg *v1.ItemServiceReadFilterRequest) *map[string] any {
-	userInFilter := make(InFilterStringType)
-	userInFilter["$in"] = msg.UserFilter
+	readFilter := make(map[string] any)
+	var orFilter []PostInFilterStringType
 
+	var addUser bool = len(msg.UserFilter) != 0
 	var addTag bool = len(msg.TagFilter) != 0
 	var addCategory bool = len(msg.CategoryFilter) != 0
-	var orFilter []PostInFilterStringType
+
+	if (addUser){
+		userInFilter := make(InFilterStringType)
+		userInFilter["$in"] = msg.UserFilter
+		readFilter["userid"] = userInFilter
+	}
 
 	if (addTag){
 		tagFilter := make(PostInFilterStringType)
@@ -318,10 +324,6 @@ func GetReadFilterObject(msg *v1.ItemServiceReadFilterRequest) *map[string] any 
 		categoryFilter["category"] = make(InFilterStringType)
 		categoryFilter["category"]["$in"] = msg.CategoryFilter
 		orFilter = append(orFilter, categoryFilter)
-	}
-
-	var readFilter = map[string] any {
-		"userid": userInFilter,
 	}
 
 	if (len(orFilter) != 0){

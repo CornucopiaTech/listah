@@ -44,7 +44,7 @@ export function ItemListing(){
           }}>
             <Suspense fallback={<Skeleton animation="wave" />}>
               <Await
-                resolve={getItems(itemState.categoryFilters, itemState.tagFilters, ["4b4b6b2d-f453-496c-bbb2-4371362f386d"])}
+                resolve={getItems(itemState.categoryFilters, itemState.tagFilters, [])}
                 errorElement={
                     <Typography variant="h6" gutterBottom
                                 sx={{justifyContent: 'center', alignContent: 'center', p:4,}}>
