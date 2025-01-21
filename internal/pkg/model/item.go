@@ -13,7 +13,8 @@ import (
 type Item struct {
 	Id           string `bson:"_id"`
 	UserId string
-	Title        string
+	Summary        string
+	Category string
 	Description  string
 	Note         string
 	Tags         []string
@@ -39,7 +40,8 @@ func (c *Item) CreateOneItemModelFromRequest(msg *v1.ItemServiceCreateOneRequest
 	// Update category model
 	c.Id = uuid.Must(uuid.NewV7()).String()
 	c.UserId = msg.GetUserId()
-	c.Title = msg.GetTitle()
+	c.Summary = msg.GetSummary()
+	c.Category = msg.GetCategory()
 	c.Description = msg.GetDescription()
 	c.Note = msg.GetNote()
 	c.Tags = msg.GetTags()
@@ -80,7 +82,8 @@ func CreateManyItemModelInterfacesFromRequest(msg *v1.ItemServiceCreateManyReque
 func (c *Item) UpdateOneItemModelFromRequest(msg *v1.ItemServiceUpdateOneRequest, readModel *Item) error {
 	c.Id = msg.GetId()
 	c.UserId = msg.GetUserId()
-	c.Title = msg.GetTitle()
+	c.Summary = msg.GetSummary()
+	c.Category = msg.GetCategory()
 	c.Description = msg.GetDescription()
 	c.Note = msg.GetNote()
 	c.Tags = msg.GetTags()
@@ -96,8 +99,12 @@ func (c *Item) UpdateOneItemModelFromRequest(msg *v1.ItemServiceUpdateOneRequest
 	}
 
 	// Set fields that were not included in the update request.
-	if c.Title == "" {
-		c.Title = readModel.Title
+	if c.Summary == "" {
+		c.Summary = readModel.Summary
+	}
+
+	if c.Category == "" {
+		c.Category = readModel.Category
 	}
 
 	if c.Description == "" {
@@ -131,7 +138,8 @@ func UpdateManyItemModelFromRequest(msgs *v1.ItemServiceUpdateManyRequest, readM
 				c := Item{
 					Id:           valRepo.Id,
 					UserId:        valReq.GetUserId(),
-					Title:        valReq.GetTitle(),
+					Summary:        valReq.GetSummary(),
+					Category:        valReq.GetCategory(),
 					Description:  valReq.GetDescription(),
 					Note:         valReq.GetNote(),
 					Tags:         valReq.GetTags(),
@@ -153,8 +161,13 @@ func UpdateManyItemModelFromRequest(msgs *v1.ItemServiceUpdateManyRequest, readM
 				}
 
 				// Set fields that were not included in the update request.
-				if c.Title == "" {
-					c.Title = valRepo.Title
+				if c.Summary == "" {
+					c.Summary = valRepo.Summary
+				}
+
+				// Set fields that were not included in the update request.
+				if c.Category == "" {
+					c.Category = valRepo.Category
 				}
 
 				if c.Description == "" {
@@ -186,7 +199,8 @@ func UpdateManyItemModelFromRequest(msgs *v1.ItemServiceUpdateManyRequest, readM
 func (c *Item) DeleteOneItemModelFromRequest(msg *v1.ItemServiceDeleteOneRequest, readModel *Item) {
 	c.Id = readModel.Id
 	c.UserId = readModel.UserId
-	c.Title = readModel.Title
+	c.Summary = readModel.Summary
+	c.Category = readModel.Category
 	c.Description = readModel.Description
 	c.Note = readModel.Note
 	c.Tags = readModel.Tags
@@ -211,7 +225,8 @@ func DeleteManyItemModelFromRequest(msgs *v1.ItemServiceDeleteManyRequest, readM
 				c := Item{
 					Id:           valRepo.Id,
 					UserId:           valRepo.UserId,
-					Title:        valRepo.Title,
+					Summary:        valRepo.Summary,
+					Category:        valRepo.Category,
 					Description:  valRepo.Description,
 					Note:         valRepo.Note,
 					Tags:         valRepo.Tags,
@@ -237,7 +252,8 @@ func (c *Item) ItemModelToResponse() *v1.ItemServiceCreateOneResponse {
 	return &v1.ItemServiceCreateOneResponse{
 		Id:           c.Id,
 		UserId:           c.UserId,
-		Title:        c.Title,
+		Summary:        c.Summary,
+		Category:        c.Category,
 		Description:  c.Description,
 		Note:         c.Note,
 		Tags:         c.Tags,
@@ -260,7 +276,8 @@ func (cs *Items) ManyItemModelToResponse() *v1.ItemServiceCreateManyResponse {
 		a := &v1.ItemServiceCreateOneResponse{
 			Id:           c.Id,
 			UserId:           c.UserId,
-			Title:        c.Title,
+			Summary:        c.Summary,
+			Category:        c.Category,
 			Description:  c.Description,
 			Note:         c.Note,
 			Tags:         c.Tags,

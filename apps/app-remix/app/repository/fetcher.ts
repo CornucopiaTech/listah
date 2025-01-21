@@ -10,9 +10,33 @@ export function setAppData() {
     AppData = [...MyData].slice(0, 10);
   }
 }
-export function getItems(dataCategory: string[], dataTags: string[], dataUser: string): ItemModelInterface[] {
-  setAppData();
-  return AppData;
+
+export async function getItems(dataCategory: string[], dataTags: string[], dataUser: string[]) {
+  const theRequest = new Request("http://localhost:8080/listah.v1.ItemService/ReadFilter", {
+    method: "POST",
+    body: JSON.stringify({
+      categoryFilter: dataCategory,
+      tagFilter: dataTags,
+      userFilter: dataUser,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const res = await fetch(theRequest, {
+    body: JSON.stringify({
+      categoryFilter: dataCategory,
+      tagFilter: dataTags,
+      userFilter: dataUser,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  const data = await res.json();
+  return data
+
 }
 
 export function getAllCategories(): string[] {

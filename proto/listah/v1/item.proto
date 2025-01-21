@@ -15,7 +15,8 @@ import "gnostic/openapi/v3/annotations.proto";
 message ItemServiceItem {
     string id = 1;
     string user_id = 2 [json_name = "userId"];
-    string title = 3;
+    string summary = 3;
+    string category =  8;
     string description = 4;
     string note = 5;
     repeated string tags = 6;
@@ -27,7 +28,8 @@ message ItemServiceItem {
 message ItemServiceCreateOneRequest {
     string id = 1;
     string user_id = 2 [json_name = "userId"];
-    string title = 3;
+    string summary = 3;
+    string category =  8;
     string description = 4;
     string note = 5;
     repeated string tags = 6;
@@ -39,7 +41,8 @@ message ItemServiceCreateOneRequest {
 message ItemServiceCreateOneResponse {
     string id = 1;
     string user_id = 2 [json_name = "userId"];
-    string title = 3;
+    string summary = 3;
+    string category =  8;
     string description = 4;
     string note = 5;
     repeated string tags = 6;
@@ -61,7 +64,8 @@ message ItemServiceReadOneRequest {
 message ItemServiceReadOneResponse {
     string id = 1;
     string user_id = 2 [json_name = "userId"];
-    string title = 3;
+    string summary = 3;
+    string category =  8;
     string description = 4;
     string note = 5;
     repeated string tags = 6;
@@ -91,7 +95,8 @@ message ItemServiceReadManyResponse {
 message ItemServiceUpdateOneRequest {
     string id = 1;
     string user_id = 2 [json_name = "userId"];
-    string title = 3;
+    string summary = 3;
+    string category =  8;
     string description = 4;
     string note = 5;
     repeated string tags = 6;
@@ -102,7 +107,8 @@ message ItemServiceUpdateOneRequest {
 message ItemServiceUpdateOneResponse {
     string id = 1;
     string user_id = 2 [json_name = "userId"];
-    string title = 3;
+    string summary = 3;
+    string category =  8;
     string description = 4;
     string note = 5;
     repeated string tags = 6;
@@ -125,7 +131,8 @@ message ItemServiceDeleteOneRequest {
 message ItemServiceDeleteOneResponse {
     string id = 1;
     string user_id = 2 [json_name = "userId"];
-    string title = 3;
+    string summary = 3;
+    string category =  8;
     string description = 4;
     string note = 5;
     repeated string tags = 6;

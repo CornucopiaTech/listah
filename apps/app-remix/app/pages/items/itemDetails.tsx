@@ -61,15 +61,15 @@ export function ItemDetails(){
   }
 
 
-  const saveandRefresh = (providedItem: ItemStateInterface): AppThunk => {
-    return (dispatch: AppDispatch, getState: () => RootState) => {
-      if (providedItem){
-        dispatch(AddNewTagToSelectedItem());
-        saveUpdatesToItem(providedItem);
-        dispatch(SetStateAfterItemSave());
-      }
-    }
-  }
+  // const saveandRefresh = (providedItem: ItemStateInterface): AppThunk => {
+  //   return (dispatch: AppDispatch, getState: () => RootState) => {
+  //     if (providedItem){
+  //       dispatch(AddNewTagToSelectedItem());
+  //       saveUpdatesToItem(providedItem);
+  //       dispatch(SetStateAfterItemSave());
+  //     }
+  //   }
+  // }
 
   if (itemState.selectedItem){
     console.log("\n\n\nSelected Item.tag:");

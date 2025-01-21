@@ -28,6 +28,8 @@ export interface ItemModelInterface {
 }
 
 export interface ItemStateInterface {
+	tagFilters: string[]
+	categoryFilters: string[]
 	definedFilters: string[]
 	editStatus: string
 	filterDrawerStatus: boolean

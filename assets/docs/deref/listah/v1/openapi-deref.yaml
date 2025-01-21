@@ -43,9 +43,12 @@ paths:
                 userId:
                   type: string
                   title: user_id
-                title:
+                summary:
                   type: string
-                  title: title
+                  title: summary
+                category:
+                  type: string
+                  title: category
                 description:
                   type: string
                   title: description
@@ -488,9 +491,12 @@ paths:
                   userId:
                     type: string
                     title: user_id
-                  title:
+                  summary:
                     type: string
-                    title: title
+                    title: summary
+                  category:
+                    type: string
+                    title: category
                   description:
                     type: string
                     title: description
@@ -815,9 +821,12 @@ paths:
                   userId:
                     type: string
                     title: user_id
-                  title:
+                  summary:
                     type: string
-                    title: title
+                    title: summary
+                  category:
+                    type: string
+                    title: category
                   description:
                     type: string
                     title: description
@@ -1250,9 +1259,12 @@ paths:
                         userId:
                           type: string
                           title: user_id
-                        title:
+                        summary:
                           type: string
-                          title: title
+                          title: summary
+                        category:
+                          type: string
+                          title: category
                         description:
                           type: string
                           title: description
@@ -1473,9 +1485,12 @@ paths:
                 userId:
                   type: string
                   title: user_id
-                title:
+                summary:
                   type: string
-                  title: title
+                  title: summary
+                category:
+                  type: string
+                  title: category
                 description:
                   type: string
                   title: description
@@ -1612,9 +1627,12 @@ paths:
                   userId:
                     type: string
                     title: user_id
-                  title:
+                  summary:
                     type: string
-                    title: title
+                    title: summary
+                  category:
+                    type: string
+                    title: category
                   description:
                     type: string
                     title: description
@@ -1870,9 +1888,12 @@ paths:
                   userId:
                     type: string
                     title: user_id
-                  title:
+                  summary:
                     type: string
-                    title: title
+                    title: summary
+                  category:
+                    type: string
+                    title: category
                   description:
                     type: string
                     title: description
