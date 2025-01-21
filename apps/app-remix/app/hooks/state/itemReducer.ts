@@ -3,6 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import type {
   ItemModelInterface,
   TagChangePayloadInterface,
+  FilterChangePayloadInterface,
 } from '~/model/item';
 import type { AppDispatch, RootState } from '~/store';
 
@@ -123,6 +124,43 @@ export function AddFilterReducer(state, action: PayloadAction<string>){
   state.value.definedFilters = [...state.value.definedFilters, action.payload]
 }
 
+export function AddTagFilterReducer(state, action: PayloadAction<FilterChangePayloadInterface>){
+  let newFilter: string [] = [...state.value.tagFilters];
+  if (action.payload.filterChecked){
+    newFilter.push(action.payload.filterName);
+  } else {
+    newFilter = newFilter.filter((anItem: string) => (anItem != action.payload.filterName));
+  }
+  state.value.tagFilters = newFilter;
+
+  // Reset selected if selected Item will be filtered out by this change.
+  let resetSelected: boolean = true;
+  state.value.selectedItem.tags.flat().foreach((item: string) => {
+    if (newFilter.includes(item)){resetSelected = false;}
+  });
+
+  if (state.value.selectedItem && newFilter.length !== 0 && resetSelected){
+    state.value.selectedItem = null;
+  }
+}
+
+export function AddCategoryFilterReducer(state, action: PayloadAction<FilterChangePayloadInterface>){
+  let newFilter: string [] = [...state.value.categoryFilters];
+  if (action.payload.filterChecked){
+    newFilter.push(action.payload.filterName);
+  } else {
+    newFilter = newFilter.filter((anItem: string) => (anItem != action.payload.filterName));
+  }
+  state.value.categoryFilters = newFilter;
+
+  // Reset selected if selected Item will be filtered out by this change.
+  if (state.value.selectedItem && newFilter.length !== 0 && !newFilter.includes(state.value.selectedItem.category)){
+    state.value.selectedItem = null;
+  }
+}
+
 export function ResetFilterReducer(state){
   state.value.definedFilters = []
+  state.value.tagFilters = []
+  state.value.categoryFilters = []
 }

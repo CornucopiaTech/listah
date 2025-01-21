@@ -12,7 +12,6 @@ export interface Audit {
 }
 
 
-
 export interface ItemModelInterface {
     id: string
     userId: string
@@ -27,6 +26,7 @@ export interface ItemModelInterface {
     audit: Audit
 }
 
+
 export interface ItemStateInterface {
 	tagFilters: string[]
 	categoryFilters: string[]
@@ -38,9 +38,11 @@ export interface ItemStateInterface {
 	tagCollapsed: boolean
 }
 
+
 export interface ItemStateReduxInterface {
 	value: ItemStateInterface
 }
+
 
 export interface TagChangePayloadInterface {
 	previous: null | string
@@ -50,4 +52,9 @@ export interface TagChangePayloadInterface {
 export interface AttributeChangePayloadInterface {
 	itemAttribute: null | string
 	attributeValue: null | string
+}
+
+export interface FilterChangePayloadInterface {
+	filterName: string
+	filterChecked: string
 }

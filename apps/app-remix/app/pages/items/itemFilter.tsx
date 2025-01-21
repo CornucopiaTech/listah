@@ -23,11 +23,28 @@ import type {
 } from 'app/store';
 
 import {
-  OpenFilterDrawer,
-  CloseFilterDrawer,
   selectItem,
-  AddFilter,
+  AddFilter, //Add logic to take care of removing or adding filters.
+  ChangeEditStatus,
+  ChangeSelectedItemDescription,
+  ChangeSelectedItemNote,
+  ChangeSelectedItemSummary,
+  ChangeSelectedItemTags,
+  ChangeSelectedItemTitle,
+  ChooseSelectedItem,
+  CloseFilterDrawer,
+  CreateSelectedItemNewTag,
+  DeleteSelectedItemTag,
+  OpenFilterDrawer,
   ResetFilter,
+  SaveUpdatedItem,
+  ToggleCollapseTags,
+  ToggleFilterDrawer,
+  AddNewTagToSelectedItem,
+  SetStateAfterItemSave,
+  ResetState,
+  AddCategoryFilter,
+  AddTagFilter,
 } from '~/hooks/state/itemSlice';
 import type { ItemStateInterface } from '~/model/items';
 
@@ -65,10 +82,9 @@ export function ItemFilter() {
                         key={item + '-checkBoxFormControlLabel'}
                         control={ <Checkbox /> }
                         label={ item }
-                        checked={ itemState.definedFilters.includes(item) }
-                        value={ itemState.definedFilters.includes(item) }
+                        checked={ itemState.categoryFilters.includes(item) }
                         name={ item }
-                        onChange={ () => dispatch(AddFilter(item)) } //This is wrong. Depending if the filter was checked in the first place, it could be add or remove filter.
+                        onChange={ (e) => dispatch(AddCategoryFilter({filterName: item, filterChecked: e.target.checked}))}
                     />
               ))
           }</FormGroup>
@@ -88,10 +104,9 @@ export function ItemFilter() {
                   key={item + '-checkBoxFormControlLabel'}
                   control={<Checkbox />}
                   label={item}
-                  checked={itemState.definedFilters.includes(item)}
-                  value={itemState.definedFilters.includes(item)}
+                  checked={ itemState.tagFilters.includes(item) }
                   name={item}
-                  onChange={() => dispatch(AddFilter(item))}
+                  onChange={(e) => dispatch(AddTagFilter({filterName: item, filterChecked: e.target.checked }))}
                 />
             ))
           }</FormGroup>
