@@ -35,7 +35,9 @@ const initialState: ItemStateReduxInterface = {
         filterDrawerStatus: false,
         tagCollapsed: true,
         newTag: "",
-        definedFilters: []
+        definedFilters: [],
+        categoryFilters: [],
+        tagFilters: [],
     }
 };
 

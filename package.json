@@ -19,7 +19,8 @@
     "go:lint": "golangci-lint run"
   },
   "dependencies": {
-    "@bufbuild/buf": "^1.44.0"
+    "@bufbuild/buf": "^1.44.0",
+    "@redocly/cli": "^1.27.2"
   },
   "packageManager": "npm@10.9.0",
   "devDependencies": {
