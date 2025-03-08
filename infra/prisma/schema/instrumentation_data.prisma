@@ -1,22 +1,11 @@
 model ApiLog {
   id          String  @id @db.Uuid
+  request_source          String
   trace_id          String
   span_id          String
   request       Json    @db.Json
   request_time      DateTime
 
-  @@map("api_logs")
-  @@schema("instrumentation")
-}
-
-model WebLog {
-  id          String  @id @db.Uuid
-  audit       Json    @db.Json
-  item        Json    @db.Json
-  trace_id          String
-  span_id          String
-  request       Json    @db.Json
-
-  @@map("web_logs")
+  @@map("logs")
   @@schema("instrumentation")
 }

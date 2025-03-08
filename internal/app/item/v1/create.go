@@ -21,7 +21,7 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemService
 	insertm.ItemFromCreateRequest(req.Msg)
 
 
-	insertClause, err := v1model.ItemProtoToUpsert(req.Msg)
+	insertClause, err := v1model.ItemProtoToUpsert(req.Msg, "create")
 	if err != nil {
 		s.Infra.Logger.For(ctx).Info("Create upsert field error in Create rpc of ItemService")
 		return nil, err

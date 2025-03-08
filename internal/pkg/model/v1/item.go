@@ -21,15 +21,16 @@ type Item struct {
 	Tags []string
 	Properties map[string]string
 	ReactivateAt   time.Time
+	Audit interface{}
 }
 
 
-func ItemProtoToUpsert(p *pb.ItemServiceCreateRequest) (*model.UpsertInfo, error) {
+func ItemProtoToUpsert(p *pb.ItemServiceCreateRequest, t string) (*model.UpsertInfo, error) {
 	// Update category model
 	if (p.GetUserId() == ""){
 		return nil, errors.New("No userId sent with request")
 	}
-	if (p.GetId() == ""){
+	if (t =="update" && p.GetId() == ""){
 		return nil, errors.New("No id sent with request")
 	}
 	w := model.UpsertInfo{

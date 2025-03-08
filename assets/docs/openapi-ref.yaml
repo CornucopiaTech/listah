@@ -504,9 +504,11 @@ components:
         description:
           type: string
           title: description
+          nullable: true
         note:
           type: string
           title: note
+          nullable: true
         tags:
           type: array
           items:
@@ -520,9 +522,11 @@ components:
             title: value
         reactivateAt:
           title: reactivate_at
+          nullable: true
           $ref: '#/components/schemas/google.protobuf.Timestamp'
         audit:
           title: audit
+          nullable: true
           $ref: '#/components/schemas/listah.v1.Audit'
       title: ItemServiceItem
       additionalProperties: false
