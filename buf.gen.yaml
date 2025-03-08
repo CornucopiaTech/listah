@@ -17,11 +17,11 @@ plugins:
       - paths=source_relative
 
   - local: protoc-gen-connect-openapi
-    out: assets/docs/ref
+    out: assets/docs
     strategy: all
     opt:
     - allow-get
     - format=yaml
-    - path=listah/v1/openapi-ref.yaml
+    - path=openapi-ref.yaml
 inputs:
   - directory: proto

@@ -1,0 +1,34 @@
+
+// model , "web_logs", "ios_logs", "andrioid_logs", "api_logs"
+// ToDo: Find out how to send telemetry, meter, and log data to backend.
+
+
+
+model PlaidLink {
+  id          String   @id @db.Uuid
+  user_id        String
+  expiration  DateTime
+  link_token String
+  request_id String
+  public_token String?
+  updated_at DateTime
+  updated_by String
+
+  @@unique(name: "plaid_link_unique_req_usr_link", [request_id, user_id, link_token])
+  @@map("plaid_link")
+  @@schema("apps")
+}
+
+model PlaidAccess {
+  id          String   @id @db.Uuid
+  user_id        String
+  request_id String
+  expiration  DateTime
+  access_token String
+  updated_at DateTime
+  updated_by String
+
+  @@unique(name: "plaid_access_unique_req_usr_link", [request_id, user_id, access_token])
+  @@map("plaid_access")
+  @@schema("apps")
+}

@@ -1,0 +1,142 @@
+syntax = "proto3";
+package listah.v1;
+
+
+option go_package = "cornucopia/listah/internal/pkg/proto/v1";
+
+
+import "v1/commons.proto";
+import "google/protobuf/timestamp.proto";
+import "gnostic/openapi/v3/annotations.proto";
+
+
+
+
+message ItemServiceItem {
+    string id = 1;
+    string user_id = 2 [json_name = "userId"];
+    string summary = 3;
+    string category =  8;
+    string description = 4;
+    string note = 5;
+    repeated string tags = 6;
+    map<string,string> properties = 7;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
+    Audit audit = 50;
+}
+
+message ItemServiceCreateRequest {
+    string id = 1;
+    string user_id = 2 [json_name = "userId"];
+    string summary = 3;
+    string category =  8;
+    string description = 4;
+    string note = 5;
+    repeated string tags = 6;
+    map<string,string> properties = 7;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
+    Audit audit = 50;
+}
+message ItemServiceCreateResponse {
+    string id = 1;
+    string user_id = 2 [json_name = "userId"];
+    string summary = 3;
+    string category =  8;
+    string description = 4;
+    string note = 5;
+    repeated string tags = 6;
+    map<string,string> properties = 7;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
+    Audit audit = 50;
+}
+
+message ItemServiceReadRequest {
+  string id = 1;
+  string user_id = 2 [json_name = "userId"];
+  string summary = 3;
+  string category =  8;
+  string description = 4;
+  string note = 5;
+  repeated string tags = 6;
+  map<string,string> properties = 7;
+  google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
+  Audit audit = 50;
+}
+message ItemServiceReadResponse {
+    string id = 1;
+    string user_id = 2 [json_name = "userId"];
+    string summary = 3;
+    string category =  8;
+    string description = 4;
+    string note = 5;
+    repeated string tags = 6;
+    map<string,string> properties = 7;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
+    Audit audit = 50;
+}
+
+
+message ItemServiceUpdateRequest {
+    string id = 1;
+    string user_id = 2 [json_name = "userId"];
+    string summary = 3;
+    string category =  8;
+    string description = 4;
+    string note = 5;
+    repeated string tags = 6;
+    map<string,string> properties = 7;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
+    Audit audit = 50;
+}
+message ItemServiceUpdateResponse {
+    string id = 1;
+    string user_id = 2 [json_name = "userId"];
+    string summary = 3;
+    string category =  8;
+    string description = 4;
+    string note = 5;
+    repeated string tags = 6;
+    map<string,string> properties = 7;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
+    Audit audit = 50;
+}
+
+
+
+message ItemServiceDeleteRequest {
+    string id = 1;
+    Audit audit = 50;
+}
+message ItemServiceDeleteResponse {
+    string id = 1;
+    string user_id = 2 [json_name = "userId"];
+    string summary = 3;
+    string category =  8;
+    string description = 4;
+    string note = 5;
+    repeated string tags = 6;
+    map<string,string> properties = 7;
+    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
+    Audit audit = 50;
+}
+
+
+
+service ItemService {
+    rpc Create(ItemServiceCreateRequest) returns (ItemServiceCreateResponse){
+        option (gnostic.openapi.v3.operation).description = "Create Item";
+    }
+
+    rpc Read(ItemServiceReadRequest) returns (ItemServiceReadResponse){
+        option idempotency_level = NO_SIDE_EFFECTS;
+        option (gnostic.openapi.v3.operation).description = "Read Item";
+    }
+
+    rpc Update(ItemServiceUpdateRequest) returns (ItemServiceUpdateResponse){
+        option (gnostic.openapi.v3.operation).description = "Update Item";
+    }
+
+    rpc Delete(ItemServiceDeleteRequest) returns (ItemServiceDeleteResponse){
+        option (gnostic.openapi.v3.operation).description = "Delete Item";
+    }
+}
