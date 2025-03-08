@@ -3,9 +3,8 @@ package bootstrap
 import (
 	"cornucopia/listah/internal/pkg/config"
 	"cornucopia/listah/internal/pkg/logging"
-	"cornucopia/listah/internal/pkg/repository"
+	"cornucopia/listah/internal/pkg/repository/pgsql"
 	"log"
-
 	"github.com/uptrace/opentelemetry-go-extra/otelzap"
 )
 
@@ -13,7 +12,7 @@ type Infra struct {
 	Logger     *logging.Factory
 	OtelLogger *otelzap.Logger
 	Config     *config.Config
-	Repository *repository.Repository
+	PgRepo *pgsql.Repository
 }
 
 func InitInfra() *Infra {
@@ -31,7 +30,7 @@ func InitInfra() *Infra {
 		log.Fatalf("cannot create otel logger")
 	}
 
-	repo := repository.Init(cfgs, logger)
+	repo := pgsql.Init(cfgs, logger)
 
 	// ToDo: Define metrics
 	// //
@@ -42,7 +41,7 @@ func InitInfra() *Infra {
 		Config:     cfgs,
 		Logger:     logger,
 		OtelLogger: otelLogger,
-		Repository: repo,
+		PgRepo: repo,
 	}
 
 }

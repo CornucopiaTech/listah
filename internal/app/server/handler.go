@@ -5,27 +5,19 @@ import (
 	"path"
 
 	"cornucopia/listah/internal/app/bootstrap"
-	"cornucopia/listah/internal/app/item"
-	"cornucopia/listah/internal/app/user"
+	itemV1 "cornucopia/listah/internal/app/item/v1"
 	"cornucopia/listah/internal/pkg/middleware"
-	v1connect "cornucopia/listah/internal/pkg/proto/listah/v1/v1connect"
+	"cornucopia/listah/internal/pkg/proto/v1/v1connect"
 
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 )
 
-func handle(infra *bootstrap.Infra) http.Handler {
+func handle(i *bootstrap.Infra) http.Handler {
 
 	mux := http.NewServeMux()
 
-	// // The generated constructors return a path and a plain net/http
-	// // handler.
-	// intcpt, err := otelconnect.NewInterceptor()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	interceptors := middleware.GetInterceptors(infra)
+	interceptors := middleware.GetInterceptors(i)
 
 	// otelconnect.NewInterceptor provides an interceptor that adds tracing and
 	// metrics to both clients and handlers. By default, it uses OpenTelemetry's
@@ -36,13 +28,13 @@ func handle(infra *bootstrap.Infra) http.Handler {
 
 	//
 	// Handle User connect-go generated paths
-	userPath, userHandler := v1connect.NewUserServiceHandler(user.NewServer(infra), interceptors)
-	mux.Handle(userPath, userHandler)
+	// itemPath, itemHandler := pbv1.NewUserServiceHandler(item.v1.NewServer(i), interceptors)
+	mux.Handle(v1connect.NewItemServiceHandler(itemV1.NewServer(i), interceptors))
 
-	//
-	// Handle Item Connect-go generated paths
-	itemPath, itemHandler := v1connect.NewItemServiceHandler(item.NewServer(infra), interceptors)
-	mux.Handle(itemPath, itemHandler)
+	// //
+	// // Handle Item Connect-go generated paths
+	// itemPath, itemHandler := v1connect.NewItemServiceHandler(item.NewServer(infra), interceptors)
+	// mux.Handle(itemPath, itemHandler)
 
 	// //
 	// // Handle Category Connect-go generated paths
@@ -57,7 +49,7 @@ func handle(infra *bootstrap.Infra) http.Handler {
 	//
 	// Handle OpenAPI docs files
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		p := path.Join(infra.Config.ProjectRoot, "public", "index.html")
+		p := path.Join(i.Config.ProjectRoot, "public", "index.html")
 		http.ServeFile(w, r, p)
 	})
 

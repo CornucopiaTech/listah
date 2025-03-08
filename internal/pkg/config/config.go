@@ -8,12 +8,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"time"
-
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
-	// "go.mongodb.org/mongo-driver/mongo/options"
 )
-
-const appName string = "Listah"
 
 type AppConfig struct {
 	Host    string
@@ -26,7 +22,7 @@ type ApiConfig struct {
 	Address string
 }
 
-type DatabaseConfig struct {
+type MongoDBConfig struct {
 	Host             string
 	DatabaseName     string
 	Port             string
@@ -40,14 +36,13 @@ type DatabaseConfig struct {
 	ConnectionString string
 }
 
-type PgsqlDatabaseConfig struct {
+type PgsqlDBConfig struct {
 	Host             string
 	DatabaseName     string
 	Port             string
 	User             string
 	Password         string
 	Address          string
-	ConnectionString string
 }
 
 type TelemetryConfig struct {
@@ -58,25 +53,28 @@ type Config struct {
 	AppName     string
 	Env         string
 	ProjectRoot string
-	App         AppConfig
 	Api         ApiConfig
-	Database    DatabaseConfig
+	PgsqlDB     PgsqlDBConfig
+	MongoDB    MongoDBConfig
 	Telemetry   TelemetryConfig
 }
 
 func Init() (*Config, error) {
+	appName := os.Getenv("APP_NAME");
+	log.Printf("Name of app: %s", appName)
+	if appName == "" {
+		log.Fatalf("environmental variable for application name is not set")
+	}
 	apiConfig := loadApi()
-	appConfig := loadApp()
-	dbConfig := loadDatabase()
+	pgsqlDBConfig := loadPgsqlDatabase()
 	telemetryConfig := loadTelemetry()
 
 	return &Config{
-		AppName:     appName,
+		AppName:     fmt.Sprintf("%s-api", appName),
 		Env:         loadEnv(),
 		ProjectRoot: loadProjectRoot(),
 		Api:         *apiConfig,
-		App:         *appConfig,
-		Database:    *dbConfig,
+		PgsqlDB:    *pgsqlDBConfig,
 		Telemetry:   *telemetryConfig,
 	}, nil
 
@@ -92,6 +90,7 @@ func loadEnv() string {
 	fmt.Printf("Environment is: %v\n", env)
 	return env
 }
+
 func loadProjectRoot() string {
 	fileAbsPath, err := filepath.Abs("../../")
 	if err != nil {
@@ -118,25 +117,7 @@ func loadApi() *ApiConfig {
 	}
 }
 
-func loadApp() *AppConfig {
-	appHost := os.Getenv("APP_HOST")
-	if appHost == "" {
-		log.Fatalf("environmental variable for app host is not set")
-	}
-
-	appPort := os.Getenv("APP_PORT")
-	if appPort == "" {
-		log.Fatalf("environmental variable for app port is not set")
-	}
-
-	return &AppConfig{
-		Host:    appHost,
-		Port:    appPort,
-		Address: net.JoinHostPort(appHost, appPort),
-	}
-}
-
-func loadDatabase() *DatabaseConfig {
+func loadMongoDatabase() *MongoDBConfig {
 	// This parses through environmental variables and env file to get
 	//    database config.
 	// Connection string format: mongodb://username:password@host:port/databaseName?ssl=false&connectTimeoutMS=5000&maxPoolSize=50
@@ -246,7 +227,7 @@ func loadDatabase() *DatabaseConfig {
 
 	fmt.Printf("Db connection string is %v \n", dbConnectionString)
 
-	return &DatabaseConfig{
+	return &MongoDBConfig{
 		Host:             dbHost,
 		Port:             dbPort,
 		User:             dbUser,
@@ -261,7 +242,7 @@ func loadDatabase() *DatabaseConfig {
 	}
 }
 
-func loadPgDatabase() *PgsqlDatabaseConfig {
+func loadPgsqlDatabase() *PgsqlDBConfig {
 	dbHost := os.Getenv("DATABASE_HOST")
 	if dbHost == "" {
 		log.Fatalf("environmental variable for database host is not set")
@@ -287,25 +268,16 @@ func loadPgDatabase() *PgsqlDatabaseConfig {
 		log.Fatalf("environmental variable for database name is not set")
 	}
 
-	connectionString, err := loadConnectionString()
-	if err != nil {
-		log.Fatalf("Unable to get connection string for database")
-	}
-
-	return &PgsqlDatabaseConfig{
+	return &PgsqlDBConfig{
 		Host:             dbHost,
 		Port:             dbPort,
 		User:             dbUser,
 		Password:         dbPassword,
 		DatabaseName:     dbName,
-		ConnectionString: connectionString,
 		Address:          net.JoinHostPort(dbHost, dbPort),
 	}
 }
 
-func loadConnectionString() (string, error) {
-	return "This is a connection string", nil
-}
 
 func loadTelemetry() *TelemetryConfig {
 	otel_endpoint := os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
