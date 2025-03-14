@@ -46,6 +46,7 @@ func RecordRequestInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFu
 			// Log request in db in middleware
 			reqModel := model.ApiLog{
 				Id:      uuid.Must(uuid.NewV7()).String(),
+				RequestSource:      "api",
 				TraceId: trace.SpanFromContext(ctx).SpanContext().TraceID().String(),
 				SpanId:  trace.SpanFromContext(ctx).SpanContext().SpanID().String(),
 				Request: req,

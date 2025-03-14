@@ -7,8 +7,9 @@ import (
 )
 
 type ApiLog struct {
-	bun.BaseModel `bun:"table:instrumentation.api_logs,alias:al"`
+	bun.BaseModel `bun:"table:instrumentation.logs,alias:lg"`
 	Id            string `bun:",pk"`
+	RequestSource string
 	TraceId       string
 	SpanId        string
 	Request       connect.AnyRequest

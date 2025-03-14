@@ -16,13 +16,13 @@ message ItemServiceItem {
     string id = 1;
     string user_id = 2 [json_name = "userId"];
     string summary = 3;
-    string category =  8;
-    string description = 4;
-    string note = 5;
+    string category = 8;
+    optional string description = 4;
+    optional string note = 5;
     repeated string tags = 6;
     map<string,string> properties = 7;
-    google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
-    Audit audit = 50;
+    optional google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
+    optional Audit audit = 50;
 }
 
 message ItemServiceCreateRequest {
