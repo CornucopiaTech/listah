@@ -1,7 +1,8 @@
-import { loadEnvConfig } from '@next/env';
+import dotenv from 'dotenv';
+import dotenvExpand from 'dotenv-expand';
 import path from 'path';
-
-
-const projectDir = path.dirname(path.dirname(process.cwd()));
-loadEnvConfig(projectDir);
-
+dotenvExpand.expand(
+  dotenv.config({
+    path: path.resolve(path.dirname(path.dirname(process.cwd())), '.env')
+  }
+));
