@@ -6,8 +6,7 @@ import { ItemsView } from '@/components/ItemsView';
 
 export default function Item() {
   return (
-    <Box sx={{ bgcolor: 'pink', height: '100vh'}}>
-      <AppNavBar/>
+    <Box sx={{ bgcolor: 'pink', height: '100%'}}>
       <ItemsView />
     </Box>
   );
