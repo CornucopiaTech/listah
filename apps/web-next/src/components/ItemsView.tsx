@@ -20,17 +20,18 @@ import {
 import { ItemsDrawer} from "@/components/ItemsDrawer";
 import DataTable from '@/components/DataTable';
 import ItemsDatePicker from "@/components/ItemsDatePicker";
+import ItemsList from "./ItemsList";
 
 export function ItemsView(){
 
   return (
-    <Box sx={{ bgcolor: 'blue', height: '100vh', p: 2, m: 8 }}>
-      <Box sx={{ bgcolor: 'green', display: 'inline-flex' }}>
+    <Box sx={{ bgcolor: 'rgba(0,0,255,0.1)', height: '100%', p: 2, }}>
+      <Box key='head-content' sx={{ bgcolor: 'rgba(0,255,0,0.1)', display: 'inline-flex' }}>
         <ItemsDrawer />
         <ItemsDatePicker />
       </Box>
-
-      <DataTable />
+      <ItemsList key='item-list' />
+      {/* <DataTable /> */}
     </Box>
   );
 }

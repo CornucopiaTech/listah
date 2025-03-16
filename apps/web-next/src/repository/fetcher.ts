@@ -7,8 +7,14 @@ let AppData: ItemModelInterface[];
 
 export function setAppData() {
   if (AppData === undefined) {
-    AppData = [...MyData].slice(0, 10);
+    AppData = [...MyData]//.slice(0, 50);
   }
+}
+
+export function getDemoItems(dataCategory: string[], dataTags: string[], dataUser: string[]) {
+  setAppData();
+  return AppData;
+
 }
 
 export async function getItems(dataCategory: string[], dataTags: string[], dataUser: string[]) {
