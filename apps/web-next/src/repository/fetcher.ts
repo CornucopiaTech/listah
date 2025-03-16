@@ -7,7 +7,7 @@ let AppData: ItemModelInterface[];
 
 export function setAppData() {
   if (AppData === undefined) {
-    AppData = [...MyData].slice(0, 50);
+    AppData = [...MyData]//.slice(0, 50);
   }
 }
 

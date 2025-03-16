@@ -1,5 +1,6 @@
+'use client'
 import * as React from 'react';
-import { experimentalStyled as styled } from '@mui/material/styles';
+import { useRouter } from 'next/navigation';
 import {
   Box,
   Paper,
@@ -9,28 +10,17 @@ import {
   Typography,
   CardActionArea,
   Pagination,
-  Stack
+  Stack,
+  Link,
 } from '@mui/material';
 
 
 
 import { getDemoItems } from '@/repository/fetcher';
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(2),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
-  ...theme.applyStyles('dark', {
-    backgroundColor: '#1A2027',
-  }),
-}));
-
-
 export default function ItemsList() {
   const items = getDemoItems([], [], []);
-  const recordsPerPage = 20;
+  const recordsPerPage = 18;
 
   const [page, setPage] = React.useState(1);
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -38,43 +28,45 @@ export default function ItemsList() {
   };
 
   return (
-    // <Box sx={{ flexGrow: 1, height: '100%', p:2, }}>
-    <Box sx={{ height: '100%', p:2, }}>
-      <Box sx={{justifyContent: 'flex-end'}}>
-        <Stack spacing={2}>
-          {/* <Typography>Page: {page}</Typography> */}
+    <Box sx={{ height: '100%', bgcolor: 'paper',}}>
+      <Box  key='top-pagination'
+            sx={{ display: 'flex', justifyContent: 'flex-end',
+                  my: 2}}>
+        <Stack spacing={2} >
           <Pagination count={Math.ceil(items.length/recordsPerPage)} page={page} onChange={handleChange} />
         </Stack>
       </Box>
-      <Grid container spacing={{ xs: 1, md: 2 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-        {items.slice((page-1)*recordsPerPage, page*recordsPerPage).map((val, index) => (
-          <Grid key={index} size={{ xs: 2, sm: 4, md: 4 }}>
-            {/* <Item>{val.summary}</Item> */}
-            <Card>
-              <CardActionArea
-                sx={{
-                  height: '100%',
-                }}
-                >
-                <CardContent sx={{ height: '100%' }}>
-                  <Typography variant="body1" component="div">
-                    {val.summary}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {val.description.substr(0, 100) + '...'}
-                  </Typography>
-                  <Typography variant="body2" color="text.tertiary">
-                    {val.tags.join(", ")}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-      <Box sx={{ p:2, }}>
-        <Stack spacing={2}>
-          {/* <Typography>Page: {page}</Typography> */}
+      <Paper key='content'>
+        <Box
+              sx={{
+                width: '100%',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(min(200px, 100%), 1fr))',
+                gap: 2,
+              }}
+            >
+          {items.slice((page-1)*recordsPerPage, page*recordsPerPage).map((val, _) => (
+            <Box key={val.id} sx={{ height: '100%',  p: 2}}>
+              <Typography key='link' variant="body1" component="div">
+                <Link  color="text.primary" href={`/item/${val.id}`}>{val.summary}</Link>
+              </Typography>
+              <Typography key='description' component="div" variant="caption" color="text.secondary">
+                {val.description.substr(0, 100) + '...'}
+              </Typography>
+              <Typography key='tag-header' component="span" variant="body1" color="text.tertiary">
+                Tags: &nbsp;&nbsp;
+              </Typography>
+              <Typography key='tag-content' component="span" variant="body2" color="text.tertiary">
+                {val.tags.join(", ")}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+      </Paper>
+      <Box  key='bottom-pagination'
+            sx={{ display: 'flex', justifyContent: 'flex-end',
+                  my: 2}}>
+        <Stack spacing={2} >
           <Pagination count={Math.ceil(items.length/recordsPerPage)} page={page} onChange={handleChange} />
         </Stack>
       </Box>

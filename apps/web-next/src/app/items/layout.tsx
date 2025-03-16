@@ -2,7 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 
 
-import { AppNavBar } from '@/components/AppNavBar';
+import { AppNavBar, AppBarHeight } from '@/components/AppNavBar';
 
 
 export default function PageLayout({children,}: Readonly<{ children: React.ReactNode;}>) {

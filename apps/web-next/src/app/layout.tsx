@@ -45,8 +45,7 @@ export default function RootLayout({children,}: Readonly<{ children: React.React
           <head>
           </head>
           <body>
-            <Box sx={{ bgcolor: '#cfe8fc', height: '100%' }}>
-            {/* <Box sx={{ bgcolor: 'green', height: '100vh' }}> */}
+            <Box sx={{ bgcolor: '#cfe8fc', minHeight: '720px',  height: '100%' }}>
               <Container maxWidth="l">
                 {children}
               </Container>
