@@ -322,7 +322,24 @@ components:
           $ref: '#/components/schemas/google.protobuf.Timestamp'
       title: Audit
       additionalProperties: false
-    listah.v1.ItemServiceCreateRequest:
+    listah.v1.Pagination:
+      type: object
+      properties:
+        offset:
+          type: string
+          title: offset
+        recordsCount:
+          type: integer
+          title: records_count
+          format: int32
+        sorterr:
+          type: array
+          items:
+            type: string
+          title: sorterr
+      title: Pagination
+      additionalProperties: false
+    listah.v1.Item:
       type: object
       properties:
         id:
@@ -340,9 +357,11 @@ components:
         description:
           type: string
           title: description
+          nullable: true
         note:
           type: string
           title: note
+          nullable: true
         tags:
           type: array
           items:
@@ -356,13 +375,11 @@ components:
             title: value
         reactivateAt:
           title: reactivate_at
+          nullable: true
           $ref: '#/components/schemas/google.protobuf.Timestamp'
-        audit:
-          title: audit
-          $ref: '#/components/schemas/listah.v1.Audit'
-      title: ItemServiceCreateRequest
+      title: Item
       additionalProperties: false
-    listah.v1.ItemServiceCreateRequest.PropertiesEntry:
+    listah.v1.Item.PropertiesEntry:
       type: object
       properties:
         key:
@@ -372,378 +389,114 @@ components:
           type: string
           title: value
       title: PropertiesEntry
+      additionalProperties: false
+    listah.v1.ItemServiceCreateRequest:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.Item'
+          title: items
+        audit:
+          title: audit
+          nullable: true
+          $ref: '#/components/schemas/listah.v1.Audit'
+      title: ItemServiceCreateRequest
       additionalProperties: false
     listah.v1.ItemServiceCreateResponse:
       type: object
       properties:
-        id:
-          type: string
-          title: id
-        userId:
-          type: string
-          title: user_id
-        summary:
-          type: string
-          title: summary
-        category:
-          type: string
-          title: category
-        description:
-          type: string
-          title: description
-        note:
-          type: string
-          title: note
-        tags:
+        items:
           type: array
           items:
-            type: string
-          title: tags
-        properties:
-          type: object
-          title: properties
-          additionalProperties:
-            type: string
-            title: value
-        reactivateAt:
-          title: reactivate_at
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
+            $ref: '#/components/schemas/listah.v1.Item'
+          title: items
         audit:
           title: audit
+          nullable: true
           $ref: '#/components/schemas/listah.v1.Audit'
       title: ItemServiceCreateResponse
-      additionalProperties: false
-    listah.v1.ItemServiceCreateResponse.PropertiesEntry:
-      type: object
-      properties:
-        key:
-          type: string
-          title: key
-        value:
-          type: string
-          title: value
-      title: PropertiesEntry
       additionalProperties: false
     listah.v1.ItemServiceDeleteRequest:
       type: object
       properties:
-        id:
-          type: string
-          title: id
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.Item'
+          title: items
         audit:
           title: audit
+          nullable: true
           $ref: '#/components/schemas/listah.v1.Audit'
       title: ItemServiceDeleteRequest
       additionalProperties: false
     listah.v1.ItemServiceDeleteResponse:
       type: object
       properties:
-        id:
-          type: string
-          title: id
-        userId:
-          type: string
-          title: user_id
-        summary:
-          type: string
-          title: summary
-        category:
-          type: string
-          title: category
-        description:
-          type: string
-          title: description
-        note:
-          type: string
-          title: note
-        tags:
+        items:
           type: array
           items:
-            type: string
-          title: tags
-        properties:
-          type: object
-          title: properties
-          additionalProperties:
-            type: string
-            title: value
-        reactivateAt:
-          title: reactivate_at
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
-        audit:
-          title: audit
-          $ref: '#/components/schemas/listah.v1.Audit'
+            $ref: '#/components/schemas/listah.v1.Item'
+          title: items
       title: ItemServiceDeleteResponse
-      additionalProperties: false
-    listah.v1.ItemServiceDeleteResponse.PropertiesEntry:
-      type: object
-      properties:
-        key:
-          type: string
-          title: key
-        value:
-          type: string
-          title: value
-      title: PropertiesEntry
-      additionalProperties: false
-    listah.v1.ItemServiceItem:
-      type: object
-      properties:
-        id:
-          type: string
-          title: id
-        userId:
-          type: string
-          title: user_id
-        summary:
-          type: string
-          title: summary
-        category:
-          type: string
-          title: category
-        description:
-          type: string
-          title: description
-          nullable: true
-        note:
-          type: string
-          title: note
-          nullable: true
-        tags:
-          type: array
-          items:
-            type: string
-          title: tags
-        properties:
-          type: object
-          title: properties
-          additionalProperties:
-            type: string
-            title: value
-        reactivateAt:
-          title: reactivate_at
-          nullable: true
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
-        audit:
-          title: audit
-          nullable: true
-          $ref: '#/components/schemas/listah.v1.Audit'
-      title: ItemServiceItem
-      additionalProperties: false
-    listah.v1.ItemServiceItem.PropertiesEntry:
-      type: object
-      properties:
-        key:
-          type: string
-          title: key
-        value:
-          type: string
-          title: value
-      title: PropertiesEntry
       additionalProperties: false
     listah.v1.ItemServiceReadRequest:
       type: object
       properties:
-        id:
-          type: string
-          title: id
-        userId:
-          type: string
-          title: user_id
-        summary:
-          type: string
-          title: summary
-        category:
-          type: string
-          title: category
-        description:
-          type: string
-          title: description
-        note:
-          type: string
-          title: note
-        tags:
+        items:
           type: array
           items:
-            type: string
-          title: tags
-        properties:
-          type: object
-          title: properties
-          additionalProperties:
-            type: string
-            title: value
-        reactivateAt:
-          title: reactivate_at
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
+            $ref: '#/components/schemas/listah.v1.Item'
+          title: items
         audit:
           title: audit
+          nullable: true
           $ref: '#/components/schemas/listah.v1.Audit'
+        pagination:
+          title: pagination
+          nullable: true
+          $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceReadRequest
-      additionalProperties: false
-    listah.v1.ItemServiceReadRequest.PropertiesEntry:
-      type: object
-      properties:
-        key:
-          type: string
-          title: key
-        value:
-          type: string
-          title: value
-      title: PropertiesEntry
       additionalProperties: false
     listah.v1.ItemServiceReadResponse:
       type: object
       properties:
-        id:
-          type: string
-          title: id
-        userId:
-          type: string
-          title: user_id
-        summary:
-          type: string
-          title: summary
-        category:
-          type: string
-          title: category
-        description:
-          type: string
-          title: description
-        note:
-          type: string
-          title: note
-        tags:
+        items:
           type: array
           items:
-            type: string
-          title: tags
-        properties:
-          type: object
-          title: properties
-          additionalProperties:
-            type: string
-            title: value
-        reactivateAt:
-          title: reactivate_at
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
-        audit:
-          title: audit
-          $ref: '#/components/schemas/listah.v1.Audit'
+            $ref: '#/components/schemas/listah.v1.Item'
+          title: items
+        pagination:
+          title: pagination
+          nullable: true
+          $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceReadResponse
-      additionalProperties: false
-    listah.v1.ItemServiceReadResponse.PropertiesEntry:
-      type: object
-      properties:
-        key:
-          type: string
-          title: key
-        value:
-          type: string
-          title: value
-      title: PropertiesEntry
       additionalProperties: false
     listah.v1.ItemServiceUpdateRequest:
       type: object
       properties:
-        id:
-          type: string
-          title: id
-        userId:
-          type: string
-          title: user_id
-        summary:
-          type: string
-          title: summary
-        category:
-          type: string
-          title: category
-        description:
-          type: string
-          title: description
-        note:
-          type: string
-          title: note
-        tags:
+        items:
           type: array
           items:
-            type: string
-          title: tags
-        properties:
-          type: object
-          title: properties
-          additionalProperties:
-            type: string
-            title: value
-        reactivateAt:
-          title: reactivate_at
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
+            $ref: '#/components/schemas/listah.v1.Item'
+          title: items
         audit:
           title: audit
+          nullable: true
           $ref: '#/components/schemas/listah.v1.Audit'
       title: ItemServiceUpdateRequest
-      additionalProperties: false
-    listah.v1.ItemServiceUpdateRequest.PropertiesEntry:
-      type: object
-      properties:
-        key:
-          type: string
-          title: key
-        value:
-          type: string
-          title: value
-      title: PropertiesEntry
       additionalProperties: false
     listah.v1.ItemServiceUpdateResponse:
       type: object
       properties:
-        id:
-          type: string
-          title: id
-        userId:
-          type: string
-          title: user_id
-        summary:
-          type: string
-          title: summary
-        category:
-          type: string
-          title: category
-        description:
-          type: string
-          title: description
-        note:
-          type: string
-          title: note
-        tags:
+        items:
           type: array
           items:
-            type: string
-          title: tags
-        properties:
-          type: object
-          title: properties
-          additionalProperties:
-            type: string
-            title: value
-        reactivateAt:
-          title: reactivate_at
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
-        audit:
-          title: audit
-          $ref: '#/components/schemas/listah.v1.Audit'
+            $ref: '#/components/schemas/listah.v1.Item'
+          title: items
       title: ItemServiceUpdateResponse
-      additionalProperties: false
-    listah.v1.ItemServiceUpdateResponse.PropertiesEntry:
-      type: object
-      properties:
-        key:
-          type: string
-          title: key
-        value:
-          type: string
-          title: value
-      title: PropertiesEntry
       additionalProperties: false
     encoding:
       title: encoding
