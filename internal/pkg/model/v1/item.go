@@ -85,94 +85,6 @@ var whereIndex = map[string]int {
 // 	return &w, nil
 // }
 
-func ItemProtoToWhereClauseBackup(msg []*pb.Item) ([]model.ItemWhereClause, error) {
-	w := []model.ItemWhereClause{}
-	for _, v := range msg {
-		if v.GetUserId() == "" {
-			return nil, errors.New("No userId sent with request")
-		}
-
-		// Add Id to where clause
-		if v.GetId() != "" {
-			if len(w) < whereIndex["Id"] + 1 {
-				w = append(w, model.ItemWhereClause{
-					Placeholder: "?::VARCHAR IN (?)",
-					Column:      "id",
-					Value:       []string{v.GetId()},
-				})
-			} else {
-				w[whereIndex["Id"]].Value = append(w[whereIndex["Id"]].Value, v.GetId())
-			}
-		}
-
-		// Add userId to where clause
-		if v.GetUserId() != "" {
-			if len(w) < whereIndex["UserId"] + 1 {
-				w = append(w, model.ItemWhereClause{
-					Placeholder: "? IN (?)",
-					Column:      "user_id",
-					Value:       []string{v.GetUserId()},
-				})
-			} else {
-				w[whereIndex["UserId"]].Value = append(w[whereIndex["UserId"]].Value, v.GetUserId())
-			}
-		}
-
-		// Add summary to where clause
-		if v.GetSummary() != "" {
-			if len(w) < whereIndex["Summary"] + 1 {
-				w = append(w, model.ItemWhereClause{
-					Placeholder: "? IN (?)",
-					Column:      "summary",
-					Value:       []string{v.GetSummary()},
-				})
-			} else {
-				w[whereIndex["Summary"]].Value = append(w[whereIndex["Summary"]].Value, v.GetSummary())
-			}
-		}
-
-		// Add category to where clause
-		if v.GetCategory() != "" {
-			if len(w) < whereIndex["Category"] + 1 {
-				w = append(w, model.ItemWhereClause{
-					Placeholder: "? IN (?)",
-					Column:      "category",
-					Value:       []string{v.GetCategory()},
-				})
-			} else {
-				w[whereIndex["Category"]].Value = append(w[whereIndex["Category"]].Value, v.GetCategory())
-			}
-		}
-
-		// description
-		if v.GetDescription() != "" {
-			if len(w) < whereIndex["Description"] + 1 {
-				w = append(w, model.ItemWhereClause{
-					Placeholder: "? IN (?)",
-					Column:      "description",
-					Value:       []string{v.GetDescription()},
-				})
-			} else {
-				w[whereIndex["Description"]].Value = append(w[whereIndex["Description"]].Value, v.GetDescription())
-			}
-		}
-
-		// note
-		if v.GetNote() != "" {
-			if len(w) < whereIndex["Note"] + 1 {
-				w = append(w, model.ItemWhereClause{
-					Placeholder: "? IN (?)",
-					Column:      "note",
-					Value:       []string{v.GetNote()},
-				})
-			} else {
-				w[whereIndex["Note"]].Value = append(w[whereIndex["Note"]].Value, v.GetNote())
-			}
-		}
-	}
-	return w, nil
-}
-
 func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, error) {
 	items := []*Item{}
 	for _, v := range msg {
@@ -192,14 +104,11 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, error) {
 			ReactivateAt: v.GetReactivateAt().AsTime(),
 			Audit: Audit{
 				CreatedBy: v.Audit.GetCreatedBy(),
-				// CreatedAt: time.Now().UTC().Format(time.DateTime),
-				CreatedAt: time.Now().UTC(),
+				CreatedAt: v.Audit.GetCreatedAt().AsTime(),
 				UpdatedBy: v.Audit.GetUpdatedBy(),
-				// UpdatedAt: time.Now().UTC().Format(time.DateTime),
-				UpdatedAt: time.Now().UTC(),
+				UpdatedAt: v.Audit.GetUpdatedAt().AsTime(),
 				DeletedBy: v.Audit.GetDeletedBy(),
-				// DeletedAt: time.Now().UTC().Format(time.DateTime),
-				DeletedAt: time.Now().UTC(),
+				DeletedAt: v.Audit.GetDeletedAt().AsTime(),
 			},
 		})
 	}
@@ -333,51 +242,3 @@ func ItemProtoToWhereClause(msg []*pb.Item) ([]model.WhereClause, error) {
 
 	return w, nil
 }
-
-// func ItemFromCreateRequest(msg []*pb.Item) ([]*Item, error) {
-// 	items := []*Item{}
-// 	for _, v := range msg {
-// 		id := v.GetId()
-// 		if id == ""{
-// 			id = uuid.Must(uuid.NewV7()).String()
-// 		}
-// 		items = append(items, &Item{
-// 			Id:           id,
-// 			UserId:       v.GetUserId(),
-// 			Summary:      v.GetSummary(),
-// 			Category:     v.GetCategory(),
-// 			Description:  v.GetDescription(),
-// 			Note:         v.GetNote(),
-// 			Tags:         v.GetTags(),
-// 			Properties:   v.GetProperties(),
-// 			ReactivateAt: v.GetReactivateAt().AsTime(),
-// 			// Audit:        v.GetAudit(),
-// 			Audit: Audit{
-// 				CreatedBy: "AUDIT_UPDATER_ENUM_UNSPECIFIED",
-// 				// CreatedAt: time.Now().UTC().Format(time.DateTime),
-// 				CreatedAt: time.Now().UTC(),
-// 				UpdatedBy: "AUDIT_UPDATER_ENUM_FRONTEND",
-// 				// UpdatedAt: time.Now().UTC().Format(time.DateTime),
-// 				UpdatedAt: time.Now().UTC(),
-// 				DeletedBy: "AUDIT_UPDATER_ENUM_SYSOPS",
-// 				// DeletedAt: time.Now().UTC().Format(time.DateTime),
-// 				DeletedAt: time.Now().UTC(),
-// 			},
-// 		})
-// 	}
-// 	return items, nil
-// }
-
-// func (p *Item) ItemToCreateResponse() *pb.ItemServiceCreateResponse {
-// 	return &pb.ItemServiceCreateResponse{
-// 		Id:          p.Id,
-// 		UserId:      p.UserId,
-// 		Summary:     p.Summary,
-// 		Category:    p.Category,
-// 		Description: p.Description,
-// 		Note:        p.Note,
-// 		Tags:        p.Tags,
-// 		// Properties: map[string]interface{}p.Properties, //TODO
-// 		ReactivateAt: timestamppb.New(p.ReactivateAt),
-// 	}
-// }
