@@ -9,6 +9,7 @@ import (
 	"connectrpc.com/connect"
 	"go.opentelemetry.io/otel"
 	"fmt"
+	// "strings"
 )
 
 // func (s *Server) CreateBackup(ctx context.Context, req *connect.Request[pb.ItemServiceCreateRequest]) (*connect.Response[pb.ItemServiceCreateResponse], error) {
@@ -96,18 +97,17 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemService
 	fmt.Print(res)
 	fmt.Print("\n\n\n\n")
 
-	whereClause, err := v1model.ItemProtoToWhereClause(req.Msg.Items)
-	if err != nil {
-		s.Infra.Logger.For(ctx).Error("Error getting where clause in Create rpc of ItemService")
-		return nil, err
+	// Read created model from repository
+	readModel := []*v1model.Item{}
+	i := []string{}
+	for _, v := range insertions {
+		readModel = append(readModel, &v1model.Item{Id: v.Id})
+		i = append(i, v.Id)
 	}
 
-	// Read created model from repository
-	readModel, err := v1model.ItemProtoToItemModel(req.Msg.Items, false)
-	if err != nil {
-		s.Infra.Logger.For(ctx).Error("Error getting item model for read in Create rpc of ItemService")
-		return nil, err
-	}
+	// ToDo: Clean up Where Clause.
+	whereClause := []model.WhereClause{}
+
 	if err := s.Infra.PgRepo.Item.Select(ctx, &readModel, &whereClause); err != nil {
 		s.Infra.Logger.For(ctx).Error("Repository read error in Create rpc of ItemService")
 		return nil, err
