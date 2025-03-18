@@ -22,6 +22,7 @@ message Item {
     repeated string tags = 6;
     map<string,string> properties = 7;
     optional google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
+    optional Audit audit = 50;
 }
 
 message ItemServiceCreateRequest {

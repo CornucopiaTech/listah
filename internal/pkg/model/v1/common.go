@@ -1,9 +1,11 @@
-package model
+package v1
 
 import (
 	"github.com/uptrace/bun"
 	"time"
 	"connectrpc.com/connect"
+
+	pb "cornucopia/listah/internal/pkg/proto/v1"
 )
 
 type ApiLog struct {
@@ -19,9 +21,9 @@ type ApiLog struct {
 
 
 type Audit struct {
-	CreatedBy string
-	UpdatedBy string
-	DeletedBy string
+	CreatedBy pb.AuditUpdaterEnum
+	UpdatedBy pb.AuditUpdaterEnum
+	DeletedBy pb.AuditUpdaterEnum
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt time.Time

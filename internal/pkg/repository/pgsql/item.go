@@ -18,7 +18,8 @@ type Item interface {
 	Insert(ctx context.Context, m interface{}) error
 	Update(ctx context.Context, v interface{},
 		m interface{}, s []string, w []string, al string) error
-	Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) error
+	Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (interface{}, error)
+	BulkUpsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (interface{}, error)
 }
 
 type item struct {
@@ -32,7 +33,12 @@ func (a *item) Select(ctx context.Context, m interface{}, c *[]model.WhereClause
 
 	a.logger.For(ctx).Info("Selecting from item")
 	qb := a.db.NewSelect().Model(m).QueryBuilder()
-	qb = addWhere(qb, c)
+
+	// Add where clause
+	// qb = addWhere(qb, c)
+	for _,k := range *c {
+		qb = qb.Where(k.Placeholder, bun.Ident(k.Column), k.Value)
+	}
 	selectQuery := qb.Unwrap().(*bun.SelectQuery)
 
 	if err := selectQuery.Scan(ctx); err != nil {
@@ -85,7 +91,7 @@ func (a *item) Update(ctx context.Context, v interface{},
 	return nil
 }
 
-func (a *item) Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) error {
+func (a *item) Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (interface{}, error) {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "insert")
 	defer span.End()
 	a.logger.For(ctx).Info("Inserting into item")
@@ -106,11 +112,40 @@ func (a *item) Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) e
 		q = q.Set(r)
 	}
 
-	_, err := q.Returning("*").Exec(ctx)
+	res, err := q.Exec(ctx)
 	if err != nil {
 		a.logger.For(ctx).Error("Error occurred in repository while inserting into item", zap.String("cause", errors.Cause(err).Error()))
-		return err
+		return nil, err
 	}
 
-	return nil
+	return res, nil
+}
+
+func (a *item) BulkUpsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (interface{}, error) {
+	ctx, span := otel.Tracer("item-repository").Start(ctx, "insert")
+	defer span.End()
+	a.logger.For(ctx).Info("Inserting into item")
+
+	var conflict string
+	if len(c.Conflict) == 0 {
+		conflict = fmt.Sprintf("CONFLICT(%v) DO NOTHING",
+			strings.Join(c.Conflict, ", "))
+	} else {
+		conflict = fmt.Sprintf("CONFLICT(%v) DO UPDATE",
+			strings.Join(c.Conflict, ", "))
+	}
+
+	q := a.db.NewInsert().Model(m).On(conflict)
+	for _, v := range c.Resolve {
+		r := fmt.Sprintf("%v = Excluded.%v", bun.Ident(v), bun.Ident(v))
+		q = q.Set(r)
+	}
+
+	res, err := q.Returning("*").Exec(ctx)
+	if err != nil {
+		a.logger.For(ctx).Error("Error occurred in repository while inserting into item", zap.String("cause", errors.Cause(err).Error()))
+		return nil, err
+	}
+
+	return res, nil
 }

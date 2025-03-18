@@ -377,6 +377,10 @@ components:
           title: reactivate_at
           nullable: true
           $ref: '#/components/schemas/google.protobuf.Timestamp'
+        audit:
+          title: audit
+          nullable: true
+          $ref: '#/components/schemas/listah.v1.Audit'
       title: Item
       additionalProperties: false
     listah.v1.Item.PropertiesEntry:
