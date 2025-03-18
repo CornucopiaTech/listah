@@ -9,6 +9,8 @@ import {
 import {
   ClerkProvider,
 } from '@clerk/nextjs';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -23,6 +25,8 @@ export const metadata: Metadata = {
   description: "List tracking application",
 };
 
+const queryClient = new QueryClient();
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -30,20 +34,24 @@ export default function RootLayout({
 }>) {
   return (
     <React.Fragment>
-      <CssBaseline />
-      <ClerkProvider>
-        <html lang="en">
-          <head>
-          </head>
-          <body>
-            <Box sx={{ bgcolor: '#cfe8fc', minHeight: '720px',  height: '100%' }}>
-              <Container maxWidth="lg">
-                {children}
-              </Container>
-            </Box>
-          </body>
-        </html>
-      </ClerkProvider>
+      <QueryClientProvider client={queryClient}>
+        {/* The rest of your application */}
+        <ReactQueryDevtools initialIsOpen={false} />
+        <CssBaseline />
+        <ClerkProvider>
+          <html lang="en">
+            <head>
+            </head>
+            <body>
+              <Box sx={{ bgcolor: '#cfe8fc', minHeight: '720px',  height: '100%' }}>
+                <Container maxWidth="lg">
+                  {children}
+                </Container>
+              </Box>
+            </body>
+          </html>
+        </ClerkProvider>
+      </QueryClientProvider>
     </React.Fragment>
   );
 }

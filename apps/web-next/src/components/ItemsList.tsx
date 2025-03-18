@@ -1,5 +1,6 @@
 'use client'
 import * as React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import {
   Box,
@@ -17,6 +18,7 @@ import {
 
 
 import { getDemoItems } from '@/repository/fetcher';
+import { fetchItems } from '@/repository/item';
 
 export default function ItemsList() {
   const items = getDemoItems([], [], []);
@@ -26,6 +28,21 @@ export default function ItemsList() {
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
+
+  let userId, tags, categories;
+
+  const { isPending, isError, data, error } = useQuery({
+    queryKey: ['items', {userId, tags, categories}],
+    queryFn: fetchItems
+  });
+
+  if (isPending) {
+    return <span>Loading...</span>
+  }
+
+  if (isError) {
+    return <span>Error: {error.message}</span>
+  }
 
   return (
     <Box sx={{ height: '100%', bgcolor: 'paper',}}>
