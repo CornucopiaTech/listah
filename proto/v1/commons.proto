@@ -20,3 +20,9 @@ enum AuditUpdaterEnum {
     AUDIT_UPDATER_ENUM_FRONTEND = 1;
     AUDIT_UPDATER_ENUM_SYSOPS = 2;
 }
+
+message Pagination {
+  string offset = 1;
+  int32 records_count  = 2;
+  repeated string sorterr = 3;
+}

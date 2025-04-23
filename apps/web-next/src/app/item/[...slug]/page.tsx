@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import { AppBarHeight } from '@/components/AppNavBar';
 
 
-export default async function ItemSlugPage({
+export default async function ItemSlug({
   params,
 }: {
   params: Promise<{ slug: string }>

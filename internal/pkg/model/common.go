@@ -35,6 +35,13 @@ type WhereClause struct {
 }
 
 
+type ItemWhereClause struct {
+	Placeholder string
+	Column string
+	Value []string
+}
+
+
 type UpsertInfo struct {
 	Conflict []string
 	Resolve []string

@@ -1,26 +1,20 @@
-'use client'
-import { Suspense, useRef} from "react";
-// import { useDispatch, useSelector } from 'react-redux';
+import * as React from 'react';
 import {
-  ListItem,
-  Grid2 as Grid,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Typography,
-  Skeleton,
-  Box
+  Box,
+  TextField
 } from '@mui/material';
-import {
-  ExpandLess
-} from '@mui/icons-material';
 
-
-export function ItemsSearch(){
-
+export default function ItemsSearch() {
   return (
-    <Box sx={{ bgcolor: 'blue', height: '100vh', p: 2, m: 8 }}>
+    <Box
+        component="form"
+        sx={{ '& > :not(style)': { m: 1, width: '25ch' } }}
+        noValidate
+        autoComplete="off"
+        >
+      {/* <TextField id="outlined-basic" label="Outlined" variant="outlined" />
+      <TextField id="filled-basic" label="Filled" variant="filled" /> */}
+      <TextField id="standard-basic" label="Search for item" variant="standard" />
     </Box>
   );
 }
