@@ -27,30 +27,10 @@ export async function fetchItems({
   });
 
   try{
-    const res = await fetch(theRequest, {
-      // body: JSON.stringify({
-      //   categoryFilter: dataCategory,
-      //   tagFilter: dataTags,
-      //   userFilter: dataUser,
-      // }),
-      // headers: {
-      //   "Content-Type": "application/json",
-      // },
-    });
+    const res = await fetch(theRequest);
     const data = await res.json();
     return data
   } catch (e) {
     console.error(`Unable to retrieve API data. Error thrown: f{e}`);
   }
-
-  // const response = await fetch('/todos/' + todoId)
-  // if (!response.ok) {
-  //   throw new Error('Network response was not ok')
-  // }
-  // return response.json()
 }
-// export function fetchItems(userId: string, categories: string[], tags: string[]){
-
-// }
-
-// t6sDDmU%nxWBtQTCk!Ra

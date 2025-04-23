@@ -6,9 +6,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateField } from '@mui/x-date-pickers/DateField';
 
 export default function DateFieldValue() {
-
-  // const {Dayjs} = dayjs;
-
   const [value, setValue] = React.useState<Dayjs | null>(dayjs('2022-04-17'));
 
   return (

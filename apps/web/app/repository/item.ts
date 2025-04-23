@@ -36,15 +36,4 @@ export async function fetchItems({
   });
   const data = await res.json();
   return data
-
-  // const response = await fetch('/todos/' + todoId)
-  // if (!response.ok) {
-  //   throw new Error('Network response was not ok')
-  // }
-  // return response.json()
 }
-// export function fetchItems(userId: string, categories: string[], tags: string[]){
-
-// }
-
-// t6sDDmU%nxWBtQTCk!Ra
