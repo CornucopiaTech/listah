@@ -24,7 +24,10 @@ services:
       - "55679:55679" # zpages extension
     depends_on:
       - zipkin-all-in-one
+      - prometheus
+      - jaeger
 
+  # Premetheus
   prometheus:
     container_name: prometheus
     image: prom/prometheus:latest
@@ -33,3 +36,19 @@ services:
       - ./prometheus.yaml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
+
+  # Jaeger
+  jaeger:
+    container_name: jaeger
+    image: jaegertracing/jaeger:2.5.0
+    restart: always
+    ports:
+      - 16686:16686
+      - 14268:14268
+      # - 4317:4317
+      # - 4318:4318
+      # - 5778:5778
+      # - 9411:9411
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+      - LOG_LEVEL=debug

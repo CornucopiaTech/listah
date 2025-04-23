@@ -26,7 +26,8 @@
     "prisma:fmt": "prisma format",
     "prisma:gen": "prisma generate",
     "prisma:push": "prisma db push --skip-generate",
-    "prisma:reset": "prisma migrate reset --skip-generate",
+    "prisma:reset": "prisma migrate reset",
+    "prisma:reset:skip": "prisma migrate reset --skip-generate",
     "prisma:val": "prisma validate"
   },
   "dependencies": {

@@ -16,6 +16,13 @@ exporters:
     endpoint: "http://zipkin-all-in-one:9411/api/v2/spans"
     format: proto
 
+  # jaeger:
+  #   # endpoint: http://jaeger:14250
+  #   endpoint: http://jaeger:14268/api/traces
+  #   tls:
+  #     insecure: true
+
+
 processors:
   batch:
 

@@ -17,7 +17,7 @@ export async function fetchItems({
     ]
   }
 
-  const requrl = process.env.NEXT_PUBLIC_LISTAH_API_ITEMS_READ ? process.env.NEXT_PUBLIC_LISTAH_API_ITEMS_READ : "";
+  const requrl = process.env.VITE_LISTAH_API_ITEMS_READ ? process.env.VITE_LISTAH_API_ITEMS_READ : "";
   const theRequest = new Request(requrl, {
     method: "POST",
     body: JSON.stringify(reqBody),
@@ -29,8 +29,10 @@ export async function fetchItems({
   try{
     const res = await fetch(theRequest);
     const data = await res.json();
+    console.log(data);
     return data
   } catch (e) {
-    console.error(`Unable to retrieve API data. Error thrown: f{e}`);
+    console.error(`Unable to retrieve API data. Error thrown: ${e}`);
+    throw e;
   }
 }
