@@ -7,10 +7,14 @@
 ### Local Endpoints
 
 | Service | Endpoint |
+| -- | --- |
 | Frontend | http://localhost:5050 |
 | Api | http://localhost:8080 |
-| Jaegar | http://localhost:16686 |
 | Otel | http://localhost:4318 |
+| Prometheus | http://localhost:9090 |
+| Jaegar | http://localhost:16686 |
+| Zipkin | http://localhost:9411 |
+
 
 
 ## Development Application Deployment

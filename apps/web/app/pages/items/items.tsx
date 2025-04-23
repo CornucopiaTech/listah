@@ -12,17 +12,23 @@ import { ThemeProvider } from '@mui/material/styles';
 import {
   Box,
 } from '@mui/material';
+
+
+
 import { AppNavBar} from '@/components/AppNavBar';
+import { ItemsDrawer} from "@/components/ItemsDrawer";
+import ItemsDatePicker from "@/components/ItemsDatePicker";
+import ItemsList from "@/components/ItemsList";
+import ItemsSearch from '@/components/ItemsSearch';
+import { AppBarHeight } from '@/components/AppNavBar';
+
+
 
 import theme from '@/lib/theme';
 
 const queryClient = new QueryClient();
 
-export default function PageLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>){
+export default function Items(){
   return (
     <React.Fragment>
         <QueryClientProvider client={queryClient}>
@@ -31,7 +37,19 @@ export default function PageLayout({
           <ThemeProvider theme={theme}>
             <Box sx={{ bgcolor: 'teal', height: '100%' }}>
               <AppNavBar />
-              {children}
+              <Box  sx={{ bgcolor: 'pink',
+                height: `calc(100% - ${AppBarHeight})`,
+                mt: AppBarHeight, p: 1 }}>
+                <Box  key='head-content'
+                      sx={{ bgcolor: 'rgba(0,255,0,0.1)', display: 'flex',
+                      my: 2, justifyContent: 'space-between' }}>
+                  <ItemsDrawer />
+                  <ItemsSearch />
+                  <ItemsDatePicker />
+                </Box>
+                <ItemsList key='item-list' />
+              </Box>
+
             </Box>
           </ThemeProvider>
         </QueryClientProvider>

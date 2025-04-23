@@ -8,7 +8,7 @@ import {
 import { ItemsDrawer} from "@/components/ItemsDrawer";
 import ItemsDatePicker from "@/components/ItemsDatePicker";
 import ItemsList from "@/components/ItemsList";
-import ItemsSearch from '@/components/ItemsSearach';
+import ItemsSearch from '@/components/ItemsSearch';
 import { AppBarHeight } from '@/components/AppNavBar';
 
 

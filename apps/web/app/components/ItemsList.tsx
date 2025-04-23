@@ -1,7 +1,7 @@
 'use client'
+
 import * as React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
 import {
   Box,
   Paper,
@@ -62,7 +62,7 @@ export default function ItemsList() {
                 gap: 2,
               }}
             >
-          {items.slice((page-1)*recordsPerPage, page*recordsPerPage).map((val, _) => (
+          {/* {items.slice((page-1)*recordsPerPage, page*recordsPerPage).map((val, _) => (
             <Box key={val.id} sx={{ height: '100%',  p: 2}}>
               <Typography key='link' variant="body1" component="div">
                 <Link  color="text.primary" href={`/item/${val.id}`}>{val.summary}</Link>
@@ -77,7 +77,7 @@ export default function ItemsList() {
                 {val.tags.join(", ")}
               </Typography>
             </Box>
-          ))}
+          ))} */}
         </Box>
       </Paper>
       <Box  key='bottom-pagination'
