@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
+  CssBaseline,
   Box,
   Paper,
   Grid2 as Grid,
@@ -55,20 +56,22 @@ export default function ItemsList() {
   return (
     <Box sx={{ height: '100%', bgcolor: 'paper',}}>
       <Box  key='top-pagination'
-            sx={{ display: 'flex', justifyContent: 'flex-end',
-                  my: 2}}>
+            sx={{
+              display: 'flex', justifyContent: 'flex-end',
+              my: 2
+            }}>
         <Stack spacing={2} >
           <Pagination count={Math.ceil(items.length/recordsPerPage)} page={page} onChange={handleChange} />
         </Stack>
       </Box>
       <Paper key='content'>
         <Box
-              sx={{
+            sx={{
                 width: '100%',
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(min(200px, 100%), 1fr))',
                 gap: 2,
-              }}
+            }}
             >
           {items.slice((page-1)*recordsPerPage, page*recordsPerPage).map((val, _) => (
             <Box key={val.id} sx={{ height: '100%',  p: 2}}>
