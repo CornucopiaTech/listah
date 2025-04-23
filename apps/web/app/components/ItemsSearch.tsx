@@ -12,9 +12,9 @@ export default function ItemsSearch() {
         noValidate
         autoComplete="off"
         >
-      {/* <TextField id="outlined-basic" label="Outlined" variant="outlined" />
-      <TextField id="filled-basic" label="Filled" variant="filled" /> */}
-      <TextField id="standard-basic" label="Search for item" variant="standard" />
+      <TextField id="outlined-basic" label="Search" defaultValue="Search for item" variant="outlined" />
+      {/* <TextField id="filled-basic" label="Search" variant="filled"  defaultValue="Search for item"/> */}
+      {/* <TextField id="standard-basic" label="Search for item" variant="standard" /> */}
     </Box>
   );
 }

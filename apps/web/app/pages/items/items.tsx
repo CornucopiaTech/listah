@@ -38,11 +38,12 @@ export default function Items(){
             <Box sx={{ bgcolor: 'teal', height: '100%' }}>
               <AppNavBar />
               <Box  sx={{ bgcolor: 'pink',
+                // height: `100%`,
                 height: `calc(100% - ${AppBarHeight})`,
                 mt: AppBarHeight, p: 1 }}>
                 <Box  key='head-content'
                       sx={{ bgcolor: 'rgba(0,255,0,0.1)', display: 'flex',
-                      my: 2, justifyContent: 'space-between' }}>
+                      mb: 2, justifyContent: 'space-between' }}>
                   <ItemsDrawer />
                   <ItemsSearch />
                   <ItemsDatePicker />

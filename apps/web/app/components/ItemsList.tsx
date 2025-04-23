@@ -13,6 +13,8 @@ import {
   Pagination,
   Stack,
   Link,
+  LinearProgress,
+  Skeleton,
 } from '@mui/material';
 
 
@@ -31,18 +33,24 @@ export default function ItemsList() {
 
   let userId, tags, categories;
 
-  const { isPending, isError, data, error } = useQuery({
-    queryKey: ['items', {userId, tags, categories}],
-    queryFn: fetchItems
-  });
+  // const { isPending, isError, data, error } = useQuery({
+  //   queryKey: ['items', {userId, tags, categories}],
+  //   queryFn: fetchItems
+  // });
 
-  if (isPending) {
-    return <span>Loading...</span>
-  }
+  // if (isPending) {
+  //   return (
+  //     <React.Fragment>
+  //       <LinearProgress />
+  //       <Skeleton variant="rectangular" width='80%' height='100%' />
+  //     </React.Fragment>
 
-  if (isError) {
-    return <span>Error: {error.message}</span>
-  }
+  // );
+  // }
+
+  // if (isError) {
+  //   return <span>Error: {error.message}</span>
+  // }
 
   return (
     <Box sx={{ height: '100%', bgcolor: 'paper',}}>
@@ -62,7 +70,7 @@ export default function ItemsList() {
                 gap: 2,
               }}
             >
-          {/* {items.slice((page-1)*recordsPerPage, page*recordsPerPage).map((val, _) => (
+          {items.slice((page-1)*recordsPerPage, page*recordsPerPage).map((val, _) => (
             <Box key={val.id} sx={{ height: '100%',  p: 2}}>
               <Typography key='link' variant="body1" component="div">
                 <Link  color="text.primary" href={`/item/${val.id}`}>{val.summary}</Link>
@@ -77,7 +85,7 @@ export default function ItemsList() {
                 {val.tags.join(", ")}
               </Typography>
             </Box>
-          ))} */}
+          ))}
         </Box>
       </Paper>
       <Box  key='bottom-pagination'
