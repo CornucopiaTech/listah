@@ -1,15 +1,16 @@
 package logging
 
 import (
-	"log"
+	// "log"
 
+	"log"
+	"os"
+	"time"
+
+	"github.com/sirupsen/logrus"
 	"github.com/uptrace/opentelemetry-go-extra/otelzap"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-)
-
-var (
-	logger *zap.Logger
 )
 
 func Init() (*Factory, error) {
@@ -17,6 +18,7 @@ func Init() (*Factory, error) {
 		zap.AddStacktrace(zapcore.FatalLevel),
 		zap.AddCallerSkip(1),
 	}
+	var logger *zap.Logger
 	logger, _ = zap.NewProduction(zapOptions...)
 	// logger, _ = zap.NewDevelopment(zapOptions...)
 
@@ -40,4 +42,19 @@ func InitOtelZap() (*otelzap.Logger, error) {
 	log := otelzap.New(zapLogger, otelzap.WithCallerDepth(1), otelzap.WithStackTrace(true))
 
 	return log, nil
+}
+
+func InitLogrus() *logrus.Logger {
+	log := logrus.New()
+	log.Level = logrus.DebugLevel
+	log.Formatter = &logrus.JSONFormatter{
+		FieldMap: logrus.FieldMap{
+			logrus.FieldKeyTime:  "timestamp",
+			logrus.FieldKeyLevel: "severity",
+			logrus.FieldKeyMsg:   "message",
+		},
+		TimestampFormat: time.RFC3339Nano,
+	}
+	log.Out = os.Stdout
+	return log
 }

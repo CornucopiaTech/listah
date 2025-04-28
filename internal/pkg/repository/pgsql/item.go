@@ -10,8 +10,9 @@ import (
 	"github.com/pkg/errors"
 	"github.com/uptrace/bun"
 	"go.opentelemetry.io/otel"
-	"go.uber.org/zap"
 )
+
+var svcName string = "PgDB"
 
 type Item interface {
 	Select(ctx context.Context, m interface{}, c *[]model.WhereClause) error
@@ -31,34 +32,39 @@ func (a *item) Select(ctx context.Context, m interface{}, c *[]model.WhereClause
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "select")
 	defer span.End()
 
-	a.logger.For(ctx).Info("Selecting from item")
-	qb := a.db.NewSelect().Model(m).QueryBuilder()
+	var activity string = "ItemSelect"
+	a.logger.LogDebug(ctx, svcName, activity, "Begin "+activity)
 
+	qb := a.db.NewSelect().Model(m).QueryBuilder()
 	// Add where clause
 	// qb = addWhere(qb, c)
-	for _,k := range *c {
+	for _, k := range *c {
 		qb = qb.Where(k.Placeholder, bun.Ident(k.Column), k.Value)
 	}
 	selectQuery := qb.Unwrap().(*bun.SelectQuery)
 
 	if err := selectQuery.Scan(ctx); err != nil {
-		a.logger.For(ctx).Error("Error occurred in repository while selecting from item", zap.String("cause", errors.Cause(err).Error()))
+		a.logger.LogError(ctx, svcName, activity, "Error occured", errors.Cause(err).Error())
 		return err
 	}
+
+	a.logger.LogDebug(ctx, svcName, activity, "End "+activity)
 	return nil
 }
 
 func (a *item) Insert(ctx context.Context, m interface{}) error {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "insert")
 	defer span.End()
-	a.logger.For(ctx).Info("Inserting into item")
+	var activity string = "ItemInsert"
+	a.logger.LogDebug(ctx, svcName, activity, "Begin "+activity)
 
 	_, err := a.db.NewInsert().Model(m).Returning("*").Exec(ctx)
 	if err != nil {
-		a.logger.For(ctx).Error("Error occurred in repository while inserting into item", zap.String("cause", errors.Cause(err).Error()))
+		a.logger.LogError(ctx, svcName, activity, "Error occured", errors.Cause(err).Error())
 		return err
 	}
 
+	a.logger.LogDebug(ctx, svcName, activity, "End "+activity)
 	return nil
 }
 
@@ -66,7 +72,8 @@ func (a *item) Update(ctx context.Context, v interface{},
 	m interface{}, s []string, w []string, al string) error {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "insert")
 	defer span.End()
-	a.logger.For(ctx).Info("Updating into item")
+	var activity string = "ItemUpdate"
+	a.logger.LogDebug(ctx, svcName, activity, "Begin "+activity)
 
 	values := a.db.NewValues(v)
 	q := a.db.NewUpdate().With("_data", values).Model(m).TableExpr("_data")
@@ -84,17 +91,20 @@ func (a *item) Update(ctx context.Context, v interface{},
 	_, err := q.Exec(ctx)
 
 	if err != nil {
-		a.logger.For(ctx).Error("Error occurred in repository while updating item", zap.String("cause", errors.Cause(err).Error()))
+		a.logger.LogError(ctx, svcName, activity, "Error occured", errors.Cause(err).Error())
 		return err
 	}
 
+	a.logger.LogDebug(ctx, svcName, activity, "End "+activity)
 	return nil
 }
 
 func (a *item) Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (interface{}, error) {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "insert")
 	defer span.End()
-	a.logger.For(ctx).Info("Inserting into item")
+
+	var activity string = "ItemUpsert"
+	a.logger.LogDebug(ctx, svcName, activity, "Begin "+activity)
 
 	var conflict string
 	if len(c.Conflict) == 0 {
@@ -114,18 +124,20 @@ func (a *item) Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (
 
 	res, err := q.Exec(ctx)
 	if err != nil {
-		a.logger.For(ctx).Error("Error occurred in repository while inserting into item", zap.String("cause", errors.Cause(err).Error()))
+		a.logger.LogError(ctx, svcName, activity, "Error occured", errors.Cause(err).Error())
 		return nil, err
 	}
 
+	a.logger.LogDebug(ctx, svcName, activity, "End "+activity)
 	return res, nil
 }
 
 func (a *item) BulkUpsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (interface{}, error) {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "insert")
 	defer span.End()
-	a.logger.For(ctx).Info("Inserting into item")
 
+	var activity string = "ItemBulkUpsert"
+	a.logger.LogDebug(ctx, svcName, activity, "Begin "+activity)
 	var conflict string
 	if len(c.Conflict) == 0 {
 		conflict = fmt.Sprintf("CONFLICT(%v) DO NOTHING",
@@ -143,9 +155,10 @@ func (a *item) BulkUpsert(ctx context.Context, m interface{}, c *model.UpsertInf
 
 	res, err := q.Returning("*").Exec(ctx)
 	if err != nil {
-		a.logger.For(ctx).Error("Error occurred in repository while inserting into item", zap.String("cause", errors.Cause(err).Error()))
+		a.logger.LogError(ctx, svcName, activity, "Error occured", errors.Cause(err).Error())
 		return nil, err
 	}
 
+	a.logger.LogDebug(ctx, svcName, activity, "End "+activity)
 	return res, nil
 }

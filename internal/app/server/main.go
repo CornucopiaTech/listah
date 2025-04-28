@@ -11,27 +11,22 @@ import (
 
 	"cornucopia/listah/internal/app/bootstrap"
 	"cornucopia/listah/internal/pkg/telemetry"
-
-	"go.uber.org/zap"
 )
 
-func Run() error {
-	//Following server setup guide in Otel docs: https://opentelemetry.io/docs/languages/go/getting-started/
-	// Run application bootstrapping
-	infra := bootstrap.InitInfra()
+func Run() (err error) {
 
-	// //
+	// Run application bootstrapping
+	i := bootstrap.InitInfra()
+
 	// Handle SIGINT (CTRL+C) gracefully.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 
-	//
 	// Set up OpenTelemetry.
-	otelShutdown, err := telemetry.InitSDK()
+	otelShutdown, err := telemetry.SetupOTelSDK(ctx, i)
 	if err != nil {
-		return err
+		return
 	}
-
 	// Handle shutdown properly so nothing leaks.
 	defer func() {
 		err = errors.Join(err, otelShutdown(context.Background()))
@@ -39,37 +34,26 @@ func Run() error {
 
 	//
 	// Get route handler
-	handler := handle(infra)
+	handler := handle(i)
 
-	//
-	// Define listener
-	lis, err := net.Listen("tcp", infra.Config.Api.Address)
-	if err != nil {
-		infra.OtelLogger.Fatal("failed to listen", zap.Error(err))
-		infra.Logger.Bg().Fatal("failed to listen", zap.Error(err))
-	}
-
-	//
-	// Define HTTP server
+	// Start HTTP server.
 	srv := &http.Server{
-		Addr:         infra.Config.Api.Address,
-		BaseContext:  func(_ net.Listener) context.Context { return context.Background() },
+		Addr:         i.Config.Api.Address,
+		BaseContext:  func(_ net.Listener) context.Context { return ctx },
 		ReadTimeout:  time.Second,
 		WriteTimeout: 10 * time.Second,
 		Handler:      handler,
 	}
-
-	// Start  HTTP server
 	srvErr := make(chan error, 1)
 	go func() {
-		srvErr <- srv.Serve(lis)
+		srvErr <- srv.ListenAndServe()
 	}()
 
 	// Wait for interruption.
 	select {
 	case err = <-srvErr:
 		// Error when starting HTTP server.
-		return err
+		return
 	case <-ctx.Done():
 		// Wait for first CTRL+C.
 		// Stop receiving signal notifications as soon as possible.
@@ -78,5 +62,5 @@ func Run() error {
 
 	// When Shutdown is called, ListenAndServe immediately returns ErrServerClosed.
 	err = srv.Shutdown(context.Background())
-	return err
+	return
 }

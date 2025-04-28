@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, type DefinedUseQueryResult } from '@tanstack/react-query';
 import {
   CssBaseline,
   Box,
@@ -19,12 +19,22 @@ import {
 } from '@mui/material';
 
 
-
+import type { ItemModelInterface } from '@/model/items';
 import { getDemoItems } from '@/repository/fetcher';
 import { fetchItems } from '@/repository/items';
 
 export default function ItemsList() {
   const items = getDemoItems([], [], []);
+
+  const itemsKey = "itemsListing";
+  const userId = "4b4b6b2d-f453-496c-bbb2-4371362f386d";
+  fetchItems({
+    // key: itemsKey,
+    userId, category: "", tags: []}).then(res => {
+    console.log(typeof res)
+  })
+
+  // const itemGetter = async
   const recordsPerPage = 18;
 
   const [page, setPage] = React.useState(1);
@@ -32,26 +42,28 @@ export default function ItemsList() {
     setPage(value);
   };
 
-  let userId, tags, categories;
+  // let userId, tags, categories;
 
-  // const { isPending, isError, data, error } = useQuery({
-  //   queryKey: ['items', {userId, tags, categories}],
-  //   queryFn: fetchItems
-  // });
+  const {
+    isPending, isError, data, error
+  }: DefinedUseQueryResult<ItemModelInterface> = useQuery({
+    queryKey: [itemsKey, {userId, category: "", tags: [],}],
+    queryFn: fetchItems
+  });
 
-  // if (isPending) {
-  //   return (
-  //     <React.Fragment>
-  //       <LinearProgress />
-  //       <Skeleton variant="rectangular" width='80%' height='100%' />
-  //     </React.Fragment>
+  if (isPending) {
+    return (
+      <React.Fragment>
+        <LinearProgress />
+        <Skeleton variant="rectangular" width='80%' height='100%' />
+      </React.Fragment>
 
-  // );
-  // }
+  );
+  }
 
-  // if (isError) {
-  //   return <span>Error: {error.message}</span>
-  // }
+  if (isError) {
+    return <span>Error: {error.message}</span>
+  }
 
   return (
     <Box sx={{ height: '100%', bgcolor: 'paper',}}>
@@ -61,8 +73,12 @@ export default function ItemsList() {
               my: 2
             }}>
         <Stack spacing={2} >
-          <Pagination count={Math.ceil(items.length/recordsPerPage)} page={page} onChange={handleChange} />
+          <Pagination count={Math.ceil(data.length/recordsPerPage)} page={page} onChange={handleChange} />
         </Stack>
+
+        {/* <Stack spacing={2} >
+          <Pagination count={Math.ceil(items.length/recordsPerPage)} page={page} onChange={handleChange} />
+        </Stack> */}
       </Box>
       <Paper key='content'>
         <Box
