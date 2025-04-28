@@ -33,7 +33,7 @@ func (a *item) Select(ctx context.Context, m interface{}, c *[]model.WhereClause
 	defer span.End()
 
 	var activity string = "ItemSelect"
-	a.logger.LogDebug(ctx, svcName, activity, "Begin "+activity)
+	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	qb := a.db.NewSelect().Model(m).QueryBuilder()
 	// Add where clause
@@ -48,7 +48,7 @@ func (a *item) Select(ctx context.Context, m interface{}, c *[]model.WhereClause
 		return err
 	}
 
-	a.logger.LogDebug(ctx, svcName, activity, "End "+activity)
+	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
 	return nil
 }
 
@@ -56,7 +56,7 @@ func (a *item) Insert(ctx context.Context, m interface{}) error {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "insert")
 	defer span.End()
 	var activity string = "ItemInsert"
-	a.logger.LogDebug(ctx, svcName, activity, "Begin "+activity)
+	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	_, err := a.db.NewInsert().Model(m).Returning("*").Exec(ctx)
 	if err != nil {
@@ -64,7 +64,7 @@ func (a *item) Insert(ctx context.Context, m interface{}) error {
 		return err
 	}
 
-	a.logger.LogDebug(ctx, svcName, activity, "End "+activity)
+	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
 	return nil
 }
 
@@ -73,7 +73,7 @@ func (a *item) Update(ctx context.Context, v interface{},
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "insert")
 	defer span.End()
 	var activity string = "ItemUpdate"
-	a.logger.LogDebug(ctx, svcName, activity, "Begin "+activity)
+	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	values := a.db.NewValues(v)
 	q := a.db.NewUpdate().With("_data", values).Model(m).TableExpr("_data")
@@ -95,7 +95,7 @@ func (a *item) Update(ctx context.Context, v interface{},
 		return err
 	}
 
-	a.logger.LogDebug(ctx, svcName, activity, "End "+activity)
+	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
 	return nil
 }
 
@@ -104,7 +104,7 @@ func (a *item) Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (
 	defer span.End()
 
 	var activity string = "ItemUpsert"
-	a.logger.LogDebug(ctx, svcName, activity, "Begin "+activity)
+	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	var conflict string
 	if len(c.Conflict) == 0 {
@@ -128,7 +128,7 @@ func (a *item) Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (
 		return nil, err
 	}
 
-	a.logger.LogDebug(ctx, svcName, activity, "End "+activity)
+	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
 	return res, nil
 }
 
@@ -137,7 +137,7 @@ func (a *item) BulkUpsert(ctx context.Context, m interface{}, c *model.UpsertInf
 	defer span.End()
 
 	var activity string = "ItemBulkUpsert"
-	a.logger.LogDebug(ctx, svcName, activity, "Begin "+activity)
+	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 	var conflict string
 	if len(c.Conflict) == 0 {
 		conflict = fmt.Sprintf("CONFLICT(%v) DO NOTHING",
@@ -159,6 +159,6 @@ func (a *item) BulkUpsert(ctx context.Context, m interface{}, c *model.UpsertInf
 		return nil, err
 	}
 
-	a.logger.LogDebug(ctx, svcName, activity, "End "+activity)
+	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
 	return res, nil
 }
