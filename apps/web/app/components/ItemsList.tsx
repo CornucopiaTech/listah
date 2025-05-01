@@ -1,8 +1,9 @@
 'use client'
 
 import * as React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, type DefinedUseQueryResult } from '@tanstack/react-query';
 import {
+  CssBaseline,
   Box,
   Paper,
   Grid2 as Grid,
@@ -13,15 +14,27 @@ import {
   Pagination,
   Stack,
   Link,
+  LinearProgress,
+  Skeleton,
 } from '@mui/material';
 
 
-
+import type { ItemModelInterface } from '@/model/items';
 import { getDemoItems } from '@/repository/fetcher';
 import { fetchItems } from '@/repository/items';
 
 export default function ItemsList() {
   const items = getDemoItems([], [], []);
+
+  const itemsKey = "itemsListing";
+  const userId = "4b4b6b2d-f453-496c-bbb2-4371362f386d";
+  fetchItems({
+    // key: itemsKey,
+    userId, category: "", tags: []}).then(res => {
+    console.log(typeof res)
+  })
+
+  // const itemGetter = async
   const recordsPerPage = 18;
 
   const [page, setPage] = React.useState(1);
@@ -29,15 +42,23 @@ export default function ItemsList() {
     setPage(value);
   };
 
-  let userId, tags, categories;
+  // let userId, tags, categories;
 
-  const { isPending, isError, data, error } = useQuery({
-    queryKey: ['items', {userId, tags, categories}],
+  const {
+    isPending, isError, data, error
+  }: DefinedUseQueryResult<ItemModelInterface> = useQuery({
+    queryKey: [itemsKey, {userId, category: "", tags: [],}],
     queryFn: fetchItems
   });
 
   if (isPending) {
-    return <span>Loading...</span>
+    return (
+      <React.Fragment>
+        <LinearProgress />
+        <Skeleton variant="rectangular" width='80%' height='100%' />
+      </React.Fragment>
+
+  );
   }
 
   if (isError) {
@@ -47,22 +68,28 @@ export default function ItemsList() {
   return (
     <Box sx={{ height: '100%', bgcolor: 'paper',}}>
       <Box  key='top-pagination'
-            sx={{ display: 'flex', justifyContent: 'flex-end',
-                  my: 2}}>
+            sx={{
+              display: 'flex', justifyContent: 'flex-end',
+              my: 2
+            }}>
         <Stack spacing={2} >
-          <Pagination count={Math.ceil(items.length/recordsPerPage)} page={page} onChange={handleChange} />
+          <Pagination count={Math.ceil(data.length/recordsPerPage)} page={page} onChange={handleChange} />
         </Stack>
+
+        {/* <Stack spacing={2} >
+          <Pagination count={Math.ceil(items.length/recordsPerPage)} page={page} onChange={handleChange} />
+        </Stack> */}
       </Box>
       <Paper key='content'>
         <Box
-              sx={{
+            sx={{
                 width: '100%',
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(min(200px, 100%), 1fr))',
                 gap: 2,
-              }}
+            }}
             >
-          {/* {items.slice((page-1)*recordsPerPage, page*recordsPerPage).map((val, _) => (
+          {items.slice((page-1)*recordsPerPage, page*recordsPerPage).map((val, _) => (
             <Box key={val.id} sx={{ height: '100%',  p: 2}}>
               <Typography key='link' variant="body1" component="div">
                 <Link  color="text.primary" href={`/item/${val.id}`}>{val.summary}</Link>
@@ -77,7 +104,7 @@ export default function ItemsList() {
                 {val.tags.join(", ")}
               </Typography>
             </Box>
-          ))} */}
+          ))}
         </Box>
       </Paper>
       <Box  key='bottom-pagination'

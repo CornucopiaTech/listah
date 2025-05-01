@@ -7,9 +7,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/uptrace/bun"
 	"go.opentelemetry.io/otel"
-	"go.uber.org/zap"
 )
-
 
 type ApiLog interface {
 	Insert(ctx context.Context, m interface{}) error
@@ -23,13 +21,15 @@ type apilog struct {
 func (a *apilog) Insert(ctx context.Context, m interface{}) error {
 	ctx, span := otel.Tracer("apilog-repository").Start(ctx, "insert one")
 	defer span.End()
-	a.logger.For(ctx).Info("Inserting one into apilog")
+	var activity string = "ApiLogInsert"
+	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	_, err := a.db.NewInsert().Model(m).Exec(ctx)
 	if err != nil {
-		a.logger.For(ctx).Error("Error occurred in repository while inserting one apilog", zap.String("cause", errors.Cause(err).Error()))
+		a.logger.LogError(ctx, svcName, activity, "Error occured", errors.Cause(err).Error())
 		return err
 	}
 
+	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
 	return nil
 }

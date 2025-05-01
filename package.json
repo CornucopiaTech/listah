@@ -14,7 +14,7 @@
     "api:tidy": "WK_DIR=\"$(pwd)\" && echo $WK_DIR && cd \"$WK_DIR/apps/api/\" && go mod tidy  && cd \"$WK_DIR/internal\" && go mod tidy",
     "api:lint": "WK_DIR=\"$(pwd)\" && echo $WK_DIR && cd \"$WK_DIR/apps/api/\" && golangci-lint run  && cd \"$WK_DIR/internal\" && golangci-lint run",
     "web:dev": "clear && rm -rf ./apps/web/.react-router && cd ./apps/web && npm run dev ",
-    "web-next:dev": "clear && rm -rf ./apps/web/.next && cd ./apps/web && npm run dev ",
+    "web-next:dev": "clear && rm -rf ./apps/web-next/.next  ./apps/web-next/.clerk  && cd ./apps/web-next && npm run dev ",
     "web-rmx:dev": "clear && rm -rf ./apps/web-rmx/.react-router && cd ./apps/web-rmx && npm run dev ",
     "buf:generate": "clear && rm -rf ./internal/pkg/proto && buf generate",
     "buf:lint": "buf lint",
@@ -26,7 +26,8 @@
     "prisma:fmt": "prisma format",
     "prisma:gen": "prisma generate",
     "prisma:push": "prisma db push --skip-generate",
-    "prisma:reset": "prisma migrate reset --skip-generate",
+    "prisma:reset": "prisma migrate reset",
+    "prisma:reset:skip": "prisma migrate reset --skip-generate",
     "prisma:val": "prisma validate"
   },
   "dependencies": {

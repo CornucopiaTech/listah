@@ -5,12 +5,12 @@ import (
 	"cornucopia/listah/internal/pkg/proto/v1/v1connect"
 )
 
-// ToDo: Learn more about structs in go.
-// This struct below was defined without keys but when it is implemented, keys were added to it.
 type Server struct {
 	*bootstrap.Infra
 	v1connect.UnimplementedItemServiceHandler
 }
+
+var svcName string = "ItemService"
 
 func NewServer(i *bootstrap.Infra) *Server {
 	return &Server{

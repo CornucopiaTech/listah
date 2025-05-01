@@ -1,0 +1,37 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318 # OTLP HTTP receiver for OpenTelemetry Collector
+processors:
+  batch:
+    timeout: 1s
+
+extensions:
+  health_check: {}
+
+exporters:
+  debug:
+  otlp:
+    endpoint: http://jaeger:4317 # Send traces to Jaeger
+    tls:
+      insecure: true
+  zipkin:
+    endpoint: http://zipkin:9411/api/v2/spans # Send traces to Zipkin
+    tls:
+      insecure: true
+  prometheus:
+    endpoint: "0.0.0.0:8889" # Expose metrics for Prometheus
+
+
+service:
+  extensions: [health_check]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug, otlp, zipkin]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [prometheus, debug]

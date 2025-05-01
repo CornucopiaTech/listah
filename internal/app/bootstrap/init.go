@@ -5,14 +5,20 @@ import (
 	"cornucopia/listah/internal/pkg/logging"
 	"cornucopia/listah/internal/pkg/repository/pgsql"
 	"log"
+
+	"github.com/sirupsen/logrus"
 	"github.com/uptrace/opentelemetry-go-extra/otelzap"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type Infra struct {
 	Logger     *logging.Factory
+	Logrus     *logrus.Logger
 	OtelLogger *otelzap.Logger
 	Config     *config.Config
-	PgRepo *pgsql.Repository
+	PgRepo     *pgsql.Repository
+	Tracer     trace.Tracer
 }
 
 func InitInfra() *Infra {
@@ -32,6 +38,8 @@ func InitInfra() *Infra {
 
 	repo := pgsql.Init(cfgs, logger)
 
+	lgrus := logging.InitLogrus()
+
 	// ToDo: Define metrics
 	// //
 	// // Define Metrics
@@ -41,7 +49,9 @@ func InitInfra() *Infra {
 		Config:     cfgs,
 		Logger:     logger,
 		OtelLogger: otelLogger,
-		PgRepo: repo,
+		PgRepo:     repo,
+		Logrus:     lgrus,
+		Tracer:     otel.Tracer(cfgs.AppName),
 	}
 
 }
