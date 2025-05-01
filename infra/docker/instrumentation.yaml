@@ -1,48 +1,48 @@
-# Copyright The OpenTelemetry Authors
-# SPDX-License-Identifier: Apache-2.0
-
-x-default-logging: &logging
-  driver: "json-file"
-  options:
-    max-size: "5m"
-    max-file: "2"
-    tag: "{{.Name}}"
-
 
 services:
-  # ********************
-  # Jaeger
-  jaeger:
-    image: ${REGISTRY:-}jaegertracing/jaeger:${JAEGER_VERSION:-latest}
-    ports:
-      - "16686:16686"
-      - "4317:4317"
-      - "4318:4318"
-      - '6831:6831'
-      - '14250'
-      - '14268'
-    environment:
-      - LOG_LEVEL=debug
 
 
   # OpenTelemetry Collector
   otel-collector:
+    container_name: otel-collector
     image: otel/opentelemetry-collector-contrib:latest
     command: ["--config=/etc/otel-collector.yaml"]
     volumes:
       - ./otel-collector.yaml:/etc/otel-collector.yaml
-    # ports:
-      # - "4317:4317"
-      # - "4318:4318"
-      # - 14250
-      # - 14268
+    ports:
+      - "4318:4318" # OTLP HTTP receiver
+    depends_on:
+      - jaeger
+      - zipkin
+      - prometheus
 
+
+  # Jaeger
+  jaeger:
+    container_name: jaeger
+    image: jaegertracing/jaeger:${JAEGER_VERSION:-latest}
+    ports:
+      - "16686:16686" # UI
+      - "4317:4317" # Jaeger gRPC
+    environment:
+      - LOG_LEVEL=debug
+      - COLLECTOR_OTLP_ENABLED=true
+      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+
+  zipkin:
+    container_name: zipkin
+    image: openzipkin/zipkin:latest
+    ports:
+      - "9411:9411" # Zipkin UI and API
 
   prometheus:
-    image: prom/prometheus:v2.48.0
-    volumes:
-      - ./prometheus.yaml:/etc/prometheus/prometheus.yml:ro
+    container_name: prometheus
+    image: prom/prometheus:latest
     ports:
-      - '9090:9090'
-    command:
-      - --config.file=/etc/prometheus/prometheus.yml
+      - "9090:9090" # Prometheus UI
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+
+networks:
+  default:
+    driver: bridge

@@ -25,8 +25,6 @@ import (
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/resource"
 
-	// "go.opentelemetry.io/otel/sdk/trace"
-
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 
@@ -37,7 +35,7 @@ import (
 
 // setupOTelSDK bootstraps the OpenTelemetry pipeline.
 // If it does not return an error, make sure to call shutdown for proper cleanup.
-func SetupOTelSDK(ctx context.Context, infra *bootstrap.Infra) (shutdown func(context.Context) error, err error) {
+func SetupOTelSDK(ctx context.Context, i *bootstrap.Infra) (shutdown func(context.Context) error, err error) {
 	var shutdownFuncs []func(context.Context) error
 
 	// shutdown calls cleanup functions registered via shutdownFuncs.
@@ -58,16 +56,14 @@ func SetupOTelSDK(ctx context.Context, infra *bootstrap.Infra) (shutdown func(co
 		fmt.Println(gerrors.Cause(err))
 		err = errors.Join(inErr, shutdown(ctx))
 	}
-
-	//
-	// Ensure default SDK resources and the required service name are set.
-	// ToDo: Find out the purpose of this resource
-	// ToDo: Read service name from config
+	// Create resource.
+	// The resource is used to identify the source of telemetry.
+	// It is used to group telemetry by the source.
 	res, err := resource.Merge(
 		resource.Default(),
 		resource.NewWithAttributes(
 			semconv.SchemaURL,
-			semconv.ServiceNameKey.String(infra.Config.AppName),
+			semconv.ServiceNameKey.String(i.Config.AppName),
 		),
 	)
 	if err != nil {
@@ -80,7 +76,7 @@ func SetupOTelSDK(ctx context.Context, infra *bootstrap.Infra) (shutdown func(co
 	otel.SetTextMapPropagator(prop)
 
 	// Set up trace provider.
-	tracerProvider, err := newTracerProvider(infra, res)
+	tracerProvider, err := newTracerProvider(i, res)
 	if err != nil {
 		handleErr(err, "Failed to create a trace provider for Otel")
 		return
@@ -98,7 +94,7 @@ func SetupOTelSDK(ctx context.Context, infra *bootstrap.Infra) (shutdown func(co
 	// otel.SetTracerProvider(tracerConsoleProvider)
 
 	// Set up meter provider.
-	meterProvider, err := newMeterProvider(infra, res)
+	meterProvider, err := newMeterProvider(i, res)
 	if err != nil {
 		handleErr(err, "Failed to create a meter provider for Otel")
 		return
@@ -145,36 +141,35 @@ func newPropagator() propagation.TextMapPropagator {
 
 func newTracerProvider(i *bootstrap.Infra, r *resource.Resource) (*sdktrace.TracerProvider, error) {
 	// Create exporter
-	// e, err := createOtelTraceExporter(i.Config.Api.OltpExporterType)
-	e, err := otlptrace.New(
-		context.Background(),
-		otlptracehttp.NewClient(),
-	)
+	e, err := createOtelTraceExporter(i)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create HTTP trace exporter: %w", err)
 	}
 
 	tracerProvider := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(e,
-			sdktrace.WithBatchTimeout(time.Duration(i.Config.Api.TraceFreqSec)*time.Second)),
+			sdktrace.WithBatchTimeout(
+				time.Duration(i.Config.Instrumentation.TraceFreqSec)*time.Second,
+			),
+		),
 		sdktrace.WithResource(r),
 	)
 	return tracerProvider, nil
 }
 
 func newMeterProvider(i *bootstrap.Infra, r *resource.Resource) (*sdkmetric.MeterProvider, error) {
-	// e, err := stdoutmetric.New()
-	// e, err := createOtelMetricExporter(i.Config.Api.OltpExporterType)
-	e, err := otlpmetrichttp.New(context.Background())
+	// Create exporter
+	e, err := createOtelMetricExporter(i)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create HTTP metrics exporter: %w", err)
 	}
 
 	meterProvider := sdkmetric.NewMeterProvider(
 		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(e,
-			sdkmetric.WithInterval(time.Duration(i.Config.Api.MetricFreqSec)*time.Second))),
+			sdkmetric.WithInterval(time.Duration(i.Config.Instrumentation.MetricFreqSec)*time.Second))),
 		sdkmetric.WithResource(r),
 	)
+
 	return meterProvider, nil
 }
 
@@ -190,16 +185,18 @@ func newLoggerProvider() (*sdklog.LoggerProvider, error) {
 	return loggerProvider, nil
 }
 
-func createOtelTraceExporter(exporterType string) (sdktrace.SpanExporter, error) {
+func createOtelTraceExporter(i *bootstrap.Infra) (sdktrace.SpanExporter, error) {
 	var exporter sdktrace.SpanExporter
 	var err error
-	switch exporterType {
+	switch i.Config.Instrumentation.OltpExporterType {
 	case "jaeger":
 		return nil, errors.New("jaeger exporter is no longer supported, please use otlp")
 	case "otlp":
-		var opts []otlptracehttp.Option
+		opts := []otlptracehttp.Option{
+			otlptracehttp.WithEndpointURL(i.Config.Instrumentation.OtelExporterEndpoint),
+		}
 		if !withSecure() {
-			opts = []otlptracehttp.Option{otlptracehttp.WithInsecure()}
+			opts = append(opts, otlptracehttp.WithInsecure())
 		}
 		exporter, err = otlptrace.New(
 			context.Background(),
@@ -208,35 +205,36 @@ func createOtelTraceExporter(exporterType string) (sdktrace.SpanExporter, error)
 	case "stdout":
 		exporter, err = stdouttrace.New()
 	default:
-		return nil, fmt.Errorf("unrecognized exporter type %s", exporterType)
+		return nil, fmt.Errorf("unrecognized exporter type %s", i.Config.Instrumentation.OltpExporterType)
 	}
 	return exporter, err
 }
 
-func createOtelMetricExporter(exporterType string) (sdkmetric.Exporter, error) {
+func createOtelMetricExporter(i *bootstrap.Infra) (sdkmetric.Exporter, error) {
 	var exporter sdkmetric.Exporter
 	var err error
-	switch exporterType {
+	switch i.Config.Instrumentation.OltpExporterType {
 	case "jaeger":
 		return nil, errors.New("jaeger exporter is no longer supported, please use otlp")
 	case "otlp":
-		var opts []otlpmetrichttp.Option
+		opts := []otlpmetrichttp.Option{
+			otlpmetrichttp.WithEndpointURL(i.Config.Instrumentation.OtelExporterEndpoint),
+		}
 		if !withSecure() {
-			opts = []otlpmetrichttp.Option{otlpmetrichttp.WithInsecure()}
+			opts = append(opts, otlpmetrichttp.WithInsecure())
 		}
 		exporter, err = otlpmetrichttp.New(context.Background(), opts...)
-
 	case "stdout":
 		exporter, err = stdoutmetric.New()
 	default:
-		return nil, fmt.Errorf("unrecognized exporter type %s", exporterType)
+		return nil, fmt.Errorf("unrecognized exporter type %s", i.Config.Instrumentation.OltpExporterType)
 	}
 	return exporter, err
 }
 
-// withSecure instructs the client to use HTTPS scheme, instead of hotrod's desired default HTTP
 func withSecure() bool {
-	return strings.HasPrefix(os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT"), "https://") ||
+	return strings.HasPrefix(
+		os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT"), "https://") ||
 		strings.ToLower(os.Getenv("OTEL_EXPORTER_OTLP_INSECURE")) == "false"
 }
 
@@ -249,7 +247,7 @@ func newConsoleTracerProvider(i *bootstrap.Infra, r *resource.Resource) (*sdktra
 
 	tracerProvider := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(traceExporter,
-			sdktrace.WithBatchTimeout(time.Duration(i.Config.Api.TraceFreqSec)*time.Second),
+			sdktrace.WithBatchTimeout(time.Duration(i.Config.Instrumentation.TraceFreqSec)*time.Second),
 		),
 		sdktrace.WithResource(r),
 	)
@@ -265,7 +263,7 @@ func newConsoleMeterProvider(i *bootstrap.Infra, r *resource.Resource) (*sdkmetr
 	meterProvider := sdkmetric.NewMeterProvider(
 		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(metricExporter,
 			sdkmetric.WithInterval(
-				time.Duration(i.Config.Api.MetricFreqSec)*time.Second,
+				time.Duration(i.Config.Instrumentation.MetricFreqSec)*time.Second,
 			),
 		)),
 		sdkmetric.WithResource(r),

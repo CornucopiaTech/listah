@@ -9,25 +9,21 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
-type WebConfig struct {
+type webConfig struct {
 	Host    string
 	Port    string
 	Address string
 }
-type ApiConfig struct {
-	Host             string
-	Port             string
-	Address          string
-	TraceFreqSec     int
-	MetricFreqSec    int
-	OltpExporterType string
+type apiConfig struct {
+	Host    string
+	Port    string
+	Address string
 }
 
-type MongoDBConfig struct {
+type mongoDBConfig struct {
 	Host             string
 	DatabaseName     string
 	Port             string
@@ -41,7 +37,7 @@ type MongoDBConfig struct {
 	ConnectionString string
 }
 
-type PgsqlDBConfig struct {
+type pgsqlDBConfig struct {
 	Host         string
 	DatabaseName string
 	Port         string
@@ -50,20 +46,22 @@ type PgsqlDBConfig struct {
 	Address      string
 }
 
-type TelemetryConfig struct {
+type instrumentationConfig struct {
 	OtelExporterEndpoint string
-	Logrus               *logrus.Logger
+	TraceFreqSec         int
+	MetricFreqSec        int
+	OltpExporterType     string
 }
 
 type Config struct {
-	AppName     string
-	Env         string
-	ProjectRoot string
-	Api         *ApiConfig
-	Web         *WebConfig
-	PgsqlDB     *PgsqlDBConfig
-	MongoDB     *MongoDBConfig
-	Telemetry   *TelemetryConfig
+	AppName         string
+	Env             string
+	ProjectRoot     string
+	Api             *apiConfig
+	Web             *webConfig
+	PgsqlDB         *pgsqlDBConfig
+	MongoDB         *mongoDBConfig
+	Instrumentation *instrumentationConfig
 }
 
 func Init() (*Config, error) {
@@ -75,16 +73,17 @@ func Init() (*Config, error) {
 	a := loadApi()
 	w := loadWeb()
 	d := loadPgsqlDatabase()
-	t := loadTelemetry()
+	t := loadInstrumentation()
 
 	return &Config{
-		AppName:     fmt.Sprintf("%s-api", appName),
-		Env:         loadEnv(),
-		ProjectRoot: loadProjectRoot(),
-		Api:         a,
-		Web:         w,
-		PgsqlDB:     d,
-		Telemetry:   t,
+		// AppName:         fmt.Sprintf("%s-api", appName),
+		AppName:         appName,
+		Env:             loadEnv(),
+		ProjectRoot:     loadProjectRoot(),
+		Api:             a,
+		Web:             w,
+		PgsqlDB:         d,
+		Instrumentation: t,
 	}, nil
 
 }
@@ -116,57 +115,35 @@ func loadProjectRoot() string {
 	return fileAbsPath
 }
 
-func loadApi() *ApiConfig {
+func loadApi() *apiConfig {
 	var ah string
 	mustMapEnv(&ah, "API_HOST")
 
 	var ap string
 	mustMapEnv(&ap, "API_PORT")
 
-	var ot string
-	mustMapEnv(&ot, "OLTP_EXPORTER_TYPE")
-
-	var tf_str string
-	mustMapEnv(&tf_str, "TRACE_FREQ_SEC")
-
-	tf, err := strconv.Atoi(tf_str)
-	if err != nil || tf == 0 {
-		log.Fatalf("environment variable: TRACE_FREQ_SEC incorrect")
-	}
-
-	var mf_str string
-	mustMapEnv(&mf_str, "METRIC_FREQ_SEC")
-
-	mf, err := strconv.Atoi(mf_str)
-	if err != nil || mf == 0 {
-		log.Fatalf("environment variable: METRIC_FREQ_SEC incorrect")
-	}
-
-	return &ApiConfig{
-		Host:             ah,
-		Port:             ap,
-		Address:          net.JoinHostPort(ah, ap),
-		TraceFreqSec:     tf,
-		MetricFreqSec:    mf,
-		OltpExporterType: ot,
-	}
-}
-
-func loadWeb() *WebConfig {
-	var ah string
-	mustMapEnv(&ah, "APP_HOST")
-
-	var ap string
-	mustMapEnv(&ap, "APP_PORT")
-
-	return &WebConfig{
+	return &apiConfig{
 		Host:    ah,
 		Port:    ap,
 		Address: net.JoinHostPort(ah, ap),
 	}
 }
 
-func loadMongoDatabase() *MongoDBConfig {
+func loadWeb() *webConfig {
+	var ah string
+	mustMapEnv(&ah, "APP_HOST")
+
+	var ap string
+	mustMapEnv(&ap, "APP_PORT")
+
+	return &webConfig{
+		Host:    ah,
+		Port:    ap,
+		Address: net.JoinHostPort(ah, ap),
+	}
+}
+
+func loadMongoDatabase() *mongoDBConfig {
 	// This parses through environmental variables and env file to get
 	//    database config.
 	// Connection string format: mongodb://username:password@host:port/databaseName?ssl=false&connectTimeoutMS=5000&maxPoolSize=50
@@ -268,7 +245,7 @@ func loadMongoDatabase() *MongoDBConfig {
 
 	fmt.Printf("Db connection string is %v \n", conn)
 
-	return &MongoDBConfig{
+	return &mongoDBConfig{
 		Host:             dh,
 		Port:             dp,
 		DatabaseName:     dn,
@@ -281,7 +258,7 @@ func loadMongoDatabase() *MongoDBConfig {
 	}
 }
 
-func loadPgsqlDatabase() *PgsqlDBConfig {
+func loadPgsqlDatabase() *pgsqlDBConfig {
 	// Get database host in environmental variables
 	var dh string
 	mustMapEnv(&dh, "DATABASE_HOST")
@@ -301,7 +278,7 @@ func loadPgsqlDatabase() *PgsqlDBConfig {
 	var pwd string
 	mustMapEnv(&pwd, "POSTGRES_PASSWORD")
 
-	return &PgsqlDBConfig{
+	return &pgsqlDBConfig{
 		Host:         dh,
 		Port:         dp,
 		User:         usr,
@@ -311,29 +288,33 @@ func loadPgsqlDatabase() *PgsqlDBConfig {
 	}
 }
 
-func loadTelemetry() *TelemetryConfig {
+func loadInstrumentation() *instrumentationConfig {
 	var otel_n string
 	mustMapEnv(&otel_n, "OTEL_EXPORTER_OTLP_ENDPOINT")
 
-	l := initLogrus()
+	var ot string
+	mustMapEnv(&ot, "OLTP_EXPORTER_TYPE")
 
-	return &TelemetryConfig{
+	var tf_str string
+	mustMapEnv(&tf_str, "TRACE_FREQ_SEC")
+
+	tf, err := strconv.Atoi(tf_str)
+	if err != nil || tf == 0 {
+		log.Fatalf("environment variable: TRACE_FREQ_SEC incorrect")
+	}
+
+	var mf_str string
+	mustMapEnv(&mf_str, "METRIC_FREQ_SEC")
+
+	mf, err := strconv.Atoi(mf_str)
+	if err != nil || mf == 0 {
+		log.Fatalf("environment variable: METRIC_FREQ_SEC incorrect")
+	}
+
+	return &instrumentationConfig{
 		OtelExporterEndpoint: otel_n,
-		Logrus:               l,
+		TraceFreqSec:         tf,
+		MetricFreqSec:        mf,
+		OltpExporterType:     ot,
 	}
-}
-
-func initLogrus() *logrus.Logger {
-	log := logrus.New()
-	log.Level = logrus.DebugLevel
-	log.Formatter = &logrus.JSONFormatter{
-		FieldMap: logrus.FieldMap{
-			logrus.FieldKeyTime:  "timestamp",
-			logrus.FieldKeyLevel: "severity",
-			logrus.FieldKeyMsg:   "message",
-		},
-		TimestampFormat: time.RFC3339Nano,
-	}
-	log.Out = os.Stdout
-	return log
 }

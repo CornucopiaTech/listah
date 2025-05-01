@@ -8,6 +8,8 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/uptrace/opentelemetry-go-extra/otelzap"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type Infra struct {
@@ -16,6 +18,7 @@ type Infra struct {
 	OtelLogger *otelzap.Logger
 	Config     *config.Config
 	PgRepo     *pgsql.Repository
+	Tracer     trace.Tracer
 }
 
 func InitInfra() *Infra {
@@ -48,6 +51,7 @@ func InitInfra() *Infra {
 		OtelLogger: otelLogger,
 		PgRepo:     repo,
 		Logrus:     lgrus,
+		Tracer:     otel.Tracer(cfgs.AppName),
 	}
 
 }
