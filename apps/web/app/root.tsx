@@ -1,3 +1,4 @@
+import * as React from "react";
 import {
   isRouteErrorResponse,
   Links,
@@ -49,27 +50,33 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+
 export default function App({ loaderData }: Route.ComponentProps) {
   return (
-    <ClerkProvider
+  <React.Fragment>
+    {/* <ClerkProvider
       loaderData={loaderData}
       signUpFallbackRedirectUrl="/"
       signInFallbackRedirectUrl="/"
-    >
+    > */}
       <header className="flex items-center justify-center py-8 px-4">
-        <SignedOut>
+        {/* <SignedOut>
           <SignInButton />
         </SignedOut>
         <SignedIn>
           <UserButton />
-        </SignedIn>
+        </SignedIn> */}
       </header>
       <main>
         <Outlet />
       </main>
-    </ClerkProvider>
+    {/* </ClerkProvider> */}
+    </React.Fragment >
   )
 }
+
+
+
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let message = "Oops!";
   let details = "An unexpected error occurred.";

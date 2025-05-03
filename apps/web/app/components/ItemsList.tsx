@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react';
-import { useQuery, type DefinedUseQueryResult } from '@tanstack/react-query';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import {
   CssBaseline,
   Box,
@@ -23,18 +23,18 @@ import type { ItemModelInterface } from '@/model/items';
 import { getDemoItems } from '@/repository/fetcher';
 import { fetchItems } from '@/repository/items';
 
+
+
 export default function ItemsList() {
+
+
   const items = getDemoItems([], [], []);
+
+  console.log(`1. Request url in item Listing: ${process.env.VITE_LISTAH_API_ITEMS_READ}`);
+
 
   const itemsKey = "itemsListing";
   const userId = "4b4b6b2d-f453-496c-bbb2-4371362f386d";
-  fetchItems({
-    // key: itemsKey,
-    userId, category: "", tags: []}).then(res => {
-    console.log(typeof res)
-  })
-
-  // const itemGetter = async
   const recordsPerPage = 18;
 
   const [page, setPage] = React.useState(1);
@@ -42,14 +42,14 @@ export default function ItemsList() {
     setPage(value);
   };
 
-  // let userId, tags, categories;
 
-  const {
-    isPending, isError, data, error
-  }: DefinedUseQueryResult<ItemModelInterface> = useQuery({
+  const {isPending, isError, data, error}: UseQueryResult<ItemModelInterface> = useQuery({
     queryKey: [itemsKey, {userId, category: "", tags: [],}],
     queryFn: fetchItems
   });
+
+
+  console.log(`isPending: ${isPending}\t isError: ${isError}\t data: ${data}\t error ${error}`);
 
   if (isPending) {
     return (
@@ -64,6 +64,7 @@ export default function ItemsList() {
   if (isError) {
     return <span>Error: {error.message}</span>
   }
+
 
   return (
     <Box sx={{ height: '100%', bgcolor: 'paper',}}>
