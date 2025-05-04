@@ -28,7 +28,9 @@
     "prisma:push": "prisma db push --skip-generate",
     "prisma:reset": "prisma migrate reset",
     "prisma:reset:skip": "prisma migrate reset --skip-generate",
-    "prisma:val": "prisma validate"
+    "prisma:val": "prisma validate",
+    "docker:stop-all": "docker stop $(docker ps -a -q)",
+    "docker:rm-all": "docker rm $(docker ps -a -q)"
   },
   "dependencies": {
     "@bufbuild/buf": "^1.53.0",
