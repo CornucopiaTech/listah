@@ -66,8 +66,8 @@ export function AppNavBar() {
                   <Typography variant="h6" noWrap component="div"> Settings</Typography>
               </Link>
             </Tooltip>
-
-              {/* Profile */}
+            {/* Profile */}
+            {/*
               <SignedOut>
                 <Tooltip title="Sign in">
                   <Typography variant="h6" noWrap component="div">
@@ -80,6 +80,7 @@ export function AppNavBar() {
                   <UserButton />
                 </Tooltip>
               </SignedIn>
+            */}
           </Box>
       </Toolbar>
     </AppBar>
