@@ -1,4 +1,4 @@
-'use client'
+// 'use client'
 
 import * as React from 'react';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
@@ -24,6 +24,52 @@ import { getDemoItems } from '@/repository/fetcher';
 import { fetchItems } from '@/repository/items';
 
 
+const fetcher = async (qKey) => {
+  let url = process.env.VITE_LISTAH_API_ITEMS_READ ? process.env.VITE_LISTAH_API_ITEMS_READ : "";
+  console.log(`A2. Request url: ${url}`)
+
+  let reqUrl = url == "" ? "http://localhost:8080/listah.v1.ItemService/Read" : url
+  console.log(`A2. Request reqUrl: ${reqUrl}`)
+
+
+  console.log(`A2. Fetcher function Parameters: qKey`)
+  console.log(qKey)
+  const { queryKey } = qKey;
+  const { userId, category, tags } = queryKey[1];
+  console.log(`A2. function Parameters: u: ${userId}\t c: ${category}\t t:${tags}`)
+
+
+  const reqBody = {
+    items: [{ userId, category, tags }]
+  }
+
+  console.log(`A2. Request body: `);
+  console.log(reqBody);
+
+
+  const theRequest = new Request(reqUrl, {
+    method: "POST",
+    body: JSON.stringify(reqBody),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  console.log(`A2. theRequest: `);
+  console.log(theRequest);
+
+  try {
+    const res = await fetch(theRequest);
+    console.log('A2. Fetch Items Response: ')
+    console.log(res);
+    return await res.json();
+    // console.log(data);
+    // return data;
+  } catch (e) {
+    console.error(`Unable to retrieve API data. Error thrown: ${e}`);
+    throw e;
+  }
+}
 
 export default function ItemsList() {
 
@@ -34,7 +80,7 @@ export default function ItemsList() {
 
 
   const itemsKey = "itemsListing";
-  const userId = "4b4b6b2d-f453-496c-bbb2-4371362f386d";
+  const userId = "6666d2fe-3abc-4619-aa8f-b383fc45c096";
   const recordsPerPage = 18;
 
   const [page, setPage] = React.useState(1);
@@ -45,11 +91,13 @@ export default function ItemsList() {
 
   const {isPending, isError, data, error}: UseQueryResult<ItemModelInterface> = useQuery({
     queryKey: [itemsKey, {userId, category: "", tags: [],}],
-    queryFn: fetchItems
+    // queryFn: fetchItems
+    queryFn: fetcher,
+    // enabled: !!userId,
   });
 
 
-  console.log(`isPending: ${isPending}\t isError: ${isError}\t data: ${data}\t error ${error}`);
+  console.log(`1. isPending: ${isPending}\t isError: ${isError}\t data: ${data}\t error ${error}`);
 
   if (isPending) {
     return (

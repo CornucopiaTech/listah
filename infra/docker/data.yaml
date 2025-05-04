@@ -3,38 +3,37 @@ services:
     container_name: db
     image: postgres
     restart: always
-    # set shared memory limit when using docker-compose
     shm_size: 128mb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
     volumes:
-       - ./local/db_data:/var/lib/postgresql/
+      - ./local/db_data:/var/lib/postgresql/
+    env_file: ../../.env
     environment:
       ENV: local
-    env_file: ../../.env
     ports:
       - "5434:5432"
-  liquibase:
-    # Image to be pulled from Docker Hub
-    image: liquibase/liquibase:latest
-    # Name of the container
-    container_name: liquibase
-    # Setting depends_on to PostgreSQL container to wait till the service is ready to accept connections
-    # depends_on:
-    #   - db
-    # Volume to add the liquibase collection of scripts
-    volumes:
-      - ../liquibase/:/etc/liquibase/
-    # Command to run the liquibase update service
-    command: update
-    environment:
-      - LIQUIBASE_COMMAND_URL=${LIQUID_BASE_CONNECTION_URL}
-      - LIQUIBASE_COMMAND_USERNAME=${POSTGRES_USER}
-      - LIQUIBASE_COMMAND_PASSWORD=${POSTGRES_PASSWORD}
-      - LIQUIBASE_COMMAND_CHANGELOG_FILE=/etc/liquibase/changelog/changelog.yaml
-      - LIQUIBASE_DEFAULTS_FILE=/etc/liquibase/liquibase.properties
-      - LIQUIBASE_CLASSPATH=/etc/liquibase/jars/postgresql-42.7.5.jar:/etc/liquibase/jars/snakeyaml-2.4.jar
-      - LIQUIBASE_DRIVER=org.postgresql.Driver
-      - LIQUIBASE_LOG_LEVEL=INFO
 
+  liquibase:
+    container_name: liquibase
+    image: liquibase/liquibase:latest
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+    volumes:
+      - ../liquibase/changelog/:/liquibase/changelog/
+    environment:
+      LIQUIBASE_COMMAND_URL: ${LIQUID_BASE_CONNECTION_URL}
+      LIQUIBASE_COMMAND_USERNAME: ${POSTGRES_USER}
+      LIQUIBASE_COMMAND_PASSWORD: ${POSTGRES_PASSWORD}
+      LIQUIBASE_COMMAND_CHANGELOG_FILE: changelog/changelog.yaml
+      LIQUIBASE_LOG_LEVEL: INFO
+    command: update
 
 networks:
   default:

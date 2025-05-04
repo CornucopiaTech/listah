@@ -3,12 +3,12 @@ databaseChangeLog:
       - runningAs:
           username:  listah-admin
   - changeSet:
-        id:  "1.0.0"
-        author:  "Kelechi Berquist"
-        labels: "root-migration"
-        context: "0.0.0"
-        comment: "Initial migration"
-        changes:
+      id:  "1.0.0"
+      author:  "Kelechi Berquist"
+      labels: "root-migration"
+      context: "0.0.0"
+      comment: "Initial migration"
+      changes:
         - createTable:
               schemaName: apps
               tableName:  items
@@ -50,9 +50,17 @@ databaseChangeLog:
                     name:  audit
                     type:  json
 
+        -  addUniqueConstraint:
+            columnNames:  id, user_id
+            constraintName:  constraint_unique_items_id_user_id
+            schemaName:  apps
+            tableName:  items
+            validate:  true
+
         - createTable:
               schemaName: instrumentation
-              tableName:  apiLogs
+              tableName:  logs
+              ifNotExists: true
               columns:
                 - column:
                     name:  id
@@ -77,3 +85,4 @@ databaseChangeLog:
                 - column:
                     name:  request_time
                     type:  timestamp
+

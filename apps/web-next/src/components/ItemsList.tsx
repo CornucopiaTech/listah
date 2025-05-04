@@ -87,14 +87,6 @@ export default function ItemsList() {
 
   const itemsKey = "itemsListing";
   const userId = "4b4b6b2d-f453-496c-bbb2-4371362f386d";
-  // fetchItems({
-  //   // key: itemsKey,
-  //   userId, category: "", tags: []}
-  // ).then(res => {
-  //   console.log(typeof res)
-  // })
-
-  // const itemGetter = async
   const recordsPerPage = 18;
 
   const [page, setPage] = React.useState(1);
