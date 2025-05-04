@@ -1,5 +1,5 @@
 import '@/envConfig.ts';
-import type { ItemModelInterface } from '@/model/items';
+import type { IProtoItems, IProtoItem } from '@/model/items';
 
 
 export function getItems(items: ItemModelInterface){
@@ -18,8 +18,12 @@ export async function fetchItems(qKey){
   console.log(`A2. Fetcher function Parameters: qKey`)
   console.log(qKey)
   const {queryKey} = qKey;
-  const {userId, category, tags} = queryKey[1];
+  const { contextCarrier, userId, category, tags} = queryKey[1];
   console.log(`A2. function Parameters: u: ${userId}\t c: ${category}\t t:${tags}`)
+
+
+  // Extract the traceparent and tracestate values from the output object.
+  const { traceparent, tracestate } = contextCarrier;
 
 
   const reqBody = {
@@ -36,6 +40,8 @@ export async function fetchItems(qKey){
     headers: {
       "Content-Type": "application/json",
       "Accept": "*/*",
+      "traceparent": traceparent,
+      "tracestate": tracestate
       // "Access-Control-Allow-Origin": "http://localhost"
     },
     // mode: 'no-cors'
@@ -48,9 +54,10 @@ export async function fetchItems(qKey){
     const res = await fetch(theRequest);
     console.log('A2. Fetch Items Response: ')
     console.log(res);
-    return await res.json();
-    // console.log(data);
-    // return data;
+    const data = await res.json();
+    console.log('In fetchItems: ');
+    console.log(data);
+    return data;
   } catch (e) {
     console.error(`Unable to retrieve API data. Error thrown: ${e}`);
     throw e;

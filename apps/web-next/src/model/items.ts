@@ -10,20 +10,23 @@ export interface Audit {
     deletedBy: AuditUpdaterEnum
     deletedAt: string
 }
+export interface IProtoItem {
+  id: string
+  userId: string
+  title: string
+  summary: string
+  category: string
+  description: string
+  note: string
+  tags: string[]
+  properties: { [index: string]: string }
+  reactivateAt: string
+  audit: Audit
+}
 
+export interface IProtoItems {
+  items: IProtoItem[]
 
-export interface ItemModelInterface {
-    id: string
-    userId: string
-    title: string
-    summary: string
-    category: string
-    description: string
-    note: string
-    tags: string[]
-    properties: {[index: string]: string}
-    reactivateAt: string
-    audit: Audit
 }
 
 

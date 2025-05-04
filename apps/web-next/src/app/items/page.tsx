@@ -7,13 +7,16 @@ import {
 
 import { ItemsDrawer} from "@/components/ItemsDrawer";
 import ItemsDatePicker from "@/components/ItemsDatePicker";
-import ItemsList from "@/components/ItemsList";
+import ItemsList, { getItemsList } from "@/components/ItemsList";
 import ItemsSearch from '@/components/ItemsSearch';
 import { AppBarHeight } from '@/components/AppNavBar';
 
 
 
 export default function Items() {
+
+  const listedItems = getItemsList("traceId");
+
   return (
     <Box  sx={{ bgcolor: 'pink',
                 height: `calc(100% - ${AppBarHeight})`,
@@ -25,7 +28,8 @@ export default function Items() {
         <ItemsSearch />
         <ItemsDatePicker />
       </Box>
-      <ItemsList key='item-list' />
+      {/* <ItemsList key='item-list' /> */}
+      {listedItems}
     </Box>
   );
 }

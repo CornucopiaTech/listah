@@ -9,11 +9,21 @@ import (
 	"connectrpc.com/connect"
 	"github.com/pkg/errors"
 	"go.opentelemetry.io/otel"
+	// "go.opentelemetry.io/otel/trace"
 	// "strings"
+	// "fmt"
+	"go.opentelemetry.io/otel/propagation"
 )
 
 func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceReadRequest]) (*connect.Response[pb.ItemServiceReadResponse], error) {
+
+
+	propagator := otel.GetTextMapPropagator()
+	ctx = propagator.Extract(ctx, propagation.HeaderCarrier(req.Header()))
 	ctx, span := otel.Tracer("item-service").Start(ctx, "read")
+
+
+
 	defer span.End()
 	s.Infra.Logger.LogInfo(ctx, svcName, "Read", "Read rpc called")
 
