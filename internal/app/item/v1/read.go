@@ -11,7 +11,7 @@ import (
 	"go.opentelemetry.io/otel"
 	// "go.opentelemetry.io/otel/trace"
 	// "strings"
-	// "fmt"
+	"fmt"
 	"go.opentelemetry.io/otel/propagation"
 )
 
@@ -21,6 +21,11 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 	propagator := otel.GetTextMapPropagator()
 	ctx = propagator.Extract(ctx, propagation.HeaderCarrier(req.Header()))
 	ctx, span := otel.Tracer("item-service").Start(ctx, "read")
+
+	fmt.Println("\n\n\n\n")
+	fmt.Println("Header:", req.Header())
+	// fmt.Println(req.Header.Get("traceparent"))
+	fmt.Println("\n\n\n\n")
 
 
 
