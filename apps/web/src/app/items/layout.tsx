@@ -26,7 +26,6 @@ export default function PageLayout({
   return (
     <React.Fragment>
         <QueryClientProvider client={queryClient}>
-          {/* The rest of your application */}
           <ReactQueryDevtools initialIsOpen={false} />
           <ThemeProvider theme={theme}>
             <Box sx={{ bgcolor: 'teal', height: '100%' }}>

@@ -2,6 +2,12 @@
 export type AuditUpdaterEnum = "AUDIT_UPDATER_ENUM_UNSPECIFIED" | "AUDIT_UPDATER_ENUM_FRONTEND" | "AUDIT_UPDATER_ENUM_SYSOPS";
 
 
+export interface ITraceBaggage {
+  traceparent?: string;
+  tracestate?: string;
+}
+
+
 export interface Audit {
     createdBy: AuditUpdaterEnum
     createdAt: string
@@ -37,7 +43,7 @@ export interface ItemStateInterface {
 	editStatus: string
 	filterDrawerStatus: boolean
 	newTag: string
-	selectedItem: null | ItemModelInterface
+  selectedItem: null | IProtoItem
 	tagCollapsed: boolean
 }
 
