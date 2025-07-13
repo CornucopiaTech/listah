@@ -5,6 +5,7 @@ export type AuditUpdaterEnum = "AUDIT_UPDATER_ENUM_UNSPECIFIED" | "AUDIT_UPDATER
 export interface ITraceBaggage {
   traceparent?: string;
   tracestate?: string;
+  b3?: string;
 }
 
 

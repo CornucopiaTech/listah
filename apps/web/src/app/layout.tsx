@@ -1,6 +1,4 @@
 
-let dynamic = 'force-dynamic';
-
 import type { Metadata } from "next";
 import * as React from 'react';
 import {
@@ -12,6 +10,7 @@ import {
   Box,
   Container
 } from '@mui/material';
+
 
 import "./globals.css";
 import '@/envConfig.ts';
@@ -43,9 +42,7 @@ export default function RootLayout({
             </Box>
           </body>
         </html>
-
       </ClerkProvider>
-
     </React.Fragment>
   );
 }

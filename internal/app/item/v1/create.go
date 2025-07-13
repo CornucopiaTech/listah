@@ -13,14 +13,15 @@ import (
 )
 
 func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemServiceCreateRequest]) (*connect.Response[pb.ItemServiceCreateResponse], error) {
-	ctx, span := otel.Tracer("item-service").Start(ctx, "create")
+	ctx, span := otel.Tracer(svcName).Start(ctx, "POST /listah.v1.ItemService/Create")
 	defer span.End()
-	s.Infra.Logger.LogInfo(ctx, svcName, "Create", "Create rpc called")
+	rpcName := "Create"
+	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, "POST /listah.v1.ItemService/Create")
 
 	// Create model for repository from request message
 	insertions, err := v1model.ItemProtoToItemModel(req.Msg.Items, true)
 	if err != nil {
-		s.Infra.Logger.LogError(ctx, svcName, "Create", "Error getting item model for insertion", errors.Cause(err).Error())
+		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting item model for insertion", errors.Cause(err).Error())
 		return nil, err
 	}
 
@@ -32,10 +33,10 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemService
 
 	_, err = s.Infra.PgRepo.Item.Upsert(ctx, &insertions, &w)
 	if err != nil {
-		s.Infra.Logger.LogError(ctx, svcName, "Create", "Repository  update error", errors.Cause(err).Error())
+		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository  update error", errors.Cause(err).Error())
 		return nil, err
 	}
-	s.Infra.Logger.LogInfo(ctx, svcName, "Create", "Successful repository update")
+	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository update")
 
 	// Read created model from repository
 	readModel := []*v1model.Item{}
@@ -49,19 +50,19 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemService
 	whereClause := []model.WhereClause{}
 
 	if err := s.Infra.PgRepo.Item.Select(ctx, &readModel, &whereClause); err != nil {
-		s.Infra.Logger.LogError(ctx, svcName, "Create", "Repository read error", errors.Cause(err).Error())
+		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
 		return nil, err
 	}
 
 	rs, err := v1model.ItemModelToItemProto(readModel)
 	if err != nil {
-		s.Infra.Logger.LogError(ctx, svcName, "Create", "Error getting item proto from item model", errors.Cause(err).Error())
+		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting item proto from item model", errors.Cause(err).Error())
 		return nil, err
 	}
 	resm := &pb.ItemServiceCreateResponse{
 		Items: rs,
 	}
 
-	s.Infra.Logger.LogInfo(ctx, svcName, "Create", "Successful repository read")
+	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository read")
 	return connect.NewResponse(resm), nil
 }

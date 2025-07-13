@@ -16,7 +16,6 @@ import { AppNavBar} from '@/components/AppNavBar';
 
 import theme from '@/lib/theme';
 
-const queryClient = new QueryClient();
 
 export default function PageLayout({
   children,
@@ -25,7 +24,7 @@ export default function PageLayout({
 }>){
   return (
     <React.Fragment>
-        <QueryClientProvider client={queryClient}>
+        <QueryClientProvider client={new QueryClient()}>
           <ReactQueryDevtools initialIsOpen={false} />
           <ThemeProvider theme={theme}>
             <Box sx={{ bgcolor: 'teal', height: '100%' }}>

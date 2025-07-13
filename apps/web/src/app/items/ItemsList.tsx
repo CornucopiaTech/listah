@@ -1,11 +1,7 @@
 "use client"
 
-let dynamic = 'force-dynamic';
-
 import * as React from 'react';
-import api from '@opentelemetry/api';
-import { B3Propagator, B3InjectEncoding } from '@opentelemetry/propagator-b3';
-import { CompositePropagator } from '@opentelemetry/core';
+import Link from 'next/link'
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
 import {
@@ -14,22 +10,39 @@ import {
   Typography,
   Pagination,
   Stack,
-  Link,
+  // Link,
   Chip,
 } from '@mui/material';
 
 
-import type { IProtoItems, IProtoItem, ITraceBaggage } from '@/app/items/ItemsModel';
+import type { IProtoItems } from '@/app/items/ItemsModel';
 import { ErrorAlerts } from '@/components/ErrorAlert';
-import { fetchItems, fetchItemsAsync } from './itemsRepo';
 import Loading from '@/components/Loading';
 
+
+async function fetchData(aurl: string, atraceparent: string, auserId: string, acategory: string | string [], atags: string[]) {
+  console.info(`In React Query - traceparent: ${atraceparent}`);
+  const req = new Request(aurl, {
+    method: "POST",
+    body: JSON.stringify({ items: [{ userId: auserId, category: acategory, tags: atags }] }),
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "*/*",
+      "traceparent": atraceparent,
+    },
+  });
+  const res = await fetch(req);
+  if (!res.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return res.json();
+}
 
 export default function ItemsList({ traceparent, url }: {
   traceparent: string, url: string
 }) {
-  console.info(`Traceparent In Client: ${traceparent}`);
-  console.info(`Url In Client: ${url}`);
+  // console.info(`Traceparent In Client: ${traceparent}`);
+  // console.info(`Url In Client: ${url}`);
   const recordsPerPage = 20;
   const [page, setPage] = React.useState(1);
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -40,35 +53,6 @@ export default function ItemsList({ traceparent, url }: {
   const userId = "4b4b6b2d-f453-496c-bbb2-4371362f386d";
   const category = "";
   const tags: string[] = [];
-  const reqBody = { items: [{ userId, category, tags }] }
-  const theRequest = new Request(url, {
-    method: "POST",
-    body: JSON.stringify(reqBody),
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "*/*",
-      "traceparent": traceparent,
-    },
-  });
-
-
-  async function fetchData(aurl, atraceparent, auserId, acategory, atags) {
-    console.info(`In React Query - QueryFn: ${itemsKey} - traceparent: ${traceparent}`);
-    const req = new Request(aurl, {
-      method: "POST",
-      body: JSON.stringify({ items: [{ userId:auserId, category:acategory, tags:atags }] }),
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "*/*",
-        "traceparent": atraceparent,
-      },
-    });
-    const res = await fetch(req);
-    if (!res.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return res.json();
-  }
 
 
   const { isPending, isError, data, error }: UseQueryResult<IProtoItems> = useQuery({
@@ -80,13 +64,10 @@ export default function ItemsList({ traceparent, url }: {
   console.info(`isPending: ${isPending}\t isError: ${isError}\t data: ${data}\t error ${error}`);
   if (isPending) { return <Loading />; }
 
-
-  console.info(`isPending: ${isPending}\t isError: ${isError}\t data: ${data}\t error ${error}`);
   if (isError) {
-    return <ErrorAlerts>Unable to retrieve data from API. Error: {error.message}</ErrorAlerts>
+    return <ErrorAlerts>Unable to retrieve data from API. Error: {error.message}</ErrorAlerts>;
   }
 
-  console.info(`isPending: ${isPending}\t isError: ${isError}\t data: ${data}\t error ${error}`);
   return (
     <React.Fragment>
       <Box sx={{ height: '100%', bgcolor: 'paper', }}>

@@ -20,7 +20,6 @@ type Item interface {
 	Update(ctx context.Context, v interface{},
 		m interface{}, s []string, w []string, al string) error
 	Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (interface{}, error)
-	BulkUpsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (interface{}, error)
 }
 
 type item struct {
@@ -29,7 +28,7 @@ type item struct {
 }
 
 func (a *item) Select(ctx context.Context, m interface{}, c *[]model.WhereClause) error {
-	ctx, span := otel.Tracer("item-repository").Start(ctx, "select")
+	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Select")
 	defer span.End()
 
 	var activity string = "ItemSelect"
@@ -53,7 +52,7 @@ func (a *item) Select(ctx context.Context, m interface{}, c *[]model.WhereClause
 }
 
 func (a *item) Insert(ctx context.Context, m interface{}) error {
-	ctx, span := otel.Tracer("item-repository").Start(ctx, "insert")
+	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Insert")
 	defer span.End()
 	var activity string = "ItemInsert"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
@@ -70,7 +69,7 @@ func (a *item) Insert(ctx context.Context, m interface{}) error {
 
 func (a *item) Update(ctx context.Context, v interface{},
 	m interface{}, s []string, w []string, al string) error {
-	ctx, span := otel.Tracer("item-repository").Start(ctx, "insert")
+	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Update")
 	defer span.End()
 	var activity string = "ItemUpdate"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
@@ -100,7 +99,7 @@ func (a *item) Update(ctx context.Context, v interface{},
 }
 
 func (a *item) Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (interface{}, error) {
-	ctx, span := otel.Tracer("item-repository").Start(ctx, "insert")
+	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Upsert")
 	defer span.End()
 
 	var activity string = "ItemUpsert"
@@ -123,37 +122,6 @@ func (a *item) Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (
 	}
 
 	res, err := q.Exec(ctx)
-	if err != nil {
-		a.logger.LogError(ctx, svcName, activity, "Error occured", errors.Cause(err).Error())
-		return nil, err
-	}
-
-	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
-	return res, nil
-}
-
-func (a *item) BulkUpsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (interface{}, error) {
-	ctx, span := otel.Tracer("item-repository").Start(ctx, "insert")
-	defer span.End()
-
-	var activity string = "ItemBulkUpsert"
-	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
-	var conflict string
-	if len(c.Conflict) == 0 {
-		conflict = fmt.Sprintf("CONFLICT(%v) DO NOTHING",
-			strings.Join(c.Conflict, ", "))
-	} else {
-		conflict = fmt.Sprintf("CONFLICT(%v) DO UPDATE",
-			strings.Join(c.Conflict, ", "))
-	}
-
-	q := a.db.NewInsert().Model(m).On(conflict)
-	for _, v := range c.Resolve {
-		r := fmt.Sprintf("%v = Excluded.%v", bun.Ident(v), bun.Ident(v))
-		q = q.Set(r)
-	}
-
-	res, err := q.Returning("*").Exec(ctx)
 	if err != nil {
 		a.logger.LogError(ctx, svcName, activity, "Error occured", errors.Cause(err).Error())
 		return nil, err

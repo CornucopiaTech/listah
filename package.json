@@ -28,7 +28,8 @@
     "prisma:reset:skip": "prisma migrate reset --skip-generate",
     "prisma:reset": "prisma migrate reset",
     "prisma:val": "prisma validate",
-    "web:dev": "clear && cd ./apps/web && rm -rf .next .clerk && npm run dev "
+    "web:refresh-dev": "clear && cd ./apps/web && rm -rf .next .clerk && npm run dev ",
+    "web:dev": "clear && cd ./apps/web && npm run dev "
   },
   "dependencies": {
     "@bufbuild/buf": "^1.53.0",
