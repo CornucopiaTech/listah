@@ -2,7 +2,8 @@ package v1
 
 import (
 	"context"
-	"cornucopia/listah/internal/pkg/model"
+	// "fmt"
+	// "cornucopia/listah/internal/pkg/model"
 	v1model "cornucopia/listah/internal/pkg/model/v1"
 	pb "cornucopia/listah/internal/pkg/proto/v1"
 
@@ -17,15 +18,14 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 	rpcName := "Read"
 	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, "Read rpc called")
 
-	// Read model for repository from request message
-	readModel, err := v1model.ItemProtoToItemModel(req.Msg.Items, true)
+
+	readModel := []*v1model.Item{}
+	whereClause, err := v1model.ItemProtoToWhereClause(req.Msg.Items)
 	if err != nil {
-		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting item model for insertion", errors.Cause(err).Error())
+		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting where clause from request", errors.Cause(err).Error())
 		return nil, err
 	}
 
-	// ToDo: Clean up Where Clause.
-	whereClause := []model.WhereClause{}
 
 	if err := s.Infra.PgRepo.Item.Select(ctx, &readModel, &whereClause); err != nil {
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
@@ -37,9 +37,7 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting item proto from item model", errors.Cause(err).Error())
 		return nil, err
 	}
-	resm := &pb.ItemServiceReadResponse{
-		Items: rs,
-	}
+	resm := &pb.ItemServiceReadResponse{Items: rs,}
 
 	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository read")
 	return connect.NewResponse(resm), nil

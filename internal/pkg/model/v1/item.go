@@ -4,6 +4,7 @@ import (
 	"cornucopia/listah/internal/pkg/model"
 	pb "cornucopia/listah/internal/pkg/proto/v1"
 	"time"
+	// "fmt"
 
 	"github.com/google/uuid"
 	"github.com/uptrace/bun"
@@ -185,9 +186,10 @@ func ItemProtoToWhereClause(msg []*pb.Item) ([]model.WhereClause, error) {
 		}
 	}
 
+
 	w := []model.WhereClause{}
 	// Add Id to where clause
-	if len(i) != 0{
+	if len(i) != 0 {
 		w = append(w, model.WhereClause{
 			Placeholder: "?::VARCHAR IN (?)",
 			Column:      "id",
@@ -196,7 +198,7 @@ func ItemProtoToWhereClause(msg []*pb.Item) ([]model.WhereClause, error) {
 	}
 
 	// Add userId to where clause
-	if len(u) != 0{
+	if len(u) != 0 {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "user_id",
@@ -205,7 +207,7 @@ func ItemProtoToWhereClause(msg []*pb.Item) ([]model.WhereClause, error) {
 	}
 
 	// Add summary to where clause
-	if len(s) != 0{
+	if len(s) != 0 {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "summary",
@@ -214,7 +216,7 @@ func ItemProtoToWhereClause(msg []*pb.Item) ([]model.WhereClause, error) {
 	}
 
 	// Add category to where clause
-	if len(c) != 0{
+	if len(c) != 0 {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "category",
@@ -223,7 +225,7 @@ func ItemProtoToWhereClause(msg []*pb.Item) ([]model.WhereClause, error) {
 	}
 
 	// description
-	if len(d) != 0{
+	if len(d) != 0 {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "description",
@@ -232,7 +234,7 @@ func ItemProtoToWhereClause(msg []*pb.Item) ([]model.WhereClause, error) {
 	}
 
 	// note
-	if len(n) != 0{
+	if len(n) != 0 {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "note",

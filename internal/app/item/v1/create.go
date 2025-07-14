@@ -40,14 +40,19 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemService
 
 	// Read created model from repository
 	readModel := []*v1model.Item{}
-	// i := []string{}
 	for _, v := range insertions {
 		readModel = append(readModel, &v1model.Item{Id: v.Id})
-		// i = append(i, v.Id)
 	}
 
 	// ToDo: Clean up Where Clause.
 	whereClause := []model.WhereClause{}
+
+	if err != nil {
+		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting where clause from request", errors.Cause(err).Error())
+		return nil, err
+	}
+
+
 
 	if err := s.Infra.PgRepo.Item.Select(ctx, &readModel, &whereClause); err != nil {
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
@@ -59,9 +64,7 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemService
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting item proto from item model", errors.Cause(err).Error())
 		return nil, err
 	}
-	resm := &pb.ItemServiceCreateResponse{
-		Items: rs,
-	}
+	resm := &pb.ItemServiceCreateResponse{Items: rs,}
 
 	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository read")
 	return connect.NewResponse(resm), nil

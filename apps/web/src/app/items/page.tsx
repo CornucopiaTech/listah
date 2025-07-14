@@ -22,8 +22,6 @@ export default function ItemsPage() {
   // Create an output object that conforms to that interface.
   const output: ITraceBaggage = {};
   propagation.inject(context.active(), output);
-  // console.info("ItemsPage: Injected trace context");
-  // console.info(output);
 
   const { traceparent, b3 } = output;
   const parentTraceId = traceparent ? traceparent : b3 ? b3 : "";

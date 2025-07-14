@@ -21,7 +21,6 @@ import Loading from '@/components/Loading';
 
 
 async function fetchData(aurl: string, atraceparent: string, auserId: string, acategory: string | string [], atags: string[]) {
-  console.info(`In React Query - traceparent: ${atraceparent}`);
   const req = new Request(aurl, {
     method: "POST",
     body: JSON.stringify({ items: [{ userId: auserId, category: acategory, tags: atags }] }),
@@ -41,8 +40,6 @@ async function fetchData(aurl: string, atraceparent: string, auserId: string, ac
 export default function ItemsList({ traceparent, url }: {
   traceparent: string, url: string
 }) {
-  // console.info(`Traceparent In Client: ${traceparent}`);
-  // console.info(`Url In Client: ${url}`);
   const recordsPerPage = 20;
   const [page, setPage] = React.useState(1);
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -61,7 +58,6 @@ export default function ItemsList({ traceparent, url }: {
   });
 
 
-  console.info(`isPending: ${isPending}\t isError: ${isError}\t data: ${data}\t error ${error}`);
   if (isPending) { return <Loading />; }
 
   if (isError) {
