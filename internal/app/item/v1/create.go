@@ -2,6 +2,8 @@ package v1
 
 import (
 	"context"
+	"fmt"
+	"strings"
 	"cornucopia/listah/internal/pkg/model"
 	v1model "cornucopia/listah/internal/pkg/model/v1"
 	pb "cornucopia/listah/internal/pkg/proto/v1"
@@ -52,9 +54,18 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemService
 		return nil, err
 	}
 
+	qLimit := len(readModel)
+	qPage := 1
+	qOffset := qLimit * (qPage - 1)
+	qSortMap := DefaultReadPagination.SortCondition
+	qSortSlice := []string{}
+	for key, value := range qSortMap {
+		qSortSlice = append(qSortSlice, fmt.Sprintf(" %v %v ", key, value))
+	}
+	qSort := strings.Join(qSortSlice, ", ")
 
 
-	if err := s.Infra.PgRepo.Item.Select(ctx, &readModel, &whereClause); err != nil {
+	if err := s.Infra.PgRepo.Item.Select(ctx, &readModel, &whereClause, qSort, qOffset, qLimit); err != nil {
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
 		return nil, err
 	}

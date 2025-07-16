@@ -2,7 +2,8 @@ package v1
 
 import (
 	"context"
-	// "fmt"
+	"fmt"
+	"strings"
 	// "cornucopia/listah/internal/pkg/model"
 	v1model "cornucopia/listah/internal/pkg/model/v1"
 	pb "cornucopia/listah/internal/pkg/proto/v1"
@@ -11,6 +12,12 @@ import (
 	"github.com/pkg/errors"
 	"go.opentelemetry.io/otel"
 )
+
+var DefaultReadPagination = pb.Pagination{
+	PageNumber: 0,
+	RecordsPerPage: 100,
+	SortCondition: map[string]string{"user_id": "ASC", "id": "ASC"},
+}
 
 func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceReadRequest]) (*connect.Response[pb.ItemServiceReadResponse], error) {
 	ctx, span := otel.Tracer(svcName).Start(ctx, "POST /listah.v1.ItemService/Read")
@@ -26,8 +33,35 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 		return nil, err
 	}
 
+	var qLimit int
+	var qPage int
+	var qSortMap map[string]string
+	pg:= req.Msg.GetPagination()
+	if pg == nil {
+		qPage = int(DefaultReadPagination.PageNumber)
+		qLimit = int(DefaultReadPagination.RecordsPerPage)
+		qSortMap = DefaultReadPagination.SortCondition
+	} else {
+		qLimit = int(pg.RecordsPerPage)
+		qPage = int(pg.PageNumber)
+		qSortMap = pg.SortCondition
+		if len(qSortMap) == 0 {
+			qSortMap = DefaultReadPagination.SortCondition
+		}
+	}
 
-	if err := s.Infra.PgRepo.Item.Select(ctx, &readModel, &whereClause); err != nil {
+	fmt.Printf("\n\n\n\nValues in sort map: %v\n\n\n", qSortMap)
+
+	qOffset := qLimit * (qPage - 1)
+	qSortSlice := []string{}
+	for key, value := range qSortMap {
+		qSortSlice = append(qSortSlice, fmt.Sprintf(" %v %v ", key, value))
+	}
+	qSort := strings.Join(qSortSlice, ", ")
+
+	fmt.Printf("\n\n\n\nValues in sort: %v\n\n\n", qSort)
+
+	if err := s.Infra.PgRepo.Item.Select(ctx, &readModel, &whereClause, qSort, qOffset, qLimit); err != nil {
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
 		return nil, err
 	}

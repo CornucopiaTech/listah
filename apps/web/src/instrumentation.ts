@@ -1,4 +1,3 @@
-// File: listah/apps/web/src/instrumentation.ts
 import '@/envConfig.ts';
 
 export async function register() {
@@ -10,4 +9,3 @@ export async function register() {
     await import('./instrumentation.browser');
   }
 }
-

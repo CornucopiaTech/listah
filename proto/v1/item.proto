@@ -44,7 +44,6 @@ message ItemServiceReadResponse {
   optional Pagination pagination = 100;
 }
 
-
 message ItemServiceUpdateRequest {
   repeated Item items = 1;
   optional Audit audit = 50;
@@ -52,8 +51,6 @@ message ItemServiceUpdateRequest {
 message ItemServiceUpdateResponse {
   repeated Item items = 1;
 }
-
-
 
 message ItemServiceDeleteRequest {
   repeated Item items = 1;

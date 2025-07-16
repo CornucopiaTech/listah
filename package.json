@@ -17,7 +17,7 @@
     "buf:lint": "buf lint",
     "buf:prune": "buf dep prune",
     "buf:update": "buf dep update",
-    "doc:gen-api-docs": "rm ./public/index.html && redocly bundle --dereferenced --output ./assets/docs/openapi-deref.yaml ./assets/docs/openapi-ref.yaml   &&   npx @redocly/cli build-docs  ./assets/docs/openapi-deref.yaml --output ./public/index.html  ",
+    "doc:gen-api-docs": "clear && rm ./public/index.html && redocly bundle --dereferenced --output ./assets/docs/openapi-deref.yaml ./assets/docs/openapi-ref.yaml   &&   npx @redocly/cli build-docs  ./assets/docs/openapi-deref.yaml --output ./public/index.html  ",
     "docker:rm-all": "docker rm $(docker ps -a -q)",
     "docker:stop-all": "docker stop $(docker ps -a -q)",
     "prisma:deploy": "prisma migrate deploy",
@@ -34,7 +34,7 @@
   "dependencies": {
     "@bufbuild/buf": "^1.53.0",
     "@prisma/client": "^6.7.0",
-    "@redocly/cli": "^1.34.2",
+    "@redocly/cli": "^1.34.4",
     "nodemon": "^3.1.10"
   },
   "packageManager": "npm@10.9.0",

@@ -22,7 +22,8 @@ enum AuditUpdaterEnum {
 }
 
 message Pagination {
-  string offset = 1;
-  int32 records_count  = 2;
-  repeated string sorterr = 3;
+  int32 page_number = 1;
+  int32 records_per_page = 2;
+  // int32 total_record_count = 3;
+  map<string, string> sort_condition = 3;
 }

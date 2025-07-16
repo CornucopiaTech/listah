@@ -325,19 +325,32 @@ components:
     listah.v1.Pagination:
       type: object
       properties:
-        offset:
-          type: string
-          title: offset
-        recordsCount:
+        pageNumber:
           type: integer
-          title: records_count
+          title: page_number
           format: int32
-        sorterr:
-          type: array
-          items:
+        recordsPerPage:
+          type: integer
+          title: records_per_page
+          format: int32
+        sortCondition:
+          type: object
+          title: sort_condition
+          additionalProperties:
             type: string
-          title: sorterr
+            title: value
       title: Pagination
+      additionalProperties: false
+    listah.v1.Pagination.SortConditionEntry:
+      type: object
+      properties:
+        key:
+          type: string
+          title: key
+        value:
+          type: string
+          title: value
+      title: SortConditionEntry
       additionalProperties: false
     listah.v1.Item:
       type: object

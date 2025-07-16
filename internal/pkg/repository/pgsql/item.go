@@ -15,7 +15,7 @@ import (
 var svcName string = "PgDB"
 
 type Item interface {
-	Select(ctx context.Context, m interface{}, c *[]model.WhereClause) error
+	Select(ctx context.Context, m interface{}, c *[]model.WhereClause, s string, o int, l int) error
 	Insert(ctx context.Context, m interface{}) error
 	Update(ctx context.Context, v interface{},
 		m interface{}, s []string, w []string, al string) error
@@ -27,7 +27,7 @@ type item struct {
 	logger *logging.Factory
 }
 
-func (a *item) Select(ctx context.Context, m interface{}, c *[]model.WhereClause) error {
+func (a *item) Select(ctx context.Context, m interface{}, c *[]model.WhereClause, s string, o int, l int) error {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Select")
 	defer span.End()
 
@@ -42,7 +42,7 @@ func (a *item) Select(ctx context.Context, m interface{}, c *[]model.WhereClause
 	}
 	selectQuery := qb.Unwrap().(*bun.SelectQuery)
 
-	if err := selectQuery.Scan(ctx); err != nil {
+	if err := selectQuery.OrderExpr(s).Limit(l).Offset(o).Scan(ctx); err != nil {
 		a.logger.LogError(ctx, svcName, activity, "Error occured", errors.Cause(err).Error())
 		return err
 	}

@@ -14,6 +14,7 @@ import { ItemsDrawer } from "@/app/items/ItemsDrawer";
 import ItemsDatePicker from "@/app/items/ItemsDatePicker";
 import ItemsSearch from '@/app/items/ItemsSearch';
 import { AppBarHeight } from '@/components/AppNavBar';
+import Loading from '@/components/Loading';
 
 
 
@@ -39,11 +40,16 @@ export default function ItemsPage() {
           bgcolor: 'rgba(0,255,0,0.1)', display: 'flex',
           my: 2, justifyContent: 'space-between'
         }}>
-        <ItemsDrawer />
-        <ItemsSearch />
-        <ItemsDatePicker />
+          <React.Suspense fallback={<Loading />}>
+            <ItemsDrawer />
+            <ItemsSearch />
+            <ItemsDatePicker />
+          </React.Suspense>
       </Box>
-      <ItemsList traceparent={parentTraceId} url={url}/>
+      <React.Suspense fallback={<Loading />}>
+        <ItemsList traceparent={parentTraceId} url={url}/>
+      </React.Suspense>
+
     </Box>
   );
 
