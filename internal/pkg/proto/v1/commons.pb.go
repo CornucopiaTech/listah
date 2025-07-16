@@ -159,9 +159,10 @@ type Pagination struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	PageNumber     int32                  `protobuf:"varint,1,opt,name=page_number,json=pageNumber,proto3" json:"page_number,omitempty"`
 	RecordsPerPage int32                  `protobuf:"varint,2,opt,name=records_per_page,json=recordsPerPage,proto3" json:"records_per_page,omitempty"`
-	SortCondition  map[string]string      `protobuf:"bytes,3,rep,name=sort_condition,json=sortCondition,proto3" json:"sort_condition,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// int32 total_record_count = 3;
+	SortCondition map[string]string `protobuf:"bytes,3,rep,name=sort_condition,json=sortCondition,proto3" json:"sort_condition,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Pagination) Reset() {

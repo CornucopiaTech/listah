@@ -15,10 +15,10 @@ import (
 var svcName string = "PgDB"
 
 type Item interface {
-	Select(ctx context.Context, m interface{}, c *[]model.WhereClause, s string, o int, l int) error
+	Select(ctx context.Context, m interface{}, c *[]model.WhereClause, s string, o int, l int) (int, error)
+	Count(ctx context.Context, m interface{}, c *[]model.WhereClause, s string, o int, l int) error
 	Insert(ctx context.Context, m interface{}) error
-	Update(ctx context.Context, v interface{},
-		m interface{}, s []string, w []string, al string) error
+	Update(ctx context.Context, v interface{}, m interface{}, s []string, w []string, al string) error
 	Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (interface{}, error)
 }
 
@@ -27,7 +27,32 @@ type item struct {
 	logger *logging.Factory
 }
 
-func (a *item) Select(ctx context.Context, m interface{}, c *[]model.WhereClause, s string, o int, l int) error {
+
+func (a *item) Select(ctx context.Context, m interface{}, c *[]model.WhereClause, s string, o int, l int) (int, error) {
+	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Select")
+	defer span.End()
+
+	var activity string = "ItemSelect"
+	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
+
+	qb := a.db.NewSelect().Model(m).QueryBuilder()
+	// Add where clause
+	for _, k := range *c {
+		qb = qb.Where(k.Placeholder, bun.Ident(k.Column), k.Value)
+	}
+	selectQuery := qb.Unwrap().(*bun.SelectQuery)
+
+	count, err := selectQuery.OrderExpr(s).Limit(l).Offset(o).ScanAndCount(ctx)
+	if err != nil {
+		a.logger.LogError(ctx, svcName, activity, "Error occured", errors.Cause(err).Error())
+		return 0, err
+	}
+
+	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
+	return count, nil
+}
+
+func (a *item) Count(ctx context.Context, m interface{}, c *[]model.WhereClause, s string, o int, l int) error {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Select")
 	defer span.End()
 

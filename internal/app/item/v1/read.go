@@ -14,7 +14,7 @@ import (
 )
 
 var DefaultReadPagination = pb.Pagination{
-	PageNumber: 0,
+	PageNumber: 1,
 	RecordsPerPage: 100,
 	SortCondition: map[string]string{"user_id": "ASC", "id": "ASC"},
 }
@@ -36,6 +36,7 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 	var qLimit int
 	var qPage int
 	var qSortMap map[string]string
+
 	pg:= req.Msg.GetPagination()
 	if pg == nil {
 		qPage = int(DefaultReadPagination.PageNumber)
@@ -50,8 +51,6 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 		}
 	}
 
-	fmt.Printf("\n\n\n\nValues in sort map: %v\n\n\n", qSortMap)
-
 	qOffset := qLimit * (qPage - 1)
 	qSortSlice := []string{}
 	for key, value := range qSortMap {
@@ -59,9 +58,8 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 	}
 	qSort := strings.Join(qSortSlice, ", ")
 
-	fmt.Printf("\n\n\n\nValues in sort: %v\n\n\n", qSort)
-
-	if err := s.Infra.PgRepo.Item.Select(ctx, &readModel, &whereClause, qSort, qOffset, qLimit); err != nil {
+	recCnt, err := s.Infra.PgRepo.Item.Select(ctx, &readModel, &whereClause, qSort, qOffset, qLimit)
+	if  err != nil {
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
 		return nil, err
 	}
@@ -71,8 +69,15 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting item proto from item model", errors.Cause(err).Error())
 		return nil, err
 	}
-	resm := &pb.ItemServiceReadResponse{Items: rs,}
-
+	resm := &pb.ItemServiceReadResponse{
+		Items: rs,
+		TotalRecordCount: int32(recCnt),
+		Pagination: &pb.Pagination{
+			PageNumber: int32(qPage),
+			RecordsPerPage: int32(qLimit),
+			SortCondition: qSortMap,
+		},
+	}
 	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository read")
 	return connect.NewResponse(resm), nil
 }

@@ -47,10 +47,9 @@ async function fetchData(aurl: string, atraceparent: string, auserId: string,
 
 
 export default function ItemsList({ traceparent, url }: {
-  traceparent: string, url: string
+  traceparent: string, url: string, countUrl: string
 }): React.ReactNode  {
-  const recordsPerPage = 6;
-  const maxPages = Math.ceil(18 / recordsPerPage);
+  const recordsPerPage = 12;
   const [page, setPage] = React.useState(1);
 
   const itemsKey = "itemsListing";
@@ -59,17 +58,21 @@ export default function ItemsList({ traceparent, url }: {
   const tags: string[] = [];
 
 
-  const { isPending, isError, data, error }: UseQueryResult<IProtoItems> = useQuery({
-    queryKey: [itemsKey, url, traceparent, userId, category, tags, page, recordsPerPage],
-    queryFn: () => fetchData(url, traceparent, userId, category, tags, page, recordsPerPage)
-  });
+   const { isPending, isError, data, error }: UseQueryResult<IProtoItems> = useQuery({
+     queryKey: [itemsKey, url, traceparent, userId, category, tags, page, recordsPerPage],
+     queryFn: () => fetchData(url, traceparent, userId, category, tags, page, recordsPerPage)
+   });
+
   if (isPending) { return <Loading />; }
   if (isError) {
     return <ErrorAlerts>Unable to retrieve data from API. Error: {error.message}</ErrorAlerts>;
   }
 
-  console.info(data)
-  if (data.items === undefined || data.items.length == 0){
+  const items: IProtoItems | unknown = data.items;
+  const totalRecords: number | unknown = data.totalRecordCount;
+  const maxPages = Math.ceil(totalRecords / recordsPerPage);
+
+  if (items === undefined || items.length == 0){
     return(
       <React.Fragment>
         <Box sx={{ height: '100%', bgcolor: 'paper', }}>
@@ -138,7 +141,7 @@ export default function ItemsList({ traceparent, url }: {
             width: '100%', display: 'grid', gap: 3,
             gridTemplateColumns: 'repeat(auto-fill, minmax(min(200px, 100%), 1fr))',
           }} >
-          {data.items.map((val, _) => (
+          {items.map((val, _) => (
             <Paper key={val.id + "-content"}>
               <Box key={val.id} sx={{ maxHeight: 360, p: 1.5, }}>
                 <Typography key='link' variant="body1" component="div" sx={{ p: 0.6, }}>

@@ -31,16 +31,18 @@ message ItemServiceCreateRequest {
 }
 message ItemServiceCreateResponse {
   repeated Item items = 1;
+  int32 total_record_count = 2;
   optional Audit audit = 50;
+  optional Pagination pagination = 100;
 }
 
 message ItemServiceReadRequest {
   repeated Item items = 1;
-  optional Audit audit = 50;
   optional Pagination pagination = 100;
 }
 message ItemServiceReadResponse {
   repeated Item items = 1;
+  int32 total_record_count = 2;
   optional Pagination pagination = 100;
 }
 
@@ -50,6 +52,8 @@ message ItemServiceUpdateRequest {
 }
 message ItemServiceUpdateResponse {
   repeated Item items = 1;
+  int32 total_record_count = 2;
+  optional Pagination pagination = 100;
 }
 
 message ItemServiceDeleteRequest {
@@ -58,6 +62,8 @@ message ItemServiceDeleteRequest {
 }
 message ItemServiceDeleteResponse {
   repeated Item items = 1;
+  int32 total_record_count = 2;
+  optional Pagination pagination = 100;
 }
 
 

@@ -339,6 +339,7 @@ components:
           additionalProperties:
             type: string
             title: value
+          description: int32 total_record_count = 3;
       title: Pagination
       additionalProperties: false
     listah.v1.Pagination.SortConditionEntry:
@@ -429,10 +430,18 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
+        totalRecordCount:
+          type: integer
+          title: total_record_count
+          format: int32
         audit:
           title: audit
           nullable: true
           $ref: '#/components/schemas/listah.v1.Audit'
+        pagination:
+          title: pagination
+          nullable: true
+          $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceCreateResponse
       additionalProperties: false
     listah.v1.ItemServiceDeleteRequest:
@@ -457,6 +466,14 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
+        totalRecordCount:
+          type: integer
+          title: total_record_count
+          format: int32
+        pagination:
+          title: pagination
+          nullable: true
+          $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceDeleteResponse
       additionalProperties: false
     listah.v1.ItemServiceReadRequest:
@@ -467,10 +484,6 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
-        audit:
-          title: audit
-          nullable: true
-          $ref: '#/components/schemas/listah.v1.Audit'
         pagination:
           title: pagination
           nullable: true
@@ -485,6 +498,10 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
+        totalRecordCount:
+          type: integer
+          title: total_record_count
+          format: int32
         pagination:
           title: pagination
           nullable: true
@@ -513,6 +530,14 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
+        totalRecordCount:
+          type: integer
+          title: total_record_count
+          format: int32
+        pagination:
+          title: pagination
+          nullable: true
+          $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceUpdateResponse
       additionalProperties: false
     encoding:

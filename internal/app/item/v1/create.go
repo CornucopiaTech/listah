@@ -64,8 +64,8 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemService
 	}
 	qSort := strings.Join(qSortSlice, ", ")
 
-
-	if err := s.Infra.PgRepo.Item.Select(ctx, &readModel, &whereClause, qSort, qOffset, qLimit); err != nil {
+	recCnt, err := s.Infra.PgRepo.Item.Select(ctx, &readModel, &whereClause, qSort, qOffset, qLimit)
+	if err != nil {
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
 		return nil, err
 	}
@@ -75,7 +75,15 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemService
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting item proto from item model", errors.Cause(err).Error())
 		return nil, err
 	}
-	resm := &pb.ItemServiceCreateResponse{Items: rs,}
+	resm := &pb.ItemServiceCreateResponse{
+		Items: rs,
+		TotalRecordCount: int32(recCnt),
+		Pagination: &pb.Pagination{
+			PageNumber: int32(qPage),
+			RecordsPerPage: int32(qLimit),
+			SortCondition: qSortMap,
+		},
+	}
 
 	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository read")
 	return connect.NewResponse(resm), nil

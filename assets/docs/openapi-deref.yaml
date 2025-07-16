@@ -496,11 +496,36 @@ paths:
                       title: Item
                       additionalProperties: false
                     title: items
+                  totalRecordCount:
+                    type: integer
+                    title: total_record_count
+                    format: int32
                   audit:
                     title: audit
                     nullable: true
                     type: object
                     properties: *ref_1
+                    additionalProperties: false
+                  pagination:
+                    title: pagination
+                    nullable: true
+                    type: object
+                    properties: &ref_4
+                      pageNumber:
+                        type: integer
+                        title: page_number
+                        format: int32
+                      recordsPerPage:
+                        type: integer
+                        title: records_per_page
+                        format: int32
+                      sortCondition:
+                        type: object
+                        title: sort_condition
+                        additionalProperties:
+                          type: string
+                          title: value
+                        description: int32 total_record_count = 3;
                     additionalProperties: false
                 title: ItemServiceCreateResponse
                 additionalProperties: false
@@ -590,31 +615,11 @@ paths:
                       title: Item
                       additionalProperties: false
                     title: items
-                  audit:
-                    title: audit
-                    nullable: true
-                    type: object
-                    properties: *ref_1
-                    additionalProperties: false
                   pagination:
                     title: pagination
                     nullable: true
                     type: object
-                    properties: &ref_4
-                      pageNumber:
-                        type: integer
-                        title: page_number
-                        format: int32
-                      recordsPerPage:
-                        type: integer
-                        title: records_per_page
-                        format: int32
-                      sortCondition:
-                        type: object
-                        title: sort_condition
-                        additionalProperties:
-                          type: string
-                          title: value
+                    properties: *ref_4
                     additionalProperties: false
                 title: ItemServiceReadRequest
                 additionalProperties: false
@@ -665,6 +670,10 @@ paths:
                       title: Item
                       additionalProperties: false
                     title: items
+                  totalRecordCount:
+                    type: integer
+                    title: total_record_count
+                    format: int32
                   pagination:
                     title: pagination
                     nullable: true
@@ -796,6 +805,16 @@ paths:
                       title: Item
                       additionalProperties: false
                     title: items
+                  totalRecordCount:
+                    type: integer
+                    title: total_record_count
+                    format: int32
+                  pagination:
+                    title: pagination
+                    nullable: true
+                    type: object
+                    properties: *ref_4
+                    additionalProperties: false
                 title: ItemServiceUpdateResponse
                 additionalProperties: false
         default:
@@ -870,6 +889,16 @@ paths:
                       title: Item
                       additionalProperties: false
                     title: items
+                  totalRecordCount:
+                    type: integer
+                    title: total_record_count
+                    format: int32
+                  pagination:
+                    title: pagination
+                    nullable: true
+                    type: object
+                    properties: *ref_4
+                    additionalProperties: false
                 title: ItemServiceDeleteResponse
                 additionalProperties: false
         default:

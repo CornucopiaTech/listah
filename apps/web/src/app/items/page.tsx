@@ -34,7 +34,6 @@ export default function ItemsPage() {
       height: `calc(100% - ${AppBarHeight})`,
       mt: AppBarHeight, p: 1
     }}>
-      {/* <ItemsPageHeader /> */}
       <Box key='head-content'
         sx={{
           bgcolor: 'rgba(0,255,0,0.1)', display: 'flex',
@@ -47,7 +46,7 @@ export default function ItemsPage() {
           </React.Suspense>
       </Box>
       <React.Suspense fallback={<Loading />}>
-        <ItemsList traceparent={parentTraceId} url={url}/>
+        <ItemsList traceparent={parentTraceId} url={url} />
       </React.Suspense>
 
     </Box>
