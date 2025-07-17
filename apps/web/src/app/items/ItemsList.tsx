@@ -24,19 +24,11 @@ import { ErrorAlerts } from '@/components/ErrorAlert';
 import Loading from '@/components/Loading';
 
 
-async function fetchData(aurl: string, atraceparent: string, auserId: string,
-  acategory: string | string [], atags: string[], pageNum: number, pageCount: number) {
-  const req = new Request(aurl, {
+async function getItems(traceparent: string, userId: string, category: string | string [], tags: string[], pageNumber: number, recordsPerPage: number): Promise<IProtoItems|void> {
+  const req = new Request('/api/getItems', {
     method: "POST",
-    body: JSON.stringify({
-      items: [{ userId: auserId, category: acategory, tags: atags }],
-      pagination: {pageNumber: pageNum, recordsPerPage: pageCount, sortCondition: {}}
-    }),
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "*/*",
-      "traceparent": atraceparent,
-    },
+    body: JSON.stringify({traceparent, userId, category, tags, pageNumber, recordsPerPage}),
+    headers: { "Content-Type": "application/json", "Accept": "*/*", traceparent,},
   });
   const res = await fetch(req);
   if (!res.ok) {
@@ -46,21 +38,19 @@ async function fetchData(aurl: string, atraceparent: string, auserId: string,
 }
 
 
-export default function ItemsList({ traceparent, url }: {
-  traceparent: string, url: string, countUrl: string
-}): React.ReactNode  {
+export default function ItemsList({ traceparent }: { traceparent: string }): React.ReactNode  {
   const recordsPerPage = 12;
   const [page, setPage] = React.useState(1);
 
   const itemsKey = "itemsListing";
-  const userId = "5076cbfa-9fa5-4a8c-8a87-7e534011457a";
+  const userId = "4d56128c-5042-4081-a0ef-c2d064700191";
   const category = "";
   const tags: string[] = [];
 
 
    const { isPending, isError, data, error }: UseQueryResult<IProtoItems> = useQuery({
-     queryKey: [itemsKey, url, traceparent, userId, category, tags, page, recordsPerPage],
-     queryFn: () => fetchData(url, traceparent, userId, category, tags, page, recordsPerPage)
+     queryKey: [itemsKey, traceparent, userId, category, tags, page, recordsPerPage],
+     queryFn: () => getItems(traceparent, userId, category, tags, page, recordsPerPage)
    });
 
   if (isPending) { return <Loading />; }

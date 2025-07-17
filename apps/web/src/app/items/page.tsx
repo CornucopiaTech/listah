@@ -1,5 +1,5 @@
 
-import * as React from 'react';
+import { Suspense } from 'react';
 
 import {
   Box
@@ -26,28 +26,21 @@ export default function ItemsPage() {
 
   const { traceparent, b3 } = output;
   const parentTraceId = traceparent ? traceparent : b3 ? b3 : "";
-  let url = process.env.LISTAH_API_ITEMS_READ ? process.env.LISTAH_API_ITEMS_READ : process.env.NEXT_PUBLIC_LISTAH_API_ITEMS_READ;
-
   return (
-    <Box sx={{
-      bgcolor: 'pink',
-      height: `calc(100% - ${AppBarHeight})`,
-      mt: AppBarHeight, p: 1
-    }}>
+    <Box  sx={{ bgcolor: 'pink', height: `calc(100% - ${AppBarHeight})`,
+            mt: AppBarHeight, p: 1 }}>
       <Box key='head-content'
-        sx={{
-          bgcolor: 'rgba(0,255,0,0.1)', display: 'flex',
-          my: 2, justifyContent: 'space-between'
-        }}>
-          <React.Suspense fallback={<Loading />}>
+        sx={{ bgcolor: 'rgba(0,255,0,0.1)', display: 'flex',
+          my: 2, justifyContent: 'space-between' }}>
+          <Suspense fallback={<Loading />}>
             <ItemsDrawer />
             <ItemsSearch />
             <ItemsDatePicker />
-          </React.Suspense>
+          </Suspense>
       </Box>
-      <React.Suspense fallback={<Loading />}>
-        <ItemsList traceparent={parentTraceId} url={url} />
-      </React.Suspense>
+      <Suspense fallback={<Loading />}>
+        <ItemsList traceparent={parentTraceId} />
+      </Suspense>
 
     </Box>
   );

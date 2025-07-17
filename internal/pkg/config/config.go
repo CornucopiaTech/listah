@@ -76,8 +76,7 @@ func Init() (*Config, error) {
 	t := loadInstrumentation()
 
 	return &Config{
-		// AppName:         fmt.Sprintf("%s-api", appName),
-		AppName:         appName,
+		AppName:         fmt.Sprintf("%s-api", appName),
 		Env:             loadEnv(),
 		ProjectRoot:     loadProjectRoot(),
 		Api:             a,

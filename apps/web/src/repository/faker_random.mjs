@@ -21,9 +21,7 @@ export function getData(arraySize) {
   allCategory = faker.helpers.uniqueArray(allCategory, maxUniqueCategories);
   allUserIds = faker.helpers.uniqueArray(allUserIds, maxUniqueUsers);
 
-  let combFaked = []
-  for (var i = 0; i < Math.ceil(arraySize, 100000); i++) {
-    let subFaked = faker.helpers.multiple(
+  let combFaked = faker.helpers.multiple(
       () => ({
         id: faker.string.uuid(),
         userId: faker.helpers.arrayElement(allUserIds),
@@ -51,10 +49,6 @@ export function getData(arraySize) {
       }),
       { count: arraySize }
     );
-    combFaked = combFaked.concat(subFaked);
-  }
-
-
   fs.writeFile(
     path.join(import.meta.dirname, 'fake_data_w_props.json'),
     JSON.stringify(combFaked),
@@ -62,10 +56,11 @@ export function getData(arraySize) {
       // In case of a error throw err.
       if (err) throw err;
   });
-};
+}
 
 
-getData(10000);
+
+getData(2000);
 
 
 
