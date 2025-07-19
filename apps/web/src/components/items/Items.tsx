@@ -11,13 +11,13 @@ import {
   useQuery,
 } from '@tanstack/react-query';
 import type {  UseQueryResult } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import {
   Box,
   Paper,
   Typography,
   Pagination,
   Stack,
-  Link,
   Chip,
   Tooltip
 } from '@mui/material';
@@ -149,7 +149,7 @@ export default function Items() {
     </Box>
   );
 
-  return (
+  const result = (
     <Fragment>
       <Box sx={{ height: '100%', bgcolor: 'paper', }}>
         <Box  key='top-pagination'>
@@ -166,7 +166,8 @@ export default function Items() {
             <Paper key={val.id + "-content"}>
               <Box key={val.id} sx={{ maxHeight: 360, p: 1.5, }}>
                 <Typography key='link' variant="body1" component="div" sx={{ p: 0.6, }}>
-                  <Link color="text.primary" href={`/item/${val.id}`}>
+                  <Link to="/item"
+                    search={{ id: val.id, userId, category, tags}}>
                     {val.summary.length > 80 ? val.summary.substring(0, 80) + '...' : val.summary}
                   </Link>
                 </Typography>
@@ -204,17 +205,6 @@ export default function Items() {
       </Box>
     </Fragment>
   );
-
-  const result = (
-    <div className="text-center">
-      <ul>
-      {
-        data.items.map((i: any, _: any) => <li key={i.id}> {i.summary}</li>)
-      }
-      </ul>
-    </div>
-  );
-  // span.end();
-  // parentSpan.end();
+  parentSpan.end();
   return result;
 }

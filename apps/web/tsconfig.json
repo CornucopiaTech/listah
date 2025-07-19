@@ -1,5 +1,5 @@
 {
-  "include": ["**/*.ts", "**/*.tsx", "eslint.config.js", "prettier.config.js", "vite.config.js", "src/routes/items.index.tsx.bkup.2025-07-18-1448"],
+  "include": ["**/*.ts", "**/*.tsx", "eslint.config.js", "prettier.config.js", "vite.config.js", "src/routes/items.index.tsx.bkup.2025-07-18-1448", "src/routes/item.$id.index.tsx.bkup"],
 
   "compilerOptions": {
     "target": "ES2022",
