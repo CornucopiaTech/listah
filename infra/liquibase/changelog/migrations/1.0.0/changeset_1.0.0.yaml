@@ -49,6 +49,9 @@ databaseChangeLog:
                 - column:
                     name:  audit
                     type:  json
+                - column:
+                    name:  soft_delete
+                    type:  boolean
 
         -  addUniqueConstraint:
             columnNames:  id, user_id
@@ -85,4 +88,3 @@ databaseChangeLog:
                 - column:
                     name:  request_time
                     type:  timestamp
-

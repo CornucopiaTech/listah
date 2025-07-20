@@ -29,7 +29,9 @@
     "prisma:reset": "prisma migrate reset",
     "prisma:val": "prisma validate",
     "web:refresh-dev": "clear && cd ./apps/web && rm -rf .next .clerk && npm run dev ",
-    "web:dev": "clear && cd ./apps/web && npm run dev "
+    "web:dev": "clear && cd ./apps/web && npm run dev ",
+    "web-tanstack-router:refresh-dev": "clear && cd ./apps/web-tanstack-router && rm -rf .tanstack .clerk node_modules/.vite* && npm run dev ",
+    "web-tanstack-router:dev": "clear && cd ./apps/web-tanstack-router && npm run dev "
   },
   "dependencies": {
     "@bufbuild/buf": "^1.53.0",
