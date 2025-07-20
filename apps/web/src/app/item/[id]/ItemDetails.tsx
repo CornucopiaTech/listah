@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from 'react';
 import Link from 'next/link'
 import {
   useQuery,
@@ -117,7 +116,7 @@ export default function ItemDetails({ itemId, traceparent}: {
 
   if (data.items === undefined || data.items[0] === undefined){
     return(
-      <React.Fragment>
+      <Fragment>
         <Box sx={{ height: '100%', bgcolor: 'paper', }}>
           <Box sx={{
               width: '100%', display: 'grid', gap: 3,
@@ -130,7 +129,7 @@ export default function ItemDetails({ itemId, traceparent}: {
           </Box>
 
         </Box>
-      </React.Fragment>
+      </Fragment>
     );
   }
 

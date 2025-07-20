@@ -5,7 +5,6 @@ import {
   QueryClientProvider
 } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { Provider as ReduxProvider} from 'react-redux';
 import { ThemeProvider } from '@mui/material/styles';
 import {
   Box,
@@ -13,7 +12,6 @@ import {
 import { enableMapSet } from 'immer';
 
 
-// import { store } from '@/lib/state/store';
 import { AppNavBar} from '@/components/AppNavBar';
 import Loading from '@/components/Loading';
 import theme from '@/lib/theme';

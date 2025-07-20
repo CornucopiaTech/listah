@@ -1,5 +1,6 @@
 'use client'
-import * as React from 'react';
+import { Suspense, Fragment, ReactNode } from 'react';
+
 import {
   QueryClient,
   QueryClientProvider
@@ -13,26 +14,28 @@ import {
   Box,
 } from '@mui/material';
 import { AppNavBar} from '@/components/AppNavBar';
-
+import Loading from '@/components/Loading';
 import theme from '@/lib/theme';
 
 
 export default function PageLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>){
   return (
-    <React.Fragment>
+    <Fragment>
         <QueryClientProvider client={new QueryClient()}>
           <ReactQueryDevtools initialIsOpen={false} />
           <ThemeProvider theme={theme}>
             <Box sx={{ bgcolor: 'teal', height: '100%' }}>
               <AppNavBar />
-              {children}
+              <Suspense fallback={<Loading />}>
+                {children}
+              </Suspense>
             </Box>
           </ThemeProvider>
         </QueryClientProvider>
-    </React.Fragment>
+    </Fragment>
   );
 }
