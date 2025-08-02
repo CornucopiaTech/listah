@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link';
 import {
   SignInButton,
   SignUpButton,
@@ -12,7 +13,6 @@ import {
   Box,
   Toolbar,
   Typography,
-  Link,
   Tooltip
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
@@ -41,7 +41,7 @@ export function AppNavBar() {
 
             {/* Items + Tags + Settings*/}
             <Tooltip title="View all items">
-              <Link href="/items" underline="hover"
+              <Link href="/items/read" underline="hover"
                     style={{
                             // ToDo: Set the link colour to secondary defined in the colour theme and not hard coded.
                             color: "white",

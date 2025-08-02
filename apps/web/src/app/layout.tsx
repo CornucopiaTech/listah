@@ -37,7 +37,7 @@ export default function RootLayout({
             <head>
             </head>
             <body>
-              <Box sx={{ bgcolor: '#cfe8fc', minHeight: '720px', height: '100%' }}>
+              <Box sx={{ /*bgcolor: '#cfe8fc',*/ minHeight: '720px', height: '100%' }}>
                 <Container maxWidth="lg">
                   {children}
                 </Container>

@@ -30,7 +30,7 @@ export default function PageLayout({
         <QueryClientProvider client={new QueryClient()}>
           <ReactQueryDevtools initialIsOpen={false} />
           <ThemeProvider theme={theme}>
-            <Box sx={{ bgcolor: 'teal', height: '100%' }}>
+            <Box sx={{ /*bgcolor: 'teal',*/ height: '100%' }}>
               <AppNavBar />
               <Suspense fallback={<Loading />}>
                 {children}

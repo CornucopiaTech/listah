@@ -51,6 +51,8 @@ export interface ItemsStateInterface {
   currentPage: number, //current page
   categoryFilter: string | string[],
   tagFilter: string[],
+  modalOpen: boolean,
+
 }
 
 export interface ItemsAppStateInterface {
