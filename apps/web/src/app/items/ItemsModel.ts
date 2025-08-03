@@ -22,14 +22,14 @@ export interface IProtoItem {
   userId: string
   title: string
   summary: string
-  category: string
+  category: string | string[]
   description: string
   note: string
   tags: string[]
-  soft_delete: boolean,
+  softDelete: boolean,
   properties: { [index: string]: string }
   reactivateAt: string
-  audit: Audit
+  audit?: Audit
 }
 
 

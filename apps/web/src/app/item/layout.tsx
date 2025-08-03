@@ -8,7 +8,7 @@ import {
 
 
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-
+import { UpdatedItemStoreProvider } from '@/lib/store/updatedItem/UpdatedItemStoreProvider';
 import { ThemeProvider } from '@mui/material/styles';
 import {
   Box,
@@ -26,6 +26,7 @@ export default function PageLayout({
   return (
     <Fragment>
         <QueryClientProvider client={new QueryClient()}>
+          <UpdatedItemStoreProvider>
           <ReactQueryDevtools initialIsOpen={false} />
           <ThemeProvider theme={theme}>
             <Box sx={{ /*bgcolor: 'teal',*/ height: '100%' }}>
@@ -35,6 +36,7 @@ export default function PageLayout({
               </Suspense>
             </Box>
           </ThemeProvider>
+          </UpdatedItemStoreProvider>
         </QueryClientProvider>
     </Fragment>
   );

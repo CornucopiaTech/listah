@@ -147,8 +147,8 @@ export function ItemModalDisabled(
     open: boolean,
     handleOpen: () => void,
     handleClose: () => void,
-    handleEdit: (value: string) => void,
-    handleDelete: (value: string) => void,
+    handleEdit: (value: IProtoItem) => void,
+    handleDelete: (value: IProtoItem) => void,
 
   }
 ): ReactNode {
@@ -174,11 +174,11 @@ export function ItemModalDisabled(
                 <Tooltip title="Close"><Close/></Tooltip>
               </IconButton>
               {/* <IconButton onClick={ () => router.push(`/item/${item.id}/update`) }> */}
-              <IconButton onClick={() => handleEdit(item.id)}>
+              <IconButton onClick={() => handleEdit(item)}>
                 <Tooltip title="Edit"><Create/></Tooltip>
               </IconButton>
               {/* <IconButton onClick={ () => router.push(`/item/${item.id}/delete`)  }> */}
-              <IconButton onClick={ () => handleDelete(item.id) }>
+              <IconButton onClick={ () => handleDelete(item) }>
                 <Tooltip title="Delete"><Delete/></Tooltip>
               </IconButton>
             </Stack>

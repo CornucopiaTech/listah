@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { createStore } from 'zustand/vanilla';
 
+import type { IProtoItems, IProtoItem } from '@/app/items/ItemsModel';
+
 export type ItemsState = {
   pageRecordCount: number, //records per page
   currentPage: number, //current page
@@ -8,6 +10,7 @@ export type ItemsState = {
   tagFilter: string[],
   modalOpen: boolean,
   inEditMode: boolean,
+  editedItem: IProtoItem | null,
 }
 
 export type ItemsActions = {
@@ -27,19 +30,21 @@ export const defaultPagesInitState: ItemsState = {
   tagFilter: [],
   modalOpen: false,
   inEditMode: false,
+  editedItem: null
 }
 export const createItemsStore = (
   initState: ItemsState = defaultPagesInitState,
 ) => {
   return createStore<ItemsStore>()((set) => ({
     ...initState,
-    updateItemsPageRecordCount: (recordCount: number) => set((state) => ({ pageRecordCount: recordCount})),
-    updateItemsCurrentPage: (currentPage: number) => set((state) => ({ currentPage })),
+    updateItemsPageRecordCount: (recordCount: number) => set(() => ({ pageRecordCount: recordCount})),
+    updateItemsCurrentPage: (currentPage: number) => set(() => ({ currentPage })),
     updateItemsCategoryFilter: (category: string[] | string) => set(
       (state) => ({ categoryFilter: [...state.categoryFilter, ...category]})
     ),
     updateItemsTagFilter: (tags: string[]) => set((state) => ({ tagFilter: [...state.tagFilter, ...tags]})),
-    updateModal: (modalOpen: boolean) => set((state) => ({ modalOpen })),
-    updateEditMode: (inEditMode: boolean) => set((state) => ({ inEditMode })),
+    updateModal: (modalOpen: boolean) => set(() => ({ modalOpen })),
+    updateEditMode: (inEditMode: boolean) => set(() => ({ inEditMode })),
+    updateEditedItem: (inEditMode: boolean) => set(() => ({ inEditMode })),
   }))
 }

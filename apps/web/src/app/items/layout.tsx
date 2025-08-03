@@ -15,10 +15,12 @@ import { enableMapSet } from 'immer';
 import { AppNavBar} from '@/components/AppNavBar';
 import Loading from '@/components/Loading';
 import theme from '@/lib/theme';
-import { ItemsStoreProvider } from "@/lib/store/items/ItemStoreProvider";
+import { ItemsStoreProvider } from "@/lib/store/items/ItemsStoreProvider";
+import { UpdatedItemStoreProvider } from '@/lib/store/updatedItem/UpdatedItemStoreProvider';
 
 enableMapSet();
 
+// ToDo: Fix Zustand subscribing to multiple stores.
 export default function PageLayout({
   children,
 }: Readonly<{
@@ -27,17 +29,19 @@ export default function PageLayout({
   return (
     <Fragment>
       <ItemsStoreProvider>
-        <QueryClientProvider client={new QueryClient()}>
-          <ReactQueryDevtools initialIsOpen={false} />
-          <ThemeProvider theme={theme}>
-            <Box sx={{ /*bgcolor: 'teal',*/ height: '100%' }}>
-              <AppNavBar />
-              <Suspense fallback={<Loading />}>
-                {children}
-              </Suspense>
-            </Box>
-          </ThemeProvider>
-        </QueryClientProvider>
+        <UpdatedItemStoreProvider>
+          <QueryClientProvider client={new QueryClient()}>
+            <ReactQueryDevtools initialIsOpen={false} />
+            <ThemeProvider theme={theme}>
+              <Box sx={{ /*bgcolor: 'teal',*/ height: '100%' }}>
+                <AppNavBar />
+                <Suspense fallback={<Loading />}>
+                  {children}
+                </Suspense>
+              </Box>
+            </ThemeProvider>
+          </QueryClientProvider>
+        </UpdatedItemStoreProvider>
       </ItemsStoreProvider>
     </Fragment>
   );

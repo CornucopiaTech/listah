@@ -45,7 +45,7 @@ import {
 } from '@mui/icons-material';
 
 
-import { useItemsStore } from '@/lib/store/items/ItemStoreProvider';
+import { useItemsStore } from '@/lib/store/items/ItemsStoreProvider';
 import { ItemsDrawer } from "@/app/items/read/ItemsDrawer";
 import ItemsDatePicker from "@/app/items/read/ItemsDatePicker";
 import ItemsSearch from '@/app/items/read/ItemsSearch';

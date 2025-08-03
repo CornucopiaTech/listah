@@ -4,7 +4,7 @@
 import { type ReactNode, createContext, useRef, useContext } from 'react'
 import { useStore } from 'zustand'
 
-import { type ItemsStore, createItemsStore } from '@/lib/store/items/itemStore';
+import { type ItemsStore, createItemsStore } from '@/lib/store/items/itemsStore';
 
 export type ItemsStoreApi = ReturnType<typeof createItemsStore>
 
@@ -37,7 +37,7 @@ export const useItemsStore = <T,>(
   const itemsStoreContext = useContext(ItemsStoreContext)
 
   if (!itemsStoreContext) {
-    throw new Error(`useCounterStore must be used within CounterStoreProvider`)
+    throw new Error(`useItemsStore must be used within ItemsStoreProvider`)
   }
 
   return useStore(itemsStoreContext, selector)
