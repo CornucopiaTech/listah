@@ -70,6 +70,6 @@ export const createUpdatedItemStore = (
     updateSoftDelete: (softDelete: boolean) => set((state) => ({ ...state, item: { ...state.item, softDelete }})),
     updateProperties: (properties: { [index: string]: string }) => set((state) => ({ ...state, item: { ...state.item, properties }})),
     updateReactivateAt: (reactivateAt: string) => set((state) => ({ ...state, item: { ...state.item, reactivateAt }})),
-    updateNewTag: (newTag: string) => set((state) => ({ ...state, item: { ...state.item, newTag }})),
+    updateNewTag: (newTag: string) => set(() => ({ newTag })),
   }))
 }

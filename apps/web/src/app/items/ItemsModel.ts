@@ -20,7 +20,6 @@ export interface Audit {
 export interface IProtoItem {
   id: string
   userId: string
-  title: string
   summary: string
   category: string | string[]
   description: string
@@ -47,7 +46,7 @@ export interface IProtoItems {
 
 
 export interface ItemsStateInterface {
-  pageRecordCount: number, //records per page
+  itemsPerPage: number, //records per page
   currentPage: number, //current page
   categoryFilter: string | string[],
   tagFilter: string[],

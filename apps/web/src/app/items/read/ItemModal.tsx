@@ -59,7 +59,7 @@ export function ItemModalEnabled(
   const router = useRouter();
 
   return (
-    <Modal
+    <Modal key={`${item.id}-modal`}
           open={open}
           onClose={handleClose}
           aria-labelledby="modal-modal-title"
@@ -157,6 +157,7 @@ export function ItemModalDisabled(
 
   return (
     <Modal
+          key={`${item.id}-modal`}
           open={open}
           onClose={handleClose}
           aria-labelledby="modal-modal-title"
@@ -173,11 +174,9 @@ export function ItemModalDisabled(
               <IconButton onClick={handleClose}>
                 <Tooltip title="Close"><Close/></Tooltip>
               </IconButton>
-              {/* <IconButton onClick={ () => router.push(`/item/${item.id}/update`) }> */}
               <IconButton onClick={() => handleEdit(item)}>
                 <Tooltip title="Edit"><Create/></Tooltip>
               </IconButton>
-              {/* <IconButton onClick={ () => router.push(`/item/${item.id}/delete`)  }> */}
               <IconButton onClick={ () => handleDelete(item) }>
                 <Tooltip title="Delete"><Delete/></Tooltip>
               </IconButton>

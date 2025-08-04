@@ -28,7 +28,7 @@ export function ItemDetailsPageChild() {
   const params = useParams<{ id: string }>()
   const { id } = params;
   const {
-    pageRecordCount,
+    itemsPerPage,
     currentPage,
     categoryFilter,
     tagFilter,

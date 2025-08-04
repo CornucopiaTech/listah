@@ -70,6 +70,10 @@ paths:
                         additionalProperties:
                           type: string
                           title: value
+                      softDelete:
+                        type: boolean
+                        title: soft_delete
+                        nullable: true
                       reactivateAt:
                         title: reactivate_at
                         nullable: true

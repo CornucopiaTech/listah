@@ -13,80 +13,60 @@ import {
   ListItemText,
   ListItemButton,
 } from '@mui/material';
-// import {
-
-// } from '@mui/icons-material';
+import {
+  useSearchParams, usePathname, useRouter
+} from 'next/navigation';
 
 import type {  IProtoItem } from '@/app/items/ItemsModel';
+import type { ItemsState, } from '@/lib/store/items/itemsStore';
+import { useUpdatedItemStore } from '@/lib/store/updatedItem/UpdatedItemStoreProvider';
+import { useItemsStore, } from '@/lib/store/items/ItemsStoreProvider';
+import { ItemsDrawer } from "@/app/items/read/ItemsDrawer";
+import ItemsDatePicker from "@/app/items/read/ItemsDatePicker";
+import ItemsSearch from '@/app/items/read/ItemsSearch';
+import { AppBarHeight } from '@/components/AppNavBar';
+import Loading from '@/components/Loading';
+import { ErrorAlerts } from '@/components/ErrorAlert';
+import MenuSelect from '@/components/MenuSelect';
+import {ItemModalEnabled, ItemModalDisabled} from './ItemModal';
+import ItemsPagination from './ItemsPagination';
+import ItemNoContent from './ItemsNoContent';
 
 
-export default function ItemsListStack({
-  item, handleOpen
-}: {
-  item: IProtoItem,
-  handleOpen: () => void,
-}): ReactNode {
+export default function ItemsListStack({ item }: { item: IProtoItem }): ReactNode {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const {
+    itemsPerPage,
+    currentPage,
+    categoryFilter,
+    tagFilter,
+    modalOpen,
+    inEditMode,
+    updateItemsPageRecordCount,
+    updateItemsCurrentPage,
+    updateItemsCategoryFilter,
+    updateItemsTagFilter,
+    updateModal,
+    updateEditMode,
+
+  } = useItemsStore((state) => state);
+  const {
+    setState
+  } = useUpdatedItemStore((state) => state);
+
+
+  function handleClick(item: ItemsState | IProtoItem){
+    updateEditMode(false);
+    setState(item);
+    const q = window.btoa(JSON.stringify(item));
+    router.push(`/item/read?q=${q}`);
+  }
+
   return (
-    <ListItemButton key={item.id} onClick={handleOpen}>
+    <ListItemButton key={item.id} onClick={() => handleClick(item)}>
       <ListItemText primary={item.summary} />
     </ListItemButton>
-  );
-}
-
-export function ItemsListStackDetails({
-  item, handleOpen
-}: {
-  item: IProtoItem,
-  handleOpen: () => void,
-}): ReactNode {
-  return (
-    <Stack
-        key={item.id} direction="row"
-        sx={{ width: '100%', justifyContent: 'flex-start',
-              dislay: 'inline-flex',}}>
-      <Box key={item.id} sx={{ maxHeight: 200, p: 1}}>
-        <Typography
-            key='summary-link' variant="body1" component="div"
-            sx={{ p: 0.1, textOverflow: 'ellipsis'}}>
-          <Link color="text.primary" href={`/item/${item.id}/read`}>
-            {item.summary}
-          </Link>
-        </Typography>
-        {/* <Typography
-            key='description' component="div" variant="caption"
-            color="text.secondary"
-            sx={{ p: 0.2, textOverflow: 'ellipsis'}}>
-          {item.description}
-        </Typography> */}
-        {/* <Stack
-            direction="row"
-            sx={{ width: '100%', justifyContent: 'space-between', dislay: 'inline-flex'}}
-          >
-          <Box>
-            <Chip
-              key='category'
-              label={item.category}
-              size="small"
-              color="primary"
-              sx={{ p: 0.5, m: 0.3, textTransform: 'capitalize'}}
-            />
-            {
-              item.tags.length > 0 ? (
-                item.tags.map((tag: string, index: number) => (
-                  <Chip
-                    key={tag + '-' + index}
-                    label={tag}
-                    size="small"
-                    color="secondary"
-                    sx={{ p: 0.5, m: 0.3, }}
-                  />
-                ))
-              ) : ""
-            }
-          </Box>
-          <Button onClick={handleOpen}>See More</Button>
-        </Stack> */}
-      </Box>
-    </Stack>
   );
 }

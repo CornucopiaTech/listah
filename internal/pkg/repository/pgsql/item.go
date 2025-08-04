@@ -42,7 +42,18 @@ func (a *item) Select(ctx context.Context, m interface{}, c *[]model.WhereClause
 	}
 	selectQuery := qb.Unwrap().(*bun.SelectQuery)
 
-	count, err := selectQuery.OrderExpr(s).Limit(l).Offset(o).ScanAndCount(ctx)
+	if (s != ""){
+		selectQuery = selectQuery.OrderExpr(s)
+	}
+	if ( l != 0){
+		selectQuery = selectQuery.Limit(l)
+	}
+	if ( o != 0){
+		selectQuery = selectQuery.Offset(o)
+	}
+
+	// count, err := selectQuery.OrderExpr(s).Limit(l).Offset(o).ScanAndCount(ctx)
+	count, err := selectQuery.ScanAndCount(ctx)
 	if err != nil {
 		a.logger.LogError(ctx, svcName, activity, "Error occured", errors.Cause(err).Error())
 		return 0, err

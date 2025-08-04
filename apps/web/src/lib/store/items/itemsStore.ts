@@ -4,7 +4,7 @@ import { createStore } from 'zustand/vanilla';
 import type { IProtoItems, IProtoItem } from '@/app/items/ItemsModel';
 
 export type ItemsState = {
-  pageRecordCount: number, //records per page
+  itemsPerPage: number, //records per page
   currentPage: number, //current page
   categoryFilter: string | string[],
   tagFilter: string[],
@@ -24,7 +24,7 @@ export type ItemsActions = {
 
 export type ItemsStore = ItemsState & ItemsActions
 export const defaultPagesInitState: ItemsState = {
-  pageRecordCount: 20,
+  itemsPerPage: 20,
   currentPage: 1,
   categoryFilter: "",
   tagFilter: [],
@@ -37,7 +37,7 @@ export const createItemsStore = (
 ) => {
   return createStore<ItemsStore>()((set) => ({
     ...initState,
-    updateItemsPageRecordCount: (recordCount: number) => set(() => ({ pageRecordCount: recordCount})),
+    updateItemsPageRecordCount: (recordCount: number) => set(() => ({ itemsPerPage: recordCount})),
     updateItemsCurrentPage: (currentPage: number) => set(() => ({ currentPage })),
     updateItemsCategoryFilter: (category: string[] | string) => set(
       (state) => ({ categoryFilter: [...state.categoryFilter, ...category]})

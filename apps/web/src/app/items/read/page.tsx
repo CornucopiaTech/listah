@@ -4,7 +4,9 @@ import {
   Fragment,
   ReactNode,
 } from 'react';
-import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import {
+  useSearchParams, usePathname, useRouter
+} from 'next/navigation';
 // import Link from 'next/link';
 import {
   useQuery,
@@ -27,7 +29,8 @@ import {
 
 
 import { useUpdatedItemStore } from '@/lib/store/updatedItem/UpdatedItemStoreProvider';
-import { useItemsStore } from '@/lib/store/items/ItemsStoreProvider';
+import { useItemsStore, } from '@/lib/store/items/ItemsStoreProvider';
+import { type ItemsState, } from '@/lib/store/items/itemsStore';
 import { ItemsDrawer } from "@/app/items/read/ItemsDrawer";
 import ItemsDatePicker from "@/app/items/read/ItemsDatePicker";
 import ItemsSearch from '@/app/items/read/ItemsSearch';
@@ -66,7 +69,7 @@ export default function ItemsRead(): ReactNode {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const {
-    pageRecordCount,
+    itemsPerPage,
     currentPage,
     categoryFilter,
     tagFilter,
@@ -78,6 +81,7 @@ export default function ItemsRead(): ReactNode {
     updateItemsTagFilter,
     updateModal,
     updateEditMode,
+
   } = useItemsStore((state) => state);
   const {
     setState
@@ -85,11 +89,10 @@ export default function ItemsRead(): ReactNode {
 
 
   const userId: string = "4d56128c-5042-4081-a0ef-c2d064700191";
-  const recordsPerPage: number = pageRecordCount;
+  const recordsPerPage: number = itemsPerPage;
   const page: number = currentPage;
   const category: string[] | string = categoryFilter;
   const tags: string[] = tagFilter;
-
 
   function handlePageChange(event: React.ChangeEvent<unknown>, value: number) {
     updateItemsCurrentPage(value);
@@ -103,13 +106,17 @@ export default function ItemsRead(): ReactNode {
     updateModal(!modalOpen);
   }
 
-  function handleEditClick(item: IProtoItem){
+  function handleItemClick(item: ItemsState){
+    updateEditMode(false);
+    setState(item);
+    const q = window.btoa(JSON.stringify(item));
+    router.push(`/item/read?q=${q}`);
+  }
+
+  function handleEditClick(item: ItemsState){
     updateEditMode(true);
     setState(item);
-    // const q = new URLSearchParams(JSON.stringify(item)).toString();
-    const q = window.btoa(JSON.stringify(item))
-    // console.info("Query arg: ")
-    // console.info(q);
+    const q = window.btoa(JSON.stringify(item));
     router.push(`/item/update?q=${q}`);
   }
 
@@ -130,9 +137,6 @@ export default function ItemsRead(): ReactNode {
 
   if (items === undefined || items.length == 0){return<ItemNoContent />;}
 
-  // const textEncoder = new TextEncoder();
-  // console.info();
-  // console.info(JSON.stringify(items[0]));
 
   return (
     <Fragment>
@@ -149,14 +153,8 @@ export default function ItemsRead(): ReactNode {
         <Box key="data-content" sx={{width: '100%', display: 'block',}} >
           {items.map((val: IProtoItem, id: number) => (
             <Fragment key={val.id + '-' + id}>
-              <ItemsListStack item={val} handleOpen={toggleModal}/>
+              <ItemsListStack item={val} />
               <Divider/>
-              <ItemModalDisabled item={val} open={modalOpen}
-                  handleOpen={toggleModal}
-                  handleClose={toggleModal}
-                  handleEdit={handleEditClick}
-                  handleDelete={handleDeleteClick}
-                />
             </Fragment>
           ))}
         </Box>
