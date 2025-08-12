@@ -325,19 +325,33 @@ components:
     listah.v1.Pagination:
       type: object
       properties:
-        offset:
-          type: string
-          title: offset
-        recordsCount:
+        pageNumber:
           type: integer
-          title: records_count
+          title: page_number
           format: int32
-        sorterr:
-          type: array
-          items:
+        recordsPerPage:
+          type: integer
+          title: records_per_page
+          format: int32
+        sortCondition:
+          type: object
+          title: sort_condition
+          additionalProperties:
             type: string
-          title: sorterr
+            title: value
+          description: int32 total_record_count = 3;
       title: Pagination
+      additionalProperties: false
+    listah.v1.Pagination.SortConditionEntry:
+      type: object
+      properties:
+        key:
+          type: string
+          title: key
+        value:
+          type: string
+          title: value
+      title: SortConditionEntry
       additionalProperties: false
     listah.v1.Item:
       type: object
@@ -373,6 +387,10 @@ components:
           additionalProperties:
             type: string
             title: value
+        softDelete:
+          type: boolean
+          title: soft_delete
+          nullable: true
         reactivateAt:
           title: reactivate_at
           nullable: true
@@ -416,10 +434,18 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
+        totalRecordCount:
+          type: integer
+          title: total_record_count
+          format: int32
         audit:
           title: audit
           nullable: true
           $ref: '#/components/schemas/listah.v1.Audit'
+        pagination:
+          title: pagination
+          nullable: true
+          $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceCreateResponse
       additionalProperties: false
     listah.v1.ItemServiceDeleteRequest:
@@ -444,6 +470,14 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
+        totalRecordCount:
+          type: integer
+          title: total_record_count
+          format: int32
+        pagination:
+          title: pagination
+          nullable: true
+          $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceDeleteResponse
       additionalProperties: false
     listah.v1.ItemServiceReadRequest:
@@ -454,10 +488,6 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
-        audit:
-          title: audit
-          nullable: true
-          $ref: '#/components/schemas/listah.v1.Audit'
         pagination:
           title: pagination
           nullable: true
@@ -472,6 +502,10 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
+        totalRecordCount:
+          type: integer
+          title: total_record_count
+          format: int32
         pagination:
           title: pagination
           nullable: true
@@ -500,6 +534,14 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
+        totalRecordCount:
+          type: integer
+          title: total_record_count
+          format: int32
+        pagination:
+          title: pagination
+          nullable: true
+          $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceUpdateResponse
       additionalProperties: false
     encoding:

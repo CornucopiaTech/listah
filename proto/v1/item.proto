@@ -16,11 +16,12 @@ message Item {
     string id = 1;
     string user_id = 2 [json_name = "userId"];
     string summary = 3;
-    string category = 8;
-    optional string description = 4;
-    optional string note = 5;
-    repeated string tags = 6;
-    map<string,string> properties = 7;
+    string category = 4;
+    optional string description = 5;
+    optional string note = 6;
+    repeated string tags = 7;
+    map<string,string> properties = 8;
+    optional bool soft_delete = 9;
     optional google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
     optional Audit audit = 50;
 }
@@ -31,19 +32,20 @@ message ItemServiceCreateRequest {
 }
 message ItemServiceCreateResponse {
   repeated Item items = 1;
+  int32 total_record_count = 2;
   optional Audit audit = 50;
+  optional Pagination pagination = 100;
 }
 
 message ItemServiceReadRequest {
   repeated Item items = 1;
-  optional Audit audit = 50;
   optional Pagination pagination = 100;
 }
 message ItemServiceReadResponse {
   repeated Item items = 1;
+  int32 total_record_count = 2;
   optional Pagination pagination = 100;
 }
-
 
 message ItemServiceUpdateRequest {
   repeated Item items = 1;
@@ -51,9 +53,9 @@ message ItemServiceUpdateRequest {
 }
 message ItemServiceUpdateResponse {
   repeated Item items = 1;
+  int32 total_record_count = 2;
+  optional Pagination pagination = 100;
 }
-
-
 
 message ItemServiceDeleteRequest {
   repeated Item items = 1;
@@ -61,6 +63,8 @@ message ItemServiceDeleteRequest {
 }
 message ItemServiceDeleteResponse {
   repeated Item items = 1;
+  int32 total_record_count = 2;
+  optional Pagination pagination = 100;
 }
 
 

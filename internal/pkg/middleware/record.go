@@ -9,6 +9,10 @@ import (
 	"connectrpc.com/connect"
 	"github.com/google/uuid"
 	"go.opentelemetry.io/otel/trace"
+		"fmt"
+
+	"go.opentelemetry.io/otel/propagation"
+		"go.opentelemetry.io/otel"
 )
 
 const tokenHeader = "Acme-Token"
@@ -32,6 +36,32 @@ func NewAuthInterceptor() connect.UnaryInterceptorFunc {
 			return next(ctx, req)
 		})
 	}
+	return connect.UnaryInterceptorFunc(interceptor)
+}
+
+func SetParentTraceInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFunc {
+	// Create a new Middleware/interceptor
+	interceptor := func(next connect.UnaryFunc) connect.UnaryFunc {
+		// Define the handlerFunc which is called by the server eventually
+		handler := connect.UnaryFunc(func(
+			ctx context.Context,
+			req connect.AnyRequest,
+		) (connect.AnyResponse, error) {
+			// Log request in db in middleware
+			propagator := otel.GetTextMapPropagator()
+			ctx = propagator.Extract(ctx, propagation.HeaderCarrier(req.Header()))
+			fmt.Println("\n\n\n\n")
+			fmt.Printf("Header: %#v\n", req.Header())
+			fmt.Printf("%#v\n", req.Header().Get("traceparent"))
+			fmt.Println("\n\n\n\n")
+
+			// Call the next middleware/handler in chain
+			return next(ctx, req)
+		})
+		// Return newly created handler
+		return handler
+	}
+	// Return newly created middleware
 	return connect.UnaryInterceptorFunc(interceptor)
 }
 

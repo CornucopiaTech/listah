@@ -6,7 +6,7 @@
         "**/.server/**/*.tsx",
         "**/.client/**/*.ts",
         "**/.client/**/*.tsx"
-    ],
+, "apps/tanstack-router/src/routes/items.index.tsx.bkup.2025-07-18-1448", "apps/web/src/routes/item.$id.index.tsx.bkup", "apps/web/src/app/items/ItemsListInitial.tsx.bkup.2025-07-18-0000"    ],
     "compilerOptions": {
         "lib": [
             "DOM",

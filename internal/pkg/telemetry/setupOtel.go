@@ -31,6 +31,7 @@ import (
 	// "go.opentelemetry.io/otel/trace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
+	// "go.opentelemetry.io/contrib/propagators/b3"
 )
 
 // setupOTelSDK bootstraps the OpenTelemetry pipeline.
