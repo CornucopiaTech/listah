@@ -209,11 +209,6 @@ func ItemProtoToWhereClause(msg []*pb.Item) ([]model.WhereClause, error) {
 		if v.GetNote() != "" {
 			n = append(n, v.GetNote())
 		}
-
-		// softdelete
-		if v.GetSoftDelete() {
-			sd = append(sd, v.GetSoftDelete())
-		}
 	}
 
 
