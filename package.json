@@ -36,7 +36,6 @@
   "dependencies": {
     "@bufbuild/buf": "^1.53.0",
     "@faker-js/faker": "^9.9.0",
-    "@prisma/client": "^6.7.0",
     "@redocly/cli": "^2.0.2",
     "nodemon": "^3.1.10"
   },
