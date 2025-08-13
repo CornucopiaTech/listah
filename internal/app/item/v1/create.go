@@ -48,7 +48,7 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemService
 		return nil, err
 	}
 
-	qLimit := len(readModel)
+	qLimit := len(req.Msg.Items)
 	qPage := 1
 	qOffset := 0
 	qSortMap := DefaultReadPagination.SortCondition
@@ -63,6 +63,7 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemService
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
 		return nil, err
 	}
+	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository read")
 
 
 	rs, err := v1model.ItemModelToItemProto(readModel)
@@ -70,6 +71,8 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemService
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting item proto from item model", errors.Cause(err).Error())
 		return nil, err
 	}
+
+
 	resm := &pb.ItemServiceCreateResponse{
 		Items: rs,
 		TotalRecordCount: int32(recCnt),
@@ -80,6 +83,6 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemService
 		},
 	}
 
-	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository read")
+	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, "Successful item create")
 	return connect.NewResponse(resm), nil
 }
