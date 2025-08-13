@@ -9,7 +9,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/uptrace/bun"
 	"errors"
-	"strings"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -218,7 +217,7 @@ func ItemProtoToWhereClause(msg []*pb.Item) ([]model.WhereClause, error) {
 		w = append(w, model.WhereClause{
 			Placeholder: "?::VARCHAR IN (?)",
 			Column:      "id",
-			Value:       strings.Join(i, ", "),
+			Value:       bun.In(i),
 		})
 	}
 
@@ -228,7 +227,7 @@ func ItemProtoToWhereClause(msg []*pb.Item) ([]model.WhereClause, error) {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "user_id",
-			Value:       strings.Join(u, ", "),
+			Value:       bun.In(u),
 		})
 	}
 
@@ -237,7 +236,7 @@ func ItemProtoToWhereClause(msg []*pb.Item) ([]model.WhereClause, error) {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "summary",
-			Value:       strings.Join(s, ", "),
+			Value:       bun.In(s),
 		})
 	}
 
@@ -246,7 +245,7 @@ func ItemProtoToWhereClause(msg []*pb.Item) ([]model.WhereClause, error) {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "category",
-			Value:       strings.Join(c, ", "),
+			Value:       bun.In(c),
 		})
 	}
 
@@ -255,7 +254,7 @@ func ItemProtoToWhereClause(msg []*pb.Item) ([]model.WhereClause, error) {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "description",
-			Value:       strings.Join(d, ", "),
+			Value:       bun.In(d),
 		})
 	}
 
@@ -264,16 +263,16 @@ func ItemProtoToWhereClause(msg []*pb.Item) ([]model.WhereClause, error) {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "note",
-			Value:       strings.Join(n, ", "),
+			Value:       bun.In(n),
 		})
 	}
 
-	// // softDelete
-	// w = append(w, model.WhereClause{
-	// 	Placeholder: "? = ? ",
-	// 	Column:      "soft_delete",
-	// 	Value:       false,
-	// })
+	// softDelete
+	w = append(w, model.WhereClause{
+		Placeholder: "? = ? ",
+		Column:      "soft_delete",
+		Value:       false,
+	})
 
 	return w, nil
 }
@@ -285,12 +284,11 @@ func ItemModelToWhereClause(m []*Item) ([]model.WhereClause, error) {
 	c := []string{}
 	d := []string{}
 	n := []string{}
-	sd := []bool{}
 
 	for _, v := range m {
-		// if v.UserId == "" {
-		// 	return nil, errors.New("No userId sent with request")
-		// }
+		if v.UserId == "" {
+			return nil, errors.New("No userId sent with request")
+		}
 
 		// Add Id to where clause
 		if v.Id != "" {
@@ -321,11 +319,6 @@ func ItemModelToWhereClause(m []*Item) ([]model.WhereClause, error) {
 		if v.Note != "" {
 			n = append(n, v.Note)
 		}
-
-		// softdelete
-		if v.SoftDelete {
-			sd = append(sd, v.SoftDelete)
-		}
 	}
 
 
@@ -335,7 +328,7 @@ func ItemModelToWhereClause(m []*Item) ([]model.WhereClause, error) {
 		w = append(w, model.WhereClause{
 			Placeholder: "?::VARCHAR IN (?)",
 			Column:      "id",
-			Value:       strings.Join(i, ", "),
+			Value:       bun.In(i),
 		})
 	}
 
@@ -344,7 +337,7 @@ func ItemModelToWhereClause(m []*Item) ([]model.WhereClause, error) {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "user_id",
-			Value:       strings.Join(u, ", "),
+			Value:       bun.In(u),
 		})
 	}
 
@@ -353,7 +346,7 @@ func ItemModelToWhereClause(m []*Item) ([]model.WhereClause, error) {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "summary",
-			Value:       strings.Join(s, ", "),
+			Value:       bun.In(s),
 		})
 	}
 
@@ -362,7 +355,7 @@ func ItemModelToWhereClause(m []*Item) ([]model.WhereClause, error) {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "category",
-			Value:       strings.Join(c, ", "),
+			Value:       bun.In(c),
 		})
 	}
 
@@ -371,7 +364,7 @@ func ItemModelToWhereClause(m []*Item) ([]model.WhereClause, error) {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "description",
-			Value:       strings.Join(d, ", "),
+			Value:       bun.In(d),
 		})
 	}
 
@@ -380,16 +373,16 @@ func ItemModelToWhereClause(m []*Item) ([]model.WhereClause, error) {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "note",
-			Value:       strings.Join(n, ", "),
+			Value:       bun.In(n),
 		})
 	}
 
-	// // softDelete
-	// w = append(w, model.WhereClause{
-	// 	Placeholder: "? = ? ",
-	// 	Column:      "soft_delete",
-	// 	Value:       false,
-	// })
+	// softDelete
+	w = append(w, model.WhereClause{
+		Placeholder: "? = ? ",
+		Column:      "soft_delete",
+		Value:       false,
+	})
 
 	return w, nil
 }
@@ -421,7 +414,7 @@ func ItemModelToWhereClausePkey(m []*Item) ([]model.WhereClause, error) {
 		w = append(w, model.WhereClause{
 			Placeholder: "?::VARCHAR IN (?)",
 			Column:      "id",
-			Value:       strings.Join(i, ", "),
+			Value:       bun.In(i),
 		})
 	}
 
@@ -430,7 +423,7 @@ func ItemModelToWhereClausePkey(m []*Item) ([]model.WhereClause, error) {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "user_id",
-			Value:       strings.Join(u, ", "),
+			Value:       bun.In(u),
 		})
 	}
 

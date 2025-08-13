@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	// "cornucopia/listah/internal/pkg/model"
 	v1model "cornucopia/listah/internal/pkg/model/v1"
 	pb "cornucopia/listah/internal/pkg/proto/v1"
 
