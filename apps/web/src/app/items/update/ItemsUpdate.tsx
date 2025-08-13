@@ -34,13 +34,13 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 
 
-import type { IProtoItems, IProtoItem } from '@/app/items/ItemsModel';
+import type { ItemsProto, ItemProto} from '@/app/items/ItemsModel';
 import { ErrorAlerts } from '@/components/ErrorAlert';
 import Loading from '@/components/Loading';
 
 
 
-async function deleteItems(userId: string, item: IProtoItem | IProtoItems) {
+async function deleteItems(userId: string, item: ItemProto| ItemsProto) {
   const req = new Request("/api/postItem", {
     method: "POST",
     body: JSON.stringify({userId, items: [item]}),
@@ -53,7 +53,7 @@ async function deleteItems(userId: string, item: IProtoItem | IProtoItems) {
   return res.json();
 }
 
-// export function deleteItemGroupOptions(userId: string, item: IProtoItem | string) {
+// export function deleteItemGroupOptions(userId: string, item: ItemProto| string) {
 //   return mutationOptions({
 //     mutationFn: () => deleteItems(userId, item),
 //     onSuccess: () => {
@@ -76,25 +76,25 @@ export default function ItemsUpdate(): React.ReactNode {
   const tags: string[] = [];
 
   const mutation = useMutation({
-    mutationFn: (newItem: IProtoItem | IProtoItems) => deleteItems(userId, newItem),
+    mutationFn: (newItem: ItemProto| ItemsProto) => deleteItems(userId, newItem),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["getItems"] })
     },
   });
 
-  function handleDelete (newItem: IProtoItem | IProtoItems){
+  function handleDelete (newItem: ItemProto| ItemsProto){
 
   }
 
 
-  const { isPending, isError, data, error }: UseQueryResult<IProtoItems> = useQuery(getItemsGroupOptions(userId, category, tags, pageNumber, recordsPerPage));
+  const { isPending, isError, data, error }: UseQueryResult<ItemsProto> = useQuery(getItemsGroupOptions(userId, category, tags, pageNumber, recordsPerPage));
 
   if (isPending) { return <Loading />; }
   if (isError) {
     return <ErrorAlerts>Unable to retrieve data from API. Error: {error.message}</ErrorAlerts>;
   }
 
-  const items: IProtoItems | unknown = data.items;
+  const items: ItemsProto | unknown = data.items;
   const totalRecords: number | unknown = data.totalRecordCount;
   const maxPages = Math.ceil(totalRecords / recordsPerPage);
 
@@ -190,7 +190,7 @@ export default function ItemsUpdate(): React.ReactNode {
         <Box  key='head-content'> { header } </Box>
 
         <Box key="data-content" sx={{width: '100%', display: 'block', mt: 2}} >
-          {items.map((val: IProtoItem, id: number) => (
+          {items.map((val: ItemProto id: number) => (
             <Stack key={val.id} direction="row"
                   sx={{ width: '100%', justifyContent: 'flex-start',
                     dislay: 'inline-flex', p: 1}}>

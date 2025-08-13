@@ -58,7 +58,7 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 	}
 	qSort := strings.Join(qSortSlice, ", ")
 
-	recCnt, err := s.Infra.PgRepo.Item.Select(ctx, &readModel, &whereClause, qSort, qOffset, qLimit)
+	recCnt, err := s.Infra.BunRepo.Item.Select(ctx, &readModel, &whereClause, qSort, qOffset, qLimit)
 	if  err != nil {
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
 		return nil, err

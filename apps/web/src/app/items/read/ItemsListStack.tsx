@@ -17,8 +17,7 @@ import {
   useSearchParams, usePathname, useRouter
 } from 'next/navigation';
 
-import type {  IProtoItem } from '@/app/items/ItemsModel';
-import type { ItemsState, } from '@/lib/store/items/itemsStore';
+import { ItemProto, ItemsState } from '@/lib/model/ItemsModel';
 import { useUpdatedItemStore } from '@/lib/store/updatedItem/UpdatedItemStoreProvider';
 import { useItemsStore, } from '@/lib/store/items/ItemsStoreProvider';
 import { ItemsDrawer } from "@/app/items/read/ItemsDrawer";
@@ -33,7 +32,7 @@ import ItemsPagination from './ItemsPagination';
 import ItemNoContent from './ItemsNoContent';
 
 
-export default function ItemsListStack({ item }: { item: IProtoItem }): ReactNode {
+export default function ItemsListStack({ item }: { item: ItemProto}): ReactNode {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -57,7 +56,7 @@ export default function ItemsListStack({ item }: { item: IProtoItem }): ReactNod
   } = useUpdatedItemStore((state) => state);
 
 
-  function handleClick(item: ItemsState | IProtoItem){
+  function handleClick(item: ItemsState | ItemProto) {
     updateEditMode(false);
     setState(item);
     const q = window.btoa(JSON.stringify(item));

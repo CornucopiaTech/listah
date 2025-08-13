@@ -37,7 +37,7 @@ func (s *Server) Update(ctx context.Context, req *connect.Request[pb.ItemService
 			"properties", "reactivate_at", "audit", "soft_delete"},
 	}
 
-	_, err = s.Infra.PgRepo.Item.Upsert(ctx, &insertions, &w)
+	_, err = s.Infra.BunRepo.Item.Upsert(ctx, &insertions, &w)
 	if err != nil {
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository  update error", errors.Cause(err).Error())
 		return nil, err
@@ -66,7 +66,7 @@ func (s *Server) Update(ctx context.Context, req *connect.Request[pb.ItemService
 	}
 	qSort := strings.Join(qSortSlice, ", ")
 
-	recCnt, err := s.Infra.PgRepo.Item.Select(ctx, &readModel, &whereClause, qSort, qOffset, qLimit)
+	recCnt, err := s.Infra.BunRepo.Item.Select(ctx, &readModel, &whereClause, qSort, qOffset, qLimit)
 	if err != nil {
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
 		return nil, err

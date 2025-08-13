@@ -1,36 +1,15 @@
-import { create } from 'zustand';
 import { createStore } from 'zustand/vanilla';
+import { ItemsState, ItemsStore, } from '@/lib/model/ItemsModel';
 
-import type { IProtoItems, IProtoItem } from '@/app/items/ItemsModel';
 
-export type ItemsState = {
-  itemsPerPage: number, //records per page
-  currentPage: number, //current page
-  categoryFilter: string | string[],
-  tagFilter: string[],
-  modalOpen: boolean,
-  inEditMode: boolean,
-  editedItem: IProtoItem | null,
-}
 
-export type ItemsActions = {
-  updateItemsPageRecordCount: (recordCount: number) => void
-  updateItemsCurrentPage: (currentPage: number) => void
-  updateItemsCategoryFilter: (category: string | string[]) => void
-  updateItemsTagFilter: (tags: string[]) => void
-  updateModal: (modalOpen: boolean) => void
-  updateEditMode: (inEditMode: boolean) => void
-}
-
-export type ItemsStore = ItemsState & ItemsActions
 export const defaultPagesInitState: ItemsState = {
   itemsPerPage: 20,
   currentPage: 1,
-  categoryFilter: "",
+  categoryFilter: [],
   tagFilter: [],
   modalOpen: false,
   inEditMode: false,
-  editedItem: null
 }
 export const createItemsStore = (
   initState: ItemsState = defaultPagesInitState,
@@ -39,10 +18,10 @@ export const createItemsStore = (
     ...initState,
     updateItemsPageRecordCount: (recordCount: number) => set(() => ({ itemsPerPage: recordCount})),
     updateItemsCurrentPage: (currentPage: number) => set(() => ({ currentPage })),
-    updateItemsCategoryFilter: (category: string[] | string) => set(
-      (state) => ({ categoryFilter: [...state.categoryFilter, ...category]})
+    updateItemsCategoryFilter: (category: string) => set(
+      (state) => ({ categoryFilter: state.categoryFilter ? [...state.categoryFilter, category] : [category] })
     ),
-    updateItemsTagFilter: (tags: string[]) => set((state) => ({ tagFilter: [...state.tagFilter, ...tags]})),
+    updateItemsTagFilter: (tag: string) => set((state) => ({ tagFilter: state.tagFilter ? [...state.tagFilter, tag] : [tag]})),
     updateModal: (modalOpen: boolean) => set(() => ({ modalOpen })),
     updateEditMode: (inEditMode: boolean) => set(() => ({ inEditMode })),
     updateEditedItem: (inEditMode: boolean) => set(() => ({ inEditMode })),

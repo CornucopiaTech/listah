@@ -51,7 +51,7 @@ import ItemsDatePicker from "@/app/items/read/ItemsDatePicker";
 import ItemsSearch from '@/app/items/read/ItemsSearch';
 import { AppBarHeight } from '@/components/AppNavBar';
 import Loading from '@/components/Loading';
-import type { IProtoItems, IProtoItem } from '@/app/items/ItemsModel';
+import { ItemProto, ItemsProto, ItemsState } from '@/lib/model/ItemsModel';
 import { ErrorAlerts } from '@/components/ErrorAlert';
 import MenuSelect from '@/components/MenuSelect';
 import {ItemModalEnabled, ItemModalDisabled} from './ItemModal';
@@ -69,7 +69,7 @@ const modelStyle = {
   p: 4,
 };
 
-async function getItems(userId: string, category: string | string [], tags: string[], pageNumber: number, recordsPerPage: number): Promise<IProtoItems|void> {
+async function getItems(userId: string, category: string | string [], tags: string[], pageNumber: number, recordsPerPage: number): Promise<ItemsProto|void> {
   const req = new Request('/api/getItems', {
     method: "POST",
     body: JSON.stringify({userId, category, tags, pageNumber, recordsPerPage})

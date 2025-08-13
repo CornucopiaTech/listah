@@ -1,6 +1,5 @@
 "use client"
 
-
 import {
   useSearchParams, useRouter
 } from 'next/navigation';
@@ -30,10 +29,12 @@ import {
 
 import { useItemsStore } from '@/lib/store/items/ItemsStoreProvider';
 import { useUpdatedItemStore } from '@/lib/store/updatedItem/UpdatedItemStoreProvider';
-import type { IProtoItem } from '@/app/items/ItemsModel';
+import { ItemProto, } from '@/lib/model/ItemsModel';
+import { getValidItem } from '@/lib/utils/itemHelper';
 
 
-async function postItem(item: IProtoItem) {
+
+async function postItem(item: ItemProto) {
   console.info("In postItem");
   console.info(item);
   const req = new Request("/api/postItem", {
@@ -54,7 +55,7 @@ export default function ItemRead(): React.ReactNode {
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const query = searchParams.get('q') ? searchParams.get('q') : "";
-  const passed = JSON.parse(window.atob(query));
+  const passed = query == "" ? {} : JSON.parse(window.atob(query));
   const {
     item,
   } = useUpdatedItemStore((state) => state);
@@ -76,21 +77,9 @@ export default function ItemRead(): React.ReactNode {
   const {
     setState
   } = useUpdatedItemStore((state) => state);
-  const usedItem: IProtoItem = {
-    id: passed.id,
-    userId: passed.userId,
-    summary: item.summary ? item.summary : passed.summary,
-    category: item.category ? item.category : passed.category,
-    description: item.description ? item.description : passed.description,
-    note: item.note ? item.note : passed.note,
-    tags: item.tags ? item.tags : passed.tags,
-    softDelete: item.softDelete ? item.softDelete : passed.softDelete,
-    properties: item.properties ? item.properties : passed.properties,
-    reactivateAt: item.reactivateAt ? item.reactivateAt : passed.reactivateAt,
-  };
-
+  const usedItem: ItemProto= getValidItem(passed, item);
   const mutation = useMutation({
-    mutationFn: (mutateItem: IProtoItem) => {
+    mutationFn: (mutateItem: ItemProto) => {
       return postItem(mutateItem);
     },
     onSuccess: () => {
