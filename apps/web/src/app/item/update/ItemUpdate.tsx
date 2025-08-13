@@ -1,6 +1,9 @@
 "use client"
 
 import {
+  useRef
+} from 'react';
+import {
   useSearchParams, useRouter
 } from 'next/navigation';
 import {
@@ -30,12 +33,12 @@ import {
 
 import { useItemsStore } from '@/lib/store/items/ItemsStoreProvider';
 import { useUpdatedItemStore } from '@/lib/store/updatedItem/UpdatedItemStoreProvider';
-import type { IProtoItem } from '@/app/items/ItemsModel';
+import { ItemProto } from '@/lib/model/ItemsModel';
+import { getValidItem } from '@/lib/utils/itemHelper';
 
 
-async function postItem(item: IProtoItem) {
-  console.info("In postItem");
-  console.info(item);
+
+async function postItem(item: ItemProto) {
   const req = new Request("/api/postItem", {
     method: "POST",
     body: JSON.stringify({items: [item]}),
@@ -49,7 +52,7 @@ async function postItem(item: IProtoItem) {
 }
 
 export default function ItemUpdate({ pItem }: {
-  pItem?: IProtoItem
+  pItem?: ItemProto
 }): React.ReactNode {
   const itemsKey = "itemsDetails";
   const router = useRouter();
@@ -67,41 +70,21 @@ export default function ItemUpdate({ pItem }: {
     updateProperties,
     updateReactivateAt,
     updateNewTag,
-    // addNewTag,
+    defaultUpdateItemInitState,
   } = useUpdatedItemStore((state) => state);
     const {
       itemsPerPage,
       currentPage,
       categoryFilter,
       tagFilter,
-      modalOpen,
-      inEditMode,
-      updateItemsPageRecordCount,
-      updateItemsCurrentPage,
-      updateItemsCategoryFilter,
-      updateItemsTagFilter,
-      updateModal,
-      updateEditMode,
     } = useItemsStore((state) => state);
 
   const searchParams = useSearchParams();
   const query = searchParams.get('q') ? searchParams.get('q') : "";
-  const passed = JSON.parse(window.atob(query));
-
-  const usedItem: IProtoItem = {
-    id: passed.id,
-    userId: passed.userId,
-    summary: item.summary ? item.summary : passed.summary,
-    category: item.category ? item.category : passed.category,
-    description: item.description ? item.description : passed.description,
-    note: item.note ? item.note : passed.note,
-    tags: item.tags ? item.tags : passed.tags,
-    softDelete: item.softDelete ? item.softDelete : passed.softDelete,
-    properties: item.properties ? item.properties : passed.properties,
-  };
-
+  const passed = query == "" ? {} : JSON.parse(window.atob(query));
+  const usedItem: ItemProto= getValidItem(passed, item);
   const mutation = useMutation({
-    mutationFn: (mutateItem: IProtoItem) => {
+    mutationFn: (mutateItem: ItemProto) => {
       return postItem(mutateItem);
     },
     onSuccess: () => {
@@ -111,49 +94,72 @@ export default function ItemUpdate({ pItem }: {
 
 
   function addNewTag (){
-    updateTags([newTag, ...usedItem.tags]);
-    updateNewTag("");
+    if (!newTag || newTag.trim() == "") {
+      return;
+    }
+    let tList: string[];
+    if (!usedItem.tags || usedItem.tags.length == 0) {
+      tList = [newTag]
+    } else {
+      tList = [newTag, ...usedItem.tags];
+    }
+    updateTags(tList);
+    updateNewTag(null);
+    // router.push(pathname + '?' + createQueryString('sort', 'asc'))
   }
 
   function handleTag (e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, oldT: string, newT: string){
     e.preventDefault();
-    const idx = usedItem.tags.indexOf(oldT);
-    let tList;
-    if (idx == -1){
-      tList = [...usedItem.tags, newT]
+    let tList: string[];
+
+    if (!usedItem.tags || usedItem.tags.length == 0){
+      tList = [ newT ]
     } else {
-      tList = usedItem.tags.toSpliced(idx, 1, newT)
+      const idx = usedItem.tags.indexOf(oldT);
+      if (idx == -1) {
+        tList = [newT, ...usedItem.tags]
+      } else {
+        tList = [...usedItem.tags.toSpliced(idx, 1, newT)]
+      }
     }
     updateTags(tList);
   }
 
   function removeTag (e:React.ChangeEvent<HTMLButtonElement>, oldT: string){
     e.preventDefault();
-    updateTags(usedItem.tags.filter((i) => i != oldT));
+    if (!usedItem.tags || usedItem.tags.length == 0){
+      return;
+    }
+    const updatedTags = usedItem.tags.filter((i) => i != oldT);
+    updateTags(updatedTags);
   }
-
-
 
   function handleSave(){
     let editedTag: string[];
-    if (newTag != ""){
-      if (usedItem.tags.length == 0){
-        editedTag = [newTag]
+    if (newTag != null && newTag.trim() != ""){
+      if (!usedItem.tags || usedItem.tags.length == 0){
+        editedTag = [ newTag ]
       } else {
-        editedTag = [newTag, ...usedItem.tags]
+        editedTag = [ newTag, ...usedItem.tags ]
       }
     } else {
-      editedTag = [usedItem.tags]
+      editedTag = usedItem.tags
     }
-    const saveItem: IProtoItem = {...usedItem, userId: usedItem.userId, id: usedItem.id, tags: editedTag}
+    const saveItem: ItemProto= {...usedItem, userId: usedItem.userId, id: usedItem.id, tags: editedTag}
     mutation.mutate(saveItem);
+    setState(saveItem);
+    updateNewTag(null);
+
     const q = window.btoa(JSON.stringify(saveItem));
     router.push(`/item/read?q=${q}`);
   }
 
   function handleDelete(){
-    const deleteItem: IProtoItem = {...usedItem, userId: passed.userId, id: passed.id, softDelete: true}
+    const deleteItem: ItemProto= {...usedItem, userId: passed.userId, id: passed.id, softDelete: true}
     mutation.mutate(deleteItem);
+    setState(defaultUpdateItemInitState);
+    updateNewTag(null);
+
     router.push(`/items/read`);
   }
 
@@ -170,7 +176,7 @@ export default function ItemUpdate({ pItem }: {
       <Stack
           spacing={ 2 } direction="row" key={ `${usedItem.id}-Buttons` }
           sx={{ width: '100%', justifyContent: 'space-around',
-              dislay: 'inline-flex', p: 1,
+              display: 'inline-flex', p: 1,
           }}>
         <IconButton onClick={ handleClose }>
           <Tooltip title="Close"><Close/></Tooltip>

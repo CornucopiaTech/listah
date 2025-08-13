@@ -222,6 +222,7 @@ func ItemProtoToWhereClause(msg []*pb.Item) ([]model.WhereClause, error) {
 		})
 	}
 
+
 	// Add userId to where clause
 	if len(u) != 0 {
 		w = append(w, model.WhereClause{

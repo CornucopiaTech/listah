@@ -7,7 +7,6 @@ import {
 import {
   useSearchParams, usePathname, useRouter
 } from 'next/navigation';
-// import Link from 'next/link';
 import {
   useQuery,
   queryOptions,
@@ -17,26 +16,16 @@ import {
   Box,
   Divider,
 } from '@mui/material';
-// import {
-//   Create,
-//   Send,
-//   Delete,
-//   Add,
-//   ExpandLess,
-//   ArrowBackIosNewOutlined,
-//   ArrowForwardIosOutlined,
-// } from '@mui/icons-material';
 
 
 import { useUpdatedItemStore } from '@/lib/store/updatedItem/UpdatedItemStoreProvider';
 import { useItemsStore, } from '@/lib/store/items/ItemsStoreProvider';
-import { type ItemsState, } from '@/lib/store/items/itemsStore';
 import { ItemsDrawer } from "@/app/items/read/ItemsDrawer";
 import ItemsDatePicker from "@/app/items/read/ItemsDatePicker";
 import ItemsSearch from '@/app/items/read/ItemsSearch';
 import { AppBarHeight } from '@/components/AppNavBar';
 import Loading from '@/components/Loading';
-import type { IProtoItems, IProtoItem } from '@/app/items/ItemsModel';
+import { ItemProto, ItemsProto, ItemsState } from '@/lib/model/ItemsModel';
 import { ErrorAlerts } from '@/components/ErrorAlert';
 import MenuSelect from '@/components/MenuSelect';
 import {ItemModalEnabled, ItemModalDisabled} from './ItemModal';
@@ -44,10 +33,10 @@ import ItemsListStack from './ItemsListStack';
 import ItemsPagination from './ItemsPagination';
 import ItemNoContent from './ItemsNoContent';
 
-async function getItems(userId: string, category: string | string [], tags: string[], pageNumber: number, recordsPerPage: number): Promise<IProtoItems|void> {
+async function getItems(userId: string, category: string | string [], tags: string[], pageNumber: number, recordsPerPage: number): Promise<ItemsProto|void> {
   const req = new Request('/api/getItems', {
     method: "POST",
-    body: JSON.stringify({userId, category, tags, pageNumber, recordsPerPage})
+    body: JSON.stringify({userId, category: "", tags, pageNumber, recordsPerPage})
   });
   const res = await fetch(req);
   if (!res.ok) {
@@ -102,36 +91,14 @@ export default function ItemsRead(): ReactNode {
     updateItemsPageRecordCount(event.target.value);
   };
 
-  function toggleModal(){
-    updateModal(!modalOpen);
-  }
 
-  function handleItemClick(item: ItemsState){
-    updateEditMode(false);
-    setState(item);
-    const q = window.btoa(JSON.stringify(item));
-    router.push(`/item/read?q=${q}`);
-  }
-
-  function handleEditClick(item: ItemsState){
-    updateEditMode(true);
-    setState(item);
-    const q = window.btoa(JSON.stringify(item));
-    router.push(`/item/update?q=${q}`);
-  }
-
-  function handleDeleteClick(item: IProtoItem){
-    updateEditMode(false);
-    router.push(`/item/${item.id}/delete`)
-  }
-
-  const { isPending, isError, data, error }: UseQueryResult<IProtoItems> = useQuery(getItemsGroupOptions(userId, category, tags, page, recordsPerPage));
+  const { isPending, isError, data, error }: UseQueryResult<ItemsProto> = useQuery(getItemsGroupOptions(userId, category, tags, page, recordsPerPage));
 
   if (isPending) { return <Loading />; }
   // ToDo: Fix this error message
   if (isError) {return <ErrorAlerts>Error: {error.message}</ErrorAlerts>;}
 
-  const items: IProtoItem[] = data.items ? data.items : [];
+  const items: ItemProto = data.items ? data.items : [];
   const totalRecords: number = data.totalRecordCount ? data.totalRecordCount : 1;
   const maxPages = Math.ceil(totalRecords / recordsPerPage);
 
@@ -151,7 +118,7 @@ export default function ItemsRead(): ReactNode {
         </Box>
 
         <Box key="data-content" sx={{width: '100%', display: 'block',}} >
-          {items.map((val: IProtoItem, id: number) => (
+          {items.map((val: ItemProto, id: number) => (
             <Fragment key={val.id + '-' + id}>
               <ItemsListStack item={val} />
               <Divider/>

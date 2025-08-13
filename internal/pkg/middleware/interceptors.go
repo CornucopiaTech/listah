@@ -20,7 +20,6 @@ func GetInterceptors(infra *bootstrap.Infra) connect.Option {
 		otelInterceptor,
 		SetParentTraceInterceptor(infra),
 		RecordRequestInterceptor(infra),
-	// NewAuthInterceptor()
 	)
 
 }

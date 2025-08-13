@@ -52,12 +52,12 @@ import ArrowForwardIosOutlinedIcon from '@mui/icons-material/ArrowForwardIosOutl
 
 
 
-import type { IProtoItems, IProtoItem } from '@/app/items/ItemsModel';
+import type { ItemsProto, ItemProto} from '@/app/items/ItemsModel';
 import { ErrorAlerts } from '@/components/ErrorAlert';
 import Loading from '@/components/Loading';
 
 
-async function getItem(traceparent: string, userId: string, category: string | string [], tags: string[], id: string): Promise<IProtoItems|void> {
+async function getItem(traceparent: string, userId: string, category: string | string [], tags: string[], id: string): Promise<ItemsProto|void> {
   const req = new Request('/api/getItems', {
     method: "POST",
     body: JSON.stringify({traceparent, userId, category, tags,id}),
@@ -70,7 +70,7 @@ async function getItem(traceparent: string, userId: string, category: string | s
   return res.json();
 }
 
-async function postItem(url: string, traceparent: string, item: IProtoItem) {
+async function postItem(url: string, traceparent: string, item: ItemProto {
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify({items: [item]}),
@@ -95,7 +95,7 @@ export default function ItemDetails({ itemId, traceparent}: {
 
   const queryClient = useQueryClient();
 
-  function handleSave (newItem: IProtoItem){
+  function handleSave (newItem: ItemProto{
     const mutation = useMutation({
       mutationFn: () => postItem(traceparent, newItem),
       onSuccess: () => {
@@ -104,7 +104,7 @@ export default function ItemDetails({ itemId, traceparent}: {
     })
   }
 
-  const { isPending, isError, data, error }: UseQueryResult<IProtoItems> = useQuery({
+  const { isPending, isError, data, error }: UseQueryResult<ItemsProto> = useQuery({
      queryKey: [itemsKey, traceparent, userId, category, tags, itemId],
      queryFn: () => getItem(traceparent, userId, category, tags, itemId)
    });
@@ -133,7 +133,7 @@ export default function ItemDetails({ itemId, traceparent}: {
     );
   }
 
-  const item: IProtoItems | unknown = data.items[0];
+  const item: ItemsProto | unknown = data.items[0];
   const isEditing = status == "editing";
   const isViewing = status == "viewing";
   const viewingDisplay = isViewing ? 'block' : 'none';

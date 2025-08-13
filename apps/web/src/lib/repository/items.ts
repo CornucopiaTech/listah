@@ -1,5 +1,5 @@
 // import '@/envConfig.ts';
-import type { IProtoItems, IProtoItem } from '@/app/items/ItemsModel';
+import type { ItemsProto, ItemProto} from '@/app/items/ItemsModel';
 import {
   type Context,
   propagation,

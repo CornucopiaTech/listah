@@ -59,7 +59,7 @@ import type {  ITraceBaggage } from '@/app/items/ItemsModel';
 import Loading from '@/components/Loading';
 import { AppBarHeight } from '@/components/AppNavBar';
 // import  ItemDetails from "./ItemDetails";
-import type { IProtoItems, IProtoItem } from '@/app/items/ItemsModel';
+import type { ItemsProto, ItemProto} from '@/app/items/ItemsModel';
 import { ErrorAlerts } from '@/components/ErrorAlert';
 
 
@@ -69,7 +69,7 @@ export default function ItemDetailsPage() {
   </Suspense>
 }
 
-async function getItem(userId: string, category: string | string [], tags: string[], id: string): Promise<IProtoItems|void> {
+async function getItem(userId: string, category: string | string [], tags: string[], id: string): Promise<ItemsProto|void> {
   const req = new Request('/api/getItems', {
     method: "POST",
     body: JSON.stringify({userId, category, tags,id}),
@@ -93,7 +93,7 @@ export function ItemDetailsPageChild() {
   const tags: string[] = [];
 
 
-  const { isPending, isError, data, error }: UseQueryResult<IProtoItems> = useQuery({
+  const { isPending, isError, data, error }: UseQueryResult<ItemsProto> = useQuery({
      queryKey: [itemsKey, userId, category, tags, id],
      queryFn: () => getItem(userId, category, tags, id)
    });
@@ -123,7 +123,7 @@ export function ItemDetailsPageChild() {
   }
 
 
-  const item: IProtoItems | unknown = data.items[0];
+  const item: ItemsProto | unknown = data.items[0];
 
 
   return (

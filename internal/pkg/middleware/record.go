@@ -81,7 +81,7 @@ func RecordRequestInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFu
 				SpanId:  trace.SpanFromContext(ctx).SpanContext().SpanID().String(),
 				Request: req,
 			}
-			infra.PgRepo.ApiLog.Insert(ctx, &reqModel)
+			infra.BunRepo.ApiLog.Insert(ctx, &reqModel)
 
 			// Call the next middleware/handler in chain
 			return next(ctx, req)
