@@ -5,9 +5,6 @@ import {
   ReactNode,
 } from 'react';
 import {
-  useSearchParams, usePathname, useRouter
-} from 'next/navigation';
-import {
   useQuery,
   queryOptions,
   type UseQueryResult,
@@ -18,37 +15,20 @@ import {
 } from '@mui/material';
 
 
-import { useUpdatedItemStore } from '@/lib/store/updatedItem/UpdatedItemStoreProvider';
+// import { useUpdatedItemStore } from '@/lib/store/updatedItem/UpdatedItemStoreProvider';
 import { useItemsStore, } from '@/lib/store/items/ItemsStoreProvider';
-import { ItemsDrawer } from "@/app/items/read/ItemsDrawer";
-import ItemsDatePicker from "@/app/items/read/ItemsDatePicker";
-import ItemsSearch from '@/app/items/read/ItemsSearch';
+// import { ItemsDrawer } from "@/app/items/read/ItemsDrawer";
+// import ItemsDatePicker from "@/app/items/read/ItemsDatePicker";
+// import ItemsSearch from '@/app/items/read/ItemsSearch';
 import { AppBarHeight } from '@/components/AppNavBar';
 import Loading from '@/components/Loading';
 import { ItemProto, ItemsProto, ItemsState } from '@/lib/model/ItemsModel';
 import { ErrorAlerts } from '@/components/ErrorAlert';
-import MenuSelect from '@/components/MenuSelect';
+// import MenuSelect from '@/components/MenuSelect';
 import ItemsListStack from './ItemsListStack';
 import ItemsPagination from './ItemsPagination';
 import ItemNoContent from './ItemsNoContent';
 import { getItems } from '@/lib/utils/itemHelper';
-
-
-// async function getItems(userId: string, category: string[], tags: string[], pageNumber: number, recordsPerPage: number): Promise<ItemsProto | void> {
-//   const req = new Request('/api/getItems', {
-//     method: "POST",
-//     body: JSON.stringify({
-//       userId: [userId], category, tags,
-//       pagination: { pageNumber, recordsPerPage }
-//     })
-//   });
-//   const res = await fetch(req);
-//   if (!res.ok) {
-//     console.error("Error in getItems: ", res.statusText);
-//     throw new Error('Network response was not ok');
-//   }
-//   return res.json();
-// }
 
 
 export function getItemsGroupOptions(userId: string, category: string [], tags: string[], pageNumber: number, recordsPerPage: number) {
@@ -60,27 +40,21 @@ export function getItemsGroupOptions(userId: string, category: string [], tags: 
 }
 
 export default function ItemsRead(): ReactNode {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const {
     itemsPerPage,
     currentPage,
     categoryFilter,
     tagFilter,
-    modalOpen,
-    inEditMode,
+    // modalOpen,
+    // inEditMode,
     updateItemsPageRecordCount,
     updateItemsCurrentPage,
-    updateItemsCategoryFilter,
-    updateItemsTagFilter,
-    updateModal,
-    updateEditMode,
+    // updateItemsCategoryFilter,
+    // updateItemsTagFilter,
+    // updateModal,
+    // updateEditMode,
 
   } = useItemsStore((state) => state);
-  const {
-    setState
-  } = useUpdatedItemStore((state) => state);
 
 
   const userId: string = "4d56128c-5042-4081-a0ef-c2d064700191";

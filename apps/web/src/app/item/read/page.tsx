@@ -1,6 +1,5 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 
 import {
@@ -14,23 +13,12 @@ import  ItemRead from "./ItemRead";
 
 
 export default function ItemDetailsPage() {
-  return <Suspense fallback={<Loading />} >
-    < ItemDetailsPageChild />
-  </Suspense>
-}
+  return <Box sx={{
+    height: `calc(100% - ${AppBarHeight})`,
+    mt: AppBarHeight, p: 1
+  }}>
+    <Suspense fallback={<Loading />}>
+      <ItemRead />
+    </Suspense>
+  </Box>
 
-
-export function ItemDetailsPageChild() {
-  const searchParams = useSearchParams();
-  const query = searchParams.get('q') ? searchParams.get('q') : "";
-
-  return (
-    <Box  sx={{ height: `calc(100% - ${AppBarHeight})`,
-          mt: AppBarHeight, p: 1 }}>
-      <Suspense fallback={<Loading />}>
-        <ItemRead />
-      </Suspense>
-    </Box>
-  );
-
-}

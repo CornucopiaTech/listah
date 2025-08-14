@@ -31,7 +31,7 @@ export default function PageLayout({
             <UpdatedItemStoreProvider>
             <ReactQueryDevtools initialIsOpen={false} />
             <ThemeProvider theme={theme}>
-              <Box sx={{ /*bgcolor: 'teal',*/ height: '100%' }}>
+              <Box sx={{ height: '100%' }}>
                 <AppNavBar />
                 <Suspense fallback={<Loading />}>
                   {children}

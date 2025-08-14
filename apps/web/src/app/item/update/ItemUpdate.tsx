@@ -1,9 +1,6 @@
 "use client"
 
 import {
-  useRef
-} from 'react';
-import {
   useSearchParams, useRouter
 } from 'next/navigation';
 import {
@@ -12,7 +9,6 @@ import {
 } from '@tanstack/react-query';
 import {
   Box,
-  Grid,
   IconButton,
   List,
   ListItemButton,
@@ -52,9 +48,9 @@ export default function ItemUpdate({ pItem }: {
     updateDescription,
     updateNote,
     updateTags,
-    updateSoftDelete,
-    updateProperties,
-    updateReactivateAt,
+    // updateSoftDelete,
+    // updateProperties,
+    // updateReactivateAt,
     updateNewTag,
     defaultUpdateItemInitState,
   } = useUpdatedItemStore((state) => state);

@@ -1,14 +1,9 @@
-import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { headers } from 'next/headers';
-
 import {
   propagation,
   context,
   trace,
-  Span,
 } from '@opentelemetry/api';
-import { type Context } from '@opentelemetry/api';
 import { TraceBaggage, ItemProto } from '@/lib/model/ItemsModel';
 
 export async function POST(request: NextRequest) {
