@@ -3,30 +3,26 @@ package v1
 import (
 	"context"
 	"fmt"
-	"strings"
 	v1model "cornucopia/listah/internal/pkg/model/v1"
 	pb "cornucopia/listah/internal/pkg/proto/v1"
-
+	"strings"
 	"connectrpc.com/connect"
 	"github.com/pkg/errors"
 	"go.opentelemetry.io/otel"
 )
 
-var DefaultReadPagination = pb.Pagination{
-	PageNumber: 1,
-	RecordsPerPage: 100,
-	SortCondition: map[string]string{"user_id": "ASC", "id": "ASC"},
-}
 
 func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceReadRequest]) (*connect.Response[pb.ItemServiceReadResponse], error) {
-	ctx, span := otel.Tracer(svcName).Start(ctx, "POST /listah.v1.ItemService/Read")
-	defer span.End()
 	rpcName := "Read"
-	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, "Read rpc called")
+	rpcLogName := fmt.Sprintf("POST /%v/%v", svcName, rpcName)
+
+	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
+	defer span.End()
+	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
 
 	readModel := []*v1model.Item{}
-	whereClause, err := v1model.ItemProtoToWhereClause(req.Msg.Items)
+	whereClause, err := v1model.ItemProtoToWhereClause(req.Msg)
 	if err != nil {
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting where clause from request", errors.Cause(err).Error())
 		return nil, err
@@ -77,6 +73,6 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 			SortCondition: qSortMap,
 		},
 	}
-	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository read")
+	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item read. Read %d items", len(readModel)))
 	return connect.NewResponse(resm), nil
 }

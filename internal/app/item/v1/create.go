@@ -10,14 +10,16 @@ import (
 	"connectrpc.com/connect"
 	"github.com/pkg/errors"
 	"go.opentelemetry.io/otel"
-	"strings"
 )
 
 func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemServiceCreateRequest]) (*connect.Response[pb.ItemServiceCreateResponse], error) {
-	ctx, span := otel.Tracer(svcName).Start(ctx, "POST /listah.v1.ItemService/Create")
-	defer span.End()
 	rpcName := "Create"
-	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, "POST /listah.v1.ItemService/Create")
+	rpcLogName := fmt.Sprintf("POST /%v/%v", svcName, rpcName)
+
+
+	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
+	defer span.End()
+	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
 	// Create model for repository from request message
 	insertions, err := v1model.ItemProtoToItemModel(req.Msg.Items, true)
@@ -27,9 +29,8 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemService
 	}
 
 	w := model.UpsertInfo{
-		Conflict: []string{"id", "user_id"},
-		Resolve: []string{"summary", "category", "description", "note", "tags",
-			"properties", "reactivate_at", "audit", "soft_delete"},
+		Conflict: v1model.ItemConflictFields,
+		Resolve: v1model.ItemResolveFields,
 	}
 
 	_, err = s.Infra.BunRepo.Item.Upsert(ctx, &insertions, &w)
@@ -39,50 +40,16 @@ func (s *Server) Create(ctx context.Context, req *connect.Request[pb.ItemService
 	}
 	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository update")
 
-	// Read created model from repository
-	readModel := []*v1model.Item{}
-
-	whereClause, err := v1model.ItemModelToWhereClausePkey(insertions)
-	if err != nil {
-		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting where clause from request", errors.Cause(err).Error())
-		return nil, err
-	}
-
-	qLimit := len(req.Msg.Items)
-	qPage := 1
-	qOffset := 0
-	qSortMap := DefaultReadPagination.SortCondition
-	qSortSlice := []string{}
-	for key, value := range qSortMap {
-		qSortSlice = append(qSortSlice, fmt.Sprintf(" %v %v ", key, value))
-	}
-	qSort := strings.Join(qSortSlice, ", ")
-
-	recCnt, err := s.Infra.BunRepo.Item.Select(ctx, &readModel, &whereClause, qSort, qOffset, qLimit)
-	if err != nil {
-		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
-		return nil, err
-	}
-	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository read")
-
-
-	rs, err := v1model.ItemModelToItemProto(readModel)
-	if err != nil {
-		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting item proto from item model", errors.Cause(err).Error())
-		return nil, err
+	rs := []string{}
+	for _, v := range insertions {
+		rs = append(rs,  v.Id)
 	}
 
 
 	resm := &pb.ItemServiceCreateResponse{
-		Items: rs,
-		TotalRecordCount: int32(recCnt),
-		Pagination: &pb.Pagination{
-			PageNumber: int32(qPage),
-			RecordsPerPage: int32(qLimit),
-			SortCondition: qSortMap,
-		},
+		ItemIds: rs,
 	}
 
-	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, "Successful item create")
+	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item creation. Created %d items", len(insertions)))
 	return connect.NewResponse(resm), nil
 }

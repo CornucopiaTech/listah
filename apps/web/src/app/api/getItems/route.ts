@@ -9,28 +9,25 @@ import {
   Span,
 } from '@opentelemetry/api';
 import { type Context } from '@opentelemetry/api';
-import type { ITraceBaggage } from '@/app/items/ItemsModel';
+import { TraceBaggage, ItemProto } from '@/lib/model/ItemsModel';
 
 export async function POST(request: NextRequest) {
-  const output: ITraceBaggage = {};
+  const output: TraceBaggage = {};
   propagation.inject(context.active(), output);
-
   const { traceparent, b3 } = output;
   const initReq = await request.json();
-  const { pageNumber, recordsPerPage, userId, category, tags } = initReq
-
-  const input: ITraceBaggage = { traceparent }
-  propagation.extract(context.active(), input);
   const url = (process.env.LISTAH_API_ITEMS_READ ?
     process.env.LISTAH_API_ITEMS_READ :
     process.env.NEXT_PUBLIC_LISTAH_API_ITEMS_READ);
 
+  console.info("/api/postItem - output and url", url);
+  console.info(output);
+  console.info(url);
+  console.info(initReq);
+
   const req = new Request(url, {
     method: "POST",
-    body: JSON.stringify({
-      items: [{ userId, category, tags}],
-      pagination: {pageNumber, recordsPerPage}
-    }),
+    body: JSON.stringify(initReq),
     headers: { "Content-Type": "application/json", "Accept": "*/*", traceparent },
   });
   const res = await fetch(req);

@@ -22,7 +22,7 @@ type Item struct {
 	Note          string
 	Tags          []string
 	Properties    map[string]string
-	SoftDelete    bool
+	SoftDelete    bool `bun:",nullzero,default:false"`
 	ReactivateAt  time.Time
 	Audit         Audit
 }
@@ -35,6 +35,20 @@ var whereIndex = map[string]int {
 	"Description":   4,
 	"Note":          5,
 }
+
+var ItemConflictFields = []string{
+	"id", "user_id",
+}
+
+var ItemResolveFields = []string{
+	"summary", "category", "description", "note", "tags",
+	"properties", "reactivate_at", "audit", "soft_delete",
+	// "audit.updated_by", "audit.deleted_by",
+	// "audit.updated_at", "audit.deleted_at",
+}
+
+
+
 
 
 
@@ -88,23 +102,6 @@ func ItemProtoToItemModelUpsertSafe(msg []*pb.Item, genId bool) ([]*Item, error)
 				DeletedAt: v.Audit.GetDeletedAt().AsTime(),
 			},
 		}
-		// 	Summary:      v.GetSummary(),
-		// 	Category:     v.GetCategory(),
-		// 	Description:  v.GetDescription(),
-		// 	Note:         v.GetNote(),
-		// 	Tags:         v.GetTags(),
-		// 	Properties:   v.GetProperties(),
-		// 	ReactivateAt: v.GetReactivateAt().AsTime(),
-		// 	Audit: Audit{
-		// 		CreatedBy: v.Audit.GetCreatedBy(),
-		// 		CreatedAt: v.Audit.GetCreatedAt().AsTime(),
-		// 		UpdatedBy: v.Audit.GetUpdatedBy(),
-		// 		UpdatedAt: v.Audit.GetUpdatedAt().AsTime(),
-		// 		DeletedBy: v.Audit.GetDeletedBy(),
-		// 		DeletedAt: v.Audit.GetDeletedAt().AsTime(),
-		// 	},
-		// }
-
 
 		// Set values that have not been set to nil
 		if (v.GetSummary() != ""){
@@ -166,106 +163,86 @@ func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
 	return items, nil
 }
 
-func ItemProtoToWhereClause(msg []*pb.Item) ([]model.WhereClause, error) {
-	i := []string{}
-	u := []string{}
-	s := []string{}
-	c := []string{}
-	d := []string{}
-	n := []string{}
-
-	for _, v := range msg {
-		if v.GetUserId() == "" {
-			return nil, errors.New("No userId sent with request")
-		}
-
-		// Add Id to where clause
-		if v.GetId() != "" {
-			i = append(i, v.GetId())
-		}
-
-		// Add userId to where clause
-		if v.GetUserId() != "" {
-			u = append(u, v.GetUserId())
-		}
-
-		// Add summary to where clause
-		if v.GetSummary() != "" {
-			s = append(s, v.GetSummary())
-		}
-
-		// Add category to where clause
-		if v.GetCategory() != "" {
-			c = append(c, v.GetCategory())
-		}
-
-		// description
-		if v.GetDescription() != "" {
-			d = append(d, v.GetDescription())
-		}
-
-		// note
-		if v.GetNote() != "" {
-			n = append(n, v.GetNote())
-		}
+func ItemProtoToWhereClause(msg *pb.ItemServiceReadRequest) ([]model.WhereClause, error) {
+	if len(msg.GetUserId()) == 0 {
+		return nil, errors.New("No userId sent with request")
 	}
-
 
 	w := []model.WhereClause{}
 	// Add Id to where clause
-	if len(i) != 0 {
+	if len(msg.GetId()) != 0 {
 		w = append(w, model.WhereClause{
 			Placeholder: "?::VARCHAR IN (?)",
 			Column:      "id",
-			Value:       bun.In(i),
+			Value:       bun.In(msg.GetId()),
 		})
 	}
 
 
 	// Add userId to where clause
-	if len(u) != 0 {
+	if len(msg.GetUserId()) != 0 {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "user_id",
-			Value:       bun.In(u),
+			Value:       bun.In(msg.GetUserId()),
 		})
 	}
 
 	// Add summary to where clause
-	if len(s) != 0 {
+	if len(msg.GetSummary()) != 0 {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "summary",
-			Value:       bun.In(s),
+			Value:       bun.In(msg.GetSummary()),
 		})
 	}
 
 	// Add category to where clause
-	if len(c) != 0 {
+	if len(msg.GetCategory()) != 0 {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "category",
-			Value:       bun.In(c),
+			Value:       bun.In(msg.GetCategory()),
 		})
 	}
 
 	// description
-	if len(d) != 0 {
+	if len(msg.GetDescription()) != 0 {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "description",
-			Value:       bun.In(d),
+			Value:       bun.In(msg.GetDescription()),
 		})
 	}
 
 	// note
-	if len(n) != 0 {
+	if len(msg.GetNote()) != 0 {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "note",
-			Value:       bun.In(n),
+			Value:       bun.In(msg.GetNote()),
 		})
 	}
+
+	// // tags
+	// if len(msg.GetTags()) != 0 {
+	// 	w = append(w, model.WhereClause{
+	// 		Placeholder: "? IN (?)",
+	// 		Column:      "tags",
+	// 		Value:       bun.In(msg.GetTags()),
+	// 	})
+	// }
+
+	// // properties
+	// if len(msg.GetProperties()) != 0 {
+	// 	for k, v := range msg.GetProperties() {
+	// 		w = append(w, model.WhereClause{
+	// 			Placeholder: fmt.Sprintf("?::VARCHAR = ?::VARCHAR"),
+	// 			Column:      fmt.Sprintf("properties ->> '%s'", k),
+	// 			Value:       v,
+	// 		})
+	// 	}
+	// }
 
 	// softDelete
 	w = append(w, model.WhereClause{
@@ -277,162 +254,3 @@ func ItemProtoToWhereClause(msg []*pb.Item) ([]model.WhereClause, error) {
 	return w, nil
 }
 
-func ItemModelToWhereClause(m []*Item) ([]model.WhereClause, error) {
-	i := []string{}
-	u := []string{}
-	s := []string{}
-	c := []string{}
-	d := []string{}
-	n := []string{}
-
-	for _, v := range m {
-		if v.UserId == "" {
-			return nil, errors.New("No userId sent with request")
-		}
-
-		// Add Id to where clause
-		if v.Id != "" {
-			i = append(i, v.Id)
-		}
-
-		// Add userId to where clause
-		if v.UserId != "" {
-			u = append(u, v.UserId)
-		}
-
-		// Add summary to where clause
-		if v.Summary != "" {
-			s = append(s, v.Summary)
-		}
-
-		// Add category to where clause
-		if v.Category != "" {
-			c = append(c, v.Category)
-		}
-
-		// description
-		if v.Description != "" {
-			d = append(d, v.Description)
-		}
-
-		// note
-		if v.Note != "" {
-			n = append(n, v.Note)
-		}
-	}
-
-
-	w := []model.WhereClause{}
-	// Add Id to where clause
-	if len(i) != 0 {
-		w = append(w, model.WhereClause{
-			Placeholder: "?::VARCHAR IN (?)",
-			Column:      "id",
-			Value:       bun.In(i),
-		})
-	}
-
-	// Add userId to where clause
-	if len(u) != 0 {
-		w = append(w, model.WhereClause{
-			Placeholder: "? IN (?)",
-			Column:      "user_id",
-			Value:       bun.In(u),
-		})
-	}
-
-	// Add summary to where clause
-	if len(s) != 0 {
-		w = append(w, model.WhereClause{
-			Placeholder: "? IN (?)",
-			Column:      "summary",
-			Value:       bun.In(s),
-		})
-	}
-
-	// Add category to where clause
-	if len(c) != 0 {
-		w = append(w, model.WhereClause{
-			Placeholder: "? IN (?)",
-			Column:      "category",
-			Value:       bun.In(c),
-		})
-	}
-
-	// description
-	if len(d) != 0 {
-		w = append(w, model.WhereClause{
-			Placeholder: "? IN (?)",
-			Column:      "description",
-			Value:       bun.In(d),
-		})
-	}
-
-	// note
-	if len(n) != 0 {
-		w = append(w, model.WhereClause{
-			Placeholder: "? IN (?)",
-			Column:      "note",
-			Value:       bun.In(n),
-		})
-	}
-
-	// softDelete
-	w = append(w, model.WhereClause{
-		Placeholder: "? = ? ",
-		Column:      "soft_delete",
-		Value:       false,
-	})
-
-	return w, nil
-}
-
-func ItemModelToWhereClausePkey(m []*Item) ([]model.WhereClause, error) {
-	i := []string{}
-	u := []string{}
-
-	for _, v := range m {
-		if v.UserId == "" {
-			return nil, errors.New("No userId sent with request")
-		}
-
-		// Add Id to where clause
-		if v.Id != "" {
-			i = append(i, v.Id)
-		}
-
-		// Add userId to where clause
-		if v.UserId != "" {
-			u = append(u, v.UserId)
-		}
-
-	}
-
-	w := []model.WhereClause{}
-	// Add Id to where clause
-	if len(i) != 0 {
-		w = append(w, model.WhereClause{
-			Placeholder: "?::VARCHAR IN (?)",
-			Column:      "id",
-			Value:       bun.In(i),
-		})
-	}
-
-	// Add userId to where clause
-	if len(u) != 0 {
-		w = append(w, model.WhereClause{
-			Placeholder: "? IN (?)",
-			Column:      "user_id",
-			Value:       bun.In(u),
-		})
-	}
-
-	// softDelete
-	w = append(w, model.WhereClause{
-		Placeholder: "? = ? ",
-		Column:      "soft_delete",
-		Value:       false,
-	})
-
-	return w, nil
-}

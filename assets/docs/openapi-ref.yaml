@@ -62,21 +62,28 @@ paths:
                 $ref: '#/components/schemas/listah.v1.ItemServiceReadRequest'
         - name: encoding
           in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/encoding'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/encoding'
         - name: base64
           in: query
-          schema:
-            $ref: '#/components/schemas/base64'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/base64'
         - name: compression
           in: query
-          schema:
-            $ref: '#/components/schemas/compression'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/compression'
         - name: connect
           in: query
-          schema:
-            $ref: '#/components/schemas/connect'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect-protocol-version'
       responses:
         default:
           description: Error
@@ -303,23 +310,29 @@ components:
       type: object
       properties:
         created_by:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
           title: created_by
-          $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
         created_at:
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
           title: created_at
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
         updated_by:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
           title: updated_by
-          $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
         updated_at:
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
           title: updated_at
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
         deleted_by:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
           title: deleted_by
-          $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
         deleted_at:
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
           title: deleted_at
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
       title: Audit
       additionalProperties: false
     listah.v1.Pagination:
@@ -355,6 +368,42 @@ components:
       additionalProperties: false
     listah.v1.Item:
       type: object
+      allOf:
+        - anyOf:
+            - required:
+                - audit
+            - not:
+                anyOf:
+                  - required:
+                      - audit
+        - anyOf:
+            - required:
+                - description
+            - not:
+                anyOf:
+                  - required:
+                      - description
+        - anyOf:
+            - required:
+                - note
+            - not:
+                anyOf:
+                  - required:
+                      - note
+        - anyOf:
+            - required:
+                - reactivateAt
+            - not:
+                anyOf:
+                  - required:
+                      - reactivateAt
+        - anyOf:
+            - required:
+                - softDelete
+            - not:
+                anyOf:
+                  - required:
+                      - softDelete
       properties:
         id:
           type: string
@@ -371,11 +420,9 @@ components:
         description:
           type: string
           title: description
-          nullable: true
         note:
           type: string
           title: note
-          nullable: true
         tags:
           type: array
           items:
@@ -390,15 +437,14 @@ components:
         softDelete:
           type: boolean
           title: soft_delete
-          nullable: true
         reactivateAt:
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
           title: reactivate_at
-          nullable: true
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
         audit:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
           title: audit
-          nullable: true
-          $ref: '#/components/schemas/listah.v1.Audit'
       title: Item
       additionalProperties: false
     listah.v1.Item.PropertiesEntry:
@@ -414,6 +460,21 @@ components:
       additionalProperties: false
     listah.v1.ItemServiceCreateRequest:
       type: object
+      allOf:
+        - anyOf:
+            - required:
+                - audit
+            - not:
+                anyOf:
+                  - required:
+                      - audit
+      anyOf:
+        - required:
+            - audit
+        - not:
+            anyOf:
+              - required:
+                  - audit
       properties:
         items:
           type: array
@@ -421,35 +482,38 @@ components:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
         audit:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
           title: audit
-          nullable: true
-          $ref: '#/components/schemas/listah.v1.Audit'
       title: ItemServiceCreateRequest
       additionalProperties: false
     listah.v1.ItemServiceCreateResponse:
       type: object
       properties:
-        items:
+        itemIds:
           type: array
           items:
-            $ref: '#/components/schemas/listah.v1.Item'
-          title: items
-        totalRecordCount:
-          type: integer
-          title: total_record_count
-          format: int32
-        audit:
-          title: audit
-          nullable: true
-          $ref: '#/components/schemas/listah.v1.Audit'
-        pagination:
-          title: pagination
-          nullable: true
-          $ref: '#/components/schemas/listah.v1.Pagination'
+            type: string
+          title: item_ids
       title: ItemServiceCreateResponse
       additionalProperties: false
     listah.v1.ItemServiceDeleteRequest:
       type: object
+      allOf:
+        - anyOf:
+            - required:
+                - audit
+            - not:
+                anyOf:
+                  - required:
+                      - audit
+      anyOf:
+        - required:
+            - audit
+        - not:
+            anyOf:
+              - required:
+                  - audit
       properties:
         items:
           type: array
@@ -457,63 +521,170 @@ components:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
         audit:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
           title: audit
-          nullable: true
-          $ref: '#/components/schemas/listah.v1.Audit'
       title: ItemServiceDeleteRequest
       additionalProperties: false
     listah.v1.ItemServiceDeleteResponse:
       type: object
       properties:
-        items:
+        itemIds:
           type: array
           items:
-            $ref: '#/components/schemas/listah.v1.Item'
-          title: items
-        totalRecordCount:
-          type: integer
-          title: total_record_count
-          format: int32
-        pagination:
-          title: pagination
-          nullable: true
-          $ref: '#/components/schemas/listah.v1.Pagination'
+            type: string
+          title: item_ids
       title: ItemServiceDeleteResponse
       additionalProperties: false
     listah.v1.ItemServiceReadRequest:
       type: object
+      allOf:
+        - anyOf:
+            - required:
+                - pagination
+            - not:
+                anyOf:
+                  - required:
+                      - pagination
+      anyOf:
+        - required:
+            - pagination
+        - not:
+            anyOf:
+              - required:
+                  - pagination
       properties:
-        items:
+        id:
           type: array
           items:
-            $ref: '#/components/schemas/listah.v1.Item'
-          title: items
+            type: string
+          title: id
+        userId:
+          type: array
+          items:
+            type: string
+          title: user_id
+        summary:
+          type: array
+          items:
+            type: string
+          title: summary
+        category:
+          type: array
+          items:
+            type: string
+          title: category
+        description:
+          type: array
+          items:
+            type: string
+          title: description
+        note:
+          type: array
+          items:
+            type: string
+          title: note
+        tags:
+          type: array
+          items:
+            type: string
+          title: tags
+        properties:
+          type: array
+          items:
+            type: string
+          title: properties
+        reactivateAt:
+          type: array
+          items:
+            $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: reactivate_at
+        createdAt:
+          type: array
+          items:
+            $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: created_at
+        updatedAt:
+          type: array
+          items:
+            $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: updated_at
+        deletedAt:
+          type: array
+          items:
+            $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: deleted_at
+        createdBy:
+          type: array
+          items:
+            type: string
+          title: created_by
+        updatedBy:
+          type: array
+          items:
+            type: string
+          title: updated_by
+        deletedBy:
+          type: array
+          items:
+            type: string
+          title: deleted_by
         pagination:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Pagination'
           title: pagination
-          nullable: true
-          $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceReadRequest
       additionalProperties: false
     listah.v1.ItemServiceReadResponse:
       type: object
+      allOf:
+        - anyOf:
+            - required:
+                - pagination
+            - not:
+                anyOf:
+                  - required:
+                      - pagination
+      anyOf:
+        - required:
+            - pagination
+        - not:
+            anyOf:
+              - required:
+                  - pagination
       properties:
         items:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
+        pagination:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Pagination'
+          title: pagination
         totalRecordCount:
           type: integer
           title: total_record_count
           format: int32
-        pagination:
-          title: pagination
-          nullable: true
-          $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceReadResponse
       additionalProperties: false
     listah.v1.ItemServiceUpdateRequest:
       type: object
+      allOf:
+        - anyOf:
+            - required:
+                - audit
+            - not:
+                anyOf:
+                  - required:
+                      - audit
+      anyOf:
+        - required:
+            - audit
+        - not:
+            anyOf:
+              - required:
+                  - audit
       properties:
         items:
           type: array
@@ -521,27 +692,19 @@ components:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
         audit:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
           title: audit
-          nullable: true
-          $ref: '#/components/schemas/listah.v1.Audit'
       title: ItemServiceUpdateRequest
       additionalProperties: false
     listah.v1.ItemServiceUpdateResponse:
       type: object
       properties:
-        items:
+        itemIds:
           type: array
           items:
-            $ref: '#/components/schemas/listah.v1.Item'
-          title: items
-        totalRecordCount:
-          type: integer
-          title: total_record_count
-          format: int32
-        pagination:
-          title: pagination
-          nullable: true
-          $ref: '#/components/schemas/listah.v1.Pagination'
+            type: string
+          title: item_ids
       title: ItemServiceUpdateResponse
       additionalProperties: false
     encoding:
@@ -561,11 +724,6 @@ components:
         - gzip
         - br
       description: Which compression algorithm to use for this request
-    connect:
-      title: connect
-      enum:
-        - v1
-      description: Define the version of the Connect protocol
     connect-protocol-version:
       type: number
       title: Connect-Protocol-Version
@@ -583,24 +741,23 @@ components:
         code:
           type: string
           examples:
-            - not_found
+            - CodeNotFound
           enum:
-            - canceled
-            - unknown
-            - invalid_argument
-            - deadline_exceeded
-            - not_found
-            - already_exists
-            - permission_denied
-            - resource_exhausted
-            - failed_precondition
-            - aborted
-            - out_of_range
-            - unimplemented
-            - internal
-            - unavailable
-            - data_loss
-            - unauthenticated
+            - CodeCanceled
+            - CodeUnknown
+            - CodeInvalidArgument
+            - CodeDeadlineExceeded
+            - CodeNotFound
+            - CodeAlreadyExists
+            - CodePermissionDenied
+            - CodeResourceExhausted
+            - CodeFailedPrecondition
+            - CodeAborted
+            - CodeOutOfRange
+            - CodeInternal
+            - CodeUnavailable
+            - CodeDataLoss
+            - CodeUnauthenticated
           description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
         message:
           type: string
