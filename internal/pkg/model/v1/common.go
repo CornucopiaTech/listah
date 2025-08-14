@@ -24,9 +24,9 @@ type Audit struct {
 	CreatedBy pb.AuditUpdaterEnum
 	UpdatedBy pb.AuditUpdaterEnum
 	DeletedBy pb.AuditUpdaterEnum
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time
+	CreatedAt time.Time `bun:",nullzero,default:current_timestamp"`
+	UpdatedAt time.Time `bun:",nullzero,default:current_timestamp"`
+	DeletedAt time.Time	`bun:",nullzero,default:current_timestamp"`
 }
 
 

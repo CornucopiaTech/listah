@@ -9,31 +9,28 @@ import {
   Span,
 } from '@opentelemetry/api';
 import { type Context } from '@opentelemetry/api';
-import type { ITraceBaggage } from '@/app/items/ItemsModel';
+import { TraceBaggage, ItemProto } from '@/lib/model/ItemsModel';
 
 export async function POST(request: NextRequest) {
-  const output: ITraceBaggage = {};
+  const output: TraceBaggage = {};
   propagation.inject(context.active(), output);
-
-  console.info("/api/postItem - output");
-  console.info(output);
-
   const activeSpan = trace.getActiveSpan();
-  console.info("/api/postItem - activeSpan");
-  console.info(activeSpan?.spanContext());
 
   const { traceparent, b3 } = output;
   const initReq = await request.json();
-  console.info("In /api/postItem")
-  console.info(initReq)
-  // const { pageNumber, recordsPerPage, userId, category, tags } = initReq
 
-  const input: ITraceBaggage = { traceparent }
+
+  const input: TraceBaggage = { traceparent }
   propagation.extract(context.active(), input);
   const url = (process.env.LISTAH_API_ITEMS_UPDATE ?
     process.env.LISTAH_API_ITEMS_UPDATE :
     process.env.NEXT_PUBLIC_LISTAH_API_ITEMS_UPDATE);
 
+
+  console.info("/api/postItem - output");
+  console.info(output);
+  console.info("/api/postItem - activeSpan");
+  console.info(activeSpan?.spanContext());
   console.info(`URL: ${url}`)
 
   const req = new Request(url, {

@@ -34,22 +34,8 @@ import {
 import { useItemsStore } from '@/lib/store/items/ItemsStoreProvider';
 import { useUpdatedItemStore } from '@/lib/store/updatedItem/UpdatedItemStoreProvider';
 import { ItemProto } from '@/lib/model/ItemsModel';
-import { getValidItem } from '@/lib/utils/itemHelper';
+import { getValidItem, postItem } from '@/lib/utils/itemHelper';
 
-
-
-async function postItem(item: ItemProto) {
-  const req = new Request("/api/postItem", {
-    method: "POST",
-    body: JSON.stringify({items: [item]}),
-    headers: {"Content-Type": "application/json", "Accept": "*/*",},
-  });
-  const res = await fetch(req);
-  if (!res.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return res.json();
-}
 
 export default function ItemUpdate({ pItem }: {
   pItem?: ItemProto

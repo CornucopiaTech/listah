@@ -28,24 +28,30 @@ import Loading from '@/components/Loading';
 import { ItemProto, ItemsProto, ItemsState } from '@/lib/model/ItemsModel';
 import { ErrorAlerts } from '@/components/ErrorAlert';
 import MenuSelect from '@/components/MenuSelect';
-import {ItemModalEnabled, ItemModalDisabled} from './ItemModal';
 import ItemsListStack from './ItemsListStack';
 import ItemsPagination from './ItemsPagination';
 import ItemNoContent from './ItemsNoContent';
+import { getItems } from '@/lib/utils/itemHelper';
 
-async function getItems(userId: string, category: string | string [], tags: string[], pageNumber: number, recordsPerPage: number): Promise<ItemsProto|void> {
-  const req = new Request('/api/getItems', {
-    method: "POST",
-    body: JSON.stringify({userId, category: "", tags, pageNumber, recordsPerPage})
-  });
-  const res = await fetch(req);
-  if (!res.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return res.json();
-}
 
-export function getItemsGroupOptions(userId: string, category: string | string [], tags: string[], pageNumber: number, recordsPerPage: number) {
+// async function getItems(userId: string, category: string[], tags: string[], pageNumber: number, recordsPerPage: number): Promise<ItemsProto | void> {
+//   const req = new Request('/api/getItems', {
+//     method: "POST",
+//     body: JSON.stringify({
+//       userId: [userId], category, tags,
+//       pagination: { pageNumber, recordsPerPage }
+//     })
+//   });
+//   const res = await fetch(req);
+//   if (!res.ok) {
+//     console.error("Error in getItems: ", res.statusText);
+//     throw new Error('Network response was not ok');
+//   }
+//   return res.json();
+// }
+
+
+export function getItemsGroupOptions(userId: string, category: string [], tags: string[], pageNumber: number, recordsPerPage: number) {
   return queryOptions({
      queryKey: ["getItems", userId, category, tags, pageNumber, recordsPerPage],
      queryFn: () => getItems(userId, category, tags, pageNumber, recordsPerPage),
@@ -80,7 +86,7 @@ export default function ItemsRead(): ReactNode {
   const userId: string = "4d56128c-5042-4081-a0ef-c2d064700191";
   const recordsPerPage: number = itemsPerPage;
   const page: number = currentPage;
-  const category: string[] | string = categoryFilter;
+  const category: string[] = categoryFilter;
   const tags: string[] = tagFilter;
 
   function handlePageChange(event: React.ChangeEvent<unknown>, value: number) {
@@ -98,7 +104,7 @@ export default function ItemsRead(): ReactNode {
   // ToDo: Fix this error message
   if (isError) {return <ErrorAlerts>Error: {error.message}</ErrorAlerts>;}
 
-  const items: ItemProto = data.items ? data.items : [];
+  const items: ItemProto[] = data.items ? data.items : [];
   const totalRecords: number = data.totalRecordCount ? data.totalRecordCount : 1;
   const maxPages = Math.ceil(totalRecords / recordsPerPage);
 
