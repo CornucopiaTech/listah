@@ -14,7 +14,9 @@ import { ThemeProvider } from '@mui/material/styles';
 import {
   Box,
 } from '@mui/material';
-import { AppNavBar} from '@/components/AppNavBar';
+
+
+import AppNavBar from '@/components/AppNavBar';
 import Loading from '@/components/Loading';
 import theme from '@/lib/theme';
 

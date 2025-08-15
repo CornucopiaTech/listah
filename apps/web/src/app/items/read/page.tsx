@@ -12,24 +12,31 @@ import {
 import {
   Box,
   Divider,
+  Pagination,
 } from '@mui/material';
 
 
 // import { useUpdatedItemStore } from '@/lib/store/updatedItem/UpdatedItemStoreProvider';
 import { useItemsStore, } from '@/lib/store/items/ItemsStoreProvider';
-// import { ItemsDrawer } from "@/app/items/read/ItemsDrawer";
+import { ItemsDrawer } from "@/app/items/read/ItemsDrawer";
 // import ItemsDatePicker from "@/app/items/read/ItemsDatePicker";
 // import ItemsSearch from '@/app/items/read/ItemsSearch';
-import { AppBarHeight } from '@/components/AppNavBar';
+import { AppBarHeight } from '@/lib/model/appNavBarModel';
 import Loading from '@/components/Loading';
 import { ItemProto, ItemsProto, ItemsState } from '@/lib/model/ItemsModel';
 import { ErrorAlerts } from '@/components/ErrorAlert';
 // import MenuSelect from '@/components/MenuSelect';
 import ItemsListStack from './ItemsListStack';
-import ItemsPagination from './ItemsPagination';
+import { ItemsTopPagination, ItemsBottomPagination } from './ItemsPagination';
 import ItemNoContent from './ItemsNoContent';
+import MenuSelect from '@/components/MenuSelect';
 import { getItems } from '@/lib/utils/itemHelper';
 
+
+const menuItemsOptions = [
+  { label: 10, value: 10 }, { label: 20, value: 20 },
+  { label: 50, value: 50 }, { label: 100, value: 100 }
+]
 
 export function getItemsGroupOptions(userId: string, category: string [], tags: string[], pageNumber: number, recordsPerPage: number) {
   return queryOptions({
@@ -45,15 +52,10 @@ export default function ItemsRead(): ReactNode {
     currentPage,
     categoryFilter,
     tagFilter,
-    // modalOpen,
-    // inEditMode,
+    drawerOpen,
     updateItemsPageRecordCount,
     updateItemsCurrentPage,
-    // updateItemsCategoryFilter,
-    // updateItemsTagFilter,
-    // updateModal,
-    // updateEditMode,
-
+    toggleDrawer,
   } = useItemsStore((state) => state);
 
 
@@ -79,6 +81,8 @@ export default function ItemsRead(): ReactNode {
   if (isError) {return <ErrorAlerts>Error: {error.message}</ErrorAlerts>;}
 
   const items: ItemProto[] = data.items ? data.items : [];
+  const itemTags: string[] = data.tags ? data.tags : [];
+  const itemCategories: string[] = data.categories ? data.categories : [];
   const totalRecords: number = data.totalRecordCount ? data.totalRecordCount : 1;
   const maxPages = Math.ceil(totalRecords / recordsPerPage);
 
@@ -90,9 +94,11 @@ export default function ItemsRead(): ReactNode {
       <Box
           sx={{ height: `calc(100% - ${AppBarHeight})`,
                 mt: AppBarHeight, p: 1 }}>
-        <Box  key='head-content' sx={{ mt: 1, }}>
-          <ItemsPagination
-              page={page} maxPages={maxPages} recordsPerPage={recordsPerPage}
+
+        <Box  key='head-content' sx={{ mt: 0, }}>
+
+          <ItemsTopPagination
+              page={page} maxPages={maxPages} recordsPerPage={recordsPerPage} tags={itemTags} categories={itemCategories}
               handlePageChange={handlePageChange}
               handlePageCountChange={handlePageCountChange} />
         </Box>
@@ -107,7 +113,7 @@ export default function ItemsRead(): ReactNode {
         </Box>
 
         <Box  key='foot-content'>
-          <ItemsPagination
+          <ItemsBottomPagination
               page={page} maxPages={maxPages} recordsPerPage={recordsPerPage}
               handlePageChange={handlePageChange}
               handlePageCountChange={handlePageCountChange} />

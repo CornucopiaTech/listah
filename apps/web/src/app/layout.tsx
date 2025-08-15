@@ -18,6 +18,8 @@ import { enableMapSet } from 'immer';
 import "./globals.css";
 import '@/envConfig.ts';
 
+import { AppNavBarStoreProvider} from '@/lib/store/appNavBar/AppNavBarStoreProvider';
+
 enableMapSet()
 export const metadata: Metadata = {
   title: "Listah",
@@ -32,18 +34,20 @@ export default function RootLayout({
   return (
     <Fragment>
       <ClerkProvider>
+        <AppNavBarStoreProvider>
           <CssBaseline />
           <html lang="en">
             <head>
             </head>
             <body>
-              <Box sx={{ /*bgcolor: '#cfe8fc',*/ minHeight: '720px', height: '100%' }}>
+              <Box sx={{ minHeight: '720px', height: '100%' }}>
                 <Container maxWidth="lg">
                   {children}
                 </Container>
               </Box>
             </body>
           </html>
+        </AppNavBarStoreProvider>
       </ClerkProvider>
     </Fragment>
   );

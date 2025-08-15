@@ -4,7 +4,7 @@ import (
 	"cornucopia/listah/internal/pkg/model"
 	pb "cornucopia/listah/internal/pkg/proto/v1"
 	"time"
-	"fmt"
+	// "fmt"
 
 	"github.com/google/uuid"
 	"github.com/uptrace/bun"
@@ -157,8 +157,6 @@ func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
 				DeletedAt: timestamppb.New(v.Audit.DeletedAt),
 			},
 		})
-
-		fmt.Println(&v.SoftDelete)
 	}
 	return items, nil
 }

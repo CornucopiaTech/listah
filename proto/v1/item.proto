@@ -54,6 +54,8 @@ message ItemServiceReadRequest {
 }
 message ItemServiceReadResponse {
   repeated Item items = 1;
+  repeated string tags = 2;
+  repeated string categories = 3;
   optional Pagination pagination = 200;
   int32 total_record_count = 300;
 }

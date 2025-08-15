@@ -1,0 +1,35 @@
+syntax = "proto3";
+package listah.v1;
+
+
+option go_package = "cornucopia/listah/internal/pkg/proto/v1";
+
+
+import "v1/commons.proto";
+import "google/protobuf/timestamp.proto";
+import "gnostic/openapi/v3/annotations.proto";
+
+
+
+
+message TagServiceReadRequest {
+  repeated string user_id = 1 [json_name = "userId"];
+  repeated string id = 2;
+  repeated string category = 4;
+  optional Pagination pagination = 200;
+}
+message TagServiceReadResponse {
+  repeated string tag = 1;
+  optional Pagination pagination = 200;
+  int32 total_record_count = 300;
+}
+
+
+service TagService {
+
+    rpc Read(TagServiceReadRequest) returns (TagServiceReadResponse){
+        option idempotency_level = NO_SIDE_EFFECTS;
+        option (gnostic.openapi.v3.operation).description = "Read Tag";
+    }
+
+}

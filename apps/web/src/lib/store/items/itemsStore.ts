@@ -8,8 +8,17 @@ export const defaultPagesInitState: ItemsState = {
   currentPage: 1,
   categoryFilter: [],
   tagFilter: [],
-  modalOpen: false,
-  inEditMode: false,
+  readFromDate: "",
+  readToDate: "",
+  drawerOpen: false,
+  searchQuery: '',
+  collapseTags: true,
+  collapseCategories: true,
+  collapseDatePicker: true,
+  checkedTags: [],
+  checkedCategories: [],
+  filterFromDate: '',
+  filterToDate: '',
 }
 export const createItemsStore = (
   initState: ItemsState = defaultPagesInitState,
@@ -18,12 +27,21 @@ export const createItemsStore = (
     ...initState,
     updateItemsPageRecordCount: (recordCount: number) => set(() => ({ itemsPerPage: recordCount})),
     updateItemsCurrentPage: (currentPage: number) => set(() => ({ currentPage })),
-    updateItemsCategoryFilter: (category: string) => set(
-      (state) => ({ categoryFilter: state.categoryFilter ? [...state.categoryFilter, category] : [category] })
+    updateItemsCategoryFilter: (categoryFilter: string[]) => set(
+      (state) => ({ categoryFilter })
     ),
-    updateItemsTagFilter: (tag: string) => set((state) => ({ tagFilter: state.tagFilter ? [...state.tagFilter, tag] : [tag]})),
-    updateModal: (modalOpen: boolean) => set(() => ({ modalOpen })),
-    updateEditMode: (inEditMode: boolean) => set(() => ({ inEditMode })),
-    updateEditedItem: (inEditMode: boolean) => set(() => ({ inEditMode })),
+    updateItemsTagFilter: (tagFilter: string[]) => set((state) => ({ tagFilter })),
+    toggleDrawer: (drawerOpen: boolean) => set(() => ({ drawerOpen })),
+    updateSearchQuery: (searchQuery: string) => set(() => ({ searchQuery })),
+    toggleCollapseTags: (collapseTags: boolean) => set(() => ({ collapseTags })),
+    toggleCollapseCategories: (collapseCategories: boolean) => set(() => ({ collapseCategories })),
+    toggleCollapseDatePicker: (collapseDatePicker: boolean) => set(() => ({ collapseDatePicker })),
+    updateItemsCheckedCategory: (checkedCategories: string[]) => set((state) => ({ checkedCategories })),
+    updateItemsCheckedTags: (checkedTags: string[]) => set((state) => ({ checkedTags })),
+    updateItemsFromDate: (readFromDate: string) => set((state) => ({ readFromDate })),
+    updateItemsToDate: (readToDate: string) => set((state) => ({ readToDate })),
+    updateFilterFromDate: (filterFromDate: string) => set((state) => ({ filterFromDate })),
+    updateFilterToDate: (filterToDate: string) => set((state) => ({ filterToDate })),
+
   }))
 }

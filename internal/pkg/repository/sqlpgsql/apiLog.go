@@ -26,7 +26,7 @@ func (a *apilog) Insert(ctx context.Context, m interface{}) error {
 
 	_, err := a.db.NewInsert().Model(m).Exec(ctx)
 	if err != nil {
-		a.logger.LogError(ctx, svcName, activity, "Error occured", errors.Cause(err).Error())
+		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
 		return err
 	}
 

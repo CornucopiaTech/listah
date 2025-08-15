@@ -21,6 +21,8 @@ type Repository struct {
 	DB       *bun.DB
 	ApiLog   ApiLog
 	Item     Item
+	Category Category
+	Tag Tag
 }
 
 func Init(cfg *config.Config, logger *logging.Factory) *Repository {
@@ -63,6 +65,8 @@ func Init(cfg *config.Config, logger *logging.Factory) *Repository {
 		DB:       db,
 		ApiLog:   &apilog{db: db, logger: logger},
 		Item:     &item{db: db, logger: logger},
+		Category:     &category{db: db, logger: logger},
+		Tag:     &tag{db: db, logger: logger},
 	}
 
 }

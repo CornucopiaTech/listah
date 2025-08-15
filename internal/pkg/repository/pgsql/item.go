@@ -55,7 +55,7 @@ func (a *item) Select(ctx context.Context, m interface{}, c *[]model.WhereClause
 	// count, err := selectQuery.OrderExpr(s).Limit(l).Offset(o).ScanAndCount(ctx)
 	count, err := selectQuery.ScanAndCount(ctx)
 	if err != nil {
-		a.logger.LogError(ctx, svcName, activity, "Error occured", errors.Cause(err).Error())
+		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
 		return 0, err
 	}
 
@@ -79,7 +79,7 @@ func (a *item) Count(ctx context.Context, m interface{}, c *[]model.WhereClause,
 	selectQuery := qb.Unwrap().(*bun.SelectQuery)
 
 	if err := selectQuery.OrderExpr(s).Limit(l).Offset(o).Scan(ctx); err != nil {
-		a.logger.LogError(ctx, svcName, activity, "Error occured", errors.Cause(err).Error())
+		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
 		return err
 	}
 
@@ -95,7 +95,7 @@ func (a *item) Insert(ctx context.Context, m interface{}) error {
 
 	_, err := a.db.NewInsert().Model(m).Returning("*").Exec(ctx)
 	if err != nil {
-		a.logger.LogError(ctx, svcName, activity, "Error occured", errors.Cause(err).Error())
+		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
 		return err
 	}
 
@@ -126,7 +126,7 @@ func (a *item) Update(ctx context.Context, v interface{},
 	_, err := q.Exec(ctx)
 
 	if err != nil {
-		a.logger.LogError(ctx, svcName, activity, "Error occured", errors.Cause(err).Error())
+		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
 		return err
 	}
 
@@ -159,7 +159,7 @@ func (a *item) Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (
 
 	res, err := q.Exec(ctx)
 	if err != nil {
-		a.logger.LogError(ctx, svcName, activity, "Error occured", errors.Cause(err).Error())
+		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
 		return nil, err
 	}
 

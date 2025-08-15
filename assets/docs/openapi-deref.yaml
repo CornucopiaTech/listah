@@ -2,8 +2,272 @@ openapi: 3.1.0
 info: {}
 security: []
 tags:
+  - name: listah.v1.CategoryService
   - name: listah.v1.ItemService
+  - name: listah.v1.TagService
 paths:
+  /listah.v1.CategoryService/Read:
+    get:
+      tags:
+        - listah.v1.CategoryService
+      summary: Read
+      description: Read Category
+      operationId: listah.v1.CategoryService.Read.get
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            type: number
+            title: Connect-Protocol-Version
+            enum: &ref_0
+              - 1
+            description: Define the version of the Connect protocol
+            const: 1
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            type: number
+            title: Connect-Timeout-Ms
+            description: Define the timeout, in ms
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf: &ref_2
+                  - anyOf:
+                      - required:
+                          - pagination
+                      - not:
+                          anyOf:
+                            - required:
+                                - pagination
+                anyOf: &ref_3
+                  - required:
+                      - pagination
+                  - not:
+                      anyOf:
+                        - required:
+                            - pagination
+                properties: &ref_4
+                  userId:
+                    type: array
+                    items:
+                      type: string
+                    title: user_id
+                  tags:
+                    type: array
+                    items:
+                      type: string
+                    title: tags
+                  pagination:
+                    allOf:
+                      - type: object
+                        properties: &ref_1
+                          pageNumber:
+                            type: integer
+                            title: page_number
+                            format: int32
+                          recordsPerPage:
+                            type: integer
+                            title: records_per_page
+                            format: int32
+                          sortCondition:
+                            type: object
+                            title: sort_condition
+                            additionalProperties:
+                              type: string
+                              title: value
+                            description: int32 total_record_count = 3;
+                        title: Pagination
+                        additionalProperties: false
+                    title: pagination
+                title: CategoryServiceReadRequest
+                additionalProperties: false
+        - name: encoding
+          in: query
+          content:
+            application/json:
+              schema:
+                title: encoding
+                enum: &ref_11
+                  - proto
+                  - json
+                description: Define which encoding or 'Message-Codec' to use
+        - name: base64
+          in: query
+          content:
+            application/json:
+              schema:
+                type: boolean
+                title: base64
+                description: Specifies if the message query param is base64 encoded, which may be required for binary data
+        - name: compression
+          in: query
+          content:
+            application/json:
+              schema:
+                title: compression
+                enum: &ref_12
+                  - identity
+                  - gzip
+                  - br
+                description: Which compression algorithm to use for this request
+        - name: connect
+          in: query
+          content:
+            application/json:
+              schema:
+                type: number
+                title: Connect-Protocol-Version
+                enum: *ref_0
+                description: Define the version of the Connect protocol
+                const: 1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf: &ref_5
+                  - anyOf:
+                      - required:
+                          - pagination
+                      - not:
+                          anyOf:
+                            - required:
+                                - pagination
+                anyOf: &ref_6
+                  - required:
+                      - pagination
+                  - not:
+                      anyOf:
+                        - required:
+                            - pagination
+                properties: &ref_7
+                  category:
+                    type: array
+                    items:
+                      type: string
+                    title: category
+                  pagination:
+                    allOf:
+                      - type: object
+                        properties: *ref_1
+                        title: Pagination
+                        additionalProperties: false
+                    title: pagination
+                  totalRecordCount:
+                    type: integer
+                    title: total_record_count
+                    format: int32
+                title: CategoryServiceReadResponse
+                additionalProperties: false
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: &ref_8
+                  code:
+                    type: string
+                    examples:
+                      - CodeNotFound
+                    enum:
+                      - CodeCanceled
+                      - CodeUnknown
+                      - CodeInvalidArgument
+                      - CodeDeadlineExceeded
+                      - CodeNotFound
+                      - CodeAlreadyExists
+                      - CodePermissionDenied
+                      - CodeResourceExhausted
+                      - CodeFailedPrecondition
+                      - CodeAborted
+                      - CodeOutOfRange
+                      - CodeInternal
+                      - CodeUnavailable
+                      - CodeDataLoss
+                      - CodeUnauthenticated
+                    description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
+                  message:
+                    type: string
+                    description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
+                  detail:
+                    type: object
+                    properties: &ref_27
+                      type:
+                        type: string
+                      value:
+                        type: string
+                        format: binary
+                      debug:
+                        type: object
+                        additionalProperties: true
+                    additionalProperties: true
+                    description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+                title: Connect Error
+                additionalProperties: true
+                description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
+    post:
+      tags:
+        - listah.v1.CategoryService
+      summary: Read
+      description: Read Category
+      operationId: listah.v1.CategoryService.Read
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            type: number
+            title: Connect-Protocol-Version
+            enum: *ref_0
+            description: Define the version of the Connect protocol
+            const: 1
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            type: number
+            title: Connect-Timeout-Ms
+            description: Define the timeout, in ms
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              allOf: *ref_2
+              anyOf: *ref_3
+              properties: *ref_4
+              title: CategoryServiceReadRequest
+              additionalProperties: false
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf: *ref_5
+                anyOf: *ref_6
+                properties: *ref_7
+                title: CategoryServiceReadResponse
+                additionalProperties: false
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: *ref_8
+                title: Connect Error
+                additionalProperties: true
+                description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
   /listah.v1.ItemService/Create:
     post:
       tags:
@@ -18,8 +282,7 @@ paths:
           schema:
             type: number
             title: Connect-Protocol-Version
-            enum: &ref_2
-              - 1
+            enum: *ref_0
             description: Define the version of the Connect protocol
             const: 1
         - name: Connect-Timeout-Ms
@@ -33,7 +296,7 @@ paths:
           application/json:
             schema:
               type: object
-              allOf: &ref_13
+              allOf: &ref_28
                 - anyOf:
                     - required:
                         - audit
@@ -41,19 +304,19 @@ paths:
                         anyOf:
                           - required:
                               - audit
-              anyOf: &ref_14
+              anyOf: &ref_29
                 - required:
                     - audit
                 - not:
                     anyOf:
                       - required:
                           - audit
-              properties: &ref_15
+              properties: &ref_30
                 items:
                   type: array
                   items:
                     type: object
-                    allOf: &ref_3
+                    allOf: &ref_13
                       - anyOf:
                           - required:
                               - audit
@@ -89,7 +352,7 @@ paths:
                               anyOf:
                                 - required:
                                     - softDelete
-                    properties: &ref_4
+                    properties: &ref_14
                       id:
                         type: string
                         title: id
@@ -220,12 +483,12 @@ paths:
                       audit:
                         allOf:
                           - type: object
-                            properties: &ref_1
+                            properties: &ref_10
                               created_by:
                                 allOf:
                                   - type: string
                                     title: AuditUpdaterEnum
-                                    enum: &ref_0
+                                    enum: &ref_9
                                       - AUDIT_UPDATER_ENUM_UNSPECIFIED
                                       - AUDIT_UPDATER_ENUM_FRONTEND
                                       - AUDIT_UPDATER_ENUM_SYSOPS
@@ -329,7 +592,7 @@ paths:
                                 allOf:
                                   - type: string
                                     title: AuditUpdaterEnum
-                                    enum: *ref_0
+                                    enum: *ref_9
                                 title: updated_by
                               updated_at:
                                 allOf:
@@ -430,7 +693,7 @@ paths:
                                 allOf:
                                   - type: string
                                     title: AuditUpdaterEnum
-                                    enum: *ref_0
+                                    enum: *ref_9
                                 title: deleted_by
                               deleted_at:
                                 allOf:
@@ -536,7 +799,7 @@ paths:
                 audit:
                   allOf:
                     - type: object
-                      properties: *ref_1
+                      properties: *ref_10
                       title: Audit
                       additionalProperties: false
                   title: audit
@@ -550,7 +813,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_16
+                properties: &ref_31
                   itemIds:
                     type: array
                     items:
@@ -564,44 +827,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_6
-                  code:
-                    type: string
-                    examples:
-                      - CodeNotFound
-                    enum:
-                      - CodeCanceled
-                      - CodeUnknown
-                      - CodeInvalidArgument
-                      - CodeDeadlineExceeded
-                      - CodeNotFound
-                      - CodeAlreadyExists
-                      - CodePermissionDenied
-                      - CodeResourceExhausted
-                      - CodeFailedPrecondition
-                      - CodeAborted
-                      - CodeOutOfRange
-                      - CodeInternal
-                      - CodeUnavailable
-                      - CodeDataLoss
-                      - CodeUnauthenticated
-                    description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
-                  message:
-                    type: string
-                    description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
-                  detail:
-                    type: object
-                    properties: &ref_27
-                      type:
-                        type: string
-                      value:
-                        type: string
-                        format: binary
-                      debug:
-                        type: object
-                        additionalProperties: true
-                    additionalProperties: true
-                    description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+                properties: *ref_8
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -619,7 +845,7 @@ paths:
           schema:
             type: number
             title: Connect-Protocol-Version
-            enum: *ref_2
+            enum: *ref_0
             description: Define the version of the Connect protocol
             const: 1
         - name: Connect-Timeout-Ms
@@ -634,7 +860,7 @@ paths:
             application/json:
               schema:
                 type: object
-                allOf: &ref_7
+                allOf: &ref_15
                   - anyOf:
                       - required:
                           - pagination
@@ -642,14 +868,14 @@ paths:
                           anyOf:
                             - required:
                                 - pagination
-                anyOf: &ref_8
+                anyOf: &ref_16
                   - required:
                       - pagination
                   - not:
                       anyOf:
                         - required:
                             - pagination
-                properties: &ref_9
+                properties: &ref_17
                   id:
                     type: array
                     items:
@@ -1092,22 +1318,7 @@ paths:
                   pagination:
                     allOf:
                       - type: object
-                        properties: &ref_5
-                          pageNumber:
-                            type: integer
-                            title: page_number
-                            format: int32
-                          recordsPerPage:
-                            type: integer
-                            title: records_per_page
-                            format: int32
-                          sortCondition:
-                            type: object
-                            title: sort_condition
-                            additionalProperties:
-                              type: string
-                              title: value
-                            description: int32 total_record_count = 3;
+                        properties: *ref_1
                         title: Pagination
                         additionalProperties: false
                     title: pagination
@@ -1119,9 +1330,7 @@ paths:
             application/json:
               schema:
                 title: encoding
-                enum: &ref_25
-                  - proto
-                  - json
+                enum: *ref_11
                 description: Define which encoding or 'Message-Codec' to use
         - name: base64
           in: query
@@ -1137,10 +1346,7 @@ paths:
             application/json:
               schema:
                 title: compression
-                enum: &ref_26
-                  - identity
-                  - gzip
-                  - br
+                enum: *ref_12
                 description: Which compression algorithm to use for this request
         - name: connect
           in: query
@@ -1149,7 +1355,7 @@ paths:
               schema:
                 type: number
                 title: Connect-Protocol-Version
-                enum: *ref_2
+                enum: *ref_0
                 description: Define the version of the Connect protocol
                 const: 1
       responses:
@@ -1159,7 +1365,7 @@ paths:
             application/json:
               schema:
                 type: object
-                allOf: &ref_10
+                allOf: &ref_18
                   - anyOf:
                       - required:
                           - pagination
@@ -1167,27 +1373,37 @@ paths:
                           anyOf:
                             - required:
                                 - pagination
-                anyOf: &ref_11
+                anyOf: &ref_19
                   - required:
                       - pagination
                   - not:
                       anyOf:
                         - required:
                             - pagination
-                properties: &ref_12
+                properties: &ref_20
                   items:
                     type: array
                     items:
                       type: object
-                      allOf: *ref_3
-                      properties: *ref_4
+                      allOf: *ref_13
+                      properties: *ref_14
                       title: Item
                       additionalProperties: false
                     title: items
+                  tags:
+                    type: array
+                    items:
+                      type: string
+                    title: tags
+                  categories:
+                    type: array
+                    items:
+                      type: string
+                    title: categories
                   pagination:
                     allOf:
                       - type: object
-                        properties: *ref_5
+                        properties: *ref_1
                         title: Pagination
                         additionalProperties: false
                     title: pagination
@@ -1203,7 +1419,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_6
+                properties: *ref_8
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -1220,7 +1436,7 @@ paths:
           schema:
             type: number
             title: Connect-Protocol-Version
-            enum: *ref_2
+            enum: *ref_0
             description: Define the version of the Connect protocol
             const: 1
         - name: Connect-Timeout-Ms
@@ -1234,9 +1450,9 @@ paths:
           application/json:
             schema:
               type: object
-              allOf: *ref_7
-              anyOf: *ref_8
-              properties: *ref_9
+              allOf: *ref_15
+              anyOf: *ref_16
+              properties: *ref_17
               title: ItemServiceReadRequest
               additionalProperties: false
         required: true
@@ -1247,9 +1463,9 @@ paths:
             application/json:
               schema:
                 type: object
-                allOf: *ref_10
-                anyOf: *ref_11
-                properties: *ref_12
+                allOf: *ref_18
+                anyOf: *ref_19
+                properties: *ref_20
                 title: ItemServiceReadResponse
                 additionalProperties: false
         default:
@@ -1258,7 +1474,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_6
+                properties: *ref_8
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -1276,7 +1492,7 @@ paths:
           schema:
             type: number
             title: Connect-Protocol-Version
-            enum: *ref_2
+            enum: *ref_0
             description: Define the version of the Connect protocol
             const: 1
         - name: Connect-Timeout-Ms
@@ -1290,7 +1506,7 @@ paths:
           application/json:
             schema:
               type: object
-              allOf: &ref_21
+              allOf: &ref_36
                 - anyOf:
                     - required:
                         - audit
@@ -1298,27 +1514,27 @@ paths:
                         anyOf:
                           - required:
                               - audit
-              anyOf: &ref_22
+              anyOf: &ref_37
                 - required:
                     - audit
                 - not:
                     anyOf:
                       - required:
                           - audit
-              properties: &ref_23
+              properties: &ref_38
                 items:
                   type: array
                   items:
                     type: object
-                    allOf: *ref_3
-                    properties: *ref_4
+                    allOf: *ref_13
+                    properties: *ref_14
                     title: Item
                     additionalProperties: false
                   title: items
                 audit:
                   allOf:
                     - type: object
-                      properties: *ref_1
+                      properties: *ref_10
                       title: Audit
                       additionalProperties: false
                   title: audit
@@ -1332,7 +1548,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_24
+                properties: &ref_39
                   itemIds:
                     type: array
                     items:
@@ -1346,7 +1562,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_6
+                properties: *ref_8
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -1364,7 +1580,7 @@ paths:
           schema:
             type: number
             title: Connect-Protocol-Version
-            enum: *ref_2
+            enum: *ref_0
             description: Define the version of the Connect protocol
             const: 1
         - name: Connect-Timeout-Ms
@@ -1378,7 +1594,7 @@ paths:
           application/json:
             schema:
               type: object
-              allOf: &ref_17
+              allOf: &ref_32
                 - anyOf:
                     - required:
                         - audit
@@ -1386,27 +1602,27 @@ paths:
                         anyOf:
                           - required:
                               - audit
-              anyOf: &ref_18
+              anyOf: &ref_33
                 - required:
                     - audit
                 - not:
                     anyOf:
                       - required:
                           - audit
-              properties: &ref_19
+              properties: &ref_34
                 items:
                   type: array
                   items:
                     type: object
-                    allOf: *ref_3
-                    properties: *ref_4
+                    allOf: *ref_13
+                    properties: *ref_14
                     title: Item
                     additionalProperties: false
                   title: items
                 audit:
                   allOf:
                     - type: object
-                      properties: *ref_1
+                      properties: *ref_10
                       title: Audit
                       additionalProperties: false
                   title: audit
@@ -1420,7 +1636,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_20
+                properties: &ref_35
                   itemIds:
                     type: array
                     items:
@@ -1434,7 +1650,216 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_6
+                properties: *ref_8
+                title: Connect Error
+                additionalProperties: true
+                description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
+  /listah.v1.TagService/Read:
+    get:
+      tags:
+        - listah.v1.TagService
+      summary: Read
+      description: Read Tag
+      operationId: listah.v1.TagService.Read.get
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            type: number
+            title: Connect-Protocol-Version
+            enum: *ref_0
+            description: Define the version of the Connect protocol
+            const: 1
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            type: number
+            title: Connect-Timeout-Ms
+            description: Define the timeout, in ms
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf: &ref_21
+                  - anyOf:
+                      - required:
+                          - pagination
+                      - not:
+                          anyOf:
+                            - required:
+                                - pagination
+                anyOf: &ref_22
+                  - required:
+                      - pagination
+                  - not:
+                      anyOf:
+                        - required:
+                            - pagination
+                properties: &ref_23
+                  userId:
+                    type: array
+                    items:
+                      type: string
+                    title: user_id
+                  id:
+                    type: array
+                    items:
+                      type: string
+                    title: id
+                  category:
+                    type: array
+                    items:
+                      type: string
+                    title: category
+                  pagination:
+                    allOf:
+                      - type: object
+                        properties: *ref_1
+                        title: Pagination
+                        additionalProperties: false
+                    title: pagination
+                title: TagServiceReadRequest
+                additionalProperties: false
+        - name: encoding
+          in: query
+          content:
+            application/json:
+              schema:
+                title: encoding
+                enum: *ref_11
+                description: Define which encoding or 'Message-Codec' to use
+        - name: base64
+          in: query
+          content:
+            application/json:
+              schema:
+                type: boolean
+                title: base64
+                description: Specifies if the message query param is base64 encoded, which may be required for binary data
+        - name: compression
+          in: query
+          content:
+            application/json:
+              schema:
+                title: compression
+                enum: *ref_12
+                description: Which compression algorithm to use for this request
+        - name: connect
+          in: query
+          content:
+            application/json:
+              schema:
+                type: number
+                title: Connect-Protocol-Version
+                enum: *ref_0
+                description: Define the version of the Connect protocol
+                const: 1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf: &ref_24
+                  - anyOf:
+                      - required:
+                          - pagination
+                      - not:
+                          anyOf:
+                            - required:
+                                - pagination
+                anyOf: &ref_25
+                  - required:
+                      - pagination
+                  - not:
+                      anyOf:
+                        - required:
+                            - pagination
+                properties: &ref_26
+                  tag:
+                    type: array
+                    items:
+                      type: string
+                    title: tag
+                  pagination:
+                    allOf:
+                      - type: object
+                        properties: *ref_1
+                        title: Pagination
+                        additionalProperties: false
+                    title: pagination
+                  totalRecordCount:
+                    type: integer
+                    title: total_record_count
+                    format: int32
+                title: TagServiceReadResponse
+                additionalProperties: false
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: *ref_8
+                title: Connect Error
+                additionalProperties: true
+                description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
+    post:
+      tags:
+        - listah.v1.TagService
+      summary: Read
+      description: Read Tag
+      operationId: listah.v1.TagService.Read
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            type: number
+            title: Connect-Protocol-Version
+            enum: *ref_0
+            description: Define the version of the Connect protocol
+            const: 1
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            type: number
+            title: Connect-Timeout-Ms
+            description: Define the timeout, in ms
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              allOf: *ref_21
+              anyOf: *ref_22
+              properties: *ref_23
+              title: TagServiceReadRequest
+              additionalProperties: false
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf: *ref_24
+                anyOf: *ref_25
+                properties: *ref_26
+                title: TagServiceReadResponse
+                additionalProperties: false
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: *ref_8
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -1443,7 +1868,7 @@ components:
     listah.v1.AuditUpdaterEnum:
       type: string
       title: AuditUpdaterEnum
-      enum: *ref_0
+      enum: *ref_9
     google.protobuf.Timestamp:
       type: string
       format: date-time
@@ -1539,12 +1964,12 @@ components:
          ) to obtain a formatter capable of generating timestamps in this format.
     listah.v1.Audit:
       type: object
-      properties: *ref_1
+      properties: *ref_10
       title: Audit
       additionalProperties: false
     listah.v1.Pagination:
       type: object
-      properties: *ref_5
+      properties: *ref_1
       title: Pagination
       additionalProperties: false
     listah.v1.Pagination.SortConditionEntry:
@@ -1558,10 +1983,57 @@ components:
           title: value
       title: SortConditionEntry
       additionalProperties: false
+    listah.v1.CategoryServiceReadRequest:
+      type: object
+      allOf: *ref_2
+      anyOf: *ref_3
+      properties: *ref_4
+      title: CategoryServiceReadRequest
+      additionalProperties: false
+    listah.v1.CategoryServiceReadResponse:
+      type: object
+      allOf: *ref_5
+      anyOf: *ref_6
+      properties: *ref_7
+      title: CategoryServiceReadResponse
+      additionalProperties: false
+    encoding:
+      title: encoding
+      enum: *ref_11
+      description: Define which encoding or 'Message-Codec' to use
+    base64:
+      type: boolean
+      title: base64
+      description: Specifies if the message query param is base64 encoded, which may be required for binary data
+    compression:
+      title: compression
+      enum: *ref_12
+      description: Which compression algorithm to use for this request
+    connect-protocol-version:
+      type: number
+      title: Connect-Protocol-Version
+      enum: *ref_0
+      description: Define the version of the Connect protocol
+      const: 1
+    connect-timeout-header:
+      type: number
+      title: Connect-Timeout-Ms
+      description: Define the timeout, in ms
+    connect.error:
+      type: object
+      properties: *ref_8
+      title: Connect Error
+      additionalProperties: true
+      description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
+    google.protobuf.Any:
+      type: object
+      properties: *ref_27
+      additionalProperties: true
+      description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
     listah.v1.Item:
       type: object
-      allOf: *ref_3
-      properties: *ref_4
+      allOf: *ref_13
+      properties: *ref_14
       title: Item
       additionalProperties: false
     listah.v1.Item.PropertiesEntry:
@@ -1577,84 +2049,65 @@ components:
       additionalProperties: false
     listah.v1.ItemServiceCreateRequest:
       type: object
-      allOf: *ref_13
-      anyOf: *ref_14
-      properties: *ref_15
+      allOf: *ref_28
+      anyOf: *ref_29
+      properties: *ref_30
       title: ItemServiceCreateRequest
       additionalProperties: false
     listah.v1.ItemServiceCreateResponse:
       type: object
-      properties: *ref_16
+      properties: *ref_31
       title: ItemServiceCreateResponse
       additionalProperties: false
     listah.v1.ItemServiceDeleteRequest:
       type: object
-      allOf: *ref_17
-      anyOf: *ref_18
-      properties: *ref_19
+      allOf: *ref_32
+      anyOf: *ref_33
+      properties: *ref_34
       title: ItemServiceDeleteRequest
       additionalProperties: false
     listah.v1.ItemServiceDeleteResponse:
       type: object
-      properties: *ref_20
+      properties: *ref_35
       title: ItemServiceDeleteResponse
       additionalProperties: false
     listah.v1.ItemServiceReadRequest:
       type: object
-      allOf: *ref_7
-      anyOf: *ref_8
-      properties: *ref_9
+      allOf: *ref_15
+      anyOf: *ref_16
+      properties: *ref_17
       title: ItemServiceReadRequest
       additionalProperties: false
     listah.v1.ItemServiceReadResponse:
       type: object
-      allOf: *ref_10
-      anyOf: *ref_11
-      properties: *ref_12
+      allOf: *ref_18
+      anyOf: *ref_19
+      properties: *ref_20
       title: ItemServiceReadResponse
       additionalProperties: false
     listah.v1.ItemServiceUpdateRequest:
       type: object
-      allOf: *ref_21
-      anyOf: *ref_22
-      properties: *ref_23
+      allOf: *ref_36
+      anyOf: *ref_37
+      properties: *ref_38
       title: ItemServiceUpdateRequest
       additionalProperties: false
     listah.v1.ItemServiceUpdateResponse:
       type: object
-      properties: *ref_24
+      properties: *ref_39
       title: ItemServiceUpdateResponse
       additionalProperties: false
-    encoding:
-      title: encoding
-      enum: *ref_25
-      description: Define which encoding or 'Message-Codec' to use
-    base64:
-      type: boolean
-      title: base64
-      description: Specifies if the message query param is base64 encoded, which may be required for binary data
-    compression:
-      title: compression
-      enum: *ref_26
-      description: Which compression algorithm to use for this request
-    connect-protocol-version:
-      type: number
-      title: Connect-Protocol-Version
-      enum: *ref_2
-      description: Define the version of the Connect protocol
-      const: 1
-    connect-timeout-header:
-      type: number
-      title: Connect-Timeout-Ms
-      description: Define the timeout, in ms
-    connect.error:
+    listah.v1.TagServiceReadRequest:
       type: object
-      properties: *ref_6
-      title: Connect Error
-      additionalProperties: true
-      description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
-    google.protobuf.Any:
+      allOf: *ref_21
+      anyOf: *ref_22
+      properties: *ref_23
+      title: TagServiceReadRequest
+      additionalProperties: false
+    listah.v1.TagServiceReadResponse:
       type: object
-      properties: *ref_27
-      additionalProperties: true
-      description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+      allOf: *ref_24
+      anyOf: *ref_25
+      properties: *ref_26
+      title: TagServiceReadResponse
+      additionalProperties: false
