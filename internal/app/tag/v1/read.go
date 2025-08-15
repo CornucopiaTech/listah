@@ -54,7 +54,7 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.TagServiceRea
 	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d category from repository", recCnt))
 
 
-	resm := &pb.TagServiceReadResponse{Tag: readModel}
+	resm := &pb.TagServiceReadResponse{Tag: readModel, TotalRecordCount: int32(recCnt),}
 	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful category read. Read %d unique tags.", len(readModel)))
 	return connect.NewResponse(resm), nil
 }

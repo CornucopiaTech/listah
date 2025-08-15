@@ -14,7 +14,7 @@ import "gnostic/openapi/v3/annotations.proto";
 
 message CategoryServiceReadRequest {
   repeated string user_id = 2 [json_name = "userId"];
-  repeated string tags = 4;
+  repeated string tag = 4;
   optional Pagination pagination = 200;
 }
 message CategoryServiceReadResponse {

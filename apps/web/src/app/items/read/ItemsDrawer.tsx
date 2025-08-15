@@ -22,9 +22,9 @@ import { useItemsStore, } from '@/lib/store/items/ItemsStoreProvider';
 
 
 export function ItemsDrawer({
-  tags, categories,
+  tag, categories,
 }: {
-  tags: string[], categories: string[],
+  tag: string[], categories: string[],
 }) {
   const {
     categoryFilter,
@@ -135,7 +135,7 @@ export function ItemsDrawer({
           </Accordion>
 
           {/* Tags */}
-          <Accordion key="tags" defaultExpanded
+          <Accordion key="tag" defaultExpanded
             sx={{ mb: 4, boxShadow: 0 }}>
             <AccordionSummary
               expandIcon={<ArrowDropDown />}
@@ -145,7 +145,7 @@ export function ItemsDrawer({
             </AccordionSummary>
             <AccordionDetails sx={{ maxHeight: 300, overflow: 'auto', }}>
               <FormGroup>{
-                tags.map((item: string) => (
+                tag.map((item: string) => (
                   <FormControlLabel
                     key={item + '-checkBoxFormControlLabel'}
                     control={

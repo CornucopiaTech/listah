@@ -25,7 +25,7 @@ export interface ItemProto{
   category: string | null;
   description: string | null;
   note: string | null;
-  tags: string[] | null;
+  tag: string[] | null;
   softDelete: boolean | null;
   properties: { [index: string]: string } | null;
   reactivateAt: string | null;
@@ -40,7 +40,7 @@ export interface Pagination {
 
 export interface ItemsProto {
   items: ItemProto;
-  tags: string[];
+  tag: string[];
   categories: string[];
   totalRecordCount: number;
   pagination: Pagination;
@@ -59,7 +59,7 @@ export interface UpdateItemActions {
   updateCategory: (category: string) => void;
   updateDescription: (description: string) => void;
   updateNote: (note: string) => void;
-  updateTags: (tags: string[]) => void;
+  updateTags: (tag: string[]) => void;
   updateSoftDelete: (softDelete: boolean) => void;
   updateProperties: (properties: { [index: string]: string }) => void;
   updateReactivateAt: (reactivateAt: string) => void;

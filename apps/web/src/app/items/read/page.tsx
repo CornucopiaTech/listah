@@ -38,10 +38,10 @@ const menuItemsOptions = [
   { label: 50, value: 50 }, { label: 100, value: 100 }
 ]
 
-export function getItemsGroupOptions(userId: string, category: string [], tags: string[], pageNumber: number, recordsPerPage: number) {
+export function getItemsGroupOptions(userId: string, category: string [], tag: string[], pageNumber: number, recordsPerPage: number) {
   return queryOptions({
-     queryKey: ["getItems", userId, category, tags, pageNumber, recordsPerPage],
-     queryFn: () => getItems(userId, category, tags, pageNumber, recordsPerPage),
+     queryKey: ["getItems", userId, category, tag, pageNumber, recordsPerPage],
+     queryFn: () => getItems(userId, category, tag, pageNumber, recordsPerPage),
      staleTime: 24 * 60 * 60 * 1000,
    })
 }
@@ -59,11 +59,11 @@ export default function ItemsRead(): ReactNode {
   } = useItemsStore((state) => state);
 
 
-  const userId: string = "4d56128c-5042-4081-a0ef-c2d064700191";
+  const userId: string = "d537e7d1-4693-4663-9be6-8734b0bf0a36";
   const recordsPerPage: number = itemsPerPage;
   const page: number = currentPage;
   const category: string[] = categoryFilter;
-  const tags: string[] = tagFilter;
+  const tag: string[] = tagFilter;
 
   function handlePageChange(event: React.ChangeEvent<unknown>, value: number) {
     updateItemsCurrentPage(value);
@@ -74,14 +74,14 @@ export default function ItemsRead(): ReactNode {
   };
 
 
-  const { isPending, isError, data, error }: UseQueryResult<ItemsProto> = useQuery(getItemsGroupOptions(userId, category, tags, page, recordsPerPage));
+  const { isPending, isError, data, error }: UseQueryResult<ItemsProto> = useQuery(getItemsGroupOptions(userId, category, tag, page, recordsPerPage));
 
   if (isPending) { return <Loading />; }
   // ToDo: Fix this error message
   if (isError) {return <ErrorAlerts>Error: {error.message}</ErrorAlerts>;}
 
   const items: ItemProto[] = data.items ? data.items : [];
-  const itemTags: string[] = data.tags ? data.tags : [];
+  const itemTags: string[] = data.tag ? data.tag : [];
   const itemCategories: string[] = data.categories ? data.categories : [];
   const totalRecords: number = data.totalRecordCount ? data.totalRecordCount : 1;
   const maxPages = Math.ceil(totalRecords / recordsPerPage);
@@ -98,7 +98,7 @@ export default function ItemsRead(): ReactNode {
         <Box  key='head-content' sx={{ mt: 0, }}>
 
           <ItemsTopPagination
-              page={page} maxPages={maxPages} recordsPerPage={recordsPerPage} tags={itemTags} categories={itemCategories}
+              page={page} maxPages={maxPages} recordsPerPage={recordsPerPage} tag={itemTags} categories={itemCategories}
               handlePageChange={handlePageChange}
               handlePageCountChange={handlePageCountChange} />
         </Box>

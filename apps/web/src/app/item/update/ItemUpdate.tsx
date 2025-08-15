@@ -80,10 +80,10 @@ export default function ItemUpdate({ pItem }: {
       return;
     }
     let tList: string[];
-    if (!usedItem.tags || usedItem.tags.length == 0) {
+    if (!usedItem.tag || usedItem.tag.length == 0) {
       tList = [newTag]
     } else {
-      tList = [newTag, ...usedItem.tags];
+      tList = [newTag, ...usedItem.tag];
     }
     updateTags(tList);
     updateNewTag(null);
@@ -94,14 +94,14 @@ export default function ItemUpdate({ pItem }: {
     e.preventDefault();
     let tList: string[];
 
-    if (!usedItem.tags || usedItem.tags.length == 0){
+    if (!usedItem.tag || usedItem.tag.length == 0){
       tList = [ newT ]
     } else {
-      const idx = usedItem.tags.indexOf(oldT);
+      const idx = usedItem.tag.indexOf(oldT);
       if (idx == -1) {
-        tList = [newT, ...usedItem.tags]
+        tList = [newT, ...usedItem.tag]
       } else {
-        tList = [...usedItem.tags.toSpliced(idx, 1, newT)]
+        tList = [...usedItem.tag.toSpliced(idx, 1, newT)]
       }
     }
     updateTags(tList);
@@ -109,25 +109,25 @@ export default function ItemUpdate({ pItem }: {
 
   function removeTag (e:React.ChangeEvent<HTMLButtonElement>, oldT: string){
     e.preventDefault();
-    if (!usedItem.tags || usedItem.tags.length == 0){
+    if (!usedItem.tag || usedItem.tag.length == 0){
       return;
     }
-    const updatedTags = usedItem.tags.filter((i) => i != oldT);
+    const updatedTags = usedItem.tag.filter((i) => i != oldT);
     updateTags(updatedTags);
   }
 
   function handleSave(){
     let editedTag: string[];
     if (newTag != null && newTag.trim() != ""){
-      if (!usedItem.tags || usedItem.tags.length == 0){
+      if (!usedItem.tag || usedItem.tag.length == 0){
         editedTag = [ newTag ]
       } else {
-        editedTag = [ newTag, ...usedItem.tags ]
+        editedTag = [ newTag, ...usedItem.tag ]
       }
     } else {
-      editedTag = usedItem.tags
+      editedTag = usedItem.tag
     }
-    const saveItem: ItemProto= {...usedItem, userId: usedItem.userId, id: usedItem.id, tags: editedTag}
+    const saveItem: ItemProto= {...usedItem, userId: usedItem.userId, id: usedItem.id, tag: editedTag}
     mutation.mutate(saveItem);
     setState(saveItem);
     updateNewTag(null);
@@ -226,8 +226,8 @@ export default function ItemUpdate({ pItem }: {
           </ListItemButton>
           {
             // Since the value is changed, dont use it as key, else React will re-render instead of re-using the component and it will lose focus.
-            usedItem.tags && usedItem.tags.length > 0 &&
-            usedItem.tags.map((tagItem: string, id: number) => (
+            usedItem.tag && usedItem.tag.length > 0 &&
+            usedItem.tag.map((tagItem: string, id: number) => (
               <ListItemButton key={ 'tag-' + id + '-formField' }>
                 <TextField required multiline
                     key={ 'tag-' + id + 'formField' }

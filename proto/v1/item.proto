@@ -19,7 +19,7 @@ message Item {
   string category = 4;
   optional string description = 5;
   optional string note = 6;
-  repeated string tags = 7;
+  repeated string tag = 7;
   map<string,string> properties = 8;
   optional bool soft_delete = 9;
   optional google.protobuf.Timestamp reactivate_at = 21 [json_name = "reactivateAt"];
@@ -41,7 +41,7 @@ message ItemServiceReadRequest {
   repeated string category = 4;
   repeated string description = 5;
   repeated string note = 6;
-  repeated string tags = 7;
+  repeated string tag = 7;
   repeated string properties = 8;
   repeated google.protobuf.Timestamp reactivate_at = 50 [json_name = "reactivateAt"];
   repeated google.protobuf.Timestamp created_at  = 100;
@@ -54,8 +54,6 @@ message ItemServiceReadRequest {
 }
 message ItemServiceReadResponse {
   repeated Item items = 1;
-  repeated string tags = 2;
-  repeated string categories = 3;
   optional Pagination pagination = 200;
   int32 total_record_count = 300;
 }

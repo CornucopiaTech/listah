@@ -4,7 +4,7 @@ import {
   context,
   trace,
 } from '@opentelemetry/api';
-import { TraceBaggage, ItemProto } from '@/lib/model/ItemsModel';
+import { TraceBaggage } from '@/lib/model/ItemsModel';
 
 export async function POST(request: NextRequest) {
   const output: TraceBaggage = {};

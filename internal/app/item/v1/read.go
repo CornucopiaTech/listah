@@ -9,7 +9,7 @@ import (
 	"connectrpc.com/connect"
 	"github.com/pkg/errors"
 	"go.opentelemetry.io/otel"
-	"sort"
+	// "sort"
 )
 
 
@@ -62,40 +62,6 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d items from repository", recCnt))
 
 
-	// Collect all tags and categories from the readModel
-	// to return them in the response
-	var rsTags	[]string
-	var rsCategories []string
-	for _, item := range readModel {
-		if item.Tags != nil {
-			rsTags = append(rsTags, item.Tags...)
-		}
-		if item.Category != "" {
-			rsCategories = append(rsCategories, item.Category)
-		}
-	}
-
-	// Remove duplicates from tags and categories
-	tagMap := make(map[string]struct{})
-	for _, tag := range rsTags {
-		tagMap[tag] = struct{}{}
-	}
-	catMap := make(map[string]struct{})
-	for _, cat := range rsCategories {
-		catMap[cat] = struct{}{}
-	}
-	rsTags = []string{}
-	for tag := range tagMap {
-		rsTags = append(rsTags, tag)
-	}
-	rsCategories = []string{}
-	for cat := range catMap {
-		rsCategories = append(rsCategories, cat)
-	}
-	// Sort tags and categories
-	sort.Strings(rsTags)
-	sort.Strings(rsCategories)
-
 
 	// Convert readModel to response proto
 	// using the model conversion function
@@ -106,8 +72,6 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 	}
 	resm := &pb.ItemServiceReadResponse{
 		Items: rs,
-		Tags: rsTags,
-		Categories: rsCategories,
 		TotalRecordCount: int32(recCnt),
 		Pagination: &pb.Pagination{
 			PageNumber: int32(qPage),
@@ -115,6 +79,6 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 			SortCondition: qSortMap,
 		},
 	}
-	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item read. Read %d items, %d unique categories, %d unique tags", len(readModel), len(rsCategories), len(rsTags)))
+	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item read. Read %d items", len(readModel)))
 	return connect.NewResponse(resm), nil
 }

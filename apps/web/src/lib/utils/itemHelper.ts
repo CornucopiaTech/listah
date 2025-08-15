@@ -18,7 +18,7 @@ export function getValidItem(passed: ItemProto, item: ItemState): ItemProto{
     category: item.category ? item.category : passed.category,
     description: item.description ? item.description : passed.description,
     note: item.note ? item.note : passed.note,
-    tags: item.tags ? item.tags : passed.tags,
+    tag: item.tag ? item.tag : passed.tag,
     softDelete: item.softDelete ? item.softDelete : passed.softDelete,
     properties: item.properties ? item.properties : passed.properties,
     reactivateAt: item.reactivateAt ? item.reactivateAt : passed.reactivateAt,
@@ -42,7 +42,7 @@ export async function postItem(item: ItemProto) {
 }
 
 
-export async function directGetItems(userId: string[], category: string[], tags: string[], pageNumber: number, recordsPerPage: number): Promise<ItemsProto | void> {
+export async function directGetItems(userId: string[], category: string[], tag: string[], pageNumber: number, recordsPerPage: number): Promise<ItemsProto | void> {
 
   const output: TraceBaggage = {};
   propagation.inject(context.active(), output);
@@ -57,7 +57,7 @@ export async function directGetItems(userId: string[], category: string[], tags:
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify({
-      userId, category, tags,
+      userId, category, tag,
       pagination: { pageNumber, recordsPerPage }
     }),
      headers: { "Content-Type": "application/json", "Accept": "*/*", traceparent },
@@ -69,11 +69,11 @@ export async function directGetItems(userId: string[], category: string[], tags:
   return res.json();
 }
 
-export async function originalGetItems(userId: string, category: string[], tags: string[], pageNumber: number, recordsPerPage: number): Promise<ItemsProto | void> {
+export async function originalGetItems(userId: string, category: string[], tag: string[], pageNumber: number, recordsPerPage: number): Promise<ItemsProto | void> {
   const req = new Request('/api/getItems', {
     method: "POST",
     body: JSON.stringify({
-      userId, category, tags,
+      userId, category, tag,
       pagination: { pageNumber, recordsPerPage }
     })
   });
@@ -85,11 +85,11 @@ export async function originalGetItems(userId: string, category: string[], tags:
 }
 
 
-export async function getItems(userId: string[], category: string[], tags: string[], pageNumber: number, recordsPerPage: number): Promise<ItemsProto | void> {
+export async function getItems(userId: string[], category: string[], tag: string[], pageNumber: number, recordsPerPage: number): Promise<ItemsProto | void> {
   const req = new Request('/api/getItems', {
     method: "POST",
     body: JSON.stringify({
-      category, tags,
+      category, tag,
       userId: [userId,],
       pagination: { pageNumber, recordsPerPage }
     })

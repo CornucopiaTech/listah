@@ -145,13 +145,13 @@ export default function ItemRead(): React.ReactNode {
             subheader={
               <ListSubheader component="div" id="nested-list-subheader"
                 sx={{ display: 'flex', opacity: 0.54 }}>
-                <ListItemText primary="Tags" />
+                <ListItemText primary="Tag" />
               </ListSubheader>
             }>
             {
               // Since the value is changed, dont use it as key, else React will re-render instead of re-using the component and it will lose focus.
-              usedItem.tags && usedItem.tags.length > 0 &&
-              usedItem.tags.map((tagItem: string, id: number) => (
+              usedItem.tag && usedItem.tag.length > 0 &&
+              usedItem.tag.map((tagItem: string, id: number) => (
                 <ListItemButton key={ 'tag-' + id + '-formField' }>
                   <TextField disabled required multiline
                       key={ 'tag-' + id + 'formField' }

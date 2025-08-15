@@ -37,12 +37,6 @@ const (
 	CategoryServiceReadProcedure = "/listah.v1.CategoryService/Read"
 )
 
-// These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
-var (
-	categoryServiceServiceDescriptor    = v1.File_v1_category_proto.Services().ByName("CategoryService")
-	categoryServiceReadMethodDescriptor = categoryServiceServiceDescriptor.Methods().ByName("Read")
-)
-
 // CategoryServiceClient is a client for the listah.v1.CategoryService service.
 type CategoryServiceClient interface {
 	Read(context.Context, *connect.Request[v1.CategoryServiceReadRequest]) (*connect.Response[v1.CategoryServiceReadResponse], error)
@@ -57,11 +51,12 @@ type CategoryServiceClient interface {
 // http://api.acme.com or https://acme.com/grpc).
 func NewCategoryServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) CategoryServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
+	categoryServiceMethods := v1.File_v1_category_proto.Services().ByName("CategoryService").Methods()
 	return &categoryServiceClient{
 		read: connect.NewClient[v1.CategoryServiceReadRequest, v1.CategoryServiceReadResponse](
 			httpClient,
 			baseURL+CategoryServiceReadProcedure,
-			connect.WithSchema(categoryServiceReadMethodDescriptor),
+			connect.WithSchema(categoryServiceMethods.ByName("Read")),
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
@@ -89,10 +84,11 @@ type CategoryServiceHandler interface {
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
 func NewCategoryServiceHandler(svc CategoryServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	categoryServiceMethods := v1.File_v1_category_proto.Services().ByName("CategoryService").Methods()
 	categoryServiceReadHandler := connect.NewUnaryHandler(
 		CategoryServiceReadProcedure,
 		svc.Read,
-		connect.WithSchema(categoryServiceReadMethodDescriptor),
+		connect.WithSchema(categoryServiceMethods.ByName("Read")),
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)

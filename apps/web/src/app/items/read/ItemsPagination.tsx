@@ -17,10 +17,10 @@ import MenuSelect from '@/components/MenuSelect';
 
 
 export function ItemsTopPagination({
-  maxPages, page, recordsPerPage, tags, categories, handlePageChange, handlePageCountChange
+  maxPages, page, recordsPerPage, tag, categories, handlePageChange, handlePageCountChange
 }: {
   maxPages: number, page: number, recordsPerPage: number,
-  tags: string[], categories: string[],
+  tag: string[], categories: string[],
   handlePageChange: (event: React.ChangeEvent<unknown>, value: number) => void,
   handlePageCountChange: (event: React.ChangeEvent<unknown>) => void,
 }): ReactNode {
@@ -28,7 +28,7 @@ export function ItemsTopPagination({
   return (
     <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: "center"}}>
       <Box key='drawer' sx={{ width: '100%', display: 'flex', justifyContent: 'flex-start', alignItems: "center"}}>
-        <ItemsDrawer tags={tags} categories={categories} />
+        <ItemsDrawer tag={tag} categories={categories} />
           {/* <ItemsSearch /> */}
         </Box>
       <Box key='navigation' sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', alignItems: "center"}}>

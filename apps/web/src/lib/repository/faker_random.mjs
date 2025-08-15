@@ -3,13 +3,17 @@ import * as fs from 'fs';
 
 import path from 'path';
 
+console.log(import.meta.filename);
+console.log(import.meta.dirname);
+
+
 export function getData(arraySize) {
   let numTags = 5;
   let maxTags = 200;
   let maxUsers = 200;
   let maxCategories = 200;
   let maxUniqueTags = 100;
-  let maxUniqueProps = 50;
+  let maxUniqueProps = 10;
   let maxUniqueUsers = 50;
   let maxUniqueCategories = 20;
   let allTags = faker.helpers.multiple(() => faker.word.noun(), { count: maxTags });
@@ -26,7 +30,7 @@ export function getData(arraySize) {
         id: faker.string.uuid(),
         userId: faker.helpers.arrayElement(allUserIds),
         category: faker.helpers.arrayElement(allCategory),
-        title: faker.lorem.sentence(),
+        // title: faker.lorem.sentence(),
         summary: faker.lorem.sentence(),
         description: faker.lorem.paragraphs(),
         note: faker.lorem.sentence(),
@@ -41,7 +45,7 @@ export function getData(arraySize) {
             { count: faker.helpers.arrayElement([...Array(maxUniqueProps).keys()]) }
           )
         ),
-        reactivate_at: faker.helpers.arrayElement([faker.date.future(), null]),
+        reactivateAt: faker.helpers.arrayElement([faker.date.future(), null]),
         audit: {
           "created_by": faker.helpers.arrayElement(updaters),
           "created_at": faker.date.past(),
@@ -52,22 +56,40 @@ export function getData(arraySize) {
         }
       }),
       { count: arraySize }
-    );
-  fs.writeFile(
-    path.join(import.meta.dirname, 'fake_data_w_props.json'),
-    JSON.stringify(combFaked),
-    (err) => {
-      // In case of a error throw err.
-      if (err) throw err;
-  });
+  );
+  let stringFaked = JSON.stringify({items: combFaked});
+
+  // let filepath = path.join(import.meta.dirname, `fake_data_w_props_${Date.now()}.json`);
+  // console.info("Writing to", filepath);
+  // fs.writeFile(filepath, stringFaked, (err) => {if (err) throw err;});
+
+  return stringFaked;
 }
 
 
+async function loadData(maxLoaded, maxGen) {
+  const url = "http://localhost:8080/listah.v1.ItemService/Create";
+  for (let i = 0; i < maxLoaded; i++)
+  try {
+    const data = getData(maxGen);
+    // console.info("Data: ");
+    // console.info(data)
+    const req = new Request(url, {
+      method: "POST",
+      body: data,
+      headers: { "Content-Type": "application/json", "Accept": "*/*" },
+    });
+    const res = await fetch(req);
+    if (!res.ok) {
+      throw new Error(`Network response was not ok: ${res.statusText}`);
+    }
 
-getData(2000);
+    const result = await res.json();
+    console.log(`Api result length: ${result.itemIds.length}`);
+  } catch (error) {
+    console.log(`Api error: ${error.message}`);
+  }
+}
 
 
-
-
-console.log(import.meta.filename);
-console.log(import.meta.dirname);
+loadData(50, 2000)
