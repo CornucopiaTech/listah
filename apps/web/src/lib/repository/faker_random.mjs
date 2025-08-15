@@ -5,13 +5,13 @@ import path from 'path';
 
 export function getData(arraySize) {
   let numTags = 5;
-  let maxTags = 50;
-  let maxUsers = 20;
-  let maxCategories = 20;
-  let maxUniqueTags = 50;
+  let maxTags = 200;
+  let maxUsers = 200;
+  let maxCategories = 200;
+  let maxUniqueTags = 100;
   let maxUniqueProps = 50;
   let maxUniqueUsers = 50;
-  let maxUniqueCategories = 10;
+  let maxUniqueCategories = 20;
   let allTags = faker.helpers.multiple(() => faker.word.noun(), { count: maxTags });
   let allCategory = faker.helpers.multiple(() => faker.word.noun(), { count: maxCategories });
   let allUserIds = faker.helpers.multiple(() => faker.string.uuid(), { count: maxUsers });
@@ -30,7 +30,11 @@ export function getData(arraySize) {
         summary: faker.lorem.sentence(),
         description: faker.lorem.paragraphs(),
         note: faker.lorem.sentence(),
-        tags: faker.helpers.arrayElements(allTags, numTags),
+        // tag: faker.helpers.arrayElements(allTags, numTags),
+        tag: faker.helpers.multiple(
+          () => (faker.helpers.arrayElement(allCategory)),
+          { count: faker.helpers.arrayElement([...Array(numTags).keys()]) }
+        ),
         properties: Object.fromEntries(
           faker.helpers.multiple(
             () => ([faker.word.sample(), faker.word.sample()]),
