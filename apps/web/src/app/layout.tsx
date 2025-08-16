@@ -18,8 +18,6 @@ import { enableMapSet } from 'immer';
 import "./globals.css";
 import '@/envConfig.ts';
 
-import { AppNavBarStoreProvider} from '@/lib/store/appNavBar/AppNavBarStoreProvider';
-
 enableMapSet()
 export const metadata: Metadata = {
   title: "Listah",
@@ -33,8 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <Fragment>
-      <ClerkProvider>
-        <AppNavBarStoreProvider>
+      {/* <ClerkProvider> */}
           <CssBaseline />
           <html lang="en">
             <head>
@@ -47,8 +44,7 @@ export default function RootLayout({
               </Box>
             </body>
           </html>
-        </AppNavBarStoreProvider>
-      </ClerkProvider>
+      {/* </ClerkProvider> */}
     </Fragment>
   );
 }

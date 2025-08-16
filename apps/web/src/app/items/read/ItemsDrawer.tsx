@@ -1,5 +1,14 @@
 "use client"
 import {
+  Fragment,
+  ReactNode,
+  useContext,
+} from 'react';
+import {
+  useQueries,
+  type UseQueryResult,
+} from '@tanstack/react-query';
+import {
   Box,
   Drawer,
   Button,
@@ -19,23 +28,20 @@ import {
 } from '@mui/icons-material';
 
 import { useItemsStore, } from '@/lib/store/items/ItemsStoreProvider';
+import {
+  getTagGroupOptions,
+  getCategoryGroupOptions
+} from '@/lib/utils/itemHelper';
+import { WebAppContext } from "@/lib/context/webappContext";
+import Loading from '@/components/Loading';
+import { ErrorAlerts } from '@/components/ErrorAlert';
 
-
-export function ItemsDrawer({
-  tag, categories,
-}: {
-  tag: string[], categories: string[],
-}) {
+export function ItemsDrawer() {
   const {
-    categoryFilter,
-    tagFilter,
     checkedTags,
     checkedCategories,
     searchQuery,
     drawerOpen,
-    collapseTags,
-    collapseCategories,
-    collapseDatePicker,
     filterFromDate,
     filterToDate,
     updateItemsCategoryFilter,
@@ -47,11 +53,13 @@ export function ItemsDrawer({
     updateItemsFromDate,
     updateItemsToDate,
   } = useItemsStore((state) => state);
+  const webState = useContext(WebAppContext);
+  const userId: string = webState.userId;
 
   // function handleDrawerToggle(e: React.DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES) {
   function handleDrawerToggle(e: React.ChangeEvent<HTMLButtonElement>, changeDrawerOpen: boolean = !drawerOpen) {
     e.stopPropagation();
-    toggleDrawer(changeDrawerOpen);  // Toggle the drawer open state
+    toggleDrawer(changeDrawerOpen);
   }
 
   function handleCategoryCheckChange(event: React.SyntheticEvent<unknown>, categoryName: string) {
@@ -86,6 +94,7 @@ export function ItemsDrawer({
     updateSearchQuery(searchQuery);
     updateItemsFromDate(filterFromDate);
     updateItemsToDate(filterToDate);
+    toggleDrawer(false)
   }
 
   function handleResetFilter() {
@@ -95,6 +104,31 @@ export function ItemsDrawer({
     updateItemsFromDate("");
     updateItemsToDate("");
   }
+
+  const { isPending, isError, data, error}: UseQueryResult<any> = useQueries(
+  {
+      queries: [
+        getTagGroupOptions(userId),
+        getCategoryGroupOptions(userId)
+      ],
+      combine: (results) => {
+        return {
+          data: results.map((res) => res.data),
+          isPending: results.some((res) => res.isPending),
+          isError: results.some((res) => res.isError),
+          error: results.some((res) => res.error),
+        }
+      }
+    }
+  );
+
+  if (isPending) { return <Loading />; }
+  // ToDo: Fix this error message
+  if (isError) {return <ErrorAlerts>Error: {error.message}</ErrorAlerts>;}
+
+  const [tagResult, categoryResult] = data;
+  const tag: string[] = tagResult && tagResult.tag ? tagResult.tag : []
+  const category: string[] = categoryResult && categoryResult.category ? categoryResult.category : []
 
   return (
     <Box sx={{ mx: 3, }}>
@@ -118,7 +152,7 @@ export function ItemsDrawer({
             </AccordionSummary>
             <AccordionDetails sx={{ maxHeight: 300, overflow: 'auto', }}>
               <FormGroup>{
-                categories.map((item: string) => (
+                category.map((item: string) => (
                   <FormControlLabel
                     key={item + '-category-checkBox'}
                     control={

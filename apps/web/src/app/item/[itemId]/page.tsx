@@ -9,7 +9,7 @@ import {
 
 import Loading from '@/components/Loading';
 import { AppBarHeight } from '@/lib/model/appNavBarModel';
-import  ItemUpdate from "./ItemUpdate";
+import  ItemUpdate from "./ItemDetails";
 
 
 export default function ItemUpdatePage() {

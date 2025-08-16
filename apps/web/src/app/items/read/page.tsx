@@ -3,48 +3,35 @@
 import {
   Fragment,
   ReactNode,
+  useContext,
 } from 'react';
 import {
   useQuery,
-  queryOptions,
   type UseQueryResult,
 } from '@tanstack/react-query';
 import {
   Box,
   Divider,
-  Pagination,
 } from '@mui/material';
 
 
-// import { useUpdatedItemStore } from '@/lib/store/updatedItem/UpdatedItemStoreProvider';
 import { useItemsStore, } from '@/lib/store/items/ItemsStoreProvider';
-import { ItemsDrawer } from "@/app/items/read/ItemsDrawer";
-// import ItemsDatePicker from "@/app/items/read/ItemsDatePicker";
-// import ItemsSearch from '@/app/items/read/ItemsSearch';
 import { AppBarHeight } from '@/lib/model/appNavBarModel';
+import { ItemProto, ItemsProto } from '@/lib/model/ItemsModel';
 import Loading from '@/components/Loading';
-import { ItemProto, ItemsProto, ItemsState } from '@/lib/model/ItemsModel';
 import { ErrorAlerts } from '@/components/ErrorAlert';
-// import MenuSelect from '@/components/MenuSelect';
 import ItemsListStack from './ItemsListStack';
 import { ItemsTopPagination, ItemsBottomPagination } from './ItemsPagination';
 import ItemNoContent from './ItemsNoContent';
-import MenuSelect from '@/components/MenuSelect';
-import { getItems } from '@/lib/utils/itemHelper';
-
+import { getItemsGroupOptions } from '@/lib/utils/itemHelper';
+import { WebAppContext } from "@/lib/context/webappContext";
 
 const menuItemsOptions = [
   { label: 10, value: 10 }, { label: 20, value: 20 },
   { label: 50, value: 50 }, { label: 100, value: 100 }
 ]
 
-export function getItemsGroupOptions(userId: string, category: string [], tag: string[], pageNumber: number, recordsPerPage: number) {
-  return queryOptions({
-     queryKey: ["getItems", userId, category, tag, pageNumber, recordsPerPage],
-     queryFn: () => getItems(userId, category, tag, pageNumber, recordsPerPage),
-     staleTime: 24 * 60 * 60 * 1000,
-   })
-}
+
 
 export default function ItemsRead(): ReactNode {
   const {
@@ -52,14 +39,12 @@ export default function ItemsRead(): ReactNode {
     currentPage,
     categoryFilter,
     tagFilter,
-    drawerOpen,
     updateItemsPageRecordCount,
     updateItemsCurrentPage,
-    toggleDrawer,
   } = useItemsStore((state) => state);
 
-
-  const userId: string = "d537e7d1-4693-4663-9be6-8734b0bf0a36";
+  const webState = useContext(WebAppContext);
+  const userId: string = webState.userId;
   const recordsPerPage: number = itemsPerPage;
   const page: number = currentPage;
   const category: string[] = categoryFilter;
@@ -81,8 +66,6 @@ export default function ItemsRead(): ReactNode {
   if (isError) {return <ErrorAlerts>Error: {error.message}</ErrorAlerts>;}
 
   const items: ItemProto[] = data.items ? data.items : [];
-  const itemTags: string[] = data.tag ? data.tag : [];
-  const itemCategories: string[] = data.categories ? data.categories : [];
   const totalRecords: number = data.totalRecordCount ? data.totalRecordCount : 1;
   const maxPages = Math.ceil(totalRecords / recordsPerPage);
 
@@ -98,7 +81,7 @@ export default function ItemsRead(): ReactNode {
         <Box  key='head-content' sx={{ mt: 0, }}>
 
           <ItemsTopPagination
-              page={page} maxPages={maxPages} recordsPerPage={recordsPerPage} tag={itemTags} categories={itemCategories}
+              page={page} maxPages={maxPages} recordsPerPage={recordsPerPage}
               handlePageChange={handlePageChange}
               handlePageCountChange={handlePageCountChange} />
         </Box>

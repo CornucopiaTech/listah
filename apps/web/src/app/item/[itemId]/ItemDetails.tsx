@@ -1,11 +1,18 @@
 "use client"
 
 import {
-  useSearchParams, useRouter
+  ReactNode,
+  useContext,
+} from 'react';
+import {
+  useRouter, useParams
 } from 'next/navigation';
 import {
   useQueryClient,
   useMutation,
+  useQuery,
+  queryOptions,
+  type UseQueryResult,
 } from '@tanstack/react-query';
 import {
   Box,
@@ -29,16 +36,17 @@ import {
 
 import { useItemsStore } from '@/lib/store/items/ItemsStoreProvider';
 import { useUpdatedItemStore } from '@/lib/store/updatedItem/UpdatedItemStoreProvider';
-import { ItemProto } from '@/lib/model/ItemsModel';
-import { getValidItem, postItem } from '@/lib/utils/itemHelper';
+import { ItemProto, ItemsProto, } from '@/lib/model/ItemsModel';
+import { postItem, getItem } from '@/lib/utils/itemHelper';
+import { WebAppContext } from "@/lib/context/webappContext";
+import Loading from '@/components/Loading';
+import { ErrorAlerts } from '@/components/ErrorAlert';
 
 
-export default function ItemUpdate({ pItem }: {
-  pItem?: ItemProto
-}): React.ReactNode {
-  const itemsKey = "itemsDetails";
-  const router = useRouter();
-  const queryClient = useQueryClient();
+export default function ItemUpdate(): ReactNode {
+  const params: { itemId: string } = useParams<{ itemId: string }>();
+  const { itemId } = params
+
   const {
     item,
     newTag,
@@ -54,25 +62,62 @@ export default function ItemUpdate({ pItem }: {
     updateNewTag,
     defaultUpdateItemInitState,
   } = useUpdatedItemStore((state) => state);
-    const {
-      itemsPerPage,
-      currentPage,
-      categoryFilter,
-      tagFilter,
-    } = useItemsStore((state) => state);
+  const {
+    itemsPerPage,
+    currentPage,
+    categoryFilter,
+    tagFilter,
+  } = useItemsStore((state) => state);
 
-  const searchParams = useSearchParams();
-  const query = searchParams.get('q') ? searchParams.get('q') : "";
-  const passed = query == "" ? {} : JSON.parse(window.atob(query));
-  const usedItem: ItemProto= getValidItem(passed, item);
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const webState = useContext(WebAppContext);
+  const userId: string = webState.userId;
+  const recordsPerPage: number = itemsPerPage;
+  const page: number = currentPage;
+  const category: string[] = categoryFilter;
+  const tag: string[] = tagFilter;
+
+  function getItemGroupOptions(itemId: string, userId: string, category: string [], tag: string[], pageNumber: number, recordsPerPage: number) {
+  return queryOptions({
+    queryKey: ["getItem", userId, itemId],
+    queryFn: () => getItem(userId, itemId),
+    initialData: () => {
+      const state: any = queryClient.getQueryState(['getItems', userId, category, tag, pageNumber, recordsPerPage]);
+
+      if (state && Date.now() - state.dataUpdatedAt <= 24 * 60 * 60 * 1000 ){
+        return state.data.find((d: ItemProto) => d.id === itemId);
+     }
+    },
+     staleTime: 24 * 60 * 60 * 1000,
+   })
+  }
   const mutation = useMutation({
     mutationFn: (mutateItem: ItemProto) => {
       return postItem(mutateItem);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["getItems", usedItem.userId, categoryFilter, tagFilter, currentPage, itemsPerPage,] })
+    onSuccess: (data, variables) => {
+      // queryClient.invalidateQueries({ queryKey: ["getItems", usedItem.userId, categoryFilter, tagFilter, currentPage, itemsPerPage,] })
+      queryClient.setQueryData([["getItems", usedItem.userId, categoryFilter, tagFilter, currentPage, itemsPerPage], { id: variables.id }], data)
+      queryClient.setQueryData([["getItem", variables.userId, variables.id], { id: variables.id }], data)
     },
   });
+
+
+  // const { isPending, isError, data, error }: UseQueryResult<ItemsProto> = useQuery(getItemGroupOptions(itemId, userId, category, tag, page, recordsPerPage));
+
+  // if (isPending) { return <Loading />; }
+  // // ToDo: Fix this error message
+  // if (isError) {return <ErrorAlerts>Error: {error.message}</ErrorAlerts>;}
+
+  let usedItem: ItemProto = {...item};
+
+  // if (item.id !== null){
+  //   usedItem = {...item}
+  // } else {
+  //   usedItem = data.items && data.items.length > 0 ? data.items[0] : [];
+  // }
+
 
 
   function addNewTag (){
@@ -85,13 +130,16 @@ export default function ItemUpdate({ pItem }: {
     } else {
       tList = [newTag, ...usedItem.tag];
     }
-    updateTags(tList);
+    // updateTags(tList);
     updateNewTag(null);
+    let newState = {...usedItem, tag: tList}
+    setState(newState);
     // router.push(pathname + '?' + createQueryString('sort', 'asc'))
   }
 
   function handleTag (e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, oldT: string, newT: string){
     e.preventDefault();
+    e.stopPropagation();
     let tList: string[];
 
     if (!usedItem.tag || usedItem.tag.length == 0){
@@ -104,16 +152,21 @@ export default function ItemUpdate({ pItem }: {
         tList = [...usedItem.tag.toSpliced(idx, 1, newT)]
       }
     }
-    updateTags(tList);
+    // updateTags(tList);
+    let newState = {...usedItem, tag: tList}
+    setState(newState);
   }
 
   function removeTag (e:React.ChangeEvent<HTMLButtonElement>, oldT: string){
     e.preventDefault();
+    e.stopPropagation();
     if (!usedItem.tag || usedItem.tag.length == 0){
       return;
     }
     const updatedTags = usedItem.tag.filter((i) => i != oldT);
-    updateTags(updatedTags);
+    // updateTags(updatedTags);
+    let newState = {...usedItem, tag: updatedTags}
+    setState(newState);
   }
 
   function handleSave(){
@@ -127,17 +180,16 @@ export default function ItemUpdate({ pItem }: {
     } else {
       editedTag = usedItem.tag
     }
-    const saveItem: ItemProto= {...usedItem, userId: usedItem.userId, id: usedItem.id, tag: editedTag}
+    const saveItem: ItemProto= {...usedItem, tag: editedTag}
     mutation.mutate(saveItem);
     setState(saveItem);
     updateNewTag(null);
 
-    const q = window.btoa(JSON.stringify(saveItem));
-    router.push(`/item/read?q=${q}`);
+    // router.push(`/item/${saveItem.id}`);
   }
 
   function handleDelete(){
-    const deleteItem: ItemProto= {...usedItem, userId: passed.userId, id: passed.id, softDelete: true}
+    const deleteItem: ItemProto= {...usedItem, softDelete: true}
     mutation.mutate(deleteItem);
     setState(defaultUpdateItemInitState);
     updateNewTag(null);

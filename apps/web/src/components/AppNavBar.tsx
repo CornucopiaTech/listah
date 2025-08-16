@@ -52,7 +52,7 @@ export default function AppNavBar() {
             }
 
             {/* Profile */}
-            <SignedOut>
+            {/* <SignedOut>
               <Tooltip title="Sign in">
                 <Typography variant="h6" noWrap component="div">
                   <SignInButton />
@@ -68,7 +68,7 @@ export default function AppNavBar() {
               <Tooltip title="View profile">
                 <UserButton />
               </Tooltip>
-            </SignedIn>
+            </SignedIn> */}
           </Box>
       </Toolbar>
     </AppBar>

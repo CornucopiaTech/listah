@@ -30,13 +30,11 @@ export function getData(arraySize) {
         id: faker.string.uuid(),
         userId: faker.helpers.arrayElement(allUserIds),
         category: faker.helpers.arrayElement(allCategory),
-        // title: faker.lorem.sentence(),
         summary: faker.lorem.sentence(),
         description: faker.lorem.paragraphs(),
         note: faker.lorem.sentence(),
-        // tag: faker.helpers.arrayElements(allTags, numTags),
         tag: faker.helpers.multiple(
-          () => (faker.helpers.arrayElement(allCategory)),
+          () => (faker.helpers.arrayElement(allTags)),
           { count: faker.helpers.arrayElement([...Array(numTags).keys()]) }
         ),
         properties: Object.fromEntries(

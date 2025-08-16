@@ -8,11 +8,11 @@ import { TraceBaggage} from '@/lib/model/ItemsModel';
 export async function POST(request: NextRequest): Promise<Response | void> {
   const output: TraceBaggage = {};
   propagation.inject(context.active(), output);
-  const { traceparent, b3 } = output;
+  const { traceparent } = output;
   const initReq = await request.json();
-  const url = (process.env.LISTAH_API_ITEMS_READ ?
-    process.env.LISTAH_API_ITEMS_READ :
-    process.env.NEXT_PUBLIC_LISTAH_API_ITEMS_READ);
+  const url = (process.env.LISTAH_API_CATEGORY_READ ?
+    process.env.LISTAH_API_CATEGORY_READ :
+    process.env.NEXT_PUBLIC_LISTAH_API_CATEGORY_READ);
 
   const req = new Request(url, {
     method: "POST",

@@ -34,7 +34,7 @@ func (a *tag) Select(ctx context.Context, m interface{}, c *[]model.WhereClause,
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	qb := a.db.NewSelect().Table("apps.items").
-		ColumnExpr("jsonb_array_elements_text(tags::jsonb) AS tags", bun.Ident("tags")).
+		ColumnExpr("jsonb_array_elements_text(?::jsonb) AS tag", bun.Ident("tag")).Where("?::VARCHAR != 'null'", bun.Ident("tag")).
 		Distinct().Model(m).QueryBuilder()
 	// Add where clause
 	for _, k := range *c {

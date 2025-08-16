@@ -10,6 +10,7 @@ import {
   // Stack,
   // Chip,
   // Button,
+  Link,
   ListItemText,
   ListItemButton,
 } from '@mui/material';
@@ -18,7 +19,7 @@ import {
   useRouter
 } from 'next/navigation';
 
-import { ItemProto, ItemsState } from '@/lib/model/ItemsModel';
+import { ItemProto } from '@/lib/model/ItemsModel';
 import { useUpdatedItemStore } from '@/lib/store/updatedItem/UpdatedItemStoreProvider';
 import { useItemsStore, } from '@/lib/store/items/ItemsStoreProvider';
 // import { ItemsDrawer } from "@/app/items/read/ItemsDrawer";
@@ -34,38 +35,20 @@ import { useItemsStore, } from '@/lib/store/items/ItemsStoreProvider';
 
 export default function ItemsListStack({ item }: { item: ItemProto}): ReactNode {
   const router = useRouter();
-  // const pathname = usePathname();
-  // const searchParams = useSearchParams();
-  const {
-    // itemsPerPage,
-    // currentPage,
-    // categoryFilter,
-    // tagFilter,
-    // modalOpen,
-    // inEditMode,
-    // updateItemsPageRecordCount,
-    // updateItemsCurrentPage,
-    // updateItemsCategoryFilter,
-    // updateItemsTagFilter,
-    // updateModal,
-    updateEditMode,
-
-  } = useItemsStore((state) => state);
   const {
     setState
   } = useUpdatedItemStore((state) => state);
 
 
-  function handleClick(item: ItemsState | ItemProto) {
-    updateEditMode(false);
+  function handleClick(item: ItemProto) {
     setState(item);
-    const q = window.btoa(JSON.stringify(item));
-    router.push(`/item/read?q=${q}`);
+    router.push(`/item/${item.id}`);
   }
 
   return (
     <ListItemButton key={item.id} onClick={() => handleClick(item)}>
       <ListItemText primary={item.summary} />
+      {/* <Link href={`/item/${item.id}`} >View More</Link> */}
     </ListItemButton>
   );
 }
