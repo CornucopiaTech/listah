@@ -38,8 +38,8 @@ import { ErrorAlerts } from '@/components/ErrorAlert';
 
 export function ItemsDrawer(): ReactNode {
   const {
-    checkedTags,
-    checkedCategories,
+    checkedTag,
+    checkedCategory,
     searchQuery,
     drawerOpen,
     filterFromDate,
@@ -49,7 +49,7 @@ export function ItemsDrawer(): ReactNode {
     toggleDrawer,
     updateSearchQuery,
     updateItemsCheckedCategory,
-    updateItemsCheckedTags,
+    updateItemsCheckedTag,
     updateItemsFromDate,
     updateItemsToDate,
   } = useItemsStore((state) => state);
@@ -64,33 +64,38 @@ export function ItemsDrawer(): ReactNode {
 
   function handleCategoryCheckChange(event: React.SyntheticEvent<unknown>, categoryName: string) {
     event.stopPropagation();
-    if (!checkedCategories) {
-      updateItemsCheckedCategory([categoryName]);
-    } else if (checkedCategories.indexOf(categoryName) === -1) {
-      updateItemsCheckedCategory([...checkedCategories, categoryName]);
+    let newChecked: Set<string> = new Set([]);
+
+    if (!checkedCategory || checkedCategory.size == 0) {
+      // Add category to new checked Set
+      newChecked.add(categoryName);
+    } else if (!checkedCategory.has(categoryName)) {
+      // Add category to existing checked Set
+      newChecked = newChecked.union(checkedCategory).add(categoryName)
     } else {
-      // Remove category from filter
-      const newFilter = checkedCategories.filter((item: string) => item !== categoryName);
-      updateItemsCheckedCategory(newFilter);
+      // Remove category from existing checked Set
+      newChecked = newChecked.union(checkedCategory).delete(categoryName)
     }
+    updateItemsCheckedCategory(newChecked);
   }
 
   function handleTagCheckChange(event: React.SyntheticEvent<unknown>, tagName: string) {
     event.stopPropagation();
-    if (!checkedTags) {
-      updateItemsCheckedTags([tagName]);
-    } else if (checkedTags.indexOf(tagName) === -1) {
-      updateItemsCheckedTags([...checkedTags, tagName]);
+    let newChecked: Set<string> = new Set([]);
+    if (!checkedTag || checkedTag.size == 0) {
+      newChecked.add(tagName);
+    } else if (!checkedTag.has(tagName)) {
+      newChecked = newChecked.union(checkedTag).add(tagName)
     } else {
       // Remove category from filter
-      const newFilter = checkedTags.filter((item: string) => item !== tagName);
-      updateItemsCheckedTags(newFilter);
+      newChecked = newChecked.union(checkedTag).delete(tagName)
     }
+    updateItemsCheckedTag(newChecked);
   }
 
   function handleApplyFilter() {
-    updateItemsCategoryFilter(checkedCategories);
-    updateItemsTagFilter(checkedTags);
+    updateItemsCategoryFilter([...checkedCategory]);
+    updateItemsTagFilter([...checkedTag]);
     updateSearchQuery(searchQuery);
     updateItemsFromDate(filterFromDate);
     updateItemsToDate(filterToDate);
@@ -100,8 +105,8 @@ export function ItemsDrawer(): ReactNode {
   function handleResetFilter() {
     updateItemsCategoryFilter([]);
     updateItemsTagFilter([]);
-    updateItemsCheckedCategory([]);
-    updateItemsCheckedTags([]);
+    updateItemsCheckedCategory(new Set([]));
+    updateItemsCheckedTag(new Set([]));
     updateSearchQuery("");
     updateItemsFromDate("");
     updateItemsToDate("");
@@ -160,7 +165,7 @@ export function ItemsDrawer(): ReactNode {
                     key={item + '-category-checkBox'}
                     control={
                       <Checkbox
-                        checked={checkedCategories.indexOf(item) != -1}
+                        checked={checkedCategory.has(item)}
                         onChange={(e) => handleCategoryCheckChange(e, item)}
                       />
                     }
@@ -187,7 +192,7 @@ export function ItemsDrawer(): ReactNode {
                     key={item + '-checkBoxFormControlLabel'}
                     control={
                       <Checkbox
-                        checked={checkedTags.indexOf(item) != -1}
+                        checked={checkedTag.has(item)}
                         onChange={(e) => handleTagCheckChange(e, item)}
                       />
                     }

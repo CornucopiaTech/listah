@@ -13,11 +13,13 @@ import {
   Box,
   Divider,
 } from '@mui/material';
+import * as z from "zod";
+
 
 
 import { useItemsStore, } from '@/lib/store/items/ItemsStoreProvider';
 import { AppBarHeight } from '@/lib/model/appNavBarModel';
-import { ItemProto, ItemsProto } from '@/lib/model/ItemsModel';
+import { ItemProto, ItemsProto , ZItemsProto } from '@/lib/model/ItemsModel';
 import Loading from '@/components/Loading';
 import { ErrorAlerts } from '@/components/ErrorAlert';
 import ItemsListStack from './ItemsListStack';
@@ -65,11 +67,23 @@ export default function ItemsRead(): ReactNode {
   // ToDo: Fix this error message
   if (isError) {return <ErrorAlerts>Error: {error.message}</ErrorAlerts>;}
 
+  let apiItems: ItemsProto;
+  try{
+    apiItems = ZItemsProto.parse(data);
+  } catch(error){
+    if(error instanceof z.ZodError){
+      console.info(error.issues);
+      return <ErrorAlerts>An error occurred. Please try again</ErrorAlerts>;
+
+    }
+  }
+
+
   const items: ItemProto[] = data.items ? data.items : [];
   const totalRecords: number = data.totalRecordCount ? data.totalRecordCount : 1;
   const maxPages = Math.ceil(totalRecords / recordsPerPage);
 
-  if (items === undefined || items.length == 0){return<ItemNoContent />;}
+  if (!items || items.length == 0){return<ItemNoContent />;}
 
 
   return (

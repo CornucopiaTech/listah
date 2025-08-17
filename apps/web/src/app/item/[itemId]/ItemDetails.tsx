@@ -25,18 +25,19 @@ import {
   TextField,
   Tooltip,
  } from '@mui/material';
-
 import {
     Save,
     Delete,
     Add,
     Close,
  } from '@mui/icons-material';
+import * as z from "zod";
+
 
 
 import { useItemsStore } from '@/lib/store/items/ItemsStoreProvider';
 import { useUpdatedItemStore } from '@/lib/store/updatedItem/UpdatedItemStoreProvider';
-import { ItemProto, ItemsProto, } from '@/lib/model/ItemsModel';
+import { ItemProto, ItemsProto, ZItemProto , ZItemsProto } from '@/lib/model/ItemsModel';
 import { postItem, getItem, getValidItem } from '@/lib/utils/itemHelper';
 import { WebAppContext } from "@/lib/context/webappContext";
 import Loading from '@/components/Loading';
@@ -94,7 +95,8 @@ export default function ItemUpdate(): ReactNode {
   }
   const mutation = useMutation({
     mutationFn: (mutateItem: ItemProto) => {
-      return postItem(mutateItem);
+      const mi = ZItemProto.parse(mutateItem);
+      return postItem(mi);
     },
     onSuccess: (data, variables) => {
       // queryClient.invalidateQueries({ queryKey: ["getItems", usedItem.userId, categoryFilter, tagFilter, currentPage, itemsPerPage,] })
@@ -110,9 +112,16 @@ export default function ItemUpdate(): ReactNode {
   // ToDo: Fix this error message
   if (isError) {return <ErrorAlerts>Error: {error.message}</ErrorAlerts>;}
 
-  // let usedItem: ItemProto = item && item.id !== null ? item : data.items[0];
-  let usedItem: ItemProto = getValidItem(item, data.items[0]);
+  let usedItem: ItemProto;
+  try{
+    usedItem = ZItemProto.parse(getValidItem(item, data.items[0]));
+  } catch(error){
+    if(error instanceof z.ZodError){
+      console.info(error.issues);
+      return <ErrorAlerts>An error occurred. Please try again</ErrorAlerts>;
 
+    }
+  }
 
   function addNewTag (){
     if (!newTag || newTag.trim() == "") {
@@ -213,6 +222,14 @@ export default function ItemUpdate(): ReactNode {
           <Tooltip title="Delete Item"><Delete/></Tooltip>
         </IconButton>
       </Stack>
+
+      {mutation.error && (
+        <h5 onClick={() => mutation.reset()}>{mutation.error}</h5>
+      )}
+      {mutation.isError ? (
+            <div>An error occurred: {mutation.error.message}</div>
+          ) : null}
+      {mutation.isSuccess ? <div>Todo added!</div> : null}
       <Box
           component="form" key={ `${usedItem.id}-Box` }
           noValidate autoComplete="off"

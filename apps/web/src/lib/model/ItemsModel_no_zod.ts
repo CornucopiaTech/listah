@@ -1,63 +1,53 @@
-import * as z from "zod";
+
 
 export type AuditUpdaterEnum = "AUDIT_UPDATER_ENUM_UNSPECIFIED" | "AUDIT_UPDATER_ENUM_FRONTEND" | "AUDIT_UPDATER_ENUM_SYSOPS";
 
-const auditEnum = [
-  "AUDIT_UPDATER_ENUM_UNSPECIFIED",
-  "AUDIT_UPDATER_ENUM_FRONTEND",
-  "AUDIT_UPDATER_ENUM_SYSOPS"
-]
-
-export const ZTraceBaggage = z.object({
-  traceparent: z.nullish(z.string()),
-  tracestate: z.nullish(z.string()),
-  b3: z.nullish(z.string()),
-});
-export interface TraceBaggage extends z.infer<typeof ZTraceBaggage>{};
-
-
-export const ZAudit = z.object({
-  createdBy: z.enum(auditEnum),
-  createdAt: z.nullish(z.iso.datetime()),
-  updatedBy: z.enum(auditEnum),
-  updatedAt: z.nullish(z.iso.datetime()),
-  deletedBy: z.enum(auditEnum),
-  deletedAt: z.nullish(z.iso.datetime()),
-});
-export interface Audit extends z.infer<typeof ZAudit>{};
 
 
 
-export const ZItemProto = z.object({
-  id: z.uuid(),
-  userId: z.uuid(),
-  summary: z.string(),
-  category: z.string(),
-  description: z.nullish(z.string()),
-  note: z.nullish(z.string()),
-  tag: z.nullish(z.array(z.string())),
-  softDelete: z.nullish(z.boolean()),
-  properties: z.nullish(z.unknown()),
-  reactivateAt: z.nullish(z.string()),
-})
-export interface ItemProto extends z.infer<typeof ZItemProto>{};
+export interface TraceBaggage {
+  traceparent?: string;
+  tracestate?: string;
+  b3?: string;
+}
 
 
-export const ZPagination = z.object({
-  pageNumber: z.number(),
-  recordsPerPage: z.number(),
-  sortCondition: z.nullish(z.any()),
-});
-export interface Pagination extends z.infer<typeof ZPagination>{};
+export interface Audit {
+    createdBy: AuditUpdaterEnum;
+    createdAt: string;
+    updatedBy: AuditUpdaterEnum;
+    updatedAt: string;
+    deletedBy: AuditUpdaterEnum;
+    deletedAt: string;
+}
 
+export interface ItemProto{
+  id: string | null;
+  userId: string | null;
+  summary: string | null;
+  category: string | null;
+  description: string | null;
+  note: string | null;
+  tag: string[] | null;
+  softDelete: boolean | null;
+  properties: { [index: string]: string } | null;
+  reactivateAt: string | null;
+  audit?: Audit | null;
+}
 
+export interface Pagination {
+  pageNumber: number;
+  recordsPerPage: number;
+  sortCondition: Map<string, string> | null;
+}
 
-export const ZItemsProto = z.object({
-  items: z.array(ZItemProto),
-  totalRecordCount: z.nullish(z.number()),
-  pagination: z.nullish(ZPagination),
-});
-export interface ItemsProto extends z.infer<typeof ZItemsProto>{};
+export interface ItemsProto {
+  items: ItemProto;
+  tag: string[];
+  categories: string[];
+  totalRecordCount: number;
+  pagination: Pagination;
+}
 
 
 // Update Item Store
@@ -114,4 +104,4 @@ export interface ItemsActions {
   updateFilterToDate: (filterToDate: string) => void
 }
 
-export interface ItemsStore extends ItemsState, ItemsActions{};
+export interface ItemsStore extends ItemsState, ItemsActions;
