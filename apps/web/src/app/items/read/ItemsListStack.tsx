@@ -41,7 +41,7 @@ export default function ItemsListStack({ item }: { item: ItemProto}): ReactNode 
 
 
   function handleClick(item: ItemProto) {
-    setState(item);
+    // setState(item);
     router.push(`/item/${item.id}`);
   }
 

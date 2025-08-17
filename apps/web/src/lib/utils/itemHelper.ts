@@ -34,18 +34,21 @@ export function getCategoryGroupOptions(userId: string) {
   })
 }
 
-export function getValidItem(passed: ItemProto, item: ItemProto): ItemProto{
-  const validItem: ItemProto= {
-    id: passed.id,
-    userId: passed.userId,
-    summary: item.summary ? item.summary : passed.summary,
-    category: item.category ? item.category : passed.category,
-    description: item.description ? item.description : passed.description,
-    note: item.note ? item.note : passed.note,
-    tag: item.tag ? item.tag : passed.tag,
-    softDelete: item.softDelete ? item.softDelete : passed.softDelete,
-    properties: item.properties ? item.properties : passed.properties,
-    reactivateAt: item.reactivateAt ? item.reactivateAt : passed.reactivateAt,
+export function getValidItem(storeItem: ItemProto, apiItem: ItemProto): ItemProto{
+  if (!storeItem){
+    return apiItem;
+  }
+  const validItem: ItemProto = {
+    id: storeItem.id ? storeItem.id : apiItem.id,
+    userId: storeItem.userId ? storeItem.userId : apiItem.userId,
+    summary: storeItem.summary ? storeItem.summary : apiItem.summary,
+    category: storeItem.category ? storeItem.category : apiItem.category,
+    description: storeItem.description ? storeItem.description : apiItem.description,
+    note: storeItem.note ? storeItem.note : apiItem.note,
+    tag: storeItem.tag ? storeItem.tag : apiItem.tag,
+    softDelete: storeItem.softDelete ? storeItem.softDelete : apiItem.softDelete,
+    properties: storeItem.properties ? storeItem.properties : apiItem.properties,
+    reactivateAt: storeItem.reactivateAt ? storeItem.reactivateAt : apiItem.reactivateAt,
   };
   return validItem;
 }

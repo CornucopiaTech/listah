@@ -37,7 +37,7 @@ import {
 import { useItemsStore } from '@/lib/store/items/ItemsStoreProvider';
 import { useUpdatedItemStore } from '@/lib/store/updatedItem/UpdatedItemStoreProvider';
 import { ItemProto, ItemsProto, } from '@/lib/model/ItemsModel';
-import { postItem, getItem } from '@/lib/utils/itemHelper';
+import { postItem, getItem, getValidItem } from '@/lib/utils/itemHelper';
 import { WebAppContext } from "@/lib/context/webappContext";
 import Loading from '@/components/Loading';
 import { ErrorAlerts } from '@/components/ErrorAlert';
@@ -104,20 +104,14 @@ export default function ItemUpdate(): ReactNode {
   });
 
 
-  // const { isPending, isError, data, error }: UseQueryResult<ItemsProto> = useQuery(getItemGroupOptions(itemId, userId, category, tag, page, recordsPerPage));
+  const { isPending, isError, data, error }: UseQueryResult<ItemsProto> = useQuery(getItemGroupOptions(itemId, userId, category, tag, page, recordsPerPage));
 
-  // if (isPending) { return <Loading />; }
-  // // ToDo: Fix this error message
-  // if (isError) {return <ErrorAlerts>Error: {error.message}</ErrorAlerts>;}
+  if (isPending) { return <Loading />; }
+  // ToDo: Fix this error message
+  if (isError) {return <ErrorAlerts>Error: {error.message}</ErrorAlerts>;}
 
-  let usedItem: ItemProto = {...item};
-
-  // if (item.id !== null){
-  //   usedItem = {...item}
-  // } else {
-  //   usedItem = data.items && data.items.length > 0 ? data.items[0] : [];
-  // }
-
+  // let usedItem: ItemProto = item && item.id !== null ? item : data.items[0];
+  let usedItem: ItemProto = getValidItem(item, data.items[0]);
 
 
   function addNewTag (){
@@ -180,24 +174,21 @@ export default function ItemUpdate(): ReactNode {
     } else {
       editedTag = usedItem.tag
     }
-    const saveItem: ItemProto= {...usedItem, tag: editedTag}
+    const saveItem: ItemProto = {...usedItem, tag: editedTag}
     mutation.mutate(saveItem);
     setState(saveItem);
     updateNewTag(null);
-
-    // router.push(`/item/${saveItem.id}`);
   }
 
   function handleDelete(){
     const deleteItem: ItemProto= {...usedItem, softDelete: true}
     mutation.mutate(deleteItem);
     setState(defaultUpdateItemInitState);
-    updateNewTag(null);
-
     router.push(`/items/read`);
   }
 
   function handleClose(){
+    setState(defaultUpdateItemInitState);
     router.push(`/items/read`);
   }
 
