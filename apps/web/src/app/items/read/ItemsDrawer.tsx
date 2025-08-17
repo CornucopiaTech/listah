@@ -36,7 +36,7 @@ import { WebAppContext } from "@/lib/context/webappContext";
 import Loading from '@/components/Loading';
 import { ErrorAlerts } from '@/components/ErrorAlert';
 
-export function ItemsDrawer() {
+export function ItemsDrawer(): ReactNode {
   const {
     checkedTags,
     checkedCategories,
@@ -98,11 +98,14 @@ export function ItemsDrawer() {
   }
 
   function handleResetFilter() {
+    updateItemsCategoryFilter([]);
+    updateItemsTagFilter([]);
     updateItemsCheckedCategory([]);
     updateItemsCheckedTags([]);
     updateSearchQuery("");
     updateItemsFromDate("");
     updateItemsToDate("");
+    toggleDrawer(false);
   }
 
   const { isPending, isError, data, error}: UseQueryResult<any> = useQueries(
