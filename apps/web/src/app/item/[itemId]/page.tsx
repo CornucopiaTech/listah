@@ -8,8 +8,8 @@ import {
 
 
 import Loading from '@/components/Loading';
-import { AppBarHeight } from '@/components/AppNavBar';
-import  ItemUpdate from "./ItemUpdate";
+import { AppBarHeight } from '@/lib/model/appNavBarModel';
+import  ItemUpdate from "./ItemDetails";
 
 
 export default function ItemUpdatePage() {

@@ -1,18 +1,21 @@
 "use client"
 
 import {
-  useRef
+  ReactNode,
+  useContext,
 } from 'react';
 import {
-  useSearchParams, useRouter
+  useRouter, useParams
 } from 'next/navigation';
 import {
   useQueryClient,
   useMutation,
+  useQuery,
+  queryOptions,
+  type UseQueryResult,
 } from '@tanstack/react-query';
 import {
   Box,
-  Grid,
   IconButton,
   List,
   ListItemButton,
@@ -33,16 +36,17 @@ import {
 
 import { useItemsStore } from '@/lib/store/items/ItemsStoreProvider';
 import { useUpdatedItemStore } from '@/lib/store/updatedItem/UpdatedItemStoreProvider';
-import { ItemProto } from '@/lib/model/ItemsModel';
-import { getValidItem, postItem } from '@/lib/utils/itemHelper';
+import { ItemProto, ItemsProto, } from '@/lib/model/ItemsModel';
+import { postItem, getItem, getValidItem } from '@/lib/utils/itemHelper';
+import { WebAppContext } from "@/lib/context/webappContext";
+import Loading from '@/components/Loading';
+import { ErrorAlerts } from '@/components/ErrorAlert';
 
 
-export default function ItemUpdate({ pItem }: {
-  pItem?: ItemProto
-}): React.ReactNode {
-  const itemsKey = "itemsDetails";
-  const router = useRouter();
-  const queryClient = useQueryClient();
+export default function ItemUpdate(): ReactNode {
+  const params: { itemId: string } = useParams<{ itemId: string }>();
+  const { itemId } = params
+
   const {
     item,
     newTag,
@@ -52,31 +56,62 @@ export default function ItemUpdate({ pItem }: {
     updateDescription,
     updateNote,
     updateTags,
-    updateSoftDelete,
-    updateProperties,
-    updateReactivateAt,
+    // updateSoftDelete,
+    // updateProperties,
+    // updateReactivateAt,
     updateNewTag,
     defaultUpdateItemInitState,
   } = useUpdatedItemStore((state) => state);
-    const {
-      itemsPerPage,
-      currentPage,
-      categoryFilter,
-      tagFilter,
-    } = useItemsStore((state) => state);
+  const {
+    itemsPerPage,
+    currentPage,
+    categoryFilter,
+    tagFilter,
+  } = useItemsStore((state) => state);
 
-  const searchParams = useSearchParams();
-  const query = searchParams.get('q') ? searchParams.get('q') : "";
-  const passed = query == "" ? {} : JSON.parse(window.atob(query));
-  const usedItem: ItemProto= getValidItem(passed, item);
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const webState = useContext(WebAppContext);
+  const userId: string = webState.userId;
+  const recordsPerPage: number = itemsPerPage;
+  const page: number = currentPage;
+  const category: string[] = categoryFilter;
+  const tag: string[] = tagFilter;
+
+  function getItemGroupOptions(itemId: string, userId: string, category: string [], tag: string[], pageNumber: number, recordsPerPage: number) {
+  return queryOptions({
+    queryKey: ["getItem", userId, itemId],
+    queryFn: () => getItem(userId, itemId),
+    initialData: () => {
+      const state: any = queryClient.getQueryState(['getItems', userId, category, tag, pageNumber, recordsPerPage]);
+
+      if (state && Date.now() - state.dataUpdatedAt <= 24 * 60 * 60 * 1000 ){
+        return state.data.find((d: ItemProto) => d.id === itemId);
+     }
+    },
+     staleTime: 24 * 60 * 60 * 1000,
+   })
+  }
   const mutation = useMutation({
     mutationFn: (mutateItem: ItemProto) => {
       return postItem(mutateItem);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["getItems", usedItem.userId, categoryFilter, tagFilter, currentPage, itemsPerPage,] })
+    onSuccess: (data, variables) => {
+      // queryClient.invalidateQueries({ queryKey: ["getItems", usedItem.userId, categoryFilter, tagFilter, currentPage, itemsPerPage,] })
+      queryClient.setQueryData([["getItems", usedItem.userId, categoryFilter, tagFilter, currentPage, itemsPerPage], { id: variables.id }], data)
+      queryClient.setQueryData([["getItem", variables.userId, variables.id], { id: variables.id }], data)
     },
   });
+
+
+  const { isPending, isError, data, error }: UseQueryResult<ItemsProto> = useQuery(getItemGroupOptions(itemId, userId, category, tag, page, recordsPerPage));
+
+  if (isPending) { return <Loading />; }
+  // ToDo: Fix this error message
+  if (isError) {return <ErrorAlerts>Error: {error.message}</ErrorAlerts>;}
+
+  // let usedItem: ItemProto = item && item.id !== null ? item : data.items[0];
+  let usedItem: ItemProto = getValidItem(item, data.items[0]);
 
 
   function addNewTag (){
@@ -84,72 +119,76 @@ export default function ItemUpdate({ pItem }: {
       return;
     }
     let tList: string[];
-    if (!usedItem.tags || usedItem.tags.length == 0) {
+    if (!usedItem.tag || usedItem.tag.length == 0) {
       tList = [newTag]
     } else {
-      tList = [newTag, ...usedItem.tags];
+      tList = [newTag, ...usedItem.tag];
     }
-    updateTags(tList);
+    // updateTags(tList);
     updateNewTag(null);
+    let newState = {...usedItem, tag: tList}
+    setState(newState);
     // router.push(pathname + '?' + createQueryString('sort', 'asc'))
   }
 
   function handleTag (e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, oldT: string, newT: string){
     e.preventDefault();
+    e.stopPropagation();
     let tList: string[];
 
-    if (!usedItem.tags || usedItem.tags.length == 0){
+    if (!usedItem.tag || usedItem.tag.length == 0){
       tList = [ newT ]
     } else {
-      const idx = usedItem.tags.indexOf(oldT);
+      const idx = usedItem.tag.indexOf(oldT);
       if (idx == -1) {
-        tList = [newT, ...usedItem.tags]
+        tList = [newT, ...usedItem.tag]
       } else {
-        tList = [...usedItem.tags.toSpliced(idx, 1, newT)]
+        tList = [...usedItem.tag.toSpliced(idx, 1, newT)]
       }
     }
-    updateTags(tList);
+    // updateTags(tList);
+    let newState = {...usedItem, tag: tList}
+    setState(newState);
   }
 
   function removeTag (e:React.ChangeEvent<HTMLButtonElement>, oldT: string){
     e.preventDefault();
-    if (!usedItem.tags || usedItem.tags.length == 0){
+    e.stopPropagation();
+    if (!usedItem.tag || usedItem.tag.length == 0){
       return;
     }
-    const updatedTags = usedItem.tags.filter((i) => i != oldT);
-    updateTags(updatedTags);
+    const updatedTags = usedItem.tag.filter((i) => i != oldT);
+    // updateTags(updatedTags);
+    let newState = {...usedItem, tag: updatedTags}
+    setState(newState);
   }
 
   function handleSave(){
     let editedTag: string[];
     if (newTag != null && newTag.trim() != ""){
-      if (!usedItem.tags || usedItem.tags.length == 0){
+      if (!usedItem.tag || usedItem.tag.length == 0){
         editedTag = [ newTag ]
       } else {
-        editedTag = [ newTag, ...usedItem.tags ]
+        editedTag = [ newTag, ...usedItem.tag ]
       }
     } else {
-      editedTag = usedItem.tags
+      editedTag = usedItem.tag
     }
-    const saveItem: ItemProto= {...usedItem, userId: usedItem.userId, id: usedItem.id, tags: editedTag}
+    const saveItem: ItemProto = {...usedItem, tag: editedTag}
     mutation.mutate(saveItem);
     setState(saveItem);
     updateNewTag(null);
-
-    const q = window.btoa(JSON.stringify(saveItem));
-    router.push(`/item/read?q=${q}`);
   }
 
   function handleDelete(){
-    const deleteItem: ItemProto= {...usedItem, userId: passed.userId, id: passed.id, softDelete: true}
+    const deleteItem: ItemProto= {...usedItem, softDelete: true}
     mutation.mutate(deleteItem);
     setState(defaultUpdateItemInitState);
-    updateNewTag(null);
-
     router.push(`/items/read`);
   }
 
   function handleClose(){
+    setState(defaultUpdateItemInitState);
     router.push(`/items/read`);
   }
 
@@ -230,8 +269,8 @@ export default function ItemUpdate({ pItem }: {
           </ListItemButton>
           {
             // Since the value is changed, dont use it as key, else React will re-render instead of re-using the component and it will lose focus.
-            usedItem.tags && usedItem.tags.length > 0 &&
-            usedItem.tags.map((tagItem: string, id: number) => (
+            usedItem.tag && usedItem.tag.length > 0 &&
+            usedItem.tag.map((tagItem: string, id: number) => (
               <ListItemButton key={ 'tag-' + id + '-formField' }>
                 <TextField required multiline
                     key={ 'tag-' + id + 'formField' }

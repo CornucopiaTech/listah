@@ -3,13 +3,10 @@
 import {
   Fragment,
   ReactNode,
+  useContext,
 } from 'react';
 import {
-  useSearchParams, usePathname, useRouter
-} from 'next/navigation';
-import {
   useQuery,
-  queryOptions,
   type UseQueryResult,
 } from '@tanstack/react-query';
 import {
@@ -18,76 +15,40 @@ import {
 } from '@mui/material';
 
 
-import { useUpdatedItemStore } from '@/lib/store/updatedItem/UpdatedItemStoreProvider';
 import { useItemsStore, } from '@/lib/store/items/ItemsStoreProvider';
-import { ItemsDrawer } from "@/app/items/read/ItemsDrawer";
-import ItemsDatePicker from "@/app/items/read/ItemsDatePicker";
-import ItemsSearch from '@/app/items/read/ItemsSearch';
-import { AppBarHeight } from '@/components/AppNavBar';
+import { AppBarHeight } from '@/lib/model/appNavBarModel';
+import { ItemProto, ItemsProto } from '@/lib/model/ItemsModel';
 import Loading from '@/components/Loading';
-import { ItemProto, ItemsProto, ItemsState } from '@/lib/model/ItemsModel';
 import { ErrorAlerts } from '@/components/ErrorAlert';
-import MenuSelect from '@/components/MenuSelect';
 import ItemsListStack from './ItemsListStack';
-import ItemsPagination from './ItemsPagination';
+import { ItemsTopPagination, ItemsBottomPagination } from './ItemsPagination';
 import ItemNoContent from './ItemsNoContent';
-import { getItems } from '@/lib/utils/itemHelper';
+import { getItemsGroupOptions } from '@/lib/utils/itemHelper';
+import { WebAppContext } from "@/lib/context/webappContext";
+
+const menuItemsOptions = [
+  { label: 10, value: 10 }, { label: 20, value: 20 },
+  { label: 50, value: 50 }, { label: 100, value: 100 }
+]
 
 
-// async function getItems(userId: string, category: string[], tags: string[], pageNumber: number, recordsPerPage: number): Promise<ItemsProto | void> {
-//   const req = new Request('/api/getItems', {
-//     method: "POST",
-//     body: JSON.stringify({
-//       userId: [userId], category, tags,
-//       pagination: { pageNumber, recordsPerPage }
-//     })
-//   });
-//   const res = await fetch(req);
-//   if (!res.ok) {
-//     console.error("Error in getItems: ", res.statusText);
-//     throw new Error('Network response was not ok');
-//   }
-//   return res.json();
-// }
-
-
-export function getItemsGroupOptions(userId: string, category: string [], tags: string[], pageNumber: number, recordsPerPage: number) {
-  return queryOptions({
-     queryKey: ["getItems", userId, category, tags, pageNumber, recordsPerPage],
-     queryFn: () => getItems(userId, category, tags, pageNumber, recordsPerPage),
-     staleTime: 24 * 60 * 60 * 1000,
-   })
-}
 
 export default function ItemsRead(): ReactNode {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const {
     itemsPerPage,
     currentPage,
     categoryFilter,
     tagFilter,
-    modalOpen,
-    inEditMode,
     updateItemsPageRecordCount,
     updateItemsCurrentPage,
-    updateItemsCategoryFilter,
-    updateItemsTagFilter,
-    updateModal,
-    updateEditMode,
-
   } = useItemsStore((state) => state);
-  const {
-    setState
-  } = useUpdatedItemStore((state) => state);
 
-
-  const userId: string = "4d56128c-5042-4081-a0ef-c2d064700191";
+  const webState = useContext(WebAppContext);
+  const userId: string = webState.userId;
   const recordsPerPage: number = itemsPerPage;
   const page: number = currentPage;
   const category: string[] = categoryFilter;
-  const tags: string[] = tagFilter;
+  const tag: string[] = tagFilter;
 
   function handlePageChange(event: React.ChangeEvent<unknown>, value: number) {
     updateItemsCurrentPage(value);
@@ -98,7 +59,7 @@ export default function ItemsRead(): ReactNode {
   };
 
 
-  const { isPending, isError, data, error }: UseQueryResult<ItemsProto> = useQuery(getItemsGroupOptions(userId, category, tags, page, recordsPerPage));
+  const { isPending, isError, data, error }: UseQueryResult<ItemsProto> = useQuery(getItemsGroupOptions(userId, category, tag, page, recordsPerPage));
 
   if (isPending) { return <Loading />; }
   // ToDo: Fix this error message
@@ -116,8 +77,10 @@ export default function ItemsRead(): ReactNode {
       <Box
           sx={{ height: `calc(100% - ${AppBarHeight})`,
                 mt: AppBarHeight, p: 1 }}>
-        <Box  key='head-content' sx={{ mt: 1, }}>
-          <ItemsPagination
+
+        <Box  key='head-content' sx={{ mt: 0, }}>
+
+          <ItemsTopPagination
               page={page} maxPages={maxPages} recordsPerPage={recordsPerPage}
               handlePageChange={handlePageChange}
               handlePageCountChange={handlePageCountChange} />
@@ -133,7 +96,7 @@ export default function ItemsRead(): ReactNode {
         </Box>
 
         <Box  key='foot-content'>
-          <ItemsPagination
+          <ItemsBottomPagination
               page={page} maxPages={maxPages} recordsPerPage={recordsPerPage}
               handlePageChange={handlePageChange}
               handlePageCountChange={handlePageCountChange} />

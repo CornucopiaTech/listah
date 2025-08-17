@@ -25,7 +25,7 @@ export interface ItemProto{
   category: string | null;
   description: string | null;
   note: string | null;
-  tags: string[] | null;
+  tag: string[] | null;
   softDelete: boolean | null;
   properties: { [index: string]: string } | null;
   reactivateAt: string | null;
@@ -40,20 +40,14 @@ export interface Pagination {
 
 export interface ItemsProto {
   items: ItemProto;
+  tag: string[];
+  categories: string[];
   totalRecordCount: number;
   pagination: Pagination;
 }
 
 
-// Item Store
-export interface StateItems {
-  itemsPerPage: number; //records per page
-  currentPage: number; //current page
-  categoryFilter: string | string[];
-  tagFilter: string[];
-  modalOpen: boolean;
-}
-
+// Update Item Store
 export interface UpdateItemState {
   item: ItemProto
   newTag: string | null,
@@ -65,14 +59,14 @@ export interface UpdateItemActions {
   updateCategory: (category: string) => void;
   updateDescription: (description: string) => void;
   updateNote: (note: string) => void;
-  updateTags: (tags: string[]) => void;
+  updateTags: (tag: string[]) => void;
   updateSoftDelete: (softDelete: boolean) => void;
   updateProperties: (properties: { [index: string]: string }) => void;
   updateReactivateAt: (reactivateAt: string) => void;
   updateNewTag: (newTag: string) => void;
 }
 
-export interface UpdateItemStore extends UpdateItemState, UpdateItemActions;
+export interface UpdateItemStore extends UpdateItemState, UpdateItemActions{};
 
 
 
@@ -82,17 +76,35 @@ export interface ItemsState {
   currentPage?: number;//current page
   categoryFilter?: string[];
   tagFilter?: string[];
-  modalOpen?: boolean;
-  inEditMode?: boolean;
+  readFromDate?: string;
+  readToDate?: string;
+  drawerOpen?: boolean;
+  searchQuery?: string;
+  collapseTags?: boolean;
+  collapseCategories?: boolean;
+  collapseDatePicker?: boolean;
+  checkedTags?: string[];
+  checkedCategories?: string[];
+  filterFromDate: string;
+  filterToDate: string;
 }
 
 export interface ItemsActions {
   updateItemsPageRecordCount: (recordCount: number) => void
   updateItemsCurrentPage: (currentPage: number) => void
-  updateItemsCategoryFilter: (category: string ) => void
-  updateItemsTagFilter: (tag: string) => void
-  updateModal: (modalOpen: boolean) => void
-  updateEditMode: (inEditMode: boolean) => void
+  updateItemsCategoryFilter: (categoryFilter: string[] ) => void
+  updateItemsTagFilter: (tagFilter: string[]) => void
+  toggleDrawer: (drawerOpen: boolean) => void
+  updateSearchQuery: (searchQuery: string) => void
+  toggleCollapseTags: (collapseTags: boolean) => void
+  toggleCollapseCategories: (collapseCategories: boolean) => void
+  toggleCollapseDatePicker: (collapseDatePicker: boolean) => void
+  updateItemsCheckedCategory: (checkedCategories: string[]) => void
+  updateItemsCheckedTags: (checkedTags: string[]) => void
+  updateItemsFromDate: (readFromDate: string) => void
+  updateItemsToDate: (readToDate: string) => void
+  updateFilterFromDate: (filterFromDate: string) => void
+  updateFilterToDate: (filterToDate: string) => void
 }
 
 export interface ItemsStore extends ItemsState, ItemsActions;

@@ -14,7 +14,9 @@ import { ThemeProvider } from '@mui/material/styles';
 import {
   Box,
 } from '@mui/material';
-import { AppNavBar} from '@/components/AppNavBar';
+
+
+import AppNavBar from '@/components/AppNavBar';
 import Loading from '@/components/Loading';
 import theme from '@/lib/theme';
 
@@ -31,7 +33,7 @@ export default function PageLayout({
             <UpdatedItemStoreProvider>
             <ReactQueryDevtools initialIsOpen={false} />
             <ThemeProvider theme={theme}>
-              <Box sx={{ /*bgcolor: 'teal',*/ height: '100%' }}>
+              <Box sx={{ height: '100%' }}>
                 <AppNavBar />
                 <Suspense fallback={<Loading />}>
                   {children}

@@ -38,7 +38,7 @@ databaseChangeLog:
                     name:  note
                     type:  varchar
                 - column:
-                    name:  tags
+                    name:  tag
                     type:  json
                 - column:
                     name:  properties

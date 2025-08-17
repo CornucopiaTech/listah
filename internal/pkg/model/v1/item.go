@@ -4,7 +4,7 @@ import (
 	"cornucopia/listah/internal/pkg/model"
 	pb "cornucopia/listah/internal/pkg/proto/v1"
 	"time"
-	"fmt"
+	// "fmt"
 
 	"github.com/google/uuid"
 	"github.com/uptrace/bun"
@@ -20,7 +20,7 @@ type Item struct {
 	Category      string
 	Description   string
 	Note          string
-	Tags          []string
+	Tag          []string
 	Properties    map[string]string
 	SoftDelete    bool `bun:",nullzero,default:false"`
 	ReactivateAt  time.Time
@@ -41,7 +41,7 @@ var ItemConflictFields = []string{
 }
 
 var ItemResolveFields = []string{
-	"summary", "category", "description", "note", "tags",
+	"summary", "category", "description", "note", "tag",
 	"properties", "reactivate_at", "audit", "soft_delete",
 	// "audit.updated_by", "audit.deleted_by",
 	// "audit.updated_at", "audit.deleted_at",
@@ -66,7 +66,7 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, error) {
 			Category:     v.GetCategory(),
 			Description:  v.GetDescription(),
 			Note:         v.GetNote(),
-			Tags:         v.GetTags(),
+			Tag:         v.GetTag(),
 			Properties:   v.GetProperties(),
 			SoftDelete:   v.GetSoftDelete(),
 			ReactivateAt: v.GetReactivateAt().AsTime(),
@@ -116,8 +116,8 @@ func ItemProtoToItemModelUpsertSafe(msg []*pb.Item, genId bool) ([]*Item, error)
 		if (v.GetNote() != ""){
 			newItem.Note = v.GetNote()
 		}
-		if (len(v.GetTags()) != 0){
-			newItem.Tags = v.GetTags()
+		if (len(v.GetTag()) != 0){
+			newItem.Tag = v.GetTag()
 		}
 		if (len(v.GetProperties()) != 0){
 			newItem.Properties = v.GetProperties()
@@ -144,7 +144,7 @@ func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
 			Category:     v.Category,
 			Description:  &v.Description,
 			Note:         &v.Note,
-			Tags:         v.Tags,
+			Tag:         v.Tag,
 			Properties:   v.Properties,
 			SoftDelete:   &v.SoftDelete,
 			ReactivateAt: timestamppb.New(v.ReactivateAt),
@@ -157,8 +157,6 @@ func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
 				DeletedAt: timestamppb.New(v.Audit.DeletedAt),
 			},
 		})
-
-		fmt.Println(&v.SoftDelete)
 	}
 	return items, nil
 }
@@ -224,12 +222,12 @@ func ItemProtoToWhereClause(msg *pb.ItemServiceReadRequest) ([]model.WhereClause
 		})
 	}
 
-	// // tags
-	// if len(msg.GetTags()) != 0 {
+	// // tag
+	// if len(msg.GetTag()) != 0 {
 	// 	w = append(w, model.WhereClause{
 	// 		Placeholder: "? IN (?)",
-	// 		Column:      "tags",
-	// 		Value:       bun.In(msg.GetTags()),
+	// 		Column:      "tag",
+	// 		Value:       bun.In(msg.GetTag()),
 	// 	})
 	// }
 
@@ -253,4 +251,3 @@ func ItemProtoToWhereClause(msg *pb.ItemServiceReadRequest) ([]model.WhereClause
 
 	return w, nil
 }
-

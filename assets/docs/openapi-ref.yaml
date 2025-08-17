@@ -1,6 +1,94 @@
 openapi: 3.1.0
 info: {}
 paths:
+  /listah.v1.CategoryService/Read:
+    get:
+      tags:
+        - listah.v1.CategoryService
+      summary: Read
+      description: Read Category
+      operationId: listah.v1.CategoryService.Read.get
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceReadRequest'
+        - name: encoding
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/encoding'
+        - name: base64
+          in: query
+          schema:
+            $ref: '#/components/schemas/base64'
+        - name: compression
+          in: query
+          schema:
+            $ref: '#/components/schemas/compression'
+        - name: connect
+          in: query
+          schema:
+            $ref: '#/components/schemas/connect'
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceReadResponse'
+    post:
+      tags:
+        - listah.v1.CategoryService
+      summary: Read
+      description: Read Category
+      operationId: listah.v1.CategoryService.Read
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.CategoryServiceReadRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.CategoryServiceReadResponse'
   /listah.v1.ItemService/Create:
     post:
       tags:
@@ -62,28 +150,21 @@ paths:
                 $ref: '#/components/schemas/listah.v1.ItemServiceReadRequest'
         - name: encoding
           in: query
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/encoding'
+          required: true
+          schema:
+            $ref: '#/components/schemas/encoding'
         - name: base64
           in: query
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/base64'
+          schema:
+            $ref: '#/components/schemas/base64'
         - name: compression
           in: query
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/compression'
+          schema:
+            $ref: '#/components/schemas/compression'
         - name: connect
           in: query
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/connect-protocol-version'
+          schema:
+            $ref: '#/components/schemas/connect'
       responses:
         default:
           description: Error
@@ -204,6 +285,94 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/listah.v1.ItemServiceDeleteResponse'
+  /listah.v1.TagService/Read:
+    get:
+      tags:
+        - listah.v1.TagService
+      summary: Read
+      description: Read Tag
+      operationId: listah.v1.TagService.Read.get
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.TagServiceReadRequest'
+        - name: encoding
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/encoding'
+        - name: base64
+          in: query
+          schema:
+            $ref: '#/components/schemas/base64'
+        - name: compression
+          in: query
+          schema:
+            $ref: '#/components/schemas/compression'
+        - name: connect
+          in: query
+          schema:
+            $ref: '#/components/schemas/connect'
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.TagServiceReadResponse'
+    post:
+      tags:
+        - listah.v1.TagService
+      summary: Read
+      description: Read Tag
+      operationId: listah.v1.TagService.Read
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.TagServiceReadRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.TagServiceReadResponse'
 components:
   schemas:
     listah.v1.AuditUpdaterEnum:
@@ -310,29 +479,23 @@ components:
       type: object
       properties:
         created_by:
-          allOf:
-            - $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
           title: created_by
+          $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
         created_at:
-          allOf:
-            - $ref: '#/components/schemas/google.protobuf.Timestamp'
           title: created_at
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
         updated_by:
-          allOf:
-            - $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
           title: updated_by
+          $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
         updated_at:
-          allOf:
-            - $ref: '#/components/schemas/google.protobuf.Timestamp'
           title: updated_at
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
         deleted_by:
-          allOf:
-            - $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
           title: deleted_by
+          $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
         deleted_at:
-          allOf:
-            - $ref: '#/components/schemas/google.protobuf.Timestamp'
           title: deleted_at
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
       title: Audit
       additionalProperties: false
     listah.v1.Pagination:
@@ -366,44 +529,124 @@ components:
           title: value
       title: SortConditionEntry
       additionalProperties: false
+    listah.v1.CategoryServiceReadRequest:
+      type: object
+      properties:
+        userId:
+          type: array
+          items:
+            type: string
+          title: user_id
+        tag:
+          type: array
+          items:
+            type: string
+          title: tag
+        pagination:
+          title: pagination
+          nullable: true
+          $ref: '#/components/schemas/listah.v1.Pagination'
+      title: CategoryServiceReadRequest
+      additionalProperties: false
+    listah.v1.CategoryServiceReadResponse:
+      type: object
+      properties:
+        category:
+          type: array
+          items:
+            type: string
+          title: category
+        pagination:
+          title: pagination
+          nullable: true
+          $ref: '#/components/schemas/listah.v1.Pagination'
+        totalRecordCount:
+          type: integer
+          title: total_record_count
+          format: int32
+      title: CategoryServiceReadResponse
+      additionalProperties: false
+    encoding:
+      title: encoding
+      enum:
+        - proto
+        - json
+      description: Define which encoding or 'Message-Codec' to use
+    base64:
+      type: boolean
+      title: base64
+      description: Specifies if the message query param is base64 encoded, which may be required for binary data
+    compression:
+      title: compression
+      enum:
+        - identity
+        - gzip
+        - br
+      description: Which compression algorithm to use for this request
+    connect:
+      title: connect
+      enum:
+        - v1
+      description: Define the version of the Connect protocol
+    connect-protocol-version:
+      type: number
+      title: Connect-Protocol-Version
+      enum:
+        - 1
+      description: Define the version of the Connect protocol
+      const: 1
+    connect-timeout-header:
+      type: number
+      title: Connect-Timeout-Ms
+      description: Define the timeout, in ms
+    connect.error:
+      type: object
+      properties:
+        code:
+          type: string
+          examples:
+            - not_found
+          enum:
+            - canceled
+            - unknown
+            - invalid_argument
+            - deadline_exceeded
+            - not_found
+            - already_exists
+            - permission_denied
+            - resource_exhausted
+            - failed_precondition
+            - aborted
+            - out_of_range
+            - unimplemented
+            - internal
+            - unavailable
+            - data_loss
+            - unauthenticated
+          description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
+        message:
+          type: string
+          description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
+        detail:
+          $ref: '#/components/schemas/google.protobuf.Any'
+      title: Connect Error
+      additionalProperties: true
+      description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
+    google.protobuf.Any:
+      type: object
+      properties:
+        type:
+          type: string
+        value:
+          type: string
+          format: binary
+        debug:
+          type: object
+          additionalProperties: true
+      additionalProperties: true
+      description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
     listah.v1.Item:
       type: object
-      allOf:
-        - anyOf:
-            - required:
-                - audit
-            - not:
-                anyOf:
-                  - required:
-                      - audit
-        - anyOf:
-            - required:
-                - description
-            - not:
-                anyOf:
-                  - required:
-                      - description
-        - anyOf:
-            - required:
-                - note
-            - not:
-                anyOf:
-                  - required:
-                      - note
-        - anyOf:
-            - required:
-                - reactivateAt
-            - not:
-                anyOf:
-                  - required:
-                      - reactivateAt
-        - anyOf:
-            - required:
-                - softDelete
-            - not:
-                anyOf:
-                  - required:
-                      - softDelete
       properties:
         id:
           type: string
@@ -420,14 +663,16 @@ components:
         description:
           type: string
           title: description
+          nullable: true
         note:
           type: string
           title: note
-        tags:
+          nullable: true
+        tag:
           type: array
           items:
             type: string
-          title: tags
+          title: tag
         properties:
           type: object
           title: properties
@@ -437,14 +682,15 @@ components:
         softDelete:
           type: boolean
           title: soft_delete
+          nullable: true
         reactivateAt:
-          allOf:
-            - $ref: '#/components/schemas/google.protobuf.Timestamp'
           title: reactivate_at
+          nullable: true
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
         audit:
-          allOf:
-            - $ref: '#/components/schemas/listah.v1.Audit'
           title: audit
+          nullable: true
+          $ref: '#/components/schemas/listah.v1.Audit'
       title: Item
       additionalProperties: false
     listah.v1.Item.PropertiesEntry:
@@ -460,21 +706,6 @@ components:
       additionalProperties: false
     listah.v1.ItemServiceCreateRequest:
       type: object
-      allOf:
-        - anyOf:
-            - required:
-                - audit
-            - not:
-                anyOf:
-                  - required:
-                      - audit
-      anyOf:
-        - required:
-            - audit
-        - not:
-            anyOf:
-              - required:
-                  - audit
       properties:
         items:
           type: array
@@ -482,9 +713,9 @@ components:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
         audit:
-          allOf:
-            - $ref: '#/components/schemas/listah.v1.Audit'
           title: audit
+          nullable: true
+          $ref: '#/components/schemas/listah.v1.Audit'
       title: ItemServiceCreateRequest
       additionalProperties: false
     listah.v1.ItemServiceCreateResponse:
@@ -499,21 +730,6 @@ components:
       additionalProperties: false
     listah.v1.ItemServiceDeleteRequest:
       type: object
-      allOf:
-        - anyOf:
-            - required:
-                - audit
-            - not:
-                anyOf:
-                  - required:
-                      - audit
-      anyOf:
-        - required:
-            - audit
-        - not:
-            anyOf:
-              - required:
-                  - audit
       properties:
         items:
           type: array
@@ -521,9 +737,9 @@ components:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
         audit:
-          allOf:
-            - $ref: '#/components/schemas/listah.v1.Audit'
           title: audit
+          nullable: true
+          $ref: '#/components/schemas/listah.v1.Audit'
       title: ItemServiceDeleteRequest
       additionalProperties: false
     listah.v1.ItemServiceDeleteResponse:
@@ -538,21 +754,6 @@ components:
       additionalProperties: false
     listah.v1.ItemServiceReadRequest:
       type: object
-      allOf:
-        - anyOf:
-            - required:
-                - pagination
-            - not:
-                anyOf:
-                  - required:
-                      - pagination
-      anyOf:
-        - required:
-            - pagination
-        - not:
-            anyOf:
-              - required:
-                  - pagination
       properties:
         id:
           type: array
@@ -584,11 +785,11 @@ components:
           items:
             type: string
           title: note
-        tags:
+        tag:
           type: array
           items:
             type: string
-          title: tags
+          title: tag
         properties:
           type: array
           items:
@@ -630,28 +831,13 @@ components:
             type: string
           title: deleted_by
         pagination:
-          allOf:
-            - $ref: '#/components/schemas/listah.v1.Pagination'
           title: pagination
+          nullable: true
+          $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceReadRequest
       additionalProperties: false
     listah.v1.ItemServiceReadResponse:
       type: object
-      allOf:
-        - anyOf:
-            - required:
-                - pagination
-            - not:
-                anyOf:
-                  - required:
-                      - pagination
-      anyOf:
-        - required:
-            - pagination
-        - not:
-            anyOf:
-              - required:
-                  - pagination
       properties:
         items:
           type: array
@@ -659,9 +845,9 @@ components:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
         pagination:
-          allOf:
-            - $ref: '#/components/schemas/listah.v1.Pagination'
           title: pagination
+          nullable: true
+          $ref: '#/components/schemas/listah.v1.Pagination'
         totalRecordCount:
           type: integer
           title: total_record_count
@@ -670,21 +856,6 @@ components:
       additionalProperties: false
     listah.v1.ItemServiceUpdateRequest:
       type: object
-      allOf:
-        - anyOf:
-            - required:
-                - audit
-            - not:
-                anyOf:
-                  - required:
-                      - audit
-      anyOf:
-        - required:
-            - audit
-        - not:
-            anyOf:
-              - required:
-                  - audit
       properties:
         items:
           type: array
@@ -692,9 +863,9 @@ components:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
         audit:
-          allOf:
-            - $ref: '#/components/schemas/listah.v1.Audit'
           title: audit
+          nullable: true
+          $ref: '#/components/schemas/listah.v1.Audit'
       title: ItemServiceUpdateRequest
       additionalProperties: false
     listah.v1.ItemServiceUpdateResponse:
@@ -707,79 +878,50 @@ components:
           title: item_ids
       title: ItemServiceUpdateResponse
       additionalProperties: false
-    encoding:
-      title: encoding
-      enum:
-        - proto
-        - json
-      description: Define which encoding or 'Message-Codec' to use
-    base64:
-      type: boolean
-      title: base64
-      description: Specifies if the message query param is base64 encoded, which may be required for binary data
-    compression:
-      title: compression
-      enum:
-        - identity
-        - gzip
-        - br
-      description: Which compression algorithm to use for this request
-    connect-protocol-version:
-      type: number
-      title: Connect-Protocol-Version
-      enum:
-        - 1
-      description: Define the version of the Connect protocol
-      const: 1
-    connect-timeout-header:
-      type: number
-      title: Connect-Timeout-Ms
-      description: Define the timeout, in ms
-    connect.error:
+    listah.v1.TagServiceReadRequest:
       type: object
       properties:
-        code:
-          type: string
-          examples:
-            - CodeNotFound
-          enum:
-            - CodeCanceled
-            - CodeUnknown
-            - CodeInvalidArgument
-            - CodeDeadlineExceeded
-            - CodeNotFound
-            - CodeAlreadyExists
-            - CodePermissionDenied
-            - CodeResourceExhausted
-            - CodeFailedPrecondition
-            - CodeAborted
-            - CodeOutOfRange
-            - CodeInternal
-            - CodeUnavailable
-            - CodeDataLoss
-            - CodeUnauthenticated
-          description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
-        message:
-          type: string
-          description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
-        detail:
-          $ref: '#/components/schemas/google.protobuf.Any'
-      title: Connect Error
-      additionalProperties: true
-      description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
-    google.protobuf.Any:
+        userId:
+          type: array
+          items:
+            type: string
+          title: user_id
+        id:
+          type: array
+          items:
+            type: string
+          title: id
+        category:
+          type: array
+          items:
+            type: string
+          title: category
+        pagination:
+          title: pagination
+          nullable: true
+          $ref: '#/components/schemas/listah.v1.Pagination'
+      title: TagServiceReadRequest
+      additionalProperties: false
+    listah.v1.TagServiceReadResponse:
       type: object
       properties:
-        type:
-          type: string
-        value:
-          type: string
-          format: binary
-        debug:
-          type: object
-          additionalProperties: true
-      additionalProperties: true
-      description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        tag:
+          type: array
+          items:
+            type: string
+          title: tag
+        pagination:
+          title: pagination
+          nullable: true
+          $ref: '#/components/schemas/listah.v1.Pagination'
+        totalRecordCount:
+          type: integer
+          title: total_record_count
+          format: int32
+      title: TagServiceReadResponse
+      additionalProperties: false
 security: []
 tags:
+  - name: listah.v1.CategoryService
   - name: listah.v1.ItemService
+  - name: listah.v1.TagService

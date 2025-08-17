@@ -31,20 +31,20 @@ export default function RootLayout({
 }>) {
   return (
     <Fragment>
-      <ClerkProvider>
+      {/* <ClerkProvider> */}
           <CssBaseline />
           <html lang="en">
             <head>
             </head>
             <body>
-              <Box sx={{ /*bgcolor: '#cfe8fc',*/ minHeight: '720px', height: '100%' }}>
+              <Box sx={{ minHeight: '720px', height: '100%' }}>
                 <Container maxWidth="lg">
                   {children}
                 </Container>
               </Box>
             </body>
           </html>
-      </ClerkProvider>
+      {/* </ClerkProvider> */}
     </Fragment>
   );
 }

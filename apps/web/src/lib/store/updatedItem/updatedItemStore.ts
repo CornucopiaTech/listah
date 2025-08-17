@@ -1,5 +1,5 @@
 import { createStore } from 'zustand/vanilla';
-
+import { devtools } from 'zustand/middleware';
 
 import { ItemProto, UpdateItemState, UpdateItemStore } from '@/lib/model/ItemsModel';
 
@@ -14,7 +14,7 @@ export const defaultUpdateItemInitState: UpdateItemState = {
     category:  null,
     description:  null,
     note:  null,
-    tags:  null,
+    tag:  null,
     softDelete:  null,
     properties:  null,
     reactivateAt:  null,
@@ -25,6 +25,27 @@ export const defaultUpdateItemInitState: UpdateItemState = {
 
 
 export const createUpdatedItemStore = (
+  initState: UpdateItemState = defaultUpdateItemInitState,
+) => {
+  return createStore<UpdateItemStore>()(
+    devtools((set) => ({
+      ...initState,
+      setState: (item: ItemProto) => set(() => ({ item })),
+      updateSummary: (summary: string) => set((state) => ({ ...state, item: {...state.item, summary }})),
+      updateCategory: (category: string) => set((state) => ({ ...state, item: { ...state.item, category }})),
+      updateDescription: (description: string) => set((state) => ({ ...state, item: { ...state.item,description }})),
+      updateNote: (note: string) => set((state) => ({ ...state, item: { ...state.item, note }})),
+      updateTags: (tags: string[]) => set((state) => ({ ...state, item: { ...state.item, tags }})),
+      updateSoftDelete: (softDelete: boolean) => set((state) => ({ ...state, item: { ...state.item, softDelete }})),
+      updateProperties: (properties: { [index: string]: string }) => set((state) => ({ ...state, item: { ...state.item, properties }})),
+      updateReactivateAt: (reactivateAt: string) => set((state) => ({ ...state, item: { ...state.item, reactivateAt }})),
+      updateNewTag: (newTag: string) => set(() => ({ newTag })),
+    }))
+  );
+}
+
+
+export const createUpdatedItemStoreNoDevTools = (
   initState: UpdateItemState = defaultUpdateItemInitState,
 ) => {
   return createStore<UpdateItemStore>()((set) => ({
@@ -39,5 +60,5 @@ export const createUpdatedItemStore = (
     updateProperties: (properties: { [index: string]: string }) => set((state) => ({ ...state, item: { ...state.item, properties }})),
     updateReactivateAt: (reactivateAt: string) => set((state) => ({ ...state, item: { ...state.item, reactivateAt }})),
     updateNewTag: (newTag: string) => set(() => ({ newTag })),
-  }))
+  }));
 }

@@ -9,6 +9,7 @@ import (
 	"connectrpc.com/connect"
 	"github.com/pkg/errors"
 	"go.opentelemetry.io/otel"
+	// "sort"
 )
 
 
@@ -58,7 +59,12 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
 		return nil, err
 	}
+	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d items from repository", recCnt))
 
+
+
+	// Convert readModel to response proto
+	// using the model conversion function
 	rs, err := v1model.ItemModelToItemProto(readModel)
 	if err != nil {
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting item proto from item model", errors.Cause(err).Error())

@@ -9,6 +9,8 @@ import (
 
 	"cornucopia/listah/internal/app/bootstrap"
 	itemV1 "cornucopia/listah/internal/app/item/v1"
+	categoryV1 "cornucopia/listah/internal/app/category/v1"
+	tagV1 "cornucopia/listah/internal/app/tag/v1"
 	"cornucopia/listah/internal/pkg/middleware"
 	"cornucopia/listah/internal/pkg/proto/v1/v1connect"
 
@@ -33,7 +35,7 @@ func withHandlerFunc(m *http.ServeMux, p string, hf func(http.ResponseWriter, *h
 	m.Handle(p, h)
 }
 
-func withHandler(m *http.ServeMux, p string, hr http.Handler, i *bootstrap.Infra) {
+func withHandler(m *http.ServeMux, i *bootstrap.Infra, p string, hr http.Handler) {
 	// Configure the "http.route" for the HTTP instrumentation.
 	h := otelhttp.WithRouteTag(p, hr)
 	h = withCORS(h, i)
@@ -46,9 +48,19 @@ func handle(i *bootstrap.Infra) http.Handler {
 	icp := middleware.GetInterceptors(i)
 
 	//
-	// Handle User connect-go generated paths
+	// Handle Item connect-go generated paths
 	ip, ih := v1connect.NewItemServiceHandler(itemV1.NewServer(i), icp)
-	withHandler(mux, ip, ih, i)
+	withHandler(mux, i, ip, ih)
+
+	// Handle Category connect-go generated paths
+	cp, ch := v1connect.NewCategoryServiceHandler(categoryV1.NewServer(i), icp)
+	withHandler(mux, i, cp, ch)
+
+	// Handle Tag connect-go generated paths
+	tp, th := v1connect.NewTagServiceHandler(tagV1.NewServer(i), icp)
+	withHandler(mux, i, tp, th)
+
+
 
 	handleDoc := func(w http.ResponseWriter, r *http.Request) {
 		p := path.Join(i.Config.ProjectRoot, "public", "index.html")
