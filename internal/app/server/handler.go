@@ -3,9 +3,14 @@ package server
 import (
 	"net/http"
 	"path"
+	"github.com/go-chi/cors"
+	chi "github.com/go-chi/chi/v5"
+	chimiddleware "github.com/go-chi/chi/v5/middleware"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"fmt"
+	"golang.org/x/net/http2/h2c"
+	"golang.org/x/net/http2"
 
-	connectcors "connectrpc.com/cors"
-	"github.com/rs/cors"
 
 	"cornucopia/listah/internal/app/bootstrap"
 	itemV1 "cornucopia/listah/internal/app/item/v1"
@@ -14,51 +19,52 @@ import (
 	"cornucopia/listah/internal/pkg/middleware"
 	"cornucopia/listah/internal/pkg/proto/v1/v1connect"
 
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
-// withCORS adds CORS support to a Connect HTTP handler.
-func withCORS(h http.Handler, i *bootstrap.Infra) http.Handler {
-	middleware := cors.New(cors.Options{
-		AllowedOrigins: []string{i.Config.Web.Address},
-		AllowedMethods: connectcors.AllowedMethods(),
-		AllowedHeaders: connectcors.AllowedHeaders(),
-		ExposedHeaders: connectcors.ExposedHeaders(),
-	})
-	return middleware.Handler(h)
-}
-
-func withHandlerFunc(m *http.ServeMux, p string, hf func(http.ResponseWriter, *http.Request), i *bootstrap.Infra) {
-	// Configure the "http.route" for the HTTP instrumentation.
-	h := otelhttp.WithRouteTag(p, http.HandlerFunc(hf))
-	h = withCORS(h, i)
-	m.Handle(p, h)
-}
-
-func withHandler(m *http.ServeMux, i *bootstrap.Infra, p string, hr http.Handler) {
-	// Configure the "http.route" for the HTTP instrumentation.
-	h := otelhttp.WithRouteTag(p, hr)
-	h = withCORS(h, i)
-	m.Handle(p, h)
-}
 
 func handle(i *bootstrap.Infra) http.Handler {
+	allowedOrigins := []string{
+		i.Config.Web.Address,
+		i.Config.Web.UrlAddress,
+		i.Config.Web.Url,
+		i.Config.Web.Host,
+		"127.0.0.1",
+	}
+	mux := chi.NewRouter()
+	mux.Use(cors.Handler(cors.Options{
+    AllowedOrigins:   allowedOrigins,
+    AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+    AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "traceparent"},
+    // ExposedHeaders:   []string{"Link"},
+    // AllowCredentials: false,
+    // MaxAge:           300, // Maximum value not ignored by any of major browsers
+  }))
 
-	mux := http.NewServeMux()
+	mux.Use(chimiddleware.RequestID)
+	mux.Use(chimiddleware.RealIP)
+	mux.Use(chimiddleware.Logger)
+	mux.Use(chimiddleware.Recoverer)
+	mux.Use(chimiddleware.Timeout(60 * 60 * 1e9)) // 1 hour
+
+	fmt.Printf("Allowed Origins are: %v\n", allowedOrigins)
+
+	// Get gRPC interceptors chain
 	icp := middleware.GetInterceptors(i)
 
 	//
 	// Handle Item connect-go generated paths
 	ip, ih := v1connect.NewItemServiceHandler(itemV1.NewServer(i), icp)
-	withHandler(mux, i, ip, ih)
+	mux.Mount(ip, otelhttp.WithRouteTag(ip, ih))
+
+
 
 	// Handle Category connect-go generated paths
 	cp, ch := v1connect.NewCategoryServiceHandler(categoryV1.NewServer(i), icp)
-	withHandler(mux, i, cp, ch)
+	mux.Mount(cp, otelhttp.WithRouteTag(cp, ch))
 
 	// Handle Tag connect-go generated paths
 	tp, th := v1connect.NewTagServiceHandler(tagV1.NewServer(i), icp)
-	withHandler(mux, i, tp, th)
+	mux.Mount(tp, otelhttp.WithRouteTag(tp, th))
 
 
 
@@ -66,10 +72,8 @@ func handle(i *bootstrap.Infra) http.Handler {
 		p := path.Join(i.Config.ProjectRoot, "public", "index.html")
 		http.ServeFile(w, r, p)
 	}
+	mux.Mount("/", otelhttp.WithRouteTag("/", http.HandlerFunc(handleDoc)))
 
-	//
-	// Handle OpenAPI docs files
-	withHandlerFunc(mux, "/", handleDoc, i)
 
-	return otelhttp.NewHandler(mux, "/")
+	return h2c.NewHandler(mux, &http2.Server{})
 }

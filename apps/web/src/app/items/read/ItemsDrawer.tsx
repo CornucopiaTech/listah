@@ -3,6 +3,7 @@ import {
   Fragment,
   ReactNode,
   useContext,
+  useState,
 } from 'react';
 import {
   useQueries,
@@ -36,7 +37,7 @@ import { WebAppContext } from "@/lib/context/webappContext";
 import Loading from '@/components/Loading';
 import { ErrorAlerts } from '@/components/ErrorAlert';
 
-export function ItemsDrawer(): ReactNode {
+export function ItemsDrawer({tag, category}: {tag: string[], category: string[]}): ReactNode {
   const {
     checkedTag,
     checkedCategory,
@@ -56,11 +57,19 @@ export function ItemsDrawer(): ReactNode {
   const webState = useContext(WebAppContext);
   const userId: string = webState.userId;
 
-  // function handleDrawerToggle(e: React.DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES) {
-  function handleDrawerToggle(e: React.ChangeEvent<HTMLButtonElement>, changeDrawerOpen: boolean = !drawerOpen) {
-    e.stopPropagation();
-    toggleDrawer(changeDrawerOpen);
+  const [openDrawer, setOpenDrawer] = useState(false);
+
+  function handleDrawerToggle(newVal) {
+    setOpenDrawer(newVal);
+    // setOpenDrawer(!openDrawer);
   }
+
+  // // function handleDrawerToggle(e: React.DO_NOT_USE_OR_YOU_WILL_BE_FIRED_CALLBACK_REF_RETURN_VALUES) {
+  // function handleDrawerToggle(e: React.ChangeEvent<HTMLButtonElement>, changeDrawerOpen: boolean = !drawerOpen) {
+  //   // e.stopPropagation();
+  //   // toggleDrawer(changeDrawerOpen);
+  //   setOpenDrawer(changeDrawerOpen);
+  // }
 
   function handleCategoryCheckChange(event: React.SyntheticEvent<unknown>, categoryName: string) {
     event.stopPropagation();
@@ -113,38 +122,38 @@ export function ItemsDrawer(): ReactNode {
     toggleDrawer(false);
   }
 
-  const { isPending, isError, data, error}: UseQueryResult<any> = useQueries(
-  {
-      queries: [
-        getTagGroupOptions(userId),
-        getCategoryGroupOptions(userId)
-      ],
-      combine: (results) => {
-        return {
-          data: results.map((res) => res.data),
-          isPending: results.some((res) => res.isPending),
-          isError: results.some((res) => res.isError),
-          error: results.some((res) => res.error),
-        }
-      }
-    }
-  );
+  // const { isPending, isError, data, error}: UseQueryResult<any> = useQueries(
+  // {
+  //     queries: [
+  //       getTagGroupOptions(userId),
+  //       getCategoryGroupOptions(userId)
+  //     ],
+  //     combine: (results) => {
+  //       return {
+  //         data: results.map((res) => res.data),
+  //         isPending: results.some((res) => res.isPending),
+  //         isError: results.some((res) => res.isError),
+  //         error: results.some((res) => res.error),
+  //       }
+  //     }
+  //   }
+  // );
 
-  if (isPending) { return <Loading />; }
-  // ToDo: Fix this error message
-  if (isError) {return <ErrorAlerts>Error: {error.message}</ErrorAlerts>;}
+  // if (isPending) { return <Loading />; }
+  // // ToDo: Fix this error message
+  // if (isError) {return <ErrorAlerts>Error: {error.message}</ErrorAlerts>;}
 
-  const [tagResult, categoryResult] = data;
-  const tag: string[] = tagResult && tagResult.tag ? tagResult.tag : []
-  const category: string[] = categoryResult && categoryResult.category ? categoryResult.category : []
+  // const [tagResult, categoryResult] = data;
+  // const tag: string[] = tagResult && tagResult.tag ? tagResult.tag : []
+  // const category: string[] = categoryResult && categoryResult.category ? categoryResult.category : []
 
   return (
     <Box sx={{ mx: 3, }}>
-      <Button onClick={handleDrawerToggle} startIcon={<Tune />}>
+      <Button onClick={() => handleDrawerToggle(true)} startIcon={<Tune />}>
         Filter
       </Button>
 
-      <Drawer open={drawerOpen} onClose={(e) => handleDrawerToggle(e, false)}>
+      <Drawer open={openDrawer} onClose={() => handleDrawerToggle(false)} >
         <Box component='form' sx={{ width: 250, p: 2, my: 6 }}
           role="presentation" >
           <TextField id="standard-basic" label="Search for item" variant="standard" sx={{ mb: 4, }} />

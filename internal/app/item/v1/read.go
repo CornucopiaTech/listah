@@ -10,6 +10,8 @@ import (
 	"github.com/pkg/errors"
 	"go.opentelemetry.io/otel"
 	// "sort"
+	"github.com/uptrace/bun"
+	"cornucopia/listah/internal/pkg/model"
 )
 
 
@@ -28,6 +30,44 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting where clause from request", errors.Cause(err).Error())
 		return nil, err
 	}
+
+
+	// If tags are requested, get the list of unique tags first
+	tcw := []model.WhereClause{}
+	// whereClause := make([]model.WhereClause), 0)
+	if len(req.Msg.GetId()) > 0 {
+		tcw = append(tcw, model.WhereClause{
+			Placeholder: " ?::VARCHAR IN (?) ",
+			Column: "id",
+			Value:       bun.In(req.Msg.GetId()),
+		})
+	}
+	if len(req.Msg.GetUserId()) > 0 {
+		tcw = append(tcw, model.WhereClause{
+			Placeholder: " ? IN (?) ",
+			Column: "user_id",
+			Value:       bun.In(req.Msg.GetUserId()),
+		})
+	}
+
+
+	tagModel := []string{}
+	tagCnt, err := s.Infra.BunRepo.Tag.Select(ctx, &tagModel, &tcw, "", 0, 0)
+	if  err != nil {
+		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
+		return nil, err
+	}
+	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d tags from repository", tagCnt))
+
+	catModel := []string{}
+	catCnt, err := s.Infra.BunRepo.Category.Select(ctx, &catModel, &tcw, "", 0, 0)
+	if  err != nil {
+		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
+		return nil, err
+	}
+	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d category from repository", catCnt))
+
+
 
 	var qLimit int
 	var qPage int
@@ -72,6 +112,8 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 	}
 	resm := &pb.ItemServiceReadResponse{
 		Items: rs,
+		Tag: tagModel,
+		Category: catModel,
 		TotalRecordCount: int32(recCnt),
 		Pagination: &pb.Pagination{
 			PageNumber: int32(qPage),

@@ -28,7 +28,7 @@ export const createItemsStore = (
       (state) => ({ categoryFilter })
     ),
     updateItemsTagFilter: (tagFilter: string[]) => set((state) => ({ tagFilter })),
-    toggleDrawer: (drawerOpen: boolean) => set(() => ({ drawerOpen })),
+    toggleDrawer: (drawerOpen: boolean) => set((state) => ({ ...state, drawerOpen })),
     updateSearchQuery: (searchQuery: string) => set(() => ({ searchQuery })),
     updateItemsCheckedCategory: (checkedCategory: Set<string>) => set((state) => ({ checkedCategory })),
     updateItemsCheckedTag: (checkedTag: Set<string>) => set((state) => ({ checkedTag })),

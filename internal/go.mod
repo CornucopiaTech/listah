@@ -4,15 +4,15 @@ go 1.24.1
 
 require (
 	connectrpc.com/connect v1.18.1
-	connectrpc.com/cors v0.1.0
 	connectrpc.com/otelconnect v0.7.2
+	github.com/go-chi/chi/v5 v5.2.3
+	github.com/go-chi/cors v1.2.2
 	github.com/google/gnostic v0.7.0
 	github.com/google/uuid v1.6.0
 	github.com/jaegertracing/jaeger v1.66.0
 	github.com/lib/pq v1.10.9
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1
-	github.com/rs/cors v1.11.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.10.0
 	github.com/uptrace/bun v1.2.11

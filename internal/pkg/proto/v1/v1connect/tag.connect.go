@@ -37,6 +37,12 @@ const (
 	TagServiceReadProcedure = "/listah.v1.TagService/Read"
 )
 
+// These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
+var (
+	tagServiceServiceDescriptor    = v1.File_v1_tag_proto.Services().ByName("TagService")
+	tagServiceReadMethodDescriptor = tagServiceServiceDescriptor.Methods().ByName("Read")
+)
+
 // TagServiceClient is a client for the listah.v1.TagService service.
 type TagServiceClient interface {
 	Read(context.Context, *connect.Request[v1.TagServiceReadRequest]) (*connect.Response[v1.TagServiceReadResponse], error)
@@ -51,12 +57,11 @@ type TagServiceClient interface {
 // http://api.acme.com or https://acme.com/grpc).
 func NewTagServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) TagServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
-	tagServiceMethods := v1.File_v1_tag_proto.Services().ByName("TagService").Methods()
 	return &tagServiceClient{
 		read: connect.NewClient[v1.TagServiceReadRequest, v1.TagServiceReadResponse](
 			httpClient,
 			baseURL+TagServiceReadProcedure,
-			connect.WithSchema(tagServiceMethods.ByName("Read")),
+			connect.WithSchema(tagServiceReadMethodDescriptor),
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
@@ -84,11 +89,10 @@ type TagServiceHandler interface {
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
 func NewTagServiceHandler(svc TagServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
-	tagServiceMethods := v1.File_v1_tag_proto.Services().ByName("TagService").Methods()
 	tagServiceReadHandler := connect.NewUnaryHandler(
 		TagServiceReadProcedure,
 		svc.Read,
-		connect.WithSchema(tagServiceMethods.ByName("Read")),
+		connect.WithSchema(tagServiceReadMethodDescriptor),
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
