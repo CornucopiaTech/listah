@@ -29,17 +29,18 @@ export interface Audit extends z.infer<typeof ZAudit>{};
 
 
 export const ZItemProto = z.object({
-  id: z.uuid(),
-  userId: z.uuid(),
-  summary: z.string(),
-  category: z.string(),
+  id: z.nullish(z.uuid()),
+  userId: z.nullish(z.uuid()),
+  summary: z.nullish(z.string()),
+  category: z.nullish(z.string()),
   description: z.nullish(z.string()),
   note: z.nullish(z.string()),
   tag: z.nullish(z.array(z.string())),
   softDelete: z.nullish(z.boolean()),
   properties: z.nullish(z.unknown()),
   reactivateAt: z.nullish(z.string()),
-})
+  audit: z.nullish(ZAudit),
+});
 export interface ItemProto extends z.infer<typeof ZItemProto>{};
 
 
@@ -56,14 +57,66 @@ export const ZItemsProto = z.object({
   items: z.array(ZItemProto),
   totalRecordCount: z.nullish(z.number()),
   pagination: z.nullish(ZPagination),
+  tag: z.nullish(z.array(z.string())),
+  category: z.nullish(z.array(z.string())),
 });
 export interface ItemsProto extends z.infer<typeof ZItemsProto>{};
 
 
+
+// Items Store
+export interface ItemsState {
+  itemsPerPage: number; //records per page
+  currentPage: number;//current page
+  categoryFilter: string[];
+  tagFilter: string[];
+  drawerOpen: boolean;
+  searchQuery: string;
+  checkedTag: Set<string>;
+  checkedCategory: Set<string>;
+  fromFilterDate: string;
+  toFilterDate: string;
+}
+
+// export interface ItemsState {
+//   itemsPerPage?: number; //records per page
+//   currentPage?: number;//current page
+//   categoryFilter?: string[];
+//   tagFilter?: string[];
+//   readFromDate?: string;
+//   readToDate?: string;
+//   drawerOpen?: boolean;
+//   searchQuery?: string;
+//   checkedTag?: Set<string>;
+//   checkedCategory?: Set<string>;
+//   filterFromDate: string;
+//   filterToDate: string;
+// }
+
+export interface ItemsActions {
+  updateItemsPageRecordCount: (recordCount: number) => void;
+  updateItemsCurrentPage: (currentPage: number) => void;
+  updateItemsCategoryFilter: (categoryFilter: string[] ) => void;
+  updateItemsTagFilter: (tagFilter: string[]) => void;
+  toggleDrawer: (drawerOpen: boolean) => void;
+  updateSearchQuery: (searchQuery: string) => void;
+  updateItemsCheckedCategory: (checkedCategory: Set<string>) => void;
+  updateItemsCheckedTag: (checkedTag: Set<string>) => void;
+  updateItemsFromDate: (readFromDate: string) => void;
+  updateItemsToDate: (readToDate: string) => void;
+  updateFilterFromDate: (filterFromDate: string) => void;
+  updateFilterToDate: (filterToDate: string) => void;
+}
+
+export interface ItemsStore extends ItemsState, ItemsActions{};
+// export type ItemsStore = ItemsState & ItemsActions;
+
+
+
 // Update Item Store
 export interface UpdateItemState {
-  item: ItemProto
-  newTag: string | null,
+  item: ItemProto;
+  newTag: string | null;
 }
 
 export interface UpdateItemActions {
@@ -79,39 +132,5 @@ export interface UpdateItemActions {
   updateNewTag: (newTag: string) => void;
 }
 
-export interface UpdateItemStore extends UpdateItemState, UpdateItemActions{};
+export interface UpdateItemStore extends UpdateItemState, UpdateItemActions { };
 
-
-
-// Items Store
-export interface ItemsState {
-  itemsPerPage?: number; //records per page
-  currentPage?: number;//current page
-  categoryFilter?: string[];
-  tagFilter?: string[];
-  readFromDate?: string;
-  readToDate?: string;
-  drawerOpen?: boolean;
-  searchQuery?: string;
-  checkedTag?: Set<string>;
-  checkedCategory?: Set<string>;
-  filterFromDate: string;
-  filterToDate: string;
-}
-
-export interface ItemsActions {
-  updateItemsPageRecordCount: (recordCount: number) => void
-  updateItemsCurrentPage: (currentPage: number) => void
-  updateItemsCategoryFilter: (categoryFilter: string[] ) => void
-  updateItemsTagFilter: (tagFilter: string[]) => void
-  toggleDrawer: (drawerOpen: boolean) => void
-  updateSearchQuery: (searchQuery: string) => void
-  updateItemsCheckedCategory: (checkedCategory: Set<string>) => void
-  updateItemsCheckedTag: (checkedTag: Set<string>) => void
-  updateItemsFromDate: (readFromDate: string) => void
-  updateItemsToDate: (readToDate: string) => void
-  updateFilterFromDate: (filterFromDate: string) => void
-  updateFilterToDate: (filterToDate: string) => void
-}
-
-export interface ItemsStore extends ItemsState, ItemsActions{};

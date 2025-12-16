@@ -1,5 +1,5 @@
 import { createStore } from 'zustand/vanilla';
-import { AppNavBarState, AppNavBarStore, } from '@/lib/model/appNavBarModel';
+import type { AppNavBarState, AppNavBarStore, } from '@/lib/model/appNavBarModel';
 
 
 

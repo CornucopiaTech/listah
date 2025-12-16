@@ -1,7 +1,7 @@
 import { createStore } from 'zustand/vanilla';
 import { devtools } from 'zustand/middleware';
 
-import { ItemProto, UpdateItemState, UpdateItemStore } from '@/lib/model/ItemsModel';
+import type { ItemProto, UpdateItemState, UpdateItemStore } from '@/lib/model/ItemsModel';
 
 
 

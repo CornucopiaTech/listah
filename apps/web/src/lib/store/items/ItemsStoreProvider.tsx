@@ -1,10 +1,13 @@
 // src/providers/counter-store-provider.tsx
-'use client'
+
 
 import { type ReactNode, createContext, useRef, useContext } from 'react'
 import { useStore } from 'zustand'
 
-import { ItemsStore, createItemsStore } from '@/lib/store/items/itemsStore';
+import { createItemsStore } from '@/lib/store/items/itemsStore';
+import type { ItemsStore, } from '@/lib/model/ItemsModel';
+
+
 
 export type ItemsStoreApi = ReturnType<typeof createItemsStore>
 

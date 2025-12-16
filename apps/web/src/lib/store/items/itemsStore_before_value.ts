@@ -4,23 +4,25 @@ import type { ItemsState, ItemsStore, } from '@/lib/model/ItemsModel';
 
 
 export const defaultPagesInitState: ItemsState = {
-  itemsPerPage: 50,
+  itemsPerPage: 20,
   currentPage: 1,
   categoryFilter: [],
   tagFilter: [],
+  readFromDate: "",
+  readToDate: "",
   drawerOpen: false,
   searchQuery: '',
   checkedTag: new Set([]),
   checkedCategory: new Set([]),
-  fromFilterDate: '',
-  toFilterDate: '',
+  filterFromDate: '',
+  filterToDate: '',
 }
 export const createItemsStore = (
   initState: ItemsState = defaultPagesInitState,
 ) => {
   return createStore<ItemsStore>()((set) => ({
     ...initState,
-    updateItemsPageRecordCount: (recordCount: number) => set((state) => ({ itemsPerPage: recordCount})),
+    updateItemsPageRecordCount: (recordCount: number) => set(() => ({ itemsPerPage: recordCount})),
     updateItemsCurrentPage: (currentPage: number) => set(() => ({ currentPage })),
     updateItemsCategoryFilter: (categoryFilter: string[]) => set(
       (state) => ({ categoryFilter })
@@ -28,9 +30,12 @@ export const createItemsStore = (
     updateItemsTagFilter: (tagFilter: string[]) => set((state) => ({ tagFilter })),
     toggleDrawer: (drawerOpen: boolean) => set(() => ({ drawerOpen })),
     updateSearchQuery: (searchQuery: string) => set(() => ({ searchQuery })),
-    updateItemsCheckedCategory: (checkedCategory: Set<string>) => set(() => ({ checkedCategory })),
-    updateItemsCheckedTag: (checkedTag: Set<string>) => set(() => ({ checkedTag })),
-    updateFromFilterDate: (filterFromDate: string) => set(() => ({ fromFilterDate })),
-    updateToFilterDate: (filterToDate: string) => set(() => ({ toFilterDate })),
+    updateItemsCheckedCategory: (checkedCategory: Set<string>) => set((state) => ({ checkedCategory })),
+    updateItemsCheckedTag: (checkedTag: Set<string>) => set((state) => ({ checkedTag })),
+    updateItemsFromDate: (readFromDate: string) => set((state) => ({ readFromDate })),
+    updateItemsToDate: (readToDate: string) => set((state) => ({ readToDate })),
+    updateFilterFromDate: (filterFromDate: string) => set((state) => ({ filterFromDate })),
+    updateFilterToDate: (filterToDate: string) => set((state) => ({ filterToDate })),
+
   }))
 }
