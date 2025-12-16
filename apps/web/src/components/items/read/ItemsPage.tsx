@@ -114,7 +114,7 @@ export default function ItemsPage(): ReactNode {
             <Fragment key={item.id}>
               <ListItemButton key={item.id} onClick={() => handleClick(item)}>
                 <ListItemText primary={item.summary} />
-                <Link href={`/item/${item.id}`} >View More</Link>
+                <Link href={`/items/${item.id}`} >View More</Link>
               </ListItemButton>
               <Divider />
             </Fragment>
