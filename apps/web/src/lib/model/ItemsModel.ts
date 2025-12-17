@@ -65,7 +65,7 @@ export interface ItemsProto extends z.infer<typeof ZItemsProto>{};
 
 
 // Items Store
-export interface ItemsState {
+export interface IListingState {
   itemsPerPage: number; //records per page
   currentPage: number;//current page
   categoryFilter: string[];
@@ -78,59 +78,11 @@ export interface ItemsState {
   toFilterDate: string;
 }
 
-// export interface ItemsState {
-//   itemsPerPage?: number; //records per page
-//   currentPage?: number;//current page
-//   categoryFilter?: string[];
-//   tagFilter?: string[];
-//   readFromDate?: string;
-//   readToDate?: string;
-//   drawerOpen?: boolean;
-//   searchQuery?: string;
-//   checkedTag?: Set<string>;
-//   checkedCategory?: Set<string>;
-//   filterFromDate: string;
-//   filterToDate: string;
-// }
-
-export interface ItemsActions {
-  updateItemsPageRecordCount: (recordCount: number) => void;
-  updateItemsCurrentPage: (currentPage: number) => void;
-  updateItemsCategoryFilter: (categoryFilter: string[] ) => void;
-  updateItemsTagFilter: (tagFilter: string[]) => void;
-  toggleDrawer: (drawerOpen: boolean) => void;
-  updateSearchQuery: (searchQuery: string) => void;
-  updateItemsCheckedCategory: (checkedCategory: Set<string>) => void;
-  updateItemsCheckedTag: (checkedTag: Set<string>) => void;
-  updateItemsFromDate: (readFromDate: string) => void;
-  updateItemsToDate: (readToDate: string) => void;
-  updateFilterFromDate: (filterFromDate: string) => void;
-  updateFilterToDate: (filterToDate: string) => void;
-}
-
-export interface ItemsStore extends ItemsState, ItemsActions{};
-// export type ItemsStore = ItemsState & ItemsActions;
 
 
 
 // Update Item Store
-export interface UpdateItemState {
+export interface IDetailState {
   item: ItemProto;
   newTag: string | null;
 }
-
-export interface UpdateItemActions {
-  setState: (item: ItemProto) => void;
-  updateSummary: (summary: string) => void;
-  updateCategory: (category: string) => void;
-  updateDescription: (description: string) => void;
-  updateNote: (note: string) => void;
-  updateTags: (tag: string[]) => void;
-  updateSoftDelete: (softDelete: boolean) => void;
-  updateProperties: (properties: { [index: string]: string }) => void;
-  updateReactivateAt: (reactivateAt: string) => void;
-  updateNewTag: (newTag: string) => void;
-}
-
-export interface UpdateItemStore extends UpdateItemState, UpdateItemActions { };
-

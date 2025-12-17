@@ -21,9 +21,11 @@ import { Virtuoso } from 'react-virtuoso';
 
 
 
-import { useItemsStore, } from '@/lib/store/items/ItemsStoreProvider';
+// Internal store
+import { useAppSelector, useAppDispatch } from '@/lib/state/hook';
 import { AppBarHeight } from '@/lib/model/appNavBarModel';
-import type { ItemProto, ItemsProto, ZItemsProto, ItemsStore } from '@/lib/model/ItemsModel';
+import type { ItemProto, ItemsProto, ZItemsProto } from '@/lib/model/ItemsModel';
+import type { IListingState, IDetailState } from '@/lib/model/ItemsModel';
 import Loading from '@/components/common/Loading';
 import { ErrorAlerts } from '@/components/common/ErrorAlert';
 import ItemsNoContent from './ItemsNoContent';
@@ -41,24 +43,27 @@ const menuItemsOptions = [
 
 
 export default function ItemsPage(): ReactNode {
-  const itemStore: ItemsStore = useItemsStore((state) => state);
   const webState = useContext(WebAppContext);
-
+  const listingState = useAppSelector((state) => state.listing);
+  const dispatch = useAppDispatch();
 
   function handlePageChange(event: React.ChangeEvent<unknown>, value: number) {
-    itemStore.updateItemsCurrentPage(value);
+    dispatch(listingState.setCurrentPage(value));
   };
 
-  function handlePageCountChange(event: React.ChangeEvent<unknown>) {
-    itemStore.updateItemsPageRecordCount(event.target.value);
+  function handlePageCountChange(e: React.ChangeEvent<unknown>) {
+    // listingState.updateItemsPageRecordCount(event.target.value);
+    dispatch(listingState.setItemsPerPage(e.target.value))
   };
 
   function handleClick(item: ItemProto) {
+    listingState.setItem(item);
+    listingState.updateNewTag(null);
     // router.push(`/item/${item.id}`);
   }
 
 
-  const { isPending, isError, data, error }: UseQueryResult<ItemsProto> = useQuery(getItemsGroupOptions(webState.userId, itemStore.categoryFilter, itemStore.tagFilter, itemStore.currentPage, itemStore.itemsPerPage));
+  const { isPending, isError, data, error }: UseQueryResult<ItemsProto> = useQuery(getItemsGroupOptions(webState.userId, listingState.categoryFilter, listingState.tagFilter, listingState.currentPage, listingState.itemsPerPage));
 
   if (isPending) { return <Loading />; }
   // ToDo: Fix this error message
@@ -80,7 +85,7 @@ export default function ItemsPage(): ReactNode {
   const allCategory = data.category ? data.category : [];
   const items: ItemProto[] = data.items ? data.items : [];
   const totalRecords: number = data.totalRecordCount ? data.totalRecordCount : 1;
-  const maxPages = Math.ceil(totalRecords / itemStore.itemsPerPage);
+  const maxPages = Math.ceil(totalRecords / listingState.itemsPerPage);
 
   if (!items || items.length == 0){return<ItemsNoContent />;}
 
@@ -97,8 +102,11 @@ export default function ItemsPage(): ReactNode {
                 {/* <ItemsSearch /> */}
             </Box>
             <Box key='navigation' sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', alignItems: "center"}}>
-              <Pagination count={maxPages} page={itemStore.currentPage} onChange={handlePageChange} />
-              <MenuSelect defaultValue={itemStore.itemsPerPage}
+              <Pagination
+                  count={maxPages} page={listingState.currentPage}
+                  onChange={handlePageChange}
+              />
+              <MenuSelect defaultValue={listingState.itemsPerPage}
                   handleChange={handlePageCountChange}
                   formHelperText="Items per page" label="Page count"
                   menuItems={menuItemsOptions}/>
@@ -112,6 +120,21 @@ export default function ItemsPage(): ReactNode {
           data={items}
           itemContent={(_, item) =>
             <Fragment key={item.id}>
+              <Link href={`/items/${item.id}`} >
+                <ListItemButton key={item.id} onClick={() => handleClick(item)}>
+                <ListItemText primary={item.summary} />
+                </ListItemButton>
+              </Link>
+              <Divider />
+            </Fragment>
+          }
+        />
+
+        {/* <Virtuoso key="data-content"
+          style={{ height: '70vh', width: '100%', display: 'block', overflow: 'auto', }}
+          data={items}
+          itemContent={(_, item) =>
+            <Fragment key={item.id}>
               <ListItemButton key={item.id} onClick={() => handleClick(item)}>
                 <ListItemText primary={item.summary} />
                 <Link href={`/items/${item.id}`} >View More</Link>
@@ -120,13 +143,13 @@ export default function ItemsPage(): ReactNode {
             </Fragment>
           }
           // components={{ Footer: Footer }}
-        />
+        /> */}
 
         <Box  key='foot-content'>
           <Box key='navigation' sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', alignItems: "center"}}>
             <Box key='navigation' sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', alignItems: "center"}}>
-              <Pagination count={maxPages} page={itemStore.currentPage} onChange={handlePageChange} />
-              <MenuSelect defaultValue={itemStore.itemsPerPage}
+              <Pagination count={maxPages} page={listingState.currentPage} onChange={handlePageChange} />
+              <MenuSelect defaultValue={listingState.itemsPerPage}
                   handleChange={handlePageCountChange}
                   formHelperText="Items per page" label="Page count"
                   menuItems={menuItemsOptions}/>

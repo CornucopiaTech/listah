@@ -26,13 +26,15 @@ import {
   Box,
 } from '@mui/material';
 import { enableMapSet } from 'immer';
+import { Provider } from 'react-redux'
 
+
+
+import {store} from '@/lib/state/store'
 
 import AppNavBar from '@/components/common/AppNavBar';
 import Loading from '@/components/common/Loading';
 import theme from '@/lib/theme';
-import { ItemsStoreProvider } from "@/lib/store/items/ItemsStoreProvider";
-import { UpdatedItemStoreProvider } from '@/lib/store/updatedItem/UpdatedItemStoreProvider';
 import NotFound from '@/components/common/NotFound';
 
 enableMapSet();
@@ -42,22 +44,20 @@ enableMapSet();
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <ItemsStoreProvider>
-      <UpdatedItemStoreProvider>
-        <QueryClientProvider client={new QueryClient()}>
-          <ReactQueryDevtools initialIsOpen={false} />
-          <ThemeProvider theme={theme}>
-            <Box sx={{ height: '100%' }}>
-              <AppNavBar />
-              <Suspense fallback={<Loading />}>
-                {children}
-              </Suspense>
-              <Scripts />
-            </Box>
-          </ThemeProvider>
-        </QueryClientProvider>
-      </UpdatedItemStoreProvider>
-    </ItemsStoreProvider >
+    <QueryClientProvider client={new QueryClient()}>
+      <ReactQueryDevtools initialIsOpen={false} />
+      <Provider store={store}>
+        <ThemeProvider theme={theme}>
+          <Box sx={{ height: '100%' }}>
+            <AppNavBar />
+            <Suspense fallback={<Loading />}>
+              {children}
+            </Suspense>
+            <Scripts />
+          </Box>
+        </ThemeProvider>
+      </Provider>
+    </QueryClientProvider>
   )
 }
 

@@ -23,58 +23,17 @@ import {
 import { Virtuoso } from 'react-virtuoso';
 
 
-import { useItemsStore, } from '@/lib/store/items/ItemsStoreProvider';
+
+// Internal store
+import { useAppSelector, useAppDispatch } from '@/lib/state/hook';
+import { useBoundStore } from '@/lib/store/boundStore';
 import { WebAppContext } from "@/lib/context/webappContext";
 import type { ItemProto, ItemsProto, ZItemsProto, ItemsStore } from '@/lib/model/ItemsModel';
 
 
 export const ItemsDrawer = memo(function ItemsDrawer({ tag, category }: { tag: string[], category: string[] }): ReactNode {
-  const itemStore: ItemsStore = useItemsStore((state) => state);
-
-  function handleDrawerToggle(e: ChangeEvent<HTMLButtonElement>, changeDrawerOpen: boolean = !itemStore.drawerOpen) {
-    e.stopPropagation();
-    itemStore.toggleDrawer(changeDrawerOpen);
-  }
-
-  function handleCategoryCheckChange(categoryName: string) {
-    let newChecked: Set<string> = itemStore.checkedCategory.union(new Set([categoryName]));
-
-    if (itemStore.checkedCategory.has(categoryName)) {
-      // Remove category from filter
-      newChecked.delete(categoryName)
-    }
-    itemStore.updateItemsCheckedCategory(newChecked);
-  }
-
-  function handleTagCheckChange(tagName: string) {
-    // event.stopPropagation();
-    let newChecked: Set<string> = itemStore.checkedTag.union(new Set([tagName]))
-    if (itemStore.checkedTag.has(tagName)) {
-      // Remove tag from filter
-      newChecked.delete(tagName)
-    }
-    itemStore.updateItemsCheckedTag(newChecked);
-  }
-
-  function handleApplyFilter() {
-    itemStore.updateItemsCategoryFilter([...itemStore.checkedCategory]);
-    itemStore.updateItemsTagFilter([...itemStore.checkedTag]);
-    itemStore.updateSearchQuery(itemStore.searchQuery);
-    itemStore.updateItemsFromDate(itemStore.fromFilterDate);
-    itemStore.updateItemsToDate(itemStore.toFilterDate);
-    itemStore.toggleDrawer(false)
-  }
-
-  function handleResetFilter() {
-    itemStore.updateItemsCategoryFilter([]);
-    itemStore.updateItemsTagFilter([]);
-    itemStore.updateItemsCheckedCategory(new Set([]));
-    itemStore.updateItemsCheckedTag(new Set([]));
-    itemStore.updateSearchQuery("");
-    itemStore.updateItemsFromDate("");
-    itemStore.updateItemsToDate("");
-    itemStore.toggleDrawer(false);
-  }
+  const listingState = useAppSelector((state) => state.listing);
+  const dispatch = useAppDispatch();
 
   const listLeftPadding: number = 3;
   const bottomMargin: number = 2;
@@ -97,11 +56,8 @@ export const ItemsDrawer = memo(function ItemsDrawer({ tag, category }: { tag: s
               key={item + '-checkBoxFormControlLabel'}
               control={
                 <Checkbox
-                  // checked={checkedCategoryList.indexOf(item) !== -1}
-                  // onChange={(e) => handleCategoryListCheckChange(e, item)}
-                  onChange={() => handleCategoryCheckChange(item)}
-                  checked={itemStore.checkedCategory.has(item)}
-
+                  onChange={() => dispatch(listingState.setCheckedCategory(item))}
+                  checked={listingState.checkedCategory.has(item)}
                 />
               }
               label={item}
@@ -125,8 +81,8 @@ export const ItemsDrawer = memo(function ItemsDrawer({ tag, category }: { tag: s
               key={item + '-checkBoxFormControlLabel'}
               control={
                 <Checkbox
-                  checked={itemStore.checkedTag.has(item)}
-                  onChange={() => handleTagCheckChange(item)}
+                  checked={listingState.checkedTag.has(item)}
+                  onChange={() => dispatch(listingState.setCheckedTag(item))}
                 />
               }
               label={item}
@@ -138,8 +94,8 @@ export const ItemsDrawer = memo(function ItemsDrawer({ tag, category }: { tag: s
 
       <Divider sx={{ mb: bottomMargin, mt: topMargin }} />
       <Box sx={{ display: 'flex', width: '100', justifyContent: 'space-between', }}>
-        <Button onClick={handleApplyFilter}> Apply</Button>
-        <Button onClick={handleResetFilter}> Reset</Button>
+        <Button onClick={() => dispatch(listingState.applyFilter())}> Apply</Button>
+        <Button onClick={() => dispatch(listingState.resetFilter())}> Reset</Button>
       </Box>
     </Box>
 
@@ -148,9 +104,16 @@ export const ItemsDrawer = memo(function ItemsDrawer({ tag, category }: { tag: s
 
   return (
     <div>
-      <Button onClick={(e) => handleDrawerToggle(e, true)} startIcon={<Tune />}> Filter</Button>
-      <Drawer open={itemStore.drawerOpen} onClose={(e) => handleDrawerToggle(e, false)}>
-        {DrawerList}
+      <Button
+          onClick={() => dispatch(listingState.setToggleDrawer(true))}
+          startIcon={<Tune />}
+        >
+        Filter
+      </Button>
+      <Drawer
+          open={listingState.drawerOpen}
+          onClose={() => dispatch(listingState.setToggleDrawer(false))}
+        > {DrawerList}
       </Drawer>
     </div>
   );
