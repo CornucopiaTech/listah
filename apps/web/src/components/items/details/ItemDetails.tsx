@@ -33,7 +33,6 @@ import * as z from "zod";
 
 
 
-import { useAppSelector, useAppDispatch } from '@/lib/state/hook';
 import { useBoundStore } from '@/lib/store/boundStore';
 import type { ItemProto, ItemsProto, ZItemProto , ZItemsProto } from '@/lib/model/ItemsModel';
 import { postItem, getItem, getValidItem } from '@/lib/utils/itemHelper';
@@ -47,14 +46,12 @@ import { getItemsGroupOptions } from '@/lib/utils/itemHelper';
 
 export default function ItemDetails(): ReactNode {
   const { itemId } = Route.useParams()
-  const store = useBoundStore((state) => state);
   const queryClient = useQueryClient();
   const webState = useContext(WebAppContext);
-  const listingState = useAppSelector((state) => state.listing);
-  const dispatch = useAppDispatch();
+  const store = useBoundStore((state) => state);
 
 
-  // Define update item store mutation
+  // Define mutation
   const mutation = useMutation({
     mutationFn: (mutateItem: ItemProto) => {
       const mi = ZItemProto.parse(mutateItem);
@@ -64,8 +61,8 @@ export default function ItemDetails(): ReactNode {
       // queryClient.invalidateQueries({ queryKey: ["getItems", usedItem.userId, categoryFilter, tagFilter, currentPage, itemsPerPage,] })
       queryClient.setQueryData([
         [
-          "getItems", webState.userId, listingState.categoryFilter,
-          listingState.tagFilter, listingState.currentPage, listingState.itemsPerPage
+          "getItems", webState.userId, store.categoryFilter,
+          store.tagFilter, store.currentPage, store.itemsPerPage
         ], { id: variables.id }
       ], data)
     },
@@ -73,7 +70,7 @@ export default function ItemDetails(): ReactNode {
 
 
   // Get the item data from the API
-  const { isPending, isError, data, error }: UseQueryResult<ItemsProto> = useQuery(getItemsGroupOptions(webState.userId, listingState.categoryFilter, listingState.tagFilter, listingState.currentPage, listingState.itemsPerPage));
+  const { isPending, isError, data, error }: UseQueryResult<ItemsProto> = useQuery(getItemsGroupOptions(webState.userId, store.categoryFilter, store.tagFilter, store.currentPage, store.itemsPerPage));
 
   if (isPending) { return <Loading />; }
   // ToDo: Fix this error message
@@ -84,10 +81,10 @@ export default function ItemDetails(): ReactNode {
   try{
     apiItems = ZItemsProto.parse(data);
     let uit: ItemProto = apiItems.items.find((it) => it.id === itemId);
-    usedItem = ZItemProto.parse(getValidItem(listingState.item, uit));
+    usedItem = ZItemProto.parse(getValidItem(store.item, uit));
     console.info("0. usedItem");
     console.info(usedItem);
-    console.info(listingState.item);
+    console.info(store.item);
     console.info(uit);
   } catch(error){
     if(error instanceof z.ZodError){
@@ -97,20 +94,20 @@ export default function ItemDetails(): ReactNode {
   }
 
 
-  // ToDO: Set up normal store and not per request listingState.
+  // ToDO: Set up normal store and not per request store.
 
 
 
   function handleSave(){
     let editedTag: string[];
-    if (listingState.newTag != null && listingState.newTag.trim() != ""){
+    if (store.newTag != null && store.newTag.trim() != ""){
       // IF a new tag exists
       if (!usedItem.tag || usedItem.tag.length == 0){
         // If no tags, just add the new one
-        editedTag = [ listingState.newTag ]
+        editedTag = [ store.newTag ]
       } else {
         // Add the new tag to existing tags
-        editedTag = [ listingState.newTag, ...usedItem.tag ]
+        editedTag = [ store.newTag, ...usedItem.tag ]
       }
     } else {
       // If no new tag, use existing tags
@@ -118,19 +115,19 @@ export default function ItemDetails(): ReactNode {
     }
     const saveItem: ItemProto = {...usedItem, tag: editedTag}
     mutation.mutate(saveItem);
-    dispatch(listingState.setItem(saveItem));
-    dispatch(listingState.updateNewTag(null));
+    store.setItem(saveItem);
+    store.setNewTag(null);
   }
 
   function handleDelete(){
     // const deleteItem: ItemProto= {...usedItem, softDelete: true}
     // mutation.mutate(deleteItem);
-    // listingState.setState(defaultUpdateItemInitState);
+    // store.setState(defaultUpdateItemInitState);
     // // router.push(`/items/read`);
   }
 
   function handleClose(){
-    // listingState.setState(defaultUpdateItemInitState);
+    // store.setState(defaultUpdateItemInitState);
     // router.push(`/items/read`);
   }
 
@@ -179,22 +176,26 @@ export default function ItemDetails(): ReactNode {
           >
         <TextField required multiline key={`${usedItem.id}-summary`}
           label='Summary' value={ usedItem.summary}
-          onChange={() => { dispatch(listingState.setSummary(e.target.value))} } size='small'
+          onChange={(e) => { store.setSummary(e.target.value)} }
+          size='small'
         />
         <TextField
           required multiline key={`${ usedItem.id }-category`}
           label="Category" value={ usedItem.category}
-          onChange={() => { dispatch(listingState.setCategory(e.target.value))} } size='small'
+          onChange={(e) => { store.setCategory(e.target.value)} }
+          size='small'
         />
         <TextField
-            required multiline key={`${ usedItem.id }-description`}
-            label="Description" value={ usedItem.description }
-          onChange={() => { dispatch(listingState.setDescription(e.target.value))} } size='small'
+          required multiline key={`${ usedItem.id }-description`}
+          label="Description" value={ usedItem.description }
+          onChange={(e) => { store.setDescription(e.target.value)} }
+          size='small'
         />
         <TextField
           required multiline key={`${ usedItem.id }-note`}
           label="Note" value={ usedItem.note}
-          onChange={() => { dispatch(listingState.setNote(e.target.value))} } size='small'
+          onChange={(e) => { store.setNote(e.target.value)} }
+          size='small'
         />
         <List
           key="tag-list"
@@ -210,13 +211,13 @@ export default function ItemDetails(): ReactNode {
           <ListItemButton key={ `${ usedItem.id }-newtag` }>
             <TextField required multiline
                 key={ `${ usedItem.id }-newtag` }
-                value={ listingState.newTag ? listingState.newTag : "" }
+                value={ store.newTag ? store.newTag : "" }
                 size='small'
                 onChange={
-                  () => { dispatch(listingState.setNewTag(e.target.value)); }
+                  (e) => { store.setNewTag(e.target.value); }
                 }
             />
-            <IconButton onClick={() => { dispatch(listingState.addNewTag( e.target.value)); }}>
+            <IconButton onClick={(e) => { store.addNewTag( e.target.value); }}>
               <Tooltip title="Add New Tag"><Add/></Tooltip>
             </IconButton>
           </ListItemButton>
@@ -230,10 +231,10 @@ export default function ItemDetails(): ReactNode {
                     value={ tagItem }
                     size='small'
                     onChange={
-                      () => { dispatch(listingState.setTag({o: tagItem, h: e.target.value}));}
+                      (e) => { store.setTag({o: tagItem, h: e.target.value});}
                     }
                 />
-                <IconButton onClick={() => { dispatch(listingState.removeTag(e.target.value)); }}>
+                <IconButton onClick={(e) => { store.removeTag(e.target.value); }}>
                   <Tooltip title="Delete Tag"><Close/></Tooltip>
                 </IconButton>
 

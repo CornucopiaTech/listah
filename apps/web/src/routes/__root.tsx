@@ -30,7 +30,7 @@ import { Provider } from 'react-redux'
 
 
 
-import {store} from '@/lib/state/store'
+// import {store} from '@/lib/state/store'
 
 import AppNavBar from '@/components/common/AppNavBar';
 import Loading from '@/components/common/Loading';
@@ -46,7 +46,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <QueryClientProvider client={new QueryClient()}>
       <ReactQueryDevtools initialIsOpen={false} />
-      <Provider store={store}>
+      {/* <Provider store={store}> */}
         <ThemeProvider theme={theme}>
           <Box sx={{ height: '100%' }}>
             <AppNavBar />
@@ -56,7 +56,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
             <Scripts />
           </Box>
         </ThemeProvider>
-      </Provider>
+      {/* </Provider> */}
     </QueryClientProvider>
   )
 }

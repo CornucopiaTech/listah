@@ -22,7 +22,7 @@ import { Virtuoso } from 'react-virtuoso';
 
 
 // Internal store
-import { useAppSelector, useAppDispatch } from '@/lib/state/hook';
+import { useBoundStore } from '@/lib/store/boundStore';
 import { AppBarHeight } from '@/lib/model/appNavBarModel';
 import type { ItemProto, ItemsProto, ZItemsProto } from '@/lib/model/ItemsModel';
 import type { IListingState, IDetailState } from '@/lib/model/ItemsModel';
@@ -44,26 +44,24 @@ const menuItemsOptions = [
 
 export default function ItemsPage(): ReactNode {
   const webState = useContext(WebAppContext);
-  const listingState = useAppSelector((state) => state.listing);
-  const dispatch = useAppDispatch();
+  const store = useBoundStore((state) => state);
 
   function handlePageChange(event: React.ChangeEvent<unknown>, value: number) {
-    dispatch(listingState.setCurrentPage(value));
+    store.setCurrentPage(value);
   };
 
   function handlePageCountChange(e: React.ChangeEvent<unknown>) {
-    // listingState.updateItemsPageRecordCount(event.target.value);
-    dispatch(listingState.setItemsPerPage(e.target.value))
+    store.setItemsPerPage(e.target.value);
   };
 
   function handleClick(item: ItemProto) {
-    listingState.setItem(item);
-    listingState.updateNewTag(null);
+    store.setItem(item);
+    store.setNewTag(null);
     // router.push(`/item/${item.id}`);
   }
 
 
-  const { isPending, isError, data, error }: UseQueryResult<ItemsProto> = useQuery(getItemsGroupOptions(webState.userId, listingState.categoryFilter, listingState.tagFilter, listingState.currentPage, listingState.itemsPerPage));
+  const { isPending, isError, data, error }: UseQueryResult<ItemsProto> = useQuery(getItemsGroupOptions(webState.userId, store.categoryFilter, store.tagFilter, store.currentPage, store.itemsPerPage));
 
   if (isPending) { return <Loading />; }
   // ToDo: Fix this error message
@@ -85,7 +83,7 @@ export default function ItemsPage(): ReactNode {
   const allCategory = data.category ? data.category : [];
   const items: ItemProto[] = data.items ? data.items : [];
   const totalRecords: number = data.totalRecordCount ? data.totalRecordCount : 1;
-  const maxPages = Math.ceil(totalRecords / listingState.itemsPerPage);
+  const maxPages = Math.ceil(totalRecords / store.itemsPerPage);
 
   if (!items || items.length == 0){return<ItemsNoContent />;}
 
@@ -103,10 +101,10 @@ export default function ItemsPage(): ReactNode {
             </Box>
             <Box key='navigation' sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', alignItems: "center"}}>
               <Pagination
-                  count={maxPages} page={listingState.currentPage}
+                  count={maxPages} page={store.currentPage}
                   onChange={handlePageChange}
               />
-              <MenuSelect defaultValue={listingState.itemsPerPage}
+              <MenuSelect defaultValue={store.itemsPerPage}
                   handleChange={handlePageCountChange}
                   formHelperText="Items per page" label="Page count"
                   menuItems={menuItemsOptions}/>
@@ -148,8 +146,8 @@ export default function ItemsPage(): ReactNode {
         <Box  key='foot-content'>
           <Box key='navigation' sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', alignItems: "center"}}>
             <Box key='navigation' sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', alignItems: "center"}}>
-              <Pagination count={maxPages} page={listingState.currentPage} onChange={handlePageChange} />
-              <MenuSelect defaultValue={listingState.itemsPerPage}
+              <Pagination count={maxPages} page={store.currentPage} onChange={handlePageChange} />
+              <MenuSelect defaultValue={store.itemsPerPage}
                   handleChange={handlePageCountChange}
                   formHelperText="Items per page" label="Page count"
                   menuItems={menuItemsOptions}/>

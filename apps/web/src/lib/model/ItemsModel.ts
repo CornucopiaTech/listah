@@ -60,7 +60,7 @@ export const ZItemsProto = z.object({
   tag: z.nullish(z.array(z.string())),
   category: z.nullish(z.array(z.string())),
 });
-export interface ItemsProto extends z.infer<typeof ZItemsProto>{};
+export interface IItemsProto extends z.infer<typeof ZItemsProto>{};
 
 
 
@@ -70,7 +70,7 @@ export interface IListingState {
   currentPage: number;//current page
   categoryFilter: string[];
   tagFilter: string[];
-  drawerOpen: boolean;
+  drawer: boolean;
   searchQuery: string;
   checkedTag: Set<string>;
   checkedCategory: Set<string>;
@@ -79,6 +79,36 @@ export interface IListingState {
 }
 
 
+export interface IListingActions {
+  setItemsPerPage: (recordCount: number) => void
+  setCurrentPage: (currentPage: number) => void
+  setCategoryFilter: (categoryFilter: string[]) => void
+  setTagFilter: (tagFilter: string[]) => void
+  setDrawer: (drawer: boolean) => void
+  setSearchQuery: (searchQuery: string) => void
+  setCheckedTag: (checkedTag: Set<string>) => void
+  setCheckedCategory: (checkedCategory: Set<string>) => void
+  setFromFilterDate: (filterFromDate: string) => void
+  setToFilterDate: (filterToDate: string) => void
+}
+export interface IListingStore extends IListingState, IListingActions { };
+
+
+
+
+export interface IDetailActions {
+  setState: (item: ItemProto) => void;
+  setSummary: (summary: string) => void;
+  setCategory: (category: string) => void;
+  setDescription: (description: string) => void;
+  setNote: (note: string) => void;
+  setTags: (tag: string[]) => void;
+  setSoftDelete: (softDelete: boolean) => void;
+  setProperties: (properties: { [index: string]: string }) => void;
+  setReactivateAt: (reactivateAt: string) => void;
+  setNewTag: (newTag: string) => void;
+}
+
 
 
 // Update Item Store
@@ -86,3 +116,4 @@ export interface IDetailState {
   item: ItemProto;
   newTag: string | null;
 }
+export interface IDetailStore extends IDetailState, IDetailActions { };

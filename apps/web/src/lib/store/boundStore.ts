@@ -1,13 +1,13 @@
 import { create } from 'zustand'
-import { createItemsSlice } from './itemsSlice';
-import { createItemSlice } from './itemSlice';
+import { createDetailSlice } from './detailSlice';
+import { createListingSlice } from './listingSlice';
 import { devtools } from 'zustand/middleware';
 
 
 
 export const useBoundStore = create(
   devtools((...a) => ({
-    ...createItemsSlice(...a),
-    ...createItemSlice(...a),
+    ...createDetailSlice(...a),
+    ...createListingSlice(...a),
   })
 ));

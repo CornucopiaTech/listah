@@ -25,21 +25,63 @@ import { Virtuoso } from 'react-virtuoso';
 
 
 // Internal store
-import { useAppSelector, useAppDispatch } from '@/lib/state/hook';
 import { useBoundStore } from '@/lib/store/boundStore';
 import { WebAppContext } from "@/lib/context/webappContext";
 import type { ItemProto, ItemsProto, ZItemsProto, ItemsStore } from '@/lib/model/ItemsModel';
 
 
 export const ItemsDrawer = memo(function ItemsDrawer({ tag, category }: { tag: string[], category: string[] }): ReactNode {
-  const listingState = useAppSelector((state) => state.listing);
-  const dispatch = useAppDispatch();
-
+  const store = useBoundStore((state) => state);
   const listLeftPadding: number = 3;
   const bottomMargin: number = 2;
   const topMargin: number = 1;
   const textPaddingLeft: number = 2;
   const textPaddingBottom: number = 1;
+
+
+  function handleDrawerToggle(e: ChangeEvent<HTMLButtonElement>, changeDrawerOpen: boolean = !drawerOpen) {
+    store.setDrawer(changeDrawerOpen);
+  }
+
+  function handleCategoryCheck(e, categoryName: string) {
+    e.stopPropagation();
+    let newChecked: Set<string> = store.checkedCategory.union(new Set([categoryName]));
+
+    if (store.checkedCategory.has(categoryName)) {
+      // Remove category from filter
+      newChecked.delete(categoryName)
+    }
+    store.setCheckedCategory(newChecked);
+  }
+
+  function handleTagCheck(e, tagName: string) {
+    e.stopPropagation();
+    let newChecked: Set<string> = store.checkedTag.union(new Set([tagName]))
+    if (store.checkedTag.has(tagName)) {
+      // Remove tag from filter
+      newChecked.delete(tagName)
+    }
+    store.setCheckedTag(newChecked);
+  }
+
+  function handleApplyFilter() {
+    store.setCategoryFilter([...store.checkedCategory]);
+    store.setTagFilter([...store.checkedTag]);
+    store.setDrawer(false)
+  }
+
+  function handleResetFilter() {
+    store.setCategoryFilter([]);
+    store.setTagFilter([]);
+    store.setCheckedCategory(new Set([]));
+    store.setCheckedTag(new Set([]));
+    store.setSearchQuery("");
+    store.setFromDate("");
+    store.setToDate("");
+    store.setDrawer(false);
+  }
+
+
 
   const DrawerList = (
     <Box sx={{ width: 360, my: '10%', height: '100vh', overflow: 'auto', }} role="presentation" >
@@ -56,8 +98,8 @@ export const ItemsDrawer = memo(function ItemsDrawer({ tag, category }: { tag: s
               key={item + '-checkBoxFormControlLabel'}
               control={
                 <Checkbox
-                  onChange={() => dispatch(listingState.setCheckedCategory(item))}
-                  checked={listingState.checkedCategory.has(item)}
+                  onChange={(e) => handleCategoryCheck(e, item)}
+                  checked={store.checkedCategory.has(item)}
                 />
               }
               label={item}
@@ -81,8 +123,8 @@ export const ItemsDrawer = memo(function ItemsDrawer({ tag, category }: { tag: s
               key={item + '-checkBoxFormControlLabel'}
               control={
                 <Checkbox
-                  checked={listingState.checkedTag.has(item)}
-                  onChange={() => dispatch(listingState.setCheckedTag(item))}
+                  checked={store.checkedTag.has(item)}
+                  onChange={(e) => handleTagCheck(e, item)}
                 />
               }
               label={item}
@@ -94,25 +136,24 @@ export const ItemsDrawer = memo(function ItemsDrawer({ tag, category }: { tag: s
 
       <Divider sx={{ mb: bottomMargin, mt: topMargin }} />
       <Box sx={{ display: 'flex', width: '100', justifyContent: 'space-between', }}>
-        <Button onClick={() => dispatch(listingState.applyFilter())}> Apply</Button>
-        <Button onClick={() => dispatch(listingState.resetFilter())}> Reset</Button>
+        <Button onClick={handleApplyFilter}> Apply</Button>
+        <Button onClick={handleResetFilter}> Reset</Button>
       </Box>
     </Box>
-
 
   );
 
   return (
     <div>
       <Button
-          onClick={() => dispatch(listingState.setToggleDrawer(true))}
+          onClick={() => store.setDrawer(true)}
           startIcon={<Tune />}
         >
         Filter
       </Button>
       <Drawer
-          open={listingState.drawerOpen}
-          onClose={() => dispatch(listingState.setToggleDrawer(false))}
+          open={store.drawer}
+          onClose={() => store.setDrawer(false)}
         > {DrawerList}
       </Drawer>
     </div>
