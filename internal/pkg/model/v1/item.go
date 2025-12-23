@@ -167,33 +167,20 @@ func ItemProtoToWhereClause(msg *pb.ItemServiceReadRequest) ([]model.WhereClause
 	}
 
 	w := []model.WhereClause{}
-	// Add Id to where clause
-	if len(msg.GetId()) != 0 {
-		w = append(w, model.WhereClause{
-			Placeholder: "?::VARCHAR IN (?)",
-			Column:      "id",
-			Value:       bun.In(msg.GetId()),
-		})
-	}
 
 
+	// ToDo: add search text, from date, to date
+	// ToDo: allow admin to filter by other users' items
 	// Add userId to where clause
-	if len(msg.GetUserId()) != 0 {
+	if msg.GetUserId() != "" {
 		w = append(w, model.WhereClause{
-			Placeholder: "? IN (?)",
+			Placeholder: "? = ?",
 			Column:      "user_id",
-			Value:       bun.In(msg.GetUserId()),
+			Value:       msg.GetUserId(),
 		})
 	}
 
-	// Add summary to where clause
-	if len(msg.GetSummary()) != 0 {
-		w = append(w, model.WhereClause{
-			Placeholder: "? IN (?)",
-			Column:      "summary",
-			Value:       bun.In(msg.GetSummary()),
-		})
-	}
+
 
 	// Add category to where clause
 	if len(msg.GetCategory()) != 0 {
@@ -204,23 +191,6 @@ func ItemProtoToWhereClause(msg *pb.ItemServiceReadRequest) ([]model.WhereClause
 		})
 	}
 
-	// description
-	if len(msg.GetDescription()) != 0 {
-		w = append(w, model.WhereClause{
-			Placeholder: "? IN (?)",
-			Column:      "description",
-			Value:       bun.In(msg.GetDescription()),
-		})
-	}
-
-	// note
-	if len(msg.GetNote()) != 0 {
-		w = append(w, model.WhereClause{
-			Placeholder: "? IN (?)",
-			Column:      "note",
-			Value:       bun.In(msg.GetNote()),
-		})
-	}
 
 	// // tag
 	// if len(msg.GetTag()) != 0 {

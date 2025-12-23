@@ -5,7 +5,7 @@ import (
 	"fmt"
 	v1model "cornucopia/listah/internal/pkg/model/v1"
 	pb "cornucopia/listah/internal/pkg/proto/v1"
-	"strings"
+	// "strings"
 	"connectrpc.com/connect"
 	"github.com/pkg/errors"
 	"go.opentelemetry.io/otel"
@@ -35,18 +35,25 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 	// If tags are requested, get the list of unique tags first
 	tcw := []model.WhereClause{}
 	// whereClause := make([]model.WhereClause), 0)
-	if len(req.Msg.GetId()) > 0 {
-		tcw = append(tcw, model.WhereClause{
-			Placeholder: " ?::VARCHAR IN (?) ",
-			Column: "id",
-			Value:       bun.In(req.Msg.GetId()),
-		})
-	}
+	// if len(req.Msg.GetTagFilter()) > 0 {
+	// 	tcw = append(tcw, model.WhereClause{
+	// 		Placeholder: " ?::VARCHAR IN (?) ",
+	// 		Column: "id",
+	// 		Value:       bun.In(req.Msg.GetId()),
+	// 	})
+	// }
 	if len(req.Msg.GetUserId()) > 0 {
 		tcw = append(tcw, model.WhereClause{
-			Placeholder: " ? IN (?) ",
+			Placeholder: " ? = '?' ",
 			Column: "user_id",
 			Value:       bun.In(req.Msg.GetUserId()),
+		})
+	}
+	if len(req.Msg.GetCategoryFilter()) > 0 {
+		tcw = append(tcw, model.WhereClause{
+			Placeholder: " ? IN (?) ",
+			Column: "category",
+			Value:       bun.In(req.Msg.GetCategory()),
 		})
 	}
 
@@ -69,32 +76,42 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 
 
 
-	var qLimit int
-	var qPage int
-	var qSortMap map[string]string
+	rCnt := int(req.Msg.GetRecordCount())
+	pge := int(req.Msg.GetPage())
+	srt := req.Msg.GetSearchText()
 
-	pg:= req.Msg.GetPagination()
-	if pg == nil {
-		qPage = int(DefaultReadPagination.PageNumber)
-		qLimit = int(DefaultReadPagination.RecordsPerPage)
-		qSortMap = DefaultReadPagination.SortCondition
-	} else {
-		qLimit = int(pg.RecordsPerPage)
-		qPage = int(pg.PageNumber)
-		qSortMap = pg.SortCondition
-		if len(qSortMap) == 0 {
-			qSortMap = DefaultReadPagination.SortCondition
-		}
+	if rCnt <= 0 {
+		rCnt = int(DefaultReadPagination.RecordsPerPage)
 	}
-
-	qOffset := qLimit * (qPage - 1)
-	qSortSlice := []string{}
-	for key, value := range qSortMap {
-		qSortSlice = append(qSortSlice, fmt.Sprintf(" %v %v ", key, value))
+	if pge <= 0 {
+		pge = int(DefaultReadPagination.PageNumber)
 	}
-	qSort := strings.Join(qSortSlice, ", ")
+	// if len(srt) == 0 {
+	// 	srt = "created_at DESC"
+	// }
 
-	recCnt, err := s.Infra.BunRepo.Item.Select(ctx, &readModel, &whereClause, qSort, qOffset, qLimit)
+
+	// var qLimit int = req.Msg.GetRecordCount()
+	// var qPage int = req.Msg.GetRecordPage()
+	// var qSortMap map[string]string
+
+	// pg := req.Msg.GetPagination()
+	// if pg == nil {
+	// 	qPage = int(DefaultReadPagination.PageNumber)
+	// 	qLimit = int(DefaultReadPagination.RecordsPerPage)
+	// 	qSortMap = DefaultReadPagination.SortCondition
+	// } else {
+	// 	qLimit = int(pg.RecordsPerPage)
+	// 	qPage = int(pg.PageNumber)
+	// 	qSortMap = pg.SortCondition
+	// 	if len(qSortMap) == 0 {
+	// 		qSortMap = DefaultReadPagination.SortCondition
+	// 	}
+	// }
+
+	offset := rCnt * (pge - 1)
+
+	recCnt, err := s.Infra.BunRepo.Item.Select(ctx, &readModel, &whereClause, srt, offset, rCnt)
 	if  err != nil {
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
 		return nil, err
@@ -112,14 +129,19 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 	}
 	resm := &pb.ItemServiceReadResponse{
 		Items: rs,
-		Tag: tagModel,
+		UserId: req.Msg.GetUserId(),
 		Category: catModel,
-		TotalRecordCount: int32(recCnt),
-		Pagination: &pb.Pagination{
-			PageNumber: int32(qPage),
-			RecordsPerPage: int32(qLimit),
-			SortCondition: qSortMap,
-		},
+		Tag: tagModel,
+
+		RecordCount: int32(recCnt),
+		Page: int32(pge),
+		Sort: srt,
+
+		TagFilter: req.Msg.GetTagFilter(),
+		CategoryFilter: req.Msg.GetCategoryFilter(),
+		SearchText: req.Msg.GetSearchText(),
+		FromDate: req.Msg.GetFromDate(),
+		ToDate: req.Msg.GetToDate(),
 	}
 	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item read. Read %d items", len(readModel)))
 	return connect.NewResponse(resm), nil

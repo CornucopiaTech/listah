@@ -8,6 +8,7 @@ import {
   useQuery,
   type UseQueryResult,
 } from '@tanstack/react-query';
+import { createFileRoute, useRouter, getRouteApi, useNavigate } from '@tanstack/react-router';
 import {
   Box,
   Divider,
@@ -24,7 +25,8 @@ import { Virtuoso } from 'react-virtuoso';
 // Internal store
 import { useBoundStore } from '@/lib/store/boundStore';
 import { AppBarHeight } from '@/lib/model/appNavBarModel';
-import type { ItemProto, ItemsProto, ZItemsProto } from '@/lib/model/ItemsModel';
+import type { ItemProto, ItemsProto} from '@/lib/model/ItemsModel';
+import { ItemsProtoSchema, ItemProtoSchema } from '@/lib/model/ItemsModel';
 import type { IListingState, IDetailState } from '@/lib/model/ItemsModel';
 import Loading from '@/components/common/Loading';
 import { ErrorAlerts } from '@/components/common/ErrorAlert';
@@ -42,9 +44,14 @@ const menuItemsOptions = [
 
 
 
+
 export default function ItemsPage(): ReactNode {
   const webState = useContext(WebAppContext);
   const store = useBoundStore((state) => state);
+  // const router = useRouter();
+  const routeApi = getRouteApi('/items');
+  const routeSearch = routeApi.useSearch();
+  const navigate = useNavigate({ from: routeApi.fullPath })
 
   function handlePageChange(event: React.ChangeEvent<unknown>, value: number) {
     store.setCurrentPage(value);
@@ -72,9 +79,11 @@ export default function ItemsPage(): ReactNode {
     apiItems = ZItemsProto.parse(data);
   } catch(error){
     if(error instanceof z.ZodError){
-      console.info(error.issues);
+      console.info("Zod issue - ", error.issues);
       return <ErrorAlerts>An error occurred. Please try again</ErrorAlerts>;
-
+    } else {
+      console.info("Other issue - ", error);
+      return <ErrorAlerts>An error occurred. Please try again</ErrorAlerts>;
     }
   }
 

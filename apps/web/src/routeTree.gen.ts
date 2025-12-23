@@ -11,7 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ItemsIndexRouteImport } from './routes/items/index'
-import { Route as ItemsItemIdRouteImport } from './routes/items/$itemId'
+import { Route as ItemsItemIdRouteImport } from './routes/items/item-$itemId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',

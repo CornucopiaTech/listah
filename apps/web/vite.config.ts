@@ -35,7 +35,7 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3000,
+    port: 5000,
     watch: {
       ignored: ["**/node_modules", "**/.git", "**/.tanstack"],
     },

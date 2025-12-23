@@ -34,12 +34,13 @@ import * as z from "zod";
 
 
 import { useBoundStore } from '@/lib/store/boundStore';
-import type { ItemProto, ItemsProto, ZItemProto , ZItemsProto } from '@/lib/model/ItemsModel';
+import type { ItemProto, ItemsProto} from '@/lib/model/ItemsModel';
+import { ZItemProto , ZItemsProto } from '@/lib/model/ItemsModel';
 import { postItem, getItem, getValidItem } from '@/lib/utils/itemHelper';
 import { WebAppContext } from "@/lib/context/webappContext";
 import Loading from '@/components/common/Loading';
 import { ErrorAlerts } from '@/components/common/ErrorAlert';
-import { Route } from '@/routes/items/$itemId';
+import { Route } from '@/routes/items/item-$itemId';
 import { getItemsGroupOptions } from '@/lib/utils/itemHelper';
 
 
@@ -88,7 +89,10 @@ export default function ItemDetails(): ReactNode {
     console.info(uit);
   } catch(error){
     if(error instanceof z.ZodError){
-      console.info(error.issues);
+      console.info("Zod issue - ", error.issues);
+      return <ErrorAlerts>An error occurred. Please try again</ErrorAlerts>;
+    } else {
+      console.info("Other issue - ", error);
       return <ErrorAlerts>An error occurred. Please try again</ErrorAlerts>;
     }
   }

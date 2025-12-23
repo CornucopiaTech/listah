@@ -868,6 +868,150 @@ components:
       additionalProperties: false
     listah.v1.ItemServiceReadRequest:
       type: object
+      properties:
+        userId:
+          type: string
+          title: user_id
+        category:
+          type: array
+          items:
+            type: string
+          title: category
+        tag:
+          type: array
+          items:
+            type: string
+          title: tag
+        recordCount:
+          type: integer
+          title: recordCount
+          format: int32
+        page:
+          type: integer
+          title: page
+          format: int32
+        sort:
+          type: string
+          title: sort
+        tagFilter:
+          type: array
+          items:
+            type: string
+          title: tagFilter
+        categoryFilter:
+          type: array
+          items:
+            type: string
+          title: categoryFilter
+        searchText:
+          type: string
+          title: search_text
+        fromDate:
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: from_date
+        toDate:
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: to_date
+      title: ItemServiceReadRequest
+      additionalProperties: false
+    listah.v1.ItemServiceReadResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.Item'
+          title: items
+        userId:
+          type: string
+          title: user_id
+        category:
+          type: array
+          items:
+            type: string
+          title: category
+        tag:
+          type: array
+          items:
+            type: string
+          title: tag
+        recordCount:
+          type: integer
+          title: recordCount
+          format: int32
+        page:
+          type: integer
+          title: page
+          format: int32
+        sort:
+          type: string
+          title: sort
+        tagFilter:
+          type: array
+          items:
+            type: string
+          title: tagFilter
+        categoryFilter:
+          type: array
+          items:
+            type: string
+          title: categoryFilter
+        searchText:
+          type: string
+          title: search_text
+        fromDate:
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: from_date
+        toDate:
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: to_date
+      title: ItemServiceReadResponse
+      additionalProperties: false
+    listah.v1.ItemServiceUpdateRequest:
+      type: object
+      allOf:
+        - anyOf:
+            - required:
+                - audit
+            - not:
+                anyOf:
+                  - required:
+                      - audit
+      anyOf:
+        - required:
+            - audit
+        - not:
+            anyOf:
+              - required:
+                  - audit
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.Item'
+          title: items
+        audit:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Audit'
+          title: audit
+      title: ItemServiceUpdateRequest
+      additionalProperties: false
+    listah.v1.ItemServiceUpdateResponse:
+      type: object
+      properties:
+        itemIds:
+          type: array
+          items:
+            type: string
+          title: item_ids
+      title: ItemServiceUpdateResponse
+      additionalProperties: false
+    listah.v1.PrevItemServiceReadRequest:
+      type: object
       allOf:
         - anyOf:
             - required:
@@ -963,89 +1107,7 @@ components:
           allOf:
             - $ref: '#/components/schemas/listah.v1.Pagination'
           title: pagination
-      title: ItemServiceReadRequest
-      additionalProperties: false
-    listah.v1.ItemServiceReadResponse:
-      type: object
-      allOf:
-        - anyOf:
-            - required:
-                - pagination
-            - not:
-                anyOf:
-                  - required:
-                      - pagination
-      anyOf:
-        - required:
-            - pagination
-        - not:
-            anyOf:
-              - required:
-                  - pagination
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.Item'
-          title: items
-        tag:
-          type: array
-          items:
-            type: string
-          title: tag
-        category:
-          type: array
-          items:
-            type: string
-          title: category
-        pagination:
-          allOf:
-            - $ref: '#/components/schemas/listah.v1.Pagination'
-          title: pagination
-        totalRecordCount:
-          type: integer
-          title: total_record_count
-          format: int32
-      title: ItemServiceReadResponse
-      additionalProperties: false
-    listah.v1.ItemServiceUpdateRequest:
-      type: object
-      allOf:
-        - anyOf:
-            - required:
-                - audit
-            - not:
-                anyOf:
-                  - required:
-                      - audit
-      anyOf:
-        - required:
-            - audit
-        - not:
-            anyOf:
-              - required:
-                  - audit
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.Item'
-          title: items
-        audit:
-          allOf:
-            - $ref: '#/components/schemas/listah.v1.Audit'
-          title: audit
-      title: ItemServiceUpdateRequest
-      additionalProperties: false
-    listah.v1.ItemServiceUpdateResponse:
-      type: object
-      properties:
-        itemIds:
-          type: array
-          items:
-            type: string
-          title: item_ids
-      title: ItemServiceUpdateResponse
+      title: PrevItemServiceReadRequest
       additionalProperties: false
     listah.v1.TagServiceReadRequest:
       type: object

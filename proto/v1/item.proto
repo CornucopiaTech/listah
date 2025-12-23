@@ -34,7 +34,7 @@ message ItemServiceCreateResponse {
   repeated string item_ids = 1;
 }
 
-message ItemServiceReadRequest {
+message PrevItemServiceReadRequest {
   repeated string id = 1;
   repeated string user_id = 2 [json_name = "userId"];
   repeated string summary = 3;
@@ -52,12 +52,36 @@ message ItemServiceReadRequest {
   repeated string deleted_by  = 105;
   optional Pagination pagination = 200;
 }
+message ItemServiceReadRequest {
+  string user_id = 2 [json_name = "userId"];
+  repeated string category = 3;
+  repeated string tag = 4;
+
+  int32 recordCount = 100;
+  int32 page = 101;
+  string sort = 102;
+
+  repeated string tagFilter = 200;
+  repeated string categoryFilter = 201;
+  string search_text = 202 [json_name = "searchText"];
+  google.protobuf.Timestamp from_date  = 203;
+  google.protobuf.Timestamp to_date  = 204;
+}
 message ItemServiceReadResponse {
   repeated Item items = 1;
-  repeated string tag = 2;
+  string user_id = 2 [json_name = "userId"];
   repeated string category = 3;
-  optional Pagination pagination = 200;
-  int32 total_record_count = 300;
+  repeated string tag = 4;
+
+  int32 recordCount = 100;
+  int32 page = 101;
+  string sort = 102;
+
+  repeated string tagFilter = 200;
+  repeated string categoryFilter = 201;
+  string search_text = 202 [json_name = "searchText"];
+  google.protobuf.Timestamp from_date  = 203;
+  google.protobuf.Timestamp to_date  = 204;
 }
 
 message ItemServiceUpdateRequest {
