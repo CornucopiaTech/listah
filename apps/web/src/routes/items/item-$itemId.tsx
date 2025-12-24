@@ -13,7 +13,7 @@ import Loading from '@/components/common/Loading';
 
 
 
-export const Route = createFileRoute('/items/$itemId')({
+export const Route = createFileRoute('/items/item-$itemId')({
   component: () => (
     <Box sx={{
       height: `calc(100% - ${AppBarHeight})`,

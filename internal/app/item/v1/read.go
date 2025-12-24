@@ -10,7 +10,7 @@ import (
 	"github.com/pkg/errors"
 	"go.opentelemetry.io/otel"
 	// "sort"
-	"github.com/uptrace/bun"
+	// "github.com/uptrace/bun"
 	"cornucopia/listah/internal/pkg/model"
 )
 
@@ -34,28 +34,14 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 
 	// If tags are requested, get the list of unique tags first
 	tcw := []model.WhereClause{}
-	// whereClause := make([]model.WhereClause), 0)
-	// if len(req.Msg.GetTagFilter()) > 0 {
-	// 	tcw = append(tcw, model.WhereClause{
-	// 		Placeholder: " ?::VARCHAR IN (?) ",
-	// 		Column: "id",
-	// 		Value:       bun.In(req.Msg.GetId()),
-	// 	})
-	// }
 	if len(req.Msg.GetUserId()) > 0 {
 		tcw = append(tcw, model.WhereClause{
-			Placeholder: " ? = '?' ",
+			Placeholder: " ? = ? ",
 			Column: "user_id",
-			Value:       bun.In(req.Msg.GetUserId()),
+			Value:       req.Msg.GetUserId(),
 		})
 	}
-	if len(req.Msg.GetCategoryFilter()) > 0 {
-		tcw = append(tcw, model.WhereClause{
-			Placeholder: " ? IN (?) ",
-			Column: "category",
-			Value:       bun.In(req.Msg.GetCategory()),
-		})
-	}
+
 
 
 	tagModel := []string{}
@@ -75,48 +61,28 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d category from repository", catCnt))
 
 
+	userId := req.Msg.GetUserId()
+	pSize := int(req.Msg.GetPageSize())
+	pNum := int(req.Msg.GetPageNumber())
+	sortT := req.Msg.GetSortQuery()
 
-	rCnt := int(req.Msg.GetRecordCount())
-	pge := int(req.Msg.GetPage())
-	srt := req.Msg.GetSearchText()
 
-	if rCnt <= 0 {
-		rCnt = int(DefaultReadPagination.RecordsPerPage)
+	if pSize <= 0 {
+		pSize = int(DefaultReadPagination.PageSize)
 	}
-	if pge <= 0 {
-		pge = int(DefaultReadPagination.PageNumber)
+	if pNum <= 0 {
+		pNum = int(DefaultReadPagination.PageNumber)
 	}
-	// if len(srt) == 0 {
-	// 	srt = "created_at DESC"
-	// }
 
 
-	// var qLimit int = req.Msg.GetRecordCount()
-	// var qPage int = req.Msg.GetRecordPage()
-	// var qSortMap map[string]string
+	offset := pSize * (pNum - 1)
 
-	// pg := req.Msg.GetPagination()
-	// if pg == nil {
-	// 	qPage = int(DefaultReadPagination.PageNumber)
-	// 	qLimit = int(DefaultReadPagination.RecordsPerPage)
-	// 	qSortMap = DefaultReadPagination.SortCondition
-	// } else {
-	// 	qLimit = int(pg.RecordsPerPage)
-	// 	qPage = int(pg.PageNumber)
-	// 	qSortMap = pg.SortCondition
-	// 	if len(qSortMap) == 0 {
-	// 		qSortMap = DefaultReadPagination.SortCondition
-	// 	}
-	// }
-
-	offset := rCnt * (pge - 1)
-
-	recCnt, err := s.Infra.BunRepo.Item.Select(ctx, &readModel, &whereClause, srt, offset, rCnt)
+	recordCnt, err := s.Infra.BunRepo.Item.Select(ctx, &readModel, &whereClause, sortT, offset, pSize)
 	if  err != nil {
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
 		return nil, err
 	}
-	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d items from repository", recCnt))
+	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d items from repository", recordCnt))
 
 
 
@@ -129,19 +95,19 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 	}
 	resm := &pb.ItemServiceReadResponse{
 		Items: rs,
-		UserId: req.Msg.GetUserId(),
 		Category: catModel,
 		Tag: tagModel,
 
-		RecordCount: int32(recCnt),
-		Page: int32(pge),
-		Sort: srt,
-
+		UserId: userId,
 		TagFilter: req.Msg.GetTagFilter(),
 		CategoryFilter: req.Msg.GetCategoryFilter(),
-		SearchText: req.Msg.GetSearchText(),
+		SearchQuery: req.Msg.GetSearchQuery(),
 		FromDate: req.Msg.GetFromDate(),
 		ToDate: req.Msg.GetToDate(),
+
+		PageSize: int32(recordCnt),
+		PageNumber: int32(pNum),
+		SortQuery: sortT,
 	}
 	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item read. Read %d items", len(readModel)))
 	return connect.NewResponse(resm), nil

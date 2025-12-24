@@ -11,7 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ItemsIndexRouteImport } from './routes/items/index'
-import { Route as ItemsItemIdRouteImport } from './routes/items/item-$itemId'
+import { Route as ItemsItemItemIdRouteImport } from './routes/items/item-$itemId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -23,39 +23,39 @@ const ItemsIndexRoute = ItemsIndexRouteImport.update({
   path: '/items/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ItemsItemIdRoute = ItemsItemIdRouteImport.update({
-  id: '/items/$itemId',
-  path: '/items/$itemId',
+const ItemsItemItemIdRoute = ItemsItemItemIdRouteImport.update({
+  id: '/items/item-$itemId',
+  path: '/items/item-$itemId',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/items/$itemId': typeof ItemsItemIdRoute
+  '/items/item-$itemId': typeof ItemsItemItemIdRoute
   '/items': typeof ItemsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/items/$itemId': typeof ItemsItemIdRoute
+  '/items/item-$itemId': typeof ItemsItemItemIdRoute
   '/items': typeof ItemsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/items/$itemId': typeof ItemsItemIdRoute
+  '/items/item-$itemId': typeof ItemsItemItemIdRoute
   '/items/': typeof ItemsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/items/$itemId' | '/items'
+  fullPaths: '/' | '/items/item-$itemId' | '/items'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/items/$itemId' | '/items'
-  id: '__root__' | '/' | '/items/$itemId' | '/items/'
+  to: '/' | '/items/item-$itemId' | '/items'
+  id: '__root__' | '/' | '/items/item-$itemId' | '/items/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ItemsItemIdRoute: typeof ItemsItemIdRoute
+  ItemsItemItemIdRoute: typeof ItemsItemItemIdRoute
   ItemsIndexRoute: typeof ItemsIndexRoute
 }
 
@@ -75,11 +75,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ItemsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/items/$itemId': {
-      id: '/items/$itemId'
-      path: '/items/$itemId'
-      fullPath: '/items/$itemId'
-      preLoaderRoute: typeof ItemsItemIdRouteImport
+    '/items/item-$itemId': {
+      id: '/items/item-$itemId'
+      path: '/items/item-$itemId'
+      fullPath: '/items/item-$itemId'
+      preLoaderRoute: typeof ItemsItemItemIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -87,7 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ItemsItemIdRoute: ItemsItemIdRoute,
+  ItemsItemItemIdRoute: ItemsItemItemIdRoute,
   ItemsIndexRoute: ItemsIndexRoute,
 }
 export const routeTree = rootRouteImport

@@ -183,11 +183,11 @@ func ItemProtoToWhereClause(msg *pb.ItemServiceReadRequest) ([]model.WhereClause
 
 
 	// Add category to where clause
-	if len(msg.GetCategory()) != 0 {
+	if len(msg.GetCategoryFilter()) != 0 {
 		w = append(w, model.WhereClause{
 			Placeholder: "? IN (?)",
 			Column:      "category",
-			Value:       bun.In(msg.GetCategory()),
+			Value:       bun.In(msg.GetCategoryFilter()),
 		})
 	}
 

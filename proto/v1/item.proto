@@ -53,35 +53,37 @@ message PrevItemServiceReadRequest {
   optional Pagination pagination = 200;
 }
 message ItemServiceReadRequest {
-  string user_id = 2 [json_name = "userId"];
-  repeated string category = 3;
-  repeated string tag = 4;
 
-  int32 recordCount = 100;
-  int32 page = 101;
-  string sort = 102;
+  string userId = 200 [json_name = "userId"];
+  repeated string tagFilter = 201 [json_name = "tagFilter"];
+  repeated string categoryFilter = 202 [json_name = "categoryFilter"];
+  string searchQuery = 203 [json_name = "searchQuery"];
+  string fromDate  = 204 [json_name = "fromDate"];
+  string toDate  = 205 [json_name = "toDate"];
+  // google.protobuf.Timestamp fromDate  = 204 [json_name = "fromDate"];
+  // google.protobuf.Timestamp toDate  = 205 [json_name = "toDate"];
 
-  repeated string tagFilter = 200;
-  repeated string categoryFilter = 201;
-  string search_text = 202 [json_name = "searchText"];
-  google.protobuf.Timestamp from_date  = 203;
-  google.protobuf.Timestamp to_date  = 204;
+  int32 pageSize = 300 [json_name = "pageSize"];
+  int32 pageNumber = 301 [json_name = "pageNumber"];
+  string sortQuery = 302 [json_name = "sortQuery"];
 }
 message ItemServiceReadResponse {
   repeated Item items = 1;
-  string user_id = 2 [json_name = "userId"];
-  repeated string category = 3;
-  repeated string tag = 4;
+  repeated string category = 2;
+  repeated string tag = 3;
 
-  int32 recordCount = 100;
-  int32 page = 101;
-  string sort = 102;
+  string userId = 200 [json_name = "userId"];
+  repeated string tagFilter = 201 [json_name = "tagFilter"];
+  repeated string categoryFilter = 202 [json_name = "categoryFilter"];
+  string searchQuery = 203 [json_name = "searchQuery"];
+  string fromDate  = 204 [json_name = "fromDate"];
+  string toDate  = 205 [json_name = "toDate"];
+  // google.protobuf.Timestamp fromDate  = 204 [json_name = "fromDate"];
+  // google.protobuf.Timestamp toDate  = 205 [json_name = "toDate"];
 
-  repeated string tagFilter = 200;
-  repeated string categoryFilter = 201;
-  string search_text = 202 [json_name = "searchText"];
-  google.protobuf.Timestamp from_date  = 203;
-  google.protobuf.Timestamp to_date  = 204;
+  int32 pageSize = 300 [json_name = "pageSize"];
+  int32 pageNumber = 301 [json_name = "pageNumber"];
+  string sortQuery = 302 [json_name = "sortQuery"];
 }
 
 message ItemServiceUpdateRequest {

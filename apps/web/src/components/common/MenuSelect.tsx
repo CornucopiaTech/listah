@@ -30,9 +30,9 @@ export default function MenuSelect(props: IMenuSelectProps) {
           label={props.label}
           onChange={props.handleChange}
         >
-          <MenuItem value="">
+          {/* <MenuItem value="">
             <em>None</em>
-          </MenuItem>
+          </MenuItem> */}
           {
             props.menuItems.map(
               (val: any, ) => (<MenuItem value={val.value}>{val.label}</MenuItem>)

@@ -52,13 +52,13 @@ export const ItemsProtoSchema = z.object({
   tag: z.array(z.string()).catch([]),
 
 
-  recordCount: z.number().catch(10),
+  pageSize: z.number().catch(10),
   page: z.number().catch(1),
   sort: z.string().catch('asc'),
 
   categoryFilter: z.array(z.string()).catch([]),
   tagFilter: z.array(z.string()).catch([]),
-  searchText: z.string().catch(''),
+  searchQuery: z.string().catch(''),
   fromDate: z.string().catch('1970-01-01'),
   toDate: z.string().catch('2099-12-31'),
 });
@@ -72,6 +72,8 @@ export interface IListingState {
   searchQuery: string;
   checkedTag: Set<string>;
   checkedCategory: Set<string>;
+  fromDate: string;
+  toDate: string;
 }
 
 
@@ -114,14 +116,14 @@ export interface IDetailStore extends IDetailState, IDetailActions { };
 
 
 export const ItemsSearchSchema = z.object({
-  page: z.number().catch(1),
-  itemCount: z.number().catch(10),
-  category: z.array(z.string()).catch([]),
-  tag: z.array(z.string()).catch([]),
-  search: z.string().catch(''),
-  from: z.string().catch('1970-01-01'),
-  to: z.string().catch('2099-12-31'),
-  sort: z.enum(['asc', 'desc']).catch('asc'),
+  tagFilter: z.array(z.string()).catch([]),
+  categoryFilter: z.array(z.string()).catch([]),
+  searchQuery: z.string().catch(''),
+  fromDate: z.string().catch('1970-01-01'),
+  toDate: z.string().catch('2099-12-31'),
+  pageSize: z.number().catch(50),
+  pageNumber: z.number().catch(1),
+  sortQuery: z.string().catch(''),
 })
 
 export interface IItemsSearch extends z.infer<typeof ItemsSearchSchema>{}

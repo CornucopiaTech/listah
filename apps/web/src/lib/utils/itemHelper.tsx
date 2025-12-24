@@ -8,31 +8,23 @@ import {
 } from '@tanstack/react-query';
 
 
-export function getItemsGroupOptions(userId: string, category: string [], tag: string[], pageNumber: number, recordsPerPage: number) {
+export function getItemsGroupOptions(userId: string, categoryFilter: string[],
+                tagFilter: string[], pageNumber: number, pageSize: number,
+                searchQuery: string, fromDate: string, toDate: string,
+                sortQuery: string) {
   return queryOptions({
-     queryKey: ["getItems", userId, category, tag, pageNumber, recordsPerPage],
-     queryFn: () => getItems(userId, category, tag, pageNumber, recordsPerPage),
+    queryKey: [
+      "getItems", userId, categoryFilter, tagFilter, pageNumber, pageSize,
+      searchQuery, fromDate, toDate, sortQuery
+    ],
+    queryFn: () => getItems(
+        userId, categoryFilter, tagFilter, pageNumber, pageSize,
+        searchQuery, fromDate, toDate, sortQuery
+      ),
      staleTime: 24 * 60 * 60 * 1000,
    })
 }
 
-
-
-export function getTagGroupOptions(userId: string) {
-  return queryOptions({
-     queryKey: ["getTag", userId],
-     queryFn: () => getTag(userId),
-     staleTime: 24 * 60 * 60 * 1000,
-  })
-}
-
-export function getCategoryGroupOptions(userId: string) {
-  return queryOptions({
-     queryKey: ["getCategory", userId],
-     queryFn: () => getCategory(userId),
-     staleTime: 24 * 60 * 60 * 1000,
-  })
-}
 
 export function getValidItem(storeItem: ItemProto, apiItem: ItemProto): ItemProto{
   if (!storeItem){
@@ -68,16 +60,23 @@ export async function postItem(item: ItemProto) {
   return res.json();
 }
 
-export async function getItems(userId: string, category: string[], tag: string[], pageNumber: number, recordsPerPage: number): Promise<ItemsProto | void> {
+export async function getItems(userId: string, categoryFilter: string[],
+                              tagFilter: string[], pageNumber: number,
+                              pageSize: number, searchQuery: string,
+                              fromDate: string, toDate: string,
+                              sortQuery: string): Promise<ItemsProto | void> {
   const url = `/api/${process.env.LISTAH_PROXY_ITEMS_READ}`;
+
+  const reqBody = {
+    userId, tagFilter, categoryFilter, searchQuery,
+    fromDate, toDate, pageSize, pageNumber, sortQuery,
+  };
+  console.info("In getItems, reqBody: ", reqBody);
+
 
   const req = new Request(url, {
     method: "POST",
-    body: JSON.stringify({
-      category, tag,
-      userId: [userId,],
-      pagination: { pageNumber, recordsPerPage }
-    }),
+    body: JSON.stringify(reqBody),
     headers: { "Content-Type": "application/json", "Accept": "*/*" },
   });
   const res = await fetch(req);
@@ -93,23 +92,6 @@ export async function getItems(userId: string, category: string[], tag: string[]
   // console.info("In getItems, data: ");
   // console.info(data.items ? data.items[0] : {});
   return data;
-}
-
-
-export async function getItem(userId: string, itemId: string): Promise<ItemsProto | void> {
-  const req = new Request('/api/getItem', {
-    method: "POST",
-    body: JSON.stringify({
-      userId: [ userId ],
-      id: [ itemId ],
-    })
-  });
-  const res = await fetch(req);
-  if (!res.ok) {
-    console.error("Error in getItems: ", res.statusText);
-    throw new Error('Network response was not ok');
-  }
-  return res.json();
 }
 
 

@@ -21,27 +21,26 @@ import {
   Tune
 } from '@mui/icons-material';
 import { Virtuoso } from 'react-virtuoso';
+import { Navigate, useNavigate } from '@tanstack/react-router';
 
 
 
 // Internal store
+import { encodeState } from '@/lib/utils/encoders';
+import { ITEMS_URL } from '@/lib/utils/defaults';
 import { useBoundStore } from '@/lib/store/boundStore';
 import { WebAppContext } from "@/lib/context/webappContext";
-import type { ItemProto, ItemsProto, ZItemsProto, ItemsStore } from '@/lib/model/ItemsModel';
+import type { ItemProto, ItemsProto, ItemsProtoSchema, IItemsSearch } from '@/lib/model/ItemsModel';
 
 
-export const ItemsDrawer = memo(function ItemsDrawer({ tag, category }: { tag: string[], category: string[] }): ReactNode {
+export function ItemsDrawer({ tag, category, query }: { tag: string[], category: string[], query: IItemsSearch }): ReactNode {
   const store = useBoundStore((state) => state);
+  const navigate = useNavigate();
   const listLeftPadding: number = 3;
   const bottomMargin: number = 2;
   const topMargin: number = 1;
   const textPaddingLeft: number = 2;
   const textPaddingBottom: number = 1;
-
-
-  function handleDrawerToggle(e: ChangeEvent<HTMLButtonElement>, changeDrawerOpen: boolean = !drawerOpen) {
-    store.setDrawer(changeDrawerOpen);
-  }
 
   function handleCategoryCheck(e, categoryName: string) {
     e.stopPropagation();
@@ -65,20 +64,34 @@ export const ItemsDrawer = memo(function ItemsDrawer({ tag, category }: { tag: s
   }
 
   function handleApplyFilter() {
-    store.setCategoryFilter([...store.checkedCategory]);
-    store.setTagFilter([...store.checkedTag]);
-    store.setDrawer(false)
+    const q = {
+      ...query,
+      pageNumber: 1,
+      categoryFilter: [...store.checkedCategory],
+      tagFilter: [...store.checkedTag]
+    };
+    const encoded = encodeState(q);
+    console.info("In handlePageChange - Encoded ", encoded);
+
+    // store.setCheckedCategory(new Set([]));
+    // store.setCheckedTag(new Set([]));
+    store.setDrawer(false);
+
+    navigate({ to: ITEMS_URL, search: { s: encoded } });
   }
 
   function handleResetFilter() {
-    store.setCategoryFilter([]);
-    store.setTagFilter([]);
     store.setCheckedCategory(new Set([]));
     store.setCheckedTag(new Set([]));
     store.setSearchQuery("");
     store.setFromDate("");
     store.setToDate("");
     store.setDrawer(false);
+
+    const q = { ...query, categoryFilter: [], tagFilter: []};
+    const encoded = encodeState(q);
+    console.info("In handlePageChange - Encoded ", encoded);
+    navigate({ to: ITEMS_URL, search: { s: encoded } });
   }
 
 
@@ -98,8 +111,12 @@ export const ItemsDrawer = memo(function ItemsDrawer({ tag, category }: { tag: s
               key={item + '-checkBoxFormControlLabel'}
               control={
                 <Checkbox
+                  checked={
+                    store.checkedCategory.has(item) ||
+                    query.categoryFilter.indexOf(item) !== -1
+                  }
+                  // checked={query.categoryFilter.indexOf(item) !== -1}
                   onChange={(e) => handleCategoryCheck(e, item)}
-                  checked={store.checkedCategory.has(item)}
                 />
               }
               label={item}
@@ -123,7 +140,11 @@ export const ItemsDrawer = memo(function ItemsDrawer({ tag, category }: { tag: s
               key={item + '-checkBoxFormControlLabel'}
               control={
                 <Checkbox
-                  checked={store.checkedTag.has(item)}
+                  checked={
+                    store.checkedTag.has(item) ||
+                    query.tagFilter.indexOf(item) !== -1
+                  }
+                  // checked={query.tagFilter.indexOf(item) !== -1}
                   onChange={(e) => handleTagCheck(e, item)}
                 />
               }
@@ -158,5 +179,4 @@ export const ItemsDrawer = memo(function ItemsDrawer({ tag, category }: { tag: s
       </Drawer>
     </div>
   );
-});
-ItemsDrawer.displayName = 'ItemsDrawer';
+};

@@ -1,21 +1,41 @@
 
-import { createFileRoute, useRouter } from '@tanstack/react-router';
+import { createFileRoute} from '@tanstack/react-router';
 import { Suspense } from 'react';
+import { Navigate } from '@tanstack/react-router';
 
 
 
-import ItemsPage from '@/components/items/read/ItemsPage';
+import Items from '@/components/items/read/Items';
 import NotFound from '@/components/common/NotFound';
 import Loading from '@/components/common/Loading';
-import { ItemsProtoSchema } from '@/lib/model/ItemsModel';
-// export const Route = createFileRoute('/shop/products')({
-//   validateSearch: (search) => productSearchSchema.parse(search),
-// })
+import { encodeState } from '@/lib/utils/encoders';
+import { validateItemsUrlSearch } from '@/lib/utils/validator';
+import { DefaultQueryParams, ITEMS_URL } from '@/lib/utils/defaults';
 
 
-export const Route = createFileRoute('/items/')({
-  validateSearch: (search) => ItemsProtoSchema.parse(search),
-  component: () => <Suspense fallback={Loading}><ItemsPage /></Suspense>,
+
+export const Route = createFileRoute(ITEMS_URL)({
+  component: ItemPage,
   notFoundComponent: NotFound,
-  // loader: async () => await getCount(),
 })
+
+function ItemPage() {
+  const searchParams = Route.useSearch()
+  console.info("In Items Page - Search Params ", searchParams);
+
+
+
+  if (Object.keys(searchParams).length === 0 || !searchParams.s) {
+    console.info("In ItemPage - using default");
+    return <Navigate
+      to={ITEMS_URL}
+        search={{ s: encodeState(DefaultQueryParams) }}
+      />
+  }
+  const query = validateItemsUrlSearch(searchParams);
+  console.info("In Page - Items");
+  console.info(query);
+  return (
+    <Suspense fallback={Loading}><Items query={query}/></Suspense>
+  );
+}

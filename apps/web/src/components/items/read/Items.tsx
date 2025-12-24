@@ -8,7 +8,7 @@ import {
   useQuery,
   type UseQueryResult,
 } from '@tanstack/react-query';
-import { createFileRoute, useRouter, getRouteApi, useNavigate } from '@tanstack/react-router';
+import { Navigate, useNavigate } from '@tanstack/react-router';
 import {
   Box,
   Divider,
@@ -23,9 +23,10 @@ import { Virtuoso } from 'react-virtuoso';
 
 
 // Internal store
+import { encodeState } from '@/lib/utils/encoders';
 import { useBoundStore } from '@/lib/store/boundStore';
 import { AppBarHeight } from '@/lib/model/appNavBarModel';
-import type { ItemProto, ItemsProto} from '@/lib/model/ItemsModel';
+import type { ItemProto, ItemsProto, IItemsSearch } from '@/lib/model/ItemsModel';
 import { ItemsProtoSchema, ItemProtoSchema } from '@/lib/model/ItemsModel';
 import type { IListingState, IDetailState } from '@/lib/model/ItemsModel';
 import Loading from '@/components/common/Loading';
@@ -35,6 +36,8 @@ import { getItemsGroupOptions } from '@/lib/utils/itemHelper';
 import { WebAppContext } from "@/lib/context/webappContext";
 import { ItemsDrawer } from "./ItemsDrawer";
 import MenuSelect from '@/components/common/MenuSelect';
+import { DefaultQueryParams, ITEMS_URL } from '@/lib/utils/defaults';
+
 
 
 const menuItemsOptions = [
@@ -42,41 +45,54 @@ const menuItemsOptions = [
   { label: 50, value: 50 }, { label: 100, value: 100 }
 ]
 
+const defaultPageSize = 50;
 
 
-
-export default function ItemsPage(): ReactNode {
+export default function Items({ query }: { query: IItemsSearch }): ReactNode {
   const webState = useContext(WebAppContext);
   const store = useBoundStore((state) => state);
-  // const router = useRouter();
-  const routeApi = getRouteApi('/items');
-  const routeSearch = routeApi.useSearch();
-  const navigate = useNavigate({ from: routeApi.fullPath })
+  const navigate = useNavigate();
+
+  // navigate({ search: encodeState(query)});
+
+  console.info("In Component - Items");
+  console.info(query);
+  console.info(query.pageSize);
+
 
   function handlePageChange(event: React.ChangeEvent<unknown>, value: number) {
-    store.setCurrentPage(value);
+    const q = { ...query, pageNumber: value };
+    const encoded = encodeState(q);
+    console.info("In handlePageChange - Encoded ", encoded);
+    navigate({ to: ITEMS_URL, search: { s: encoded } });
   };
 
   function handlePageCountChange(e: React.ChangeEvent<unknown>) {
-    store.setItemsPerPage(e.target.value);
+    // store.setItemsPerPage(e.target.value);
+    const q = { ...query, pageSize: e.target.value };
+    const encoded = encodeState(q);
+    console.info("In handlePageChange - q ", q);
+    console.info("In handlePageChange - Encoded ", encoded);
+    navigate({ to: ITEMS_URL, search: { s: encoded } });
   };
 
-  function handleClick(item: ItemProto) {
-    store.setItem(item);
-    store.setNewTag(null);
-    // router.push(`/item/${item.id}`);
-  }
 
-
-  const { isPending, isError, data, error }: UseQueryResult<ItemsProto> = useQuery(getItemsGroupOptions(webState.userId, store.categoryFilter, store.tagFilter, store.currentPage, store.itemsPerPage));
+  const {
+    isPending, isError, data, error
+  }: UseQueryResult<ItemsProto> = useQuery(
+    getItemsGroupOptions(
+      webState.userId, query.categoryFilter, query.tagFilter,
+      query.pageNumber, query.pageSize, query.searchQuery,
+      query.fromDate, query.toDate, query.sortQuery
+    )
+  );
 
   if (isPending) { return <Loading />; }
   // ToDo: Fix this error message
   if (isError) {return <ErrorAlerts>Error: {error.message}</ErrorAlerts>;}
 
-  let apiItems: ItemsProto;
   try{
-    apiItems = ZItemsProto.parse(data);
+    ItemsProtoSchema.parse(data);
   } catch(error){
     if(error instanceof z.ZodError){
       console.info("Zod issue - ", error.issues);
@@ -91,10 +107,10 @@ export default function ItemsPage(): ReactNode {
   const allTag = data.tag ? data.tag : [];
   const allCategory = data.category ? data.category : [];
   const items: ItemProto[] = data.items ? data.items : [];
-  const totalRecords: number = data.totalRecordCount ? data.totalRecordCount : 1;
-  const maxPages = Math.ceil(totalRecords / store.itemsPerPage);
+  const totalRecords: number = data.pageSize ? data.pageSize : 1;
+  const maxPages = Math.ceil(totalRecords / query.pageSize);
 
-  if (!items || items.length == 0){return<ItemsNoContent />;}
+  if (!items || items.length == 0) { return <ItemsNoContent tag={allTag} category={allCategory} query={query} />;}
 
 
   return (
@@ -105,18 +121,20 @@ export default function ItemsPage(): ReactNode {
         <Box  key='head-content' sx={{ mt: 0, }}>
           <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: "center"}}>
             <Box key='drawer' sx={{ width: '100%', display: 'flex', justifyContent: 'flex-start', alignItems: "center"}}>
-              <ItemsDrawer tag={allTag} category={allCategory} />
+              <ItemsDrawer tag={allTag} category={allCategory} query={query}/>
                 {/* <ItemsSearch /> */}
             </Box>
             <Box key='navigation' sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', alignItems: "center"}}>
               <Pagination
-                  count={maxPages} page={store.currentPage}
-                  onChange={handlePageChange}
+                count={maxPages} page={query.pageNumber}
+                onChange={handlePageChange}
               />
-              <MenuSelect defaultValue={store.itemsPerPage}
-                  handleChange={handlePageCountChange}
-                  formHelperText="Items per page" label="Page count"
-                  menuItems={menuItemsOptions}/>
+              <MenuSelect
+                // defaultValue={defaultPageSize}
+                defaultValue={query.pageSize}
+                handleChange={handlePageCountChange}
+                formHelperText="Items per page" label="Page count"
+                menuItems={menuItemsOptions}/>
             </Box>
           </Box>
         </Box>
@@ -127,8 +145,8 @@ export default function ItemsPage(): ReactNode {
           data={items}
           itemContent={(_, item) =>
             <Fragment key={item.id}>
-              <Link href={`/items/${item.id}`} >
-                <ListItemButton key={item.id} onClick={() => handleClick(item)}>
+              <Link href={`/items/${item.id}`} underline="hover">
+                <ListItemButton key={item.id}>
                 <ListItemText primary={item.summary} />
                 </ListItemButton>
               </Link>
@@ -137,29 +155,17 @@ export default function ItemsPage(): ReactNode {
           }
         />
 
-        {/* <Virtuoso key="data-content"
-          style={{ height: '70vh', width: '100%', display: 'block', overflow: 'auto', }}
-          data={items}
-          itemContent={(_, item) =>
-            <Fragment key={item.id}>
-              <ListItemButton key={item.id} onClick={() => handleClick(item)}>
-                <ListItemText primary={item.summary} />
-                <Link href={`/items/${item.id}`} >View More</Link>
-              </ListItemButton>
-              <Divider />
-            </Fragment>
-          }
-          // components={{ Footer: Footer }}
-        /> */}
-
         <Box  key='foot-content'>
           <Box key='navigation' sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', alignItems: "center"}}>
             <Box key='navigation' sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', alignItems: "center"}}>
-              <Pagination count={maxPages} page={store.currentPage} onChange={handlePageChange} />
-              <MenuSelect defaultValue={store.itemsPerPage}
-                  handleChange={handlePageCountChange}
-                  formHelperText="Items per page" label="Page count"
-                  menuItems={menuItemsOptions}/>
+              <Pagination count={maxPages} page={query.pageNumber} onChange={handlePageChange} />
+              <MenuSelect
+                // defaultValue={defaultPageSize}
+                defaultValue={query.pageSize}
+                handleChange={handlePageCountChange}
+                formHelperText="Items per page" label="Page count"
+                menuItems={menuItemsOptions}
+              />
             </Box>
           </Box>
         </Box>

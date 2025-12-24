@@ -871,28 +871,7 @@ components:
       properties:
         userId:
           type: string
-          title: user_id
-        category:
-          type: array
-          items:
-            type: string
-          title: category
-        tag:
-          type: array
-          items:
-            type: string
-          title: tag
-        recordCount:
-          type: integer
-          title: recordCount
-          format: int32
-        page:
-          type: integer
-          title: page
-          format: int32
-        sort:
-          type: string
-          title: sort
+          title: userId
         tagFilter:
           type: array
           items:
@@ -903,17 +882,29 @@ components:
           items:
             type: string
           title: categoryFilter
-        searchText:
+        searchQuery:
           type: string
-          title: search_text
+          title: searchQuery
         fromDate:
-          allOf:
-            - $ref: '#/components/schemas/google.protobuf.Timestamp'
-          title: from_date
+          type: string
+          title: fromDate
         toDate:
-          allOf:
-            - $ref: '#/components/schemas/google.protobuf.Timestamp'
-          title: to_date
+          type: string
+          title: toDate
+          description: |-
+            google.protobuf.Timestamp fromDate  = 204 [json_name = "fromDate"];
+             google.protobuf.Timestamp toDate  = 205 [json_name = "toDate"];
+        pageSize:
+          type: integer
+          title: pageSize
+          format: int32
+        pageNumber:
+          type: integer
+          title: pageNumber
+          format: int32
+        sortQuery:
+          type: string
+          title: sortQuery
       title: ItemServiceReadRequest
       additionalProperties: false
     listah.v1.ItemServiceReadResponse:
@@ -924,9 +915,6 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
-        userId:
-          type: string
-          title: user_id
         category:
           type: array
           items:
@@ -937,17 +925,9 @@ components:
           items:
             type: string
           title: tag
-        recordCount:
-          type: integer
-          title: recordCount
-          format: int32
-        page:
-          type: integer
-          title: page
-          format: int32
-        sort:
+        userId:
           type: string
-          title: sort
+          title: userId
         tagFilter:
           type: array
           items:
@@ -958,17 +938,29 @@ components:
           items:
             type: string
           title: categoryFilter
-        searchText:
+        searchQuery:
           type: string
-          title: search_text
+          title: searchQuery
         fromDate:
-          allOf:
-            - $ref: '#/components/schemas/google.protobuf.Timestamp'
-          title: from_date
+          type: string
+          title: fromDate
         toDate:
-          allOf:
-            - $ref: '#/components/schemas/google.protobuf.Timestamp'
-          title: to_date
+          type: string
+          title: toDate
+          description: |-
+            google.protobuf.Timestamp fromDate  = 204 [json_name = "fromDate"];
+             google.protobuf.Timestamp toDate  = 205 [json_name = "toDate"];
+        pageSize:
+          type: integer
+          title: pageSize
+          format: int32
+        pageNumber:
+          type: integer
+          title: pageNumber
+          format: int32
+        sortQuery:
+          type: string
+          title: sortQuery
       title: ItemServiceReadResponse
       additionalProperties: false
     listah.v1.ItemServiceUpdateRequest:
