@@ -44,6 +44,27 @@ export function ItemsDrawer({ tag, category, query }: { tag: string[], category:
 
   function handleCategoryCheck(e, categoryName: string) {
     e.stopPropagation();
+    let newChecked: string[];
+
+    if (query.categoryFilter.indexOf(categoryName) != -1) {
+      // Remove category from filter
+      newChecked = query.categoryFilter.filter((i) => i != categoryName);
+    } else {
+      newChecked = [...query.categoryFilter, categoryName]
+    }
+    const q = {
+      ...query,
+      pageNumber: 1,
+      categoryFilter: newChecked,
+    };
+    const encoded = encodeState(q);
+    console.info("In handlePageChange - Encoded ", encoded);
+
+    navigate({ to: ITEMS_URL, search: { s: encoded } });
+  }
+
+  function PrevhandleCategoryCheck(e, categoryName: string) {
+    e.stopPropagation();
     let newChecked: Set<string> = store.checkedCategory.union(new Set([categoryName]));
 
     if (store.checkedCategory.has(categoryName)) {
@@ -53,7 +74,7 @@ export function ItemsDrawer({ tag, category, query }: { tag: string[], category:
     store.setCheckedCategory(newChecked);
   }
 
-  function handleTagCheck(e, tagName: string) {
+  function PrevhandleTagCheck(e, tagName: string) {
     e.stopPropagation();
     let newChecked: Set<string> = store.checkedTag.union(new Set([tagName]))
     if (store.checkedTag.has(tagName)) {
@@ -63,21 +84,37 @@ export function ItemsDrawer({ tag, category, query }: { tag: string[], category:
     store.setCheckedTag(newChecked);
   }
 
-  function handleApplyFilter() {
+  function handleTagCheck(e, tagName: string) {
+    e.stopPropagation();
+    let newChecked: string[];
+
+    if (query.tagFilter.indexOf(tagName) != -1) {
+      newChecked = query.tagFilter.filter((i) => i != tagName);
+    } else {
+      newChecked = [...query.tagFilter, tagName]
+    }
     const q = {
       ...query,
       pageNumber: 1,
-      categoryFilter: [...store.checkedCategory],
-      tagFilter: [...store.checkedTag]
+      tagFilter: newChecked,
     };
     const encoded = encodeState(q);
     console.info("In handlePageChange - Encoded ", encoded);
+    navigate({ to: ITEMS_URL, search: { s: encoded } });
+  }
 
-    // store.setCheckedCategory(new Set([]));
-    // store.setCheckedTag(new Set([]));
+  function handleApplyFilter() {
+    // const q = {
+    //   ...query,
+    //   pageNumber: 1,
+    //   categoryFilter: [...store.checkedCategory],
+    //   tagFilter: [...store.checkedTag]
+    // };
+    // const encoded = encodeState(q);
+    // console.info("In handlePageChange - Encoded ", encoded);
     store.setDrawer(false);
 
-    navigate({ to: ITEMS_URL, search: { s: encoded } });
+    // navigate({ to: ITEMS_URL, search: { s: encoded } });
   }
 
   function handleResetFilter() {
