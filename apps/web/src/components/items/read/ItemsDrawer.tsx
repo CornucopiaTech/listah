@@ -42,7 +42,7 @@ export function ItemsDrawer({ tag, category, query }: { tag: string[], category:
   const textPaddingLeft: number = 2;
   const textPaddingBottom: number = 1;
 
-  function handleCategoryCheck(e, categoryName: string) {
+  function immediate_effect_handleCategoryCheck(e, categoryName: string) {
     e.stopPropagation();
     let newChecked: string[];
 
@@ -63,28 +63,7 @@ export function ItemsDrawer({ tag, category, query }: { tag: string[], category:
     navigate({ to: ITEMS_URL, search: { s: encoded } });
   }
 
-  function PrevhandleCategoryCheck(e, categoryName: string) {
-    e.stopPropagation();
-    let newChecked: Set<string> = store.checkedCategory.union(new Set([categoryName]));
-
-    if (store.checkedCategory.has(categoryName)) {
-      // Remove category from filter
-      newChecked.delete(categoryName)
-    }
-    store.setCheckedCategory(newChecked);
-  }
-
-  function PrevhandleTagCheck(e, tagName: string) {
-    e.stopPropagation();
-    let newChecked: Set<string> = store.checkedTag.union(new Set([tagName]))
-    if (store.checkedTag.has(tagName)) {
-      // Remove tag from filter
-      newChecked.delete(tagName)
-    }
-    store.setCheckedTag(newChecked);
-  }
-
-  function handleTagCheck(e, tagName: string) {
+  function immediate_effect_handleTagCheck(e, tagName: string) {
     e.stopPropagation();
     let newChecked: string[];
 
@@ -103,18 +82,40 @@ export function ItemsDrawer({ tag, category, query }: { tag: string[], category:
     navigate({ to: ITEMS_URL, search: { s: encoded } });
   }
 
-  function handleApplyFilter() {
-    // const q = {
-    //   ...query,
-    //   pageNumber: 1,
-    //   categoryFilter: [...store.checkedCategory],
-    //   tagFilter: [...store.checkedTag]
-    // };
-    // const encoded = encodeState(q);
-    // console.info("In handlePageChange - Encoded ", encoded);
-    store.setDrawer(false);
+  function handleCategoryCheck(e, categoryName: string) {
+    e.stopPropagation();
+    let newChecked: Set<string> = store.checkedCategory.union(new Set([categoryName]));
 
-    // navigate({ to: ITEMS_URL, search: { s: encoded } });
+    if (store.checkedCategory.has(categoryName)) {
+      // Remove category from filter
+      newChecked.delete(categoryName)
+    }
+    store.setCheckedCategory(newChecked);
+  }
+
+  function handleTagCheck(e, tagName: string) {
+    e.stopPropagation();
+    let newChecked: Set<string> = store.checkedTag.union(new Set([tagName]))
+    if (store.checkedTag.has(tagName)) {
+      // Remove tag from filter
+      newChecked.delete(tagName)
+    }
+    store.setCheckedTag(newChecked);
+  }
+
+  function handleApplyFilter() {
+    const q = {
+      ...query,
+      pageNumber: 1,
+      categoryFilter: [...query.categoryFilter, ...store.checkedCategory],
+      tagFilter: [...query.tagFilter, ...store.checkedTag]
+    };
+    const encoded = encodeState(q);
+    console.info("In handlePageChange - Encoded ", encoded);
+    store.setDrawer(false);
+    store.setCheckedCategory(new Set([]));
+    store.setCheckedTag(new Set([]));
+    navigate({ to: ITEMS_URL, search: { s: encoded } });
   }
 
   function handleResetFilter() {
@@ -125,7 +126,7 @@ export function ItemsDrawer({ tag, category, query }: { tag: string[], category:
     store.setToDate("");
     store.setDrawer(false);
 
-    const q = { ...query, categoryFilter: [], tagFilter: []};
+    const q = { ...query, pageNumber: 1, categoryFilter: [], tagFilter: []};
     const encoded = encodeState(q);
     console.info("In handlePageChange - Encoded ", encoded);
     navigate({ to: ITEMS_URL, search: { s: encoded } });
