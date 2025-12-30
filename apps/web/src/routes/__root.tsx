@@ -42,10 +42,8 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         {/* <Provider store={store}> */}
           <ThemeProvider theme={theme}>
             <Box sx={{ height: '100%' }}>
-              {/* <AppNavBar /> */}
-              <Suspense fallback={<Loading />}>
-                {children}
-              </Suspense>
+              <AppNavBar />
+                <Outlet />
               <Scripts />
             </Box>
           </ThemeProvider>
