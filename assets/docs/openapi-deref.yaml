@@ -53,15 +53,8 @@ paths:
                             - pagination
                 properties: &ref_4
                   userId:
-                    type: array
-                    items:
-                      type: string
+                    type: string
                     title: user_id
-                  tag:
-                    type: array
-                    items:
-                      type: string
-                    title: tag
                   pagination:
                     allOf:
                       - type: object
@@ -92,7 +85,7 @@ paths:
             application/json:
               schema:
                 title: encoding
-                enum: &ref_11
+                enum: &ref_10
                   - proto
                   - json
                 description: Define which encoding or 'Message-Codec' to use
@@ -110,7 +103,7 @@ paths:
             application/json:
               schema:
                 title: compression
-                enum: &ref_12
+                enum: &ref_11
                   - identity
                   - gzip
                   - br
@@ -140,14 +133,14 @@ paths:
                           anyOf:
                             - required:
                                 - pagination
-                anyOf: &ref_6
-                  - required:
-                      - pagination
-                  - not:
-                      anyOf:
-                        - required:
-                            - pagination
-                properties: &ref_7
+                  - anyOf:
+                      - required:
+                          - totalRecordCount
+                      - not:
+                          anyOf:
+                            - required:
+                                - totalRecordCount
+                properties: &ref_6
                   category:
                     type: array
                     items:
@@ -172,7 +165,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_8
+                properties: &ref_7
                   code:
                     type: string
                     examples:
@@ -199,7 +192,7 @@ paths:
                     description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
                   detail:
                     type: object
-                    properties: &ref_23
+                    properties: &ref_21
                       type:
                         type: string
                       value:
@@ -254,8 +247,7 @@ paths:
               schema:
                 type: object
                 allOf: *ref_5
-                anyOf: *ref_6
-                properties: *ref_7
+                properties: *ref_6
                 title: CategoryServiceReadResponse
                 additionalProperties: false
         default:
@@ -264,7 +256,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_8
+                properties: *ref_7
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -296,7 +288,7 @@ paths:
           application/json:
             schema:
               type: object
-              allOf: &ref_24
+              allOf: &ref_22
                 - anyOf:
                     - required:
                         - audit
@@ -304,19 +296,19 @@ paths:
                         anyOf:
                           - required:
                               - audit
-              anyOf: &ref_25
+              anyOf: &ref_23
                 - required:
                     - audit
                 - not:
                     anyOf:
                       - required:
                           - audit
-              properties: &ref_26
+              properties: &ref_24
                 items:
                   type: array
                   items:
                     type: object
-                    allOf: &ref_13
+                    allOf: &ref_12
                       - anyOf:
                           - required:
                               - audit
@@ -352,7 +344,7 @@ paths:
                               anyOf:
                                 - required:
                                     - softDelete
-                    properties: &ref_14
+                    properties: &ref_13
                       id:
                         type: string
                         title: id
@@ -483,12 +475,12 @@ paths:
                       audit:
                         allOf:
                           - type: object
-                            properties: &ref_10
+                            properties: &ref_9
                               created_by:
                                 allOf:
                                   - type: string
                                     title: AuditUpdaterEnum
-                                    enum: &ref_9
+                                    enum: &ref_8
                                       - AUDIT_UPDATER_ENUM_UNSPECIFIED
                                       - AUDIT_UPDATER_ENUM_FRONTEND
                                       - AUDIT_UPDATER_ENUM_SYSOPS
@@ -592,7 +584,7 @@ paths:
                                 allOf:
                                   - type: string
                                     title: AuditUpdaterEnum
-                                    enum: *ref_9
+                                    enum: *ref_8
                                 title: updated_by
                               updated_at:
                                 allOf:
@@ -693,7 +685,7 @@ paths:
                                 allOf:
                                   - type: string
                                     title: AuditUpdaterEnum
-                                    enum: *ref_9
+                                    enum: *ref_8
                                 title: deleted_by
                               deleted_at:
                                 allOf:
@@ -799,7 +791,7 @@ paths:
                 audit:
                   allOf:
                     - type: object
-                      properties: *ref_10
+                      properties: *ref_9
                       title: Audit
                       additionalProperties: false
                   title: audit
@@ -813,7 +805,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_27
+                properties: &ref_25
                   itemIds:
                     type: array
                     items:
@@ -827,7 +819,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_8
+                properties: *ref_7
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -860,7 +852,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_15
+                properties: &ref_14
                   userId:
                     type: string
                     title: userId
@@ -905,7 +897,7 @@ paths:
             application/json:
               schema:
                 title: encoding
-                enum: *ref_11
+                enum: *ref_10
                 description: Define which encoding or 'Message-Codec' to use
         - name: base64
           in: query
@@ -921,7 +913,7 @@ paths:
             application/json:
               schema:
                 title: compression
-                enum: *ref_12
+                enum: *ref_11
                 description: Which compression algorithm to use for this request
         - name: connect
           in: query
@@ -940,13 +932,13 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_16
+                properties: &ref_15
                   items:
                     type: array
                     items:
                       type: object
-                      allOf: *ref_13
-                      properties: *ref_14
+                      allOf: *ref_12
+                      properties: *ref_13
                       title: Item
                       additionalProperties: false
                     title: items
@@ -1004,7 +996,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_8
+                properties: *ref_7
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -1035,7 +1027,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: *ref_15
+              properties: *ref_14
               title: ItemServiceReadRequest
               additionalProperties: false
         required: true
@@ -1046,7 +1038,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_16
+                properties: *ref_15
                 title: ItemServiceReadResponse
                 additionalProperties: false
         default:
@@ -1055,7 +1047,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_8
+                properties: *ref_7
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -1087,7 +1079,7 @@ paths:
           application/json:
             schema:
               type: object
-              allOf: &ref_32
+              allOf: &ref_30
                 - anyOf:
                     - required:
                         - audit
@@ -1095,27 +1087,27 @@ paths:
                         anyOf:
                           - required:
                               - audit
-              anyOf: &ref_33
+              anyOf: &ref_31
                 - required:
                     - audit
                 - not:
                     anyOf:
                       - required:
                           - audit
-              properties: &ref_34
+              properties: &ref_32
                 items:
                   type: array
                   items:
                     type: object
-                    allOf: *ref_13
-                    properties: *ref_14
+                    allOf: *ref_12
+                    properties: *ref_13
                     title: Item
                     additionalProperties: false
                   title: items
                 audit:
                   allOf:
                     - type: object
-                      properties: *ref_10
+                      properties: *ref_9
                       title: Audit
                       additionalProperties: false
                   title: audit
@@ -1129,7 +1121,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_35
+                properties: &ref_33
                   itemIds:
                     type: array
                     items:
@@ -1143,7 +1135,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_8
+                properties: *ref_7
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -1175,7 +1167,7 @@ paths:
           application/json:
             schema:
               type: object
-              allOf: &ref_28
+              allOf: &ref_26
                 - anyOf:
                     - required:
                         - audit
@@ -1183,27 +1175,27 @@ paths:
                         anyOf:
                           - required:
                               - audit
-              anyOf: &ref_29
+              anyOf: &ref_27
                 - required:
                     - audit
                 - not:
                     anyOf:
                       - required:
                           - audit
-              properties: &ref_30
+              properties: &ref_28
                 items:
                   type: array
                   items:
                     type: object
-                    allOf: *ref_13
-                    properties: *ref_14
+                    allOf: *ref_12
+                    properties: *ref_13
                     title: Item
                     additionalProperties: false
                   title: items
                 audit:
                   allOf:
                     - type: object
-                      properties: *ref_10
+                      properties: *ref_9
                       title: Audit
                       additionalProperties: false
                   title: audit
@@ -1217,7 +1209,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_31
+                properties: &ref_29
                   itemIds:
                     type: array
                     items:
@@ -1231,7 +1223,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_8
+                properties: *ref_7
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -1264,7 +1256,7 @@ paths:
             application/json:
               schema:
                 type: object
-                allOf: &ref_17
+                allOf: &ref_16
                   - anyOf:
                       - required:
                           - pagination
@@ -1272,29 +1264,17 @@ paths:
                           anyOf:
                             - required:
                                 - pagination
-                anyOf: &ref_18
+                anyOf: &ref_17
                   - required:
                       - pagination
                   - not:
                       anyOf:
                         - required:
                             - pagination
-                properties: &ref_19
+                properties: &ref_18
                   userId:
-                    type: array
-                    items:
-                      type: string
+                    type: string
                     title: user_id
-                  id:
-                    type: array
-                    items:
-                      type: string
-                    title: id
-                  category:
-                    type: array
-                    items:
-                      type: string
-                    title: category
                   pagination:
                     allOf:
                       - type: object
@@ -1310,7 +1290,7 @@ paths:
             application/json:
               schema:
                 title: encoding
-                enum: *ref_11
+                enum: *ref_10
                 description: Define which encoding or 'Message-Codec' to use
         - name: base64
           in: query
@@ -1326,7 +1306,7 @@ paths:
             application/json:
               schema:
                 title: compression
-                enum: *ref_12
+                enum: *ref_11
                 description: Which compression algorithm to use for this request
         - name: connect
           in: query
@@ -1345,7 +1325,7 @@ paths:
             application/json:
               schema:
                 type: object
-                allOf: &ref_20
+                allOf: &ref_19
                   - anyOf:
                       - required:
                           - pagination
@@ -1353,14 +1333,14 @@ paths:
                           anyOf:
                             - required:
                                 - pagination
-                anyOf: &ref_21
-                  - required:
-                      - pagination
-                  - not:
-                      anyOf:
-                        - required:
-                            - pagination
-                properties: &ref_22
+                  - anyOf:
+                      - required:
+                          - totalRecordCount
+                      - not:
+                          anyOf:
+                            - required:
+                                - totalRecordCount
+                properties: &ref_20
                   tag:
                     type: array
                     items:
@@ -1385,7 +1365,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_8
+                properties: *ref_7
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -1416,9 +1396,9 @@ paths:
           application/json:
             schema:
               type: object
-              allOf: *ref_17
-              anyOf: *ref_18
-              properties: *ref_19
+              allOf: *ref_16
+              anyOf: *ref_17
+              properties: *ref_18
               title: TagServiceReadRequest
               additionalProperties: false
         required: true
@@ -1429,9 +1409,8 @@ paths:
             application/json:
               schema:
                 type: object
-                allOf: *ref_20
-                anyOf: *ref_21
-                properties: *ref_22
+                allOf: *ref_19
+                properties: *ref_20
                 title: TagServiceReadResponse
                 additionalProperties: false
         default:
@@ -1440,7 +1419,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_8
+                properties: *ref_7
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -1449,7 +1428,7 @@ components:
     listah.v1.AuditUpdaterEnum:
       type: string
       title: AuditUpdaterEnum
-      enum: *ref_9
+      enum: *ref_8
     google.protobuf.Timestamp:
       type: string
       format: date-time
@@ -1545,7 +1524,7 @@ components:
          ) to obtain a formatter capable of generating timestamps in this format.
     listah.v1.Audit:
       type: object
-      properties: *ref_10
+      properties: *ref_9
       title: Audit
       additionalProperties: false
     listah.v1.Pagination:
@@ -1574,13 +1553,12 @@ components:
     listah.v1.CategoryServiceReadResponse:
       type: object
       allOf: *ref_5
-      anyOf: *ref_6
-      properties: *ref_7
+      properties: *ref_6
       title: CategoryServiceReadResponse
       additionalProperties: false
     encoding:
       title: encoding
-      enum: *ref_11
+      enum: *ref_10
       description: Define which encoding or 'Message-Codec' to use
     base64:
       type: boolean
@@ -1588,7 +1566,7 @@ components:
       description: Specifies if the message query param is base64 encoded, which may be required for binary data
     compression:
       title: compression
-      enum: *ref_12
+      enum: *ref_11
       description: Which compression algorithm to use for this request
     connect-protocol-version:
       type: number
@@ -1602,19 +1580,19 @@ components:
       description: Define the timeout, in ms
     connect.error:
       type: object
-      properties: *ref_8
+      properties: *ref_7
       title: Connect Error
       additionalProperties: true
       description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
     google.protobuf.Any:
       type: object
-      properties: *ref_23
+      properties: *ref_21
       additionalProperties: true
       description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
     listah.v1.Item:
       type: object
-      allOf: *ref_13
-      properties: *ref_14
+      allOf: *ref_12
+      properties: *ref_13
       title: Item
       additionalProperties: false
     listah.v1.Item.PropertiesEntry:
@@ -1630,48 +1608,48 @@ components:
       additionalProperties: false
     listah.v1.ItemServiceCreateRequest:
       type: object
-      allOf: *ref_24
-      anyOf: *ref_25
-      properties: *ref_26
+      allOf: *ref_22
+      anyOf: *ref_23
+      properties: *ref_24
       title: ItemServiceCreateRequest
       additionalProperties: false
     listah.v1.ItemServiceCreateResponse:
       type: object
-      properties: *ref_27
+      properties: *ref_25
       title: ItemServiceCreateResponse
       additionalProperties: false
     listah.v1.ItemServiceDeleteRequest:
       type: object
-      allOf: *ref_28
-      anyOf: *ref_29
-      properties: *ref_30
+      allOf: *ref_26
+      anyOf: *ref_27
+      properties: *ref_28
       title: ItemServiceDeleteRequest
       additionalProperties: false
     listah.v1.ItemServiceDeleteResponse:
       type: object
-      properties: *ref_31
+      properties: *ref_29
       title: ItemServiceDeleteResponse
       additionalProperties: false
     listah.v1.ItemServiceReadRequest:
       type: object
-      properties: *ref_15
+      properties: *ref_14
       title: ItemServiceReadRequest
       additionalProperties: false
     listah.v1.ItemServiceReadResponse:
       type: object
-      properties: *ref_16
+      properties: *ref_15
       title: ItemServiceReadResponse
       additionalProperties: false
     listah.v1.ItemServiceUpdateRequest:
       type: object
-      allOf: *ref_32
-      anyOf: *ref_33
-      properties: *ref_34
+      allOf: *ref_30
+      anyOf: *ref_31
+      properties: *ref_32
       title: ItemServiceUpdateRequest
       additionalProperties: false
     listah.v1.ItemServiceUpdateResponse:
       type: object
-      properties: *ref_35
+      properties: *ref_33
       title: ItemServiceUpdateResponse
       additionalProperties: false
     listah.v1.PrevItemServiceReadRequest:
@@ -2142,15 +2120,14 @@ components:
       additionalProperties: false
     listah.v1.TagServiceReadRequest:
       type: object
-      allOf: *ref_17
-      anyOf: *ref_18
-      properties: *ref_19
+      allOf: *ref_16
+      anyOf: *ref_17
+      properties: *ref_18
       title: TagServiceReadRequest
       additionalProperties: false
     listah.v1.TagServiceReadResponse:
       type: object
-      allOf: *ref_20
-      anyOf: *ref_21
-      properties: *ref_22
+      allOf: *ref_19
+      properties: *ref_20
       title: TagServiceReadResponse
       additionalProperties: false

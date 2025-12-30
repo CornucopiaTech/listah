@@ -9,10 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PathlessLayoutRouteImport } from './routes/_pathlessLayout'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ItemsIndexRouteImport } from './routes/items/index'
 import { Route as ItemsItemItemIdRouteImport } from './routes/items/item-$itemId'
 
+const PathlessLayoutRoute = PathlessLayoutRouteImport.update({
+  id: '/_pathlessLayout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -42,6 +47,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_pathlessLayout': typeof PathlessLayoutRoute
   '/items/item-$itemId': typeof ItemsItemItemIdRoute
   '/items/': typeof ItemsIndexRoute
 }
@@ -50,17 +56,25 @@ export interface FileRouteTypes {
   fullPaths: '/' | '/items/item-$itemId' | '/items'
   fileRoutesByTo: FileRoutesByTo
   to: '/' | '/items/item-$itemId' | '/items'
-  id: '__root__' | '/' | '/items/item-$itemId' | '/items/'
+  id: '__root__' | '/' | '/_pathlessLayout' | '/items/item-$itemId' | '/items/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PathlessLayoutRoute: typeof PathlessLayoutRoute
   ItemsItemItemIdRoute: typeof ItemsItemItemIdRoute
   ItemsIndexRoute: typeof ItemsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_pathlessLayout': {
+      id: '/_pathlessLayout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof PathlessLayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -87,6 +101,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PathlessLayoutRoute: PathlessLayoutRoute,
   ItemsItemItemIdRoute: ItemsItemItemIdRoute,
   ItemsIndexRoute: ItemsIndexRoute,
 }

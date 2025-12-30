@@ -1,4 +1,4 @@
-import type { TraceBaggage, ItemProto, ItemsProto} from '@/lib/model/ItemsModel';
+import type { TraceBaggage, ItemProto, ItemsProto } from '@/lib/model/ItemsModel';
 import {
   propagation,
   context,
@@ -8,26 +8,37 @@ import {
 } from '@tanstack/react-query';
 
 
-export function getItemsGroupOptions(userId: string, categoryFilter: string[],
-                tagFilter: string[], pageNumber: number, pageSize: number,
-                searchQuery: string, fromDate: string, toDate: string,
-                sortQuery: string) {
+
+
+export function itemGroupOptions(opts: ItemsSearchSchema) {
   return queryOptions({
-    queryKey: [
-      "getItems", userId, categoryFilter, tagFilter, pageNumber, pageSize,
-      searchQuery, fromDate, toDate, sortQuery
-    ],
-    queryFn: () => getItems(
-        userId, categoryFilter, tagFilter, pageNumber, pageSize,
-        searchQuery, fromDate, toDate, sortQuery
-      ),
-     staleTime: 24 * 60 * 60 * 1000,
-   })
+    queryKey: ["item", opts],
+    queryFn: () => getItem(opts),
+    staleTime: 24 * 60 * 60 * 1000,
+  })
 }
 
 
-export function getValidItem(storeItem: ItemProto, apiItem: ItemProto): ItemProto{
-  if (!storeItem){
+export function tagGroupOptions(opts: string) {
+  return queryOptions({
+    queryKey: ["tag", opts],
+    queryFn: () => getTag(opts),
+    staleTime: 24 * 60 * 60 * 1000,
+  })
+}
+
+
+export function categoryGroupOptions(opts: string) {
+  return queryOptions({
+    queryKey: ["category", opts],
+    queryFn: () => getCategory(opts),
+    staleTime: 24 * 60 * 60 * 1000,
+  })
+}
+
+
+export function getValidItem(storeItem: ItemProto, apiItem: ItemProto): ItemProto {
+  if (!storeItem) {
     return apiItem;
   }
   const validItem: ItemProto = {
@@ -60,23 +71,14 @@ export async function postItem(item: ItemProto) {
   return res.json();
 }
 
-export async function getItems(userId: string, categoryFilter: string[],
-                              tagFilter: string[], pageNumber: number,
-                              pageSize: number, searchQuery: string,
-                              fromDate: string, toDate: string,
-                              sortQuery: string): Promise<ItemsProto | void> {
+export async function getItem(opts: ItemsSearchSchema): Promise<ItemsProto | void> {
   const url = `/api/${process.env.LISTAH_PROXY_ITEMS_READ}`;
-
-  const reqBody = {
-    userId, tagFilter, categoryFilter, searchQuery,
-    fromDate, toDate, pageSize, pageNumber, sortQuery,
-  };
-  console.info("In getItems, reqBody: ", reqBody);
+  console.info("In getItems, opts: ", opts);
 
 
   const req = new Request(url, {
     method: "POST",
-    body: JSON.stringify(reqBody),
+    body: JSON.stringify(opts),
     headers: { "Content-Type": "application/json", "Accept": "*/*" },
   });
   const res = await fetch(req);
@@ -94,11 +96,10 @@ export async function getItems(userId: string, categoryFilter: string[],
   return data;
 }
 
-
 export async function getTag(userId: string): Promise<ItemsProto | void> {
   const req = new Request('/api/getTag', {
     method: "POST",
-    body: JSON.stringify({ userId: [ userId ] })
+    body: JSON.stringify({ userId: userId })
   });
   const res = await fetch(req);
   if (!res.ok) {
@@ -108,11 +109,10 @@ export async function getTag(userId: string): Promise<ItemsProto | void> {
   return res.json();
 }
 
-
 export async function getCategory(userId: string): Promise<ItemsProto | void> {
   const req = new Request('/api/getCategory', {
     method: "POST",
-    body: JSON.stringify({ userId: [ userId ] })
+    body: JSON.stringify({ userId: userId })
   });
   const res = await fetch(req);
   if (!res.ok) {

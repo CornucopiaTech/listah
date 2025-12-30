@@ -575,15 +575,8 @@ components:
                   - pagination
       properties:
         userId:
-          type: array
-          items:
-            type: string
+          type: string
           title: user_id
-        tag:
-          type: array
-          items:
-            type: string
-          title: tag
         pagination:
           allOf:
             - $ref: '#/components/schemas/listah.v1.Pagination'
@@ -600,13 +593,13 @@ components:
                 anyOf:
                   - required:
                       - pagination
-      anyOf:
-        - required:
-            - pagination
-        - not:
-            anyOf:
-              - required:
-                  - pagination
+        - anyOf:
+            - required:
+                - totalRecordCount
+            - not:
+                anyOf:
+                  - required:
+                      - totalRecordCount
       properties:
         category:
           type: array
@@ -1120,20 +1113,8 @@ components:
                   - pagination
       properties:
         userId:
-          type: array
-          items:
-            type: string
+          type: string
           title: user_id
-        id:
-          type: array
-          items:
-            type: string
-          title: id
-        category:
-          type: array
-          items:
-            type: string
-          title: category
         pagination:
           allOf:
             - $ref: '#/components/schemas/listah.v1.Pagination'
@@ -1150,13 +1131,13 @@ components:
                 anyOf:
                   - required:
                       - pagination
-      anyOf:
-        - required:
-            - pagination
-        - not:
-            anyOf:
-              - required:
-                  - pagination
+        - anyOf:
+            - required:
+                - totalRecordCount
+            - not:
+                anyOf:
+                  - required:
+                      - totalRecordCount
       properties:
         tag:
           type: array

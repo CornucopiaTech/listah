@@ -2,36 +2,29 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { TanStackDevtools } from '@tanstack/react-devtools';
 
 
-
-
-
 import { Suspense, Fragment } from 'react';
 import type { ReactNode } from 'react';
 import {
   Outlet,
-  createRootRoute,
-  HeadContent,
   Scripts,
+  createRootRouteWithContext,
 } from '@tanstack/react-router';
 
 
 
-import {
-  QueryClient,
-  QueryClientProvider
-} from '@tanstack/react-query';
+
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider } from '@mui/material/styles';
 import {
   Box,
 } from '@mui/material';
 import { enableMapSet } from 'immer';
-import { Provider } from 'react-redux'
+import { Provider } from 'react-redux';
 
 
 
 // import {store} from '@/lib/state/store'
-
+import { initalWebappContext, WebAppContext } from "@/lib/context/webappContext";
 import AppNavBar from '@/components/common/AppNavBar';
 import Loading from '@/components/common/Loading';
 import theme from '@/lib/theme';
@@ -44,20 +37,20 @@ enableMapSet();
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <QueryClientProvider client={new QueryClient()}>
-      <ReactQueryDevtools initialIsOpen={false} />
-      {/* <Provider store={store}> */}
-        <ThemeProvider theme={theme}>
-          <Box sx={{ height: '100%' }}>
-            <AppNavBar />
-            <Suspense fallback={<Loading />}>
-              {children}
-            </Suspense>
-            <Scripts />
-          </Box>
-        </ThemeProvider>
-      {/* </Provider> */}
-    </QueryClientProvider>
+    <WebAppContext value={initalWebappContext.userId}>
+        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+        {/* <Provider store={store}> */}
+          <ThemeProvider theme={theme}>
+            <Box sx={{ height: '100%' }}>
+              {/* <AppNavBar /> */}
+              <Suspense fallback={<Loading />}>
+                {children}
+              </Suspense>
+              <Scripts />
+            </Box>
+          </ThemeProvider>
+        {/* </Provider> */}
+    </WebAppContext>
   )
 }
 
@@ -67,7 +60,10 @@ function RootComponent() {
 }
 
 
-export const Route = createRootRoute({
+// export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient
+}>()({
   head: () => ({
     meta: [
       {
@@ -82,7 +78,7 @@ export const Route = createRootRoute({
       },
     ],
   }),
-  component: () => <Suspense fallback={Loading}><RootComponent /></Suspense>,
+  component: () => <Suspense fallback={<Loading />}><RootComponent /></Suspense>,
   notFoundComponent: NotFound,
 });
 

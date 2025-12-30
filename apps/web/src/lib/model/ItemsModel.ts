@@ -116,6 +116,7 @@ export interface IDetailStore extends IDetailState, IDetailActions { };
 
 
 export const ItemsSearchSchema = z.object({
+  userId: z.nullish(z.uuid()),
   tagFilter: z.array(z.string()).catch([]),
   categoryFilter: z.array(z.string()).catch([]),
   searchQuery: z.string().catch(''),

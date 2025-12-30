@@ -1,14 +1,14 @@
 
 import { ItemsSearchSchema } from '@/lib/model/ItemsModel';
 import { decodeState } from '@/lib/utils/encoders';
-
+import { DefaultQueryParams } from '@/lib/utils/defaults';
 
 
 export function validateItemsUrlSearch(params: any) {
   if (!params || Object.keys(params).length === 0  || !params.s) {
     console.info("In validateItemQueryParams - using default");
-    return null;
-    // return DefaultQueryParams;
+    // return null;
+    return DefaultQueryParams;
   }
 
   console.info("In validateItemQueryParams - Raw ");

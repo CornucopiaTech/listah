@@ -6,6 +6,8 @@ import {
 } from 'react';
 import {
   useQuery,
+  useQueryClient,
+  useSuspenseQuery,
   type UseQueryResult,
 } from '@tanstack/react-query';
 import { Navigate, useNavigate } from '@tanstack/react-router';
@@ -32,7 +34,7 @@ import type { IListingState, IDetailState } from '@/lib/model/ItemsModel';
 import Loading from '@/components/common/Loading';
 import { ErrorAlerts } from '@/components/common/ErrorAlert';
 import ItemsNoContent from './ItemsNoContent';
-import { getItemsGroupOptions } from '@/lib/utils/itemHelper';
+import { getItemsGroupOptions, getItemsOptGroupOptions } from '@/lib/utils/itemHelper';
 import { WebAppContext } from "@/lib/context/webappContext";
 import { ItemsDrawer } from "./ItemsDrawer";
 import MenuSelect from '@/components/common/MenuSelect';
@@ -47,11 +49,18 @@ const menuItemsOptions = [
 
 const defaultPageSize = 50;
 
+const initFile = {
+  ...DefaultQueryParams,
+  userId: "24f35fe6-5b72-466c-ae2f-2f27b5f4da00",
+}
+export const queryOpts = getItemsOptGroupOptions(initFile);
+
 
 export default function Items({ query }: { query: IItemsSearch }): ReactNode {
   const webState = useContext(WebAppContext);
   const store = useBoundStore((state) => state);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   // navigate({ search: encodeState(query)});
 
@@ -79,13 +88,7 @@ export default function Items({ query }: { query: IItemsSearch }): ReactNode {
 
   const {
     isPending, isError, data, error
-  }: UseQueryResult<ItemsProto> = useQuery(
-    getItemsGroupOptions(
-      webState.userId, query.categoryFilter, query.tagFilter,
-      query.pageNumber, query.pageSize, query.searchQuery,
-      query.fromDate, query.toDate, query.sortQuery
-    )
-  );
+  }: UseQueryResult<ItemsProto> = useSuspenseQuery(queryOpts);
 
   if (isPending) { return <Loading />; }
   // ToDo: Fix this error message
