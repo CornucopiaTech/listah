@@ -17,6 +17,7 @@ export async function postItem(item: ItemProto) {
   return res.json();
 }
 
+
 export async function getItem(opts: ItemsSearchSchema): Promise<ItemsProto | void> {
   const url = `/api/${process.env.LISTAH_PROXY_ITEMS_READ}`;
   console.info("In getItem, opts: ", opts);

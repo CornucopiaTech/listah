@@ -6,23 +6,22 @@ import {
 import type {
   ReactNode,
 } from 'react';
-import {
-  Typography,
-  FormControlLabel,
-  Checkbox,
-  ListItem,
-} from '@mui/material';
+
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import ListItem from '@mui/material/ListItem';
 import { Virtuoso } from 'react-virtuoso';
 import {
   useQuery,
-  useSuspenseQuery,
   type UseQueryResult,
 } from '@tanstack/react-query';
 
 
 import { WebAppContext } from "@/lib/context/webappContext";
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
-import { categoryGroupOptions } from '@/lib/utils/querying';
+import { categoryGroupOptions } from '@/lib/helper/querying';
 import { useBoundStore } from '@/lib/store/boundStore';
 import type {  IItemsSearch } from '@/lib/model/ItemsModel';
 import Loading from '@/components/common/Loading';
@@ -33,8 +32,6 @@ export default function CategoryDrawer(): ReactNode {
   const store = useBoundStore((state) => state);
   const uId: str = useContext(WebAppContext);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
-  console.info("In CategoryDrawer - userId", uId);
-  console.info("In CategoryDrawer - query", query);
 
 
   const listLeftPadding: number = 3;

@@ -1,20 +1,16 @@
-import { defineConfig } from 'vite';
-import { devtools } from '@tanstack/devtools-vite';
-import viteReact from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
-
-import { tanstackRouter } from '@tanstack/router-plugin/vite';
-import { fileURLToPath, URL } from 'node:url';
+import { defineConfig } from 'vite'
+import { devtools } from '@tanstack/devtools-vite'
+import viteReact from '@vitejs/plugin-react'
+import { tanstackRouter } from '@tanstack/router-plugin/vite'
+import { fileURLToPath, URL } from 'node:url'
+import path from 'path';
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
-import path from 'path';
-import { resolve } from 'node:path';
 
 
 const currPath = path.resolve(path.dirname(path.dirname(process.cwd())), '.env');
 dotenvExpand.expand(dotenv.config({ path: currPath, }));
 console.info(`Loaded environment variables from: ${currPath}`);
-
 
 
 
@@ -27,7 +23,6 @@ export default defineConfig({
       autoCodeSplitting: true,
     }),
     viteReact(),
-    tailwindcss(),
   ],
   resolve: {
     alias: {
@@ -35,10 +30,10 @@ export default defineConfig({
     },
   },
   server: {
-    port: 5000,
-    watch: {
-      ignored: ["**/node_modules", "**/.git", "**/.tanstack"],
-    },
+    // port: 5000,
+    // watch: {
+    //   ignored: ["**/node_modules", "**/.git", "**/.tanstack"],
+    // },
     proxy: {
       "/api/": { // The prefix for API requests in your frontend
         target: process.env.API_HOST_URL_ADDRESS, // The URL of your backend server

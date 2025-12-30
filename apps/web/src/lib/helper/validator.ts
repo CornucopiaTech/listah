@@ -1,7 +1,7 @@
 
 import { ItemsSearchSchema } from '@/lib/model/ItemsModel';
-import { decodeState } from '@/lib/utils/encoders';
-import { DefaultQueryParams } from '@/lib/utils/defaults';
+import { decodeState } from '@/lib/helper/encoders';
+import { DefaultQueryParams } from '@/lib/helper/defaults';
 
 
 export function validateItemsUrlSearch(params: any) {

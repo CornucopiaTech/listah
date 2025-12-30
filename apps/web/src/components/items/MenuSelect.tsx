@@ -1,36 +1,29 @@
 
 import {
-  Suspense,
   useContext,
   type ReactNode,
 } from 'react';
 import {
   useNavigate,
 } from '@tanstack/react-router';
-import {
-  InputLabel,
-  MenuItem,
-  FormHelperText,
-  FormControl,
-  Select
-} from '@mui/material';
+
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 
-
-
-import { encodeState } from '@/lib/utils/encoders';
+// Internal
+import { encodeState } from '@/lib/helper/encoders';
 import type { IItemsSearch } from '@/lib/model/ItemsModel';
-import { ITEMS_URL, PAGE_SIZE_OPTIONS } from '@/lib/utils/defaults';
+import { ITEMS_URL, PAGE_SIZE_OPTIONS } from '@/lib/helper/defaults';
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
-import Loading from '@/components/common/Loading';
-import { ErrorAlerts } from '@/components/common/ErrorAlert';
 
 
 export default function MenuSelect(): ReactNode {
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const navigate = useNavigate();
-
-  console.info("In MenuSelect", query);
 
   function handlePageSizeChange(e: React.ChangeEvent<unknown>) {
     const q = { ...query, pageSize: e.target.value };
@@ -45,28 +38,26 @@ export default function MenuSelect(): ReactNode {
 
 
   return (
-    <Suspense fallback={<Loading />}>
-      <div>
-        <FormControl sx={{ m: 1, minWidth: 120 }}>
-          <InputLabel id="ItemsSelectMenuLabel">{label}</InputLabel>
-          <Select
-              labelId="ItemsSelectMenuLabel"
-              id={"ItemsSelectMenuLabel"}
-              value={query.pageSize}
-              label="Page count"
-              onChange={handlePageSizeChange}
-            >
-            {
-              PAGE_SIZE_OPTIONS.map(
-                (val: any, ) => (
-                  <MenuItem value={val.value}>{val.label}</MenuItem>
-                )
+    <div>
+      <FormControl sx={{ m: 1, minWidth: 120 }}>
+        <InputLabel id="ItemsSelectMenuLabel">{label}</InputLabel>
+        <Select
+            labelId="ItemsSelectMenuLabel"
+            id={"ItemsSelectMenuLabel"}
+            value={query.pageSize}
+            label="Page count"
+            onChange={handlePageSizeChange}
+          >
+          {
+            PAGE_SIZE_OPTIONS.map(
+              (val: any, ) => (
+                <MenuItem value={val.value}>{val.label}</MenuItem>
               )
-            }
-          </Select>
-          <FormHelperText>Items per page</FormHelperText>
-        </FormControl>
-      </div>
-    </Suspense>
+            )
+          }
+        </Select>
+        <FormHelperText>Items per page</FormHelperText>
+      </FormControl>
+    </div>
   );
 }

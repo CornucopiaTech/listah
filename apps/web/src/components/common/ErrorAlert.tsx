@@ -1,12 +1,10 @@
-import * as React from 'react';
-import {
-  Box,
-  Alert,
-  Stack,
-  Button
-} from '@mui/material';
+import type { ReactNode } from 'react';
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 
-export function ErrorAlerts( { children }: { children?: React.ReactNode }) {
+
+export function ErrorAlerts({ children }: { children?: ReactNode }): ReactNode {
   return (
     <Stack sx={{ width: '100%' }} spacing={2}>
       <Alert severity="error" >
@@ -19,7 +17,7 @@ export function ErrorAlerts( { children }: { children?: React.ReactNode }) {
 
 
 
-export function WarnAlerts() {
+export function WarnAlerts(): ReactNode {
   return (
     <Stack sx={{ width: '100%' }} spacing={2}>
       <Alert severity="warning" onClose={() => { }}>
@@ -39,7 +37,7 @@ export function WarnAlerts() {
   );
 }
 
-export function InfoAlerts() {
+export function InfoAlerts(): ReactNode {
   return (
     <Stack sx={{ width: '100%' }} spacing={2}>
       <Alert severity="warning" onClose={() => { }}>
@@ -59,7 +57,7 @@ export function InfoAlerts() {
   );
 }
 
-export function SuccessAlerts() {
+export function SuccessAlerts(): ReactNode {
   return (
     <Stack sx={{ width: '100%' }} spacing={2}>
       <Alert severity="warning" onClose={() => { }}>

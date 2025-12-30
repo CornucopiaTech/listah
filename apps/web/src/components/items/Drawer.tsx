@@ -1,27 +1,22 @@
 import {
-  Suspense,
   useContext,
 } from 'react';
 import type {
   ReactNode,
 } from 'react';
-import {
-  Box,
-  Drawer,
-  Button,
-  Divider,
-} from '@mui/material';
-import {
-  Tune
-} from '@mui/icons-material';
+import Box from '@mui/material/Box';
+import Drawer from '@mui/material/Drawer';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import TuneIcon from '@mui/icons-material/Tune';
 import {
   useNavigate,
 } from '@tanstack/react-router';
 
 
 
-import { encodeState } from '@/lib/utils/encoders';
-import { ITEMS_URL } from '@/lib/utils/defaults';
+import { encodeState } from '@/lib/helper/encoders';
+import { ITEMS_URL } from '@/lib/helper/defaults';
 import { useBoundStore } from '@/lib/store/boundStore';
 import type { IItemsSearch } from '@/lib/model/ItemsModel';
 import CategoryDrawer from '@/components/items/CategoryDrawer';
@@ -33,8 +28,6 @@ import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
 export default function Draws(): ReactNode {
   const store = useBoundStore((state) => state);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
-
-  console.info("In Drawer", query);
 
   const navigate = useNavigate();
   const bottomMargin: number = 2;
@@ -73,7 +66,7 @@ export default function Draws(): ReactNode {
 
   return (
     <Box key='drawer' sx={{ width: '100%', display: 'flex', justifyContent: 'flex-start', alignItems: "center" }}>
-      <Button onClick={() => store.setDrawer(true)} startIcon={<Tune />}>
+      <Button onClick={() => store.setDrawer(true)} startIcon={<TuneIcon />}>
         Filter
       </Button>
       <Drawer open={store.drawer} onClose={() => store.setDrawer(false)}>

@@ -6,17 +6,15 @@ import {
 } from 'react';
 import {
   useQuery,
-  useSuspenseQuery,
   type UseQueryResult,
 } from '@tanstack/react-query';
-import {
-  Box,
-  Divider,
-  Link,
-  ListItemText,
-  ListItemButton,
-  Paper,
-} from '@mui/material';
+
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import Link from '@mui/material/Link';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemButton from '@mui/material/ListItemButton';
+import Paper from '@mui/material/Paper';
 import * as z from "zod";
 import { Virtuoso } from 'react-virtuoso';
 
@@ -27,13 +25,12 @@ import { ItemsProtoSchema, } from '@/lib/model/ItemsModel';
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
 import Loading from '@/components/common/Loading';
 import { ErrorAlerts } from '@/components/common/ErrorAlert';
-import { itemGroupOptions } from '@/lib/utils/querying';
+import { itemGroupOptions } from '@/lib/helper/querying';
 
 
 
 export default function Content(): ReactNode {
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
-  console.info("In Content", query);
 
 
   // const {

@@ -1,12 +1,11 @@
 
-import {
-  AppBar,
-  Box,
-  Toolbar,
-  Typography,
-  Tooltip,
-  Link,
-} from '@mui/material';
+
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
+import Link from '@mui/material/Link';
 import { useTheme } from '@mui/material/styles';
 
 
