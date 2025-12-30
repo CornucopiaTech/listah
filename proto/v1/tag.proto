@@ -13,15 +13,13 @@ import "gnostic/openapi/v3/annotations.proto";
 
 
 message TagServiceReadRequest {
-  repeated string user_id = 1 [json_name = "userId"];
-  repeated string id = 2;
-  repeated string category = 4;
+  string user_id = 1 [json_name = "userId"];
   optional Pagination pagination = 200;
 }
 message TagServiceReadResponse {
   repeated string tag = 1;
   optional Pagination pagination = 200;
-  int32 total_record_count = 300;
+  optional int32 total_record_count = 300;
 }
 
 

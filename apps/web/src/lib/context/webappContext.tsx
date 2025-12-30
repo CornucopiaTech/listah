@@ -1,9 +1,13 @@
-"use client"
 
 import { createContext } from "react";
+
+
+
 export const initalWebappContext: {
   userId: string,
+  AppBarHeight: string,
 } = {
-  userId: "002283d1-a82f-47ab-83e9-8f2e667f0d48",
+  userId: "24f35fe6-5b72-466c-ae2f-2f27b5f4da00",
+  AppBarHeight: '64px',
 };
 export const WebAppContext = createContext(initalWebappContext);

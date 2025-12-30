@@ -9,7 +9,7 @@ import (
 	"connectrpc.com/connect"
 	"github.com/pkg/errors"
 	"go.opentelemetry.io/otel"
-		"github.com/uptrace/bun"
+		// "github.com/uptrace/bun"
 )
 
 
@@ -24,11 +24,10 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.CategoryServi
 
 	readModel := []string{}
 	whereClause := []model.WhereClause{}
-	// whereClause := make([]model.WhereClause), 0)
 	whereClause = append(whereClause, model.WhereClause{
-		Placeholder: " ? IN (?) ",
+		Placeholder: " ? = ?",
 		Column: "user_id",
-		Value:       bun.In(req.Msg.GetUserId()),
+		Value:       req.Msg.GetUserId(),
 	})
 
 	var qOffset int
@@ -44,7 +43,10 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.CategoryServi
 	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d category from repository", recCnt))
 
 
-	resm := &pb.CategoryServiceReadResponse{Category: readModel, TotalRecordCount: int32(recCnt),}
+	resm := &pb.CategoryServiceReadResponse{
+		Category: readModel,
+		// TotalRecordCount: &int32(recCnt),
+	}
 	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful category read. Read %d unique categories.", len(readModel)))
 	return connect.NewResponse(resm), nil
 }

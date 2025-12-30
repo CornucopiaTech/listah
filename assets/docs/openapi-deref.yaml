@@ -20,7 +20,7 @@ paths:
           schema:
             type: number
             title: Connect-Protocol-Version
-            enum: &ref_1
+            enum: &ref_0
               - 1
             description: Define the version of the Connect protocol
             const: 1
@@ -36,71 +36,88 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_2
+                allOf: &ref_2
+                  - anyOf:
+                      - required:
+                          - pagination
+                      - not:
+                          anyOf:
+                            - required:
+                                - pagination
+                anyOf: &ref_3
+                  - required:
+                      - pagination
+                  - not:
+                      anyOf:
+                        - required:
+                            - pagination
+                properties: &ref_4
                   userId:
-                    type: array
-                    items:
-                      type: string
+                    type: string
                     title: user_id
-                  tag:
-                    type: array
-                    items:
-                      type: string
-                    title: tag
                   pagination:
+                    allOf:
+                      - type: object
+                        properties: &ref_1
+                          pageNumber:
+                            type: integer
+                            title: page_number
+                            format: int32
+                          recordsPerPage:
+                            type: integer
+                            title: records_per_page
+                            format: int32
+                          sortCondition:
+                            type: object
+                            title: sort_condition
+                            additionalProperties:
+                              type: string
+                              title: value
+                            description: int32 total_record_count = 3;
+                        title: Pagination
+                        additionalProperties: false
                     title: pagination
-                    nullable: true
-                    type: object
-                    properties: &ref_0
-                      pageNumber:
-                        type: integer
-                        title: page_number
-                        format: int32
-                      recordsPerPage:
-                        type: integer
-                        title: records_per_page
-                        format: int32
-                      sortCondition:
-                        type: object
-                        title: sort_condition
-                        additionalProperties:
-                          type: string
-                          title: value
-                        description: int32 total_record_count = 3;
-                    additionalProperties: false
                 title: CategoryServiceReadRequest
                 additionalProperties: false
         - name: encoding
           in: query
-          required: true
-          schema:
-            title: encoding
-            enum: &ref_7
-              - proto
-              - json
-            description: Define which encoding or 'Message-Codec' to use
+          content:
+            application/json:
+              schema:
+                title: encoding
+                enum: &ref_10
+                  - proto
+                  - json
+                description: Define which encoding or 'Message-Codec' to use
         - name: base64
           in: query
-          schema:
-            type: boolean
-            title: base64
-            description: Specifies if the message query param is base64 encoded, which may be required for binary data
+          content:
+            application/json:
+              schema:
+                type: boolean
+                title: base64
+                description: Specifies if the message query param is base64 encoded, which may be required for binary data
         - name: compression
           in: query
-          schema:
-            title: compression
-            enum: &ref_8
-              - identity
-              - gzip
-              - br
-            description: Which compression algorithm to use for this request
+          content:
+            application/json:
+              schema:
+                title: compression
+                enum: &ref_11
+                  - identity
+                  - gzip
+                  - br
+                description: Which compression algorithm to use for this request
         - name: connect
           in: query
-          schema:
-            title: connect
-            enum: &ref_9
-              - v1
-            description: Define the version of the Connect protocol
+          content:
+            application/json:
+              schema:
+                type: number
+                title: Connect-Protocol-Version
+                enum: *ref_0
+                description: Define the version of the Connect protocol
+                const: 1
       responses:
         '200':
           description: Success
@@ -108,18 +125,34 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_3
+                allOf: &ref_5
+                  - anyOf:
+                      - required:
+                          - pagination
+                      - not:
+                          anyOf:
+                            - required:
+                                - pagination
+                  - anyOf:
+                      - required:
+                          - totalRecordCount
+                      - not:
+                          anyOf:
+                            - required:
+                                - totalRecordCount
+                properties: &ref_6
                   category:
                     type: array
                     items:
                       type: string
                     title: category
                   pagination:
+                    allOf:
+                      - type: object
+                        properties: *ref_1
+                        title: Pagination
+                        additionalProperties: false
                     title: pagination
-                    nullable: true
-                    type: object
-                    properties: *ref_0
-                    additionalProperties: false
                   totalRecordCount:
                     type: integer
                     title: total_record_count
@@ -132,35 +165,34 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_4
+                properties: &ref_7
                   code:
                     type: string
                     examples:
-                      - not_found
+                      - CodeNotFound
                     enum:
-                      - canceled
-                      - unknown
-                      - invalid_argument
-                      - deadline_exceeded
-                      - not_found
-                      - already_exists
-                      - permission_denied
-                      - resource_exhausted
-                      - failed_precondition
-                      - aborted
-                      - out_of_range
-                      - unimplemented
-                      - internal
-                      - unavailable
-                      - data_loss
-                      - unauthenticated
+                      - CodeCanceled
+                      - CodeUnknown
+                      - CodeInvalidArgument
+                      - CodeDeadlineExceeded
+                      - CodeNotFound
+                      - CodeAlreadyExists
+                      - CodePermissionDenied
+                      - CodeResourceExhausted
+                      - CodeFailedPrecondition
+                      - CodeAborted
+                      - CodeOutOfRange
+                      - CodeInternal
+                      - CodeUnavailable
+                      - CodeDataLoss
+                      - CodeUnauthenticated
                     description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
                   message:
                     type: string
                     description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
                   detail:
                     type: object
-                    properties: &ref_15
+                    properties: &ref_21
                       type:
                         type: string
                       value:
@@ -187,7 +219,7 @@ paths:
           schema:
             type: number
             title: Connect-Protocol-Version
-            enum: *ref_1
+            enum: *ref_0
             description: Define the version of the Connect protocol
             const: 1
         - name: Connect-Timeout-Ms
@@ -201,7 +233,9 @@ paths:
           application/json:
             schema:
               type: object
-              properties: *ref_2
+              allOf: *ref_2
+              anyOf: *ref_3
+              properties: *ref_4
               title: CategoryServiceReadRequest
               additionalProperties: false
         required: true
@@ -212,7 +246,8 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_3
+                allOf: *ref_5
+                properties: *ref_6
                 title: CategoryServiceReadResponse
                 additionalProperties: false
         default:
@@ -221,7 +256,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_4
+                properties: *ref_7
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -239,7 +274,7 @@ paths:
           schema:
             type: number
             title: Connect-Protocol-Version
-            enum: *ref_1
+            enum: *ref_0
             description: Define the version of the Connect protocol
             const: 1
         - name: Connect-Timeout-Ms
@@ -253,12 +288,63 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_16
+              allOf: &ref_22
+                - anyOf:
+                    - required:
+                        - audit
+                    - not:
+                        anyOf:
+                          - required:
+                              - audit
+              anyOf: &ref_23
+                - required:
+                    - audit
+                - not:
+                    anyOf:
+                      - required:
+                          - audit
+              properties: &ref_24
                 items:
                   type: array
                   items:
                     type: object
-                    properties: &ref_10
+                    allOf: &ref_12
+                      - anyOf:
+                          - required:
+                              - audit
+                          - not:
+                              anyOf:
+                                - required:
+                                    - audit
+                      - anyOf:
+                          - required:
+                              - description
+                          - not:
+                              anyOf:
+                                - required:
+                                    - description
+                      - anyOf:
+                          - required:
+                              - note
+                          - not:
+                              anyOf:
+                                - required:
+                                    - note
+                      - anyOf:
+                          - required:
+                              - reactivateAt
+                          - not:
+                              anyOf:
+                                - required:
+                                    - reactivateAt
+                      - anyOf:
+                          - required:
+                              - softDelete
+                          - not:
+                              anyOf:
+                                - required:
+                                    - softDelete
+                    properties: &ref_13
                       id:
                         type: string
                         title: id
@@ -274,11 +360,9 @@ paths:
                       description:
                         type: string
                         title: description
-                        nullable: true
                       note:
                         type: string
                         title: note
-                        nullable: true
                       tag:
                         type: array
                         items:
@@ -293,414 +377,424 @@ paths:
                       softDelete:
                         type: boolean
                         title: soft_delete
-                        nullable: true
                       reactivateAt:
+                        allOf:
+                          - type: string
+                            format: date-time
+                            description: |-
+                              A Timestamp represents a point in time independent of any time zone or local
+                               calendar, encoded as a count of seconds and fractions of seconds at
+                               nanosecond resolution. The count is relative to an epoch at UTC midnight on
+                               January 1, 1970, in the proleptic Gregorian calendar which extends the
+                               Gregorian calendar backwards to year one.
+
+                               All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+                               second table is needed for interpretation, using a [24-hour linear
+                               smear](https://developers.google.com/time/smear).
+
+                               The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+                               restricting to that range, we ensure that we can convert to and from [RFC
+                               3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+
+                               # Examples
+
+                               Example 1: Compute Timestamp from POSIX `time()`.
+
+                                   Timestamp timestamp;
+                                   timestamp.set_seconds(time(NULL));
+                                   timestamp.set_nanos(0);
+
+                               Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+
+                                   struct timeval tv;
+                                   gettimeofday(&tv, NULL);
+
+                                   Timestamp timestamp;
+                                   timestamp.set_seconds(tv.tv_sec);
+                                   timestamp.set_nanos(tv.tv_usec * 1000);
+
+                               Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+
+                                   FILETIME ft;
+                                   GetSystemTimeAsFileTime(&ft);
+                                   UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+
+                                   // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+                                   // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+                                   Timestamp timestamp;
+                                   timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+                                   timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+
+                               Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+
+                                   long millis = System.currentTimeMillis();
+
+                                   Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+                                       .setNanos((int) ((millis % 1000) * 1000000)).build();
+
+                               Example 5: Compute Timestamp from Java `Instant.now()`.
+
+                                   Instant now = Instant.now();
+
+                                   Timestamp timestamp =
+                                       Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+                                           .setNanos(now.getNano()).build();
+
+                               Example 6: Compute Timestamp from current time in Python.
+
+                                   timestamp = Timestamp()
+                                   timestamp.GetCurrentTime()
+
+                               # JSON Mapping
+
+                               In JSON format, the Timestamp type is encoded as a string in the
+                               [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
+                               format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
+                               where {year} is always expressed using four digits while {month}, {day},
+                               {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
+                               seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
+                               are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
+                               is required. A proto3 JSON serializer should always use UTC (as indicated by
+                               "Z") when printing the Timestamp type and a proto3 JSON parser should be
+                               able to accept both UTC and other timezones (as indicated by an offset).
+
+                               For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
+                               01:30 UTC on January 15, 2017.
+
+                               In JavaScript, one can convert a Date object to this format using the
+                               standard
+                               [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+                               method. In Python, a standard `datetime.datetime` object can be converted
+                               to this format using
+                               [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
+                               the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
+                               the Joda Time's [`ISODateTimeFormat.dateTime()`](
+                               http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
+                               ) to obtain a formatter capable of generating timestamps in this format.
                         title: reactivate_at
-                        nullable: true
-                        type: string
-                        format: date-time
-                        description: |-
-                          A Timestamp represents a point in time independent of any time zone or local
-                           calendar, encoded as a count of seconds and fractions of seconds at
-                           nanosecond resolution. The count is relative to an epoch at UTC midnight on
-                           January 1, 1970, in the proleptic Gregorian calendar which extends the
-                           Gregorian calendar backwards to year one.
-
-                           All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-                           second table is needed for interpretation, using a [24-hour linear
-                           smear](https://developers.google.com/time/smear).
-
-                           The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-                           restricting to that range, we ensure that we can convert to and from [RFC
-                           3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-
-                           # Examples
-
-                           Example 1: Compute Timestamp from POSIX `time()`.
-
-                               Timestamp timestamp;
-                               timestamp.set_seconds(time(NULL));
-                               timestamp.set_nanos(0);
-
-                           Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-
-                               struct timeval tv;
-                               gettimeofday(&tv, NULL);
-
-                               Timestamp timestamp;
-                               timestamp.set_seconds(tv.tv_sec);
-                               timestamp.set_nanos(tv.tv_usec * 1000);
-
-                           Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-
-                               FILETIME ft;
-                               GetSystemTimeAsFileTime(&ft);
-                               UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-
-                               // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-                               // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-                               Timestamp timestamp;
-                               timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-                               timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-
-                           Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-
-                               long millis = System.currentTimeMillis();
-
-                               Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-                                   .setNanos((int) ((millis % 1000) * 1000000)).build();
-
-                           Example 5: Compute Timestamp from Java `Instant.now()`.
-
-                               Instant now = Instant.now();
-
-                               Timestamp timestamp =
-                                   Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-                                       .setNanos(now.getNano()).build();
-
-                           Example 6: Compute Timestamp from current time in Python.
-
-                               timestamp = Timestamp()
-                               timestamp.GetCurrentTime()
-
-                           # JSON Mapping
-
-                           In JSON format, the Timestamp type is encoded as a string in the
-                           [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
-                           format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
-                           where {year} is always expressed using four digits while {month}, {day},
-                           {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
-                           seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
-                           are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
-                           is required. A proto3 JSON serializer should always use UTC (as indicated by
-                           "Z") when printing the Timestamp type and a proto3 JSON parser should be
-                           able to accept both UTC and other timezones (as indicated by an offset).
-
-                           For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
-                           01:30 UTC on January 15, 2017.
-
-                           In JavaScript, one can convert a Date object to this format using the
-                           standard
-                           [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-                           method. In Python, a standard `datetime.datetime` object can be converted
-                           to this format using
-                           [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
-                           the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
-                           the Joda Time's [`ISODateTimeFormat.dateTime()`](
-                           http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
-                           ) to obtain a formatter capable of generating timestamps in this format.
                       audit:
+                        allOf:
+                          - type: object
+                            properties: &ref_9
+                              created_by:
+                                allOf:
+                                  - type: string
+                                    title: AuditUpdaterEnum
+                                    enum: &ref_8
+                                      - AUDIT_UPDATER_ENUM_UNSPECIFIED
+                                      - AUDIT_UPDATER_ENUM_FRONTEND
+                                      - AUDIT_UPDATER_ENUM_SYSOPS
+                                title: created_by
+                              created_at:
+                                allOf:
+                                  - type: string
+                                    format: date-time
+                                    description: |-
+                                      A Timestamp represents a point in time independent of any time zone or local
+                                       calendar, encoded as a count of seconds and fractions of seconds at
+                                       nanosecond resolution. The count is relative to an epoch at UTC midnight on
+                                       January 1, 1970, in the proleptic Gregorian calendar which extends the
+                                       Gregorian calendar backwards to year one.
+
+                                       All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+                                       second table is needed for interpretation, using a [24-hour linear
+                                       smear](https://developers.google.com/time/smear).
+
+                                       The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+                                       restricting to that range, we ensure that we can convert to and from [RFC
+                                       3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+
+                                       # Examples
+
+                                       Example 1: Compute Timestamp from POSIX `time()`.
+
+                                           Timestamp timestamp;
+                                           timestamp.set_seconds(time(NULL));
+                                           timestamp.set_nanos(0);
+
+                                       Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+
+                                           struct timeval tv;
+                                           gettimeofday(&tv, NULL);
+
+                                           Timestamp timestamp;
+                                           timestamp.set_seconds(tv.tv_sec);
+                                           timestamp.set_nanos(tv.tv_usec * 1000);
+
+                                       Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+
+                                           FILETIME ft;
+                                           GetSystemTimeAsFileTime(&ft);
+                                           UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+
+                                           // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+                                           // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+                                           Timestamp timestamp;
+                                           timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+                                           timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+
+                                       Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+
+                                           long millis = System.currentTimeMillis();
+
+                                           Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+                                               .setNanos((int) ((millis % 1000) * 1000000)).build();
+
+                                       Example 5: Compute Timestamp from Java `Instant.now()`.
+
+                                           Instant now = Instant.now();
+
+                                           Timestamp timestamp =
+                                               Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+                                                   .setNanos(now.getNano()).build();
+
+                                       Example 6: Compute Timestamp from current time in Python.
+
+                                           timestamp = Timestamp()
+                                           timestamp.GetCurrentTime()
+
+                                       # JSON Mapping
+
+                                       In JSON format, the Timestamp type is encoded as a string in the
+                                       [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
+                                       format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
+                                       where {year} is always expressed using four digits while {month}, {day},
+                                       {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
+                                       seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
+                                       are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
+                                       is required. A proto3 JSON serializer should always use UTC (as indicated by
+                                       "Z") when printing the Timestamp type and a proto3 JSON parser should be
+                                       able to accept both UTC and other timezones (as indicated by an offset).
+
+                                       For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
+                                       01:30 UTC on January 15, 2017.
+
+                                       In JavaScript, one can convert a Date object to this format using the
+                                       standard
+                                       [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+                                       method. In Python, a standard `datetime.datetime` object can be converted
+                                       to this format using
+                                       [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
+                                       the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
+                                       the Joda Time's [`ISODateTimeFormat.dateTime()`](
+                                       http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
+                                       ) to obtain a formatter capable of generating timestamps in this format.
+                                title: created_at
+                              updated_by:
+                                allOf:
+                                  - type: string
+                                    title: AuditUpdaterEnum
+                                    enum: *ref_8
+                                title: updated_by
+                              updated_at:
+                                allOf:
+                                  - type: string
+                                    format: date-time
+                                    description: |-
+                                      A Timestamp represents a point in time independent of any time zone or local
+                                       calendar, encoded as a count of seconds and fractions of seconds at
+                                       nanosecond resolution. The count is relative to an epoch at UTC midnight on
+                                       January 1, 1970, in the proleptic Gregorian calendar which extends the
+                                       Gregorian calendar backwards to year one.
+
+                                       All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+                                       second table is needed for interpretation, using a [24-hour linear
+                                       smear](https://developers.google.com/time/smear).
+
+                                       The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+                                       restricting to that range, we ensure that we can convert to and from [RFC
+                                       3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+
+                                       # Examples
+
+                                       Example 1: Compute Timestamp from POSIX `time()`.
+
+                                           Timestamp timestamp;
+                                           timestamp.set_seconds(time(NULL));
+                                           timestamp.set_nanos(0);
+
+                                       Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+
+                                           struct timeval tv;
+                                           gettimeofday(&tv, NULL);
+
+                                           Timestamp timestamp;
+                                           timestamp.set_seconds(tv.tv_sec);
+                                           timestamp.set_nanos(tv.tv_usec * 1000);
+
+                                       Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+
+                                           FILETIME ft;
+                                           GetSystemTimeAsFileTime(&ft);
+                                           UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+
+                                           // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+                                           // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+                                           Timestamp timestamp;
+                                           timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+                                           timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+
+                                       Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+
+                                           long millis = System.currentTimeMillis();
+
+                                           Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+                                               .setNanos((int) ((millis % 1000) * 1000000)).build();
+
+                                       Example 5: Compute Timestamp from Java `Instant.now()`.
+
+                                           Instant now = Instant.now();
+
+                                           Timestamp timestamp =
+                                               Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+                                                   .setNanos(now.getNano()).build();
+
+                                       Example 6: Compute Timestamp from current time in Python.
+
+                                           timestamp = Timestamp()
+                                           timestamp.GetCurrentTime()
+
+                                       # JSON Mapping
+
+                                       In JSON format, the Timestamp type is encoded as a string in the
+                                       [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
+                                       format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
+                                       where {year} is always expressed using four digits while {month}, {day},
+                                       {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
+                                       seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
+                                       are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
+                                       is required. A proto3 JSON serializer should always use UTC (as indicated by
+                                       "Z") when printing the Timestamp type and a proto3 JSON parser should be
+                                       able to accept both UTC and other timezones (as indicated by an offset).
+
+                                       For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
+                                       01:30 UTC on January 15, 2017.
+
+                                       In JavaScript, one can convert a Date object to this format using the
+                                       standard
+                                       [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+                                       method. In Python, a standard `datetime.datetime` object can be converted
+                                       to this format using
+                                       [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
+                                       the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
+                                       the Joda Time's [`ISODateTimeFormat.dateTime()`](
+                                       http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
+                                       ) to obtain a formatter capable of generating timestamps in this format.
+                                title: updated_at
+                              deleted_by:
+                                allOf:
+                                  - type: string
+                                    title: AuditUpdaterEnum
+                                    enum: *ref_8
+                                title: deleted_by
+                              deleted_at:
+                                allOf:
+                                  - type: string
+                                    format: date-time
+                                    description: |-
+                                      A Timestamp represents a point in time independent of any time zone or local
+                                       calendar, encoded as a count of seconds and fractions of seconds at
+                                       nanosecond resolution. The count is relative to an epoch at UTC midnight on
+                                       January 1, 1970, in the proleptic Gregorian calendar which extends the
+                                       Gregorian calendar backwards to year one.
+
+                                       All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+                                       second table is needed for interpretation, using a [24-hour linear
+                                       smear](https://developers.google.com/time/smear).
+
+                                       The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+                                       restricting to that range, we ensure that we can convert to and from [RFC
+                                       3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+
+                                       # Examples
+
+                                       Example 1: Compute Timestamp from POSIX `time()`.
+
+                                           Timestamp timestamp;
+                                           timestamp.set_seconds(time(NULL));
+                                           timestamp.set_nanos(0);
+
+                                       Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+
+                                           struct timeval tv;
+                                           gettimeofday(&tv, NULL);
+
+                                           Timestamp timestamp;
+                                           timestamp.set_seconds(tv.tv_sec);
+                                           timestamp.set_nanos(tv.tv_usec * 1000);
+
+                                       Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+
+                                           FILETIME ft;
+                                           GetSystemTimeAsFileTime(&ft);
+                                           UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+
+                                           // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+                                           // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+                                           Timestamp timestamp;
+                                           timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+                                           timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+
+                                       Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+
+                                           long millis = System.currentTimeMillis();
+
+                                           Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+                                               .setNanos((int) ((millis % 1000) * 1000000)).build();
+
+                                       Example 5: Compute Timestamp from Java `Instant.now()`.
+
+                                           Instant now = Instant.now();
+
+                                           Timestamp timestamp =
+                                               Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+                                                   .setNanos(now.getNano()).build();
+
+                                       Example 6: Compute Timestamp from current time in Python.
+
+                                           timestamp = Timestamp()
+                                           timestamp.GetCurrentTime()
+
+                                       # JSON Mapping
+
+                                       In JSON format, the Timestamp type is encoded as a string in the
+                                       [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
+                                       format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
+                                       where {year} is always expressed using four digits while {month}, {day},
+                                       {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
+                                       seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
+                                       are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
+                                       is required. A proto3 JSON serializer should always use UTC (as indicated by
+                                       "Z") when printing the Timestamp type and a proto3 JSON parser should be
+                                       able to accept both UTC and other timezones (as indicated by an offset).
+
+                                       For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
+                                       01:30 UTC on January 15, 2017.
+
+                                       In JavaScript, one can convert a Date object to this format using the
+                                       standard
+                                       [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+                                       method. In Python, a standard `datetime.datetime` object can be converted
+                                       to this format using
+                                       [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
+                                       the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
+                                       the Joda Time's [`ISODateTimeFormat.dateTime()`](
+                                       http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
+                                       ) to obtain a formatter capable of generating timestamps in this format.
+                                title: deleted_at
+                            title: Audit
+                            additionalProperties: false
                         title: audit
-                        nullable: true
-                        type: object
-                        properties: &ref_6
-                          created_by:
-                            title: created_by
-                            type: string
-                            enum: &ref_5
-                              - AUDIT_UPDATER_ENUM_UNSPECIFIED
-                              - AUDIT_UPDATER_ENUM_FRONTEND
-                              - AUDIT_UPDATER_ENUM_SYSOPS
-                          created_at:
-                            title: created_at
-                            type: string
-                            format: date-time
-                            description: |-
-                              A Timestamp represents a point in time independent of any time zone or local
-                               calendar, encoded as a count of seconds and fractions of seconds at
-                               nanosecond resolution. The count is relative to an epoch at UTC midnight on
-                               January 1, 1970, in the proleptic Gregorian calendar which extends the
-                               Gregorian calendar backwards to year one.
-
-                               All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-                               second table is needed for interpretation, using a [24-hour linear
-                               smear](https://developers.google.com/time/smear).
-
-                               The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-                               restricting to that range, we ensure that we can convert to and from [RFC
-                               3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-
-                               # Examples
-
-                               Example 1: Compute Timestamp from POSIX `time()`.
-
-                                   Timestamp timestamp;
-                                   timestamp.set_seconds(time(NULL));
-                                   timestamp.set_nanos(0);
-
-                               Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-
-                                   struct timeval tv;
-                                   gettimeofday(&tv, NULL);
-
-                                   Timestamp timestamp;
-                                   timestamp.set_seconds(tv.tv_sec);
-                                   timestamp.set_nanos(tv.tv_usec * 1000);
-
-                               Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-
-                                   FILETIME ft;
-                                   GetSystemTimeAsFileTime(&ft);
-                                   UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-
-                                   // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-                                   // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-                                   Timestamp timestamp;
-                                   timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-                                   timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-
-                               Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-
-                                   long millis = System.currentTimeMillis();
-
-                                   Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-                                       .setNanos((int) ((millis % 1000) * 1000000)).build();
-
-                               Example 5: Compute Timestamp from Java `Instant.now()`.
-
-                                   Instant now = Instant.now();
-
-                                   Timestamp timestamp =
-                                       Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-                                           .setNanos(now.getNano()).build();
-
-                               Example 6: Compute Timestamp from current time in Python.
-
-                                   timestamp = Timestamp()
-                                   timestamp.GetCurrentTime()
-
-                               # JSON Mapping
-
-                               In JSON format, the Timestamp type is encoded as a string in the
-                               [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
-                               format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
-                               where {year} is always expressed using four digits while {month}, {day},
-                               {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
-                               seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
-                               are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
-                               is required. A proto3 JSON serializer should always use UTC (as indicated by
-                               "Z") when printing the Timestamp type and a proto3 JSON parser should be
-                               able to accept both UTC and other timezones (as indicated by an offset).
-
-                               For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
-                               01:30 UTC on January 15, 2017.
-
-                               In JavaScript, one can convert a Date object to this format using the
-                               standard
-                               [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-                               method. In Python, a standard `datetime.datetime` object can be converted
-                               to this format using
-                               [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
-                               the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
-                               the Joda Time's [`ISODateTimeFormat.dateTime()`](
-                               http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
-                               ) to obtain a formatter capable of generating timestamps in this format.
-                          updated_by:
-                            title: updated_by
-                            type: string
-                            enum: *ref_5
-                          updated_at:
-                            title: updated_at
-                            type: string
-                            format: date-time
-                            description: |-
-                              A Timestamp represents a point in time independent of any time zone or local
-                               calendar, encoded as a count of seconds and fractions of seconds at
-                               nanosecond resolution. The count is relative to an epoch at UTC midnight on
-                               January 1, 1970, in the proleptic Gregorian calendar which extends the
-                               Gregorian calendar backwards to year one.
-
-                               All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-                               second table is needed for interpretation, using a [24-hour linear
-                               smear](https://developers.google.com/time/smear).
-
-                               The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-                               restricting to that range, we ensure that we can convert to and from [RFC
-                               3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-
-                               # Examples
-
-                               Example 1: Compute Timestamp from POSIX `time()`.
-
-                                   Timestamp timestamp;
-                                   timestamp.set_seconds(time(NULL));
-                                   timestamp.set_nanos(0);
-
-                               Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-
-                                   struct timeval tv;
-                                   gettimeofday(&tv, NULL);
-
-                                   Timestamp timestamp;
-                                   timestamp.set_seconds(tv.tv_sec);
-                                   timestamp.set_nanos(tv.tv_usec * 1000);
-
-                               Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-
-                                   FILETIME ft;
-                                   GetSystemTimeAsFileTime(&ft);
-                                   UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-
-                                   // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-                                   // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-                                   Timestamp timestamp;
-                                   timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-                                   timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-
-                               Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-
-                                   long millis = System.currentTimeMillis();
-
-                                   Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-                                       .setNanos((int) ((millis % 1000) * 1000000)).build();
-
-                               Example 5: Compute Timestamp from Java `Instant.now()`.
-
-                                   Instant now = Instant.now();
-
-                                   Timestamp timestamp =
-                                       Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-                                           .setNanos(now.getNano()).build();
-
-                               Example 6: Compute Timestamp from current time in Python.
-
-                                   timestamp = Timestamp()
-                                   timestamp.GetCurrentTime()
-
-                               # JSON Mapping
-
-                               In JSON format, the Timestamp type is encoded as a string in the
-                               [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
-                               format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
-                               where {year} is always expressed using four digits while {month}, {day},
-                               {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
-                               seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
-                               are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
-                               is required. A proto3 JSON serializer should always use UTC (as indicated by
-                               "Z") when printing the Timestamp type and a proto3 JSON parser should be
-                               able to accept both UTC and other timezones (as indicated by an offset).
-
-                               For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
-                               01:30 UTC on January 15, 2017.
-
-                               In JavaScript, one can convert a Date object to this format using the
-                               standard
-                               [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-                               method. In Python, a standard `datetime.datetime` object can be converted
-                               to this format using
-                               [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
-                               the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
-                               the Joda Time's [`ISODateTimeFormat.dateTime()`](
-                               http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
-                               ) to obtain a formatter capable of generating timestamps in this format.
-                          deleted_by:
-                            title: deleted_by
-                            type: string
-                            enum: *ref_5
-                          deleted_at:
-                            title: deleted_at
-                            type: string
-                            format: date-time
-                            description: |-
-                              A Timestamp represents a point in time independent of any time zone or local
-                               calendar, encoded as a count of seconds and fractions of seconds at
-                               nanosecond resolution. The count is relative to an epoch at UTC midnight on
-                               January 1, 1970, in the proleptic Gregorian calendar which extends the
-                               Gregorian calendar backwards to year one.
-
-                               All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-                               second table is needed for interpretation, using a [24-hour linear
-                               smear](https://developers.google.com/time/smear).
-
-                               The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-                               restricting to that range, we ensure that we can convert to and from [RFC
-                               3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-
-                               # Examples
-
-                               Example 1: Compute Timestamp from POSIX `time()`.
-
-                                   Timestamp timestamp;
-                                   timestamp.set_seconds(time(NULL));
-                                   timestamp.set_nanos(0);
-
-                               Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-
-                                   struct timeval tv;
-                                   gettimeofday(&tv, NULL);
-
-                                   Timestamp timestamp;
-                                   timestamp.set_seconds(tv.tv_sec);
-                                   timestamp.set_nanos(tv.tv_usec * 1000);
-
-                               Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-
-                                   FILETIME ft;
-                                   GetSystemTimeAsFileTime(&ft);
-                                   UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-
-                                   // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-                                   // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-                                   Timestamp timestamp;
-                                   timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-                                   timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-
-                               Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-
-                                   long millis = System.currentTimeMillis();
-
-                                   Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-                                       .setNanos((int) ((millis % 1000) * 1000000)).build();
-
-                               Example 5: Compute Timestamp from Java `Instant.now()`.
-
-                                   Instant now = Instant.now();
-
-                                   Timestamp timestamp =
-                                       Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-                                           .setNanos(now.getNano()).build();
-
-                               Example 6: Compute Timestamp from current time in Python.
-
-                                   timestamp = Timestamp()
-                                   timestamp.GetCurrentTime()
-
-                               # JSON Mapping
-
-                               In JSON format, the Timestamp type is encoded as a string in the
-                               [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
-                               format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
-                               where {year} is always expressed using four digits while {month}, {day},
-                               {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
-                               seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
-                               are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
-                               is required. A proto3 JSON serializer should always use UTC (as indicated by
-                               "Z") when printing the Timestamp type and a proto3 JSON parser should be
-                               able to accept both UTC and other timezones (as indicated by an offset).
-
-                               For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
-                               01:30 UTC on January 15, 2017.
-
-                               In JavaScript, one can convert a Date object to this format using the
-                               standard
-                               [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-                               method. In Python, a standard `datetime.datetime` object can be converted
-                               to this format using
-                               [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
-                               the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
-                               the Joda Time's [`ISODateTimeFormat.dateTime()`](
-                               http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
-                               ) to obtain a formatter capable of generating timestamps in this format.
-                        additionalProperties: false
                     title: Item
                     additionalProperties: false
                   title: items
                 audit:
+                  allOf:
+                    - type: object
+                      properties: *ref_9
+                      title: Audit
+                      additionalProperties: false
                   title: audit
-                  nullable: true
-                  type: object
-                  properties: *ref_6
-                  additionalProperties: false
               title: ItemServiceCreateRequest
               additionalProperties: false
         required: true
@@ -711,7 +805,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_17
+                properties: &ref_25
                   itemIds:
                     type: array
                     items:
@@ -725,7 +819,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_4
+                properties: *ref_7
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -743,7 +837,7 @@ paths:
           schema:
             type: number
             title: Connect-Protocol-Version
-            enum: *ref_1
+            enum: *ref_0
             description: Define the version of the Connect protocol
             const: 1
         - name: Connect-Timeout-Ms
@@ -758,479 +852,79 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_11
-                  id:
-                    type: array
-                    items:
-                      type: string
-                    title: id
+                properties: &ref_14
                   userId:
+                    type: string
+                    title: userId
+                  tagFilter:
                     type: array
                     items:
                       type: string
-                    title: user_id
-                  summary:
+                    title: tagFilter
+                  categoryFilter:
                     type: array
                     items:
                       type: string
-                    title: summary
-                  category:
-                    type: array
-                    items:
-                      type: string
-                    title: category
-                  description:
-                    type: array
-                    items:
-                      type: string
-                    title: description
-                  note:
-                    type: array
-                    items:
-                      type: string
-                    title: note
-                  tag:
-                    type: array
-                    items:
-                      type: string
-                    title: tag
-                  properties:
-                    type: array
-                    items:
-                      type: string
-                    title: properties
-                  reactivateAt:
-                    type: array
-                    items:
-                      type: string
-                      format: date-time
-                      description: |-
-                        A Timestamp represents a point in time independent of any time zone or local
-                         calendar, encoded as a count of seconds and fractions of seconds at
-                         nanosecond resolution. The count is relative to an epoch at UTC midnight on
-                         January 1, 1970, in the proleptic Gregorian calendar which extends the
-                         Gregorian calendar backwards to year one.
-
-                         All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-                         second table is needed for interpretation, using a [24-hour linear
-                         smear](https://developers.google.com/time/smear).
-
-                         The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-                         restricting to that range, we ensure that we can convert to and from [RFC
-                         3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-
-                         # Examples
-
-                         Example 1: Compute Timestamp from POSIX `time()`.
-
-                             Timestamp timestamp;
-                             timestamp.set_seconds(time(NULL));
-                             timestamp.set_nanos(0);
-
-                         Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-
-                             struct timeval tv;
-                             gettimeofday(&tv, NULL);
-
-                             Timestamp timestamp;
-                             timestamp.set_seconds(tv.tv_sec);
-                             timestamp.set_nanos(tv.tv_usec * 1000);
-
-                         Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-
-                             FILETIME ft;
-                             GetSystemTimeAsFileTime(&ft);
-                             UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-
-                             // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-                             // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-                             Timestamp timestamp;
-                             timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-                             timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-
-                         Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-
-                             long millis = System.currentTimeMillis();
-
-                             Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-                                 .setNanos((int) ((millis % 1000) * 1000000)).build();
-
-                         Example 5: Compute Timestamp from Java `Instant.now()`.
-
-                             Instant now = Instant.now();
-
-                             Timestamp timestamp =
-                                 Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-                                     .setNanos(now.getNano()).build();
-
-                         Example 6: Compute Timestamp from current time in Python.
-
-                             timestamp = Timestamp()
-                             timestamp.GetCurrentTime()
-
-                         # JSON Mapping
-
-                         In JSON format, the Timestamp type is encoded as a string in the
-                         [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
-                         format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
-                         where {year} is always expressed using four digits while {month}, {day},
-                         {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
-                         seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
-                         are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
-                         is required. A proto3 JSON serializer should always use UTC (as indicated by
-                         "Z") when printing the Timestamp type and a proto3 JSON parser should be
-                         able to accept both UTC and other timezones (as indicated by an offset).
-
-                         For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
-                         01:30 UTC on January 15, 2017.
-
-                         In JavaScript, one can convert a Date object to this format using the
-                         standard
-                         [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-                         method. In Python, a standard `datetime.datetime` object can be converted
-                         to this format using
-                         [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
-                         the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
-                         the Joda Time's [`ISODateTimeFormat.dateTime()`](
-                         http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
-                         ) to obtain a formatter capable of generating timestamps in this format.
-                    title: reactivate_at
-                  createdAt:
-                    type: array
-                    items:
-                      type: string
-                      format: date-time
-                      description: |-
-                        A Timestamp represents a point in time independent of any time zone or local
-                         calendar, encoded as a count of seconds and fractions of seconds at
-                         nanosecond resolution. The count is relative to an epoch at UTC midnight on
-                         January 1, 1970, in the proleptic Gregorian calendar which extends the
-                         Gregorian calendar backwards to year one.
-
-                         All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-                         second table is needed for interpretation, using a [24-hour linear
-                         smear](https://developers.google.com/time/smear).
-
-                         The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-                         restricting to that range, we ensure that we can convert to and from [RFC
-                         3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-
-                         # Examples
-
-                         Example 1: Compute Timestamp from POSIX `time()`.
-
-                             Timestamp timestamp;
-                             timestamp.set_seconds(time(NULL));
-                             timestamp.set_nanos(0);
-
-                         Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-
-                             struct timeval tv;
-                             gettimeofday(&tv, NULL);
-
-                             Timestamp timestamp;
-                             timestamp.set_seconds(tv.tv_sec);
-                             timestamp.set_nanos(tv.tv_usec * 1000);
-
-                         Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-
-                             FILETIME ft;
-                             GetSystemTimeAsFileTime(&ft);
-                             UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-
-                             // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-                             // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-                             Timestamp timestamp;
-                             timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-                             timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-
-                         Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-
-                             long millis = System.currentTimeMillis();
-
-                             Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-                                 .setNanos((int) ((millis % 1000) * 1000000)).build();
-
-                         Example 5: Compute Timestamp from Java `Instant.now()`.
-
-                             Instant now = Instant.now();
-
-                             Timestamp timestamp =
-                                 Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-                                     .setNanos(now.getNano()).build();
-
-                         Example 6: Compute Timestamp from current time in Python.
-
-                             timestamp = Timestamp()
-                             timestamp.GetCurrentTime()
-
-                         # JSON Mapping
-
-                         In JSON format, the Timestamp type is encoded as a string in the
-                         [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
-                         format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
-                         where {year} is always expressed using four digits while {month}, {day},
-                         {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
-                         seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
-                         are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
-                         is required. A proto3 JSON serializer should always use UTC (as indicated by
-                         "Z") when printing the Timestamp type and a proto3 JSON parser should be
-                         able to accept both UTC and other timezones (as indicated by an offset).
-
-                         For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
-                         01:30 UTC on January 15, 2017.
-
-                         In JavaScript, one can convert a Date object to this format using the
-                         standard
-                         [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-                         method. In Python, a standard `datetime.datetime` object can be converted
-                         to this format using
-                         [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
-                         the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
-                         the Joda Time's [`ISODateTimeFormat.dateTime()`](
-                         http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
-                         ) to obtain a formatter capable of generating timestamps in this format.
-                    title: created_at
-                  updatedAt:
-                    type: array
-                    items:
-                      type: string
-                      format: date-time
-                      description: |-
-                        A Timestamp represents a point in time independent of any time zone or local
-                         calendar, encoded as a count of seconds and fractions of seconds at
-                         nanosecond resolution. The count is relative to an epoch at UTC midnight on
-                         January 1, 1970, in the proleptic Gregorian calendar which extends the
-                         Gregorian calendar backwards to year one.
-
-                         All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-                         second table is needed for interpretation, using a [24-hour linear
-                         smear](https://developers.google.com/time/smear).
-
-                         The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-                         restricting to that range, we ensure that we can convert to and from [RFC
-                         3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-
-                         # Examples
-
-                         Example 1: Compute Timestamp from POSIX `time()`.
-
-                             Timestamp timestamp;
-                             timestamp.set_seconds(time(NULL));
-                             timestamp.set_nanos(0);
-
-                         Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-
-                             struct timeval tv;
-                             gettimeofday(&tv, NULL);
-
-                             Timestamp timestamp;
-                             timestamp.set_seconds(tv.tv_sec);
-                             timestamp.set_nanos(tv.tv_usec * 1000);
-
-                         Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-
-                             FILETIME ft;
-                             GetSystemTimeAsFileTime(&ft);
-                             UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-
-                             // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-                             // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-                             Timestamp timestamp;
-                             timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-                             timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-
-                         Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-
-                             long millis = System.currentTimeMillis();
-
-                             Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-                                 .setNanos((int) ((millis % 1000) * 1000000)).build();
-
-                         Example 5: Compute Timestamp from Java `Instant.now()`.
-
-                             Instant now = Instant.now();
-
-                             Timestamp timestamp =
-                                 Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-                                     .setNanos(now.getNano()).build();
-
-                         Example 6: Compute Timestamp from current time in Python.
-
-                             timestamp = Timestamp()
-                             timestamp.GetCurrentTime()
-
-                         # JSON Mapping
-
-                         In JSON format, the Timestamp type is encoded as a string in the
-                         [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
-                         format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
-                         where {year} is always expressed using four digits while {month}, {day},
-                         {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
-                         seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
-                         are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
-                         is required. A proto3 JSON serializer should always use UTC (as indicated by
-                         "Z") when printing the Timestamp type and a proto3 JSON parser should be
-                         able to accept both UTC and other timezones (as indicated by an offset).
-
-                         For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
-                         01:30 UTC on January 15, 2017.
-
-                         In JavaScript, one can convert a Date object to this format using the
-                         standard
-                         [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-                         method. In Python, a standard `datetime.datetime` object can be converted
-                         to this format using
-                         [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
-                         the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
-                         the Joda Time's [`ISODateTimeFormat.dateTime()`](
-                         http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
-                         ) to obtain a formatter capable of generating timestamps in this format.
-                    title: updated_at
-                  deletedAt:
-                    type: array
-                    items:
-                      type: string
-                      format: date-time
-                      description: |-
-                        A Timestamp represents a point in time independent of any time zone or local
-                         calendar, encoded as a count of seconds and fractions of seconds at
-                         nanosecond resolution. The count is relative to an epoch at UTC midnight on
-                         January 1, 1970, in the proleptic Gregorian calendar which extends the
-                         Gregorian calendar backwards to year one.
-
-                         All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-                         second table is needed for interpretation, using a [24-hour linear
-                         smear](https://developers.google.com/time/smear).
-
-                         The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-                         restricting to that range, we ensure that we can convert to and from [RFC
-                         3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-
-                         # Examples
-
-                         Example 1: Compute Timestamp from POSIX `time()`.
-
-                             Timestamp timestamp;
-                             timestamp.set_seconds(time(NULL));
-                             timestamp.set_nanos(0);
-
-                         Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-
-                             struct timeval tv;
-                             gettimeofday(&tv, NULL);
-
-                             Timestamp timestamp;
-                             timestamp.set_seconds(tv.tv_sec);
-                             timestamp.set_nanos(tv.tv_usec * 1000);
-
-                         Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-
-                             FILETIME ft;
-                             GetSystemTimeAsFileTime(&ft);
-                             UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-
-                             // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-                             // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-                             Timestamp timestamp;
-                             timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-                             timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-
-                         Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-
-                             long millis = System.currentTimeMillis();
-
-                             Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-                                 .setNanos((int) ((millis % 1000) * 1000000)).build();
-
-                         Example 5: Compute Timestamp from Java `Instant.now()`.
-
-                             Instant now = Instant.now();
-
-                             Timestamp timestamp =
-                                 Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-                                     .setNanos(now.getNano()).build();
-
-                         Example 6: Compute Timestamp from current time in Python.
-
-                             timestamp = Timestamp()
-                             timestamp.GetCurrentTime()
-
-                         # JSON Mapping
-
-                         In JSON format, the Timestamp type is encoded as a string in the
-                         [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
-                         format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
-                         where {year} is always expressed using four digits while {month}, {day},
-                         {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
-                         seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
-                         are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
-                         is required. A proto3 JSON serializer should always use UTC (as indicated by
-                         "Z") when printing the Timestamp type and a proto3 JSON parser should be
-                         able to accept both UTC and other timezones (as indicated by an offset).
-
-                         For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
-                         01:30 UTC on January 15, 2017.
-
-                         In JavaScript, one can convert a Date object to this format using the
-                         standard
-                         [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-                         method. In Python, a standard `datetime.datetime` object can be converted
-                         to this format using
-                         [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
-                         the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
-                         the Joda Time's [`ISODateTimeFormat.dateTime()`](
-                         http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
-                         ) to obtain a formatter capable of generating timestamps in this format.
-                    title: deleted_at
-                  createdBy:
-                    type: array
-                    items:
-                      type: string
-                    title: created_by
-                  updatedBy:
-                    type: array
-                    items:
-                      type: string
-                    title: updated_by
-                  deletedBy:
-                    type: array
-                    items:
-                      type: string
-                    title: deleted_by
-                  pagination:
-                    title: pagination
-                    nullable: true
-                    type: object
-                    properties: *ref_0
-                    additionalProperties: false
+                    title: categoryFilter
+                  searchQuery:
+                    type: string
+                    title: searchQuery
+                  fromDate:
+                    type: string
+                    title: fromDate
+                  toDate:
+                    type: string
+                    title: toDate
+                    description: |-
+                      google.protobuf.Timestamp fromDate  = 204 [json_name = "fromDate"];
+                       google.protobuf.Timestamp toDate  = 205 [json_name = "toDate"];
+                  pageSize:
+                    type: integer
+                    title: pageSize
+                    format: int32
+                  pageNumber:
+                    type: integer
+                    title: pageNumber
+                    format: int32
+                  sortQuery:
+                    type: string
+                    title: sortQuery
                 title: ItemServiceReadRequest
                 additionalProperties: false
         - name: encoding
           in: query
-          required: true
-          schema:
-            title: encoding
-            enum: *ref_7
-            description: Define which encoding or 'Message-Codec' to use
+          content:
+            application/json:
+              schema:
+                title: encoding
+                enum: *ref_10
+                description: Define which encoding or 'Message-Codec' to use
         - name: base64
           in: query
-          schema:
-            type: boolean
-            title: base64
-            description: Specifies if the message query param is base64 encoded, which may be required for binary data
+          content:
+            application/json:
+              schema:
+                type: boolean
+                title: base64
+                description: Specifies if the message query param is base64 encoded, which may be required for binary data
         - name: compression
           in: query
-          schema:
-            title: compression
-            enum: *ref_8
-            description: Which compression algorithm to use for this request
+          content:
+            application/json:
+              schema:
+                title: compression
+                enum: *ref_11
+                description: Which compression algorithm to use for this request
         - name: connect
           in: query
-          schema:
-            title: connect
-            enum: *ref_9
-            description: Define the version of the Connect protocol
+          content:
+            application/json:
+              schema:
+                type: number
+                title: Connect-Protocol-Version
+                enum: *ref_0
+                description: Define the version of the Connect protocol
+                const: 1
       responses:
         '200':
           description: Success
@@ -1238,25 +932,62 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_12
+                properties: &ref_15
                   items:
                     type: array
                     items:
                       type: object
-                      properties: *ref_10
+                      allOf: *ref_12
+                      properties: *ref_13
                       title: Item
                       additionalProperties: false
                     title: items
-                  pagination:
-                    title: pagination
-                    nullable: true
-                    type: object
-                    properties: *ref_0
-                    additionalProperties: false
-                  totalRecordCount:
+                  category:
+                    type: array
+                    items:
+                      type: string
+                    title: category
+                  tag:
+                    type: array
+                    items:
+                      type: string
+                    title: tag
+                  userId:
+                    type: string
+                    title: userId
+                  tagFilter:
+                    type: array
+                    items:
+                      type: string
+                    title: tagFilter
+                  categoryFilter:
+                    type: array
+                    items:
+                      type: string
+                    title: categoryFilter
+                  searchQuery:
+                    type: string
+                    title: searchQuery
+                  fromDate:
+                    type: string
+                    title: fromDate
+                  toDate:
+                    type: string
+                    title: toDate
+                    description: |-
+                      google.protobuf.Timestamp fromDate  = 204 [json_name = "fromDate"];
+                       google.protobuf.Timestamp toDate  = 205 [json_name = "toDate"];
+                  pageSize:
                     type: integer
-                    title: total_record_count
+                    title: pageSize
                     format: int32
+                  pageNumber:
+                    type: integer
+                    title: pageNumber
+                    format: int32
+                  sortQuery:
+                    type: string
+                    title: sortQuery
                 title: ItemServiceReadResponse
                 additionalProperties: false
         default:
@@ -1265,7 +996,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_4
+                properties: *ref_7
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -1282,7 +1013,7 @@ paths:
           schema:
             type: number
             title: Connect-Protocol-Version
-            enum: *ref_1
+            enum: *ref_0
             description: Define the version of the Connect protocol
             const: 1
         - name: Connect-Timeout-Ms
@@ -1296,7 +1027,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: *ref_11
+              properties: *ref_14
               title: ItemServiceReadRequest
               additionalProperties: false
         required: true
@@ -1307,7 +1038,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_12
+                properties: *ref_15
                 title: ItemServiceReadResponse
                 additionalProperties: false
         default:
@@ -1316,7 +1047,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_4
+                properties: *ref_7
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -1334,7 +1065,7 @@ paths:
           schema:
             type: number
             title: Connect-Protocol-Version
-            enum: *ref_1
+            enum: *ref_0
             description: Define the version of the Connect protocol
             const: 1
         - name: Connect-Timeout-Ms
@@ -1348,21 +1079,38 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_20
+              allOf: &ref_30
+                - anyOf:
+                    - required:
+                        - audit
+                    - not:
+                        anyOf:
+                          - required:
+                              - audit
+              anyOf: &ref_31
+                - required:
+                    - audit
+                - not:
+                    anyOf:
+                      - required:
+                          - audit
+              properties: &ref_32
                 items:
                   type: array
                   items:
                     type: object
-                    properties: *ref_10
+                    allOf: *ref_12
+                    properties: *ref_13
                     title: Item
                     additionalProperties: false
                   title: items
                 audit:
+                  allOf:
+                    - type: object
+                      properties: *ref_9
+                      title: Audit
+                      additionalProperties: false
                   title: audit
-                  nullable: true
-                  type: object
-                  properties: *ref_6
-                  additionalProperties: false
               title: ItemServiceUpdateRequest
               additionalProperties: false
         required: true
@@ -1373,7 +1121,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_21
+                properties: &ref_33
                   itemIds:
                     type: array
                     items:
@@ -1387,7 +1135,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_4
+                properties: *ref_7
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -1405,7 +1153,7 @@ paths:
           schema:
             type: number
             title: Connect-Protocol-Version
-            enum: *ref_1
+            enum: *ref_0
             description: Define the version of the Connect protocol
             const: 1
         - name: Connect-Timeout-Ms
@@ -1419,21 +1167,38 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_18
+              allOf: &ref_26
+                - anyOf:
+                    - required:
+                        - audit
+                    - not:
+                        anyOf:
+                          - required:
+                              - audit
+              anyOf: &ref_27
+                - required:
+                    - audit
+                - not:
+                    anyOf:
+                      - required:
+                          - audit
+              properties: &ref_28
                 items:
                   type: array
                   items:
                     type: object
-                    properties: *ref_10
+                    allOf: *ref_12
+                    properties: *ref_13
                     title: Item
                     additionalProperties: false
                   title: items
                 audit:
+                  allOf:
+                    - type: object
+                      properties: *ref_9
+                      title: Audit
+                      additionalProperties: false
                   title: audit
-                  nullable: true
-                  type: object
-                  properties: *ref_6
-                  additionalProperties: false
               title: ItemServiceDeleteRequest
               additionalProperties: false
         required: true
@@ -1444,7 +1209,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_19
+                properties: &ref_29
                   itemIds:
                     type: array
                     items:
@@ -1458,7 +1223,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_4
+                properties: *ref_7
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -1476,7 +1241,7 @@ paths:
           schema:
             type: number
             title: Connect-Protocol-Version
-            enum: *ref_1
+            enum: *ref_0
             description: Define the version of the Connect protocol
             const: 1
         - name: Connect-Timeout-Ms
@@ -1491,55 +1256,68 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_13
+                allOf: &ref_16
+                  - anyOf:
+                      - required:
+                          - pagination
+                      - not:
+                          anyOf:
+                            - required:
+                                - pagination
+                anyOf: &ref_17
+                  - required:
+                      - pagination
+                  - not:
+                      anyOf:
+                        - required:
+                            - pagination
+                properties: &ref_18
                   userId:
-                    type: array
-                    items:
-                      type: string
+                    type: string
                     title: user_id
-                  id:
-                    type: array
-                    items:
-                      type: string
-                    title: id
-                  category:
-                    type: array
-                    items:
-                      type: string
-                    title: category
                   pagination:
+                    allOf:
+                      - type: object
+                        properties: *ref_1
+                        title: Pagination
+                        additionalProperties: false
                     title: pagination
-                    nullable: true
-                    type: object
-                    properties: *ref_0
-                    additionalProperties: false
                 title: TagServiceReadRequest
                 additionalProperties: false
         - name: encoding
           in: query
-          required: true
-          schema:
-            title: encoding
-            enum: *ref_7
-            description: Define which encoding or 'Message-Codec' to use
+          content:
+            application/json:
+              schema:
+                title: encoding
+                enum: *ref_10
+                description: Define which encoding or 'Message-Codec' to use
         - name: base64
           in: query
-          schema:
-            type: boolean
-            title: base64
-            description: Specifies if the message query param is base64 encoded, which may be required for binary data
+          content:
+            application/json:
+              schema:
+                type: boolean
+                title: base64
+                description: Specifies if the message query param is base64 encoded, which may be required for binary data
         - name: compression
           in: query
-          schema:
-            title: compression
-            enum: *ref_8
-            description: Which compression algorithm to use for this request
+          content:
+            application/json:
+              schema:
+                title: compression
+                enum: *ref_11
+                description: Which compression algorithm to use for this request
         - name: connect
           in: query
-          schema:
-            title: connect
-            enum: *ref_9
-            description: Define the version of the Connect protocol
+          content:
+            application/json:
+              schema:
+                type: number
+                title: Connect-Protocol-Version
+                enum: *ref_0
+                description: Define the version of the Connect protocol
+                const: 1
       responses:
         '200':
           description: Success
@@ -1547,18 +1325,34 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_14
+                allOf: &ref_19
+                  - anyOf:
+                      - required:
+                          - pagination
+                      - not:
+                          anyOf:
+                            - required:
+                                - pagination
+                  - anyOf:
+                      - required:
+                          - totalRecordCount
+                      - not:
+                          anyOf:
+                            - required:
+                                - totalRecordCount
+                properties: &ref_20
                   tag:
                     type: array
                     items:
                       type: string
                     title: tag
                   pagination:
+                    allOf:
+                      - type: object
+                        properties: *ref_1
+                        title: Pagination
+                        additionalProperties: false
                     title: pagination
-                    nullable: true
-                    type: object
-                    properties: *ref_0
-                    additionalProperties: false
                   totalRecordCount:
                     type: integer
                     title: total_record_count
@@ -1571,7 +1365,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_4
+                properties: *ref_7
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -1588,7 +1382,7 @@ paths:
           schema:
             type: number
             title: Connect-Protocol-Version
-            enum: *ref_1
+            enum: *ref_0
             description: Define the version of the Connect protocol
             const: 1
         - name: Connect-Timeout-Ms
@@ -1602,7 +1396,9 @@ paths:
           application/json:
             schema:
               type: object
-              properties: *ref_13
+              allOf: *ref_16
+              anyOf: *ref_17
+              properties: *ref_18
               title: TagServiceReadRequest
               additionalProperties: false
         required: true
@@ -1613,7 +1409,8 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_14
+                allOf: *ref_19
+                properties: *ref_20
                 title: TagServiceReadResponse
                 additionalProperties: false
         default:
@@ -1622,7 +1419,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_4
+                properties: *ref_7
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -1631,7 +1428,7 @@ components:
     listah.v1.AuditUpdaterEnum:
       type: string
       title: AuditUpdaterEnum
-      enum: *ref_5
+      enum: *ref_8
     google.protobuf.Timestamp:
       type: string
       format: date-time
@@ -1727,12 +1524,12 @@ components:
          ) to obtain a formatter capable of generating timestamps in this format.
     listah.v1.Audit:
       type: object
-      properties: *ref_6
+      properties: *ref_9
       title: Audit
       additionalProperties: false
     listah.v1.Pagination:
       type: object
-      properties: *ref_0
+      properties: *ref_1
       title: Pagination
       additionalProperties: false
     listah.v1.Pagination.SortConditionEntry:
@@ -1748,17 +1545,20 @@ components:
       additionalProperties: false
     listah.v1.CategoryServiceReadRequest:
       type: object
-      properties: *ref_2
+      allOf: *ref_2
+      anyOf: *ref_3
+      properties: *ref_4
       title: CategoryServiceReadRequest
       additionalProperties: false
     listah.v1.CategoryServiceReadResponse:
       type: object
-      properties: *ref_3
+      allOf: *ref_5
+      properties: *ref_6
       title: CategoryServiceReadResponse
       additionalProperties: false
     encoding:
       title: encoding
-      enum: *ref_7
+      enum: *ref_10
       description: Define which encoding or 'Message-Codec' to use
     base64:
       type: boolean
@@ -1766,16 +1566,12 @@ components:
       description: Specifies if the message query param is base64 encoded, which may be required for binary data
     compression:
       title: compression
-      enum: *ref_8
+      enum: *ref_11
       description: Which compression algorithm to use for this request
-    connect:
-      title: connect
-      enum: *ref_9
-      description: Define the version of the Connect protocol
     connect-protocol-version:
       type: number
       title: Connect-Protocol-Version
-      enum: *ref_1
+      enum: *ref_0
       description: Define the version of the Connect protocol
       const: 1
     connect-timeout-header:
@@ -1784,18 +1580,19 @@ components:
       description: Define the timeout, in ms
     connect.error:
       type: object
-      properties: *ref_4
+      properties: *ref_7
       title: Connect Error
       additionalProperties: true
       description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
     google.protobuf.Any:
       type: object
-      properties: *ref_15
+      properties: *ref_21
       additionalProperties: true
       description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
     listah.v1.Item:
       type: object
-      properties: *ref_10
+      allOf: *ref_12
+      properties: *ref_13
       title: Item
       additionalProperties: false
     listah.v1.Item.PropertiesEntry:
@@ -1811,51 +1608,526 @@ components:
       additionalProperties: false
     listah.v1.ItemServiceCreateRequest:
       type: object
-      properties: *ref_16
+      allOf: *ref_22
+      anyOf: *ref_23
+      properties: *ref_24
       title: ItemServiceCreateRequest
       additionalProperties: false
     listah.v1.ItemServiceCreateResponse:
       type: object
-      properties: *ref_17
+      properties: *ref_25
       title: ItemServiceCreateResponse
       additionalProperties: false
     listah.v1.ItemServiceDeleteRequest:
       type: object
-      properties: *ref_18
+      allOf: *ref_26
+      anyOf: *ref_27
+      properties: *ref_28
       title: ItemServiceDeleteRequest
       additionalProperties: false
     listah.v1.ItemServiceDeleteResponse:
       type: object
-      properties: *ref_19
+      properties: *ref_29
       title: ItemServiceDeleteResponse
       additionalProperties: false
     listah.v1.ItemServiceReadRequest:
       type: object
-      properties: *ref_11
+      properties: *ref_14
       title: ItemServiceReadRequest
       additionalProperties: false
     listah.v1.ItemServiceReadResponse:
       type: object
-      properties: *ref_12
+      properties: *ref_15
       title: ItemServiceReadResponse
       additionalProperties: false
     listah.v1.ItemServiceUpdateRequest:
       type: object
-      properties: *ref_20
+      allOf: *ref_30
+      anyOf: *ref_31
+      properties: *ref_32
       title: ItemServiceUpdateRequest
       additionalProperties: false
     listah.v1.ItemServiceUpdateResponse:
       type: object
-      properties: *ref_21
+      properties: *ref_33
       title: ItemServiceUpdateResponse
+      additionalProperties: false
+    listah.v1.PrevItemServiceReadRequest:
+      type: object
+      allOf:
+        - anyOf:
+            - required:
+                - pagination
+            - not:
+                anyOf:
+                  - required:
+                      - pagination
+      anyOf:
+        - required:
+            - pagination
+        - not:
+            anyOf:
+              - required:
+                  - pagination
+      properties:
+        id:
+          type: array
+          items:
+            type: string
+          title: id
+        userId:
+          type: array
+          items:
+            type: string
+          title: user_id
+        summary:
+          type: array
+          items:
+            type: string
+          title: summary
+        category:
+          type: array
+          items:
+            type: string
+          title: category
+        description:
+          type: array
+          items:
+            type: string
+          title: description
+        note:
+          type: array
+          items:
+            type: string
+          title: note
+        tag:
+          type: array
+          items:
+            type: string
+          title: tag
+        properties:
+          type: array
+          items:
+            type: string
+          title: properties
+        reactivateAt:
+          type: array
+          items:
+            type: string
+            format: date-time
+            description: |-
+              A Timestamp represents a point in time independent of any time zone or local
+               calendar, encoded as a count of seconds and fractions of seconds at
+               nanosecond resolution. The count is relative to an epoch at UTC midnight on
+               January 1, 1970, in the proleptic Gregorian calendar which extends the
+               Gregorian calendar backwards to year one.
+
+               All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+               second table is needed for interpretation, using a [24-hour linear
+               smear](https://developers.google.com/time/smear).
+
+               The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+               restricting to that range, we ensure that we can convert to and from [RFC
+               3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+
+               # Examples
+
+               Example 1: Compute Timestamp from POSIX `time()`.
+
+                   Timestamp timestamp;
+                   timestamp.set_seconds(time(NULL));
+                   timestamp.set_nanos(0);
+
+               Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+
+                   struct timeval tv;
+                   gettimeofday(&tv, NULL);
+
+                   Timestamp timestamp;
+                   timestamp.set_seconds(tv.tv_sec);
+                   timestamp.set_nanos(tv.tv_usec * 1000);
+
+               Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+
+                   FILETIME ft;
+                   GetSystemTimeAsFileTime(&ft);
+                   UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+
+                   // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+                   // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+                   Timestamp timestamp;
+                   timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+                   timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+
+               Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+
+                   long millis = System.currentTimeMillis();
+
+                   Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+                       .setNanos((int) ((millis % 1000) * 1000000)).build();
+
+               Example 5: Compute Timestamp from Java `Instant.now()`.
+
+                   Instant now = Instant.now();
+
+                   Timestamp timestamp =
+                       Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+                           .setNanos(now.getNano()).build();
+
+               Example 6: Compute Timestamp from current time in Python.
+
+                   timestamp = Timestamp()
+                   timestamp.GetCurrentTime()
+
+               # JSON Mapping
+
+               In JSON format, the Timestamp type is encoded as a string in the
+               [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
+               format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
+               where {year} is always expressed using four digits while {month}, {day},
+               {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
+               seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
+               are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
+               is required. A proto3 JSON serializer should always use UTC (as indicated by
+               "Z") when printing the Timestamp type and a proto3 JSON parser should be
+               able to accept both UTC and other timezones (as indicated by an offset).
+
+               For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
+               01:30 UTC on January 15, 2017.
+
+               In JavaScript, one can convert a Date object to this format using the
+               standard
+               [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+               method. In Python, a standard `datetime.datetime` object can be converted
+               to this format using
+               [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
+               the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
+               the Joda Time's [`ISODateTimeFormat.dateTime()`](
+               http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
+               ) to obtain a formatter capable of generating timestamps in this format.
+          title: reactivate_at
+        createdAt:
+          type: array
+          items:
+            type: string
+            format: date-time
+            description: |-
+              A Timestamp represents a point in time independent of any time zone or local
+               calendar, encoded as a count of seconds and fractions of seconds at
+               nanosecond resolution. The count is relative to an epoch at UTC midnight on
+               January 1, 1970, in the proleptic Gregorian calendar which extends the
+               Gregorian calendar backwards to year one.
+
+               All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+               second table is needed for interpretation, using a [24-hour linear
+               smear](https://developers.google.com/time/smear).
+
+               The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+               restricting to that range, we ensure that we can convert to and from [RFC
+               3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+
+               # Examples
+
+               Example 1: Compute Timestamp from POSIX `time()`.
+
+                   Timestamp timestamp;
+                   timestamp.set_seconds(time(NULL));
+                   timestamp.set_nanos(0);
+
+               Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+
+                   struct timeval tv;
+                   gettimeofday(&tv, NULL);
+
+                   Timestamp timestamp;
+                   timestamp.set_seconds(tv.tv_sec);
+                   timestamp.set_nanos(tv.tv_usec * 1000);
+
+               Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+
+                   FILETIME ft;
+                   GetSystemTimeAsFileTime(&ft);
+                   UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+
+                   // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+                   // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+                   Timestamp timestamp;
+                   timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+                   timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+
+               Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+
+                   long millis = System.currentTimeMillis();
+
+                   Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+                       .setNanos((int) ((millis % 1000) * 1000000)).build();
+
+               Example 5: Compute Timestamp from Java `Instant.now()`.
+
+                   Instant now = Instant.now();
+
+                   Timestamp timestamp =
+                       Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+                           .setNanos(now.getNano()).build();
+
+               Example 6: Compute Timestamp from current time in Python.
+
+                   timestamp = Timestamp()
+                   timestamp.GetCurrentTime()
+
+               # JSON Mapping
+
+               In JSON format, the Timestamp type is encoded as a string in the
+               [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
+               format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
+               where {year} is always expressed using four digits while {month}, {day},
+               {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
+               seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
+               are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
+               is required. A proto3 JSON serializer should always use UTC (as indicated by
+               "Z") when printing the Timestamp type and a proto3 JSON parser should be
+               able to accept both UTC and other timezones (as indicated by an offset).
+
+               For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
+               01:30 UTC on January 15, 2017.
+
+               In JavaScript, one can convert a Date object to this format using the
+               standard
+               [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+               method. In Python, a standard `datetime.datetime` object can be converted
+               to this format using
+               [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
+               the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
+               the Joda Time's [`ISODateTimeFormat.dateTime()`](
+               http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
+               ) to obtain a formatter capable of generating timestamps in this format.
+          title: created_at
+        updatedAt:
+          type: array
+          items:
+            type: string
+            format: date-time
+            description: |-
+              A Timestamp represents a point in time independent of any time zone or local
+               calendar, encoded as a count of seconds and fractions of seconds at
+               nanosecond resolution. The count is relative to an epoch at UTC midnight on
+               January 1, 1970, in the proleptic Gregorian calendar which extends the
+               Gregorian calendar backwards to year one.
+
+               All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+               second table is needed for interpretation, using a [24-hour linear
+               smear](https://developers.google.com/time/smear).
+
+               The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+               restricting to that range, we ensure that we can convert to and from [RFC
+               3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+
+               # Examples
+
+               Example 1: Compute Timestamp from POSIX `time()`.
+
+                   Timestamp timestamp;
+                   timestamp.set_seconds(time(NULL));
+                   timestamp.set_nanos(0);
+
+               Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+
+                   struct timeval tv;
+                   gettimeofday(&tv, NULL);
+
+                   Timestamp timestamp;
+                   timestamp.set_seconds(tv.tv_sec);
+                   timestamp.set_nanos(tv.tv_usec * 1000);
+
+               Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+
+                   FILETIME ft;
+                   GetSystemTimeAsFileTime(&ft);
+                   UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+
+                   // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+                   // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+                   Timestamp timestamp;
+                   timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+                   timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+
+               Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+
+                   long millis = System.currentTimeMillis();
+
+                   Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+                       .setNanos((int) ((millis % 1000) * 1000000)).build();
+
+               Example 5: Compute Timestamp from Java `Instant.now()`.
+
+                   Instant now = Instant.now();
+
+                   Timestamp timestamp =
+                       Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+                           .setNanos(now.getNano()).build();
+
+               Example 6: Compute Timestamp from current time in Python.
+
+                   timestamp = Timestamp()
+                   timestamp.GetCurrentTime()
+
+               # JSON Mapping
+
+               In JSON format, the Timestamp type is encoded as a string in the
+               [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
+               format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
+               where {year} is always expressed using four digits while {month}, {day},
+               {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
+               seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
+               are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
+               is required. A proto3 JSON serializer should always use UTC (as indicated by
+               "Z") when printing the Timestamp type and a proto3 JSON parser should be
+               able to accept both UTC and other timezones (as indicated by an offset).
+
+               For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
+               01:30 UTC on January 15, 2017.
+
+               In JavaScript, one can convert a Date object to this format using the
+               standard
+               [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+               method. In Python, a standard `datetime.datetime` object can be converted
+               to this format using
+               [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
+               the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
+               the Joda Time's [`ISODateTimeFormat.dateTime()`](
+               http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
+               ) to obtain a formatter capable of generating timestamps in this format.
+          title: updated_at
+        deletedAt:
+          type: array
+          items:
+            type: string
+            format: date-time
+            description: |-
+              A Timestamp represents a point in time independent of any time zone or local
+               calendar, encoded as a count of seconds and fractions of seconds at
+               nanosecond resolution. The count is relative to an epoch at UTC midnight on
+               January 1, 1970, in the proleptic Gregorian calendar which extends the
+               Gregorian calendar backwards to year one.
+
+               All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+               second table is needed for interpretation, using a [24-hour linear
+               smear](https://developers.google.com/time/smear).
+
+               The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+               restricting to that range, we ensure that we can convert to and from [RFC
+               3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+
+               # Examples
+
+               Example 1: Compute Timestamp from POSIX `time()`.
+
+                   Timestamp timestamp;
+                   timestamp.set_seconds(time(NULL));
+                   timestamp.set_nanos(0);
+
+               Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+
+                   struct timeval tv;
+                   gettimeofday(&tv, NULL);
+
+                   Timestamp timestamp;
+                   timestamp.set_seconds(tv.tv_sec);
+                   timestamp.set_nanos(tv.tv_usec * 1000);
+
+               Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+
+                   FILETIME ft;
+                   GetSystemTimeAsFileTime(&ft);
+                   UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+
+                   // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+                   // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+                   Timestamp timestamp;
+                   timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+                   timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+
+               Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+
+                   long millis = System.currentTimeMillis();
+
+                   Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+                       .setNanos((int) ((millis % 1000) * 1000000)).build();
+
+               Example 5: Compute Timestamp from Java `Instant.now()`.
+
+                   Instant now = Instant.now();
+
+                   Timestamp timestamp =
+                       Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+                           .setNanos(now.getNano()).build();
+
+               Example 6: Compute Timestamp from current time in Python.
+
+                   timestamp = Timestamp()
+                   timestamp.GetCurrentTime()
+
+               # JSON Mapping
+
+               In JSON format, the Timestamp type is encoded as a string in the
+               [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
+               format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
+               where {year} is always expressed using four digits while {month}, {day},
+               {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
+               seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
+               are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
+               is required. A proto3 JSON serializer should always use UTC (as indicated by
+               "Z") when printing the Timestamp type and a proto3 JSON parser should be
+               able to accept both UTC and other timezones (as indicated by an offset).
+
+               For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
+               01:30 UTC on January 15, 2017.
+
+               In JavaScript, one can convert a Date object to this format using the
+               standard
+               [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+               method. In Python, a standard `datetime.datetime` object can be converted
+               to this format using
+               [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
+               the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
+               the Joda Time's [`ISODateTimeFormat.dateTime()`](
+               http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
+               ) to obtain a formatter capable of generating timestamps in this format.
+          title: deleted_at
+        createdBy:
+          type: array
+          items:
+            type: string
+          title: created_by
+        updatedBy:
+          type: array
+          items:
+            type: string
+          title: updated_by
+        deletedBy:
+          type: array
+          items:
+            type: string
+          title: deleted_by
+        pagination:
+          allOf:
+            - type: object
+              properties: *ref_1
+              title: Pagination
+              additionalProperties: false
+          title: pagination
+      title: PrevItemServiceReadRequest
       additionalProperties: false
     listah.v1.TagServiceReadRequest:
       type: object
-      properties: *ref_13
+      allOf: *ref_16
+      anyOf: *ref_17
+      properties: *ref_18
       title: TagServiceReadRequest
       additionalProperties: false
     listah.v1.TagServiceReadResponse:
       type: object
-      properties: *ref_14
+      allOf: *ref_19
+      properties: *ref_20
       title: TagServiceReadResponse
       additionalProperties: false

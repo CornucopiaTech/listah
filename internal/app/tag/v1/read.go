@@ -9,7 +9,7 @@ import (
 	"connectrpc.com/connect"
 	"github.com/pkg/errors"
 	"go.opentelemetry.io/otel"
-		"github.com/uptrace/bun"
+		// "github.com/uptrace/bun"
 )
 
 
@@ -24,20 +24,12 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.TagServiceRea
 
 	readModel := []string{}
 	whereClause := []model.WhereClause{}
-	// whereClause := make([]model.WhereClause), 0)
-	if len(req.Msg.GetId()) > 0 {
-		whereClause = append(whereClause, model.WhereClause{
-			Placeholder: " ?::VARCHAR IN (?) ",
-			Column: "id",
-			Value:       bun.In(req.Msg.GetId()),
-		})
-	}
-
 	if len(req.Msg.GetUserId()) > 0 {
 		whereClause = append(whereClause, model.WhereClause{
-			Placeholder: " ? IN (?) ",
+			Placeholder: " ? = ?",
 			Column: "user_id",
-			Value:       bun.In(req.Msg.GetUserId()),
+			// Value:       bun.In(req.Msg.GetUserId()),
+			Value:       req.Msg.GetUserId(),
 		})
 	}
 
@@ -54,7 +46,10 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.TagServiceRea
 	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d category from repository", recCnt))
 
 
-	resm := &pb.TagServiceReadResponse{Tag: readModel, TotalRecordCount: int32(recCnt),}
+	resm := &pb.TagServiceReadResponse{
+		Tag: readModel,
+		// TotalRecordCount: int32(recCnt),
+	}
 	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful category read. Read %d unique tags.", len(readModel)))
 	return connect.NewResponse(resm), nil
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"go.opentelemetry.io/otel/trace"
 		"fmt"
+		"time"
 
 	"go.opentelemetry.io/otel/propagation"
 		"go.opentelemetry.io/otel"
@@ -80,6 +81,7 @@ func RecordRequestInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFu
 				TraceId: trace.SpanFromContext(ctx).SpanContext().TraceID().String(),
 				SpanId:  trace.SpanFromContext(ctx).SpanContext().SpanID().String(),
 				Request: req,
+				RequestTime: time.Now().UTC(),
 			}
 			infra.BunRepo.ApiLog.Insert(ctx, &reqModel)
 

@@ -12,15 +12,12 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
-type webConfig struct {
+type appNetworkConfig struct {
 	Host    string
+	Url    string
 	Port    string
 	Address string
-}
-type apiConfig struct {
-	Host    string
-	Port    string
-	Address string
+	UrlAddress string
 }
 
 type mongoDBConfig struct {
@@ -57,8 +54,8 @@ type Config struct {
 	AppName         string
 	Env             string
 	ProjectRoot     string
-	Api             *apiConfig
-	Web             *webConfig
+	Api             *appNetworkConfig
+	Web             *appNetworkConfig
 	PgsqlDB         *pgsqlDBConfig
 	MongoDB         *mongoDBConfig
 	Instrumentation *instrumentationConfig
@@ -114,31 +111,41 @@ func loadProjectRoot() string {
 	return fileAbsPath
 }
 
-func loadApi() *apiConfig {
+func loadApi() *appNetworkConfig {
 	var ah string
-	mustMapEnv(&ah, "API_HOST")
+	mustMapEnv(&ah, "API_HOST_IP")
+
+	var uh string
+	mustMapEnv(&uh, "API_HOST_URL")
 
 	var ap string
 	mustMapEnv(&ap, "API_PORT")
 
-	return &apiConfig{
+	return &appNetworkConfig{
 		Host:    ah,
+		Url:    uh,
 		Port:    ap,
 		Address: net.JoinHostPort(ah, ap),
+		UrlAddress: fmt.Sprintf("%s:%s", uh, ap),
 	}
 }
 
-func loadWeb() *webConfig {
+func loadWeb() *appNetworkConfig {
 	var ah string
-	mustMapEnv(&ah, "APP_HOST")
+	mustMapEnv(&ah, "WEB_HOST_IP")
+
+	var uh string
+	mustMapEnv(&uh, "WEB_HOST_URL")
 
 	var ap string
-	mustMapEnv(&ap, "APP_PORT")
+	mustMapEnv(&ap, "WEB_PORT")
 
-	return &webConfig{
+	return &appNetworkConfig{
 		Host:    ah,
+		Url:    uh,
 		Port:    ap,
 		Address: net.JoinHostPort(ah, ap),
+		UrlAddress: fmt.Sprintf("%s:%s", uh, ap),
 	}
 }
 

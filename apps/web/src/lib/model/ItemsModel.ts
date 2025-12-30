@@ -17,101 +17,114 @@ export interface TraceBaggage extends z.infer<typeof ZTraceBaggage>{};
 
 
 export const ZAudit = z.object({
-  createdBy: z.enum(auditEnum),
+  createdBy: z.nullish(z.enum(auditEnum)),
   createdAt: z.nullish(z.iso.datetime()),
-  updatedBy: z.enum(auditEnum),
+  updatedBy: z.nullish(z.enum(auditEnum)),
   updatedAt: z.nullish(z.iso.datetime()),
-  deletedBy: z.enum(auditEnum),
+  deletedBy: z.nullish(z.enum(auditEnum)),
   deletedAt: z.nullish(z.iso.datetime()),
 });
 export interface Audit extends z.infer<typeof ZAudit>{};
 
 
 
-export const ZItemProto = z.object({
-  id: z.uuid(),
-  userId: z.uuid(),
-  summary: z.string(),
-  category: z.string(),
+export const ItemProtoSchema = z.object({
+  id: z.nullish(z.uuid()),
+  userId: z.nullish(z.uuid()),
+  summary: z.nullish(z.string()),
+  category: z.nullish(z.string()),
   description: z.nullish(z.string()),
   note: z.nullish(z.string()),
   tag: z.nullish(z.array(z.string())),
   softDelete: z.nullish(z.boolean()),
   properties: z.nullish(z.unknown()),
   reactivateAt: z.nullish(z.string()),
-})
-export interface ItemProto extends z.infer<typeof ZItemProto>{};
-
-
-export const ZPagination = z.object({
-  pageNumber: z.number(),
-  recordsPerPage: z.number(),
-  sortCondition: z.nullish(z.any()),
+  audit: z.nullish(ZAudit),
 });
-export interface Pagination extends z.infer<typeof ZPagination>{};
+export interface ItemProto extends z.infer<typeof ItemProtoSchema>{};
 
 
 
-export const ZItemsProto = z.object({
-  items: z.array(ZItemProto),
-  totalRecordCount: z.nullish(z.number()),
-  pagination: z.nullish(ZPagination),
+export const ItemsProtoSchema = z.object({
+  items: z.array(ItemProtoSchema).catch([]),
+  userId: z.string().catch(''),
+  category: z.array(z.string()).catch([]),
+  tag: z.array(z.string()).catch([]),
+
+
+  pageSize: z.number().catch(10),
+  page: z.number().catch(1),
+  sort: z.string().catch('asc'),
+
+  categoryFilter: z.array(z.string()).catch([]),
+  tagFilter: z.array(z.string()).catch([]),
+  searchQuery: z.string().catch(''),
+  fromDate: z.string().catch('1970-01-01'),
+  toDate: z.string().catch('2099-12-31'),
 });
-export interface ItemsProto extends z.infer<typeof ZItemsProto>{};
-
-
-// Update Item Store
-export interface UpdateItemState {
-  item: ItemProto
-  newTag: string | null,
-}
-
-export interface UpdateItemActions {
-  setState: (item: ItemProto) => void;
-  updateSummary: (summary: string) => void;
-  updateCategory: (category: string) => void;
-  updateDescription: (description: string) => void;
-  updateNote: (note: string) => void;
-  updateTags: (tag: string[]) => void;
-  updateSoftDelete: (softDelete: boolean) => void;
-  updateProperties: (properties: { [index: string]: string }) => void;
-  updateReactivateAt: (reactivateAt: string) => void;
-  updateNewTag: (newTag: string) => void;
-}
-
-export interface UpdateItemStore extends UpdateItemState, UpdateItemActions{};
+export interface ItemsProto extends z.infer<typeof ItemsProtoSchema>{};
 
 
 
 // Items Store
-export interface ItemsState {
-  itemsPerPage?: number; //records per page
-  currentPage?: number;//current page
-  categoryFilter?: string[];
-  tagFilter?: string[];
-  readFromDate?: string;
-  readToDate?: string;
-  drawerOpen?: boolean;
-  searchQuery?: string;
-  checkedTag?: Set<string>;
-  checkedCategory?: Set<string>;
-  filterFromDate: string;
-  filterToDate: string;
+export interface IListingState {
+  drawer: boolean;
+  searchQuery: string;
+  checkedTag: Set<string>;
+  checkedCategory: Set<string>;
+  fromDate: string;
+  toDate: string;
 }
 
-export interface ItemsActions {
-  updateItemsPageRecordCount: (recordCount: number) => void
-  updateItemsCurrentPage: (currentPage: number) => void
-  updateItemsCategoryFilter: (categoryFilter: string[] ) => void
-  updateItemsTagFilter: (tagFilter: string[]) => void
-  toggleDrawer: (drawerOpen: boolean) => void
-  updateSearchQuery: (searchQuery: string) => void
-  updateItemsCheckedCategory: (checkedCategory: Set<string>) => void
-  updateItemsCheckedTag: (checkedTag: Set<string>) => void
-  updateItemsFromDate: (readFromDate: string) => void
-  updateItemsToDate: (readToDate: string) => void
-  updateFilterFromDate: (filterFromDate: string) => void
-  updateFilterToDate: (filterToDate: string) => void
+
+export interface IListingActions {
+  setDrawer: (drawer: boolean) => void
+  setSearchQuery: (searchQuery: string) => void
+  setCheckedTag: (checkedTag: Set<string>) => void
+  setCheckedCategory: (checkedCategory: Set<string>) => void
+}
+export interface IListingStore extends IListingState, IListingActions { };
+
+
+
+
+export interface IDetailActions {
+  setState: (item: ItemProto) => void;
+  setSummary: (summary: string) => void;
+  setCategory: (category: string) => void;
+  setDescription: (description: string) => void;
+  setNote: (note: string) => void;
+  setTags: (tag: string[]) => void;
+  setSoftDelete: (softDelete: boolean) => void;
+  setProperties: (properties: { [index: string]: string }) => void;
+  setReactivateAt: (reactivateAt: string) => void;
+  setNewTag: (newTag: string) => void;
 }
 
-export interface ItemsStore extends ItemsState, ItemsActions{};
+
+
+// Update Item Store
+export interface IDetailState {
+  item: ItemProto;
+  newTag: string | null;
+}
+export interface IDetailStore extends IDetailState, IDetailActions { };
+
+
+
+
+
+
+export const ItemsSearchSchema = z.object({
+  userId: z.nullish(z.uuid()),
+  tagFilter: z.array(z.string()).catch([]),
+  categoryFilter: z.array(z.string()).catch([]),
+  searchQuery: z.string().catch(''),
+  fromDate: z.string().catch('1970-01-01'),
+  toDate: z.string().catch('2099-12-31'),
+  pageSize: z.number().catch(50),
+  pageNumber: z.number().catch(1),
+  sortQuery: z.string().catch(''),
+})
+
+export interface IItemsSearch extends z.infer<typeof ItemsSearchSchema>{}

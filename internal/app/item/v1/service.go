@@ -3,7 +3,6 @@ package v1
 import (
 	"cornucopia/listah/internal/app/bootstrap"
 	"cornucopia/listah/internal/pkg/proto/v1/v1connect"
-		pb "cornucopia/listah/internal/pkg/proto/v1"
 )
 
 type Server struct {
@@ -11,11 +10,21 @@ type Server struct {
 	v1connect.UnimplementedItemServiceHandler
 }
 
+
+type ReadPagination struct {
+	PageNumber int32
+	PageSize int32
+	SortCondition string
+}
+
+
+
 var svcName string = "listah.v1.ItemService"
-var DefaultReadPagination = pb.Pagination{
+
+var DefaultReadPagination = ReadPagination {
 	PageNumber: 1,
-	RecordsPerPage: 100,
-	SortCondition: map[string]string{"user_id": "ASC", "id": "ASC"},
+	PageSize: 50,
+	SortCondition: "user_id ASC, id ASC",
 }
 
 
