@@ -14,13 +14,13 @@ export async function postItem(item: ItemProto) {
   if (!res.ok) {
     throw new Error('Network response was not ok');
   }
-  return res.json();
+  return await res.json();
 }
 
 
 export async function getItem(opts: ItemsSearchSchema): Promise<ItemsProto | void> {
   const url = `/api/${process.env.LISTAH_PROXY_ITEMS_READ}`;
-  console.info("In getItem, opts: ", opts);
+  console.info("In getItem, url, opts: ", url, opts, );
 
   const req = new Request(url, {
     method: "POST",
@@ -52,7 +52,7 @@ export async function getTag(userId: string): Promise<ItemsProto | void> {
     console.error("Error in getTag: ", res.statusText);
     throw new Error('Network response was not ok');
   }
-  return res.json();
+  return await res.json();
 }
 
 export async function getCategory(userId: string): Promise<ItemsProto | void> {
@@ -68,5 +68,5 @@ export async function getCategory(userId: string): Promise<ItemsProto | void> {
     console.error("Error in getCategory: ", res.statusText);
     throw new Error('Network response was not ok');
   }
-  return res.json();
+  return await res.json();
 }

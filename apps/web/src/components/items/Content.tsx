@@ -32,12 +32,6 @@ import { itemGroupOptions } from '@/lib/helper/querying';
 export default function Content(): ReactNode {
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
 
-
-  // const {
-  //     isPending, isError, data, error
-  // }: UseQueryResult<string[]> = useSuspenseQuery(itemGroupOptions(query));
-
-
   const {
       isPending, isError, data, error
   }: UseQueryResult<string[]> = useQuery(itemGroupOptions(query));

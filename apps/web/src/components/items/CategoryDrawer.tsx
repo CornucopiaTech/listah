@@ -19,7 +19,6 @@ import {
 } from '@tanstack/react-query';
 
 
-import { WebAppContext } from "@/lib/context/webappContext";
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
 import { categoryGroupOptions } from '@/lib/helper/querying';
 import { useBoundStore } from '@/lib/store/boundStore';
@@ -30,7 +29,6 @@ import { ErrorAlerts } from '@/components/common/ErrorAlert';
 
 export default function CategoryDrawer(): ReactNode {
   const store = useBoundStore((state) => state);
-  const uId: str = useContext(WebAppContext);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
 
 
@@ -52,12 +50,8 @@ export default function CategoryDrawer(): ReactNode {
 
   const {
     isPending, isError, data, error
-  }: UseQueryResult<string[]> = useQuery(categoryGroupOptions(uId));
+  }: UseQueryResult<string[]> = useQuery(categoryGroupOptions(query.userId));
 
-
-  // const {
-  //   isPending, isError, data, error
-  // }: UseQueryResult<string[]> = useSuspenseQuery(categoryGroupOptions(uId));
 
   if (isPending) { return <Loading />; }
   if (isError) { return <ErrorAlerts>Error: {error.message}</ErrorAlerts>; }
