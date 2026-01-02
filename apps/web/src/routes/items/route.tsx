@@ -11,7 +11,6 @@ import { ThemeProvider } from '@mui/material/styles';
 
 import { AppBarHeight } from '@/lib/model/appNavBarModel';
 import AppNavBar from '@/components/common/AppNavBar';
-import theme from '@/lib/theme';
 import NotFound from '@/components/common/NotFound';
 
 

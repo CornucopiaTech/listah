@@ -18,7 +18,7 @@ import {
 import { encodeState } from '@/lib/helper/encoders';
 import { ITEMS_URL } from '@/lib/helper/defaults';
 import { useBoundStore } from '@/lib/store/boundStore';
-import type { IItemsSearch } from '@/lib/model/ItemsModel';
+import type { IItemsSearch } from '@/lib/model/Items';
 import CategoryDrawer from '@/components/items/CategoryDrawer';
 import TagDrawer from '@/components/items/TagDrawer';
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';

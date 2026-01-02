@@ -16,7 +16,7 @@ import Pagination from '@mui/material/Pagination';
 
 
 import { encodeState } from '@/lib/helper/encoders';
-import type { ItemsProto, IItemsSearch } from '@/lib/model/ItemsModel';
+import type { ZItems, IItemsSearch } from '@/lib/model/Items';
 import Loading from '@/components/common/Loading';
 import { ErrorAlerts } from '@/components/common/ErrorAlert';
 import { ITEMS_URL } from '@/lib/helper/defaults';
@@ -40,7 +40,7 @@ export default function Paged(): ReactNode {
 
   const {
     isPending, isError, data, error
-  }: UseQueryResult<ItemsProto> = useQuery(itemGroupOptions(query));
+  }: UseQueryResult<ZItems> = useQuery(itemGroupOptions(query));
 
 
   if (isPending) { return <Loading />; }

@@ -17,7 +17,7 @@ import { Virtuoso } from 'react-virtuoso';
 
 
 import { useBoundStore } from '@/lib/store/boundStore';
-import type { IItemsSearch } from '@/lib/model/ItemsModel';
+import type { IItemsSearch } from '@/lib/model/Items';
 import Loading from '@/components/common/Loading';
 import { ErrorAlerts } from '@/components/common/ErrorAlert';
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';

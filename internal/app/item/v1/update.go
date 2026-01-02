@@ -23,7 +23,7 @@ func (s *Server) Update(ctx context.Context, req *connect.Request[pb.ItemService
 
 
 	// Create model for repository from request message
-	insertions, err := v1model.ItemProtoToItemModelUpsertSafe(req.Msg.Items, false)
+	insertions, err := v1model.IItemToItemModelUpsertSafe(req.Msg.Items, false)
 	if err != nil {
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting item model for insertion", errors.Cause(err).Error())
 		return nil, err

@@ -1,5 +1,5 @@
 
-import type { IListingState } from '@/lib/model/ItemsModel';
+import type { IListingState } from '@/lib/model/Items';
 
 
 

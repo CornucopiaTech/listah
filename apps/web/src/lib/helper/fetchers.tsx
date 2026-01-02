@@ -1,10 +1,10 @@
-import type { ItemProto, ItemsProto } from '@/lib/model/ItemsModel';
+import type { IItem, ZItems } from '@/lib/model/Items';
 
 
 
-export async function postItem(item: ItemProto) {
+export async function postItem(item: IItem) {
   console.info("In postItem - item", item);
-  const url = `/api/${process.env.LISTAH_PROXY_ITEMS_UPDATE}`;
+  const url = `/api/${process.env.SERVER_STATE.ITEMS_UPDATE}`;
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify({ items: [item] }),
@@ -18,8 +18,8 @@ export async function postItem(item: ItemProto) {
 }
 
 
-export async function getItem(opts: ItemsSearchSchema): Promise<ItemsProto | void> {
-  const url = `/api/${process.env.LISTAH_PROXY_ITEMS_READ}`;
+export async function getItem(opts: ZItemsSearch): Promise<ZItems | void> {
+  const url = `/api/${process.env.SERVER_STATE.ITEMS_READ}`;
   console.info("In getItem, url, opts: ", url, opts, );
 
   const req = new Request(url, {
@@ -38,8 +38,8 @@ export async function getItem(opts: ItemsSearchSchema): Promise<ItemsProto | voi
   return data;
 }
 
-export async function getTag(userId: string): Promise<ItemsProto | void> {
-  const url = `/api/${process.env.LISTAH_PROXY_TAG_READ}`;
+export async function getTag(userId: string): Promise<ZItems | void> {
+  const url = `/api/${process.env.SERVER_STATE.TAG_READ}`;
   console.info("In getTag, userId: ", userId);
 
   const req = new Request(url, {
@@ -55,8 +55,8 @@ export async function getTag(userId: string): Promise<ItemsProto | void> {
   return await res.json();
 }
 
-export async function getCategory(userId: string): Promise<ItemsProto | void> {
-  const url = `/api/${process.env.LISTAH_PROXY_CATEGORY_READ}`;
+export async function getCategory(userId: string): Promise<ZItems | void> {
+  const url = `/api/${process.env.SERVER_STATE.CATEGORY_READ}`;
   console.info("In getCategory, userId: ", userId);
   const req = new Request(url, {
     method: "POST",

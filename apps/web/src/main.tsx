@@ -5,16 +5,18 @@ import {
   QueryClientProvider
 } from '@tanstack/react-query';
 import { enableMapSet } from 'immer';
+import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 
 
 
+// Internal imports
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
-
-import './styles.css'
 import reportWebVitals from './reportWebVitals.ts'
 import Loading from '@/components/common/Loading';
 import { ErrorAlerts } from '@/components/common/ErrorAlert';
+import theme from '@/lib/styles/theme';
+
 
 
 enableMapSet();
@@ -47,6 +49,27 @@ declare module '@tanstack/react-router' {
   }
 }
 
+function App(){
+  return (
+    <ThemeProvider theme={theme}>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider
+          router={router}
+          defaultPreload="intent"
+          defaultPendingMs={0}
+          defaultPendingMinMs={0}
+          context={{
+            queryClient,
+            // analytics,
+            // auth,
+          }}
+        />
+      </QueryClientProvider>
+    </ThemeProvider>
+  )
+}
+
+
 // Render the app
 const rootElement = document.getElementById('app')
 if (rootElement && !rootElement.innerHTML) {
@@ -55,21 +78,11 @@ if (rootElement && !rootElement.innerHTML) {
     // <StrictMode>
     //   <RouterProvider router={router} />
     // </StrictMode>,
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider
-        router={router}
-        defaultPreload="intent"
-        defaultPendingMs={0}
-        defaultPendingMinMs={0}
-        context={{
-          queryClient,
-        }}
-      />
-    </QueryClientProvider>,
+    <App />
   )
 }
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals()
+reportWebVitals(console.log)

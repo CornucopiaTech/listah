@@ -20,8 +20,8 @@ import { Virtuoso } from 'react-virtuoso';
 
 
 
-import type { ItemProto, IItemsSearch } from '@/lib/model/ItemsModel';
-import { ItemsProtoSchema, } from '@/lib/model/ItemsModel';
+import type { IItem, IItemsSearch } from '@/lib/model/Items';
+import { ZItems, } from '@/lib/model/Items';
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
 import Loading from '@/components/common/Loading';
 import { ErrorAlerts } from '@/components/common/ErrorAlert';
@@ -40,7 +40,7 @@ export default function Content(): ReactNode {
   if (isError) {return <ErrorAlerts>Error: {error.message}</ErrorAlerts>;}
 
   try{
-    ItemsProtoSchema.parse(data);
+    ZItems.parse(data);
   } catch(error){
     if(error instanceof z.ZodError){
       console.info("Zod issue - ", error.issues);
@@ -52,7 +52,7 @@ export default function Content(): ReactNode {
   }
 
 
-  const items: ItemProto[] = data.items ? data.items : [];
+  const items: IItem[] = data.items ? data.items : [];
 
   if (!items || items.length == 0) {
     return (

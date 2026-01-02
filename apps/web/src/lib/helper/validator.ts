@@ -1,5 +1,5 @@
 
-import { ItemsSearchSchema } from '@/lib/model/ItemsModel';
+import { ZItemsSearch } from '@/lib/model/Items';
 import { decodeState } from '@/lib/helper/encoders';
 import { DefaultQueryParams } from '@/lib/helper/defaults';
 
@@ -14,7 +14,7 @@ export function validateItemsUrlSearch(params: any) {
   console.info("In validateItemQueryParams - Raw ");
   console.info(params);
   const dcd = decodeState(params.s);
-  const parsed = ItemsSearchSchema.safeParse(dcd);
+  const parsed = ZItemsSearch.safeParse(dcd);
 
   console.info("In validateItemQueryParams - Decoded ");
   console.info(dcd);

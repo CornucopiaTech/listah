@@ -18,7 +18,7 @@ export interface Audit {
     deletedAt: string;
 }
 
-export interface ItemProto{
+export interface IItem{
   id: string | null;
   userId: string | null;
   summary: string | null;
@@ -38,8 +38,8 @@ export interface Pagination {
   sortCondition: Map<string, string> | null;
 }
 
-export interface ItemsProto {
-  items: ItemProto;
+export interface ZItems {
+  items: IItem;
   tag: string[];
   categories: string[];
   totalRecordCount: number;

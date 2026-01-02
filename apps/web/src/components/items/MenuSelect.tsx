@@ -16,7 +16,7 @@ import Select from '@mui/material/Select';
 
 // Internal
 import { encodeState } from '@/lib/helper/encoders';
-import type { IItemsSearch } from '@/lib/model/ItemsModel';
+import type { IItemsSearch } from '@/lib/model/Items';
 import { ITEMS_URL, PAGE_SIZE_OPTIONS } from '@/lib/helper/defaults';
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
 

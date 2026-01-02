@@ -13,7 +13,7 @@ export const ZTraceBaggage = z.object({
   tracestate: z.nullish(z.string()),
   b3: z.nullish(z.string()),
 });
-export interface TraceBaggage extends z.infer<typeof ZTraceBaggage>{};
+export interface ITraceBaggage extends z.infer<typeof ZTraceBaggage>{};
 
 
 export const ZAudit = z.object({
@@ -24,11 +24,11 @@ export const ZAudit = z.object({
   deletedBy: z.nullish(z.enum(auditEnum)),
   deletedAt: z.nullish(z.iso.datetime()),
 });
-export interface Audit extends z.infer<typeof ZAudit>{};
+export interface IAudit extends z.infer<typeof ZAudit>{};
 
 
 
-export const ItemProtoSchema = z.object({
+export const ZItem = z.object({
   id: z.nullish(z.uuid()),
   userId: z.nullish(z.uuid()),
   summary: z.nullish(z.string()),
@@ -41,12 +41,12 @@ export const ItemProtoSchema = z.object({
   reactivateAt: z.nullish(z.string()),
   audit: z.nullish(ZAudit),
 });
-export interface ItemProto extends z.infer<typeof ItemProtoSchema>{};
+export interface IItem extends z.infer<typeof ZItem>{};
 
 
 
-export const ItemsProtoSchema = z.object({
-  items: z.array(ItemProtoSchema).catch([]),
+export const ZItems = z.object({
+  items: z.array(ZItem).catch([]),
   userId: z.string().catch(''),
   category: z.array(z.string()).catch([]),
   tag: z.array(z.string()).catch([]),
@@ -62,7 +62,7 @@ export const ItemsProtoSchema = z.object({
   fromDate: z.string().catch('1970-01-01'),
   toDate: z.string().catch('2099-12-31'),
 });
-export interface ItemsProto extends z.infer<typeof ItemsProtoSchema>{};
+export interface ZItems extends z.infer<typeof ZItems>{};
 
 
 
@@ -89,7 +89,7 @@ export interface IListingStore extends IListingState, IListingActions { };
 
 
 export interface IDetailActions {
-  setState: (item: ItemProto) => void;
+  setState: (item: IItem) => void;
   setSummary: (summary: string) => void;
   setCategory: (category: string) => void;
   setDescription: (description: string) => void;
@@ -105,7 +105,7 @@ export interface IDetailActions {
 
 // Update Item Store
 export interface IDetailState {
-  item: ItemProto;
+  item: IItem;
   newTag: string | null;
 }
 export interface IDetailStore extends IDetailState, IDetailActions { };
@@ -115,7 +115,7 @@ export interface IDetailStore extends IDetailState, IDetailActions { };
 
 
 
-export const ItemsSearchSchema = z.object({
+export const ZItemsSearch = z.object({
   userId: z.nullish(z.uuid()),
   tagFilter: z.array(z.string()).catch([]),
   categoryFilter: z.array(z.string()).catch([]),
@@ -127,4 +127,4 @@ export const ItemsSearchSchema = z.object({
   sortQuery: z.string().catch(''),
 })
 
-export interface IItemsSearch extends z.infer<typeof ItemsSearchSchema>{}
+export interface IItemsSearch extends z.infer<typeof ZItemsSearch>{}

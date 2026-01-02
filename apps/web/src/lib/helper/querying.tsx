@@ -1,4 +1,4 @@
-import type { TraceBaggage, ItemProto, ItemsProto } from '@/lib/model/ItemsModel';
+import type { TraceBaggage, IItem, ZItems } from '@/lib/model/Items';
 import {
   propagation,
   context,
@@ -15,7 +15,7 @@ import { DefaultQueryParams, ITEMS_URL } from '@/lib/helper/defaults';
 
 
 
-export function itemGroupOptions(opts: ItemsSearchSchema) {
+export function itemGroupOptions(opts: ZItemsSearch) {
   return queryOptions({
     queryKey: ["item", opts],
     queryFn: () => getItem(opts),
@@ -42,7 +42,7 @@ export function categoryGroupOptions(opts: string) {
 }
 
 
-// export function itemLoader(opts: ItemsSearchSchema) {
+// export function itemLoader(opts: ZItemsSearch) {
 //   return {
 //     queries: [
 //       itemGroupOptions(opts),

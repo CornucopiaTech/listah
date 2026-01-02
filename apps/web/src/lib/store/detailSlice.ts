@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import type { ItemProto, IDetailState } from '@/lib/model/ItemsModel';
+import type { IItem, IDetailState } from '@/lib/model/Items';
 
 
 
@@ -26,7 +26,7 @@ export const detailInitState: IDetailState = {
 
 export const createDetailSlice = (set) => ({
   ...detailInitState,
-  setItem: (item: ItemProto) => set(() => ({ item })),
+  setItem: (item: IItem) => set(() => ({ item })),
   setSummary: (summary: string) => set((state) => ({ item: { ...state.item, summary } })),
   setCategory: (category: string) => set((state) => ({ item: { ...state.item, category } })),
   setDescription: (description: string) => set((state) => ({ item: { ...state.item, description } })),

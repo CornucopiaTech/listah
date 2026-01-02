@@ -22,7 +22,7 @@ import {
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
 import { categoryGroupOptions } from '@/lib/helper/querying';
 import { useBoundStore } from '@/lib/store/boundStore';
-import type {  IItemsSearch } from '@/lib/model/ItemsModel';
+import type {  IItemsSearch } from '@/lib/model/Items';
 import Loading from '@/components/common/Loading';
 import { ErrorAlerts } from '@/components/common/ErrorAlert';
 
