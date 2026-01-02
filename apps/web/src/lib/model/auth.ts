@@ -5,10 +5,11 @@ export const ZUser = z.object({
   id: z.nullish(z.string()),
   firstName: z.string(),
   lastName: z.string(),
-  userName: z.string(),
   email: z.string(),
   phoneNumber: z.nullish(z.string()),
   role: z.nullish(z.array(z.string())),
+  userName: z.string(),
+  password: z.nullish(z.string()),
 });
 
 

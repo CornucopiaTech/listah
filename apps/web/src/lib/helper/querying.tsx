@@ -1,4 +1,4 @@
-import type { TraceBaggage, IItem, ZItems } from '@/lib/model/Items';
+import type { ZTraceBaggage, IItem, ZItems } from '@/lib/model/Items';
 import {
   propagation,
   context,

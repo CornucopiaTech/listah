@@ -17,6 +17,10 @@ import ListItemButton from '@mui/material/ListItemButton';
 import Paper from '@mui/material/Paper';
 import * as z from "zod";
 import { Virtuoso } from 'react-virtuoso';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
+
 
 
 
@@ -26,12 +30,19 @@ import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
 import Loading from '@/components/common/Loading';
 import { ErrorAlerts } from '@/components/common/ErrorAlert';
 import { itemGroupOptions } from '@/lib/helper/querying';
+import { MAX_TAG_CHIPS_DISPLAY } from '@/lib/helper/defaults';
+import {
+  FlexEndBox,
+  SpaceAroundBox,
+  SpaceBetweenBox,
+  FlexStartBox
+} from '@/components/basics/Box';
 
 
 
 export default function Content(): ReactNode {
+  const theme: {} = useTheme();
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
-
   const {
       isPending, isError, data, error
   }: UseQueryResult<string[]> = useQuery(itemGroupOptions(query));
@@ -71,15 +82,85 @@ export default function Content(): ReactNode {
           data={items}
           itemContent={(_, item) =>
             <Fragment key={item.id}>
-              <Link href={`/items/${item.id}`} underline="hover">
-                <ListItemButton key={item.id}>
-                <ListItemText primary={item.summary} />
-                </ListItemButton>
-              </Link>
-              <Divider />
+              <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(5, 1fr)',
+                    gap: 1,
+                    gridTemplateRows: 'auto',
+                    gridTemplateAreas: ` "main main main . sidebar" `,
+                  }}
+                >
+                <Box sx={{ gridArea: 'main', }}>
+                  <Link href={`/items/${item.id}`} underline="hover" >
+                    <ListItemButton key={item.id}>
+                      <ListItemText primary={item.summary} />
+                    </ListItemButton>
+                  </Link>
+                </Box>
+                <Box sx={{ gridArea: 'sidebar', }}>
+                  <Box
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(4, 1fr)',
+                      gap: 2,
+                    }}
+                  >
+                  <Chip
+                    key={item.category} label={item.category}
+                    sx={{
+                      textTransform: 'capitalize',
+                      bgcolor: theme.palette.categoryChip.main,
+                      color: theme.palette.categoryChip.contrastText
+                    }}
+                  />
+                  {
+                    item.tag && item.tag.slice(MAX_TAG_CHIPS_DISPLAY).map((tag) => (
+                      <Chip
+                        key={tag} label={tag}
+                        sx={{
+                          textTransform: 'capitalize',
+                          bgcolor: theme.palette.tagChip.main,
+                          color: theme.palette.tagChip.contrastText
+                        }}
+                      />
+                    ))
+                  }
+                </Box>
+                </Box>
+              </Box>
+              {/* <Divider /> */}
             </Fragment>
           }
         />
     </Fragment>
   );
+
+
+  // return (
+  //   <Fragment>
+  //       <Virtuoso key="data-content"
+  //         style={{ height: '70vh', width: '100%', display: 'block', overflow: 'auto', }}
+  //         data={items}
+  //         itemContent={(_, item) =>
+  //           <Fragment key={item.id}>
+  //             <Link href={`/items/${item.id}`} underline="hover">
+  //               <ListItemButton key={item.id}>
+  //               <ListItemText primary={item.summary} />
+  //               </ListItemButton>
+  //               <Stack direction="row" spacing={1}>
+  //                 <Chip key={item.category} label={item.category} />
+  //                 {item.tag && item.tag.slice(MAX_TAG_CHIPS_DISPLAY).map((tag) => (
+  //                   <Chip key={tag} label={tag} />
+  //                 ))}
+  //               </Stack>
+  //             </Link>
+  //             <Divider />
+  //           </Fragment>
+  //         }
+  //       />
+  //   </Fragment>
+  // );
+
+
 }

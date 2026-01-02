@@ -18,9 +18,9 @@ export function validateItemsUrlSearch(params: any) {
 
   console.info("In validateItemQueryParams - Decoded ");
   console.info(dcd);
-  console.info("In validateItemQueryParams - Parsed ");
-  console.info(parsed);
-
-  return parsed.data
+  return dcd;
+  // console.info("In validateItemQueryParams - Parsed ");
+  // console.info(parsed);
+  // return parsed.data
 
 }

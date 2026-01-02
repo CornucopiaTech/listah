@@ -12,6 +12,7 @@ import {
   useNavigate,
 } from '@tanstack/react-router';
 import Pagination from '@mui/material/Pagination';
+import TablePagination from '@mui/material/TablePagination';
 
 
 
@@ -57,5 +58,53 @@ export default function Paged(): ReactNode {
         onChange={handlePageChange}
       />
     </Fragment>
+  );
+}
+
+
+
+export function TablePaged(): ReactNode {
+  const query: IItemsSearch = useContext(ItemSearchQueryContext);
+  const navigate = useNavigate();
+
+
+  function handlePageChange(event: React.ChangeEvent<unknown>, value: number) {
+    event.stopPropagation();
+    const q = { ...query, pageNumber: value };
+    const encoded = encodeState(q);
+    navigate({ to: ITEMS_URL, search: { s: encoded } });
+  };
+
+  function handlePageSizeChange(e: React.ChangeEvent<unknown>) {
+    console.log("In handlePageChange - e ", e);
+    const q = { ...query, pageSize: parseInt(e.target.value, 10), pageNumber: 0 };
+    const encoded = encodeState(q);
+    console.info("In handlePageChange - q ", q);
+    console.info("In handlePageChange - Encoded ", encoded);
+    navigate({ to: ITEMS_URL, search: { s: encoded } });
+  };
+
+
+
+  const {
+    isPending, isError, data, error
+  }: UseQueryResult<ZItems> = useQuery(itemGroupOptions(query));
+
+
+  if (isPending) { return <Loading />; }
+  if (isError) { return <ErrorAlerts>Error: {error.message}</ErrorAlerts>; }
+
+
+  const totalRecords: number = data.pageSize ? data.pageSize : 1;
+
+
+  return (
+    <TablePagination
+      component="div"
+      count={totalRecords} page={query.pageNumber}
+      onPageChange={handlePageChange}
+      rowsPerPage={query.pageSize}
+      onRowsPerPageChange={handlePageSizeChange}
+    />
   );
 }

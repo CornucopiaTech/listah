@@ -6,7 +6,7 @@ import { fileURLToPath, URL } from 'node:url'
 import path from 'path';
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
-import tailwindcss from '@tailwindcss/vite';
+// import tailwindcss from '@tailwindcss/vite';
 
 const currPath = path.resolve(path.dirname(path.dirname(process.cwd())), '.env');
 dotenvExpand.expand(dotenv.config({ path: currPath, }));
@@ -18,7 +18,7 @@ console.info(`Loaded environment variables from: ${currPath}`);
 export default defineConfig({
   plugins: [
     devtools(),
-    tailwindcss(),
+    // tailwindcss(),
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
@@ -61,7 +61,12 @@ export default defineConfig({
         ITEMS_READ: process.env.LISTAH_PROXY_ITEMS_READ,
         ITEMS_UPDATE: process.env.LISTAH_PROXY_ITEMS_UPDATE,
         ITEMS_CREATE: process.env.LISTAH_PROXY_ITEMS_CREATE,
-      }
+      },
+      AUTH_CONFIG: {
+        CLERK_KEY: process.env.VITE_CLERK_PUBLISHABLE_KEY,
+        SIGN_IN_URL: process.env.CLERK_SIGN_IN_URL,
+        SIGN_UP_URL: process.env.CLERK_SIGN_UP_URL,
+      },
     }
     // 'process.env': process.env,
 

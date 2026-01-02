@@ -29,8 +29,8 @@ export interface IAudit extends z.infer<typeof ZAudit>{};
 
 
 export const ZItem = z.object({
-  id: z.nullish(z.uuid()),
-  userId: z.nullish(z.uuid()),
+  id: z.nullish(z.string()),
+  userId: z.nullish(z.string()),
   summary: z.nullish(z.string()),
   category: z.nullish(z.string()),
   description: z.nullish(z.string()),

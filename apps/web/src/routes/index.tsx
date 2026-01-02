@@ -10,6 +10,7 @@ function Home() {
     <div className="App">
       <header className="App-header">
       </header>
+      <div> Hello  World</div>
     </div>
   )
 }

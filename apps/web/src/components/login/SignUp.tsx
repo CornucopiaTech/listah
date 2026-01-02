@@ -26,7 +26,7 @@ import { ZUser } from "@/lib/model/auth";
 import type { IUser } from "@/lib/model/auth";
 import { DEFAULT_USER } from "@/lib/helper/defaults";
 import { TextFieldBasic } from "@/components/basics/TextField";
-import { CentredBox } from "@/components/basics/Box";
+import { CentredBox, SpaceBetweenBox, RowGridBox, ColumnGridBox } from "@/components/basics/Box";
 
 
 const { fieldContext, formContext } = createFormHookContexts()
@@ -51,36 +51,32 @@ const { useAppForm } = createFormHook({
 export function SignUpForm() {
   const form = useAppForm({
     defaultValues: DEFAULT_USER,
-    validators: {
-      // Pass a schema or function to validate
-      onChange: z.object({
-        username: z.string(),
-        age: z.number().min(13),
-      }),
-    },
+    // validators: {
+    //   // Pass a schema or function to validate
+    //   onChange: z.object({
+    //     username: z.string(),
+    //     age: z.number().min(13),
+    //   }),
+    // },
     onSubmit: ({ value }) => {
       // Do something with form data
+      const newValue: IUser = { ...value, role: ['user'] }
       console.info('Submit value', value)
+      console.info('Post value', newValue)
       alert(JSON.stringify(value, null, 2))
+      alert(JSON.stringify(newValue, null, 2))
     },
   })
 
   return (
-    <CentredBox sx={{
-        // m: 1, width: '50ch', height: 'fit-content'
-      width: '60em', justifyContent: 'center', alignContent: 'center',
-      display: 'flex', flexWrap: 'wrap',
-      }} >
     <form
       onSubmit={(e: MouseEvent<HTMLButtonElement>) => {
           e.preventDefault()
           e.stopPropagation()
+          form.handleSubmit()
         }}
       >
-      {/* <CentredBox sx={{
-        width: '100%', justifyContent: 'center', alignContent: 'center',
-        display: 'flex', flexWrap: 'wrap',
-        }}> */}
+      <RowGridBox numChildren={7} sx={{ gap: 1, }}>
         <Typography gutterBottom variant="h3" component="div" sx={{  justifyContent: 'center' }}>
             Create your account
         </Typography>
@@ -94,10 +90,10 @@ export function SignUpForm() {
               value={field.state.value}
               label="First Name"
               onChange={(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-              sx={{ width: '50ch' }}
+              //sx={{ width: '98%' , p: 1}}
               size="small"
               variant="standard"
-              margin="dense"
+              //margin="dense"
             />
           }
         />
@@ -109,10 +105,11 @@ export function SignUpForm() {
               value={field.state.value}
               label="Last Name"
               onChange={(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-              sx={{ width: '50ch' }}
+              //sx={{ width: '98%' , p: 1}}
               size="small"
               variant="standard"
-              margin="dense"
+              //margin="dense"
+
             />
           }
         />
@@ -124,10 +121,10 @@ export function SignUpForm() {
               value={field.state.value}
               label="Email"
               onChange={(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-              sx={{ width: '50ch' }}
+              //sx={{ width: '98%' , p: 1}}
               size="small"
               variant="standard"
-              margin="dense"
+              //margin="dense"
             />
           }
         />
@@ -139,10 +136,10 @@ export function SignUpForm() {
               value={field.state.value}
               label="Phone Number"
               onChange={(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-              sx={{ width: '50ch' }}
+              //sx={{ width: '98%' , p: 1}}
               size="small"
               variant="standard"
-              margin="dense"
+              //margin="dense"
             />
           }
         />
@@ -154,10 +151,10 @@ export function SignUpForm() {
               value={field.state.value}
               label="Username"
               onChange={(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-              sx={{ width: '50ch' }}
+              //sx={{ width: '98%' , p: 1}}
               size="small"
               variant="standard"
-              margin="dense"
+              //margin="dense"
             />
           }
         />
@@ -169,292 +166,44 @@ export function SignUpForm() {
               value={field.state.value}
               label="Password"
               onChange={(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-              sx={{ width: '50ch' }}
+              //sx={{ width: '98%' , p: 1}}
               size="small"
               variant="standard"
-              margin="dense"
+              //margin="dense"
               type="password"
             />
           }
         />
-        {/* Components in `form.AppForm` have access to the form context */}
-          {/* <form.AppForm> */}
-            {/* <form.SubmitButton /> */}
-          <Button
-            type="submit"
-            variant="contained"
-            // onClick={() => {form.reset()}}
-            sx={{
-              // m: 1, width: '50ch', height: 'fit-content'
-              width: '32em', justifyContent: 'center', alignContent: 'center',
-              display: 'flex', flexWrap: 'wrap', my: 2,
-            }}
-            onClick={form.handleSubmit}
-          >
-            Submit
-          </Button>
-          {/* </form.AppForm> */}
-      {/* </CentredBox> */}
+      </RowGridBox>
+        <form.Subscribe
+          selector={(state) => [state.canSubmit, state.isSubmitting]}
+          children={([canSubmit, isSubmitting]) => (
+            <SpaceBetweenBox>
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={!canSubmit}
+                sx={{ my: 2,}}
+                onClick={form.handleSubmit}
+              >
+                {isSubmitting ? '...' : 'Submit'}
+              </Button>
+
+              <Button
+                type="reset"
+                variant="contained"
+                sx={{ my: 2, }}
+                onClick={(e) => {
+                  // Avoid unexpected resets of form elements (especially <select> elements)
+                  e.preventDefault()
+                  form.reset()
+                }}
+              >
+                Reset
+              </Button>
+            </SpaceBetweenBox>
+          )}
+        />
     </form>
-    </CentredBox>
   )
-
-  // return (
-  //   <CentredBox sx={{
-  //       // m: 1, width: '50ch', height: 'fit-content'
-  //     width: '60em', justifyContent: 'center', alignContent: 'center',
-  //     display: 'flex', flexWrap: 'wrap',
-  //     }} >
-  //   <form
-  //     onSubmit={(e: MouseEvent<HTMLButtonElement>) => {
-  //         e.preventDefault()
-  //         e.stopPropagation()
-  //       }}
-  //     >
-  //     {/* <CentredBox sx={{
-  //       width: '100%', justifyContent: 'center', alignContent: 'center',
-  //       display: 'flex', flexWrap: 'wrap',
-  //       }}> */}
-  //       <Typography gutterBottom variant="h3" component="div" sx={{  justifyContent: 'center' }}>
-  //           Create your account
-  //       </Typography>
-  //       {/* Components are bound to `form` and `field` to ensure extreme type safety */}
-  //       {/* Use `form.AppField` to render a component bound to a single field */}
-  //       <form.AppField
-  //         name="firstName"
-  //         children={
-  //           (field) => <field.TextField
-  //             id={"sign-up-firstname"}
-  //             value={field.state.value}
-  //             label="First Name"
-  //             onChange={(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-  //             sx={{ width: '50ch' }}
-  //             size="small"
-  //           />
-  //         }
-  //       />
-  //       <form.AppField
-  //         name="lastName"
-  //         children={
-  //           (field) => <field.TextField
-  //             id={"sign-up-lastname"}
-  //             value={field.state.value}
-  //             label="Last Name"
-  //             onChange={(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-  //             sx={{ width: '50ch' }}
-  //             size="small"
-  //           />
-  //         }
-  //       />
-  //       <form.AppField
-  //         name="email"
-  //         children={
-  //           (field) => <field.TextField
-  //             id={"sign-up-email"}
-  //             value={field.state.value}
-  //             label="Email"
-  //             onChange={(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-  //             sx={{ width: '50ch' }}
-  //             size="small"
-  //           />
-  //         }
-  //       />
-  //       <form.AppField
-  //         name="phoneNumber"
-  //         children={
-  //           (field) => <field.TextField
-  //             id={"sign-up-phoneNumber"}
-  //             value={field.state.value}
-  //             label="Phone Number"
-  //             onChange={(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-  //             sx={{ width: '50ch' }}
-  //             size="small"
-  //           />
-  //         }
-  //       />
-  //       <form.AppField
-  //         name="username"
-  //         children={
-  //           (field) => <field.TextField
-  //             id={"sign-up-username"}
-  //             value={field.state.value}
-  //             label="Username"
-  //             onChange={(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-  //             sx={{ width: '50ch' }}
-  //             size="small"
-  //           />
-  //         }
-  //       />
-  //       <form.AppField
-  //         name="password"
-  //         children={
-  //           (field) => <field.TextField
-  //             id={"sign-up-password"}
-  //             value={field.state.value}
-  //             label="Password"
-  //             onChange={(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-  //             sx={{ width: '50ch' }}
-  //             size="small"
-  //             type="password"
-  //           />
-  //         }
-  //       />
-  //       {/* Components in `form.AppForm` have access to the form context */}
-  //         {/* <form.AppForm> */}
-  //           {/* <form.SubmitButton /> */}
-  //         <Button
-  //           type="submit"
-  //           variant="contained"
-  //           // onClick={() => {form.reset()}}
-  //           sx={{
-  //             // m: 1, width: '50ch', height: 'fit-content'
-  //             width: '32em', justifyContent: 'center', alignContent: 'center',
-  //             display: 'flex', flexWrap: 'wrap', my: 2,
-  //           }}
-  //           onClick={form.handleSubmit}
-  //         >
-  //           Submit
-  //         </Button>
-  //         {/* </form.AppForm> */}
-  //     {/* </CentredBox> */}
-  //   </form>
-  //   </CentredBox>
-  // )
-
-  // return (
-  //   // <CentredBox sx={{ m: 1, width: '100%', height: 'fit-content'  }} >
-  //   <form
-  //     onSubmit={(e: MouseEvent<HTMLButtonElement>) => {
-  //         e.preventDefault()
-  //         form.handleSubmit()
-  //       }}
-  //     >
-  //     <Card sx={{
-  //       width: '80%', justifyContent: 'center', alignContent: 'center',
-  //       display: 'flex', flexWrap: 'wrap',
-  //       }}>
-  //       <CardContent>
-  //         <Typography gutterBottom variant="h5" component="div" sx={{ m: 1, }}>
-  //           Sign Up
-  //         </Typography>
-  //         {/* Components are bound to `form` and `field` to ensure extreme type safety */}
-  //         {/* Use `form.AppField` to render a component bound to a single field */}
-  //         <form.AppField
-  //           name="username"
-  //           children={
-  //             (field) => <field.TextField
-  //               id={"sign-up-username"}
-  //               value={field.state.value}
-  //               label="Username"
-  //               onChange={(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-  //               sx={{ width: '50ch' }}
-  //               size="small"
-  //             />
-  //           }
-  //         />
-  //         <form.AppField
-  //           name="firstName"
-  //           children={
-  //             (field) => <field.TextField
-  //               id={"sign-up-firstname"}
-  //               value={field.state.value}
-  //               label="First Name"
-  //               onChange={(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-  //               sx={{ width: '50ch' }}
-  //               size="small"
-  //             />
-  //           }
-  //         />
-  //         <form.AppField
-  //           name="lastName"
-  //           children={
-  //             (field) => <field.TextField
-  //               id={"sign-up-lastname"}
-  //               value={field.state.value}
-  //               label="Last Name"
-  //               onChange={(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-  //               sx={{ width: '50ch' }}
-  //               size="small"
-  //             />
-  //           }
-  //         />
-  //         <form.AppField
-  //           name="email"
-  //           children={
-  //             (field) => <field.TextField
-  //               id={"sign-up-email"}
-  //               value={field.state.value}
-  //               label="Email"
-  //               onChange={(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-  //               sx={{ width: '50ch' }}
-  //               size="small"
-  //             />
-  //           }
-  //         />
-  //         <form.AppField
-  //           name="phoneNumber"
-  //           children={
-  //             (field) => <field.TextField
-  //               id={"sign-up-phoneNumber"}
-  //               value={field.state.value}
-  //               label="Phone Number"
-  //               onChange={(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-  //               sx={{ width: '50ch' }}
-  //               size="small"
-  //             />
-  //           }
-  //         />
-  //       </CardContent>
-  //       {/* Components in `form.AppForm` have access to the form context */}
-  //       <CardActions>
-  //         <form.AppForm>
-  //           <form.SubmitButton />
-  //         </form.AppForm>
-  //       </CardActions>
-  //     </Card>
-  //   </form>
-  //   //{/* </CentredBox> */}
-  // )
 }
-
-
-
-
-
-// export  function SignUpForm() {
-//   const formOpts = formOptions({
-//     defaultValues: DEFAULT_USER,
-//   })
-
-//   const form = useForm({
-//     ...formOpts,
-//     onSubmit: async ({ value }) => {
-//       // Do something with form data
-//       console.log(value)
-//     },
-//   })
-
-//   return (
-//     <Box style={{ background: "var(--gray-a2)", borderRadius: "var(--radius-3)" }}>
-//       <Container size="1">
-//           <Box py="9" />
-//           Hello WOrld!
-
-//         <form.Field
-//           name="firstName"
-//           children={(field) => (
-//             <>
-//               <input
-//                 value={field.state.value}
-//                 onBlur={field.handleBlur}
-//                 onChange={(e) => field.handleChange(e.target.value)}
-//               />
-//               <FieldInfo field={field} />
-//             </>
-//           )}
-//         />
-//       </Container>
-//     </Box>
-
-//   )
-// }

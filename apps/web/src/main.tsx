@@ -4,8 +4,9 @@ import {
   QueryClient,
   QueryClientProvider
 } from '@tanstack/react-query';
+import { ClerkProvider } from '@clerk/clerk-react'
 import { enableMapSet } from 'immer';
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+import { ThemeProvider, } from '@mui/material/styles';
 
 
 
@@ -20,7 +21,12 @@ import theme from '@/lib/styles/theme';
 
 
 enableMapSet();
-export const queryClient = new QueryClient()
+export const queryClient = new QueryClient();
+
+
+if (!process.env.AUTH_CONFIG.CLERK_KEY) {
+  throw new Error('Add your Clerk Publishable Key to the .env file')
+}
 
 const router = createRouter({
   routeTree,
@@ -52,19 +58,23 @@ declare module '@tanstack/react-router' {
 function App(){
   return (
     <ThemeProvider theme={theme}>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider
-          router={router}
-          defaultPreload="intent"
-          defaultPendingMs={0}
-          defaultPendingMinMs={0}
-          context={{
-            queryClient,
-            // analytics,
-            // auth,
-          }}
-        />
-      </QueryClientProvider>
+      <ClerkProvider
+          publishableKey={process.env.AUTH_CONFIG.CLERK_KEY}
+        >
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider
+            router={router}
+            defaultPreload="intent"
+            defaultPendingMs={0}
+            defaultPendingMinMs={0}
+            context={{
+              queryClient,
+              // analytics,
+              // auth,
+            }}
+          />
+        </QueryClientProvider>
+      </ClerkProvider>
     </ThemeProvider>
   )
 }
@@ -85,4 +95,4 @@ if (rootElement && !rootElement.innerHTML) {
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals(console.log)
+// reportWebVitals(console.log)

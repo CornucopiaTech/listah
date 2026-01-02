@@ -5,13 +5,13 @@ import {
 } from 'react';
 import Box from '@mui/material/Box';
 import { Outlet, createFileRoute } from '@tanstack/react-router';
-import { ThemeProvider } from '@mui/material/styles';
-
+import { Protect } from '@clerk/clerk-react';
 
 
 import { AppBarHeight } from '@/lib/model/appNavBarModel';
 import AppNavBar from '@/components/common/AppNavBar';
 import NotFound from '@/components/common/NotFound';
+import { MainContainer } from '@/components/basics/Container';
 
 
 export const Route = createFileRoute("/items")({
@@ -22,15 +22,20 @@ export const Route = createFileRoute("/items")({
 
 function Items(): ReactNode {
   return (
+    <Protect fallback={<p>Users that are signed-out can see this.</p>}>
     <Fragment>
-      <ThemeProvider theme={theme}>
-        <Box sx={{ height: '100%' }}>
-          <AppNavBar />
-            <Box sx={{ maxHeight: '720px', mt: AppBarHeight, p: 1 }}>
-              <Outlet />
-            </Box>
-          </Box >
-        </ThemeProvider>
+      <Box
+        sx={{
+            height: '95vh',
+          // height: '100%'
+        }}
+        >
+        <AppNavBar />
+          {/* <MainContainer sx={{ maxHeight: '960px', p: 1, height: '95vh', }}> */}
+            <Outlet />
+          {/* </MainContainer> */}
+      </Box >
     </Fragment>
+  </Protect>
   );
 }
