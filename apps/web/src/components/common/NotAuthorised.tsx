@@ -1,15 +1,15 @@
-import type { ReactNode } from "react";
+import type {ReactNode} from "react";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
-import Link from '@mui/material/Link';
+import { SignInButton, SignUpButton, } from '@clerk/clerk-react';
 
 
-export default function NotFound(): ReactNode {
+export default function NotAuthorised(): ReactNode {
   const theme: {} = useTheme();
   return (
-      <Box sx={{
+    <Box sx={{
           minHeight: "100vh",
           display: "flex",
           flexDirection: "column",
@@ -24,7 +24,7 @@ export default function NotFound(): ReactNode {
           alignItems: "center",
           justifyContent: "center",
         }}>
-        404
+        401
       </Typography>
       <Typography variant="h6"
         sx={{
@@ -32,7 +32,7 @@ export default function NotFound(): ReactNode {
           alignItems: "center",
           justifyContent: "center",
         }}>
-        Not Found
+        Unauthorised
       </Typography>
       <Typography variant="h5"
           sx={{
@@ -40,20 +40,28 @@ export default function NotFound(): ReactNode {
             alignItems: "center",
             justifyContent: "center",
           }}>
-        The page you are looking for does not exist or has been moved.
+        You are not authorised to view this content.
+      </Typography>
+      <Typography variant="h5"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+        Please sign in or sign up.
       </Typography>
       <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(1, 1fr)',
+            gridTemplateColumns: 'repeat(2, 1fr)',
             gap: 2,
           }}
         >
-        <Link href="/" underline="none">
+        <SignInButton mode="modal">
           <Button
             variant="text"
-              sx={{ my: 2, }}
-            >
+            sx={{ my: 2, }}
+          >
             <Typography
               variant="h3" noWrap
               component="div"
@@ -62,10 +70,27 @@ export default function NotFound(): ReactNode {
                 textTransform: 'none',
               }}
             >
-              Go Home
+              Sign In
             </Typography>
           </Button>
-        </Link>
+        </SignInButton>
+        <SignUpButton mode="modal">
+            <Button
+              variant="text"
+              sx={{ my: 2, }}
+            >
+          <Typography
+              variant="h3" noWrap
+              component="div"
+              sx={{
+                color: theme.palette.containedButton.main,
+                textTransform: 'none',
+              }}
+              >
+            Sign Up
+          </Typography>
+          </Button>
+        </SignUpButton>
       </Box>
     </Box>
   );

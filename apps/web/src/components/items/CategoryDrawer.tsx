@@ -7,7 +7,6 @@ import type {
   ReactNode,
 } from 'react';
 
-import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
@@ -19,18 +18,15 @@ import {
 } from '@tanstack/react-query';
 
 
-import { WebAppContext } from "@/lib/context/webappContext";
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
 import { categoryGroupOptions } from '@/lib/helper/querying';
 import { useBoundStore } from '@/lib/store/boundStore';
-import type {  IItemsSearch } from '@/lib/model/ItemsModel';
+import type {  IItemsSearch } from '@/lib/model/Items';
 import Loading from '@/components/common/Loading';
-import { ErrorAlerts } from '@/components/common/ErrorAlert';
-
+import { Error } from '@/components/common/Error';
 
 export default function CategoryDrawer(): ReactNode {
   const store = useBoundStore((state) => state);
-  const uId: str = useContext(WebAppContext);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
 
 
@@ -52,16 +48,11 @@ export default function CategoryDrawer(): ReactNode {
 
   const {
     isPending, isError, data, error
-  }: UseQueryResult<string[]> = useQuery(categoryGroupOptions(uId));
+  }: UseQueryResult<string[]> = useQuery(categoryGroupOptions(query.userId));
 
-
-  // const {
-  //   isPending, isError, data, error
-  // }: UseQueryResult<string[]> = useSuspenseQuery(categoryGroupOptions(uId));
 
   if (isPending) { return <Loading />; }
-  if (isError) { return <ErrorAlerts>Error: {error.message}</ErrorAlerts>; }
-
+  if (isError) { return <Error message={error.message} />; }
 
   const category = data.category ? data.category : [];
 

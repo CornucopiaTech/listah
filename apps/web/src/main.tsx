@@ -4,32 +4,38 @@ import {
   QueryClient,
   QueryClientProvider
 } from '@tanstack/react-query';
+import { ClerkProvider } from '@clerk/clerk-react'
 import { enableMapSet } from 'immer';
+import { ThemeProvider, } from '@mui/material/styles';
 
 
-
+// Internal imports
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
-
-import './styles.css'
 import reportWebVitals from './reportWebVitals.ts'
 import Loading from '@/components/common/Loading';
-import { ErrorAlerts } from '@/components/common/ErrorAlert';
+import NotFound from '@/components/common/NotFound';
+import { Error } from '@/components/common/Error';
+import * as theme from '@/lib/styles/theme';
+
 
 
 enableMapSet();
-export const queryClient = new QueryClient()
+export const queryClient = new QueryClient();
+
+
+if (!process.env.AUTH_CONFIG.CLERK_KEY) {
+  throw new Error('Add your Clerk Publishable Key to the .env file')
+}
 
 const router = createRouter({
   routeTree,
-  defaultPendingComponent: () => (
-    <div className={`p-2 text-2xl`}>
-      <Loading />
-    </div>
-  ),
-  defaultErrorComponent: ({ error }) => <ErrorAlerts> {error.message} </ErrorAlerts>,
+  defaultPendingComponent: Loading,
+  defaultErrorComponent: ({ error }) => <Error message={error.message} />,
+  defaultNotFoundComponent: NotFound,
+  Wrap: Wrapper,
   context: {
-    auth: undefined!, // We'll inject this when we render
+    // auth: undefined!, // We'll inject this when we render
     queryClient,
   },
   defaultPreload: 'intent',
@@ -47,29 +53,40 @@ declare module '@tanstack/react-router' {
   }
 }
 
+
+function Wrapper( { children }: { children: React.ReactNode } ) {
+  return (
+    <ThemeProvider theme={theme.materialTheme}>
+      <ClerkProvider publishableKey={process.env.AUTH_CONFIG.CLERK_KEY}>
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </ClerkProvider>
+    </ThemeProvider>
+  )
+};
+
+
 // Render the app
 const rootElement = document.getElementById('app')
 if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
-    // <StrictMode>
-    //   <RouterProvider router={router} />
-    // </StrictMode>,
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider
-        router={router}
-        defaultPreload="intent"
-        defaultPendingMs={0}
-        defaultPendingMinMs={0}
-        context={{
-          queryClient,
-        }}
-      />
-    </QueryClientProvider>,
+    <RouterProvider
+      router={router}
+      defaultPreload="intent"
+      defaultPendingMs={0}
+      defaultPendingMinMs={0}
+      context={{
+        queryClient,
+        // analytics,
+        // auth,
+      }}
+    />
   )
 }
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals()
+// reportWebVitals(console.log)

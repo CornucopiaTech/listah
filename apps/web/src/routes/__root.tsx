@@ -1,6 +1,11 @@
-import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
+import { Outlet, createRootRoute } from '@tanstack/react-router';
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
+import { TanStackDevtools } from '@tanstack/react-devtools';
+import CssBaseline from '@mui/material/CssBaseline';
+import { Fragment } from 'react';
+
+
+import NotFound from '@/components/common/NotFound';
 
 
 
@@ -20,19 +25,10 @@ export const Route = createRootRoute({
     ],
   }),
   component: () => (
-    <>
+    <Fragment>
+      <CssBaseline />
       <Outlet />
-      <TanStackDevtools
-        config={{
-          position: 'bottom-right',
-        }}
-        plugins={[
-          {
-            name: 'Tanstack Router',
-            render: <TanStackRouterDevtoolsPanel />,
-          },
-        ]}
-      />
-    </>
+    </Fragment>
   ),
+  notFoundComponent: NotFound,
 })

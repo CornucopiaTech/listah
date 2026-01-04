@@ -1,15 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router';
+
+
 
 
 export const Route = createFileRoute('/')({
-  component: App,
+  component: () => <div> Hello World. I am home</div>
+  // beforeLoad: () => {
+  //   throw redirect({
+  //     to: '/items',
+  //     replace: true, // This option makes it a "permanent" history change
+  //   })
+  // },
 })
-
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-      </header>
-    </div>
-  )
-}

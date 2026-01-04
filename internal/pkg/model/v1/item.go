@@ -52,7 +52,7 @@ var ItemResolveFields = []string{
 
 
 
-func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, error) {
+func IItemToItemModel(msg []*pb.Item, genId bool) ([]*Item, error) {
 	items := []*Item{}
 	for _, v := range msg {
 		id := v.GetId()
@@ -83,7 +83,7 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, error) {
 	return items, nil
 }
 
-func ItemProtoToItemModelUpsertSafe(msg []*pb.Item, genId bool) ([]*Item, error) {
+func IItemToItemModelUpsertSafe(msg []*pb.Item, genId bool) ([]*Item, error) {
 	items := []*Item{}
 	for _, v := range msg {
 		id := v.GetId()
@@ -134,7 +134,7 @@ func ItemProtoToItemModelUpsertSafe(msg []*pb.Item, genId bool) ([]*Item, error)
 	return items, nil
 }
 
-func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
+func ItemModelToIItem(m []*Item) ([]*pb.Item, error) {
 	items := []*pb.Item{}
 	for _, v := range m {
 		items = append(items, &pb.Item{
@@ -161,7 +161,7 @@ func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
 	return items, nil
 }
 
-func ItemProtoToWhereClause(msg *pb.ItemServiceReadRequest) ([]model.WhereClause, error) {
+func IItemToWhereClause(msg *pb.ItemServiceReadRequest) ([]model.WhereClause, error) {
 	if len(msg.GetUserId()) == 0 {
 		return nil, errors.New("No userId sent with request")
 	}

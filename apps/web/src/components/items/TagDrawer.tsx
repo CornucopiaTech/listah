@@ -17,9 +17,9 @@ import { Virtuoso } from 'react-virtuoso';
 
 
 import { useBoundStore } from '@/lib/store/boundStore';
-import type { IItemsSearch } from '@/lib/model/ItemsModel';
+import type { IItemsSearch } from '@/lib/model/Items';
 import Loading from '@/components/common/Loading';
-import { ErrorAlerts } from '@/components/common/ErrorAlert';
+import { Error } from '@/components/common/Error';
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
 import { tagGroupOptions } from '@/lib/helper/querying';
 
@@ -44,24 +44,25 @@ export default function TagDrawer(): ReactNode {
   }
 
   const {
-    isPending, isError, data, error
+    isPending,
+    isError,
+    data,
+    error
   }: UseQueryResult<string[]> = useQuery(tagGroupOptions(query.userId));
 
 
   if (isPending) { return <Loading />; }
-  if (isError) {return <ErrorAlerts>Error: {error.message}</ErrorAlerts>;}
+  if (isError) {return <Error message={error.message} />;}
 
 
   const tag = data.tag ? data.tag : [];
 
+  const typoSx = { flexGrow: 1, textAlign: 'left', pl: textPaddingLeft, pb: textPaddingBottom }
+
 
   return (
     <Fragment>
-      <Typography
-        variant="body" component="div"
-        sx={{ flexGrow: 1, textAlign: 'left', pl: textPaddingLeft, pb: textPaddingBottom }}>
-        Tag
-      </Typography>
+      <Typography variant="body" component="div" sx={typoSx}> Tag </Typography>
       < Virtuoso
         style={{ height: '35vh' }}
         data={tag}

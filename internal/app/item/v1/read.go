@@ -25,7 +25,7 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 
 
 	readModel := []*v1model.Item{}
-	whereClause, err := v1model.ItemProtoToWhereClause(req.Msg)
+	whereClause, err := v1model.IItemToWhereClause(req.Msg)
 	if err != nil {
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting where clause from request", errors.Cause(err).Error())
 		return nil, err
@@ -88,7 +88,7 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 
 	// Convert readModel to response proto
 	// using the model conversion function
-	rs, err := v1model.ItemModelToItemProto(readModel)
+	rs, err := v1model.ItemModelToIItem(readModel)
 	if err != nil {
 		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting item proto from item model", errors.Cause(err).Error())
 		return nil, err
