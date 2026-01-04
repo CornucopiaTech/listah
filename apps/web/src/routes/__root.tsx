@@ -5,6 +5,9 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { Fragment } from 'react';
 
 
+import NotFound from '@/components/common/NotFound';
+
+
 
 export const Route = createRootRoute({
   head: () => ({
@@ -38,4 +41,5 @@ export const Route = createRootRoute({
       />
     </Fragment>
   ),
+  notFoundComponent: NotFound,
 })

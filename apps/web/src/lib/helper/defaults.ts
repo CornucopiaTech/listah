@@ -1,5 +1,5 @@
 
-import type { ZItems, IItemsSearch } from '@/lib/model/Items';
+import type { IItem, IItemsSearch } from '@/lib/model/Items';
 import type { IUser } from '@/lib/model/auth';
 
 
@@ -36,4 +36,26 @@ export const DEFAULT_USER: IUser = {
   role: [],
 };
 
+export const DEFAULT_ITEM: IItem = {
+  id: null,
+  userId: null,
+  summary: null,
+  category: null,
+  description: null,
+  note: null,
+  tag: null,
+  softDelete: null,
+  properties: null,
+  reactivateAt: null,
+  audit: null,
+};
+
 export const MAX_TAG_CHIPS_DISPLAY = 3;
+
+export const MAX_ITEM_SUMMARY_LENGTH = 100;
+export const MAX_ITEM_GRID_SUMMARY_LENGTH = 50;
+
+export const ITEM_LIST_HEIGHT = 30;
+export const MAX_ITEM_CATEGORY_LIST_HEIGHT = 600;
+export const MAX_ITEM_LIST_HEIGHT = 700;
+export const ITEM_CATEGORY_LIST_HEIGHT_BUFFER = 60;

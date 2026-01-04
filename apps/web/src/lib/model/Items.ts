@@ -69,6 +69,8 @@ export interface ZItems extends z.infer<typeof ZItems>{};
 // Items Store
 export interface IListingState {
   drawer: boolean;
+  modal: boolean;
+  displayId: string;
   searchQuery: string;
   checkedTag: Set<string>;
   checkedCategory: Set<string>;

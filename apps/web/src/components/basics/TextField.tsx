@@ -4,10 +4,12 @@ import TextField from '@mui/material/TextField';
 export function TextFieldBasic(props) {
   return (
     <TextField
-      fullWidth
+      multiline
+      // fullWidth
       variant="standard"
       // variant="outlined"
       margin="dense"
+      rows={4}
       {...props}
     />
   );

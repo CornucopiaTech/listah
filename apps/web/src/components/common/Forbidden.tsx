@@ -1,30 +1,81 @@
 import type {ReactNode} from "react";
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import Link from '@mui/material/Link';
+
 
 export default function Forbidden(): ReactNode {
+  const theme: {} = useTheme();
   return (
-    <div style={{
-          minHeight: "100vh",
+    <Box sx={{
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "#f8fafc",
+      color: theme.palette.primary.main,  //"#1a202c"
+    }}>
+      <Typography variant="h1"
+        sx={{
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "#f8fafc",
-          color: "#1a202c"
         }}>
-      <h1 style={{ fontSize: "6rem", margin: 0 }}>403</h1>
-      <h2 style={{ margin: "1rem 0" }}>Forbidden</h2>
-      <p>You are forbidden from viewing this content. Please ask an administrator to grant you permission.</p>
-      <a href="/" style={{
-        marginTop: "2rem",
-        padding: "0.75rem 1.5rem",
-        background: "#2563eb",
-        color: "#fff",
-        borderRadius: "0.5rem",
-        textDecoration: "none",
-        fontWeight: "bold"
-      }}>
-        Go Home
-      </a>
-    </div>
+        403
+      </Typography>
+      <Typography variant="h6"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
+        Forbidden
+      </Typography>
+      <Typography variant="h5"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
+        You do not have permissions to view this content.
+      </Typography>
+      <Typography variant="h5"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
+        Please request access from an administrator.
+      </Typography>
+
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(1, 1fr)',
+          gap: 2,
+        }}
+      >
+        <Link href="/" underline="none">
+          <Button
+            variant="text"
+            sx={{ my: 2, }}
+          >
+            <Typography
+              variant="h3" noWrap
+              component="div"
+              sx={{
+                color: theme.palette.containedButton.main,
+                textTransform: 'none',
+              }}
+            >
+              Go Home
+            </Typography>
+          </Button>
+        </Link>
+      </Box>
+    </Box>
   );
 }

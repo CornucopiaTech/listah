@@ -23,8 +23,7 @@ import { categoryGroupOptions } from '@/lib/helper/querying';
 import { useBoundStore } from '@/lib/store/boundStore';
 import type {  IItemsSearch } from '@/lib/model/Items';
 import Loading from '@/components/common/Loading';
-import { ErrorAlerts } from '@/components/common/ErrorAlert';
-
+import { Error } from '@/components/common/Error';
 
 export default function CategoryDrawer(): ReactNode {
   const store = useBoundStore((state) => state);
@@ -53,8 +52,7 @@ export default function CategoryDrawer(): ReactNode {
 
 
   if (isPending) { return <Loading />; }
-  if (isError) { return <ErrorAlerts>Error: {error.message}</ErrorAlerts>; }
-
+  if (isError) { return <Error message={error.message} />; }
 
   const category = data.category ? data.category : [];
 

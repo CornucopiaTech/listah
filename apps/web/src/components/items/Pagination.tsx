@@ -87,7 +87,10 @@ export function TablePaged(): ReactNode {
 
 
   const {
-    isPending, isError, data, error
+    isPending,
+    isError,
+    data,
+    error
   }: UseQueryResult<ZItems> = useQuery(itemGroupOptions(query));
 
 
@@ -96,7 +99,6 @@ export function TablePaged(): ReactNode {
 
 
   const totalRecords: number = data.pageSize ? data.pageSize : 1;
-
 
   return (
     <TablePagination

@@ -9,17 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SignUpRouteRouteImport } from './routes/sign-up/route'
 import { Route as ItemsRouteRouteImport } from './routes/items/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as SignUpIndexRouteImport } from './routes/sign-up/index'
 import { Route as ItemsIndexRouteImport } from './routes/items/index'
 
-const SignUpRouteRoute = SignUpRouteRouteImport.update({
-  id: '/sign-up',
-  path: '/sign-up',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ItemsRouteRoute = ItemsRouteRouteImport.update({
   id: '/items',
   path: '/items',
@@ -30,11 +23,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SignUpIndexRoute = SignUpIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => SignUpRouteRoute,
-} as any)
 const ItemsIndexRoute = ItemsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -44,46 +32,33 @@ const ItemsIndexRoute = ItemsIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/items': typeof ItemsRouteRouteWithChildren
-  '/sign-up': typeof SignUpRouteRouteWithChildren
   '/items/': typeof ItemsIndexRoute
-  '/sign-up/': typeof SignUpIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/items': typeof ItemsIndexRoute
-  '/sign-up': typeof SignUpIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/items': typeof ItemsRouteRouteWithChildren
-  '/sign-up': typeof SignUpRouteRouteWithChildren
   '/items/': typeof ItemsIndexRoute
-  '/sign-up/': typeof SignUpIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/items' | '/sign-up' | '/items/' | '/sign-up/'
+  fullPaths: '/' | '/items' | '/items/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/items' | '/sign-up'
-  id: '__root__' | '/' | '/items' | '/sign-up' | '/items/' | '/sign-up/'
+  to: '/' | '/items'
+  id: '__root__' | '/' | '/items' | '/items/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ItemsRouteRoute: typeof ItemsRouteRouteWithChildren
-  SignUpRouteRoute: typeof SignUpRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sign-up': {
-      id: '/sign-up'
-      path: '/sign-up'
-      fullPath: '/sign-up'
-      preLoaderRoute: typeof SignUpRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/items': {
       id: '/items'
       path: '/items'
@@ -97,13 +72,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/sign-up/': {
-      id: '/sign-up/'
-      path: '/'
-      fullPath: '/sign-up/'
-      preLoaderRoute: typeof SignUpIndexRouteImport
-      parentRoute: typeof SignUpRouteRoute
     }
     '/items/': {
       id: '/items/'
@@ -127,22 +95,9 @@ const ItemsRouteRouteWithChildren = ItemsRouteRoute._addFileChildren(
   ItemsRouteRouteChildren,
 )
 
-interface SignUpRouteRouteChildren {
-  SignUpIndexRoute: typeof SignUpIndexRoute
-}
-
-const SignUpRouteRouteChildren: SignUpRouteRouteChildren = {
-  SignUpIndexRoute: SignUpIndexRoute,
-}
-
-const SignUpRouteRouteWithChildren = SignUpRouteRoute._addFileChildren(
-  SignUpRouteRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ItemsRouteRoute: ItemsRouteRouteWithChildren,
-  SignUpRouteRoute: SignUpRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

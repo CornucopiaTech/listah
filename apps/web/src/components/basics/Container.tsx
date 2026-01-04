@@ -8,8 +8,6 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 
 
-import { CentredBox } from '@/components/basics/Box';
-
 
 
 export function MainContainer({ children }: { children: ReactNode }) {

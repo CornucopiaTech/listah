@@ -1,5 +1,6 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme as createMaterialTheme } from '@mui/material/styles';
 import { blueGrey, deepOrange, red, teal } from '@mui/material/colors';
+import { createTheme as createMantineTheme, MantineProvider } from '@mantine/core';
 
 const theme = {
   palette: {
@@ -19,15 +20,19 @@ const theme = {
       main: red.A400,
     },
     nav: {
-      main: 'rgba(21, 49, 49, 0.03)'
+      main: 'rgba(21, 49, 49, 0.05)'
     },
     tagChip: {
-      main: blueGrey[500],
-      contrastText: blueGrey[50],
+      main: '#153131',
+      contrastText: '#f9fafaff',
     },
     categoryChip: {
-      main: deepOrange[500],
-      contrastText: deepOrange[50],
+      main: '#e83904ff',
+      contrastText: '#f9fafaff',
+    },
+    containedButton: {
+      main: '#153131',
+      contrastText: '#f9fafaff',
     }
   }
 }
@@ -53,4 +58,5 @@ const theme = {
 // }
 
 // Create a theme instance.
-export default createTheme(theme);
+export const materialTheme = createMaterialTheme(theme);
+export const mantineTheme = createMantineTheme(theme);
