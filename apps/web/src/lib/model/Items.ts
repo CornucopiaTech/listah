@@ -68,8 +68,11 @@ export interface ZItems extends z.infer<typeof ZItems>{};
 
 // Items Store
 export interface IListingState {
+  message: string;
   drawer: boolean;
   modal: boolean;
+  detailModal: boolean;
+  newItemModal: boolean;
   displayId: string;
   searchQuery: string;
   checkedTag: Set<string>;
@@ -80,39 +83,19 @@ export interface IListingState {
 
 
 export interface IListingActions {
+  setMessage: (message: string) => void
   setDrawer: (drawer: boolean) => void
+  setModal: (modal: boolean) => void
+  setDetailModal: (detailModal: boolean) => void
+  setNewItemModal: (newItemModal: boolean) => void
   setSearchQuery: (searchQuery: string) => void
   setCheckedTag: (checkedTag: Set<string>) => void
   setCheckedCategory: (checkedCategory: Set<string>) => void
+  setFromDate: (fromDate: string) => void
+  setToDate: (toDate: string) => void
+  reset: () => void
 }
 export interface IListingStore extends IListingState, IListingActions { };
-
-
-
-
-export interface IDetailActions {
-  setState: (item: IItem) => void;
-  setSummary: (summary: string) => void;
-  setCategory: (category: string) => void;
-  setDescription: (description: string) => void;
-  setNote: (note: string) => void;
-  setTags: (tag: string[]) => void;
-  setSoftDelete: (softDelete: boolean) => void;
-  setProperties: (properties: { [index: string]: string }) => void;
-  setReactivateAt: (reactivateAt: string) => void;
-  setNewTag: (newTag: string) => void;
-}
-
-
-
-// Update Item Store
-export interface IDetailState {
-  item: IItem;
-  newTag: string | null;
-}
-export interface IDetailStore extends IDetailState, IDetailActions { };
-
-
 
 
 

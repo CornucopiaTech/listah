@@ -28,17 +28,6 @@ export const Route = createRootRoute({
     <Fragment>
       <CssBaseline />
       <Outlet />
-      <TanStackDevtools
-        config={{
-          position: 'bottom-right',
-        }}
-        plugins={[
-          {
-            name: 'Tanstack Router',
-            render: <TanStackRouterDevtoolsPanel />,
-          },
-        ]}
-      />
     </Fragment>
   ),
   notFoundComponent: NotFound,

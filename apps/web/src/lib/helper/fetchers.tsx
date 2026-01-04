@@ -1,4 +1,7 @@
-import type { IItem, ZItems } from '@/lib/model/Items';
+import axios from 'axios';
+
+import { ZItems } from '@/lib/model/Items';
+import type { IItem, } from '@/lib/model/Items';
 
 
 
@@ -18,10 +21,8 @@ export async function postItem(item: IItem) {
 }
 
 
-export async function getItem(opts: ZItemsSearch): Promise<ZItems | void> {
+export async function getItem(opts: ZItemsSearch): Promise<IItems | void> {
   const url = `/api/${process.env.SERVER_STATE.ITEMS_READ}`;
-  console.info("In getItem, url, opts: ", url, opts, );
-
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify(opts),
@@ -38,13 +39,12 @@ export async function getItem(opts: ZItemsSearch): Promise<ZItems | void> {
   return data;
 }
 
-export async function getTag(userId: string): Promise<ZItems | void> {
-  const url = `/api/${process.env.SERVER_STATE.TAG_READ}`;
-  console.info("In getTag, userId: ", userId);
 
+export async function getTag(userId: string): Promise<IItems | void> {
+  const url = `/api/${process.env.SERVER_STATE.TAG_READ}`;
   const req = new Request(url, {
     method: "POST",
-    body: JSON.stringify({ userId: userId }),
+    body: JSON.stringify({ userId }),
     headers: { "Content-Type": "application/json", "Accept": "*/*" },
   });
   const res = await fetch(req);
@@ -55,9 +55,9 @@ export async function getTag(userId: string): Promise<ZItems | void> {
   return await res.json();
 }
 
+
 export async function getCategory(userId: string): Promise<ZItems | void> {
   const url = `/api/${process.env.SERVER_STATE.CATEGORY_READ}`;
-  console.info("In getCategory, userId: ", userId);
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify({ userId: userId }),

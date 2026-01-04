@@ -26,7 +26,7 @@ import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
 
 
 
-export default function Paged(): ReactNode {
+export function Footer(): ReactNode {
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const navigate = useNavigate();
 
@@ -63,7 +63,7 @@ export default function Paged(): ReactNode {
 
 
 
-export function TablePaged(): ReactNode {
+export default function TableFooter(): ReactNode {
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const navigate = useNavigate();
 

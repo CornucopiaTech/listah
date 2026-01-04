@@ -35,7 +35,7 @@ const router = createRouter({
   defaultNotFoundComponent: NotFound,
   Wrap: Wrapper,
   context: {
-    auth: undefined!, // We'll inject this when we render
+    // auth: undefined!, // We'll inject this when we render
     queryClient,
   },
   defaultPreload: 'intent',
@@ -57,9 +57,7 @@ declare module '@tanstack/react-router' {
 function Wrapper( { children }: { children: React.ReactNode } ) {
   return (
     <ThemeProvider theme={theme.materialTheme}>
-      <ClerkProvider
-          publishableKey={process.env.AUTH_CONFIG.CLERK_KEY}
-        >
+      <ClerkProvider publishableKey={process.env.AUTH_CONFIG.CLERK_KEY}>
         <QueryClientProvider client={queryClient}>
           {children}
         </QueryClientProvider>
@@ -91,4 +89,4 @@ if (rootElement && !rootElement.innerHTML) {
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals(console.log)
+// reportWebVitals(console.log)

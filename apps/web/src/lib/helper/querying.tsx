@@ -19,7 +19,8 @@ export function itemGroupOptions(opts: ZItemsSearch) {
   return queryOptions({
     queryKey: ["item", opts],
     queryFn: () => getItem(opts),
-    staleTime: 24 * 60 * 60 * 1000,
+    staleTime: 60,
+    // staleTime: 24 * 60 * 60 * 1000,
   })
 }
 
@@ -28,7 +29,8 @@ export function tagGroupOptions(opts: string) {
   return queryOptions({
     queryKey: ["tag", opts],
     queryFn: () => getTag(opts),
-    staleTime: 24 * 60 * 60 * 1000,
+    staleTime: 60,
+    // staleTime: 24 * 60 * 60 * 1000,
   })
 }
 
@@ -37,7 +39,8 @@ export function categoryGroupOptions(opts: string) {
   return queryOptions({
     queryKey: ["category", opts],
     queryFn: () => getCategory(opts),
-    staleTime: 24 * 60 * 60 * 1000,
+    staleTime: 60,
+    // staleTime: 24 * 60 * 60 * 1000,
   })
 }
 

@@ -10,9 +10,6 @@ import {
 } from '@tanstack/react-query';
 
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemButton from '@mui/material/ListItemButton';
 import Paper from '@mui/material/Paper';
 import * as z from "zod";
 import { Virtuoso } from 'react-virtuoso';
@@ -21,6 +18,8 @@ import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
+import { Icon } from "@iconify/react";
+
 
 
 
@@ -34,12 +33,11 @@ import { Error } from '@/components/common/Error';
 import {
   MAX_TAG_CHIPS_DISPLAY,
   MAX_ITEM_SUMMARY_LENGTH,
-  ITEM_LIST_HEIGHT,
-  MAX_ITEM_CATEGORY_LIST_HEIGHT,
-  ITEM_CATEGORY_LIST_HEIGHT_BUFFER,
-  MAX_ITEM_LIST_HEIGHT,
 } from '@/lib/helper/defaults';
 import Detail from "@/components/items/Detail";
+import Header from "@/components/items/Header";
+import TableFooter from "@/components/items/Footer";
+
 
 
 export default function Content(): ReactNode {
@@ -83,9 +81,10 @@ export default function Content(): ReactNode {
   }
 
   function eachItem(item: IItem): ReactNode {
-    const dis = item.summary.length > MAX_ITEM_SUMMARY_LENGTH ? item.summary.slice(0, MAX_ITEM_SUMMARY_LENGTH) + "..." : item.summary;
+    let dis: string = item.summary? item.summary : "";
+    dis = dis.length > MAX_ITEM_SUMMARY_LENGTH ? dis.slice(0, MAX_ITEM_SUMMARY_LENGTH) + "..." : dis;
     return (
-      <>
+      <Fragment>
         <Grid container key={item.id}
               size={{ md: 10, xs: 12 }}
               sx={{
@@ -129,75 +128,29 @@ export default function Content(): ReactNode {
           </Grid>
         </Grid>
         <Divider />
-      </>
-    );
-    return (
-      <Box key={item.id}>
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(5, 1fr)',
-            gap: 1,
-            gridTemplateRows: 'auto',
-            gridTemplateAreas: ` "main main main . sidebar" `,
-          }}>
-          <Box sx={{ gridArea: 'main', }}>
-            <Link href={`/items/${item.id}`} underline="hover" >
-              <ListItemButton key={item.id}>
-                <ListItemText primary={item.summary} />
-              </ListItemButton>
-            </Link>
-          </Box>
-          <Box sx={{ gridArea: 'sidebar', }}>
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: 2,
-              }}
-            >
-              <Chip
-                key={item.category} label={item.category}
-                sx={{
-                  textTransform: 'capitalize',
-                  bgcolor: theme.palette.categoryChip.main,
-                  color: theme.palette.categoryChip.contrastText
-                }}
-              />
-              {
-                item.tag && item.tag.slice(MAX_TAG_CHIPS_DISPLAY).map((tag) => (
-                  <Chip
-                    key={tag} label={tag}
-                    sx={{
-                      textTransform: 'capitalize',
-                      bgcolor: theme.palette.tagChip.main,
-                      color: theme.palette.tagChip.contrastText
-                    }}
-                  />
-                ))
-              }
-            </Box>
-          </Box>
-        </Box>
-        {/* <Divider /> */}
-      </Box>
+      </Fragment>
     );
   }
 
-  const tableHeight = items.length * (ITEM_LIST_HEIGHT) + ITEM_CATEGORY_LIST_HEIGHT_BUFFER;
 
   return (
+
     <Fragment>
+      <Box key='head-content' sx={{ mt: 0, }}>
+        < Header handleAddItem={handleItemclick}/>
+      </Box>
+      {/* <Icon icon="material-symbols:arrow-downward" width="24" height="24" /> */}
       {store.modal && <Detail />}
-        <Virtuoso key="data-content"
-          style={{
-            height: `80vh`,  //`${tableHeight}px`,
-            // maxHeight: `85vh`,
-            width: '100%', display: 'block', overflow: 'auto',
-          }}
-          data={items}
-          itemContent={(_, item) => eachItem(item)}
-        />
+      <Virtuoso key="data-content"
+        style={{
+          height: `82vh`, width: '100%', display: 'block', overflow: 'auto',
+        }}
+        data={items}
+        itemContent={(_, item) => eachItem(item)}
+      />
+      <Box key='foot-content' sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', alignItems: "center" }}>
+        <TableFooter />
+      </Box>
     </Fragment>
   );
 }

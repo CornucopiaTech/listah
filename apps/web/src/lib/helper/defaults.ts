@@ -37,15 +37,15 @@ export const DEFAULT_USER: IUser = {
 };
 
 export const DEFAULT_ITEM: IItem = {
-  id: null,
-  userId: null,
-  summary: null,
-  category: null,
-  description: null,
-  note: null,
-  tag: null,
-  softDelete: null,
-  properties: null,
+  id: "",
+  userId: "",
+  summary: "",
+  category: "",
+  description: "",
+  note: "",
+  tag: [],
+  softDelete: false,
+  properties: {},
   reactivateAt: null,
   audit: null,
 };
