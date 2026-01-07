@@ -2,8 +2,6 @@
 import {
   useContext,
   Fragment,
-  useState,
-  useEffect,
 } from "react";
 import type {
   ChangeEvent,
@@ -17,16 +15,15 @@ import {
   useQuery,
   useQueryClient,
   useMutation,
-  queryOptions,
   type UseQueryResult,
 } from '@tanstack/react-query';
-
+import {
+  useParams,
+} from '@tanstack/react-router';
 // import { z } from 'zod'
 import {
   v4 as uuidv4,
-  stringify as uuidStringify,
 } from 'uuid';
-import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { useTheme } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
@@ -36,7 +33,6 @@ import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { Icon } from "@iconify/react";
-import Tooltip from "@mui/material/Tooltip";
 
 
 
@@ -55,21 +51,21 @@ import {
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
 import Loading from '@/components/common/Loading';
 import { itemGroupOptions } from '@/lib/helper/querying';
-import { Error, Success } from '@/components/common/Alerts';
+import { Error } from '@/components/common/Alerts';
 import { postItem } from "@/lib/helper/fetchers";
 import { DEFAULT_ITEM } from "@/lib/helper/defaults";
 
 
-
-export default function DialogDetail() {
+export default function DialogDetail(): ReactNode {
   const theme: {} = useTheme();
   const store = useBoundStore((state) => state);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const queryClient = useQueryClient();
+  const { category: categoryName } = useParams({ strict: false });
+
   const {
     isPending, isError, data, error
   }: UseQueryResult<string[]> = useQuery(itemGroupOptions(query));
-
 
 
 
@@ -81,7 +77,7 @@ export default function DialogDetail() {
     },
     onSuccess: (data, variables) => {
       queryClient.setQueryData(
-        [["item", query], { id: variables.id }],
+        [ ["item", query], { id: variables.id }],
         data
       )
     },
@@ -114,6 +110,7 @@ export default function DialogDetail() {
   // Define the item to use on the form
   const newItem = {
     ...DEFAULT_ITEM, id: uuidv4(), userId: query.userId,
+    category: categoryName
   }
   const formItem: IItem = displayItem ? displayItem : newItem;
 
@@ -133,9 +130,10 @@ export default function DialogDetail() {
     e.preventDefault()
     e.stopPropagation()
     form.handleSubmit()
-    store.setItemModal(false);
+    store.setCategoryModal(false);
     store.setMessage("Item updated");
   }
+
   function getSimpleField(key: string){
     const sx = (key == "id" || key == "userId") ? { display: 'none' } : {}
     return (
@@ -251,7 +249,7 @@ export default function DialogDetail() {
   }
 
   return (
-    <Dialog fullWidth open={store.itemModal} onClose={() => store.setItemModal(false)}>
+    <Dialog fullWidth open={store.categoryModal} onClose={() => store.setCategoryModal(false)}>
       <form onSubmit={handleSubmit}>
         <DialogContent sx={dialogSx} >
           <Stack spacing={2}>

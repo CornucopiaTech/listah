@@ -18,7 +18,6 @@ import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import { Icon } from "@iconify/react";
 
 
 
@@ -34,9 +33,9 @@ import {
   MAX_TAG_CHIPS_DISPLAY,
   MAX_ITEM_SUMMARY_LENGTH,
 } from '@/lib/helper/defaults';
-import Detail from "@/components/items/Detail";
-import Header from "@/components/items/Header";
-import TableFooter from "@/components/items/Footer";
+import Detail from "@/components/category/Detail";
+import Header from "@/components/category/Header";
+import TableFooter from "@/components/category/Footer";
 
 
 
@@ -77,7 +76,7 @@ export default function Content(): ReactNode {
 
   function handleItemclick(itemId: string) {
     store.setDisplayId(itemId);
-    store.setItemModal(true);
+    store.setCategoryModal(true);
   }
 
   function eachItem(item: IItem): ReactNode {
@@ -132,15 +131,15 @@ export default function Content(): ReactNode {
     );
   }
 
+  // return <div> Hello World</div>
 
   return (
-
     <Fragment>
       <Box key='head-content' sx={{ mt: 0, }}>
         < Header handleAddItem={handleItemclick}/>
       </Box>
       {/* <Icon icon="material-symbols:arrow-downward" width="24" height="24" /> */}
-      {store.itemModal && <Detail />}
+      {store.categoryModal && <Detail />}
       <Virtuoso key="data-content"
         style={{
           height: `82vh`, width: '100%', display: 'block', overflow: 'auto',
