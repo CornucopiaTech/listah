@@ -1,10 +1,14 @@
 # To Do
+- Consider adding category filter and tag filter to the drawer for  page listing items for only a particular tag or category.
+- Explore using middleware to set the userId
 - Add capability to delete items
   - Add select item capability
   - Add functionality to mark selected item as as deleted
 - Add capability to delete multiple items
 - Add capability to add new item from category page. Let the new item inherit the category from the route query.
 - Add capability to add new item from tag page. Let the new item inherit the tag from the route query.
+- Closing the modal should refresh the page and get the new changes to that were made.
+
 
 - Define home page. Redirect to /categories
 - Define categories page as a list of categories and each category can be clicked to get a list of items in the category.

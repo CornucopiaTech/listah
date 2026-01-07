@@ -71,8 +71,9 @@ export interface IListingState {
   message: string;
   drawer: boolean;
   modal: boolean;
-  detailModal: boolean;
-  newItemModal: boolean;
+  itemModal: boolean;
+  categoryModal: boolean;
+  tagModal: boolean;
   displayId: string;
   searchQuery: string;
   checkedTag: Set<string>;
@@ -111,5 +112,6 @@ export const ZItemsSearch = z.object({
   pageNumber: z.number().catch(1),
   sortQuery: z.string().catch(''),
 })
+
 
 export interface IItemsSearch extends z.infer<typeof ZItemsSearch>{}
