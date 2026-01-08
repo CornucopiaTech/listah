@@ -6,14 +6,6 @@
   - Add select item capability
   - Add functionality to mark selected item as as deleted
 - Add capability to delete multiple items
-- Add capability to add new item from category page. Let the new item inherit the category from the route query.
-- Add capability to add new item from tag page. Let the new item inherit the tag from the route query.
-- Closing the modal should refresh the page and get the new changes to that were made.
-
-
-- Define home page. Redirect to /categories
-- Define categories page as a list of categories and each category can be clicked to get a list of items in the category.
-- Define tag page as a list of tags and each tag can be clicked to get a list of items in the tag.
 - Keep a navigation arrow to quickly scroll to the top or the bottom of the page.
 - Send auth token with api request
 - Add auth token to the query key for all api requests
@@ -24,9 +16,18 @@
 - Calculate the size of the Virtuoso height from the pageSize and a fixed size per row of the table.
 - Add capability to add new property
 - Add capability to delete property
+- Send error message when server side mutation fails.
+
 
 
 # Done
+- Define home page. Redirect to /categories
+- Define categories page as a list of categories and each category can be clicked to get a list of items in the category.
+- Define tag page as a list of tags and each tag can be clicked to get a list of items in the tag.
+- Add capability to add new item from category page. Let the new item inherit the category from the route query. : Done in modal
+- Add capability to add new item from tag page. Let the new item inherit the tag from the route query. : Done in Modal
+- Closing the modal should refresh the page and get the new changes to that were made. : query invalidation at successful submission.
+
 - Add capability to delete tag:: Added clear button
 - Add capability to delete multiple tags:: Added clear button
 - Add mechanism to add new items :: Updated Dialog to add this functionality
