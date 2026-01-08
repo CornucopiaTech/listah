@@ -15,6 +15,7 @@ import (
 
 type Tag interface {
 	Select(ctx context.Context, m interface{}, c *[]model.WhereClause, s string, o int, l int) (int, error)
+	SelectItem(ctx context.Context, m interface{}, c *[]model.WhereClause, s string, o int, l int) (int, error)
 	Insert(ctx context.Context, m interface{}) error
 	Update(ctx context.Context, v interface{}, m interface{}, s []string, w []string, al string) error
 	Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (interface{}, error)
@@ -53,6 +54,50 @@ func (a *tag) Select(ctx context.Context, m interface{}, c *[]model.WhereClause,
 	}
 
 	count, err := selectQuery.ScanAndCount(ctx)
+	if err != nil {
+		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
+		return 0, err
+	}
+
+	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
+	return count, nil
+}
+
+
+func (a *tag) SelectItem(ctx context.Context, m interface{}, c *[]model.WhereClause, s string, o int, l int) (int, error) {
+	ctx, span := otel.Tracer("tag-repository").Start(ctx, "TagRepository SelectItem")
+	defer span.End()
+
+	var activity string = "TagSelectItem"
+	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
+
+
+	var uid interface{};
+	var tgs interface{};
+	for _, k := range *c {
+		if (k.Column == "user_id"){
+			uid = k.Value
+		}
+		if (k.Column == "tag"){
+			tgs = k.Value
+		}
+	}
+
+	count := 0
+	err := a.db.NewRaw(`
+			SELECT *
+			FROM apps.items a
+			WHERE EXISTS (
+				SELECT 1
+				FROM jsonb_array_elements_text(a.tag::JSONB) AS elem
+				WHERE elem IN (?0) AND  a.tag::VARCHAR != 'null'
+					AND user_id::VARCHAR = ?1
+			);
+		`, tgs, uid,
+		).Scan(ctx, m)
+
+
+	// count, err := selectQuery.ScanAndCount(ctx)
 	if err != nil {
 		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
 		return 0, err

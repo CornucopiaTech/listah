@@ -61,7 +61,7 @@ export default function DialogDetail(): ReactNode {
   const store = useBoundStore((state) => state);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const queryClient = useQueryClient();
-  const { categoryFilter: categoryName } = useParams({ strict: false });
+  const { tagFilter: tagName } = useParams({ strict: false });
 
   const {
     isPending, isError, data, error
@@ -110,7 +110,7 @@ export default function DialogDetail(): ReactNode {
   // Define the item to use on the form
   const newItem = {
     ...DEFAULT_ITEM, id: uuidv4(), userId: query.userId,
-    category: categoryName
+    tag: [tagName]
   }
   const formItem: IItem = displayItem ? displayItem : newItem;
 
@@ -130,7 +130,7 @@ export default function DialogDetail(): ReactNode {
     e.preventDefault()
     e.stopPropagation()
     form.handleSubmit()
-    store.setCategoryModal(false);
+    store.setTagModal(false);
     store.setMessage("Item updated");
   }
 
@@ -249,7 +249,7 @@ export default function DialogDetail(): ReactNode {
   }
 
   return (
-    <Dialog fullWidth open={store.categoryModal} onClose={() => store.setCategoryModal(false)}>
+    <Dialog fullWidth open={store.tagModal} onClose={() => store.setTagModal(false)}>
       <form onSubmit={handleSubmit}>
         <DialogContent sx={dialogSx} >
           <Stack spacing={2}>

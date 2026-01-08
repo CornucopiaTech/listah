@@ -19,49 +19,9 @@ import TablePagination from '@mui/material/TablePagination';
 import { encodeState } from '@/lib/helper/encoders';
 import type { ZItems, IItemsSearch } from '@/lib/model/Items';
 import Loading from '@/components/common/Loading';
-import { ErrorAlerts } from '@/components/common/ErrorAlert';
-import { ITEMS_URL } from '@/lib/helper/defaults';
-import { itemGroupOptions } from '@/lib/helper/querying';
+import { Error } from '@/components/common/Alerts';
+import { tagGroupOptions } from '@/lib/helper/querying';
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
-
-
-
-export function Footer(): ReactNode {
-  const query: IItemsSearch = useContext(ItemSearchQueryContext);
-  const navigate = useNavigate();
-
-
-  function handlePageChange(event: React.ChangeEvent<unknown>, value: number) {
-    event.stopPropagation();
-    const q = { ...query, pageNumber: value };
-    const encoded = encodeState(q);
-    navigate({
-      to: ITEMS_URL, search: { s: encoded }
-    });
-  };
-
-
-  const {
-    isPending, isError, data, error
-  }: UseQueryResult<ZItems> = useQuery(itemGroupOptions(query));
-
-
-  if (isPending) { return <Loading />; }
-  if (isError) { return <ErrorAlerts>Error: {error.message}</ErrorAlerts>; }
-
-
-  const totalRecords: number = data.pageSize ? data.pageSize : 1;
-  const maxPages = Math.ceil(totalRecords / query.pageSize);
-
-  return (
-    <Fragment>
-      <Pagination
-        count={maxPages} page={query.pageNumber}
-        onChange={handlePageChange}
-      />
-    </Fragment>
-  );
-}
 
 
 
@@ -74,7 +34,7 @@ export default function TableFooter(): ReactNode {
     event.stopPropagation();
     const q = { ...query, pageNumber: value };
     const encoded = encodeState(q);
-    navigate({ to: ITEMS_URL, search: { s: encoded } });
+    navigate({ to: "/tags", search: { s: encoded } });
   };
 
   function handlePageSizeChange(e: React.ChangeEvent<unknown>) {
@@ -83,24 +43,24 @@ export default function TableFooter(): ReactNode {
     const encoded = encodeState(q);
     console.info("In handlePageChange - q ", q);
     console.info("In handlePageChange - Encoded ", encoded);
-    navigate({ to: ITEMS_URL, search: { s: encoded } });
+    navigate({ to: "/tags", search: { s: encoded } });
   };
 
 
 
   const {
-    isPending,
-    isError,
-    data,
-    error
-  }: UseQueryResult<ZItems> = useQuery(itemGroupOptions(query));
+    isPending, isError, data, error
+  }: UseQueryResult<string[]> = useQuery(tagGroupOptions(query.userId));
 
+  // ToDo: Explore using middleware to set the userId
 
   if (isPending) { return <Loading />; }
-  if (isError) { return <ErrorAlerts>Error: {error.message}</ErrorAlerts>; }
+  if (isError) { return <Error message={error.message} />; }
 
+  const tag = data.tag ? data.tag : [];
 
-  const totalRecords: number = data.pageSize ? data.pageSize : 1;
+  const totalRecords: number = tag.length > 0 ? tag.length : 1;
+
 
   return (
     <TablePagination

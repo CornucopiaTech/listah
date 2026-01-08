@@ -5,7 +5,7 @@ import (
 	pb "cornucopia/listah/internal/pkg/proto/v1"
 	"time"
 	// "fmt"
-
+	// "github.com/uptrace/bun/dialect/pgdialect"
 	"github.com/google/uuid"
 	"github.com/uptrace/bun"
 	"errors"
@@ -20,7 +20,7 @@ type Item struct {
 	Category      string
 	Description   string
 	Note          string
-	Tag          []string
+	Tag          []string `bun:"type:jsonb"`
 	Properties    map[string]string
 	SoftDelete    bool `bun:",nullzero,default:false"`
 	ReactivateAt  time.Time
@@ -192,14 +192,27 @@ func IItemToWhereClause(msg *pb.ItemServiceReadRequest) ([]model.WhereClause, er
 	}
 
 
-	// // tag
-	// if len(msg.GetTag()) != 0 {
+	// tag
+	if len(msg.GetTagFilter()) != 0 {
+		w = append(w, model.WhereClause{
+			Placeholder: "?::JSONB IN (?)",
+			Column:      "tag",
+			// Value:       bun.In(pgdialect.Array(msg.GetTagFilter())), //Not working
+			Value:       bun.In(msg.GetTagFilter()),
+			// Value:       pgdialect.Array(msg.GetTagFilter()),
+		})
+	}
+
+	// // tag -- Not working
+	// if len(msg.GetTagFilter()) != 0 {
 	// 	w = append(w, model.WhereClause{
 	// 		Placeholder: "? IN (?)",
 	// 		Column:      "tag",
-	// 		Value:       bun.In(msg.GetTag()),
+	// 		// Value:       bun.In(pgdialect.Array(msg.GetTagFilter())), //Not working
+	// 		Value:       bun.In(pgdialect.Array(msg.GetTagFilter())),
 	// 	})
 	// }
+
 
 	// // properties
 	// if len(msg.GetProperties()) != 0 {

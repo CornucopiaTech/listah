@@ -33,10 +33,10 @@ import {
   MAX_TAG_CHIPS_DISPLAY,
   MAX_ITEM_SUMMARY_LENGTH,
 } from '@/lib/helper/defaults';
-import Detail from "@/components/category/Detail";
+import Detail from "@/components/tag/Detail";
+import Header from "@/components/tag/Header";
+import TableFooter from "@/components/tag/Footer";
 import ItemModal from "@/components/common/ItemModal";
-import Header from "@/components/category/Header";
-import TableFooter from "@/components/category/Footer";
 
 
 
@@ -77,8 +77,8 @@ export default function Content(): ReactNode {
 
   function handleItemclick(itemId: string) {
     store.setDisplayId(itemId);
-    // store.setCategoryModal(true);
     store.setModal(true);
+    // store.setTagModal(true);
   }
 
   function eachItem(item: IItem): ReactNode {
@@ -141,7 +141,7 @@ export default function Content(): ReactNode {
         < Header handleAddItem={handleItemclick}/>
       </Box>
       {/* <Icon icon="material-symbols:arrow-downward" width="24" height="24" /> */}
-      {/* {store.categoryModal && <Detail />} */}
+      {/* {store.tagModal && <Detail />} */}
       {store.modal && <ItemModal />}
       <Virtuoso key="data-content"
         style={{

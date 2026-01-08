@@ -37,7 +37,7 @@ import {
 import Detail from "@/components/items/Detail";
 import Header from "@/components/items/Header";
 import TableFooter from "@/components/items/Footer";
-
+import ItemModal from "@/components/common/ItemModal";
 
 
 export default function Content(): ReactNode {
@@ -77,7 +77,8 @@ export default function Content(): ReactNode {
 
   function handleItemclick(itemId: string) {
     store.setDisplayId(itemId);
-    store.setItemModal(true);
+    // store.setItemModal(true);
+    store.setModal(true);
   }
 
   function eachItem(item: IItem): ReactNode {
@@ -140,7 +141,8 @@ export default function Content(): ReactNode {
         < Header handleAddItem={handleItemclick}/>
       </Box>
       {/* <Icon icon="material-symbols:arrow-downward" width="24" height="24" /> */}
-      {store.itemModal && <Detail />}
+      {/* {store.itemModal && <Detail />} */}
+      {store.modal && <ItemModal />}
       <Virtuoso key="data-content"
         style={{
           height: `82vh`, width: '100%', display: 'block', overflow: 'auto',

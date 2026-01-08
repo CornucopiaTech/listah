@@ -1,5 +1,6 @@
 # To Do
 - Consider adding category filter and tag filter to the drawer for  page listing items for only a particular tag or category.
+- Add breadcrumbs for ease of navigation
 - Explore using middleware to set the userId
 - Add capability to delete items
   - Add select item capability

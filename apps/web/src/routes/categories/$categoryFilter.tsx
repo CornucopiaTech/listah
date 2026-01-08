@@ -24,7 +24,7 @@ import { MainContainer } from '@/components/basics/Container';
 
 
 
-export const Route = createFileRoute("/categories/$category")({
+export const Route = createFileRoute("/categories/$categoryFilter")({
   component: Items,
   notFoundComponent: NotFound,
 });
@@ -37,11 +37,11 @@ function Items(): ReactNode {
   const query = validateItemsUrlSearch(Route.useSearch());
   let pQ = {...query, userId: user?.id ?? ''};
 
-  const { category } = useParams({ strict: false });
+  const { categoryFilter } = useParams({ strict: false });
 
-  console.log("In index - category", category)
+  console.log("In index - category", categoryFilter)
 
-  if (!category){
+  if (!categoryFilter){
     return (
       <MainContainer>
         <ItemSearchQueryContext value={pQ}>
@@ -50,7 +50,8 @@ function Items(): ReactNode {
       </MainContainer>
     );
   }
-  pQ = { ...query, userId: user?.id ?? '', categoryFilter: [category] };
+  // pQ = { ...query, userId: user?.id ?? '', categoryFilter: [category] };
+  // pQ = { ...query, userId: user?.id ?? '', categoryFilter: [category] };
 
   return (
     <MainContainer>
