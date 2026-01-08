@@ -20,7 +20,6 @@ import { encodeState } from '@/lib/helper/encoders';
 import type { ZItems, IItemsSearch } from '@/lib/model/Items';
 import Loading from '@/components/common/Loading';
 import { ErrorAlerts } from '@/components/common/ErrorAlert';
-import { ITEMS_URL } from '@/lib/helper/defaults';
 import { itemGroupOptions } from '@/lib/helper/querying';
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
 
@@ -35,9 +34,7 @@ export function Footer(): ReactNode {
     event.stopPropagation();
     const q = { ...query, pageNumber: value };
     const encoded = encodeState(q);
-    navigate({
-      to: ITEMS_URL, search: { s: encoded }
-    });
+    navigate({ to: "/tags/", search: { s: encoded } });
   };
 
 

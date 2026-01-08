@@ -69,8 +69,6 @@ message ItemServiceReadRequest {
 }
 message ItemServiceReadResponse {
   repeated Item items = 1;
-  repeated string category = 2;
-  repeated string tag = 3;
 
   string userId = 200 [json_name = "userId"];
   repeated string tagFilter = 201 [json_name = "tagFilter"];

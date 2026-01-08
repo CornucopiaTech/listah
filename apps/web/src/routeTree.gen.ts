@@ -9,13 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TagsRouteRouteImport } from './routes/tags/route'
 import { Route as ItemsRouteRouteImport } from './routes/items/route'
 import { Route as CategoriesRouteRouteImport } from './routes/categories/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TagsIndexRouteImport } from './routes/tags/index'
 import { Route as ItemsIndexRouteImport } from './routes/items/index'
 import { Route as CategoriesIndexRouteImport } from './routes/categories/index'
-import { Route as CategoriesCategoryRouteImport } from './routes/categories/$category'
+import { Route as TagsTagFilterRouteImport } from './routes/tags/$tagFilter'
+import { Route as CategoriesCategoryFilterRouteImport } from './routes/categories/$categoryFilter'
 
+const TagsRouteRoute = TagsRouteRouteImport.update({
+  id: '/tags',
+  path: '/tags',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ItemsRouteRoute = ItemsRouteRouteImport.update({
   id: '/items',
   path: '/items',
@@ -31,6 +39,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TagsIndexRoute = TagsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TagsRouteRoute,
+} as any)
 const ItemsIndexRoute = ItemsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -41,34 +54,48 @@ const CategoriesIndexRoute = CategoriesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => CategoriesRouteRoute,
 } as any)
-const CategoriesCategoryRoute = CategoriesCategoryRouteImport.update({
-  id: '/$category',
-  path: '/$category',
-  getParentRoute: () => CategoriesRouteRoute,
+const TagsTagFilterRoute = TagsTagFilterRouteImport.update({
+  id: '/$tagFilter',
+  path: '/$tagFilter',
+  getParentRoute: () => TagsRouteRoute,
 } as any)
+const CategoriesCategoryFilterRoute =
+  CategoriesCategoryFilterRouteImport.update({
+    id: '/$categoryFilter',
+    path: '/$categoryFilter',
+    getParentRoute: () => CategoriesRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/categories': typeof CategoriesRouteRouteWithChildren
   '/items': typeof ItemsRouteRouteWithChildren
-  '/categories/$category': typeof CategoriesCategoryRoute
+  '/tags': typeof TagsRouteRouteWithChildren
+  '/categories/$categoryFilter': typeof CategoriesCategoryFilterRoute
+  '/tags/$tagFilter': typeof TagsTagFilterRoute
   '/categories/': typeof CategoriesIndexRoute
   '/items/': typeof ItemsIndexRoute
+  '/tags/': typeof TagsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/categories/$category': typeof CategoriesCategoryRoute
+  '/categories/$categoryFilter': typeof CategoriesCategoryFilterRoute
+  '/tags/$tagFilter': typeof TagsTagFilterRoute
   '/categories': typeof CategoriesIndexRoute
   '/items': typeof ItemsIndexRoute
+  '/tags': typeof TagsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/categories': typeof CategoriesRouteRouteWithChildren
   '/items': typeof ItemsRouteRouteWithChildren
-  '/categories/$category': typeof CategoriesCategoryRoute
+  '/tags': typeof TagsRouteRouteWithChildren
+  '/categories/$categoryFilter': typeof CategoriesCategoryFilterRoute
+  '/tags/$tagFilter': typeof TagsTagFilterRoute
   '/categories/': typeof CategoriesIndexRoute
   '/items/': typeof ItemsIndexRoute
+  '/tags/': typeof TagsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -76,29 +103,49 @@ export interface FileRouteTypes {
     | '/'
     | '/categories'
     | '/items'
-    | '/categories/$category'
+    | '/tags'
+    | '/categories/$categoryFilter'
+    | '/tags/$tagFilter'
     | '/categories/'
     | '/items/'
+    | '/tags/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/categories/$category' | '/categories' | '/items'
+  to:
+    | '/'
+    | '/categories/$categoryFilter'
+    | '/tags/$tagFilter'
+    | '/categories'
+    | '/items'
+    | '/tags'
   id:
     | '__root__'
     | '/'
     | '/categories'
     | '/items'
-    | '/categories/$category'
+    | '/tags'
+    | '/categories/$categoryFilter'
+    | '/tags/$tagFilter'
     | '/categories/'
     | '/items/'
+    | '/tags/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CategoriesRouteRoute: typeof CategoriesRouteRouteWithChildren
   ItemsRouteRoute: typeof ItemsRouteRouteWithChildren
+  TagsRouteRoute: typeof TagsRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tags': {
+      id: '/tags'
+      path: '/tags'
+      fullPath: '/tags'
+      preLoaderRoute: typeof TagsRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/items': {
       id: '/items'
       path: '/items'
@@ -120,6 +167,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tags/': {
+      id: '/tags/'
+      path: '/'
+      fullPath: '/tags/'
+      preLoaderRoute: typeof TagsIndexRouteImport
+      parentRoute: typeof TagsRouteRoute
+    }
     '/items/': {
       id: '/items/'
       path: '/'
@@ -134,23 +188,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriesIndexRouteImport
       parentRoute: typeof CategoriesRouteRoute
     }
-    '/categories/$category': {
-      id: '/categories/$category'
-      path: '/$category'
-      fullPath: '/categories/$category'
-      preLoaderRoute: typeof CategoriesCategoryRouteImport
+    '/tags/$tagFilter': {
+      id: '/tags/$tagFilter'
+      path: '/$tagFilter'
+      fullPath: '/tags/$tagFilter'
+      preLoaderRoute: typeof TagsTagFilterRouteImport
+      parentRoute: typeof TagsRouteRoute
+    }
+    '/categories/$categoryFilter': {
+      id: '/categories/$categoryFilter'
+      path: '/$categoryFilter'
+      fullPath: '/categories/$categoryFilter'
+      preLoaderRoute: typeof CategoriesCategoryFilterRouteImport
       parentRoute: typeof CategoriesRouteRoute
     }
   }
 }
 
 interface CategoriesRouteRouteChildren {
-  CategoriesCategoryRoute: typeof CategoriesCategoryRoute
+  CategoriesCategoryFilterRoute: typeof CategoriesCategoryFilterRoute
   CategoriesIndexRoute: typeof CategoriesIndexRoute
 }
 
 const CategoriesRouteRouteChildren: CategoriesRouteRouteChildren = {
-  CategoriesCategoryRoute: CategoriesCategoryRoute,
+  CategoriesCategoryFilterRoute: CategoriesCategoryFilterRoute,
   CategoriesIndexRoute: CategoriesIndexRoute,
 }
 
@@ -170,10 +231,25 @@ const ItemsRouteRouteWithChildren = ItemsRouteRoute._addFileChildren(
   ItemsRouteRouteChildren,
 )
 
+interface TagsRouteRouteChildren {
+  TagsTagFilterRoute: typeof TagsTagFilterRoute
+  TagsIndexRoute: typeof TagsIndexRoute
+}
+
+const TagsRouteRouteChildren: TagsRouteRouteChildren = {
+  TagsTagFilterRoute: TagsTagFilterRoute,
+  TagsIndexRoute: TagsIndexRoute,
+}
+
+const TagsRouteRouteWithChildren = TagsRouteRoute._addFileChildren(
+  TagsRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CategoriesRouteRoute: CategoriesRouteRouteWithChildren,
   ItemsRouteRoute: ItemsRouteRouteWithChildren,
+  TagsRouteRoute: TagsRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

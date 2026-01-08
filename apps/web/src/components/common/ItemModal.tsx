@@ -56,12 +56,14 @@ import { postItem } from "@/lib/helper/fetchers";
 import { DEFAULT_ITEM } from "@/lib/helper/defaults";
 
 
-export default function DialogDetail(): ReactNode {
+export default function ItemModal(): ReactNode {
   const theme: {} = useTheme();
   const store = useBoundStore((state) => state);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const queryClient = useQueryClient();
-  const { categoryFilter: categoryName } = useParams({ strict: false });
+  const { tagFilter: tagName, categoryFilter: categoryName } = useParams({ strict: false });
+
+  console.info("tag filter", tagName)
 
   const {
     isPending, isError, data, error
@@ -110,7 +112,8 @@ export default function DialogDetail(): ReactNode {
   // Define the item to use on the form
   const newItem = {
     ...DEFAULT_ITEM, id: uuidv4(), userId: query.userId,
-    category: categoryName
+    category: categoryName ? categoryName : "",
+    tag: tagName ? [tagName] : []
   }
   const formItem: IItem = displayItem ? displayItem : newItem;
 
@@ -118,8 +121,6 @@ export default function DialogDetail(): ReactNode {
   const form = useForm({
     defaultValues: formItem,
     onSubmit: ({ value }) => {
-      // console.info('Submit value', value);
-      // alert(JSON.stringify(value, null, 2));
       const submitValue = {...value, tag: value.tag?.filter((t) => t != "")}
       mutation.mutate(submitValue);
     },
@@ -130,7 +131,7 @@ export default function DialogDetail(): ReactNode {
     e.preventDefault()
     e.stopPropagation()
     form.handleSubmit()
-    store.setCategoryModal(false);
+    store.setModal(false);
     store.setMessage("Item updated");
   }
 
@@ -249,7 +250,7 @@ export default function DialogDetail(): ReactNode {
   }
 
   return (
-    <Dialog fullWidth open={store.categoryModal} onClose={() => store.setCategoryModal(false)}>
+    <Dialog fullWidth open={store.modal} onClose={() => store.setModal(false)}>
       <form onSubmit={handleSubmit}>
         <DialogContent sx={dialogSx} >
           <Stack spacing={2}>

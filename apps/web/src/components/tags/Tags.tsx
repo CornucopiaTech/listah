@@ -21,16 +21,15 @@ import {
 
 
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
-import { categoryGroupOptions } from '@/lib/helper/querying';
+import { tagGroupOptions } from '@/lib/helper/querying';
 import type {  IItemsSearch } from '@/lib/model/Items';
 import Loading from '@/components/common/Loading';
 import { Error } from '@/components/common/Error';
-import { DefaultQueryParams } from "@/lib/helper/defaults";
 import { encodeState } from '@/lib/helper/encoders';
-import TableFooter from "@/components/categories/Footer";
+import TableFooter from "@/components/tags/Footer";
 
 
-export default function Categories(): ReactNode {
+export default function Tags(): ReactNode {
   const theme: {} = useTheme();
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const navigate = useNavigate();
@@ -38,27 +37,27 @@ export default function Categories(): ReactNode {
 
   const {
     isPending, isError, data, error
-  }: UseQueryResult<string[]> = useQuery(categoryGroupOptions(query.userId));
+  }: UseQueryResult<string[]> = useQuery(tagGroupOptions(query.userId));
 
   // ToDo: Explore using middleware to set the userId
 
   if (isPending) { return <Loading />; }
   if (isError) { return <Error message={error.message} />; }
 
-  const category = data.category ? data.category : [];
+  const tag = data.tag ? data.tag : [];
 
 
-  function handleCategoryClick(categoryName: string) {
-    const q = { ...query, categoryFilter: [categoryName]}
+  function handleTagClick(tagName: string) {
+    const q = { ...query, tagFilter: [tagName]}
     const dq = encodeState(q);
     navigate({
-      to: '/categories/{-$categoryFilter}',
-      params: { categoryFilter: categoryName },
+      to: '/tags/{-$tagFilter}',
+      params: { tagFilter: tagName },
       search: {s: dq},
     })
   }
 
-  function eachCategory(catIdx: number, catName: string): ReactNode {
+  function eachTag(catIdx: number, catName: string): ReactNode {
     return (
       <Fragment>
         <Grid container key={catName + "-" + catIdx}
@@ -69,7 +68,7 @@ export default function Categories(): ReactNode {
                 },
                 p: 1,
               }}
-          onClick={() => { handleCategoryClick(catName); }}>
+          onClick={() => { handleTagClick(catName); }}>
           <Typography variant="body" sx={{
             alignContent: 'center',
             display: 'flex', width: '100%', flexWrap: 'wrap',
@@ -90,15 +89,15 @@ export default function Categories(): ReactNode {
         alignContent: 'center',
         display: 'flex', width: '100%', flexWrap: 'wrap',
       }}>
-        Categories
+        Tags
       </Typography>
       <Virtuoso key="data-content"
         style={{
           height: `80vh`, width: '100%', display: 'block', overflow: 'auto',
           // justifyItems:
         }}
-        data={category}
-        itemContent={(cIdx, cName) => eachCategory(cIdx, cName)}
+        data={tag}
+        itemContent={(cIdx, cName) => eachTag(cIdx, cName)}
       />
       <Box key='foot-content' sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', alignItems: "center" }}>
         <TableFooter />
