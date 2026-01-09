@@ -11,7 +11,7 @@
   },
   "scripts": {
     "api:dev": "clear && cd ./apps/api && nodemon -e go --watch '*.go' --watch '../../internal/**/**/*.go' --signal SIGTERM --exec 'go' run .",
-    "api:lint": "WK_DIR=\"$(pwd)\" && echo $WK_DIR && cd \"$WK_DIR/apps/api/\" && golangci-lint run  && cd \"$WK_DIR/internal\" && golangci-lint run",
+    "api:lint": "clear && WK_DIR=\"$(pwd)\" && echo $WK_DIR && cd \"$WK_DIR/apps/api/\" && golangci-lint run  && cd \"$WK_DIR/internal\" && golangci-lint run",
     "api:tidy": "WK_DIR=\"$(pwd)\" && echo $WK_DIR && cd \"$WK_DIR/apps/api/\" && go mod tidy  && cd \"$WK_DIR/internal\" && go mod tidy",
     "buf:gen": "clear && rm -rf ./internal/pkg/proto && buf generate",
     "buf:lint": "buf lint",
@@ -20,18 +20,9 @@
     "docs:gen": "clear && rm ./public/index.html && redocly bundle --dereferenced --output ./assets/docs/openapi-deref.yaml ./assets/docs/openapi-ref.yaml   &&   npx @redocly/cli build-docs  ./assets/docs/openapi-deref.yaml --output ./public/index.html  ",
     "docker:rm-all": "docker rm $(docker ps -a -q)",
     "docker:stop-all": "docker stop $(docker ps -a -q)",
-    "prisma:deploy": "prisma migrate deploy",
-    "prisma:dev": "prisma migrate dev --create-only --skip-generate",
-    "prisma:fmt": "prisma format",
-    "prisma:gen": "prisma generate",
-    "prisma:push": "prisma db push --skip-generate",
-    "prisma:reset:skip": "prisma migrate reset --skip-generate",
-    "prisma:reset": "prisma migrate reset",
-    "prisma:val": "prisma validate",
     "web:refresh-dev": "clear && cd ./apps/web && rm -rf .next .clerk .tanstack node_modules/.vite* ",
     "web:dev": "clear && cd ./apps/web && npm run dev ",
-    "web-tanstack-router:refresh-dev": "clear && cd ./apps/web-tanstack-router && rm -rf .tanstack .clerk node_modules/.vite* && npm run dev ",
-    "web-tanstack-router:dev": "clear && cd ./apps/web-tanstack-router && npm run dev "
+    "web:lint": "clear && cd ./apps/web && npx eslint . --fix"
   },
   "dependencies": {
     "@bufbuild/buf": "^1.53.0",

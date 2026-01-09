@@ -1,6 +1,5 @@
 import {
   useContext,
-  useState,
   useEffect,
 } from 'react';
 import type {
@@ -11,7 +10,6 @@ import Drawer from '@mui/material/Drawer';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
-// import TuneIcon from '@mui/icons-material/Tune';
 import { Icon } from "@iconify/react";
 import {
   useNavigate,
@@ -26,7 +24,7 @@ import type { IItemsSearch } from '@/lib/model/Items';
 import CategoryDrawer from '@/components/items/CategoryDrawer';
 import TagDrawer from '@/components/items/TagDrawer';
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
-import { Error, Success } from '@/components/common/Alerts';
+import {  Success } from '@/components/common/Alerts';
 
 
 

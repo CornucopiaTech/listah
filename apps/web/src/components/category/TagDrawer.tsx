@@ -36,7 +36,7 @@ export default function TagDrawer(): ReactNode {
 
   function handleTagCheck(e, tagName: string) {
     e.stopPropagation();
-    let newChecked: Set<string> = store.checkedTag.union(new Set([tagName]))
+    const newChecked: Set<string> = store.checkedTag.union(new Set([tagName]))
     if (store.checkedTag.has(tagName)) {
       newChecked.delete(tagName)
     }

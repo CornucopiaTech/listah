@@ -13,7 +13,7 @@ export const ZUser = z.object({
 });
 
 
-export interface IUser extends z.infer<typeof ZUser>{};
+export interface IUser extends z.infer<typeof ZUser>{ }; // eslint-disable-line @typescript-eslint/no-empty-object-type
 
 
 export const ZPermissions = z.object({
@@ -21,4 +21,4 @@ export const ZPermissions = z.object({
   grants: z.array(z.string()),
   isAdmin: z.boolean(),
 });
-export interface IPermissions extends z.infer<typeof ZPermissions>{}
+export interface IPermissions extends z.infer<typeof ZPermissions>{ }; // eslint-disable-line @typescript-eslint/no-empty-object-type

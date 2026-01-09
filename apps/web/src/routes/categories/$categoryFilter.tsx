@@ -35,7 +35,7 @@ function Items(): ReactNode {
   if (!isSignedIn) return <NotAuthorised />
 
   const query = validateItemsUrlSearch(Route.useSearch());
-  let pQ = {...query, userId: user?.id ?? ''};
+  const pQ = {...query, userId: user?.id ?? ''};
 
   const { categoryFilter } = useParams({ strict: false });
 

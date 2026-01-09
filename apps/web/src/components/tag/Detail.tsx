@@ -57,7 +57,7 @@ import { DEFAULT_ITEM } from "@/lib/helper/defaults";
 
 
 export default function DialogDetail(): ReactNode {
-  const theme: {} = useTheme();
+  const theme: object = useTheme();
   const store = useBoundStore((state) => state);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const queryClient = useQueryClient();
@@ -68,20 +68,6 @@ export default function DialogDetail(): ReactNode {
   }: UseQueryResult<string[]> = useQuery(itemGroupOptions(query));
 
 
-
-  // Define update mutation
-  const updateMutation = useMutation({
-    mutationFn: (mutateItem: IItem) => {
-      const mi = ZItem.parse(mutateItem);
-      return postItem(mi);
-    },
-    onSuccess: (data, variables) => {
-      queryClient.setQueryData(
-        [ ["item", query], { id: variables.id }],
-        data
-      )
-    },
-  });
 
   // Define invalidating  mutation
   const mutation = useMutation({

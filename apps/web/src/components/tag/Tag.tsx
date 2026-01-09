@@ -33,7 +33,6 @@ import {
   MAX_TAG_CHIPS_DISPLAY,
   MAX_ITEM_SUMMARY_LENGTH,
 } from '@/lib/helper/defaults';
-import Detail from "@/components/tag/Detail";
 import Header from "@/components/tag/Header";
 import TableFooter from "@/components/tag/Footer";
 import ItemModal from "@/components/common/ItemModal";
@@ -41,7 +40,7 @@ import ItemModal from "@/components/common/ItemModal";
 
 
 export default function Content(): ReactNode {
-  const theme: {} = useTheme();
+  const theme: object = useTheme();
   const store = useBoundStore((state) => state);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const {

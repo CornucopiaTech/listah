@@ -7,7 +7,7 @@ import Link from '@mui/material/Link';
 
 
 export default function NotFound(): ReactNode {
-  const theme: {} = useTheme();
+  const theme: object = useTheme();
   return (
       <Box sx={{
           minHeight: "100vh",

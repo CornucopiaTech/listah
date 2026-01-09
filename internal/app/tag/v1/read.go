@@ -19,7 +19,7 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.TagServiceRea
 
 	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
 	defer span.End()
-	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
+	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
 
 	readModel := []string{}
@@ -38,18 +38,18 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.TagServiceRea
 	var qSort string
 
 
-	recCnt, err := s.Infra.BunRepo.Tag.Select(ctx, &readModel, &whereClause, qSort, qOffset, qLimit)
+	recCnt, err := s.BunRepo.Tag.Select(ctx, &readModel, &whereClause, qSort, qOffset, qLimit)
 	if  err != nil {
-		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
+		s.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
 		return nil, err
 	}
-	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d category from repository", recCnt))
+	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d category from repository", recCnt))
 
 
 	resm := &pb.TagServiceReadResponse{
 		Tag: readModel,
 		// TotalRecordCount: int32(recCnt),
 	}
-	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful category read. Read %d unique tags.", len(readModel)))
+	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful category read. Read %d unique tags.", len(readModel)))
 	return connect.NewResponse(resm), nil
 }

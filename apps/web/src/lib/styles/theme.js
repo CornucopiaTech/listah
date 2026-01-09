@@ -1,6 +1,6 @@
 import { createTheme as createMaterialTheme } from '@mui/material/styles';
-import { blueGrey, deepOrange, red, teal } from '@mui/material/colors';
-import { createTheme as createMantineTheme, MantineProvider } from '@mantine/core';
+import { red, } from '@mui/material/colors';
+import { createTheme as createMantineTheme } from '@mantine/core';
 
 const theme = {
   palette: {

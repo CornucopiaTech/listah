@@ -1,4 +1,4 @@
-module.exports = {
+module.exports = { // eslint-disable-line no-undef
   plugins: {
     'postcss-preset-mantine': {},
     'postcss-simple-vars': {

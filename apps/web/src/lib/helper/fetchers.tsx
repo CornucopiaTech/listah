@@ -1,4 +1,3 @@
-import axios from 'axios';
 
 import { ZItems } from '@/lib/model/Items';
 import type { IItem, } from '@/lib/model/Items';

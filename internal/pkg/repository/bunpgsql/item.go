@@ -32,7 +32,7 @@ func (a *item) Select(ctx context.Context, m interface{}, c *[]model.WhereClause
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Select")
 	defer span.End()
 
-	var activity string = "ItemSelect"
+	var activity = "ItemSelect"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	qb := a.db.NewSelect().Model(m).QueryBuilder()
@@ -67,7 +67,7 @@ func (a *item) Count(ctx context.Context, m interface{}, c *[]model.WhereClause,
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Select")
 	defer span.End()
 
-	var activity string = "ItemSelect"
+	var activity = "ItemSelect"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	qb := a.db.NewSelect().Model(m).QueryBuilder()
@@ -90,7 +90,7 @@ func (a *item) Count(ctx context.Context, m interface{}, c *[]model.WhereClause,
 func (a *item) Insert(ctx context.Context, m interface{}) error {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Insert")
 	defer span.End()
-	var activity string = "ItemInsert"
+	var activity = "ItemInsert"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	_, err := a.db.NewInsert().Model(m).Returning("*").Exec(ctx)
@@ -107,7 +107,7 @@ func (a *item) Update(ctx context.Context, v interface{},
 	m interface{}, s []string, w []string, al string) error {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Update")
 	defer span.End()
-	var activity string = "ItemUpdate"
+	var activity = "ItemUpdate"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	values := a.db.NewValues(v)
@@ -138,7 +138,7 @@ func (a *item) Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Upsert")
 	defer span.End()
 
-	var activity string = "ItemUpsert"
+	var activity = "ItemUpsert"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	var conflict string

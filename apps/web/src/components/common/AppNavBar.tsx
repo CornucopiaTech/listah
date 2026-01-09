@@ -2,7 +2,6 @@
 
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
@@ -16,7 +15,7 @@ import { AppBarHeight } from '@/lib/model/appNavBarModel';
 
 
 export default function AppNavBar() {
-  const theme: {} = useTheme();
+  const theme: object = useTheme();
   const drawerinfo: { name: string, href: string, tip: string }[] = [
     { name: 'Listah', href: '/', tip: 'Go to Listah home' },
     { name: 'Items', href: '/items/', tip: 'View all items' },

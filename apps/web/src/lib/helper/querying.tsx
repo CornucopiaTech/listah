@@ -1,8 +1,4 @@
-import type { ZTraceBaggage, IItem, ZItems } from '@/lib/model/Items';
-import {
-  propagation,
-  context,
-} from '@opentelemetry/api';
+
 import {
   queryOptions,
 } from '@tanstack/react-query';
@@ -10,7 +6,7 @@ import {
 
 import { getItem, getCategory, getTag } from '@/lib/helper/fetchers';
 import { validateItemsUrlSearch } from '@/lib/helper/validator';
-import { DefaultQueryParams, ITEMS_URL } from '@/lib/helper/defaults';
+import { DefaultQueryParams, } from '@/lib/helper/defaults';
 
 
 

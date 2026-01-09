@@ -9,7 +9,6 @@ import (
 	"connectrpc.com/connect"
 	"github.com/google/uuid"
 	"go.opentelemetry.io/otel/trace"
-		"fmt"
 		"time"
 
 	"go.opentelemetry.io/otel/propagation"
@@ -51,10 +50,6 @@ func SetParentTraceInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorF
 			// Log request in db in middleware
 			propagator := otel.GetTextMapPropagator()
 			ctx = propagator.Extract(ctx, propagation.HeaderCarrier(req.Header()))
-			fmt.Println("\n\n\n\n")
-			fmt.Printf("Header: %#v\n", req.Header())
-			fmt.Printf("%#v\n", req.Header().Get("traceparent"))
-			fmt.Println("\n\n\n\n")
 
 			// Call the next middleware/handler in chain
 			return next(ctx, req)
@@ -83,7 +78,10 @@ func RecordRequestInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFu
 				Request: req,
 				RequestTime: time.Now().UTC(),
 			}
-			infra.BunRepo.ApiLog.Insert(ctx, &reqModel)
+			err := infra.BunRepo.ApiLog.Insert(ctx, &reqModel)
+			if err != nil {
+				infra.Logger.LogInfo(ctx, "middleware", "middleware", "Unable to record request")
+			}
 
 			// Call the next middleware/handler in chain
 			return next(ctx, req)

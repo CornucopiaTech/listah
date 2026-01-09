@@ -31,7 +31,7 @@ func (a *tag) Select(ctx context.Context, m interface{}, c *[]model.WhereClause,
 	ctx, span := otel.Tracer("tag-repository").Start(ctx, "TagRepository Select")
 	defer span.End()
 
-	var activity string = "TagSelect"
+	var activity = "TagSelect"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	qb := a.db.NewSelect().Table("apps.items").
@@ -68,7 +68,7 @@ func (a *tag) SelectItem(ctx context.Context, m interface{}, c *[]model.WhereCla
 	ctx, span := otel.Tracer("tag-repository").Start(ctx, "TagRepository SelectItem")
 	defer span.End()
 
-	var activity string = "TagSelectItem"
+	var activity = "TagSelectItem"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 
@@ -110,7 +110,7 @@ func (a *tag) SelectItem(ctx context.Context, m interface{}, c *[]model.WhereCla
 func (a *tag) Insert(ctx context.Context, m interface{}) error {
 	ctx, span := otel.Tracer("tag-repository").Start(ctx, "TagRepository Insert")
 	defer span.End()
-	var activity string = "TagInsert"
+	var activity = "TagInsert"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	_, err := a.db.NewInsert().Model(m).Returning("*").Exec(ctx)
@@ -127,7 +127,7 @@ func (a *tag) Update(ctx context.Context, v interface{},
 	m interface{}, s []string, w []string, al string) error {
 	ctx, span := otel.Tracer("tag-repository").Start(ctx, "TagRepository Update")
 	defer span.End()
-	var activity string = "TagUpdate"
+	var activity = "TagUpdate"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	values := a.db.NewValues(v)
@@ -158,7 +158,7 @@ func (a *tag) Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (i
 	ctx, span := otel.Tracer("tag-repository").Start(ctx, "TagRepository Upsert")
 	defer span.End()
 
-	var activity string = "TagUpsert"
+	var activity = "TagUpsert"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	var conflict string

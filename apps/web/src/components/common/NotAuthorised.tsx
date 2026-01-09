@@ -7,7 +7,7 @@ import { SignInButton, SignUpButton, } from '@clerk/clerk-react';
 
 
 export default function NotAuthorised(): ReactNode {
-  const theme: {} = useTheme();
+  const theme: object = useTheme();
   return (
     <Box sx={{
           minHeight: "100vh",

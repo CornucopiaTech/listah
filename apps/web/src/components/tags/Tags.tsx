@@ -30,7 +30,7 @@ import TableFooter from "@/components/tags/Footer";
 
 
 export default function Tags(): ReactNode {
-  const theme: {} = useTheme();
+  const theme: object = useTheme();
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const navigate = useNavigate();
 
