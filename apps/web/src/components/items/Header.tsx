@@ -1,6 +1,5 @@
 import {
   useContext,
-  useState,
   useEffect,
 } from 'react';
 import type {
@@ -26,7 +25,7 @@ import type { IItemsSearch } from '@/lib/model/Items';
 import CategoryDrawer from '@/components/items/CategoryDrawer';
 import TagDrawer from '@/components/items/TagDrawer';
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
-import { Error, Success } from '@/components/common/Alerts';
+import { Success } from '@/components/common/Alerts';
 
 
 

@@ -37,7 +37,7 @@ function Items(): ReactNode {
   const query = validateItemsUrlSearch(Route.useSearch());
   console.log("initial query - ", query)
 
-  let pQ = {...query, userId: user?.id ?? ''};
+  const pQ = {...query, userId: user?.id ?? ''};
 
   const { tagFilter } = useParams({ strict: false });
 
@@ -50,7 +50,6 @@ function Items(): ReactNode {
       </MainContainer>
     );
   }
-  // pQ = { ...query, userId: user?.id ?? '', tagFilter: [tag] };
 
   console.log("setting query to - ", pQ)
 

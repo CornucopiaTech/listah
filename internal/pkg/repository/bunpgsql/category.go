@@ -30,7 +30,7 @@ func (a *category) Select(ctx context.Context, m interface{}, c *[]model.WhereCl
 	ctx, span := otel.Tracer("category-repository").Start(ctx, "CategoryRepository Select")
 	defer span.End()
 
-	var activity string = "CategorySelect"
+	var activity = "CategorySelect"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	qb := a.db.NewSelect().Table("apps.items").Column("category").Distinct().Model(m).QueryBuilder()
@@ -63,7 +63,7 @@ func (a *category) Select(ctx context.Context, m interface{}, c *[]model.WhereCl
 func (a *category) Insert(ctx context.Context, m interface{}) error {
 	ctx, span := otel.Tracer("category-repository").Start(ctx, "CategoryRepository Insert")
 	defer span.End()
-	var activity string = "CategoryInsert"
+	var activity = "CategoryInsert"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	_, err := a.db.NewInsert().Model(m).Returning("*").Exec(ctx)
@@ -80,7 +80,7 @@ func (a *category) Update(ctx context.Context, v interface{},
 	m interface{}, s []string, w []string, al string) error {
 	ctx, span := otel.Tracer("category-repository").Start(ctx, "CategoryRepository Update")
 	defer span.End()
-	var activity string = "CategoryUpdate"
+	var activity = "CategoryUpdate"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	values := a.db.NewValues(v)
@@ -99,7 +99,7 @@ func (a *category) Update(ctx context.Context, v interface{},
 	_, err := q.Exec(ctx)
 
 	if err != nil {
-		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
+		a.logger.LogError(ctx, svcName, activity, "error occurred", errors.Cause(err).Error())
 		return err
 	}
 
@@ -111,7 +111,7 @@ func (a *category) Upsert(ctx context.Context, m interface{}, c *model.UpsertInf
 	ctx, span := otel.Tracer("category-repository").Start(ctx, "CategoryRepository Upsert")
 	defer span.End()
 
-	var activity string = "CategoryUpsert"
+	var activity = "CategoryUpsert"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	var conflict string
@@ -132,7 +132,7 @@ func (a *category) Upsert(ctx context.Context, m interface{}, c *model.UpsertInf
 
 	res, err := q.Exec(ctx)
 	if err != nil {
-		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
+		a.logger.LogError(ctx, svcName, activity, "error occurred", errors.Cause(err).Error())
 		return nil, err
 	}
 

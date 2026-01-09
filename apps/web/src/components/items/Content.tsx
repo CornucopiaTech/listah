@@ -18,7 +18,6 @@ import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import { Icon } from "@iconify/react";
 
 
 
@@ -34,14 +33,13 @@ import {
   MAX_TAG_CHIPS_DISPLAY,
   MAX_ITEM_SUMMARY_LENGTH,
 } from '@/lib/helper/defaults';
-import Detail from "@/components/items/Detail";
 import Header from "@/components/items/Header";
 import TableFooter from "@/components/items/Footer";
 import ItemModal from "@/components/common/ItemModal";
 
 
 export default function Content(): ReactNode {
-  const theme: {} = useTheme();
+  const theme: object = useTheme();
   const store = useBoundStore((state) => state);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const {

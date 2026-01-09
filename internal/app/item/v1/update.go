@@ -19,13 +19,13 @@ func (s *Server) Update(ctx context.Context, req *connect.Request[pb.ItemService
 
 	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
 	defer span.End()
-	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
+	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
 
 	// Create model for repository from request message
 	insertions, err := v1model.IItemToItemModelUpsertSafe(req.Msg.Items, false)
 	if err != nil {
-		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting item model for insertion", errors.Cause(err).Error())
+		s.Logger.LogError(ctx, svcName, rpcName, "Error getting item model for insertion", errors.Cause(err).Error())
 		return nil, err
 	}
 
@@ -35,12 +35,12 @@ func (s *Server) Update(ctx context.Context, req *connect.Request[pb.ItemService
 		Resolve: v1model.ItemResolveFields,
 	}
 
-	_, err = s.Infra.BunRepo.Item.Upsert(ctx, &insertions, &w)
+	_, err = s.BunRepo.Item.Upsert(ctx, &insertions, &w)
 	if err != nil {
-		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository  update error", errors.Cause(err).Error())
+		s.Logger.LogError(ctx, svcName, rpcName, "Repository  update error", errors.Cause(err).Error())
 		return nil, err
 	}
-	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository update")
+	s.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository update")
 
 	// Get the ids of the inserted items
 
@@ -51,6 +51,6 @@ func (s *Server) Update(ctx context.Context, req *connect.Request[pb.ItemService
 
 	resm := &pb.ItemServiceUpdateResponse{ ItemIds: rs,}
 
-	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item update. Updated %d items", len(insertions)))
+	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item update. Updated %d items", len(insertions)))
 	return connect.NewResponse(resm), nil
 }

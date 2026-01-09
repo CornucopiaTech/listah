@@ -2,8 +2,6 @@
 import {
   useContext,
   Fragment,
-  useState,
-  useEffect,
 } from "react";
 import type {
   ChangeEvent,
@@ -17,16 +15,13 @@ import {
   useQuery,
   useQueryClient,
   useMutation,
-  queryOptions,
   type UseQueryResult,
 } from '@tanstack/react-query';
 
 // import { z } from 'zod'
 import {
   v4 as uuidv4,
-  stringify as uuidStringify,
 } from 'uuid';
-import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { useTheme } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
@@ -36,7 +31,6 @@ import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { Icon } from "@iconify/react";
-import Tooltip from "@mui/material/Tooltip";
 
 
 
@@ -55,14 +49,14 @@ import {
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
 import Loading from '@/components/common/Loading';
 import { itemGroupOptions } from '@/lib/helper/querying';
-import { Error, Success } from '@/components/common/Alerts';
+import { Error } from '@/components/common/Alerts';
 import { postItem } from "@/lib/helper/fetchers";
 import { DEFAULT_ITEM } from "@/lib/helper/defaults";
 
 
 
-export default function DialogDetail() {
-  const theme: {} = useTheme();
+export default function DialogDetail(): ReactNode {
+  const theme: object = useTheme();
   const store = useBoundStore((state) => state);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const queryClient = useQueryClient();
@@ -70,22 +64,6 @@ export default function DialogDetail() {
     isPending, isError, data, error
   }: UseQueryResult<string[]> = useQuery(itemGroupOptions(query));
 
-
-
-
-  // Define update mutation
-  const updateMutation = useMutation({
-    mutationFn: (mutateItem: IItem) => {
-      const mi = ZItem.parse(mutateItem);
-      return postItem(mi);
-    },
-    onSuccess: (data, variables) => {
-      queryClient.setQueryData(
-        [["item", query], { id: variables.id }],
-        data
-      )
-    },
-  });
 
   // Define invalidating  mutation
   const mutation = useMutation({

@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import Box from '@mui/material/Box';
 
 
-export function SpaceBetweenBox( props ) {
+export function SpaceBetweenBox(props): ReactNode {
   return (
     <Box
       sx={{
@@ -17,7 +17,7 @@ export function SpaceBetweenBox( props ) {
 }
 
 
-export function FlexEndBox( props ) {
+export function FlexEndBox(props): ReactNode {
   return (
     <Box
       sx={{
@@ -30,7 +30,7 @@ export function FlexEndBox( props ) {
   );
 }
 
-export function FlexStartBox( props ) {
+export function FlexStartBox(props): ReactNode {
   return (
     <Box
       sx={{
@@ -44,7 +44,7 @@ export function FlexStartBox( props ) {
 }
 
 
-export function SpaceAroundBox( props) {
+export function SpaceAroundBox(props): ReactNode {
   return (
     <Box
       sx={{
@@ -58,7 +58,7 @@ export function SpaceAroundBox( props) {
 }
 
 
-export function CentredBox( props ) {
+export function CentredBox(props): ReactNode {
   return (
     <Box
       sx={{
@@ -71,14 +71,14 @@ export function CentredBox( props ) {
   );
 }
 
-export function RowGridBox( props ) {
+export function RowGridBox(props): ReactNode {
   return (
     <Box sx={{ ...props.sx, display: 'grid', gridTemplateRows: `repeat(${props.numChildren}, 1fr)` }}>
      {props.children}
     </Box>
   );
 }
-export function ColumnGridBox( props ) {
+export function ColumnGridBox(props): ReactNode {
   return (
     <Box sx={{ ...props.sx, display: 'grid', gridTemplateColumns: `repeat(${props.numChildren}, 1fr)` }}>
      {props.children}

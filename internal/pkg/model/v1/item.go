@@ -27,14 +27,6 @@ type Item struct {
 	Audit         Audit
 }
 
-var whereIndex = map[string]int {
-	"Id":            0,
-	"UserId":        1,
-	"Summary":       2,
-	"Category":      3,
-	"Description":   4,
-	"Note":          5,
-}
 
 var ItemConflictFields = []string{
 	"id", "user_id",
@@ -163,7 +155,7 @@ func ItemModelToIItem(m []*Item) ([]*pb.Item, error) {
 
 func IItemToWhereClause(msg *pb.ItemServiceReadRequest) ([]model.WhereClause, error) {
 	if len(msg.GetUserId()) == 0 {
-		return nil, errors.New("No userId sent with request")
+		return nil, errors.New("no userId sent with request")
 	}
 
 	w := []model.WhereClause{}

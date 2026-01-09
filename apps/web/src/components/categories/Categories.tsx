@@ -25,13 +25,12 @@ import { categoryGroupOptions } from '@/lib/helper/querying';
 import type {  IItemsSearch } from '@/lib/model/Items';
 import Loading from '@/components/common/Loading';
 import { Error } from '@/components/common/Error';
-import { DefaultQueryParams } from "@/lib/helper/defaults";
 import { encodeState } from '@/lib/helper/encoders';
 import TableFooter from "@/components/categories/Footer";
 
 
 export default function Categories(): ReactNode {
-  const theme: {} = useTheme();
+  const theme: object = useTheme();
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const navigate = useNavigate();
 

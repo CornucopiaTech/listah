@@ -21,7 +21,7 @@ type apilog struct {
 func (a *apilog) Insert(ctx context.Context, m interface{}) error {
 	ctx, span := otel.Tracer("apilog-repository").Start(ctx, "ApiLogRepository Insert")
 	defer span.End()
-	var activity string = "ApiLogInsert"
+	var activity = "ApiLogInsert"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	_, err := a.db.NewInsert().Model(m).Exec(ctx)

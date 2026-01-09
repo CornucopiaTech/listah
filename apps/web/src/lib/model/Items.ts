@@ -13,7 +13,7 @@ export const ZTraceBaggage = z.object({
   tracestate: z.nullish(z.string()),
   b3: z.nullish(z.string()),
 });
-export interface ITraceBaggage extends z.infer<typeof ZTraceBaggage>{};
+export interface ITraceBaggage extends z.infer<typeof ZTraceBaggage>{ }; // eslint-disable-line @typescript-eslint/no-empty-object-type
 
 
 export const ZAudit = z.object({
@@ -24,7 +24,7 @@ export const ZAudit = z.object({
   deletedBy: z.nullish(z.enum(auditEnum)),
   deletedAt: z.nullish(z.iso.datetime()),
 });
-export interface IAudit extends z.infer<typeof ZAudit>{};
+export interface IAudit extends z.infer<typeof ZAudit>{ }; // eslint-disable-line @typescript-eslint/no-empty-object-type
 
 
 
@@ -41,7 +41,7 @@ export const ZItem = z.object({
   reactivateAt: z.nullish(z.string()),
   audit: z.nullish(ZAudit),
 });
-export interface IItem extends z.infer<typeof ZItem>{};
+export interface IItem extends z.infer<typeof ZItem>{ }; // eslint-disable-line @typescript-eslint/no-empty-object-type
 
 
 
@@ -62,7 +62,7 @@ export const ZItems = z.object({
   fromDate: z.string().catch('1970-01-01'),
   toDate: z.string().catch('2099-12-31'),
 });
-export interface ZItems extends z.infer<typeof ZItems>{};
+export interface ZItems extends z.infer<typeof ZItems>{ }; // eslint-disable-line @typescript-eslint/no-empty-object-type
 
 
 
@@ -114,4 +114,4 @@ export const ZItemsSearch = z.object({
 })
 
 
-export interface IItemsSearch extends z.infer<typeof ZItemsSearch>{}
+export interface IItemsSearch extends z.infer<typeof ZItemsSearch>{ }; // eslint-disable-line @typescript-eslint/no-empty-object-type

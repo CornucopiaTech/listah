@@ -17,13 +17,13 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 
 	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
 	defer span.End()
-	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
+	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
 
 	readModel := []*v1model.Item{}
 	whereClause, err := v1model.IItemToWhereClause(req.Msg)
 	if err != nil {
-		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting where clause from request", errors.Cause(err).Error())
+		s.Logger.LogError(ctx, svcName, rpcName, "Error getting where clause from request", errors.Cause(err).Error())
 		return nil, err
 	}
 
@@ -41,25 +41,23 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 		pNum = int(DefaultReadPagination.PageNumber)
 	}
 
-
 	offset := pSize * (pNum - 1)
-
 	numTags := req.Msg.GetTagFilter()
-	var recordCnt int = 0
+	var recordCnt int
 
 	if len(numTags) > 0 {
-		recordCnt, err = s.Infra.BunRepo.Tag.SelectItem(ctx, &readModel, &whereClause, sortT, offset, pSize)
+		recordCnt, err = s.BunRepo.Tag.SelectItem(ctx, &readModel, &whereClause, sortT, offset, pSize) //nolint
 		recordCnt = len(readModel)
 	} else {
-	recordCnt, err = s.Infra.BunRepo.Item.Select(ctx, &readModel, &whereClause, sortT, offset, pSize)
+		recordCnt, err = s.BunRepo.Item.Select(ctx, &readModel, &whereClause, sortT, offset, pSize) //nolint
 	}
 
 
 	if  err != nil {
-		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
+		s.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
 		return nil, err
 	}
-	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d items from repository", recordCnt))
+	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d items from repository", recordCnt))
 
 
 
@@ -67,23 +65,21 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 	// using the model conversion function
 	rs, err := v1model.ItemModelToIItem(readModel)
 	if err != nil {
-		s.Infra.Logger.LogError(ctx, svcName, rpcName, "Error getting item proto from item model", errors.Cause(err).Error())
+		s.Logger.LogError(ctx, svcName, rpcName, "Error getting item proto from item model", errors.Cause(err).Error())
 		return nil, err
 	}
 	resm := &pb.ItemServiceReadResponse{
 		Items: rs,
-
 		UserId: userId,
 		TagFilter: req.Msg.GetTagFilter(),
 		CategoryFilter: req.Msg.GetCategoryFilter(),
 		SearchQuery: req.Msg.GetSearchQuery(),
 		FromDate: req.Msg.GetFromDate(),
 		ToDate: req.Msg.GetToDate(),
-
 		PageSize: int32(recordCnt),
 		PageNumber: int32(pNum),
 		SortQuery: sortT,
 	}
-	s.Infra.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item read. Read %d items", len(readModel)))
+	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item read. Read %d items", len(readModel)))
 	return connect.NewResponse(resm), nil
 }

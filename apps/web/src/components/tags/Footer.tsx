@@ -1,6 +1,5 @@
 
 import {
-  Fragment,
   useContext,
   type ReactNode,
 } from 'react';
@@ -11,13 +10,12 @@ import {
 import {
   useNavigate,
 } from '@tanstack/react-router';
-import Pagination from '@mui/material/Pagination';
 import TablePagination from '@mui/material/TablePagination';
 
 
 
 import { encodeState } from '@/lib/helper/encoders';
-import type { ZItems, IItemsSearch } from '@/lib/model/Items';
+import type { IItemsSearch } from '@/lib/model/Items';
 import Loading from '@/components/common/Loading';
 import { Error } from '@/components/common/Alerts';
 import { tagGroupOptions } from '@/lib/helper/querying';

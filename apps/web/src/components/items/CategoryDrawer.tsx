@@ -36,7 +36,7 @@ export default function CategoryDrawer(): ReactNode {
 
   function handleCategoryCheck(e, categoryName: string) {
     e.stopPropagation();
-    let newChecked: Set<string> = store.checkedCategory.union(new Set([categoryName]));
+    const newChecked: Set<string> = store.checkedCategory.union(new Set([categoryName]));
 
     if (store.checkedCategory.has(categoryName)) {
       // Remove category from filter
