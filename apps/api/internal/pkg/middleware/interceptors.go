@@ -1,0 +1,25 @@
+package middleware
+
+import (
+	"cornucopia/listah/apps/api/internal/app/bootstrap"
+	"log"
+
+	"connectrpc.com/connect"
+	"connectrpc.com/otelconnect"
+)
+
+func GetInterceptors(infra *bootstrap.Infra) connect.Option {
+	// The generated constructors return a path and a plain net/http
+	// handler.
+	otelInterceptor, err := otelconnect.NewInterceptor()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return connect.WithInterceptors(
+		otelInterceptor,
+		SetParentTraceInterceptor(infra),
+		RecordRequestInterceptor(infra),
+	)
+
+}
