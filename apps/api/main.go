@@ -10,7 +10,8 @@ import (
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/grpclog"
 
-	"cornucopia/listah/internal/app/server"
+	// "cornucopia/listah/apps/api/internal/app/server"
+	"cornucopia/listah/apps/api/internal/app/server"
 )
 
 func main() {

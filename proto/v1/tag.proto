@@ -2,7 +2,7 @@ syntax = "proto3";
 package listah.v1;
 
 
-option go_package = "cornucopia/listah/internal/pkg/proto/v1";
+option go_package = "cornucopia/listah/apps/api/internal/pkg/proto/v1";
 
 
 import "v1/commons.proto";
