@@ -24,11 +24,12 @@ import (
 
 func handle(i *bootstrap.Infra) http.Handler {
 	allowedOrigins := []string{
-		i.Config.Web.Address,
-		i.Config.Web.UrlAddress,
-		i.Config.Web.Url,
-		i.Config.Web.Host,
-		"127.0.0.1",
+		// i.Config.Web.Address,
+		// i.Config.Web.UrlAddress,
+		// i.Config.Web.Url,
+		// i.Config.Web.Host,
+		// "127.0.0.1",
+		""
 	}
 	mux := chi.NewRouter()
 	mux.Use(cors.Handler(cors.Options{

@@ -13,26 +13,9 @@ import (
 )
 
 type appNetworkConfig struct {
-	Host    string
-	Url    string
-	Port    string
 	Address string
-	UrlAddress string
 }
 
-type mongoDBConfig struct {
-	Host             string
-	DatabaseName     string
-	Port             string
-	User             string
-	Password         string
-	Address          string
-	TimeoutDuration  time.Duration
-	UseSSL           bool
-	MaxPoolSize      string
-	AuthCredentials  options.Credential
-	ConnectionString string
-}
 
 type pgsqlDBConfig struct {
 	Host         string
@@ -57,7 +40,6 @@ type Config struct {
 	Api             *appNetworkConfig
 	Web             *appNetworkConfig
 	PgsqlDB         *pgsqlDBConfig
-	MongoDB         *mongoDBConfig
 	Instrumentation *instrumentationConfig
 }
 
@@ -112,40 +94,18 @@ func loadProjectRoot() string {
 }
 
 func loadApi() *appNetworkConfig {
-	var ah string
-	mustMapEnv(&ah, "API_HOST_IP")
-
-	var uh string
-	mustMapEnv(&uh, "API_HOST_URL")
 
 	var ap string
 	mustMapEnv(&ap, "API_PORT")
 
 	return &appNetworkConfig{
-		Host:    ah,
-		Url:    uh,
-		Port:    ap,
-		Address: net.JoinHostPort(ah, ap),
-		UrlAddress: fmt.Sprintf("%s:%s", uh, ap),
+		Address: ":" + ap,
 	}
 }
 
 func loadWeb() *appNetworkConfig {
-	var ah string
-	mustMapEnv(&ah, "WEB_HOST_IP")
-
-	var uh string
-	mustMapEnv(&uh, "WEB_HOST_URL")
-
-	var ap string
-	mustMapEnv(&ap, "WEB_PORT")
-
 	return &appNetworkConfig{
-		Host:    ah,
-		Url:    uh,
-		Port:    ap,
-		Address: net.JoinHostPort(ah, ap),
-		UrlAddress: fmt.Sprintf("%s:%s", uh, ap),
+		Address: ":",
 	}
 }
 

@@ -4,40 +4,56 @@ run-name: Deploy to ${{ inputs.deploy_target }} by @${{ github.actor }}
 on:
   pull_request:
     branches: [ "main" ]
+env:
+  # env_var: ${{ vars.ENV_CONTEXT_VAR }}
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }} # TODO: update to your Google Cloud project ID
+  REGION: ${{ vars.GCP_REGION }} # TODO: update to your region
+  SERVICE: ${{ vars.APP_NAME }} # TODO: update to your service name
 
 jobs:
-  environment: dev
   deploy:
     runs-on: ubuntu-latest
-
+    environment: dev
     permissions:
       contents: read
-      id-token: write  # Required for Workload Identity Federation
+      id-token: write # Required for Workload Identity Federation
 
     steps:
       # 1. Checkout repository
       - name: Checkout
         uses: actions/checkout@v4
 
-
       # 2. Authenticate to Google Cloud using Workload Identity Federation
-      - name: Authenticate to Google Cloud
+      - id: 'auth'
+        name: Authenticate to Google Cloud
         uses: 'google-github-actions/auth@v3'
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          # service_account: ${{ secrets.GCP_WORKLOAD_SERVICE_ACCOUNT }}
 
-      # 3. Configure gcloud
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v3'
+      # 3 Deploy to Cloud Run
+      - name: 'Deploy to Cloud Run'
+        uses: 'google-github-actions/deploy-cloudrun@33553064113a37d688aa6937bacbdc481580be17' # google-github-actions/deploy-cloudrun@v2
         with:
-          version: '>= 363.0.0'
-
-      # 5. Deploy to Cloud Run
-      - name: Deploy to Cloud Run
-        working-directory: ./apps/api/
-        run:  gcloud run deploy ${{ vars.APP_NAME }} --source .
+          service: '${{ env.SERVICE }}'
+          region: '${{ env.REGION }}'
+          # NOTE: If using a different source folder, update the image name below:
+          source: './apps/api/'
         env:
-          CLOUDSDK_CORE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
-          DATABASE_CONNECTION_URL: ${{ vars.DATABASE_DIALECT }}://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@${{ secrets.DATABASE_HOST }}:${{ secrets.DATABASE_PORT }}/${{ secrets.POSTGRES_DB }}
+          ENV: DEV
+          APP_NAME: ${{ vars.APP_NAME }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+          DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+          DATABASE_PORT: ${{ vars.DATABASE_PORT }}
+          API_PORT: ${{ vars.API_PORT }}
+          OTEL_EXPORTER_OTLP_ENDPOINT: ""
+          TRACE_FREQ_SEC: 5
+          METRIC_FREQ_SEC: 60
+          OLTP_EXPORTER_TYPE: otlp
+
+      # 4 If required, use the Cloud Run URL output in later steps
+      - name: 'Show output'
+        run: |-
+          echo ${{ steps.deploy.outputs.url }}
