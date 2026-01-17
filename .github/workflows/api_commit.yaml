@@ -33,12 +33,14 @@ jobs:
 
       # 3 Deploy to Cloud Run
       - name: 'Deploy to Cloud Run'
+        working-directory: './apps/api/'
         uses: 'google-github-actions/deploy-cloudrun@33553064113a37d688aa6937bacbdc481580be17' # google-github-actions/deploy-cloudrun@v2
         with:
           service: '${{ env.SERVICE }}'
           region: '${{ env.REGION }}'
           # NOTE: If using a different source folder, update the image name below:
-          source: './apps/api/'
+          source: './'
+
         env:
           ENV: DEV
           APP_NAME: ${{ vars.APP_NAME }}
