@@ -1,0 +1,43 @@
+
+name: Deploy dev Listah API to Cloud Run on pull request
+run-name: Deploy to ${{ inputs.deploy_target }} by @${{ github.actor }}
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  environment: dev
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write  # Required for Workload Identity Federation
+
+    steps:
+      # 1. Checkout repository
+      - name: Checkout
+        uses: actions/checkout@v4
+
+
+      # 2. Authenticate to Google Cloud using Workload Identity Federation
+      - name: Authenticate to Google Cloud
+        uses: 'google-github-actions/auth@v3'
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          # service_account: ${{ secrets.GCP_WORKLOAD_SERVICE_ACCOUNT }}
+
+      # 3. Configure gcloud
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v3'
+        with:
+          version: '>= 363.0.0'
+
+      # 5. Deploy to Cloud Run
+      - name: Deploy to Cloud Run
+        working-directory: ./apps/api/
+        run:  gcloud run deploy ${{ vars.APP_NAME }} --source .
+        env:
+          CLOUDSDK_CORE_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
+          DATABASE_CONNECTION_URL: ${{ vars.DATABASE_DIALECT }}://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@${{ secrets.DATABASE_HOST }}:${{ secrets.DATABASE_PORT }}/${{ secrets.POSTGRES_DB }}
