@@ -68,6 +68,11 @@ func handle(i *bootstrap.Infra) http.Handler {
 	}
 	mux.Mount("/", otelhttp.WithRouteTag("/", http.HandlerFunc(handleDoc)))
 
+	handleHealth := func (w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Ready")
+	}
+	mux.Mount("/health", otelhttp.WithRouteTag("/health", http.HandlerFunc(handleHealth)))
+
 
 	return h2c.NewHandler(mux, &http2.Server{})
 }
