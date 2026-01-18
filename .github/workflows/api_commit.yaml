@@ -6,7 +6,7 @@ on:
     branches: [ "main" ]
 env:
   # env_var: ${{ vars.ENV_CONTEXT_VAR }}
-  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }} # TODO: update to your Google Cloud project ID
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   REGION: ${{ vars.GCP_REGION }} # TODO: update to your region
   SERVICE: ${{ vars.APP_NAME }} # TODO: update to your service name
 
