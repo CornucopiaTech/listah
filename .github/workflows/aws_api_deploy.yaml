@@ -1,0 +1,71 @@
+
+name: Deploy dev Listah API to Cloud Run on pull request
+run-name: Deploy to ${{ vars.APP_NAME }} by @${{ github.actor }}
+on:
+  pull_request:
+    branches: [ "main" ]
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: ${{ vars.GCP_REGION }} # TODO: update to your region
+  SERVICE: ${{ vars.APP_NAME }} # TODO: update to your service name
+  IMAGE_NAME: ${{ vars.APP_NAME }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: dev
+    defaults:
+      run:
+        working-directory: './apps/api/'
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    env:
+      IMAGE_TAG: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ vars.GCR_REPO_NAME }}/${{ vars.APP_NAME }}:${GITHUB_SHA::7}
+      DB_CERT: ${{ secrets.DB_CA_CERT }}
+      PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      WIP_ID: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+      WIP_SA: ${{ secrets.GCP_WORKLOAD_SERVICE_ACCOUNT }}
+
+    steps:
+      # Checkout repository
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      # Copy database certificates to build host
+      - name: Write CA certificate
+        run: echo "${{ env.DB_CERT }}" > db_ca.crt
+
+      # Authenticate to Google Cloud using Workload Identity Federation
+      - id: 'auth'
+        name: Authenticate to Google Cloud
+        uses: 'google-github-actions/auth@v3'
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+          workload_identity_provider: ${{ env.WIP_ID }}
+          service_account: ${{ env.WIP_SA }}
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Artifact Registry
+        run: |-
+            gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+      - name: Build, tag, and push Docker image
+        # The full image name and tag
+        # Format: LOCATION-docker.pkg.dev/PROJECT-ID/REPOSITORY/IMAGE:TAG
+        run: |-
+          docker build . -t "${{ env.IMAGE_TAG }}"
+          docker push "${{ env.IMAGE_TAG }}"
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v3'
+        with:
+          version: '>= 363.0.0'
+      - name: 'Deploy to Cloud Run'
+        run: |-
+            gcloud run deploy ${{ env.SERVICE }} \
+              --image ${{ env.IMAGE_TAG }} \
+              --region ${{ env.REGION }}
+      # If required, use the Cloud Run URL output in later steps
+      - name: 'Show output'
+        run: |-
+          echo ${{ steps.deploy.outputs.url }}
