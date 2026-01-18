@@ -29,6 +29,7 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certifi
 
 # Copy the compiled binary from the builder stage
 COPY --from=builder /app/listah-api /listah-api
+COPY --from=builder /app/public /public
 
 # Set the entry point to run the application
 CMD ["/listah-api"]

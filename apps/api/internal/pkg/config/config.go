@@ -35,7 +35,6 @@ type Config struct {
 	Env             string
 	ProjectRoot     string
 	Api             *appNetworkConfig
-	Web             *appNetworkConfig
 	PgsqlDB         *pgsqlDBConfig
 	Instrumentation *instrumentationConfig
 }
@@ -47,7 +46,6 @@ func Init() (*Config, error) {
 		log.Fatalf("environmental variable: APP_NAME not set")
 	}
 	a := loadApi()
-	w := loadWeb()
 	d := loadPgsqlDatabase()
 	t := loadInstrumentation()
 
@@ -56,7 +54,6 @@ func Init() (*Config, error) {
 		Env:             loadEnv(),
 		ProjectRoot:     loadProjectRoot(),
 		Api:             a,
-		Web:             w,
 		PgsqlDB:         d,
 		Instrumentation: t,
 	}, nil
@@ -83,7 +80,7 @@ func loadEnv() string {
 }
 
 func loadProjectRoot() string {
-	fileAbsPath, err := filepath.Abs("../../")
+	fileAbsPath, err := filepath.Abs("./")
 	if err != nil {
 		log.Fatalf("could not load project root")
 	}
@@ -91,18 +88,11 @@ func loadProjectRoot() string {
 }
 
 func loadApi() *appNetworkConfig {
-
 	var ap string
-	mustMapEnv(&ap, "API_PORT")
+	mustMapEnv(&ap, "PORT")
 
 	return &appNetworkConfig{
-		Address: ":" + ap,
-	}
-}
-
-func loadWeb() *appNetworkConfig {
-	return &appNetworkConfig{
-		Address: ":",
+		Address: net.JoinHostPort("0.0.0.0", ap),
 	}
 }
 

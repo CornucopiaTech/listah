@@ -24,11 +24,6 @@ import (
 
 func handle(i *bootstrap.Infra) http.Handler {
 	allowedOrigins := []string{
-		// i.Config.Web.Address,
-		// i.Config.Web.UrlAddress,
-		// i.Config.Web.Url,
-		// i.Config.Web.Host,
-		// "127.0.0.1",
 		"0.0.0.0",
 	}
 	mux := chi.NewRouter()
@@ -36,9 +31,6 @@ func handle(i *bootstrap.Infra) http.Handler {
     AllowedOrigins:   allowedOrigins,
     AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
     AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "traceparent"},
-    // ExposedHeaders:   []string{"Link"},
-    // AllowCredentials: false,
-    // MaxAge:           300, // Maximum value not ignored by any of major browsers
   }))
 
 	mux.Use(chimiddleware.RequestID)
@@ -71,6 +63,7 @@ func handle(i *bootstrap.Infra) http.Handler {
 
 	handleDoc := func(w http.ResponseWriter, r *http.Request) {
 		p := path.Join(i.Config.ProjectRoot, "public", "index.html")
+		fmt.Printf("Path to index file: %v\n", p)
 		http.ServeFile(w, r, p)
 	}
 	mux.Mount("/", otelhttp.WithRouteTag("/", http.HandlerFunc(handleDoc)))
