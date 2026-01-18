@@ -62,7 +62,9 @@ jobs:
           version: '>= 363.0.0'
       - name: 'Deploy to Cloud Run'
         run: |-
-            gcloud run deploy ${{ env.SERVICE }} --image ${{ env.IMAGE_TAG }}
+            gcloud run deploy ${{ env.SERVICE }} \
+              --image ${{ env.IMAGE_TAG }} \
+              --region ${{ env.REGION }}
       # If required, use the Cloud Run URL output in later steps
       - name: 'Show output'
         run: |-
