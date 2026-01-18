@@ -22,10 +22,11 @@ jobs:
       contents: read
       id-token: write # Required for Workload Identity Federation
     env:
-      IMAGE_TAG: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.AWS_ECR_FULL_REPO_NAME }}/${{ vars.APP_NAME }}:${GITHUB_SHA::7}
+      IMAGE_TAG: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.AWS_ECR_FULL_REPO_NAME }}:${GITHUB_SHA::7}
       DB_CERT: ${{ secrets.DB_CA_CERT }}
       AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
       ECR_FULL_REPO_NAME: ${{ vars.AWS_ECR_FULL_REPO_NAME }}
+      # ECR_FULL_REPO_NAME: ${{ vars.AWS_ECR_FULL_REPO_NAME }}
 
     steps:
       - name: Checkout
