@@ -21,7 +21,7 @@ jobs:
       contents: read
       id-token: write # Required for Workload Identity Federation
     env:
-      IMAGE_TAG: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ vars.GCR_REPO_NAME }}/${{ vars.APP_NAME }}:${{ github.sha::7 }}
+      IMAGE_TAG: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ vars.GCR_REPO_NAME }}/${{ vars.APP_NAME }}:${{ GITHUB_SHA::7 }}
       DB_CERT: ${{ secrets.DB_CA_CERT }}
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       WIP_ID: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
