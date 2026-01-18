@@ -29,7 +29,7 @@ func handle(i *bootstrap.Infra) http.Handler {
 		// i.Config.Web.Url,
 		// i.Config.Web.Host,
 		// "127.0.0.1",
-		""
+		"0.0.0.0",
 	}
 	mux := chi.NewRouter()
 	mux.Use(cors.Handler(cors.Options{
