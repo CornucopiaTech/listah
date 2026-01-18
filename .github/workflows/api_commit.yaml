@@ -5,10 +5,10 @@ on:
   pull_request:
     branches: [ "main" ]
 env:
-  # env_var: ${{ vars.ENV_CONTEXT_VAR }}
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   REGION: ${{ vars.GCP_REGION }} # TODO: update to your region
   SERVICE: ${{ vars.APP_NAME }} # TODO: update to your service name
+  IMAGE_NAME: ${{ vars.APP_NAME }}
 
 jobs:
   deploy:
@@ -20,34 +20,49 @@ jobs:
     permissions:
       contents: read
       id-token: write # Required for Workload Identity Federation
+    env:
+      IMAGE_TAG: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ vars.GCR_REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha::7 }}
+      DB_CERT: ${{ secrets.DB_CA_CERT }}
+      PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      WIP_ID: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+      WIP_SA: ${{ secrets.GCP_WORKLOAD_SERVICE_ACCOUNT }}
 
     steps:
       # Checkout repository
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      # Copy database certificates
+      # Copy database certificates to build host
       - name: Write CA certificate
-        run: echo "${{ secrets.DB_CA_CERT }}" > db_ca.crt
+        run: echo "${{ env.DB_CERT }}" > db_ca.crt
 
       # Authenticate to Google Cloud using Workload Identity Federation
       - id: 'auth'
         name: Authenticate to Google Cloud
         uses: 'google-github-actions/auth@v3'
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GCP_WORKLOAD_SERVICE_ACCOUNT }}
-
-      # Deploy to Cloud Run
+          project_id: ${{ env.PROJECT_ID }}
+          workload_identity_provider: ${{ env.WIP_ID }}
+          service_account: ${{ env.WIP_SA }}
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Artifact Registry
+        run: |-
+            gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+      - name: Build, tag, and push Docker image
+        # The full image name and tag
+        # Format: LOCATION-docker.pkg.dev/PROJECT-ID/REPOSITORY/IMAGE:TAG
+        run: |-
+          docker build . -t "${{ env.IMAGE_TAG }}"
+          docker push "${{ env.IMAGE_TAG }}"
       - name: 'Deploy to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@33553064113a37d688aa6937bacbdc481580be17' # google-github-actions/deploy-cloudrun@v2
         with:
           service: '${{ env.SERVICE }}'
           region: '${{ env.REGION }}'
           # NOTE: If using a different source folder, update the image name below:
-          source: './'
-
+          image: "${{ env.IMAGE_TAG }}"
       # If required, use the Cloud Run URL output in later steps
       - name: 'Show output'
         run: |-
