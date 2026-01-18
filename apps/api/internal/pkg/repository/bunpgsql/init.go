@@ -29,12 +29,10 @@ func Init(cfg *config.Config, logger *logging.Factory) *Repository {
 	var disableTls bool
 
 	switch cfg.Env {
-	case "PROD":
-		disableTls = false
-	case "TEST":
-		disableTls = false
-	default:
+	case "LOCAL":
 		disableTls = true
+	default:
+		disableTls = false
 	}
 	fmt.Printf("DisableTls TLS is: %v\n", disableTls)
 

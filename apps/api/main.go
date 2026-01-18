@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
+	// "path/filepath"
 
-	"github.com/joho/godotenv"
+	// "github.com/joho/godotenv"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/grpclog"
 
@@ -15,21 +15,21 @@ import (
 )
 
 func main() {
-	log.Printf("Starting to run connect-go server")
-	log.Printf("Reading env variables from env file")
+	// log.Printf("Starting to run connect-go server")
+	// log.Printf("Reading env variables from env file")
 
-	if err := godotenv.Load(".env"); err != nil {
-		log.Printf("Env file not found in executable folder. Checking alternate location")
+	// if err := godotenv.Load(".env"); err != nil {
+	// 	log.Printf("Env file not found in executable folder. Checking alternate location")
 
-		path, _ := os.Getwd()
-		rootDir := filepath.Dir(filepath.Dir(path))
-		envPath := filepath.Join(rootDir, ".env")
+	// 	path, _ := os.Getwd()
+	// 	rootDir := filepath.Dir(filepath.Dir(path))
+	// 	envPath := filepath.Join(rootDir, ".env")
 
-		if err2 := godotenv.Load(envPath); err2 != nil {
-			log.Printf("Env file not found in project root.")
-			log.Fatal(errors.Cause(err2))
-		}
-	}
+	// 	if err2 := godotenv.Load(envPath); err2 != nil {
+	// 		log.Printf("Env file not found in project root.")
+	// 		log.Fatal(errors.Cause(err2))
+	// 	}
+	// }
 	if err := server.Run(); err != nil {
 		fmt.Println(errors.Cause(err))
 		log.Fatal(err)
