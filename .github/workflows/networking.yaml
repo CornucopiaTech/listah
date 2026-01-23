@@ -47,19 +47,19 @@ jobs:
           tofu_version: latest
 
       - name: OpenTofu Format
-        run: opentofu fmt -check
+        run: tofu fmt -check
 
       - name: OpenTofu Init
-        run: opentofu init
+        run: tofu init
 
       - name: OpenTofu Validate
-        run: opentofu validate
+        run: tofu validate
 
       - name: OpenTofu Plan
-        run: opentofu plan
+        run: tofu plan
 
       - name: OpenTofu Plan
-        run: opentofu plan
+        run: tofu plan
 
       - name: OpenTofu Apply
-        run: opentofu apply
+        run: tofu apply
