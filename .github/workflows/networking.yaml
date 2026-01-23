@@ -1,0 +1,65 @@
+
+name: Deploy Networking Infra
+run-name: Deploy to ${{ vars.APP_NAME }} by @${{ github.actor }}
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: dev
+    defaults:
+      run:
+        working-directory: './deployment/networking'
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    env:
+      TF_VAR_GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      TF_VAR_AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      TF_VAR_AWS_REGION: ${{ vars.AWS_REGION }}
+      TF_VAR_GCP_REGION: ${{ vars.GCP_REGION }}
+      TF_VAR_STATE_MANAGEMENT_BUCKET_NAME: ${{ vars.STATE_MANAGEMENT_BUCKET_NAME }}
+      TF_VAR_STATE_MANAGEMENT_PREFIX: dev
+      TF_VAR_ENVIRONMENT: dev
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Authenticate to Google Cloud
+        uses: 'google-github-actions/auth@v3'
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_WORKLOAD_SERVICE_ACCOUNT }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@main # Or a specific version
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: latest
+
+      - name: OpenTofu Format
+        run: opentofu fmt -check
+
+      - name: OpenTofu Init
+        run: opentofu init
+
+      - name: OpenTofu Validate
+        run: opentofu validate
+
+      - name: OpenTofu Plan
+        run: opentofu plan
+
+      - name: OpenTofu Plan
+        run: opentofu plan
+
+      - name: OpenTofu Apply
+        run: opentofu apply
