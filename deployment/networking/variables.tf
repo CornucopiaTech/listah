@@ -2,13 +2,13 @@
 variable "GCP_PROJECT_ID" {
   type        = string
   description = "Google Project Id that owns/hosts the resources being deployed"
-  sensitive = true
+  sensitive   = true
 }
 
 variable "AWS_ACCOUNT_ID" {
   type        = string
   description = "AWS Account Id that owns/hosts the resources being deployed"
-  sensitive = true
+  sensitive   = true
 }
 
 variable "AWS_REGION" {
@@ -34,9 +34,9 @@ variable "STATE_MANAGEMENT_PREFIX" {
 variable "ENVIRONMENT" {
   type        = string
   description = "Deployment environment. dev, test, or prod"
-  sensitive = true
+  sensitive   = true
   validation {
-    condition     = var.ENVIRONMENT == "dev" ||  var.ENVIRONMENT == "test" || var.ENVIRONMENT == "prod"
+    condition     = var.ENVIRONMENT == "dev" || var.ENVIRONMENT == "test" || var.ENVIRONMENT == "prod"
     error_message = "Unknown deployment environment.."
   }
 }
