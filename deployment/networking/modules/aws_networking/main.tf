@@ -1,0 +1,43 @@
+
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+  tags = {
+    var.tags...
+    name = "${var.tags}-vpc"
+  }
+}
+
+resource "aws_subnet" "public" {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = "10.0.1.0/24"
+  tags = var.tags
+}
+
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.main.id
+  tags = var.tags
+}
+
+resource "aws_internet_gateway_attachment" "vpc_gw_attach" {
+  internet_gateway_id = aws_internet_gateway.gw.id
+  vpc_id              = aws_vpc.main.id
+}
+
+resource "aws_route_table" "public_rtb" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.gw.id
+  }
+  route {
+    cidr_block = "10.0.0.0/16"
+    gateway_id = "local"
+  }
+  tags = var.tags
+}
+
+resource "aws_route_table_association" "public_rtb_ass" {
+  subnet_id      = aws_subnet.public.id
+  route_table_id = aws_route_table.public_rtb.id
+}
