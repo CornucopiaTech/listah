@@ -22,6 +22,7 @@ jobs:
       TF_VAR_gcp_region: ${{ vars.GCP_REGION }}
       TF_VAR_state_management_bucket_name: ${{ secrets.STATE_MANAGEMENT_BUCKET_NAME }}
       TF_VAR_state_management_prefix: dev
+      TF_VAR_project: ${{ vars.APP_NAME }}
       TF_VAR_environment: dev
       TF_LOG: DEBUG
 
