@@ -23,6 +23,7 @@ jobs:
       TF_VAR_state_management_bucket_name: ${{ secrets.STATE_MANAGEMENT_BUCKET_NAME }}
       TF_VAR_state_management_prefix: dev
       TF_VAR_environment: dev
+      TF_LOG: DEBUG
 
     steps:
       - name: Checkout
@@ -54,9 +55,6 @@ jobs:
 
       - name: OpenTofu Validate
         run: tofu validate
-
-      - name: OpenTofu Plan
-        run: tofu plan
 
       - name: OpenTofu Plan
         run: tofu plan
