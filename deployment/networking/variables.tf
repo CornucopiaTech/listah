@@ -1,42 +1,46 @@
 
-variable "GCP_PROJECT_ID" {
+variable "gcp_project_id" {
   type        = string
   description = "Google Project Id that owns/hosts the resources being deployed"
   sensitive   = true
 }
 
-variable "AWS_ACCOUNT_ID" {
+variable "aws_account_id" {
   type        = string
   description = "AWS Account Id that owns/hosts the resources being deployed"
   sensitive   = true
 }
 
-variable "AWS_REGION" {
+variable "aws_region" {
   type        = string
   description = "AWS Region used in deployment"
 }
 
-variable "GCP_REGION" {
+variable "gcp_region" {
   type        = string
   description = "GCP Region used in deployment"
 }
 
-variable "STATE_MANAGEMENT_BUCKET_NAME" {
+variable "state_management_bucket_name" {
   type        = string
   description = "Bucket where state files are maintained"
 }
 
-variable "STATE_MANAGEMENT_PREFIX" {
+variable "state_management_prefix" {
   type        = string
   description = "Prefix within bucket where state files are maintained"
 }
 
-variable "ENVIRONMENT" {
+variable "environment" {
   type        = string
   description = "Deployment environment. dev, test, or prod"
-  sensitive   = true
   validation {
-    condition     = var.ENVIRONMENT == "dev" || var.ENVIRONMENT == "test" || var.ENVIRONMENT == "prod"
+    condition     = var.environment == "dev" || var.environment == "test" || var.environment == "prod"
     error_message = "Unknown deployment environment.."
   }
+}
+
+variable "project" {
+  type        = string
+  description = "Project name"
 }

@@ -1,8 +1,8 @@
 provider "google" {
-  project = var.GCP_PROJECT_ID
-  region  = var.GCP_REGION
+  project = var.gcp_project_id
+  region  = var.gcp_region
 }
 
 provider "aws" {
-  region = var.AWS_REGION
+  region = var.aws_region
 }

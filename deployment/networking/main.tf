@@ -2,8 +2,8 @@
 module "aws_vpc" {
   source = "./modules/aws_networking"
   tags = {
-    name        = "${var.tag.project}-${var.tag.environment}"
-    project     = var.tag.project
-    environment = var.tag.environment
+    name        = "${var.project}-${var.environment}"
+    project     = var.project
+    environment = var.environment
   }
 }
