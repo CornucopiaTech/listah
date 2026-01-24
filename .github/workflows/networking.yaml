@@ -66,8 +66,8 @@ jobs:
       - name: Post OpenTofu Plan
         run: |
           PR_NUMBER=${{ github.event.pull_request.number }}
-          # COMMENT=$(terraform show -json tfplan)
-          COMMENT=$(terraform show tfplan)
+          # COMMENT=$(tofu show -json tfplan)
+          COMMENT=$(tofu show tfplan)
           GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
 
