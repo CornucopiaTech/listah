@@ -1,7 +1,6 @@
 
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
-  # tags = var.tags
   tags = {
     for k, v in var.tags : k => (k == "Name" ? "${v}-vpc" : v)
   }
@@ -10,12 +9,18 @@ resource "aws_vpc" "main" {
 resource "aws_subnet" "public" {
   vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.1.0/24"
-  tags = var.tags
+  # tags = var.tags
+  tags = {
+    for k, v in var.tags : k => (k == "Name" ? "${v}-public-subnet" : v)
+  }
 }
 
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.main.id
-  tags = var.tags
+  # tags = var.tags
+  tags = {
+    for k, v in var.tags : k => (k == "Name" ? "${v}-igw" : v)
+  }
 }
 
 resource "aws_route_table" "public_rtb" {
@@ -29,7 +34,10 @@ resource "aws_route_table" "public_rtb" {
     cidr_block = "10.0.0.0/16"
     gateway_id = "local"
   }
-  tags = var.tags
+  # tags = var.tags
+  tags = {
+    for k, v in var.tags : k => (k == "Name" ? "${v}-pub-rtb" : v)
+  }
 }
 
 resource "aws_route_table_association" "public_rtb_ass" {
