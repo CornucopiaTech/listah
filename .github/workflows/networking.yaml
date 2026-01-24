@@ -58,7 +58,20 @@ jobs:
         run: tofu validate
 
       - name: OpenTofu Plan
-        run: tofu plan
+        run: tofu plan -out=tfplan
+
+      # - name: OpenTofu Plan
+      #   run: PLAN_OUTPUT=$(tofu plan  &> /dev/stdout)
+
+      - name: Post OpenTofu Plan
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          # COMMENT=$(terraform show -json tfplan)
+          COMMENT=$(terraform show tfplan)
+          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
+
+          curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X POST $COMMENT_URL -d "{\"body\":\"$COMMENT\"}"
 
       - name: OpenTofu Apply
-        run: tofu apply
+        run: tofu apply -auto-approve tfplan
