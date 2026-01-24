@@ -15,10 +15,10 @@ resource "aws_internet_gateway" "gw" {
   tags = var.tags
 }
 
-resource "aws_internet_gateway_attachment" "vpc_gw_attach" {
-  internet_gateway_id = aws_internet_gateway.gw.id
-  vpc_id              = aws_vpc.main.id
-}
+# resource "aws_internet_gateway_attachment" "vpc_gw_attach" {
+#   internet_gateway_id = aws_internet_gateway.gw.id
+#   vpc_id              = aws_vpc.main.id
+# }
 
 resource "aws_route_table" "public_rtb" {
   vpc_id = aws_vpc.main.id
