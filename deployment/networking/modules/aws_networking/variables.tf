@@ -1,7 +1,8 @@
 variable "tags" {
   type = object({
-    Name    = string
-    project    = string
+    Name        = string
+    project     = string
     environment = string
+    region      = string
   })
 }

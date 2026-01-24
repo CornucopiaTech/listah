@@ -6,12 +6,21 @@ resource "aws_vpc" "main" {
   }
 }
 
-resource "aws_subnet" "public" {
+resource "aws_subnet" "public1" {
   vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.1.0/24"
   # tags = var.tags
   tags = {
-    for k, v in var.tags : k => (k == "Name" ? "${v}-public-subnet" : v)
+    for k, v in var.tags : k => (k == "Name" ? "${v}-public-subnet1" : v)
+  }
+}
+
+resource "aws_subnet" "public2" {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = "10.0.2.0/24"
+  # tags = var.tags
+  tags = {
+    for k, v in var.tags : k => (k == "Name" ? "${v}-public-subnet2" : v)
   }
 }
 
