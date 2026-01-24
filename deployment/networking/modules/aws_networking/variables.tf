@@ -1,6 +1,6 @@
 variable "tags" {
   type = object({
-    name    = string
+    Name    = string
     project    = string
     environment = string
   })
