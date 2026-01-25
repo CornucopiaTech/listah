@@ -2,20 +2,16 @@
 name: Deploy Data Infra
 run-name: Deploy Data Infra to ${{ vars.APP_NAME }} by @${{ github.actor }}
 on:
-  pull_request:
-    branches: [ "main" ]
-  push:
-    branches: [ "main" ]
-
-  # workflow_run:
-  #   workflows: ["CI Build and Test"]
-  #   types:
-  #     - completed
+  workflow_call:
+    inputs:
+      dpl-env:
+        required: true
+        type: string
 
 jobs:
-  deploy:
+  deploy-data:
     runs-on: ubuntu-latest
-    environment: dev
+    environment: ${{ inputs.dpl-env }}
     defaults:
       run:
         working-directory: './deployment/data'

@@ -2,15 +2,20 @@
 name: Deploy Networking Infra
 run-name: Deploy to ${{ vars.APP_NAME }} by @${{ github.actor }}
 on:
-  pull_request:
-    branches: [ "main" ]
-  push:
-    branches: [ "main" ]
+  workflow_call:
+    inputs:
+      dpl-env:
+        required: true
+        type: string
+    outputs:
+      db_client_certs:
+        description: "Client certs created for DB"
+        value: ${{ jobs.deploy.outputs.output1 }}
 
 jobs:
-  deploy:
+  deploy-networking:
     runs-on: ubuntu-latest
-    environment: dev
+    environment: ${{ inputs.dpl-env }}
     defaults:
       run:
         working-directory: './deployment/networking'
@@ -27,7 +32,8 @@ jobs:
       TF_VAR_project: ${{ vars.APP_NAME }}
       TF_VAR_environment: dev
       TF_LOG: DEBUG
-
+    outputs:
+      output1: ${{ steps.tofu_apply.outputs.db_certs }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -75,5 +81,7 @@ jobs:
 
           curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X POST $COMMENT_URL -d "{\"body\":\"$COMMENT\"}"
 
-      - name: OpenTofu Apply
+      - id: tofu_apply
+        name: OpenTofu Apply
         run: tofu apply -auto-approve tfplan
+      # ToDo: Pass output to github output

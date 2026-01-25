@@ -1,0 +1,25 @@
+name: Deployment
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+
+
+jobs:
+  deploy-networking:
+    uses: './.github/workflows/networking.yaml'
+    with:
+      dpl-env: prod
+      environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit
+
+  deploy-data:
+    uses: './.github/workflows/data.yaml'
+    with:
+      dpl-env: prod
+      environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit
