@@ -10,7 +10,7 @@ resource "google_sql_database_instance" "main" {
   settings {
     # Second-generation instance tiers are based on the machine
     # type. See argument reference below.
-    edition           = "ENTERPRISE"
+    edition           = var.edition
     tier              = var.instance_tier
     activation_policy = "ON_DEMAND"
     availability_type = var.tags.environment == "dev" ? "ZONAL" : "REGIONAL"
@@ -29,7 +29,7 @@ resource "google_sql_database_instance" "main" {
       # }
     }
     connection_pool_config {
-      connection_pooling_enabled = true
+      connection_pooling_enabled = var.edition == "ENTERPRISE" ? false : true
     }
   }
 }

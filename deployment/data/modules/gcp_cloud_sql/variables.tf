@@ -14,3 +14,4 @@ variable "root_password" { type = string }
 variable "user_password" { type = string }
 variable "vpc_id" { type = string }
 variable "project_id" { type = string }
+variable "edition" { type = string }
