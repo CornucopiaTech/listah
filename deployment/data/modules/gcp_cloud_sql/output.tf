@@ -1,4 +1,4 @@
-# output "aws_vpc_id" {
-#   value = aws_instance.server.private_ip
-#   description = "The id of the vpc."
-# }
+output "db_client_cert" {
+  value       = google_sql_ssl_cert.client_cert.certs
+  description = "The client certs for the Cloud SQL instance"
+}

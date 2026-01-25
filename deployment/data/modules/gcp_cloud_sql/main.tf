@@ -10,14 +10,14 @@ resource "google_sql_database_instance" "main" {
   settings {
     # Second-generation instance tiers are based on the machine
     # type. See argument reference below.
-    edition           = var.edition
-    tier              = var.instance_tier
+    edition = var.edition
+    tier    = var.instance_tier
     # activation_policy = "ON_DEMAND" //Can't be used by 2nd Gen.
     availability_type = var.tags.environment == "dev" ? "ZONAL" : "REGIONAL"
     disk_autoresize   = true
     final_backup_config {
       enabled        = var.tags.environment == "dev" ? false : true
-      # retention_days = 365
+      retention_days = var.tags.environment == "dev" ? null : 365
     }
     ip_configuration {
       # private_network = var.vpc_id
@@ -45,6 +45,7 @@ resource "google_sql_user" "users" {
   name     = var.username
   instance = google_sql_database_instance.main.name
   password = var.user_password
+  type     = "BUILT_IN"
 }
 
 
