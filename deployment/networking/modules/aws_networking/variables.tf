@@ -4,5 +4,6 @@ variable "tags" {
     project     = string
     environment = string
     region      = string
+    controller  = string
   })
 }

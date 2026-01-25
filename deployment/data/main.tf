@@ -1,17 +1,16 @@
 
-module "aws_rds" {
-  source = "./modules/aws_rds"
-  allocated_storage = var.allocated_storage
-  db_name = var.project
-  engine = var.engine
-  engine_version = var.engine_version
-  instance_class = var.instance_class
-  username = var.username
-  parameter_group_name = var.parameter_group_name
+module "gcp_cloud_sql" {
+  source        = "./modules/gcp_cloud_sql"
+  instance_tier = var.instance_tier
+  username      = var.username
+  root_password = var.root_password
+  user_password = var.user_password
+  vpc_id        = data.terraform_remote_state.network.vpc_id
   tags = {
     Name        = "${var.project}-${var.environment}-${var.aws_region}"
     project     = var.project
     environment = var.environment
     region      = var.aws_region
+    controller  = "OpenTofu via Github Actions"
   }
 }

@@ -44,3 +44,8 @@ variable "project" {
   type        = string
   description = "Project name"
 }
+
+variable "instance_tier" { type = string }
+variable "username" { type = string }
+variable "root_password" { type = string }
+variable "user_password" { type = string }
