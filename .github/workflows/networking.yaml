@@ -4,6 +4,8 @@ run-name: Deploy to ${{ vars.APP_NAME }} by @${{ github.actor }}
 on:
   pull_request:
     branches: [ "main" ]
+  push:
+    branches: [ "main" ]
 
 jobs:
   deploy:
