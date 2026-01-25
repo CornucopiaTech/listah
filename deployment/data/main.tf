@@ -15,6 +15,7 @@ module "gcp_cloud_sql" {
   root_password = var.root_password
   user_password = var.user_password
   vpc_id        = data.terraform_remote_state.networking.outputs.gcp_vpc_id
+  project_id    = var.gcp_project_id
   tags = {
     Name        = "${var.project}-${var.environment}-${var.gcp_region}"
     project     = var.project
