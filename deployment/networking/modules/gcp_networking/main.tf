@@ -7,7 +7,7 @@ resource "google_compute_network" "vpc_network" {
 
 resource "google_compute_subnetwork" "private_subnet" {
   name                     = "${var.tags.Name}-private-subnet"
-  ip_cidr_range            = "10.10.10.0/22"
+  ip_cidr_range            = "10.0.0.0/20"
   region                   = var.tags.region
   network                  = google_compute_network.vpc_network.id
   private_ip_google_access = true
@@ -15,7 +15,7 @@ resource "google_compute_subnetwork" "private_subnet" {
 
 resource "google_compute_subnetwork" "public_subnet" {
   name                     = "${var.tags.Name}-public-subnet"
-  ip_cidr_range            = "10.10.20.0/22"
+  ip_cidr_range            = "10.0.16.0/20"
   region                   = var.tags.region
   network                  = google_compute_network.vpc_network.id
   private_ip_google_access = true
@@ -62,7 +62,6 @@ resource "google_compute_firewall" "web-internet-ingress-firewall-rule" {
   direction   = "INGRESS"
   allow {
     protocol = "all"
-    ports    = ["0-65535"]
   }
   priority      = 1000
   source_ranges = ["0.0.0.0/0"]
@@ -77,7 +76,6 @@ resource "google_compute_firewall" "web-internet-egress-firewall-rule" {
   direction   = "EGRESS"
   allow {
     protocol = "all"
-    ports    = ["0-65535"]
   }
   priority           = 1000
   destination_ranges = ["0.0.0.0/0"]
@@ -92,7 +90,6 @@ resource "google_compute_firewall" "data-internet-ingress-firewall-rule" {
   direction   = "INGRESS"
   deny {
     protocol = "all"
-    ports    = ["0-65535"]
   }
   priority      = 1000
   source_ranges = ["0.0.0.0/0"]
@@ -107,7 +104,6 @@ resource "google_compute_firewall" "data-internet-egress-firewall-rule" {
   direction   = "EGRESS"
   deny {
     protocol = "all"
-    ports    = ["0-65535"]
   }
   destination_ranges = ["0.0.0.0/0"]
 }
@@ -119,7 +115,6 @@ resource "google_compute_firewall" "web-data-firewall-rule" {
   description = "Firewall rule allowing access between web and data-tagged resources"
   allow {
     protocol = "all"
-    ports    = ["0-65535"]
   }
   # source_ranges = ["10.10.10.0/22", "10.10.20.0/22"]
   source_tags = ["${var.tags.project}-data", "${var.tags.project}-web"]
