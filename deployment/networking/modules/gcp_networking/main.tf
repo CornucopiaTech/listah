@@ -118,5 +118,5 @@ resource "google_compute_firewall" "web-data-firewall-rule" {
   }
   # source_ranges = ["10.10.10.0/22", "10.10.20.0/22"]
   source_tags = ["${var.tags.project}-data", "${var.tags.project}-web"]
-  target_tags   = ["${var.tags.project}-data", "${var.tags.project}-web"]
+  target_tags = ["${var.tags.project}-data", "${var.tags.project}-web"]
 }

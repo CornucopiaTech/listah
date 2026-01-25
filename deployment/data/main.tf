@@ -5,12 +5,12 @@ module "gcp_cloud_sql" {
   username      = var.username
   root_password = var.root_password
   user_password = var.user_password
-  vpc_id        = data.terraform_remote_state.network.vpc_id
+  vpc_id        = data.terraform_remote_state.networking.gcp_vpc_id
   tags = {
     Name        = "${var.project}-${var.environment}-${var.aws_region}"
     project     = var.project
     environment = var.environment
-    region      = var.aws_region
+    region      = var.gcp_region
     controller  = "OpenTofu via Github Actions"
   }
 }
