@@ -17,7 +17,7 @@ resource "google_sql_database_instance" "main" {
     disk_autoresize   = true
     final_backup_config {
       enabled        = var.tags.environment == "dev" ? false : true
-      retention_days = 365
+      # retention_days = 365
     }
     ip_configuration {
       # private_network = var.vpc_id
