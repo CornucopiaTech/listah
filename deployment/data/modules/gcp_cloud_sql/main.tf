@@ -15,7 +15,7 @@ resource "google_sql_database_instance" "main" {
     availability_type = var.tags.environment == "dev" ? "ZONAL" : "REGIONAL"
     disk_autoresize   = true
     ip_configuration {
-      private_network = var.vpc_id
+      # private_network = var.vpc_id
       ssl_mode        = "ENCRYPTED_ONLY"
     }
     connection_pool_config {
