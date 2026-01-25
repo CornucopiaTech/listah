@@ -17,6 +17,7 @@ resource "google_sql_database_instance" "main" {
     ip_configuration {
       # private_network = var.vpc_id
       ssl_mode        = "ENCRYPTED_ONLY"
+      #  requireSsl = true
     }
     connection_pool_config {
       connection_pooling_enabled = true

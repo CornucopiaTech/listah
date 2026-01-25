@@ -111,3 +111,7 @@ gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
 gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
   --role="roles/cloudsql.admin" \
   --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}"
+
+
+# Database Migration Service Agent
+# Compute Engine Service Agent
