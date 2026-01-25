@@ -1,3 +1,12 @@
+data "terraform_remote_state" "network" {
+  backend = "gcs"
+
+  config = {
+    bucket = var.state_management_bucket_name
+    prefix = "${var.state_management_prefix}/network/"
+  }
+}
+
 
 module "gcp_cloud_sql" {
   source        = "./modules/gcp_cloud_sql"
