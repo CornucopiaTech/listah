@@ -12,7 +12,7 @@ resource "google_sql_database_instance" "main" {
     # type. See argument reference below.
     edition           = var.edition
     tier              = var.instance_tier
-    activation_policy = "ON_DEMAND"
+    # activation_policy = "ON_DEMAND" //Can't be used by 2nd Gen.
     availability_type = var.tags.environment == "dev" ? "ZONAL" : "REGIONAL"
     disk_autoresize   = true
     final_backup_config {
