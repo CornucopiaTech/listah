@@ -7,11 +7,15 @@ on:
       dpl-env:
         required: true
         type: string
+      environment:
+        required: true
+        type: string
 
 jobs:
   deploy-data:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.dpl-env }}
+    # environment: ${{ inputs.dpl-env }}
+    environment: ${{ inputs.environment }}
     defaults:
       run:
         working-directory: './deployment/data'
