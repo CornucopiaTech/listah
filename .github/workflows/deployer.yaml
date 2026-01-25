@@ -11,6 +11,9 @@ on:
 
 jobs:
   deploy-networking:
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
     uses: './.github/workflows/networking.yaml'
     with:
       dpl-env: prod
@@ -18,6 +21,9 @@ jobs:
     secrets: inherit
 
   deploy-data:
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
     uses: './.github/workflows/data.yaml'
     with:
       dpl-env: prod
