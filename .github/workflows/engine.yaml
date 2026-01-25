@@ -1,4 +1,4 @@
-name: Deployment
+name: CICD Engine
 
 on:
   pull_request:
@@ -16,7 +16,6 @@ jobs:
       id-token: write # Required for Workload Identity Federation
     uses: './.github/workflows/networking.yaml'
     with:
-      dpl-env: prod
       environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
     secrets: inherit
 
@@ -26,6 +25,5 @@ jobs:
       id-token: write # Required for Workload Identity Federation
     uses: './.github/workflows/data.yaml'
     with:
-      dpl-env: prod
       environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
     secrets: inherit

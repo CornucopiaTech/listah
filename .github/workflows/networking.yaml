@@ -4,21 +4,17 @@ run-name: Deploy to ${{ vars.APP_NAME }} by @${{ github.actor }}
 on:
   workflow_call:
     inputs:
-      dpl-env:
-        required: true
-        type: string
       environment:
         required: true
         type: string
-    outputs:
-      db_client_certs:
-        description: "Client certs created for DB"
-        value: ${{ jobs.deploy.outputs.output1 }}
+    # outputs:
+    #   db_client_certs:
+    #     description: "Client certs created for DB"
+    #     value: ${{ jobs.deploy.outputs.output1 }}
 
 jobs:
   deploy-networking:
     runs-on: ubuntu-latest
-    # environment: ${{ inputs.dpl-env }}
     environment: ${{ inputs.environment }}
     defaults:
       run:
