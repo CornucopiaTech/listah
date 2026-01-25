@@ -50,6 +50,6 @@ resource "aws_route_table" "public_rtb" {
 }
 
 resource "aws_route_table_association" "public_rtb_ass" {
-  subnet_id      = aws_subnet.public.id
+  subnet_id      = aws_subnet.public1.id
   route_table_id = aws_route_table.public_rtb.id
 }
