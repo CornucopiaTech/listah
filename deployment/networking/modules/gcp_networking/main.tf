@@ -9,8 +9,6 @@ resource "google_compute_subnetwork" "private_subnet" {
   name                     = "${var.tags.Name}-private-subnet"
   ip_cidr_range            = "10.10.10.0/22"
   region                   = var.tags.region
-  stack_type               = "IPV4_IPV6"
-  ipv6_access_type         = "INTERNAL"
   network                  = google_compute_network.vpc_network.id
   private_ip_google_access = true
 }
@@ -19,8 +17,6 @@ resource "google_compute_subnetwork" "public_subnet" {
   name                     = "${var.tags.Name}-public-subnet"
   ip_cidr_range            = "10.10.20.0/22"
   region                   = var.tags.region
-  stack_type               = "IPV4_IPV6"
-  ipv6_access_type         = "INTERNAL"
   network                  = google_compute_network.vpc_network.id
   private_ip_google_access = true
 }
