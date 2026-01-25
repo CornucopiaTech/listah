@@ -27,6 +27,7 @@ jobs:
       TF_VAR_instance_tier: ${{ vars.DB_INSTANCE_TIER }}
       TF_VAR_root_password: ${{ secrets.POSTGRES_PASSWORD }}
       TF_VAR_user_password: ${{ secrets.POSTGRES_PASSWORD }}
+      TF_VAR_username: ${{ secrets.POSTGRES_USER }}
       TF_LOG: DEBUG
 
     steps:
