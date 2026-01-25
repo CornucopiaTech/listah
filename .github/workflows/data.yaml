@@ -1,6 +1,6 @@
 
 name: Deploy Data Infra
-run-name: Deploy to ${{ vars.APP_NAME }} by @${{ github.actor }}
+run-name: Deploy Data Infra to ${{ vars.APP_NAME }} by @${{ github.actor }}
 on:
   pull_request:
     branches: [ "main" ]
