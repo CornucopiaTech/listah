@@ -10,6 +10,7 @@ resource "google_sql_database_instance" "main" {
   settings {
     # Second-generation instance tiers are based on the machine
     # type. See argument reference below.
+    edition           = "ENTERPRISE"
     tier              = var.instance_tier
     activation_policy = "ON_DEMAND"
     availability_type = var.tags.environment == "dev" ? "ZONAL" : "REGIONAL"
