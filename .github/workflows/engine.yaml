@@ -20,6 +20,7 @@ jobs:
     secrets: inherit
 
   deploy-data:
+    needs: [deploy-networking]
     permissions:
       contents: read
       id-token: write # Required for Workload Identity Federation
