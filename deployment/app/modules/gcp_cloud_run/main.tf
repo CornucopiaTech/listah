@@ -72,129 +72,129 @@ resource "google_project_iam_member" "cloudsql_client" {
 }
 
 
-# Cloud Run
-resource "google_project_service" "cloudrun_api" {
-  service            = "run.googleapis.com"
-  disable_on_destroy = false
-}
+# # Cloud Run
+# resource "google_project_service" "cloudrun_api" {
+#   service            = "run.googleapis.com"
+#   disable_on_destroy = false
+# }
 
-resource "google_cloud_run_v2_service" "app" {
-  name                = "${var.tags.name}-cloudrun-service"
-  location            = var.tags.region
-  deletion_protection = var.tags.environment == "dev" ? false : true
-  ingress             = "INGRESS_TRAFFIC_ALL"
+# resource "google_cloud_run_v2_service" "app" {
+#   name                = "${var.tags.name}-cloudrun-service"
+#   location            = var.tags.region
+#   deletion_protection = var.tags.environment == "dev" ? false : true
+#   ingress             = "INGRESS_TRAFFIC_ALL"
 
-  scaling {
-    max_instance_count = 100
-  }
+#   scaling {
+#     max_instance_count = 100
+#   }
 
-  template {
-    service_account = google_service_account.app_service_account.email
-    containers {
-      image = google_artifact_registry_repository.repo.registry_uri
+#   template {
+#     service_account = google_service_account.app_service_account.email
+#     containers {
+#       image = google_artifact_registry_repository.repo.registry_uri
 
-      liveness_probe {
-        failure_threshold     = 5
-        initial_delay_seconds = 60
-        timeout_seconds       = 30
-        period_seconds        = 30
+#       liveness_probe {
+#         failure_threshold     = 5
+#         initial_delay_seconds = 60
+#         timeout_seconds       = 30
+#         period_seconds        = 30
 
-        http_get {
-          path = "/health"
-          # Custom headers to set in the request
-          # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_service#http_headers
-          http_headers {
-            name  = "Access-Control-Allow-Origin"
-            value = "*"
-          }
-        }
-      }
-      startup_probe {
-        failure_threshold     = 5
-        initial_delay_seconds = 60
-        timeout_seconds       = 30
-        period_seconds        = 30
+#         http_get {
+#           path = "/health"
+#           # Custom headers to set in the request
+#           # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_service#http_headers
+#           http_headers {
+#             name  = "Access-Control-Allow-Origin"
+#             value = "*"
+#           }
+#         }
+#       }
+#       startup_probe {
+#         failure_threshold     = 5
+#         initial_delay_seconds = 60
+#         timeout_seconds       = 30
+#         period_seconds        = 30
 
-        http_get {
-          path = "/health"
-          # Custom headers to set in the request
-          # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_service#http_headers
-          http_headers {
-            name  = "Access-Control-Allow-Origin"
-            value = "*"
-          }
-        }
-      }
-      env {
-        name  = "POSTGRES_PASSWORD"
-        value = var.db_password
-      }
-      env {
-        name  = "POSTGRES_USER"
-        value = var.db_username
-      }
-      env {
-        name  = "POSTGRES_DB"
-        value = var.db_name
-      }
-      env {
-        name  = "DATABASE_HOST"
-        value = var.db_host
-      }
-      env {
-        name  = "DB_DNS_NAME"
-        value = var.db_dns_name
-      }
-      env {
-        name  = "DB_PRIVATE_IP"
-        value = var.db_private_ip_address
-      }
-      env {
-        name  = "DATABASE_PORT"
-        value = "5432"
-      }
-      env {
-        name  = "POSTGRES_USE_TLS"
-        value = "true"
-      }
-      env {
-        name  = "OTEL_EXPORTER_OTLP_ENDPOINT"
-        value = "CHANGEME"
-      }
-      env {
-        name  = "OLTP_EXPORTER_TYPE"
-        value = "otlp"
-      }
-      env {
-        name  = "METRIC_FREQ_SEC"
-        value = 60
-      }
-      env {
-        name  = "TRACE_FREQ_SEC"
-        value = 5
-      }
-      env {
-        name  = "APP_NAME"
-        value = var.tags.project
-      }
-    }
+#         http_get {
+#           path = "/health"
+#           # Custom headers to set in the request
+#           # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_service#http_headers
+#           http_headers {
+#             name  = "Access-Control-Allow-Origin"
+#             value = "*"
+#           }
+#         }
+#       }
+#       env {
+#         name  = "POSTGRES_PASSWORD"
+#         value = var.db_password
+#       }
+#       env {
+#         name  = "POSTGRES_USER"
+#         value = var.db_username
+#       }
+#       env {
+#         name  = "POSTGRES_DB"
+#         value = var.db_name
+#       }
+#       env {
+#         name  = "DATABASE_HOST"
+#         value = var.db_host
+#       }
+#       env {
+#         name  = "DB_DNS_NAME"
+#         value = var.db_dns_name
+#       }
+#       env {
+#         name  = "DB_PRIVATE_IP"
+#         value = var.db_private_ip_address
+#       }
+#       env {
+#         name  = "DATABASE_PORT"
+#         value = "5432"
+#       }
+#       env {
+#         name  = "POSTGRES_USE_TLS"
+#         value = "true"
+#       }
+#       env {
+#         name  = "OTEL_EXPORTER_OTLP_ENDPOINT"
+#         value = "CHANGEME"
+#       }
+#       env {
+#         name  = "OLTP_EXPORTER_TYPE"
+#         value = "otlp"
+#       }
+#       env {
+#         name  = "METRIC_FREQ_SEC"
+#         value = 60
+#       }
+#       env {
+#         name  = "TRACE_FREQ_SEC"
+#         value = 5
+#       }
+#       env {
+#         name  = "APP_NAME"
+#         value = var.tags.project
+#       }
+#     }
 
-    labels = {
-      for k, v in var.tags : k => (k == "name" ? "${v}-cloudrun-service-container" : v)
-    }
-  }
-  labels = {
-    for k, v in var.tags : k => (k == "name" ? "${v}-cloudrun-service" : v)
-  }
-  depends_on = [google_project_service.cloudrun_api]
-}
+#     labels = {
+#       for k, v in var.tags : k => (k == "name" ? "${v}-cloudrun-service-container" : v)
+#     }
+#   }
+#   labels = {
+#     for k, v in var.tags : k => (k == "name" ? "${v}-cloudrun-service" : v)
+#   }
+#   depends_on = [google_project_service.cloudrun_api]
+# }
 
-resource "google_cloud_run_service_iam_binding" "allow_all_users" {
-  location = google_cloud_run_v2_service.app.location
-  project  = var.project_id
-  service  = google_cloud_run_v2_service.app.name
-  role     = "roles/run.invoker"
-  members = [
-    "allUsers"
-  ]
-}
+# resource "google_cloud_run_service_iam_binding" "allow_all_users" {
+#   location = google_cloud_run_v2_service.app.location
+#   project  = var.project_id
+#   service  = google_cloud_run_v2_service.app.name
+#   role     = "roles/run.invoker"
+#   members = [
+#     "allUsers"
+#   ]
+# }
