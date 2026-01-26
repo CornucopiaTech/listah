@@ -10,13 +10,13 @@ resource "google_artifact_registry_repository" "repo" {
   repository_id = "${var.tags.name}-container-repo"
   description   = "${var.tags.project} container repository/registry"
   format        = "DOCKER"
-  cleanup_policies {
-    id     = "${var.tags.name}-container-repo"
-    action = "DELETE"
-    most_recent_versions {
-      keep_count = 3
-    }
-  }
+  # cleanup_policies {
+  #   id     = "${var.tags.name}-container-repo"
+  #   action = "DELETE"
+  #   most_recent_versions {
+  #     keep_count = 3
+  #   }
+  # }
   docker_config {
     immutable_tags = true
   }
