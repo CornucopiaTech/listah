@@ -28,7 +28,7 @@ module "gcp_cloud_run" {
   vpc_id                = data.terraform_remote_state.networking.outputs.gcp_vpc_id
   project_id            = var.gcp_project_id
   tags = {
-    Name        = "${var.project}-${var.environment}-${var.gcp_region}"
+    name        = "${var.project}-${var.environment}-${var.gcp_region}"
     project     = var.project
     environment = var.environment
     region      = var.gcp_region
