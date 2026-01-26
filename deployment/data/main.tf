@@ -27,8 +27,8 @@ module "gcp_cloud_sql" {
 }
 
 module "gcp_artifact_registry" {
-  source                = "./modules/gcp_artifact_registry"
-  project_id            = var.gcp_project_id
+  source     = "./modules/gcp_artifact_registry"
+  project_id = var.gcp_project_id
   tags = {
     name        = "${var.project}-${var.environment}-${var.gcp_region}"
     project     = var.project
