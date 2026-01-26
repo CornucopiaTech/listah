@@ -23,6 +23,6 @@ module "gcp_cloud_sql" {
     project     = var.project
     environment = var.environment
     region      = var.gcp_region
-    controller  = "OpenTofu via Github Actions"
+    controller  = "opentofu-via-github-actions"
   }
 }

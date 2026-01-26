@@ -25,7 +25,7 @@ variable "gcp_project_id" {
 # }
 variable "tags" {
   type = object({
-    Name        = string
+    name        = string
     project     = string
     environment = string
     region      = string

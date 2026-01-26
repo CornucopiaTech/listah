@@ -118,3 +118,6 @@ gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
 # Database Migration Service Agent
 # Compute Engine Service Agent
 # servicenetworking.serviceAgent
+roles/iam.serviceAccountAdmin
+roles/iam.securityAdmin
+roles/owner

@@ -4,14 +4,14 @@ locals {
     project     = var.project
     environment = var.environment
     region      = var.aws_region
-    controller  = "OpenTofu via Github Actions"
+    controller  = "opentofu-via-github-actions"
   }
   default_gcp_tags = {
-    Name        = "${var.project}-${var.environment}-${var.gcp_region}"
+    name        = "${var.project}-${var.environment}-${var.gcp_region}"
     project     = var.project
     environment = var.environment
     region      = var.gcp_region
-    controller  = "OpenTofu via Github Actions"
+    controller  = "opentofu-via-github-actions"
   }
 }
 module "aws_vpc" {
