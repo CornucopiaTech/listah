@@ -28,7 +28,7 @@ resource "google_artifact_registry_repository" "repo" {
 }
 
 resource "google_service_account" "app_service_account" {
-  account_id                   = "${var.tags.project}-cloudrun-service-account"
+  account_id                   = "${var.tags.project}-run-sa"
   display_name                 = "${var.tags.project} Service Account"
   project                      = var.project_id
   create_ignore_already_exists = true
@@ -55,6 +55,13 @@ resource "google_project_iam_member" "dns_admin" {
 resource "google_project_iam_member" "cloudsql_instanceUser" {
   project = var.project_id
   role    = "roles/cloudsql.instanceUser"
+  member  = "serviceAccount:${google_service_account.app_service_account.email}"
+}
+
+
+resource "google_project_iam_member" "cloudsql_client" {
+  project = var.project_id
+  role    = "roles/cloudsql.client"
   member  = "serviceAccount:${google_service_account.app_service_account.email}"
 }
 
