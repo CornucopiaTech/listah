@@ -10,31 +10,31 @@ on:
 
 
 jobs:
-  deploy-networking:
+  # deploy-networking:
+  #   permissions:
+  #     contents: read
+  #     id-token: write # Required for Workload Identity Federation
+  #   uses: './.github/workflows/networking.yaml'
+  #   with:
+  #     environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+  #   secrets: inherit
+
+  deploy-data:
+    # needs: [deploy-networking]
     permissions:
       contents: read
       id-token: write # Required for Workload Identity Federation
-    uses: './.github/workflows/networking.yaml'
+    uses: './.github/workflows/data.yaml'
     with:
       environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
     secrets: inherit
 
-  # deploy-data:
-  #   needs: [deploy-networking]
-  #   permissions:
-  #     contents: read
-  #     id-token: write # Required for Workload Identity Federation
-  #   uses: './.github/workflows/data.yaml'
-  #   with:
-  #     environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
-  #   secrets: inherit
-
-  # deploy-app:
-  #   # needs: [deploy-data]
-  #   permissions:
-  #     contents: read
-  #     id-token: write # Required for Workload Identity Federation
-  #   uses: './.github/workflows/app.yaml'
-  #   with:
-  #     environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
-  #   secrets: inherit
+  deploy-app:
+    # needs: [deploy-data]
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    uses: './.github/workflows/app.yaml'
+    with:
+      environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit

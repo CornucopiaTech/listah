@@ -52,7 +52,13 @@ resource "google_project_iam_member" "dns_admin" {
   member  = "serviceAccount:${google_service_account.app_service_account.email}"
 }
 
-resource "google_project_iam_member" "dcloudsql_instanceUser" {
+resource "google_project_iam_member" "cloudsql_instanceUser" {
+  project = var.project_id
+  role    = "roles/cloudsql.instanceUser"
+  member  = "serviceAccount:${google_service_account.app_service_account.email}"
+}
+
+resource "google_project_iam_member" "cloudsql_instanceUser" {
   project = var.project_id
   role    = "roles/cloudsql.instanceUser"
   member  = "serviceAccount:${google_service_account.app_service_account.email}"
@@ -121,6 +127,14 @@ resource "google_cloud_run_v2_service" "app" {
       env {
         name  = "DATABASE_HOST"
         value = var.db_host
+      }
+      env {
+        name  = "DB_DNS_NAME"
+        value = var.db_dns_name
+      }
+      env {
+        name  = "DB_PRIVATE_IP"
+        value = var.db_private_ip_address
       }
       env {
         name  = "DATABASE_PORT"
