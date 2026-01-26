@@ -32,6 +32,6 @@ module "gcp_cloud_run" {
     project     = var.project
     environment = var.environment
     region      = var.gcp_region
-    controller  = "OpenTofu via Github Actions"
+    controller  = "OpenTofu_via_Github_Actions"
   }
 }
