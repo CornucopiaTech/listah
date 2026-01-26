@@ -30,7 +30,7 @@ jobs:
     secrets: inherit
 
   deploy-app:
-    # needs: [deploy-data]
+    needs: [deploy-data]
     permissions:
       contents: read
       id-token: write # Required for Workload Identity Federation
