@@ -121,3 +121,4 @@ gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
 roles/iam.serviceAccountAdmin
 roles/iam.securityAdmin
 roles/owner
+# Artifact Registry Administrator
