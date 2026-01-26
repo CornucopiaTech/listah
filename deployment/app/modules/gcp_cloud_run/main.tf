@@ -1,41 +1,36 @@
 
-# Enable Cloud Run API
-resource "google_project_service" "cloudrun_api" {
-  service            = "run.googleapis.com"
-  disable_on_destroy = false
-}
+# # Artifact registry
+# resource "google_project_service" "artifactregistry_api" {
+#   service            = "artifactregistry.googleapis.com"
+#   disable_on_destroy = false
+# }
+# resource "google_artifact_registry_repository" "repo" {
+#   location      = var.tags.region
+#   project       = var.project_id
+#   repository_id = "${var.tags.name}-container-repo"
+#   description   = "${var.tags.project} container repository/registry"
+#   format        = "DOCKER"
+#   # cleanup_policies {
+#   #   id     = "${var.tags.name}-container-reg-repo"
+#   #   action = "DELETE"
+#   #   most_recent_versions {
+#   #     keep_count = 3
+#   #   }
+#   # }
+#   docker_config {
+#     immutable_tags = true
+#   }
+#   labels = {
+#     for k, v in var.tags : k => (k == "name" ? "${v}-container-reg-repo" : v)
+#   }
+#   depends_on = [google_project_service.artifactregistry_api]
+# }
 
-resource "google_project_service" "artifactregistry_api" {
-  service            = "artifactregistry.googleapis.com"
-  disable_on_destroy = false
-}
 
+# Service Account
 resource "google_project_service" "iam_api" {
   service            = "iam.googleapis.com"
   disable_on_destroy = false
-}
-
-
-resource "google_artifact_registry_repository" "repo" {
-  location      = var.tags.region
-  project       = var.project_id
-  repository_id = "${var.tags.name}-container-repo"
-  description   = "${var.tags.project} container repository/registry"
-  format        = "DOCKER"
-  # cleanup_policies {
-  #   id     = "${var.tags.name}-container-reg-repo"
-  #   action = "DELETE"
-  #   most_recent_versions {
-  #     keep_count = 3
-  #   }
-  # }
-  docker_config {
-    immutable_tags = true
-  }
-  labels = {
-    for k, v in var.tags : k => (k == "name" ? "${v}-container-reg-repo" : v)
-  }
-  depends_on = [google_project_service.artifactregistry_api]
 }
 
 resource "google_service_account" "app_service_account" {
@@ -70,13 +65,18 @@ resource "google_project_iam_member" "cloudsql_instanceUser" {
   member  = "serviceAccount:${google_service_account.app_service_account.email}"
 }
 
-
 resource "google_project_iam_member" "cloudsql_client" {
   project = var.project_id
   role    = "roles/cloudsql.client"
   member  = "serviceAccount:${google_service_account.app_service_account.email}"
 }
 
+
+# Cloud Run
+resource "google_project_service" "cloudrun_api" {
+  service            = "run.googleapis.com"
+  disable_on_destroy = false
+}
 
 resource "google_cloud_run_v2_service" "app" {
   name                = "${var.tags.name}-cloudrun-service"
@@ -188,7 +188,6 @@ resource "google_cloud_run_v2_service" "app" {
   }
   depends_on = [google_project_service.cloudrun_api]
 }
-
 
 resource "google_cloud_run_service_iam_binding" "allow_all_users" {
   location = google_cloud_run_v2_service.app.location
