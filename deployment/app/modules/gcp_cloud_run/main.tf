@@ -5,6 +5,11 @@ resource "google_project_service" "cloudrun_api" {
   disable_on_destroy = false
 }
 
+resource "google_project_service" "artifactregistry_api" {
+  service            = "artifactregistry.googleapis.com"
+  disable_on_destroy = false
+}
+
 
 resource "google_artifact_registry_repository" "repo" {
   location      = var.tags.region
