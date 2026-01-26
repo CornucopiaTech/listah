@@ -1,5 +1,5 @@
 name: CICD Engine
-
+run-name: CICD Engine for ${{ vars.APP_NAME }} by @${{ github.actor }}
 on:
   pull_request:
     branches: [ "main" ]
@@ -28,3 +28,13 @@ jobs:
     with:
       environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
     secrets: inherit
+
+  # deploy-app:
+  #   needs: [deploy-data]
+  #   permissions:
+  #     contents: read
+  #     id-token: write # Required for Workload Identity Federation
+  #   uses: './.github/workflows/app.yaml'
+  #   with:
+  #     environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+  #   secrets: inherit

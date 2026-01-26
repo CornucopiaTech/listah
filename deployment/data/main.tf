@@ -12,6 +12,7 @@ module "gcp_cloud_sql" {
   source        = "./modules/gcp_cloud_sql"
   instance_tier = var.instance_tier
   username      = var.username
+  db_name       = var.db_name
   root_password = var.root_password
   user_password = var.user_password
   vpc_id        = data.terraform_remote_state.networking.outputs.gcp_vpc_id

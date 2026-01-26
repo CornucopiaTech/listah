@@ -45,9 +45,7 @@ variable "project" {
   description = "Project name"
 }
 
-variable "instance_tier" { type = string }
+variable "db_username" { type = string }
+variable "db_password" { type = string }
 variable "db_name" { type = string }
-variable "username" { type = string }
-variable "root_password" { type = string }
-variable "user_password" { type = string }
-variable "db_edition" { type = string }
+variable "db_host" { type = string }

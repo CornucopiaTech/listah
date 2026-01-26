@@ -1,4 +1,15 @@
 
+# Enable Secret Manager API
+resource "google_project_service" "secretmanager_api" {
+  service            = "secretmanager.googleapis.com"
+  disable_on_destroy = false
+}
+
+# Enable SQL Admin API
+resource "google_project_service" "sqladmin_api" {
+  service            = "sqladmin.googleapis.com"
+  disable_on_destroy = false
+}
 
 resource "google_sql_database_instance" "main" {
   name             = "${var.tags.Name}-db-instance"
@@ -20,9 +31,9 @@ resource "google_sql_database_instance" "main" {
       retention_days = var.tags.environment == "dev" ? null : 365
     }
     ip_configuration {
-      # private_network = var.vpc_id
-      ssl_mode       = "ENCRYPTED_ONLY"
-      server_ca_mode = "GOOGLE_MANAGED_INTERNAL_CA"
+      private_network = var.vpc_id
+      ssl_mode        = "ENCRYPTED_ONLY"
+      server_ca_mode  = "GOOGLE_MANAGED_INTERNAL_CA"
       #  requireSsl = true
       # authorized_networks {
       #   name = "Web "
@@ -36,7 +47,7 @@ resource "google_sql_database_instance" "main" {
 
 
 resource "google_sql_database" "database" {
-  name     = "${var.tags.Name}-db"
+  name     = var.db_name
   instance = google_sql_database_instance.main.name
   project  = var.project_id
 }

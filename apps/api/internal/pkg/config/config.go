@@ -40,11 +40,9 @@ type Config struct {
 }
 
 func Init() (*Config, error) {
-	appName := os.Getenv("APP_NAME")
-	log.Printf("Name of app: %s", appName)
-	if appName == "" {
-		log.Fatalf("environmental variable: APP_NAME not set")
-	}
+	var appName string
+	mustMapEnv(&appName, "APP_NAME")
+
 	a := loadApi()
 	d := loadPgsqlDatabase()
 	t := loadInstrumentation()
