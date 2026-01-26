@@ -14,16 +14,16 @@ resource "google_project_service" "artifactregistry_api" {
 resource "google_artifact_registry_repository" "repo" {
   location      = var.tags.region
   project       = var.project_id
-  repository_id = "${var.tags.Name}-container-reg-repo"
+  repository_id = "${var.tags.Name}-container-repo"
   description   = "${var.tags.project} container repository/registry"
   format        = "DOCKER"
-  cleanup_policies {
-    id     = "${var.tags.Name}-container-reg-repo"
-    action = "DELETE"
-    most_recent_versions {
-      keep_count = 3
-    }
-  }
+  # cleanup_policies {
+  #   id     = "${var.tags.Name}-container-reg-repo"
+  #   action = "DELETE"
+  #   most_recent_versions {
+  #     keep_count = 3
+  #   }
+  # }
   docker_config {
     immutable_tags = true
   }
