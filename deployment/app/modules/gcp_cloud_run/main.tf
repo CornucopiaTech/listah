@@ -35,6 +35,7 @@ resource "google_artifact_registry_repository" "repo" {
   labels = {
     for k, v in var.tags : k => (k == "Name" ? "${v}-container-reg-repo" : v)
   }
+  depends_on = [ google_project_service.artifactregistry_api ]
 }
 
 resource "google_service_account" "app_service_account" {
@@ -42,6 +43,7 @@ resource "google_service_account" "app_service_account" {
   display_name                 = "${var.tags.project} Service Account"
   project                      = var.project_id
   create_ignore_already_exists = true
+  depends_on = [ google_project_service.iam_api ]
 }
 
 resource "google_project_iam_member" "cloud_sql_admin_binding" {
@@ -184,6 +186,7 @@ resource "google_cloud_run_v2_service" "app" {
   labels = {
     for k, v in var.tags : k => (k == "Name" ? "${v}-cloudrun-service" : v)
   }
+  depends_on = [ google_project_service.cloudrun_api ]
 }
 
 
