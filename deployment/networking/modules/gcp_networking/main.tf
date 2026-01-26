@@ -38,13 +38,13 @@ resource "google_compute_network_peering_routes_config" "peering_routes" {
 
 
 # Not sure if needed
-# resource "google_compute_subnetwork" "private_subnet" {
-#   name                     = "${var.tags.Name}-private-subnet"
-#   ip_cidr_range            = "10.0.0.0/20"
-#   region                   = var.tags.region
-#   network                  = google_compute_network.vpc_network.id
-#   private_ip_google_access = true
-# }
+resource "google_compute_subnetwork" "private_subnet" {
+  name                     = "${var.tags.Name}-private-subnet"
+  ip_cidr_range            = "10.0.0.0/20"
+  region                   = var.tags.region
+  network                  = google_compute_network.vpc_network.id
+  private_ip_google_access = true
+}
 
 # resource "google_compute_subnetwork" "public_subnet" {
 #   name                     = "${var.tags.Name}-public-subnet"
@@ -54,12 +54,12 @@ resource "google_compute_network_peering_routes_config" "peering_routes" {
 #   private_ip_google_access = true
 # }
 
-# # Internal router
-# resource "google_compute_router" "router" {
-#   name    = "${var.tags.Name}-router"
-#   region  = var.tags.region
-#   network = google_compute_network.vpc_network.id
-# }
+# Internal router
+resource "google_compute_router" "router" {
+  name    = "${var.tags.Name}-router"
+  region  = var.tags.region
+  network = google_compute_network.vpc_network.id
+}
 
 # # Nat Gateway
 # resource "google_compute_router_nat" "nat" {
