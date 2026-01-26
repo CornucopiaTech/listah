@@ -12,7 +12,7 @@ resource "google_project_service" "sqladmin_api" {
 }
 
 resource "google_sql_database_instance" "main" {
-  name             = "${var.tags.Name}-db-instance"
+  name             = "${var.tags.name}-db-instance"
   database_version = "POSTGRES_18"
   region           = var.tags.region
   project          = var.project_id
@@ -61,7 +61,7 @@ resource "google_sql_user" "users" {
 
 
 resource "google_sql_ssl_cert" "client_cert" {
-  common_name = "${var.tags.Name}-db-client-ssl-cert"
+  common_name = "${var.tags.name}-db-client-ssl-cert"
   instance    = google_sql_database_instance.main.name
   project     = var.project_id
 }

@@ -19,11 +19,11 @@ resource "google_project_service" "iam_api" {
 resource "google_artifact_registry_repository" "repo" {
   location      = var.tags.region
   project       = var.project_id
-  repository_id = "${var.tags.Name}-container-repo"
+  repository_id = "${var.tags.name}-container-repo"
   description   = "${var.tags.project} container repository/registry"
   format        = "DOCKER"
   # cleanup_policies {
-  #   id     = "${var.tags.Name}-container-reg-repo"
+  #   id     = "${var.tags.name}-container-reg-repo"
   #   action = "DELETE"
   #   most_recent_versions {
   #     keep_count = 3
@@ -79,7 +79,7 @@ resource "google_project_iam_member" "cloudsql_client" {
 
 
 resource "google_cloud_run_v2_service" "app" {
-  name                = "${var.tags.Name}-cloudrun-service"
+  name                = "${var.tags.name}-cloudrun-service"
   location            = var.tags.region
   deletion_protection = var.tags.environment == "dev" ? false : true
   ingress             = "INGRESS_TRAFFIC_ALL"

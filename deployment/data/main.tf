@@ -19,7 +19,7 @@ module "gcp_cloud_sql" {
   project_id    = var.gcp_project_id
   edition       = var.db_edition
   tags = {
-    Name        = "${var.project}-${var.environment}-${var.gcp_region}"
+    name        = "${var.project}-${var.environment}-${var.gcp_region}"
     project     = var.project
     environment = var.environment
     region      = var.gcp_region
