@@ -73,17 +73,16 @@ jobs:
         with:
           tofu_version: latest
 
-      - name: Build, Tag, and Push Docker Image to Container Repository
+      - name: Write CA Certificate to Host Using Tofu Output
+        run: |
+          echo "$(tofu output -raw db_client_cert)" > db_ca.crt
+
+      - name: Build, Tag, and Push Docker Image to Container Repository Using Tofu Output
         run: |-
           repo_uri="$(tofu output -raw artifact_repo_uri)"
           image_name=${repo_uri}/${{ env.TF_VAR_image_tag }}
           docker build . -t "${image_name}"
           docker push "${image_name}"
-
-      - name: Write CA Certificate to Host
-        run: |
-          db_certs="$(tofu output -raw db_client_cert)"
-          echo "${db_certs}" > db_ca.crt
 
       - name: OpenTofu Format
         run: tofu fmt -check
