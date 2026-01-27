@@ -95,9 +95,11 @@ jobs:
         name: View Outputs 1
         run:  |
           echo " Output - "$(tofu output -raw artifact_repo_uri)""
+          # echo " val="$(tofu output -raw artifact_repo_uri)""
+          # echo " val - $val"
           echo "repo_uri="$(tofu output -raw artifact_repo_uri)"" >> $GITHUB_OUTPUT
-          echo "repo_uri - ${repo_uri}"
           echo "GITHUB_OUTPUT - $GITHUB_OUTPUT"
+          echo "GITHUB_OUTPUT content - $(cat $GITHUB_OUTPUT)"
 
       # - id: view_outputs2
       #   name: View Outputs 2
