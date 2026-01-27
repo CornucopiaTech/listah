@@ -20,18 +20,18 @@ jobs:
   #     environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
   #   secrets: inherit
 
-  run_data_deploy:
-    # needs: [deploy-networking]
-    permissions:
-      contents: read
-      id-token: write # Required for Workload Identity Federation
-    uses: './.github/workflows/data.yaml'
-    with:
-      environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
-    secrets: inherit
+  # run_data_deploy:
+  #   # needs: [deploy-networking]
+  #   permissions:
+  #     contents: read
+  #     id-token: write # Required for Workload Identity Federation
+  #   uses: './.github/workflows/data.yaml'
+  #   with:
+  #     environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+  #   secrets: inherit
 
   deploy-app:
-    needs: [run_data_deploy]
+    # needs: [run_data_deploy]
     permissions:
       contents: read
       id-token: write # Required for Workload Identity Federation

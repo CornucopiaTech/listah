@@ -73,6 +73,15 @@ jobs:
         with:
           tofu_version: latest
 
+      - name: Initialise OpenTofu
+        run: tofu fmt -check
+
+      - name: OpenTofu Init
+        run: tofu init
+
+      - name: OpenTofu Validate
+        run: tofu validate
+
       - name: Write CA Certificate to Host Using Tofu Output
         run: |
           echo "$(tofu output -raw db_client_cert)" > db_ca.crt
@@ -84,14 +93,6 @@ jobs:
           docker build . -t "${image_name}"
           docker push "${image_name}"
 
-      - name: OpenTofu Format
-        run: tofu fmt -check
-
-      - name: OpenTofu Init
-        run: tofu init
-
-      - name: OpenTofu Validate
-        run: tofu validate
 
       - name: OpenTofu Plan
         run: tofu plan -out=tfplan
