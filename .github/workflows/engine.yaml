@@ -36,7 +36,7 @@ jobs:
       contents: read
       id-token: write # Required for Workload Identity Federation
     steps:
-        - run: echo "Result From Data: ${{ needs.deploy-data.outputs.gcp_container_repo_uri}}"
+        - run: echo "Result From Data - ${{ needs.deploy-data.outputs.gcp_container_repo_uri}}"
 
   deploy-app:
     needs: [deploy-data]
