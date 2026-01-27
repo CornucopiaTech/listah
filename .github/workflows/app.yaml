@@ -7,7 +7,12 @@ on:
       environment:
         required: true
         type: string
-
+      repo_uri:
+        required: true
+        type: string
+      db_certs:
+        required: true
+        type: string
 jobs:
   deploy-app:
     runs-on: ubuntu-latest
@@ -31,9 +36,9 @@ jobs:
       TF_VAR_db_name: ${{ vars.APP_NAME }}-${{ inputs.environment }}-${{ vars.GCP_REGION }}-db
       TF_VAR_db_password: ${{ secrets.POSTGRES_PASSWORD }}
       TF_VAR_db_username: ${{ vars.POSTGRES_USER }}
+      TF_VAR_image_tag: ${{ inputs.repo_uri }}/${{ vars.APP_NAME }}:${GITHUB_SHA::7}
       TF_LOG: DEBUG
 
-    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -51,6 +56,26 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
 
+      - name: Write CA Certificate to Host
+        run: echo "${{ inputs.db_certs }}" > db_ca.crt
+
+      - name: Set up Cloud SDK
+        uses: 'google-github-actions/setup-gcloud@v3'
+        with:
+          version: '>= 363.0.0'
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GCP Artifact Registry
+        run: |-
+            gcloud auth configure-docker ${{ vars.GCP_REGION }}-docker.pkg.dev
+
+      - name: Build, Tag, and Push Docker Image to Container Repository
+        run: |-
+          docker build . -t "${{ env.TF_VAR_image_tag }}"
+          docker push "${{ env.TF_VAR_image_tag }}"
+
       - name: Setup OpenTofu
         uses: opentofu/setup-opentofu@v1
         with:
@@ -67,9 +92,6 @@ jobs:
 
       - name: OpenTofu Plan
         run: tofu plan -out=tfplan
-
-      # - name: OpenTofu Plan
-      #   run: PLAN_OUTPUT=$(tofu plan  &> /dev/stdout)
 
       - name: Post OpenTofu Plan
         run: |

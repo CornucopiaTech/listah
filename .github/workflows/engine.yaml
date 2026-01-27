@@ -6,7 +6,8 @@ on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
-
+env:
+  ENV_NAME: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
 
 
 jobs:
@@ -26,24 +27,17 @@ jobs:
       id-token: write # Required for Workload Identity Federation
     uses: './.github/workflows/data.yaml'
     with:
-      environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+      environment: ${{ env.ENV_NAME }}
     secrets: inherit
 
-  check-output:
-    runs-on: ubuntu-latest
+  deploy-app:
     needs: [run_data_deploy]
     permissions:
       contents: read
       id-token: write # Required for Workload Identity Federation
-    steps:
-        - run: echo "Result From Data - ${{ needs.run_data_deploy.outputs.gcp_container_repo_uri }}"
-
-  # deploy-app:
-  #   needs: [deploy-data]
-  #   permissions:
-  #     contents: read
-  #     id-token: write # Required for Workload Identity Federation
-  #   uses: './.github/workflows/app.yaml'
-  #   with:
-  #     environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
-  #   secrets: inherit
+    uses: './.github/workflows/app.yaml'
+    with:
+      environment: ${{ env.ENV_NAME }}
+      repo_uri: ${{ needs.run_data_deploy.outputs.gcp_container_repo_uri }}
+      db_certs: ${{ needs.run_data_deploy.outputs.gcp_db_client_certs }}
+    secrets: inherit
