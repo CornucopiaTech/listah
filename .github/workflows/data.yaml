@@ -7,7 +7,10 @@ on:
       environment:
         required: true
         type: string
-
+    outputs:
+      gcp_container_repo_uri:
+        description: "Uri of artifactory registry repository"
+        value: ${{ jobs.deploy-data.outputs.repo_uri}}
 jobs:
   deploy-data:
     runs-on: ubuntu-latest
@@ -34,8 +37,8 @@ jobs:
       TF_VAR_username: ${{ vars.POSTGRES_USER }}
       TF_VAR_db_edition: "ENTERPRISE"
       TF_LOG: DEBUG
-
-    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    outputs:
+      repo_uri: steps.tofu_appy.repo_uri
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -83,5 +86,8 @@ jobs:
 
           curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X POST $COMMENT_URL -d "{\"body\":\"$COMMENT\"}"
 
-      - name: OpenTofu Apply
-        run: tofu apply -auto-approve tfplan
+      - id: tofu_apply
+        name: OpenTofu Apply
+        run:  |
+          tofu apply -auto-approve tfplan
+          echo "repo_uri=$(tofu output -raw artifact_repo_uri)" >>$GITHUB_OUTPUT
