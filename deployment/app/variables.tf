@@ -46,15 +46,16 @@ variable "project" {
 }
 
 variable "db_username" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "db_password" {
-  type = string
+  type      = string
   sensitive = true
 }
+
 variable "db_name" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "image_tag" { type = string }

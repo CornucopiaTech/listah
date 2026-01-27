@@ -38,6 +38,6 @@ jobs:
     uses: './.github/workflows/app.yaml'
     with:
       environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
-      repo_uri: ${{ needs.run_data_deploy.outputs.gcp_container_repo_uri }}
-      db_certs: ${{ needs.run_data_deploy.outputs.gcp_db_client_certs }}
+      # repo_uri: ${{ needs.run_data_deploy.outputs.gcp_container_repo_uri }}
+      # db_certs: ${{ needs.run_data_deploy.outputs.gcp_db_client_certs }}
     secrets: inherit

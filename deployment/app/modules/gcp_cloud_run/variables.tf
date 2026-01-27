@@ -9,27 +9,27 @@ variable "tags" {
 }
 
 variable "db_username" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "db_password" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "db_name" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "db_host" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "db_dns_name" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "db_private_ip_address" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "vpc_id" { type = string }
