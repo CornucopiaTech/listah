@@ -94,9 +94,14 @@ jobs:
           echo "gcp_container_repo_uri=$(tofu output -raw artifact_repo_uri)" >> $GITHUB_OUTPUT
           echo ${gcp_container_repo_uri}
 
-      # - id: set_outputs
-      #   name: Set output from OpenTofu Apply
-      #   run:  |
-      #     echo "$(tofu output -raw artifact_repo_uri)"
-      #     echo "gcp_container_repo_uri=$(tofu output -raw artifact_repo_uri)" >> $GITHUB_OUTPUT
-      #     echo ${gcp_container_repo_uri}
+      - id: view_outputs1
+        name: View Outputs 1
+        run:  |
+          echo "$(tofu output -raw artifact_repo_uri)"
+          # echo "gcp_container_repo_uri=$(tofu output -raw artifact_repo_uri)" >> $GITHUB_OUTPUT
+          # echo ${gcp_container_repo_uri}
+
+      - id: view_outputs2
+        name: View Outputs 2
+        run:  |
+          echo "$(tofu state pull | jq '.outputs.artifact_repo_uri.value')"
