@@ -19,7 +19,7 @@ jobs:
   #     environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
   #   secrets: inherit
 
-  deploy-data:
+  run_data_deploy:
     # needs: [deploy-networking]
     permissions:
       contents: read
@@ -31,12 +31,12 @@ jobs:
 
   check-output:
     runs-on: ubuntu-latest
-    needs: [deploy-data]
+    needs: [run_data_deploy]
     permissions:
       contents: read
       id-token: write # Required for Workload Identity Federation
     steps:
-        - run: echo "Result From Data - ${{ needs.deploy-data.outputs.gcp_container_repo_uri }}"
+        - run: echo "Result From Data - ${{ needs.run_data_deploy.outputs.gcp_container_repo_uri }}"
 
   # deploy-app:
   #   needs: [deploy-data]

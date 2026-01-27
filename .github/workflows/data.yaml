@@ -10,9 +10,9 @@ on:
     outputs:
       gcp_container_repo_uri:
         description: "Uri of artifactory registry repository"
-        value: ${{ jobs.deploy-data.outputs.gcp_container_repo_uri}}
+        value: ${{ jobs.data_deployment.outputs.repo_uri}}
 jobs:
-  deploy-data:
+  data_deployment:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     defaults:
@@ -38,7 +38,7 @@ jobs:
       TF_VAR_db_edition: "ENTERPRISE"
       TF_LOG: DEBUG
     outputs:
-      repo_uri: ${{ steps.tofu_apply.gcp_container_repo_uri }}
+      repo_uri: ${{ steps.set_outputs.outputs.repo_uri }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -73,9 +73,6 @@ jobs:
       - name: OpenTofu Plan
         run: tofu plan -out=tfplan
 
-      # - name: OpenTofu Plan
-      #   run: PLAN_OUTPUT=$(tofu plan  &> /dev/stdout)
-
       - name: Post OpenTofu Plan
         run: |
           PR_NUMBER=${{ github.event.pull_request.number }}
@@ -91,12 +88,10 @@ jobs:
         run:  |
           tofu apply -auto-approve tfplan
 
-      - id: view_outputs1
-        name: View Outputs 1
+      - id: set_outputs
+        name: Set Outputs
         run:  |
           echo " Output - "$(tofu output -raw artifact_repo_uri)""
-          # echo " val="$(tofu output -raw artifact_repo_uri)""
-          # echo " val - $val"
           echo "repo_uri="$(tofu output -raw artifact_repo_uri)"" >> $GITHUB_OUTPUT
           echo "GITHUB_OUTPUT - $GITHUB_OUTPUT"
           echo "GITHUB_OUTPUT content - $(cat $GITHUB_OUTPUT)"
