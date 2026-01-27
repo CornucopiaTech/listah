@@ -38,7 +38,7 @@ jobs:
       TF_VAR_db_edition: "ENTERPRISE"
       TF_LOG: DEBUG
     outputs:
-      gcp_container_repo_uri: ${{ steps.set_outputs.gcp_container_repo_uri }}
+      gcp_container_repo_uri: ${{ steps.tofu_apply.gcp_container_repo_uri }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -90,10 +90,13 @@ jobs:
         name: OpenTofu Apply
         run:  |
           tofu apply -auto-approve tfplan
-
-      - id: set_outputs
-        name: OpenTofu Apply
-        run:  |
           echo "$(tofu output -raw artifact_repo_uri)"
           echo "gcp_container_repo_uri=$(tofu output -raw artifact_repo_uri)" >> $GITHUB_OUTPUT
           echo ${gcp_container_repo_uri}
+
+      # - id: set_outputs
+      #   name: Set output from OpenTofu Apply
+      #   run:  |
+      #     echo "$(tofu output -raw artifact_repo_uri)"
+      #     echo "gcp_container_repo_uri=$(tofu output -raw artifact_repo_uri)" >> $GITHUB_OUTPUT
+      #     echo ${gcp_container_repo_uri}
