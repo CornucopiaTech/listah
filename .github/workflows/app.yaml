@@ -89,7 +89,9 @@ jobs:
       - name: Build, Tag, and Push Docker Image to Container Repository Using Tofu Output
         run: |-
           repo_uri="$(tofu output -raw artifact_repo_uri)"
-          image_name=${repo_uri}/${{ env.TF_VAR_image_tag }}
+          echo "repo_uri - ${repo_uri}"
+          image_name="${repo_uri}/${{ env.TF_VAR_image_tag }}"
+          echo "image_name - ${image_name}"
           docker build . -t "${image_name}"
           docker push "${image_name}"
 
