@@ -116,19 +116,19 @@ jobs:
           curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.20.0/cloud-sql-proxy.linux.amd64
 
           sqlproxy_port=9000
-          sqlproxy_host=localhost
 
           chmod +x cloud-sql-proxy
+          ./cloud-sql-proxy --port ${sqlproxy_port} "${{ env.CONNECTION_NAME }}" > /dev/null &
 
-          nohup ./cloud-sql-proxy --port ${sqlproxy_port} "${{ env.CONNECTION_NAME }}" &
+          liquibase_changelog_file="${{ github.workspace }}/deployment/data/liquibase/changelog/changelog.yaml"
 
-          LIQUIBASE_CHANGELOG_FILE="${{ github.workspace }}/deployment/data/liquibase/changelog/changelog.yaml"
+          db_name=${{ vars.APP_NAME }}-${{ inputs.environment }}-${{ vars.GCP_REGION }}-db
 
-          LIQUIBASE_CONNECTION_URL="jdbc:postgresql://127.0.0.1:${sqlproxy_port}/${{ vars.TF_VAR_db_name }}"
+          liquibase_connection_url="jdbc:postgresql://127.0.0.1:${sqlproxy_port}/${db_name}"
 
           liquibase update \
-            --changelog-file=${LIQUIBASE_CHANGELOG_FILE}\
-            --url=${LIQUIBASE_CONNECTION_URL} \
+            --changelog-file=${liquibase_changelog_file}\
+            --url=${liquibase_connection_url} \
             --log-level=INFO \
             --username=${{ vars.POSTGRES_USER }} \
             --password=${{ secrets.POSTGRES_PASSWORD }}
