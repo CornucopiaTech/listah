@@ -117,12 +117,13 @@ jobs:
 
           chmod +x cloud-sql-proxy
 
-          ./cloud-sql-proxy "${{ env.CONNECTION_NAME }}"
+          nohup ./cloud-sql-proxy "${{ env.CONNECTION_NAME }}"
           # ./cloud-sql-proxy "${{ secrets.GCP_PROJECT_ID }}:${{ vars.GCP_REGION }}:${{ env.CONNECTION_NAME }}"
 
           LIQUIBASE_CHANGELOG_FILE="${{ github.workspace }}/deployment/data/liquibase/changelog/changelog.yaml"
 
-          LIQUIBASE_CONNECTION_URL="jdbc:postgresql://${{ env.PUBLIC_IP}}:${{ vars.DATABASE_PORT }}/${{ vars.TF_VAR_db_name }}"
+          LIQUIBASE_CONNECTION_URL="jdbc:postgresql://127.0.0.1:${{ vars.DATABASE_PORT }}/${{ vars.TF_VAR_db_name }}"
+          # LIQUIBASE_CONNECTION_URL="jdbc:postgresql://${{ env.PUBLIC_IP}}:${{ vars.DATABASE_PORT }}/${{ vars.TF_VAR_db_name }}"
 
           liquibase update \
             --changelog-file=${LIQUIBASE_CHANGELOG_FILE}\
