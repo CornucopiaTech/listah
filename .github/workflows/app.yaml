@@ -85,13 +85,13 @@ jobs:
       # - name: OpenTofu Refresh
       #   run: tofu refresh
 
-      - name: Write CA Certificate to Host Using Tofu Output
-        run: |
-          echo "pwd - $(pwd)"
-          cd ${{ github.workspace }}/deployment/data
-          tofu init
-          echo "$(tofu output -raw db_client_cert)" > db_ca.crt
-          echo "pwd - $(pwd)"
+      # - name: Write CA Certificate to Host Using Tofu Output
+      #   run: |
+      #     echo "pwd - $(pwd)"
+      #     cd ${{ github.workspace }}/deployment/data
+      #     tofu init
+      #     echo "$(tofu output -raw db_client_cert)" > db_ca.crt
+      #     echo "pwd - $(pwd)"
 
       - name: Build, Tag, and Push Docker Image to Container Repository Using Tofu Output
         run: |-
