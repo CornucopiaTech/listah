@@ -119,17 +119,17 @@ jobs:
           chmod +x cloud-sql-proxy
 
           sqlproxy_port=9000
-          ./cloud-sql-proxy --port ${sqlproxy_port} "${{ env.CONNECTION_NAME }}" &> /dev/null &
+          ./cloud-sql-proxy --port $sqlproxy_port "${{ env.CONNECTION_NAME }}" &> /dev/null &
 
           liquibase_changelog_file="${{ github.workspace }}/deployment/data/liquibase/changelog/changelog.yaml"
 
           db_name=${{ vars.APP_NAME }}-${{ inputs.environment }}-${{ vars.GCP_REGION }}-db
 
-          liquibase_connection_url="jdbc:postgresql://127.0.0.1:${sqlproxy_port}/${db_name}"
+          liquibase_connection_url="jdbc:postgresql://127.0.0.1:$sqlproxy_port/$db_name"
 
           liquibase update \
-            --changelog-file=${liquibase_changelog_file}\
-            --url=${liquibase_connection_url} \
+            --changelog-file=$liquibase_changelog_file\
+            --url=$liquibase_connection_url \
             --log-level=INFO \
             --username=${{ vars.POSTGRES_USER }} \
             --password=${{ secrets.POSTGRES_PASSWORD }}
