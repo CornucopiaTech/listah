@@ -36,7 +36,7 @@ jobs:
       TF_VAR_db_name: ${{ vars.APP_NAME }}-${{ inputs.environment }}-${{ vars.GCP_REGION }}-db
       TF_VAR_db_password: ${{ secrets.POSTGRES_PASSWORD }}
       TF_VAR_db_username: ${{ vars.POSTGRES_USER }}
-      TF_VAR_image_tag: ${{ vars.APP_NAME }}:${GITHUB_SHA::7}
+
       TF_LOG: DEBUG
 
     steps:
@@ -82,41 +82,48 @@ jobs:
       - name: OpenTofu Validate
         run: tofu validate
 
-      # - name: OpenTofu Refresh
-      #   run: tofu refresh
+      - name: Retrieve Outputs from Data Job Using Tofu Output
+        run: |
+          echo "pwd - $(pwd)"
+          cd ${{ github.workspace }}/deployment/data
+          tofu init
 
-      # - name: Write CA Certificate to Host Using Tofu Output
-      #   run: |
-      #     echo "pwd - $(pwd)"
-      #     cd ${{ github.workspace }}/deployment/data
-      #     tofu init
-      #     echo "$(tofu output -raw db_client_cert)" > db_ca.crt
-      #     echo "pwd - $(pwd)"
+          echo "DB_CERTS="$(tofu output -raw db_client_cert)"" >> GITHUB_ENV
+          echo "REPO_URI="$(tofu output -raw artifact_repo_uri)"" >> GITHUB_ENV
+          echo "pwd - $(pwd)"
 
       - name: Build, Tag, and Push Docker Image to Container Repository Using Tofu Output
         run: |-
           echo "pwd - $(pwd)"
-          cd ${{ github.workspace }}/deployment/data
-          tofu init
-          db_cert="$(tofu output -raw db_client_cert)"
-          repo_uri="$(tofu output -raw artifact_repo_uri)"
-          echo "repo_uri - ${repo_uri}"
-          image_name="${repo_uri}/${{ env.TF_VAR_image_tag }}"
+          echo "repo_uri - ${{ env.REPO_URI }}"
+          image_name="${{ vars.APP_NAME }}:${GITHUB_SHA::7}"
           echo "image_name - ${image_name}"
+          echo "IMAGE_FULL_NAME="${{ env.REPO_URI }}/${image_name}"" >> GITHUB_ENV
+          echo "IMAGE_FULL_NAME - ${{ env.IMAGE_FULL_NAME }}"
 
           cd ${{ github.workspace }}/apps/api
           echo "$db_cert" > ./db_ca.crt
-          docker build . -t "${image_name}"
-          docker push "${image_name}"
+          docker build . -t "${{ env.IMAGE_FULL_NAME }}"
+          docker push "${{ env.IMAGE_FULL_NAME }}"
           echo "pwd - $(pwd)"
 
+      # - name: Get Container Image Digest
+      #   run: |
+      #     echo "pwd - $(pwd)"
+      #     # TF_VAR_image_tag: ${{ vars.APP_NAME }}:${GITHUB_SHA::7}
+      #     image_name_digest="$(gcloud artifacts docker images list "${{ env.IMAGE_FULL_NAME }}" \
+      #     --sort-by="~UPDATE_TIME" \
+      #     --limit=1 \
+      #     --format="value(tags[0])")"
+      #     tofu plan -out=tfplan
 
       - name: OpenTofu Plan
-        run: |
-          echo "pwd - $(pwd)"
+        run:
           tofu plan -out=tfplan
+        env:
+          TF_VAR_image_tag: ${{ env.IMAGE_FULL_NAME }}
 
-      - name: Post OpenTofu Plan
+      - name: Post OpenTofu Plan to Github Comments/Conversation
         run: |
           PR_NUMBER=${{ github.event.pull_request.number }}
           # COMMENT=$(tofu show -json tfplan)
@@ -128,3 +135,5 @@ jobs:
 
       - name: OpenTofu Apply
         run: tofu apply -auto-approve tfplan
+        env:
+          TF_VAR_image_tag: ${{ env.IMAGE_FULL_NAME }}
