@@ -66,8 +66,8 @@ resource "google_cloud_run_v2_service" "app" {
       # connector = null
       egress = "PRIVATE_RANGES_ONLY" # "ALL_TRAFFIC"
       network_interfaces {
-        network    = null
-        subnetwork = null
+        network    = var.vpc_id
+        subnetwork = var.subnet_id
       }
     }
     containers {

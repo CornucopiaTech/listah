@@ -28,15 +28,6 @@ resource "google_compute_network_peering_routes_config" "peering_routes" {
   export_custom_routes = true
 }
 
-## Uncomment this block after adding a valid DNS suffix
-# resource "google_service_networking_peered_dns_domain" "default" {
-#   name       = "example-com"
-#   network    = google_compute_network.vpc_network.id
-#   dns_suffix = "example.com."
-#   service    = "servicenetworking.googleapis.com"
-# }
-
-
 # Not sure if needed
 resource "google_compute_subnetwork" "private_subnet" {
   name                     = "${var.tags.name}-private-subnet"

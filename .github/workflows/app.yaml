@@ -7,12 +7,7 @@ on:
       environment:
         required: true
         type: string
-      # repo_uri:
-      #   required: true
-      #   type: string
-      # db_certs:
-      #   required: true
-      #   type: string
+
 jobs:
   deploy-app:
     runs-on: ubuntu-latest
@@ -36,7 +31,6 @@ jobs:
       TF_VAR_db_name: ${{ vars.APP_NAME }}-${{ inputs.environment }}-${{ vars.GCP_REGION }}-db
       TF_VAR_db_password: ${{ secrets.POSTGRES_PASSWORD }}
       TF_VAR_db_username: ${{ vars.POSTGRES_USER }}
-
       TF_LOG: DEBUG
 
     steps:
@@ -109,23 +103,13 @@ jobs:
           docker push "${image_full_name}"
           echo "pwd - $(pwd)"
 
-      # - name: Get Container Image Digest
-      #   run: |
-      #     echo "pwd - $(pwd)"
-      #     # TF_VAR_image_tag: ${{ vars.APP_NAME }}:${GITHUB_SHA::7}
-      #     image_name_digest="$(gcloud artifacts docker images list "${{ env.IMAGE_FULL_NAME }}" \
-      #     --sort-by="~UPDATE_TIME" \
-      #     --limit=1 \
-      #     --format="value(tags[0])")"
-      #     tofu plan -out=tfplan
-
       - name: OpenTofu Plan
         run:
           tofu plan -out=tfplan
         env:
           TF_VAR_image_tag: ${{ env.IMAGE_FULL_NAME }}
 
-      - name: Post OpenTofu Plan to Github Comments/Conversation
+      - name: Add OpenTofu Plan to Github Comments/Conversation
         run: |
           PR_NUMBER=${{ github.event.pull_request.number }}
           # COMMENT=$(tofu show -json tfplan)
