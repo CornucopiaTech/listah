@@ -98,13 +98,15 @@ jobs:
           echo "repo_uri - ${{ env.REPO_URI }}"
           image_name="${{ vars.APP_NAME }}:${GITHUB_SHA::7}"
           echo "image_name - ${image_name}"
-          echo "IMAGE_FULL_NAME="${{ env.REPO_URI }}/${image_name}"" >> ${GITHUB_ENV}
+          image_full_name="${{ env.REPO_URI }}/${image_name}"
+          echo "IMAGE_FULL_NAME="${image_full_name}"" >> ${GITHUB_ENV}
+          echo "image_full_name - ${image_full_name}"
           echo "IMAGE_FULL_NAME - ${{ env.IMAGE_FULL_NAME }}"
 
           cd ${{ github.workspace }}/apps/api
           echo "$db_cert" > ./db_ca.crt
-          docker build . -t "${{ env.IMAGE_FULL_NAME }}"
-          docker push "${{ env.IMAGE_FULL_NAME }}"
+          docker build . -t "${image_full_name}"
+          docker push "${image_full_name}"
           echo "pwd - $(pwd)"
 
       # - name: Get Container Image Digest
