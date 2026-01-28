@@ -82,3 +82,29 @@ jobs:
         name: OpenTofu Apply
         run:  |
           tofu apply -auto-approve tfplan
+
+      - name: Setup Liquibase
+        uses: liquibase/setup-liquibase@v2
+        with:
+          version: '5.0.0'
+          edition: 'community'
+          # version: '4.32.0'  # Requires 4.32.0 or higher
+          # edition: 'oss'
+
+      - name: Install PostgreSQL Driver
+        run: liquibase lpm add postgresql --global
+
+      - name: Set Liquibase Environmental Variables
+        run: |
+          echo "LIQUIBASE_COMMAND_CHANGELOG_FILE="${{ github.workspace }}/liquibase/changelog/changelog.yaml"" >> ${GITHUB_ENV}
+          LIQUIBASE_DB_HOST="$(tofu output -raw db_private_ip_address)"
+          echo "LIQUID_BASE_CONNECTION_URL="jdbc:postgresql://${LIQUIBASE_DB_HOST}:${{ vars.DATABASE_PORT }}/${{ vars.TF_VAR_db_name }}"" >> ${GITHUB_ENV}
+
+      - name: Migrate Schema using Liquibase
+        run: |
+          liquibase update \
+            --changelog-file=${{ env.LIQUIBASE_COMMAND_CHANGELOG_FILE }}\
+            --url=${{ env.LIQUID_BASE_CONNECTION_URL }} \
+            --log-level=INFO \
+            --username=${{ vars.POSTGRES_USER }} \
+            --password=${{ secrets.POSTGRES_PASSWORD }}
