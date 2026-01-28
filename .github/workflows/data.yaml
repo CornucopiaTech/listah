@@ -119,5 +119,5 @@ jobs:
             --changelog-file=${{ env.CHANGELOG_FILE }}\
             --url=${{ env.LB_CONN_URL }} \
             --log-level=INFO \
-            --username=${{ vars.POSTGRES_USER }} \
-            --password=${{ secrets.POSTGRES_PASSWORD }}
+            --username="${{ vars.POSTGRES_USER }}" \
+            --password="${{ secrets.POSTGRES_PASSWORD }}"
