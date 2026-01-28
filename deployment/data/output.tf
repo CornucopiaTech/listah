@@ -6,18 +6,25 @@ output "db_client_cert" {
 
 output "db_dns_name" {
   value       = module.gcp_cloud_sql.db_dns_name
-  description = "The dns name for connecting to Cloud SQL instance via Private Service Connect"
+  description = "The dns name for connecting to Cloud SQL instance"
+  sensitive   = true
+}
+
+output "db_public_ip_address" {
+  value       = module.gcp_cloud_sql.db_public_ip_address
+  description = "The public ip address for Cloud SQL instance"
   sensitive   = true
 }
 
 output "db_private_ip_address" {
   value       = module.gcp_cloud_sql.db_private_ip_address
-  description = "The dns name for connecting to Cloud SQL instance via Private Service Connect"
+  description = "The private ip address for Cloud SQL instance"
   sensitive   = true
 }
+
 output "db_connection_name" {
   value       = module.gcp_cloud_sql.db_connection_name
-  description = "The connection name for connecting to Cloud SQL instance via Private Service Connect"
+  description = "The connection name for Cloud SQL instance"
   sensitive   = true
 }
 

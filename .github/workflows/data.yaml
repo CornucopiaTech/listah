@@ -83,11 +83,16 @@ jobs:
         run:  |
           tofu apply -auto-approve tfplan
 
-      - name: Set up Cloud SQL Auth Proxy
-        uses: 'google-github-actions/cloud-sql-proxy@v2'
-        with:
-          instance_connection_name: '${{ secrets.GCP_PROJECT_ID }}:${{ vars.GCP_REGION }}:INSTANCE_NAME'
-          port: ${{ vars.DATABASE_PORT }}
+      # - name: Install Cloud SQL Auth Proxy
+      #   run: |
+      #     curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.20.0/cloud-sql-proxy.linux.amd64
+      #     chmod +x cloud-sql-proxy
+
+      # - name: Set up Cloud SQL Auth Proxy
+      #   uses: 'google-github-actions/cloud-sql-proxy@v2'
+      #   with:
+      #     instance_connection_name: '${{ secrets.GCP_PROJECT_ID }}:${{ vars.GCP_REGION }}:${{ env.CONNECTION_NAME }}'
+      #     port: ${{ vars.DATABASE_PORT }}
 
       - name: Setup Liquibase
         uses: liquibase/setup-liquibase@v2
@@ -102,15 +107,25 @@ jobs:
 
       - name: Set Liquibase Environmental Variables
         run: |
-          echo "LIQUIBASE_COMMAND_CHANGELOG_FILE="${{ github.workspace }}/deployment/data/liquibase/changelog/changelog.yaml"" >> ${GITHUB_ENV}
-          LIQUIBASE_DB_HOST="$(tofu output -raw db_private_ip_address)"
-          echo "LIQUID_BASE_CONNECTION_URL="jdbc:postgresql://${LIQUIBASE_DB_HOST}:${{ vars.DATABASE_PORT }}/${{ vars.TF_VAR_db_name }}"" >> ${GITHUB_ENV}
+          echo "PUBLIC_IP="$(tofu output -raw db_public_ip_address)"" >> ${GITHUB_ENV}
+
+          echo "CONNECTION_NAME="$(tofu output -raw db_connection_name)"" >> ${GITHUB_ENV}
 
       - name: Migrate Schema using Liquibase
         run: |
+          curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.20.0/cloud-sql-proxy.linux.amd64
+
+          chmod +x cloud-sql-proxy
+
+          ./cloud-sql-proxy "${{ secrets.GCP_PROJECT_ID }}:${{ vars.GCP_REGION }}:${{ env.CONNECTION_NAME }}"
+
+          LIQUIBASE_CHANGELOG_FILE="${{ github.workspace }}/deployment/data/liquibase/changelog/changelog.yaml"
+
+          LIQUIBASE_CONNECTION_URL="jdbc:postgresql://${{ env.PUBLIC_IP}}:${{ vars.DATABASE_PORT }}/${{ vars.TF_VAR_db_name }}"
+
           liquibase update \
-            --changelog-file=${{ env.LIQUIBASE_COMMAND_CHANGELOG_FILE }}\
-            --url=${{ env.LIQUID_BASE_CONNECTION_URL }} \
+            --changelog-file=${LIQUIBASE_CHANGELOG_FILE}\
+            --url=${LIQUIBASE_CONNECTION_URL} \
             --log-level=INFO \
             --username=${{ vars.POSTGRES_USER }} \
             --password=${{ secrets.POSTGRES_PASSWORD }}
