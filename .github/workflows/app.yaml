@@ -88,8 +88,8 @@ jobs:
           cd ${{ github.workspace }}/deployment/data
           tofu init
 
-          echo "DB_CERTS="$(tofu output -raw db_client_cert)"" >> GITHUB_ENV
-          echo "REPO_URI="$(tofu output -raw artifact_repo_uri)"" >> GITHUB_ENV
+          echo "DB_CERTS="$(tofu output -raw db_client_cert)"" >> ${GITHUB_ENV}
+          echo "REPO_URI="$(tofu output -raw artifact_repo_uri)"" >> ${GITHUB_ENV}
           echo "pwd - $(pwd)"
 
       - name: Build, Tag, and Push Docker Image to Container Repository Using Tofu Output
@@ -98,7 +98,7 @@ jobs:
           echo "repo_uri - ${{ env.REPO_URI }}"
           image_name="${{ vars.APP_NAME }}:${GITHUB_SHA::7}"
           echo "image_name - ${image_name}"
-          echo "IMAGE_FULL_NAME="${{ env.REPO_URI }}/${image_name}"" >> GITHUB_ENV
+          echo "IMAGE_FULL_NAME="${{ env.REPO_URI }}/${image_name}"" >> ${GITHUB_ENV}
           echo "IMAGE_FULL_NAME - ${{ env.IMAGE_FULL_NAME }}"
 
           cd ${{ github.workspace }}/apps/api
