@@ -7,13 +7,6 @@ on:
       environment:
         required: true
         type: string
-    outputs:
-      gcp_container_repo_uri:
-        description: "Uri of artifactory registry repository"
-        value: ${{ jobs.data_deployment.outputs.repo_uri}}
-      gcp_db_client_certs:
-        description: "Client certs for DB"
-        value: ${{ jobs.data_deployment.outputs.db_client_certs}}
 jobs:
   data_deployment:
     runs-on: ubuntu-latest
@@ -40,9 +33,7 @@ jobs:
       TF_VAR_username: ${{ vars.POSTGRES_USER }}
       TF_VAR_db_edition: "ENTERPRISE"
       TF_LOG: DEBUG
-    outputs:
-      repo_uri: ${{ steps.set_repo_uri.outputs.repo_uri }}
-      db_client_certs: ${{ steps.set_db_certs.outputs.db_certs }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -77,7 +68,7 @@ jobs:
       - name: OpenTofu Plan
         run: tofu plan -out=tfplan
 
-      - name: Post OpenTofu Plan
+      - name: Add OpenTofu Plan to Github Comments/Conversation
         run: |
           PR_NUMBER=${{ github.event.pull_request.number }}
           # COMMENT=$(tofu show -json tfplan)
@@ -91,17 +82,3 @@ jobs:
         name: OpenTofu Apply
         run:  |
           tofu apply -auto-approve tfplan
-
-      - id: set_repo_uri
-        name: Set Container Repository Uri
-        run:  |
-          echo " Output - "$(tofu output -raw artifact_repo_uri)""
-          echo "repo_uri="$(tofu output -raw artifact_repo_uri)"" >> $GITHUB_OUTPUT
-          echo "GITHUB_OUTPUT - $GITHUB_OUTPUT"
-          echo "GITHUB_OUTPUT content - $(cat $GITHUB_OUTPUT)"
-
-      - id: set_db_certs
-        name: Set Db Client Certs
-        run:  |
-          echo "db_certs="$(tofu output -raw db_client_cert)"" >> $GITHUB_OUTPUT
-          echo "GITHUB_OUTPUT content - $(cat $GITHUB_OUTPUT)"

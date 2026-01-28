@@ -7,10 +7,6 @@ on:
       environment:
         required: true
         type: string
-    # outputs:
-    #   db_client_certs:
-    #     description: "Client certs created for DB"
-    #     value: ${{ jobs.deploy.outputs.output1 }}
 
 jobs:
   deploy-networking:
@@ -68,10 +64,7 @@ jobs:
       - name: OpenTofu Plan
         run: tofu plan -out=tfplan
 
-      # - name: OpenTofu Plan
-      #   run: PLAN_OUTPUT=$(tofu plan  &> /dev/stdout)
-
-      - name: Post OpenTofu Plan
+      - name: Add OpenTofu Plan to Github Comments/Conversation
         run: |
           PR_NUMBER=${{ github.event.pull_request.number }}
           # COMMENT=$(tofu show -json tfplan)
