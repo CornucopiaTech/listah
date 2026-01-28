@@ -115,10 +115,11 @@ jobs:
         run: |
           curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.20.0/cloud-sql-proxy.linux.amd64
 
-          sqlproxy_port=9000
 
           chmod +x cloud-sql-proxy
-          ./cloud-sql-proxy --port ${sqlproxy_port} "${{ env.CONNECTION_NAME }}" > /dev/null &
+
+          sqlproxy_port=9000
+          ./cloud-sql-proxy --port ${sqlproxy_port} "${{ env.CONNECTION_NAME }}" &> /dev/null &
 
           liquibase_changelog_file="${{ github.workspace }}/deployment/data/liquibase/changelog/changelog.yaml"
 
