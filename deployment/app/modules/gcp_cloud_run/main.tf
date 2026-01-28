@@ -62,6 +62,14 @@ resource "google_cloud_run_v2_service" "app" {
 
   template {
     service_account = google_service_account.app_service_account.email
+    vpc_access {
+      # connector = null
+      egress = "PRIVATE_RANGES_ONLY" # "ALL_TRAFFIC"
+      network_interfaces {
+        network    = null
+        subnetwork = null
+      }
+    }
     containers {
       image = var.image_tag
 

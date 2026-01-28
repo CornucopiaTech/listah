@@ -122,3 +122,12 @@ roles/iam.serviceAccountAdmin
 roles/iam.securityAdmin
 roles/owner
 # Artifact Registry Administrator
+
+  Compute Engine API
+  Cloud SQL Admin API
+  Cloud Run API
+  Container Registry API
+  Cloud Build API
+  Service Networking API
+Cloud Run Service Agent role:
+Compute Network User role
