@@ -19,6 +19,13 @@
 - Send error message when server side mutation fails.
 
 
+<!-- Devops -->
+ - Pass the output of Tofu that are needed across workflows
+- Define secrets to store db connection information
+- Pass defined secret to cloud run.
+
+<!-- environment: ${{ github.ref == 'refs/heads/master' && 'prod' || github.ref == 'refs/heads/release' && 'release' || 'dev' }} -->
+
 
 # Done
 - Define home page. Redirect to /categories
