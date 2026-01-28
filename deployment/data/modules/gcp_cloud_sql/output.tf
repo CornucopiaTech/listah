@@ -4,6 +4,12 @@ output "db_client_cert" {
   sensitive   = true
 }
 
+output "db_connection_name" {
+  value       = google_sql_database_instance.main.connection_name
+  description = "The connection name for connecting to Cloud SQL instance via Private Service Connect"
+  sensitive   = true
+}
+
 output "db_dns_name" {
   value       = google_sql_database_instance.main.dns_name
   description = "The dns name for connecting to Cloud SQL instance via Private Service Connect"

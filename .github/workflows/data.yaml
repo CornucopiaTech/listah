@@ -83,6 +83,12 @@ jobs:
         run:  |
           tofu apply -auto-approve tfplan
 
+      - name: Set up Cloud SQL Auth Proxy
+        uses: 'google-github-actions/cloud-sql-proxy@v2'
+        with:
+          instance_connection_name: '${{ secrets.GCP_PROJECT_ID }}:${{ vars.GCP_REGION }}:INSTANCE_NAME'
+          port: ${{ vars.DATABASE_PORT }}
+
       - name: Setup Liquibase
         uses: liquibase/setup-liquibase@v2
         with:
@@ -96,7 +102,7 @@ jobs:
 
       - name: Set Liquibase Environmental Variables
         run: |
-          echo "LIQUIBASE_COMMAND_CHANGELOG_FILE="${{ github.workspace }}/liquibase/changelog/changelog.yaml"" >> ${GITHUB_ENV}
+          echo "LIQUIBASE_COMMAND_CHANGELOG_FILE="${{ github.workspace }}/deployment/data/liquibase/changelog/changelog.yaml"" >> ${GITHUB_ENV}
           LIQUIBASE_DB_HOST="$(tofu output -raw db_private_ip_address)"
           echo "LIQUID_BASE_CONNECTION_URL="jdbc:postgresql://${LIQUIBASE_DB_HOST}:${{ vars.DATABASE_PORT }}/${{ vars.TF_VAR_db_name }}"" >> ${GITHUB_ENV}
 

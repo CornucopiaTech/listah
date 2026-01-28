@@ -15,6 +15,11 @@ output "db_private_ip_address" {
   description = "The dns name for connecting to Cloud SQL instance via Private Service Connect"
   sensitive   = true
 }
+output "db_connection_name" {
+  value       = module.gcp_cloud_sql.db_connection_name
+  description = "The connection name for connecting to Cloud SQL instance via Private Service Connect"
+  sensitive   = true
+}
 
 
 output "artifact_repo_name" {
