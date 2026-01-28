@@ -115,14 +115,16 @@ jobs:
         run: |
           curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.20.0/cloud-sql-proxy.linux.amd64
 
+          proxy_port=9000
+          proxy_host=localhost
+
           chmod +x cloud-sql-proxy
 
-          nohup ./cloud-sql-proxy "${{ env.CONNECTION_NAME }}"
-          # ./cloud-sql-proxy "${{ secrets.GCP_PROJECT_ID }}:${{ vars.GCP_REGION }}:${{ env.CONNECTION_NAME }}"
+          nohup ./cloud-sql-proxy --port $proxy_port "${{ env.CONNECTION_NAME }}" > cloud-sql-proxy.out 2> cloud-sql-proxy.err < /dev/null &
 
           LIQUIBASE_CHANGELOG_FILE="${{ github.workspace }}/deployment/data/liquibase/changelog/changelog.yaml"
 
-          LIQUIBASE_CONNECTION_URL="jdbc:postgresql://127.0.0.1:${{ vars.DATABASE_PORT }}/${{ vars.TF_VAR_db_name }}"
+          LIQUIBASE_CONNECTION_URL="jdbc:postgresql://${proxy_host}:${proxy_port}/${{ vars.TF_VAR_db_name }}"
           # LIQUIBASE_CONNECTION_URL="jdbc:postgresql://${{ env.PUBLIC_IP}}:${{ vars.DATABASE_PORT }}/${{ vars.TF_VAR_db_name }}"
 
           liquibase update \
