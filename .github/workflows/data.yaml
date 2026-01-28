@@ -62,37 +62,26 @@ jobs:
       - name: OpenTofu Init
         run: tofu init
 
-      - name: OpenTofu Validate
-        run: tofu validate
+      # - name: OpenTofu Validate
+      #   run: tofu validate
 
-      - name: OpenTofu Plan
-        run: tofu plan -out=tfplan
+      # - name: OpenTofu Plan
+      #   run: tofu plan -out=tfplan
 
-      - name: Add OpenTofu Plan to Github Comments/Conversation
-        run: |
-          PR_NUMBER=${{ github.event.pull_request.number }}
-          # COMMENT=$(tofu show -json tfplan)
-          COMMENT=$(tofu show tfplan)
-          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-          COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
-
-          curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X POST $COMMENT_URL -d "{\"body\":\"$COMMENT\"}"
-
-      - id: tofu_apply
-        name: OpenTofu Apply
-        run:  |
-          tofu apply -auto-approve tfplan
-
-      # - name: Install Cloud SQL Auth Proxy
+      # - name: Add OpenTofu Plan to Github Comments/Conversation
       #   run: |
-      #     curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.20.0/cloud-sql-proxy.linux.amd64
-      #     chmod +x cloud-sql-proxy
+      #     PR_NUMBER=${{ github.event.pull_request.number }}
+      #     # COMMENT=$(tofu show -json tfplan)
+      #     COMMENT=$(tofu show tfplan)
+      #     GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+      #     COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
 
-      # - name: Set up Cloud SQL Auth Proxy
-      #   uses: 'google-github-actions/cloud-sql-proxy@v2'
-      #   with:
-      #     instance_connection_name: '${{ secrets.GCP_PROJECT_ID }}:${{ vars.GCP_REGION }}:${{ env.CONNECTION_NAME }}'
-      #     port: ${{ vars.DATABASE_PORT }}
+      #     curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X POST $COMMENT_URL -d "{\"body\":\"$COMMENT\"}"
+
+      # - id: tofu_apply
+      #   name: OpenTofu Apply
+      #   run:  |
+      #     tofu apply -auto-approve tfplan
 
       - name: Setup Liquibase
         uses: liquibase/setup-liquibase@v2
@@ -111,17 +100,24 @@ jobs:
 
           echo "CONNECTION_NAME="$(tofu output -raw db_connection_name)"" >> ${GITHUB_ENV}
 
-      - name: Migrate Schema using Liquibase
+          echo "LB_CHANGELOG_FILE="${{ github.workspace }}/deployment/data/liquibase/changelog/changelog.yaml"" >> ${GITHUB_ENV}
+
+          echo "LB_CONN_PORT=9000" >> ${GITHUB_ENV}
+          echo "LB_CONN_URL="jdbc:postgresql://127.0.0.1:9000/${{ vars.APP_NAME }}-${{ inputs.environment }}-${{ vars.GCP_REGION }}-db"" >> ${GITHUB_ENV}
+
+      - name: Setup Cloud Sql Proxy
         run: |
           curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.20.0/cloud-sql-proxy.linux.amd64
 
           chmod +x cloud-sql-proxy
 
-          ./cloud-sql-proxy --port 9000 "${{ env.CONNECTION_NAME }}" &> /dev/null &
+          nohup ./cloud-sql-proxy --port "${{ env.LB_CONN_PORT }}" "${{ env.CONNECTION_NAME }}" &> /dev/null &
 
+      - name: Migrate Schema using Liquibase
+        run: |
           liquibase update \
-            --changelog-file="${{ github.workspace }}/deployment/data/liquibase/changelog/changelog.yaml"\
-            --url="jdbc:postgresql://127.0.0.1:9000/${{ vars.APP_NAME }}-${{ inputs.environment }}-${{ vars.GCP_REGION }}-db" \
+            --changelog-file=${{ env.CHANGELOG_FILE }}\
+            --url=${{ env.LB_CONN_URL }} \
             --log-level=INFO \
             --username=${{ vars.POSTGRES_USER }} \
             --password=${{ secrets.POSTGRES_PASSWORD }}
