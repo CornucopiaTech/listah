@@ -96,11 +96,12 @@ jobs:
 
       - name: Set Liquibase Environmental Variables
         run: |
+          echo "$(pwd)"
           echo "PUBLIC_IP="$(tofu output -raw db_public_ip_address)"" >> ${GITHUB_ENV}
 
           echo "CONNECTION_NAME="$(tofu output -raw db_connection_name)"" >> ${GITHUB_ENV}
 
-          echo "LB_CHANGELOG_FILE="${{ github.workspace }}/deployment/data/liquibase/changelog/changelog.yaml"" >> ${GITHUB_ENV}
+          echo "LB_CHANGELOG_FILE="liquibase/changelog/changelog.yaml"" >> ${GITHUB_ENV}
 
           echo "LB_CONN_PORT=9000" >> ${GITHUB_ENV}
           echo "LB_CONN_URL="jdbc:postgresql://127.0.0.1:9000/${{ vars.APP_NAME }}-${{ inputs.environment }}-${{ vars.GCP_REGION }}-db"" >> ${GITHUB_ENV}
@@ -115,6 +116,7 @@ jobs:
 
       - name: Migrate Schema using Liquibase
         run: |
+          echo "$(pwd)"
           liquibase update \
             --changelog-file=${{ env.LB_CHANGELOG_FILE }}\
             --url=${{ env.LB_CONN_URL }} \
