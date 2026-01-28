@@ -98,12 +98,14 @@ jobs:
           echo "pwd - $(pwd)"
           cd ${{ github.workspace }}/deployment/data
           tofu init
+          db_cert="$(tofu output -raw db_client_cert)"
           repo_uri="$(tofu output -raw artifact_repo_uri)"
           echo "repo_uri - ${repo_uri}"
           image_name="${repo_uri}/${{ env.TF_VAR_image_tag }}"
           echo "image_name - ${image_name}"
 
           cd ${{ github.workspace }}/apps/api
+          echo "$db_cert" > ./db_ca.crt
           docker build . -t "${image_name}"
           docker push "${image_name}"
           echo "pwd - $(pwd)"
