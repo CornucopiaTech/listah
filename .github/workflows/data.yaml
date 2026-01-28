@@ -117,7 +117,8 @@ jobs:
 
           chmod +x cloud-sql-proxy
 
-          ./cloud-sql-proxy "${{ secrets.GCP_PROJECT_ID }}:${{ vars.GCP_REGION }}:${{ env.CONNECTION_NAME }}"
+          ./cloud-sql-proxy "${{ env.CONNECTION_NAME }}"
+          # ./cloud-sql-proxy "${{ secrets.GCP_PROJECT_ID }}:${{ vars.GCP_REGION }}:${{ env.CONNECTION_NAME }}"
 
           LIQUIBASE_CHANGELOG_FILE="${{ github.workspace }}/deployment/data/liquibase/changelog/changelog.yaml"
 
