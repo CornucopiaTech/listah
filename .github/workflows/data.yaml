@@ -124,8 +124,7 @@ jobs:
 
           LIQUIBASE_CHANGELOG_FILE="${{ github.workspace }}/deployment/data/liquibase/changelog/changelog.yaml"
 
-          LIQUIBASE_CONNECTION_URL="jdbc:postgresql://${sqlproxy_host}:${sqlproxy_port}/${{ vars.TF_VAR_db_name }}"
-          # LIQUIBASE_CONNECTION_URL="jdbc:postgresql://${{ env.PUBLIC_IP}}:${{ vars.DATABASE_PORT }}/${{ vars.TF_VAR_db_name }}"
+          LIQUIBASE_CONNECTION_URL="jdbc:postgresql://127.0.0.1:${sqlproxy_port}/${{ vars.TF_VAR_db_name }}"
 
           liquibase update \
             --changelog-file=${LIQUIBASE_CHANGELOG_FILE}\
