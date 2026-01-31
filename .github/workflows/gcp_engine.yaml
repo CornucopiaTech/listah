@@ -18,22 +18,22 @@ jobs:
   #     environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
   #   secrets: inherit
 
-  run_data_deploy:
-    # needs: [deploy_networking]
-    permissions:
-      contents: read
-      id-token: write # Required for Workload Identity Federation
-    uses: './.github/workflows/gcp_data.yaml'
-    with:
-      environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
-    secrets: inherit
-
-  # deploy_app:
-  #   needs: [run_data_deploy]
+  # run_data_deploy:
+  #   # needs: [deploy_networking]
   #   permissions:
   #     contents: read
   #     id-token: write # Required for Workload Identity Federation
-  #   uses: './.github/workflows/gcp_app.yaml'
+  #   uses: './.github/workflows/gcp_data.yaml'
   #   with:
-  #     environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+  #     environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
   #   secrets: inherit
+
+  deploy_app:
+    # needs: [run_data_deploy]
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    uses: './.github/workflows/gcp_app.yaml'
+    with:
+      environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit
