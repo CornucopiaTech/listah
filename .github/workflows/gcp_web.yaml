@@ -79,7 +79,7 @@ jobs:
           cd ${{ github.workspace }}/deployment/gcp/api
           tofu init
           echo "$(tofu output -raw api_urls)"
-          echo "API_URLS="$(tofu output -raw api_urls)"" >> ${GITHUB_ENV}
+          echo "API_URLS="$(tofu output -json api_urls)"" >> ${GITHUB_ENV}
           echo "pwd - $(pwd)"
 
       # - name: Initialise OpenTofu
