@@ -34,10 +34,6 @@ resource "google_kms_key_ring" "key_ring" {
 
 
 # Define root user in db
-resource "google_kms_crypto_key" "crypto_key" {
-  name     = "${var.tags.name}-crypto-key"
-  key_ring = google_kms_key_ring.key_ring.id
-}
 resource "google_secret_manager_secret" "root_password" {
   secret_id = "${var.tags.name}-root-password"
   labels = {
@@ -45,11 +41,7 @@ resource "google_secret_manager_secret" "root_password" {
   }
 
   replication {
-    auto {
-      customer_managed_encryption {
-        kms_key_name = google_kms_crypto_key.crypto_key.id
-      }
-    }
+    auto {}
   }
   deletion_protection = var.tags.environment == "prod" ? true : false
   depends_on          = [google_project_service.secretmanager_api]
@@ -110,11 +102,7 @@ resource "google_secret_manager_secret" "user_password" {
   }
 
   replication {
-    auto {
-      customer_managed_encryption {
-        kms_key_name = google_kms_crypto_key.crypto_key.id
-      }
-    }
+    auto { }
   }
   deletion_protection = var.tags.environment == "prod" ? true : false
   depends_on          = [google_project_service.secretmanager_api]
