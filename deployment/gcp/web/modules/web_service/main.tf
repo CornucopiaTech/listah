@@ -52,7 +52,7 @@ resource "google_project_service" "cloudrun_api" {
 }
 
 resource "google_cloud_run_v2_service" "app" {
-  name                = "${var.tags.name}-cloudrun-service"
+  name                = "${var.tags.name}-web-service"
   location            = var.tags.region
   deletion_protection = var.tags.environment == "dev" ? false : true
   ingress             = "INGRESS_TRAFFIC_ALL"
@@ -82,7 +82,7 @@ resource "google_cloud_run_v2_service" "app" {
         period_seconds        = 30
 
         http_get {
-          path = "/health"
+          path = "/"
           # Custom headers to set in the request
           # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_service#http_headers
           http_headers {
@@ -98,7 +98,7 @@ resource "google_cloud_run_v2_service" "app" {
         period_seconds        = 30
 
         http_get {
-          path = "/health"
+          path = "/"
           # Custom headers to set in the request
           # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_service#http_headers
           http_headers {
@@ -108,49 +108,29 @@ resource "google_cloud_run_v2_service" "app" {
         }
       }
       env {
-        name = "POSTGRES_PASSWORD"
+        name = "API_HOST_URL_ADDRESS"
         value_source {
           secret_key_ref {
-            secret  = var.db_password
+            secret  = var.api_urls
             version = "latest"
           }
         }
       }
       env {
-        name  = "POSTGRES_USER"
-        value = var.db_username
+        name  = "LISTAH_PROXY_CATEGORY_READ"
+        value = "${var.tags.project}.${var.api_version}.CategoryService/Read"
       }
       env {
-        name  = "POSTGRES_DB"
-        value = var.db_name
+        name  = "LISTAH_PROXY_TAG_READ"
+        value = "${var.tags.project}.${var.api_version}.TagService/Read"
       }
       env {
-        name  = "DATABASE_HOST"
-        value = var.db_host
+        name  = "LISTAH_PROXY_ITEMS_READ"
+        value = "${var.tags.project}.${var.api_version}.ItemService/Read"
       }
       env {
-        name  = "DATABASE_PORT"
-        value = "5432"
-      }
-      env {
-        name  = "POSTGRES_USE_TLS"
-        value = "true"
-      }
-      env {
-        name  = "OTEL_EXPORTER_OTLP_ENDPOINT"
-        value = "CHANGEME"
-      }
-      env {
-        name  = "OLTP_EXPORTER_TYPE"
-        value = "otlp"
-      }
-      env {
-        name  = "METRIC_FREQ_SEC"
-        value = 60
-      }
-      env {
-        name  = "TRACE_FREQ_SEC"
-        value = 5
+        name  = "LISTAH_PROXY_ITEMS_UPDATE"
+        value = "${var.tags.project}.${var.api_version}.ItemService/Update"
       }
       env {
         name  = "APP_NAME"
@@ -159,11 +139,11 @@ resource "google_cloud_run_v2_service" "app" {
     }
 
     labels = {
-      for k, v in var.tags : k => (k == "name" ? "${v}-container" : v)
+      for k, v in var.tags : k => (k == "name" ? "${v}-web-container" : v)
     }
   }
   labels = {
-    for k, v in var.tags : k => (k == "name" ? "${v}-service" : v)
+    for k, v in var.tags : k => (k == "name" ? "${v}-web-service" : v)
   }
   depends_on = [
     google_project_service.cloudrun_api,

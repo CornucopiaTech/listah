@@ -102,7 +102,7 @@ resource "google_secret_manager_secret" "user_password" {
   }
 
   replication {
-    auto { }
+    auto {}
   }
   deletion_protection = var.tags.environment == "prod" ? true : false
   depends_on          = [google_project_service.secretmanager_api]

@@ -19,7 +19,7 @@ jobs:
   #   secrets: inherit
 
   # run_data_deploy:
-  #   # needs: [deploy_networking]
+  #   needs: [deploy_networking]
   #   permissions:
   #     contents: read
   #     id-token: write # Required for Workload Identity Federation
@@ -33,7 +33,7 @@ jobs:
     permissions:
       contents: read
       id-token: write # Required for Workload Identity Federation
-    uses: './.github/workflows/gcp_app.yaml'
+    uses: './.github/workflows/gcp_api.yaml'
     with:
       environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
     secrets: inherit

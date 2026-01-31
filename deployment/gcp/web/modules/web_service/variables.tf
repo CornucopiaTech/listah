@@ -8,22 +8,8 @@ variable "tags" {
   })
 }
 
-variable "db_username" {
-  type      = string
-  sensitive = true
-}
-variable "db_password" {
-  type      = string
-  sensitive = true
-}
-variable "db_name" {
-  type      = string
-  sensitive = true
-}
-variable "db_host" {
-  type      = string
-  sensitive = true
-}
+variable "api_urls" { type = string }
+variable "api_version" { type = string }
 variable "vpc_id" { type = string }
 variable "subnet_id" { type = string }
 variable "project_id" { type = string }

@@ -73,53 +73,56 @@ jobs:
       - name: OpenTofu Init
         run: tofu init
 
-      - name: OpenTofu Validate
-        run: tofu validate
+      - name: Destroy existing infra
+        run: tofu destroy -auto-approve
 
-      - name: Retrieve Outputs from Data Job Using Tofu Output
-        run: |
-          echo "pwd - $(pwd)"
-          cd ${{ github.workspace }}/deployment/gcp/data
-          tofu init
+      # - name: OpenTofu Validate
+      #   run: tofu validate
 
-          echo "DB_CERTS="$(tofu output -raw db_client_cert)"" >> ${GITHUB_ENV}
-          echo "REPO_URI="$(tofu output -raw artifact_repo_uri)"" >> ${GITHUB_ENV}
-          echo "pwd - $(pwd)"
+      # - name: Retrieve Outputs from Data Job Using Tofu Output
+      #   run: |
+      #     echo "pwd - $(pwd)"
+      #     cd ${{ github.workspace }}/deployment/gcp/data
+      #     tofu init
 
-      - name: Build, Tag, and Push Docker Image to Container Repository Using Tofu Output
-        run: |-
-          echo "pwd - $(pwd)"
-          echo "repo_uri - ${{ env.REPO_URI }}"
-          image_name="${{ vars.APP_NAME }}:${GITHUB_SHA::7}"
-          echo "image_name - ${image_name}"
-          image_full_name="${{ env.REPO_URI }}/${image_name}"
-          echo "IMAGE_FULL_NAME="${image_full_name}"" >> ${GITHUB_ENV}
-          echo "image_full_name - ${image_full_name}"
-          echo "IMAGE_FULL_NAME - ${{ env.IMAGE_FULL_NAME }}"
+      #     echo "DB_CERTS="$(tofu output -raw db_client_cert)"" >> ${GITHUB_ENV}
+      #     echo "REPO_URI="$(tofu output -raw artifact_repo_uri)"" >> ${GITHUB_ENV}
+      #     echo "pwd - $(pwd)"
 
-          cd ${{ github.workspace }}/apps/api
-          echo "$db_cert" > ./db_ca.crt
-          docker build . -t "${image_full_name}"
-          docker push "${image_full_name}"
-          echo "pwd - $(pwd)"
+      # - name: Build, Tag, and Push Docker Image to Container Repository Using Tofu Output
+      #   run: |-
+      #     echo "pwd - $(pwd)"
+      #     echo "repo_uri - ${{ env.REPO_URI }}"
+      #     image_name="${{ vars.APP_NAME }}:${GITHUB_SHA::7}"
+      #     echo "image_name - ${image_name}"
+      #     image_full_name="${{ env.REPO_URI }}/${image_name}"
+      #     echo "IMAGE_FULL_NAME="${image_full_name}"" >> ${GITHUB_ENV}
+      #     echo "image_full_name - ${image_full_name}"
+      #     echo "IMAGE_FULL_NAME - ${{ env.IMAGE_FULL_NAME }}"
 
-      - name: OpenTofu Plan
-        run:
-          tofu plan -out=tfplan
-        env:
-          TF_VAR_image_tag: ${{ env.IMAGE_FULL_NAME }}
+      #     cd ${{ github.workspace }}/apps/api
+      #     echo "$db_cert" > ./db_ca.crt
+      #     docker build . -t "${image_full_name}"
+      #     docker push "${image_full_name}"
+      #     echo "pwd - $(pwd)"
 
-      - name: Add OpenTofu Plan to Github Comments/Conversation
-        run: |
-          PR_NUMBER=${{ github.event.pull_request.number }}
-          # COMMENT=$(tofu show -json tfplan)
-          COMMENT=$(tofu show tfplan)
-          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-          COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
+      # - name: OpenTofu Plan
+      #   run:
+      #     tofu plan -out=tfplan
+      #   env:
+      #     TF_VAR_image_tag: ${{ env.IMAGE_FULL_NAME }}
 
-          curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X POST $COMMENT_URL -d "{\"body\":\"$COMMENT\"}"
+      # - name: Add OpenTofu Plan to Github Comments/Conversation
+      #   run: |
+      #     PR_NUMBER=${{ github.event.pull_request.number }}
+      #     # COMMENT=$(tofu show -json tfplan)
+      #     COMMENT=$(tofu show tfplan)
+      #     GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+      #     COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
 
-      - name: OpenTofu Apply
-        run: tofu apply -auto-approve tfplan
-        env:
-          TF_VAR_image_tag: ${{ env.IMAGE_FULL_NAME }}
+      #     curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X POST $COMMENT_URL -d "{\"body\":\"$COMMENT\"}"
+
+      # - name: OpenTofu Apply
+      #   run: tofu apply -auto-approve tfplan
+      #   env:
+      #     TF_VAR_image_tag: ${{ env.IMAGE_FULL_NAME }}

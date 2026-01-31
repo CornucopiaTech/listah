@@ -10,7 +10,6 @@ locals {
 
 data "terraform_remote_state" "networking" {
   backend = "gcs"
-
   config = {
     bucket = var.state_management_bucket_name
     prefix = "${var.state_management_prefix}/networking/"
@@ -19,7 +18,6 @@ data "terraform_remote_state" "networking" {
 
 data "terraform_remote_state" "data" {
   backend = "gcs"
-
   config = {
     bucket = var.state_management_bucket_name
     prefix = "${var.state_management_prefix}/data/"
@@ -27,12 +25,19 @@ data "terraform_remote_state" "data" {
 }
 
 
-module "gcp_cloud_run" {
-  source      = "./modules/gcp_cloud_run"
-  db_username = data.terraform_remote_state.data.outputs.db_username
-  db_password = data.terraform_remote_state.data.outputs.db_secret_userpassword_name
-  db_host     = data.terraform_remote_state.data.outputs.db_private_ip_address
-  db_name     = data.terraform_remote_state.data.outputs.db_dbname
+data "terraform_remote_state" "app" {
+  backend = "gcs"
+  config = {
+    bucket = var.state_management_bucket_name
+    prefix = "${var.state_management_prefix}/app/"
+  }
+}
+
+
+module "web_service" {
+  source      = "./modules/web_service"
+  api_urls    = data.terraform_remote_state.app.outputs.api_urls
+  api_version = "1"
   vpc_id      = data.terraform_remote_state.networking.outputs.gcp_vpc_id
   subnet_id   = data.terraform_remote_state.networking.outputs.gcp_private_subnet_id
   project_id  = var.gcp_project_id

@@ -26,7 +26,7 @@ jobs:
       TF_VAR_state_management_prefix: gcp/${{ inputs.environment }}
       TF_VAR_project: ${{ vars.APP_NAME }}
       TF_VAR_environment: ${{ inputs.environment }}
-      TF_VAR_instance_tier: ${{ vars.DB_INSTANCE_TIER }}
+      TF_VAR_instance_tier: ${{ vars.GCP_DB_INSTANCE_TIER }}
       TF_VAR_db_edition: "ENTERPRISE"
       TF_LOG: DEBUG
 
