@@ -13,7 +13,7 @@ jobs:
     environment: ${{ inputs.environment }}
     defaults:
       run:
-        working-directory: './deployment/data'
+        working-directory: './deployment/gcp/data'
     permissions:
       contents: read
       id-token: write # Required for Workload Identity Federation

@@ -14,7 +14,7 @@ jobs:
     environment: ${{ inputs.environment }}
     defaults:
       run:
-        working-directory: './deployment/app'
+        working-directory: './deployment/gcp/app'
     permissions:
       contents: read
       id-token: write # Required for Workload Identity Federation
@@ -79,7 +79,7 @@ jobs:
       - name: Retrieve Outputs from Data Job Using Tofu Output
         run: |
           echo "pwd - $(pwd)"
-          cd ${{ github.workspace }}/deployment/data
+          cd ${{ github.workspace }}/deployment/gcp/data
           tofu init
 
           echo "DB_CERTS="$(tofu output -raw db_client_cert)"" >> ${GITHUB_ENV}
