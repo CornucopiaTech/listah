@@ -1,0 +1,1 @@
+{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"aws_vpc","Source":"./modules/aws_networking","Dir":"modules/aws_networking"}]}
