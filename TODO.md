@@ -20,7 +20,6 @@
 
 
 <!-- Devops -->
- - Pass the output of Tofu that are needed across workflows
 - Define secrets to store db connection information
 - Pass defined secret to cloud run.
 
@@ -28,6 +27,7 @@
 
 
 # Done
+- Pass the output of Tofu that are needed across workflows
 - Define home page. Redirect to /categories
 - Define categories page as a list of categories and each category can be clicked to get a list of items in the category.
 - Define tag page as a list of tags and each tag can be clicked to get a list of items in the tag.
