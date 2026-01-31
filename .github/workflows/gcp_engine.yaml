@@ -9,24 +9,24 @@ on:
 
 
 jobs:
-  deploy_networking:
-    permissions:
-      contents: read
-      id-token: write # Required for Workload Identity Federation
-    uses: './.github/workflows/gcp_networking.yaml'
-    with:
-      environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
-    secrets: inherit
-
-  # run_data_deploy:
-  #   needs: [deploy_networking]
+  # deploy_networking:
   #   permissions:
   #     contents: read
   #     id-token: write # Required for Workload Identity Federation
-  #   uses: './.github/workflows/gcp_data.yaml'
+  #   uses: './.github/workflows/gcp_networking.yaml'
   #   with:
   #     environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
   #   secrets: inherit
+
+  run_data_deploy:
+    # needs: [deploy_networking]
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    uses: './.github/workflows/gcp_data.yaml'
+    with:
+      environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit
 
   # deploy_app:
   #   needs: [run_data_deploy]
