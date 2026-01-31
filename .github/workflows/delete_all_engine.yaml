@@ -50,14 +50,14 @@ jobs:
           tofu init
           tofu destroy -auto-approve
 
-      - name: Clear Data
-        run: |
-          cd './delete_deployment/data'
-          tofu init
-          tofu destroy -auto-approve
+      # - name: Clear Data
+      #   run: |
+      #     cd './delete_deployment/data'
+      #     tofu init
+      #     tofu destroy -auto-approve
 
-      - name: Clear Networking
-        run: |
-          cd './delete_deployment/networking'
-          tofu init
-          tofu destroy -auto-approve
+      # - name: Clear Networking
+      #   run: |
+      #     cd './delete_deployment/networking'
+      #     tofu init
+      #     tofu destroy -auto-approve

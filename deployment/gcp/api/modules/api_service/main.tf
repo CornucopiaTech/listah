@@ -7,7 +7,7 @@ resource "google_project_service" "iam_api" {
 
 # Define service account and permissions
 resource "google_service_account" "app_service_account" {
-  account_id                   = "${var.tags.project}-run-sa"
+  account_id                   = "${var.tags.project}-api-sa"
   display_name                 = "${var.tags.project} Service Account"
   project                      = var.project_id
   create_ignore_already_exists = true
