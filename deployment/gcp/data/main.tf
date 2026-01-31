@@ -6,7 +6,7 @@ locals {
     region      = var.gcp_region
     controller  = "opentofu-via-github-actions"
   }
-  db_username = "${var.project}-admin"
+  db_username = "${var.project}-db-admin"
   db_dbname   = "${var.project}-db"
 }
 
