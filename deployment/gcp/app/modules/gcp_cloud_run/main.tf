@@ -165,7 +165,10 @@ resource "google_cloud_run_v2_service" "app" {
   labels = {
     for k, v in var.tags : k => (k == "name" ? "${v}-service" : v)
   }
-  depends_on = [google_project_service.cloudrun_api]
+  depends_on = [
+    google_project_service.cloudrun_api,
+    google_project_iam_member.secret-access
+  ]
 }
 
 resource "google_cloud_run_service_iam_binding" "allow_all_users" {
