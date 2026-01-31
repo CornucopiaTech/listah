@@ -47,7 +47,7 @@ resource "google_secret_manager_secret" "root_password" {
   replication {
     auto {
       customer_managed_encryption {
-        kms_key_name = google_kms_crypto_key.crypto_key.name
+        kms_key_name = google_kms_crypto_key.crypto_key.id
       }
     }
   }
@@ -104,15 +104,15 @@ resource "google_sql_database" "database" {
 
 # Define app user in db
 resource "google_secret_manager_secret" "user_password" {
-  secret_id = "${var.tags.name}-user-password"
+  secret_id = "${var.tags.name}-db-user-password"
   labels = {
-    for k, v in var.tags : k => (k == "name" ? "${v}-user-password" : v)
+    for k, v in var.tags : k => (k == "name" ? "${v}-db-user-password" : v)
   }
 
   replication {
     auto {
       customer_managed_encryption {
-        kms_key_name = google_kms_crypto_key.crypto_key.name
+        kms_key_name = google_kms_crypto_key.crypto_key.id
       }
     }
   }
