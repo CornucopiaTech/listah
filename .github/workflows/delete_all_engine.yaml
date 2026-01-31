@@ -50,21 +50,21 @@ jobs:
 
       - name: Clear App
         run: |
-          cd './deployment/app'
+          cd './delete_deployment/app'
           tofu init
           tofu plan -out=tfplan
           tofu apply -auto-approve tfplan
 
       - name: Clear Data
         run: |
-          cd './deployment/data'
+          cd './delete_deployment/data'
           tofu init
           tofu plan -out=tfplan
           tofu apply -auto-approve tfplan
 
       - name: Clear Networking
         run: |
-          cd './deployment/networking'
+          cd './delete_deployment/networking'
           tofu init
           tofu plan -out=tfplan
           tofu apply -auto-approve tfplan
