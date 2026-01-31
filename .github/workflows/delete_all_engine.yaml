@@ -52,19 +52,16 @@ jobs:
         run: |
           cd './delete_deployment/app'
           tofu init
-          tofu plan -out=tfplan
-          tofu apply -auto-approve tfplan
+          tofu destroy -auto-approve
 
       - name: Clear Data
         run: |
           cd './delete_deployment/data'
           tofu init
-          tofu plan -out=tfplan
-          tofu apply -auto-approve tfplan
+          tofu destroy -auto-approve
 
       - name: Clear Networking
         run: |
           cd './delete_deployment/networking'
           tofu init
-          tofu plan -out=tfplan
-          tofu apply -auto-approve tfplan
+          tofu destroy -auto-approve
