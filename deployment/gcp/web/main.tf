@@ -25,18 +25,18 @@ data "terraform_remote_state" "data" {
 }
 
 
-data "terraform_remote_state" "app" {
+data "terraform_remote_state" "api" {
   backend = "gcs"
   config = {
     bucket = var.state_management_bucket_name
-    prefix = "${var.state_management_prefix}/app/"
+    prefix = "${var.state_management_prefix}/api/"
   }
 }
 
 
 module "web_service" {
   source      = "./modules/web_service"
-  api_urls    = data.terraform_remote_state.app.outputs.api_urls
+  api_urls    = data.terraform_remote_state.api.outputs.api_urls
   api_version = "1"
   vpc_id      = data.terraform_remote_state.networking.outputs.gcp_vpc_id
   subnet_id   = data.terraform_remote_state.networking.outputs.gcp_private_subnet_id

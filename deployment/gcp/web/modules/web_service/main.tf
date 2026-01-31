@@ -1,48 +1,48 @@
 
-# Service Account
-resource "google_project_service" "iam_api" {
-  service            = "iam.googleapis.com"
-  disable_on_destroy = false
-}
+# # Service Account
+# resource "google_project_service" "iam_api" {
+#   service            = "iam.googleapis.com"
+#   disable_on_destroy = false
+# }
 
-# Define service account and permissions
-resource "google_service_account" "app_service_account" {
-  account_id                   = "${var.tags.project}-run-sa"
-  display_name                 = "${var.tags.project} Service Account"
-  project                      = var.project_id
-  create_ignore_already_exists = true
-  depends_on                   = [google_project_service.iam_api]
-}
-resource "google_project_iam_member" "cloud_sql_admin_binding" {
-  project = var.project_id
-  role    = "roles/cloudsql.admin"
-  member  = "serviceAccount:${google_service_account.app_service_account.email}"
-}
-resource "google_project_iam_member" "network_admin_binding" {
-  project = var.project_id
-  role    = "roles/compute.networkAdmin"
-  member  = "serviceAccount:${google_service_account.app_service_account.email}"
-}
-resource "google_project_iam_member" "dns_admin" {
-  project = var.project_id
-  role    = "roles/dns.admin"
-  member  = "serviceAccount:${google_service_account.app_service_account.email}"
-}
-resource "google_project_iam_member" "cloudsql_instanceUser" {
-  project = var.project_id
-  role    = "roles/cloudsql.instanceUser"
-  member  = "serviceAccount:${google_service_account.app_service_account.email}"
-}
-resource "google_project_iam_member" "cloudsql_client" {
-  project = var.project_id
-  role    = "roles/cloudsql.client"
-  member  = "serviceAccount:${google_service_account.app_service_account.email}"
-}
-resource "google_project_iam_member" "secret-access" {
-  project = var.project_id
-  role    = "roles/secretmanager.secretAccessor"
-  member  = "serviceAccount:${google_service_account.app_service_account.email}"
-}
+# # Define service account and permissions
+# resource "google_service_account" "app_service_account" {
+#   account_id                   = "${var.tags.project}-run-sa"
+#   display_name                 = "${var.tags.project} Service Account"
+#   project                      = var.project_id
+#   create_ignore_already_exists = true
+#   depends_on                   = [google_project_service.iam_api]
+# }
+# resource "google_project_iam_member" "cloud_sql_admin_binding" {
+#   project = var.project_id
+#   role    = "roles/cloudsql.admin"
+#   member  = "serviceAccount:${google_service_account.app_service_account.email}"
+# }
+# resource "google_project_iam_member" "network_admin_binding" {
+#   project = var.project_id
+#   role    = "roles/compute.networkAdmin"
+#   member  = "serviceAccount:${google_service_account.app_service_account.email}"
+# }
+# resource "google_project_iam_member" "dns_admin" {
+#   project = var.project_id
+#   role    = "roles/dns.admin"
+#   member  = "serviceAccount:${google_service_account.app_service_account.email}"
+# }
+# resource "google_project_iam_member" "cloudsql_instanceUser" {
+#   project = var.project_id
+#   role    = "roles/cloudsql.instanceUser"
+#   member  = "serviceAccount:${google_service_account.app_service_account.email}"
+# }
+# resource "google_project_iam_member" "cloudsql_client" {
+#   project = var.project_id
+#   role    = "roles/cloudsql.client"
+#   member  = "serviceAccount:${google_service_account.app_service_account.email}"
+# }
+# resource "google_project_iam_member" "secret-access" {
+#   project = var.project_id
+#   role    = "roles/secretmanager.secretAccessor"
+#   member  = "serviceAccount:${google_service_account.app_service_account.email}"
+# }
 
 
 # Cloud Run
@@ -64,7 +64,7 @@ resource "google_cloud_run_v2_service" "app" {
   }
 
   template {
-    service_account = google_service_account.app_service_account.email
+    # service_account = google_service_account.app_service_account.email
     vpc_access {
       egress = "PRIVATE_RANGES_ONLY" # "ALL_TRAFFIC"
       network_interfaces {
@@ -111,7 +111,7 @@ resource "google_cloud_run_v2_service" "app" {
         name = "API_HOST_URL_ADDRESS"
         value_source {
           secret_key_ref {
-            secret  = var.api_urls
+            secret  = var.api_urls.0
             version = "latest"
           }
         }

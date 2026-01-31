@@ -28,12 +28,22 @@ jobs:
   #     environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
   #   secrets: inherit
 
-  deploy_app:
-    # needs: [run_data_deploy]
+  # deploy_app:
+  #   # needs: [run_data_deploy]
+  #   permissions:
+  #     contents: read
+  #     id-token: write # Required for Workload Identity Federation
+  #   uses: './.github/workflows/gcp_api.yaml'
+  #   with:
+  #     environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+  #   secrets: inherit
+
+  deploy_web:
+    # needs: [deploy_app]
     permissions:
       contents: read
       id-token: write # Required for Workload Identity Federation
-    uses: './.github/workflows/gcp_api.yaml'
+    uses: './.github/workflows/gcp_web.yaml'
     with:
       environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
     secrets: inherit
