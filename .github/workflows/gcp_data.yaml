@@ -23,14 +23,10 @@ jobs:
       TF_VAR_aws_region: ${{ vars.AWS_REGION }}
       TF_VAR_gcp_region: ${{ vars.GCP_REGION }}
       TF_VAR_state_management_bucket_name: ${{ secrets.STATE_MANAGEMENT_BUCKET_NAME }}
-      TF_VAR_state_management_prefix: ${{ inputs.environment }}
+      TF_VAR_state_management_prefix: gcp/${{ inputs.environment }}
       TF_VAR_project: ${{ vars.APP_NAME }}
       TF_VAR_environment: ${{ inputs.environment }}
       TF_VAR_instance_tier: ${{ vars.DB_INSTANCE_TIER }}
-      TF_VAR_db_name: ${{ vars.APP_NAME }}-${{ inputs.environment }}-${{ vars.GCP_REGION }}-db
-      TF_VAR_root_password: ${{ secrets.POSTGRES_PASSWORD }}
-      TF_VAR_user_password: ${{ secrets.POSTGRES_PASSWORD }}
-      TF_VAR_username: ${{ vars.POSTGRES_USER }}
       TF_VAR_db_edition: "ENTERPRISE"
       TF_LOG: DEBUG
 
@@ -62,34 +58,32 @@ jobs:
       - name: OpenTofu Init
         run: tofu init
 
-      # - name: OpenTofu Validate
-      #   run: tofu validate
+      - name: OpenTofu Validate
+        run: tofu validate
 
-      # - name: OpenTofu Plan
-      #   run: tofu plan -out=tfplan
+      - name: OpenTofu Plan
+        run: tofu plan -out=tfplan
 
-      # - name: Add OpenTofu Plan to Github Comments/Conversation
-      #   run: |
-      #     PR_NUMBER=${{ github.event.pull_request.number }}
-      #     # COMMENT=$(tofu show -json tfplan)
-      #     COMMENT=$(tofu show tfplan)
-      #     GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-      #     COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
+      - name: Add OpenTofu Plan to Github Comments/Conversation
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          # COMMENT=$(tofu show -json tfplan)
+          COMMENT=$(tofu show tfplan)
+          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
 
-      #     curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X POST $COMMENT_URL -d "{\"body\":\"$COMMENT\"}"
+          curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X POST $COMMENT_URL -d "{\"body\":\"$COMMENT\"}"
 
-      # - id: tofu_apply
-      #   name: OpenTofu Apply
-      #   run:  |
-      #     tofu apply -auto-approve tfplan
+      - id: tofu_apply
+        name: OpenTofu Apply
+        run:  |
+          tofu apply -auto-approve tfplan
 
       - name: Setup Liquibase
         uses: liquibase/setup-liquibase@v2
         with:
           version: '5.0.0'
           edition: 'community'
-          # version: '4.32.0'  # Requires 4.32.0 or higher
-          # edition: 'oss'
 
       - name: Install PostgreSQL Driver
         run: liquibase lpm add postgresql --global
@@ -97,14 +91,11 @@ jobs:
       - name: Set Liquibase Environmental Variables
         run: |
           echo "$(pwd)"
-          echo "PUBLIC_IP="$(tofu output -raw db_public_ip_address)"" >> ${GITHUB_ENV}
-
+          echo "DB_USERNAME="$(tofu output -raw db_username)"" >> ${GITHUB_ENV}
+          echo "DB_USER_PASSWORD="$(tofu output -raw db_userpassword)"" >> ${GITHUB_ENV}
+          echo "DB_DBNAME="$(tofu output -raw db_dbname)"" >> ${GITHUB_ENV}
           echo "CONNECTION_NAME="$(tofu output -raw db_connection_name)"" >> ${GITHUB_ENV}
-
-          echo "LB_CHANGELOG_FILE="liquibase/changelog/changelog.yaml"" >> ${GITHUB_ENV}
-
           echo "LB_CONN_PORT=9000" >> ${GITHUB_ENV}
-          echo "LB_CONN_URL="jdbc:postgresql://127.0.0.1:9000/${{ vars.APP_NAME }}-${{ inputs.environment }}-${{ vars.GCP_REGION }}-db"" >> ${GITHUB_ENV}
 
       - name: Setup Cloud Sql Proxy
         run: |
@@ -118,8 +109,8 @@ jobs:
         run: |
           echo "$(pwd)"
           liquibase update \
-            --changelog-file=${{ env.LB_CHANGELOG_FILE }}\
-            --url=${{ env.LB_CONN_URL }} \
+            --changelog-file="liquibase/changelog/changelog.yaml"\
+            --url="jdbc:postgresql://127.0.0.1:9000/${{ env.DB_DBNAME }}" \
             --log-level=INFO \
-            --username="${{ vars.POSTGRES_USER }}" \
-            --password="${{ secrets.POSTGRES_PASSWORD }}"
+            --username="${{ env.DB_USERNAME}}" \
+            --password="${{ env.DB_USER_PASSWORD }}"

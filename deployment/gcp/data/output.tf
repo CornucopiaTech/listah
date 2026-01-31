@@ -1,3 +1,26 @@
+output "db_dbname" {
+  value       = local.db_dbname
+  description = "Name of the database"
+  sensitive   = true
+}
+
+output "db_username" {
+  value       = local.db_username
+  description = "Username of the application user in the database"
+  sensitive   = true
+}
+
+output "db_userpassword" {
+  value       = module.gcp_cloud_sql.db_userpassword
+  description = "Result of randomly generated secret for the Db user password"
+  sensitive   = true
+}
+output "db_secret_userpassword_name" {
+  value       = module.gcp_cloud_sql.db_secret_userpassword_name
+  description = "Name of the secret that stores the Db user password"
+  sensitive   = true
+}
+
 output "db_client_cert" {
   value       = module.gcp_cloud_sql.db_client_cert
   description = "The client certs for the Cloud SQL instance"

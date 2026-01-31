@@ -5,6 +5,7 @@ resource "google_project_service" "iam_api" {
   disable_on_destroy = false
 }
 
+# Define service account and permissions
 resource "google_service_account" "app_service_account" {
   account_id                   = "${var.tags.project}-run-sa"
   display_name                 = "${var.tags.project} Service Account"
@@ -12,34 +13,34 @@ resource "google_service_account" "app_service_account" {
   create_ignore_already_exists = true
   depends_on                   = [google_project_service.iam_api]
 }
-
 resource "google_project_iam_member" "cloud_sql_admin_binding" {
   project = var.project_id
   role    = "roles/cloudsql.admin"
   member  = "serviceAccount:${google_service_account.app_service_account.email}"
 }
-
 resource "google_project_iam_member" "network_admin_binding" {
   project = var.project_id
   role    = "roles/compute.networkAdmin"
   member  = "serviceAccount:${google_service_account.app_service_account.email}"
 }
-
 resource "google_project_iam_member" "dns_admin" {
   project = var.project_id
   role    = "roles/dns.admin"
   member  = "serviceAccount:${google_service_account.app_service_account.email}"
 }
-
 resource "google_project_iam_member" "cloudsql_instanceUser" {
   project = var.project_id
   role    = "roles/cloudsql.instanceUser"
   member  = "serviceAccount:${google_service_account.app_service_account.email}"
 }
-
 resource "google_project_iam_member" "cloudsql_client" {
   project = var.project_id
   role    = "roles/cloudsql.client"
+  member  = "serviceAccount:${google_service_account.app_service_account.email}"
+}
+resource "google_project_iam_member" "secret-access" {
+  project = var.project_id
+  role    = "roles/secretmanager.secretAccessor"
   member  = "serviceAccount:${google_service_account.app_service_account.email}"
 }
 
@@ -57,7 +58,9 @@ resource "google_cloud_run_v2_service" "app" {
   ingress             = "INGRESS_TRAFFIC_ALL"
 
   scaling {
+    min_instance_count = 1
     max_instance_count = 100
+    scaling_mode       = "AUTOMATIC"
   }
 
   template {
@@ -105,8 +108,13 @@ resource "google_cloud_run_v2_service" "app" {
         }
       }
       env {
-        name  = "POSTGRES_PASSWORD"
-        value = var.db_password
+        name = "POSTGRES_PASSWORD"
+        value_source {
+          secret_key_ref {
+            secret  = var.db_password
+            version = "latest"
+          }
+        }
       }
       env {
         name  = "POSTGRES_USER"
@@ -118,15 +126,7 @@ resource "google_cloud_run_v2_service" "app" {
       }
       env {
         name  = "DATABASE_HOST"
-        value = var.db_private_ip_address
-      }
-      env {
-        name  = "DB_DNS_NAME"
-        value = var.db_dns_name
-      }
-      env {
-        name  = "DB_PRIVATE_IP"
-        value = var.db_private_ip_address
+        value = var.db_host
       }
       env {
         name  = "DATABASE_PORT"

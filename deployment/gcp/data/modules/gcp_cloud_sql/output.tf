@@ -1,3 +1,16 @@
+
+output "db_userpassword" {
+  value       = random_password.user_password_value.result
+  description = "Result of randomly generated secret for the Db user password"
+  sensitive   = true
+}
+
+output "db_secret_userpassword_name" {
+  value       = google_secret_manager_secret.user_password.name
+  description = "Name of the secret that stores the Db user password"
+  sensitive   = true
+}
+
 output "db_client_cert" {
   value       = google_sql_ssl_cert.client_cert.cert
   description = "The client certs for the Cloud SQL instance"

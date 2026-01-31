@@ -24,7 +24,7 @@ jobs:
       TF_VAR_aws_region: ${{ vars.AWS_REGION }}
       TF_VAR_gcp_region: ${{ vars.GCP_REGION }}
       TF_VAR_state_management_bucket_name: ${{ secrets.STATE_MANAGEMENT_BUCKET_NAME }}
-      TF_VAR_state_management_prefix: ${{ inputs.environment }}
+      TF_VAR_state_management_prefix: gcp/${{ inputs.environment }}
       TF_VAR_project: ${{ vars.APP_NAME }}
       TF_VAR_environment: ${{ inputs.environment }}
       TF_LOG: DEBUG
@@ -64,17 +64,6 @@ jobs:
       - name: OpenTofu Plan
         run: tofu plan -out=tfplan
 
-      - name: Add OpenTofu Plan to Github Comments/Conversation
-        run: |
-          PR_NUMBER=${{ github.event.pull_request.number }}
-          # COMMENT=$(tofu show -json tfplan)
-          COMMENT=$(tofu show tfplan)
-          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-          COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
-
-          curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X POST $COMMENT_URL -d "{\"body\":\"$COMMENT\"}"
-
       - id: tofu_apply
         name: OpenTofu Apply
         run: tofu apply -auto-approve tfplan
-      # ToDo: Pass output to github output

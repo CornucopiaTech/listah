@@ -1,5 +1,5 @@
-name: CICD Engine
-run-name: CICD Engine for ${{ vars.APP_NAME }} by @${{ github.actor }}
+name: GCP CICD Engine
+run-name: GCP CICD Engine for ${{ vars.APP_NAME }} by @${{ github.actor }}
 on:
   pull_request:
     branches: [ "main" ]
@@ -9,31 +9,31 @@ on:
 
 
 jobs:
-  # deploy-networking:
-  #   permissions:
-  #     contents: read
-  #     id-token: write # Required for Workload Identity Federation
-  #   uses: './.github/workflows/networking.yaml'
-  #   with:
-  #     environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
-  #   secrets: inherit
-
-  run_data_deploy:
-    # needs: [deploy-networking]
+  deploy_networking:
     permissions:
       contents: read
       id-token: write # Required for Workload Identity Federation
-    uses: './.github/workflows/data.yaml'
+    uses: './.github/workflows/gcp_networking.yaml'
     with:
       environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
     secrets: inherit
 
-  # deploy-app:
+  # run_data_deploy:
+  #   needs: [deploy_networking]
+  #   permissions:
+  #     contents: read
+  #     id-token: write # Required for Workload Identity Federation
+  #   uses: './.github/workflows/gcp_data.yaml'
+  #   with:
+  #     environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+  #   secrets: inherit
+
+  # deploy_app:
   #   needs: [run_data_deploy]
   #   permissions:
   #     contents: read
   #     id-token: write # Required for Workload Identity Federation
-  #   uses: './.github/workflows/app.yaml'
+  #   uses: './.github/workflows/gcp_app.yaml'
   #   with:
   #     environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
   #   secrets: inherit

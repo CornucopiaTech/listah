@@ -6,22 +6,9 @@ locals {
     region      = var.aws_region
     controller  = "opentofu-via-github-actions"
   }
-  default_gcp_tags = {
-    name        = "${var.project}-${var.environment}-${var.gcp_region}"
-    project     = var.project
-    environment = var.environment
-    region      = var.gcp_region
-    controller  = "opentofu-via-github-actions"
-  }
 }
 module "aws_vpc" {
   source = "./modules/aws_networking"
   tags   = local.default_aws_tags
 
-}
-
-module "gcp_vpc" {
-  source         = "./modules/gcp_networking"
-  tags           = local.default_gcp_tags
-  gcp_project_id = var.gcp_project_id
 }

@@ -5,17 +5,6 @@ variable "gcp_project_id" {
   sensitive   = true
 }
 
-variable "aws_account_id" {
-  type        = string
-  description = "AWS Account Id that owns/hosts the resources being deployed"
-  sensitive   = true
-}
-
-variable "aws_region" {
-  type        = string
-  description = "AWS Region used in deployment"
-}
-
 variable "gcp_region" {
   type        = string
   description = "GCP Region used in deployment"
