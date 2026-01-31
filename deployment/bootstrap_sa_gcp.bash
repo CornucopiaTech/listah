@@ -131,3 +131,5 @@ roles/owner
   Service Networking API
 Cloud Run Service Agent role:
 Compute Network User role
+Secret Manager Admin
+CloudKMS Admin
