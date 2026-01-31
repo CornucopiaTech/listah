@@ -75,12 +75,14 @@ jobs:
 
       - name: Retrieve Outputs from Api Job Using Tofu Output
         run: |
-          echo "pwd - $(pwd)"
+          echo -e "\n\nBegin api retrieval in $(pwd)"
           cd ${{ github.workspace }}/deployment/gcp/api
           tofu init
-          echo "$(tofu output -json api_urls)"
-          echo "API_URLS="$(tofu output -json api_urls)"" >> ${GITHUB_ENV}
-          echo "pwd - $(pwd)"
+          echo -e "\n\nApi Output Url - $(tofu output -json api_urls)"
+          api_uri="$(tofu output -json api_urls | jq '.[1]')"
+          echo -e "\n\nParsed Api Output Url - ${api_uri}"
+          echo "API_URL="${api_uri}"" >> ${GITHUB_ENV}
+          echo -e "\n\nEnd api retrieval in $(pwd)"
 
       # - name: Initialise OpenTofu
       #   run: tofu fmt -check
