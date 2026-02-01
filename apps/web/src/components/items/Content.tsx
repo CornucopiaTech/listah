@@ -24,7 +24,7 @@ import Divider from '@mui/material/Divider';
 
 import { useBoundStore } from '@/lib/store/boundStore';
 import type { IItem, IItemsSearch } from '@/lib/model/Items';
-import { ZItems, } from '@/lib/model/Items';
+import { ZItemResponse } from '@/lib/model/Items';
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
 import Loading from '@/components/common/Loading';
 import { itemGroupOptions } from '@/lib/helper/querying';
@@ -50,7 +50,7 @@ export default function Content(): ReactNode {
   if (isError) { return <Error message={error.message} /> ;}
 
   try{
-    ZItems.parse(data);
+    ZItemResponse.parse(data);
   } catch(error){
     if(error instanceof z.ZodError){
       console.info("Zod issue - ", error.issues);
@@ -62,7 +62,7 @@ export default function Content(): ReactNode {
   }
 
 
-  const items: IItem[] = data.items ? data.items : [];
+  const items: IItem[] = data && data.items ? data.items : [];
 
   if (!items || items.length == 0) {
     return (

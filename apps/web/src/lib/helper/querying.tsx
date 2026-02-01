@@ -4,6 +4,8 @@ import {
 } from '@tanstack/react-query';
 
 
+import { ZItemsSearch } from '@/lib/model/Items';
+import type { IItemsSearch } from '@/lib/model/Items';
 import { getItem, getCategory, getTag } from '@/lib/helper/fetchers';
 import { validateItemsUrlSearch } from '@/lib/helper/validator';
 import { DefaultQueryParams, } from '@/lib/helper/defaults';
@@ -11,7 +13,7 @@ import { DefaultQueryParams, } from '@/lib/helper/defaults';
 
 
 
-export function itemGroupOptions(opts: ZItemsSearch) {
+export function itemGroupOptions(opts: IItemsSearch) {
   return queryOptions({
     queryKey: ["item", opts],
     queryFn: () => getItem(opts),

@@ -45,12 +45,11 @@ export interface IItem extends z.infer<typeof ZItem>{ }; // eslint-disable-line 
 
 
 
-export const ZItems = z.object({
+export const ZItemRequest = z.object({
   items: z.array(ZItem).catch([]),
   userId: z.string().catch(''),
   category: z.array(z.string()).catch([]),
   tag: z.array(z.string()).catch([]),
-
 
   pageSize: z.number().catch(10),
   page: z.number().catch(1),
@@ -62,7 +61,26 @@ export const ZItems = z.object({
   fromDate: z.string().catch('1970-01-01'),
   toDate: z.string().catch('2099-12-31'),
 });
-export interface ZItems extends z.infer<typeof ZItems>{ }; // eslint-disable-line @typescript-eslint/no-empty-object-type
+export interface IItemRequest extends z.infer<typeof ZItemRequest>{ }; // eslint-disable-line @typescript-eslint/no-empty-object-type
+
+
+export const ZItemResponse = z.object({
+  items: z.array(ZItem).catch([]),
+  userId: z.string().catch(''),
+  category: z.array(z.string()).catch([]),
+  tag: z.array(z.string()).catch([]),
+
+  pageSize: z.number().catch(10),
+  page: z.number().catch(1),
+  sort: z.string().catch('asc'),
+
+  categoryFilter: z.array(z.string()).catch([]),
+  tagFilter: z.array(z.string()).catch([]),
+  searchQuery: z.string().catch(''),
+  fromDate: z.string().catch('1970-01-01'),
+  toDate: z.string().catch('2099-12-31'),
+});
+export interface IItemResponse extends z.infer<typeof ZItemResponse>{ }; // eslint-disable-line @typescript-eslint/no-empty-object-type
 
 
 
