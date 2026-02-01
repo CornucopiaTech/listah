@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import Box from '@mui/material/Box';
 
 
-export function SpaceBetweenBox(props): ReactNode {
+export function SpaceBetweenBox(props: { children: ReactNode, sx: any}): ReactNode {
   return (
     <Box
       sx={{
@@ -17,7 +17,7 @@ export function SpaceBetweenBox(props): ReactNode {
 }
 
 
-export function FlexEndBox(props): ReactNode {
+export function FlexEndBox(props: { children: ReactNode, sx: any}): ReactNode {
   return (
     <Box
       sx={{
@@ -30,7 +30,7 @@ export function FlexEndBox(props): ReactNode {
   );
 }
 
-export function FlexStartBox(props): ReactNode {
+export function FlexStartBox(props: { children: ReactNode, sx: any}): ReactNode {
   return (
     <Box
       sx={{
@@ -44,7 +44,7 @@ export function FlexStartBox(props): ReactNode {
 }
 
 
-export function SpaceAroundBox(props): ReactNode {
+export function SpaceAroundBox(props: { children: ReactNode, sx: any}): ReactNode {
   return (
     <Box
       sx={{
@@ -58,7 +58,7 @@ export function SpaceAroundBox(props): ReactNode {
 }
 
 
-export function CentredBox(props): ReactNode {
+export function CentredBox(props: { children: ReactNode, sx: any}): ReactNode {
   return (
     <Box
       sx={{
@@ -71,14 +71,14 @@ export function CentredBox(props): ReactNode {
   );
 }
 
-export function RowGridBox(props): ReactNode {
+export function RowGridBox(props: { children: ReactNode, sx: any, numChildren: number}): ReactNode {
   return (
     <Box sx={{ ...props.sx, display: 'grid', gridTemplateRows: `repeat(${props.numChildren}, 1fr)` }}>
      {props.children}
     </Box>
   );
 }
-export function ColumnGridBox(props): ReactNode {
+export function ColumnGridBox(props: { children: ReactNode, sx: any, numChildren: number}): ReactNode {
   return (
     <Box sx={{ ...props.sx, display: 'grid', gridTemplateColumns: `repeat(${props.numChildren}, 1fr)` }}>
      {props.children}

@@ -1,12 +1,13 @@
 
 import { ZItems } from '@/lib/model/Items';
-import type { IItem, } from '@/lib/model/Items';
-
+import type { IItem, IItems, IItemsSearch } from '@/lib/model/Items';
+import type { ICategoryResponse } from "@/lib/model/categories"
 
 
 export async function postItem(item: IItem) {
   console.info("In postItem - item", item);
-  const url = `/api/${process.env.SERVER_STATE.ITEMS_UPDATE}`;
+  const url = `/api/updateItem`;
+  // const url = `/api/${process.env.SERVER_STATE.ITEMS_UPDATE}`;
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify({ items: [item] }),
@@ -20,8 +21,9 @@ export async function postItem(item: IItem) {
 }
 
 
-export async function getItem(opts: ZItemsSearch): Promise<IItems | void> {
-  const url = `/api/${process.env.SERVER_STATE.ITEMS_READ}`;
+export async function getItem(opts: IItemsSearch): Promise<IItems | void> {
+  const url = `/api/readItem`;
+  // const url = `/api/${process.env.SERVER_STATE.ITEMS_READ}`;
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify(opts),
@@ -39,8 +41,9 @@ export async function getItem(opts: ZItemsSearch): Promise<IItems | void> {
 }
 
 
-export async function getTag(userId: string): Promise<IItems | void> {
-  const url = `/api/${process.env.SERVER_STATE.TAG_READ}`;
+export async function getTag(userId: string): Promise<string[] | void> {
+  const url = `/api/readTag`;
+  // const url = `/api/${process.env.SERVER_STATE.TAG_READ}`;
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify({ userId }),
@@ -55,8 +58,9 @@ export async function getTag(userId: string): Promise<IItems | void> {
 }
 
 
-export async function getCategory(userId: string): Promise<ZItems | void> {
-  const url = `/api/${process.env.SERVER_STATE.CATEGORY_READ}`;
+export async function getCategory(userId: string): Promise<ICategoryResponse | void> {
+  const url = `/api/readCategory`;
+  // const url = `/api/${process.env.SERVER_STATE.CATEGORY_READ}`;
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify({ userId: userId }),

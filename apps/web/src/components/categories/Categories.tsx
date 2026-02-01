@@ -34,17 +34,17 @@ export default function Categories(): ReactNode {
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const navigate = useNavigate();
 
-
+  const uId = query && query.userId ? query.userId : ""
   const {
     isPending, isError, data, error
-  }: UseQueryResult<string[]> = useQuery(categoryGroupOptions(query.userId));
+  }: UseQueryResult<string[] | void> = useQuery(categoryGroupOptions(uId));
 
   // ToDo: Explore using middleware to set the userId
 
   if (isPending) { return <Loading />; }
   if (isError) { return <Error message={error.message} />; }
 
-  const category = data.category ? data.category : [];
+  const category = data && data.category ? data.category : [];
 
 
   function handleCategoryClick(categoryName: string) {

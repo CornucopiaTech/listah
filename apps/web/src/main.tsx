@@ -17,22 +17,12 @@ import Loading from '@/components/common/Loading';
 import NotFound from '@/components/common/NotFound';
 import { Error } from '@/components/common/Error';
 import * as theme from '@/lib/styles/theme';
-
+import { ConfigContext } from '@/lib/context/configContext.tsx';
+import type { EnvConfig } from "@/lib/model/appConfig";
 
 
 enableMapSet();
 export const queryClient = new QueryClient();
-
-
-const config = await fetch('/config.json').then(r => r.json());
-console.info("config", config);
-
-console.info("import.meta", import.meta.env)
-console.info("process.env", process.env)
-
-if (!process.env.AUTH_CONFIG.CLERK_KEY) {
-  throw new Error('Add your Clerk Publishable Key to the .env file')
-}
 
 
 const router = createRouter({
@@ -60,16 +50,28 @@ declare module '@tanstack/react-router' {
   }
 }
 
+let config: EnvConfig;
+fetch('/config.json').then(
+  r => r.json()
+).then(
+  r => {
+    config = r;
+  }
+).catch(() => (config = {} as EnvConfig))
+console.info("config after fetching", config);
 
 function Wrapper( { children }: { children: React.ReactNode } ) {
+
   return (
+    <ConfigContext value={config}>
     <ThemeProvider theme={theme.materialTheme}>
-      <ClerkProvider publishableKey={process.env.AUTH_CONFIG.CLERK_KEY}>
+      <ClerkProvider publishableKey={config.authKey}>
         <QueryClientProvider client={queryClient}>
           {children}
         </QueryClientProvider>
       </ClerkProvider>
     </ThemeProvider>
+    </ConfigContext>
   )
 };
 
