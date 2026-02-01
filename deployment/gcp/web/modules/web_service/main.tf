@@ -111,7 +111,7 @@ resource "google_cloud_run_v2_service" "app" {
         name = "API_HOST_URL_ADDRESS"
         value_source {
           secret_key_ref {
-            secret  = var.api_urls.0
+            secret  = var.api_url
             version = "latest"
           }
         }

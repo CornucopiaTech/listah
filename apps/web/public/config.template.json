@@ -1,0 +1,10 @@
+{
+  "apiName": "__API_NAME__",
+  "apiVersion": "__API_VERSION__",
+  "apiUrl": "__API_URL__",
+  "apiReadItem": "__API_URL__/listah.v__API_VERSION__.ItemService/Read",
+  "apiUpdateItem": "__API_URL__/listah.v__API_VERSION__.ItemService/Update",
+  "apiReadCategory": "__API_URL__/listah.v__API_VERSION__.CategoryService/Read",
+  "apiReadTag": "__API_URL__/listah.v__API_VERSION__.TagService/Read",
+  "authKey": "__AUTH_KEY__"
+}

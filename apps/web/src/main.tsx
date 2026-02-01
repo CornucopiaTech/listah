@@ -24,9 +24,16 @@ enableMapSet();
 export const queryClient = new QueryClient();
 
 
+const config = await fetch('/config.json').then(r => r.json());
+console.info("config", config);
+
+console.info("import.meta", import.meta.env)
+console.info("process.env", process.env)
+
 if (!process.env.AUTH_CONFIG.CLERK_KEY) {
   throw new Error('Add your Clerk Publishable Key to the .env file')
 }
+
 
 const router = createRouter({
   routeTree,

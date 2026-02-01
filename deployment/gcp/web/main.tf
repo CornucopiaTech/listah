@@ -36,7 +36,7 @@ data "terraform_remote_state" "api" {
 
 module "web_service" {
   source      = "./modules/web_service"
-  api_urls    = data.terraform_remote_state.api.outputs.api_urls
+  api_url    = data.terraform_remote_state.api.outputs.api_urls[1]
   api_version = "1"
   vpc_id      = data.terraform_remote_state.networking.outputs.gcp_vpc_id
   subnet_id   = data.terraform_remote_state.networking.outputs.gcp_private_subnet_id

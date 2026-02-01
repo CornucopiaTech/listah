@@ -73,48 +73,48 @@ jobs:
           echo "REPO_URI="$(tofu output -raw artifact_repo_uri)"" >> ${GITHUB_ENV}
           echo "pwd - $(pwd)"
 
-      - name: Retrieve Outputs from Api Job Using Tofu Output
-        run: |
-          echo -e "\n\nBegin api retrieval in $(pwd)"
-          cd ${{ github.workspace }}/deployment/gcp/api
-          tofu init
-          echo -e "\n\nApi Output Url - $(tofu output -json api_urls)"
-          api_uri="$(tofu output -json api_urls | jq '.[1]')"
-          echo -e "\n\nParsed Api Output Url - ${api_uri}"
-          echo "API_URL="${api_uri}"" >> ${GITHUB_ENV}
-          echo -e "\n\nEnd api retrieval in $(pwd)"
+      # - name: Retrieve Outputs from Api Job Using Tofu Output
+      #   run: |
+      #     echo -e "\n\nBegin api retrieval in $(pwd)"
+      #     cd ${{ github.workspace }}/deployment/gcp/api
+      #     tofu init
+      #     echo -e "\n\nApi Output Url - $(tofu output -json api_urls)"
+      #     api_uri="$(tofu output -json api_urls | jq '.[1]')"
+      #     echo -e "\n\nParsed Api Output Url - ${api_uri}"
+      #     echo "API_URL="${api_uri}"" >> ${GITHUB_ENV}
+      #     echo -e "\n\nEnd api retrieval in $(pwd)"
 
-      # - name: Initialise OpenTofu
-      #   run: tofu fmt -check
+      - name: Initialise OpenTofu
+        run: tofu fmt -check
 
-      # - name: OpenTofu Init
-      #   run: tofu init
+      - name: OpenTofu Init
+        run: tofu init
 
-      # - name: OpenTofu Validate
-      #   run: tofu validate
+      - name: OpenTofu Validate
+        run: tofu validate
 
-      # - name: Build, Tag, and Push Docker Image to Container Repository Using Tofu Output
-      #   run: |-
-      #     echo "pwd - $(pwd)"
-      #     echo "repo_uri - ${{ env.REPO_URI }}"
-      #     echo "image_name - ${{ env.IMAGE_NAME_TAG }}"
-      #     image_full_name="${{ env.REPO_URI }}/${{ env.IMAGE_NAME_TAG }}"
-      #     echo "IMAGE_FULL_NAME="${image_full_name}"" >> ${GITHUB_ENV}
-      #     echo "image_full_name - ${image_full_name}"
+      - name: Build, Tag, and Push Docker Image to Container Repository Using Tofu Output
+        run: |-
+          echo "pwd - $(pwd)"
+          echo "repo_uri - ${{ env.REPO_URI }}"
+          echo "image_name - ${{ env.IMAGE_NAME_TAG }}"
+          image_full_name="${{ env.REPO_URI }}/${{ env.IMAGE_NAME_TAG }}"
+          echo "IMAGE_FULL_NAME="${image_full_name}"" >> ${GITHUB_ENV}
+          echo "image_full_name - ${image_full_name}"
 
-      #     cd ${{ github.workspace }}/apps/api
-      #     echo "${{ env.DB_CERTS }}" > ./db_ca.crt
-      #     docker build . -t "${image_full_name}"
-      #     docker push "${image_full_name}"
-      #     echo "pwd - $(pwd)"
+          cd ${{ github.workspace }}/apps/api
+          echo "${{ env.DB_CERTS }}" > ./db_ca.crt
+          docker build . -t "${image_full_name}"
+          docker push "${image_full_name}"
+          echo "pwd - $(pwd)"
 
-      # - name: OpenTofu Plan
-      #   run:
-      #     tofu plan -out=tfplan
-      #   env:
-      #     TF_VAR_image_tag: ${{ env.IMAGE_FULL_NAME }}
+      - name: OpenTofu Plan
+        run:
+          tofu plan -out=tfplan
+        env:
+          TF_VAR_image_tag: ${{ env.IMAGE_FULL_NAME }}
 
-      # - name: OpenTofu Apply
-      #   run: tofu apply -auto-approve tfplan
-      #   env:
-      #     TF_VAR_image_tag: ${{ env.IMAGE_FULL_NAME }}
+      - name: OpenTofu Apply
+        run: tofu apply -auto-approve tfplan
+        env:
+          TF_VAR_image_tag: ${{ env.IMAGE_FULL_NAME }}
