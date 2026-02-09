@@ -17,8 +17,8 @@ import Loading from '@/components/common/Loading';
 import NotFound from '@/components/common/NotFound';
 import { Error } from '@/components/common/Error';
 import * as theme from '@/lib/styles/theme';
-import { ConfigContext } from '@/lib/context/configContext.tsx';
-import type { EnvConfig } from "@/lib/model/appConfig";
+import { ConfigContext } from '@/lib/context/configContext';
+import type { IEnvConfig } from "@/lib/model/common";
 
 
 enableMapSet();
@@ -50,14 +50,14 @@ declare module '@tanstack/react-router' {
   }
 }
 
-let config: EnvConfig;
+let config: IEnvConfig = {} as IEnvConfig;
 fetch('/config.json').then(
   r => r.json()
 ).then(
   r => {
     config = r;
   }
-).catch(() => (config = {} as EnvConfig))
+).catch(() => (config = {} as IEnvConfig))
 console.info("config after fetching", config);
 
 function Wrapper( { children }: { children: React.ReactNode } ) {

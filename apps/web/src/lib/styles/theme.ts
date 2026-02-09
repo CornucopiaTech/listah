@@ -1,30 +1,48 @@
 import { createTheme as createMaterialTheme } from '@mui/material/styles';
-import { red, } from '@mui/material/colors';
-import { createTheme as createMantineTheme } from '@mantine/core';
 
-const theme = {
+import { red, } from '@mui/material/colors';
+
+import type { AppTheme } from '@/lib/model/common';
+
+
+
+const theme: AppTheme = {
   palette: {
     primary: {
       // main: 'rgba(21, 49, 49, 0.03)', //Deep Green
       main: '#153131', //Deep Green
       // main: blueGrey[50],
       contrastText: '#153131',
+      light: '#4f7b7b',
+      dark: '#0b1f1f',
     },
     secondary: {
       main: '#FF784F', //Bright Orange
+      light: '#4f7b7b',
+      dark: '#0b1f1f',
+      contrastText: '#153131',
     },
     tertiary: {
       main: '#220C10', //Deep Brown
+      // light: '#4f7b7b',
+      // dark: '#0b1f1f',
     },
     error: {
       main: red.A400,
+      light: '#4f7b7b',
+      dark: '#0b1f1f',
+      contrastText: '#153131',
     },
     nav: {
-      main: 'rgba(21, 49, 49, 0.05)'
+      main: 'rgba(21, 49, 49, 0.05)',
+      // light: '#4f7b7b',
+      // dark: '#0b1f1f',
     },
     tagChip: {
       main: '#153131',
       contrastText: '#f9fafaff',
+      // light: '#4f7b7b',
+      // dark: '#0b1f1f',
     },
     categoryChip: {
       main: '#e83904ff',
@@ -37,26 +55,6 @@ const theme = {
   }
 }
 
-// const theme = {
-//   palette: {
-//     primary: {
-//       // main: 'rgba(21, 49, 49, 0.03)', //'#153131', //Deep Green
-//       // main: '#153131', //Deep Green
-//       main: teal[50],
-//       contrastText: '#E2FCEF',
-//     },
-//     secondary: {
-//       main: '#FF784F', //Bright Orange
-//     },
-//     tertiary: {
-//       main: '#220C10', //Deep Brown
-//     },
-//     error: {
-//       main: red.A400,
-//     },
-//   }
-// }
 
 // Create a theme instance.
 export const materialTheme = createMaterialTheme(theme);
-export const mantineTheme = createMantineTheme(theme);

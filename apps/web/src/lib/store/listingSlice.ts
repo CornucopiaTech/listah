@@ -1,4 +1,6 @@
 
+
+
 import type { IListingState } from '@/lib/model/Items';
 
 
@@ -13,14 +15,14 @@ export const listingInitState: IListingState = {
   tagModal: false,
   displayId: '',
   searchQuery: '',
-  checkedTag: new Set([]),
-  checkedCategory: new Set([]),
+  checkedTag: new Set<string>([]),
+  checkedCategory: new Set<string>([]),
   fromDate: '',
   toDate: '',
 }
 
 
-export const createListingSlice = (set) => ({
+export const createListingSlice = (set: any) => ({
   ...listingInitState,
   setMessage: (message: string) => set(() => ({ message })),
   setDrawer: (drawer: boolean) => set(() => ({ drawer })),
@@ -36,6 +38,7 @@ export const createListingSlice = (set) => ({
   setToDate: (toDate: string) => set(() => ({ toDate })),
   reset: () => set(() => ({ ...listingInitState })),
 });
+
 
 
 

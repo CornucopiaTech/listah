@@ -5,8 +5,9 @@ import {
 } from "react";
 import type {
   ChangeEvent,
-  MouseEvent,
+  // MouseEvent,
   ReactNode,
+  FormEvent,
 } from 'react';
 import {
   useForm,
@@ -41,6 +42,7 @@ import { useBoundStore } from '@/lib/store/boundStore';
 import type {
   IItem,
   IItemsSearch,
+  IItemResponse,
 } from "@/lib/model/Items";
 import {
   ZItem
@@ -54,10 +56,12 @@ import { itemGroupOptions } from '@/lib/helper/querying';
 import { Error } from '@/components/common/Alerts';
 import { postItem } from "@/lib/helper/fetchers";
 import { DEFAULT_ITEM } from "@/lib/helper/defaults";
+import type { AppTheme } from '@/lib/model/common';
+
 
 
 export default function ItemModal(): ReactNode {
-  const theme: object = useTheme();
+  const theme: AppTheme = useTheme();
   const store = useBoundStore((state) => state);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const queryClient = useQueryClient();
@@ -67,7 +71,7 @@ export default function ItemModal(): ReactNode {
 
   const {
     isPending, isError, data, error
-  }: UseQueryResult<string[]> = useQuery(itemGroupOptions(query));
+  }: UseQueryResult<IItemResponse> = useQuery(itemGroupOptions(query));
 
 
   // Define invalidating  mutation
@@ -112,7 +116,7 @@ export default function ItemModal(): ReactNode {
   });
 
 
-  function handleSubmit(e: MouseEvent<HTMLButtonElement>){
+  function handleSubmit(e: FormEvent<HTMLFormElement>){
     e.preventDefault()
     e.stopPropagation()
     form.handleSubmit()
@@ -247,7 +251,7 @@ export default function ItemModal(): ReactNode {
           <form.Subscribe
             selector={(state) => [state.canSubmit, state.isSubmitting]}
             children={([canSubmit, isSubmitting]) => (
-              <SpaceBetweenBox>
+              <SpaceBetweenBox sx={{}}>
                 <Button
                   type="submit"
                   variant="contained"

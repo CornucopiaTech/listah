@@ -29,7 +29,9 @@ import {  Success } from '@/components/common/Alerts';
 
 
 
-export default function Header({ handleAddItem }: { handleAddItem: (item: str) => void}): ReactNode {
+export default function Header(
+  { handleAddItem }:{ handleAddItem: (item: string) => void}
+): ReactNode {
   const store = useBoundStore((state) => state);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const navigate = useNavigate();

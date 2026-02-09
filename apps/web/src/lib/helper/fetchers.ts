@@ -1,7 +1,8 @@
 
 
-import type { IItem, IItems, IItemsSearch } from '@/lib/model/Items';
-import type { ICategoryResponse } from "@/lib/model/categories"
+import type { IItem, IItemResponse, IItemsSearch } from '@/lib/model/Items';
+import type { ICategoryResponse } from "@/lib/model/categories";
+import type { ITagResponse } from "@/lib/model/tags";
 
 
 export async function postItem(item: IItem) {
@@ -21,7 +22,7 @@ export async function postItem(item: IItem) {
 }
 
 
-export async function getItem(opts: IItemsSearch): Promise<IItems | void> {
+export async function getItem(opts: IItemsSearch): Promise<IItemResponse> {
   const url = `/api/readItem`;
   // const url = `/api/${process.env.SERVER_STATE.ITEMS_READ}`;
   const req = new Request(url, {
@@ -41,7 +42,7 @@ export async function getItem(opts: IItemsSearch): Promise<IItems | void> {
 }
 
 
-export async function getTag(userId: string): Promise<string[] | void> {
+export async function getTag(userId: string): Promise<ITagResponse> {
   const url = `/api/readTag`;
   // const url = `/api/${process.env.SERVER_STATE.TAG_READ}`;
   const req = new Request(url, {
@@ -58,7 +59,7 @@ export async function getTag(userId: string): Promise<string[] | void> {
 }
 
 
-export async function getCategory(userId: string): Promise<ICategoryResponse | void> {
+export async function getCategory(userId: string): Promise<ICategoryResponse> {
   const url = `/api/readCategory`;
   // const url = `/api/${process.env.SERVER_STATE.CATEGORY_READ}`;
   const req = new Request(url, {

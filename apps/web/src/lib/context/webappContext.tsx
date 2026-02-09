@@ -1,5 +1,5 @@
 
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 
 
 
@@ -12,3 +12,4 @@ export const initalWebappContext: {
   AppBarHeight: '64px',
 };
 export const WebAppContext = createContext(initalWebappContext);
+export const useWebAppContext = () => useContext(WebAppContext);

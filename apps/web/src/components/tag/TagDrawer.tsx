@@ -1,9 +1,15 @@
 
 import {
-  Fragment,
   useContext,
-  type ReactNode,
+  // Suspense,
+  Fragment,
 } from 'react';
+import type {
+  ReactNode,
+  ChangeEvent,
+  // MouseEvent,
+} from 'react';
+
 import {
   useQuery,
   type UseQueryResult,
@@ -22,7 +28,7 @@ import Loading from '@/components/common/Loading';
 import { Error } from '@/components/common/Error';
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
 import { tagGroupOptions } from '@/lib/helper/querying';
-
+import type { ITagResponse } from "@/lib/model/tags";
 
 
 export default function TagDrawer(): ReactNode {
@@ -34,7 +40,7 @@ export default function TagDrawer(): ReactNode {
   const textPaddingLeft: number = 2;
   const textPaddingBottom: number = 1;
 
-  function handleTagCheck(e, tagName: string) {
+  function handleTagCheck(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, tagName: string) {
     e.stopPropagation();
     const newChecked: Set<string> = store.checkedTag.union(new Set([tagName]))
     if (store.checkedTag.has(tagName)) {
@@ -43,12 +49,14 @@ export default function TagDrawer(): ReactNode {
     store.setCheckedTag(newChecked);
   }
 
+  const uId = query && query.userId ? query.userId : "";
+
   const {
     isPending,
     isError,
     data,
     error
-  }: UseQueryResult<string[]> = useQuery(tagGroupOptions(query.userId));
+  }: UseQueryResult<ITagResponse> = useQuery(tagGroupOptions(uId));
 
 
   if (isPending) { return <Loading />; }
@@ -62,7 +70,7 @@ export default function TagDrawer(): ReactNode {
 
   return (
     <Fragment>
-      <Typography variant="body" component="div" sx={typoSx}> Tag </Typography>
+      <Typography variant="body1" component="div" sx={typoSx}> Tag </Typography>
       < Virtuoso
         style={{ height: '35vh' }}
         data={tag}

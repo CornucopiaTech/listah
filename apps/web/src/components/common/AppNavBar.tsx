@@ -11,11 +11,11 @@ import { SignedIn, SignedOut, SignInButton, UserButton} from '@clerk/clerk-react
 
 
 import { AppBarHeight } from '@/lib/model/appNavBarModel';
-
+import type { AppTheme } from '@/lib/model/common';
 
 
 export default function AppNavBar() {
-  const theme: object = useTheme();
+  const theme: AppTheme = useTheme();
   const drawerinfo: { name: string, href: string, tip: string }[] = [
     { name: 'Listah', href: '/', tip: 'Go to Listah home' },
     { name: 'Items', href: '/items/', tip: 'View all items' },

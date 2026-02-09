@@ -23,7 +23,11 @@ import Divider from '@mui/material/Divider';
 
 
 import { useBoundStore } from '@/lib/store/boundStore';
-import type { IItem, IItemsSearch } from '@/lib/model/Items';
+import type {
+  IItem,
+  IItemsSearch,
+  IItemResponse,
+} from "@/lib/model/Items";
 import { ZItemResponse } from '@/lib/model/Items';
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
 import Loading from '@/components/common/Loading';
@@ -36,15 +40,17 @@ import {
 import Header from "@/components/items/Header";
 import TableFooter from "@/components/items/Footer";
 import ItemModal from "@/components/common/ItemModal";
+import type { AppTheme } from '@/lib/model/common';
+
 
 
 export default function Content(): ReactNode {
-  const theme: object = useTheme();
+  const theme: AppTheme = useTheme();
   const store = useBoundStore((state) => state);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const {
       isPending, isError, data, error
-  }: UseQueryResult<string[]> = useQuery(itemGroupOptions(query));
+  }: UseQueryResult<IItemResponse> = useQuery(itemGroupOptions(query));
 
   if (isPending) { return <Loading />; }
   if (isError) { return <Error message={error.message} /> ;}
@@ -82,6 +88,7 @@ export default function Content(): ReactNode {
   function eachItem(item: IItem): ReactNode {
     let dis: string = item.summary? item.summary : "";
     dis = dis.length > MAX_ITEM_SUMMARY_LENGTH ? dis.slice(0, MAX_ITEM_SUMMARY_LENGTH) + "..." : dis;
+    const itemId: string = item.id ? item.id : "";
     return (
       <Fragment>
         <Grid container key={item.id}
@@ -92,9 +99,9 @@ export default function Content(): ReactNode {
                 },
                 p: 1,
               }}
-              onClick={() => { handleItemclick (item.id); }}>
+          onClick={() => { handleItemclick(itemId); }}>
           <Grid size={7} >
-            <Typography variant="body" sx={{
+            <Typography variant="body1" sx={{
               alignContent: 'center',
               display: 'flex', width: '100%', flexWrap: 'wrap',
             }}>
@@ -139,7 +146,6 @@ export default function Content(): ReactNode {
         < Header handleAddItem={handleItemclick}/>
       </Box>
       {/* <Icon icon="material-symbols:arrow-downward" width="24" height="24" /> */}
-      {/* {store.itemModal && <Detail />} */}
       {store.modal && <ItemModal />}
       <Virtuoso key="data-content"
         style={{

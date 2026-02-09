@@ -1,10 +1,13 @@
+
 import {
+  useContext,
   Suspense,
   Fragment,
-  useContext,
 } from 'react';
 import type {
   ReactNode,
+  ChangeEvent,
+  // MouseEvent,
 } from 'react';
 
 import Typography from '@mui/material/Typography';
@@ -24,6 +27,8 @@ import { useBoundStore } from '@/lib/store/boundStore';
 import type {  IItemsSearch } from '@/lib/model/Items';
 import Loading from '@/components/common/Loading';
 import { Error } from '@/components/common/Error';
+import type { ICategoryResponse } from "@/lib/model/categories";
+
 
 export default function CategoryDrawer(): ReactNode {
   const store = useBoundStore((state) => state);
@@ -34,7 +39,7 @@ export default function CategoryDrawer(): ReactNode {
   const textPaddingLeft: number = 2;
   const textPaddingBottom: number = 1;
 
-  function handleCategoryCheck(e, categoryName: string) {
+  function handleCategoryCheck(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, categoryName: string) {
     e.stopPropagation();
     const newChecked: Set<string> = store.checkedCategory.union(new Set([categoryName]));
 
@@ -45,10 +50,11 @@ export default function CategoryDrawer(): ReactNode {
     store.setCheckedCategory(newChecked);
   }
 
+  const uId = query && query.userId ? query.userId : "";
 
   const {
     isPending, isError, data, error
-  }: UseQueryResult<string[]> = useQuery(categoryGroupOptions(query.userId));
+  }: UseQueryResult<ICategoryResponse> = useQuery(categoryGroupOptions(uId));
 
 
   if (isPending) { return <Loading />; }
@@ -60,7 +66,7 @@ export default function CategoryDrawer(): ReactNode {
   return (
     <Suspense fallback={<Loading />}>
       <Fragment>
-        <Typography variant="body" component="div" sx={{ flexGrow: 1, textAlign: 'left', pl: textPaddingLeft, pb: textPaddingBottom }}>
+        <Typography variant="body1" component="div" sx={{ flexGrow: 1, textAlign: 'left', pl: textPaddingLeft, pb: textPaddingBottom }}>
           Category
         </Typography>
         < Virtuoso

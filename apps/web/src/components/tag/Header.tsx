@@ -1,9 +1,13 @@
+
 import {
   useContext,
   useEffect,
+  // Fragment,
 } from 'react';
 import type {
   ReactNode,
+  // ChangeEvent,
+  // MouseEvent,
 } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -29,7 +33,7 @@ import { Success } from '@/components/common/Alerts';
 
 
 
-export default function Header({ handleAddItem }: { handleAddItem: (item: str) => void}): ReactNode {
+export default function Header({ handleAddItem }: { handleAddItem: (item: string) => void}): ReactNode {
   const store = useBoundStore((state) => state);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const navigate = useNavigate();

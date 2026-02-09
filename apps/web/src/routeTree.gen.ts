@@ -17,6 +17,7 @@ import { Route as TagsIndexRouteImport } from './routes/tags/index'
 import { Route as ItemsIndexRouteImport } from './routes/items/index'
 import { Route as CategoriesIndexRouteImport } from './routes/categories/index'
 import { Route as TagsTagFilterRouteImport } from './routes/tags/$tagFilter'
+import { Route as CategoriesChar123CategoryFilterChar125RouteImport } from './routes/categories/{-$categoryFilter}'
 import { Route as CategoriesCategoryFilterRouteImport } from './routes/categories/$categoryFilter'
 
 const TagsRouteRoute = TagsRouteRouteImport.update({
@@ -59,6 +60,12 @@ const TagsTagFilterRoute = TagsTagFilterRouteImport.update({
   path: '/$tagFilter',
   getParentRoute: () => TagsRouteRoute,
 } as any)
+const CategoriesChar123CategoryFilterChar125Route =
+  CategoriesChar123CategoryFilterChar125RouteImport.update({
+    id: '/{-$categoryFilter}',
+    path: '/{-$categoryFilter}',
+    getParentRoute: () => CategoriesRouteRoute,
+  } as any)
 const CategoriesCategoryFilterRoute =
   CategoriesCategoryFilterRouteImport.update({
     id: '/$categoryFilter',
@@ -72,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/items': typeof ItemsRouteRouteWithChildren
   '/tags': typeof TagsRouteRouteWithChildren
   '/categories/$categoryFilter': typeof CategoriesCategoryFilterRoute
+  '/categories/{-$categoryFilter}': typeof CategoriesChar123CategoryFilterChar125Route
   '/tags/$tagFilter': typeof TagsTagFilterRoute
   '/categories/': typeof CategoriesIndexRoute
   '/items/': typeof ItemsIndexRoute
@@ -80,6 +88,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/categories/$categoryFilter': typeof CategoriesCategoryFilterRoute
+  '/categories/{-$categoryFilter}': typeof CategoriesChar123CategoryFilterChar125Route
   '/tags/$tagFilter': typeof TagsTagFilterRoute
   '/categories': typeof CategoriesIndexRoute
   '/items': typeof ItemsIndexRoute
@@ -92,6 +101,7 @@ export interface FileRoutesById {
   '/items': typeof ItemsRouteRouteWithChildren
   '/tags': typeof TagsRouteRouteWithChildren
   '/categories/$categoryFilter': typeof CategoriesCategoryFilterRoute
+  '/categories/{-$categoryFilter}': typeof CategoriesChar123CategoryFilterChar125Route
   '/tags/$tagFilter': typeof TagsTagFilterRoute
   '/categories/': typeof CategoriesIndexRoute
   '/items/': typeof ItemsIndexRoute
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
     | '/items'
     | '/tags'
     | '/categories/$categoryFilter'
+    | '/categories/{-$categoryFilter}'
     | '/tags/$tagFilter'
     | '/categories/'
     | '/items/'
@@ -113,6 +124,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/categories/$categoryFilter'
+    | '/categories/{-$categoryFilter}'
     | '/tags/$tagFilter'
     | '/categories'
     | '/items'
@@ -124,6 +136,7 @@ export interface FileRouteTypes {
     | '/items'
     | '/tags'
     | '/categories/$categoryFilter'
+    | '/categories/{-$categoryFilter}'
     | '/tags/$tagFilter'
     | '/categories/'
     | '/items/'
@@ -195,6 +208,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TagsTagFilterRouteImport
       parentRoute: typeof TagsRouteRoute
     }
+    '/categories/{-$categoryFilter}': {
+      id: '/categories/{-$categoryFilter}'
+      path: '/{-$categoryFilter}'
+      fullPath: '/categories/{-$categoryFilter}'
+      preLoaderRoute: typeof CategoriesChar123CategoryFilterChar125RouteImport
+      parentRoute: typeof CategoriesRouteRoute
+    }
     '/categories/$categoryFilter': {
       id: '/categories/$categoryFilter'
       path: '/$categoryFilter'
@@ -207,11 +227,14 @@ declare module '@tanstack/react-router' {
 
 interface CategoriesRouteRouteChildren {
   CategoriesCategoryFilterRoute: typeof CategoriesCategoryFilterRoute
+  CategoriesChar123CategoryFilterChar125Route: typeof CategoriesChar123CategoryFilterChar125Route
   CategoriesIndexRoute: typeof CategoriesIndexRoute
 }
 
 const CategoriesRouteRouteChildren: CategoriesRouteRouteChildren = {
   CategoriesCategoryFilterRoute: CategoriesCategoryFilterRoute,
+  CategoriesChar123CategoryFilterChar125Route:
+    CategoriesChar123CategoryFilterChar125Route,
   CategoriesIndexRoute: CategoriesIndexRoute,
 }
 
