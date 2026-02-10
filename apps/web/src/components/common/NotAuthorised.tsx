@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import { SignInButton, SignUpButton, } from '@clerk/clerk-react';
-import type { AppTheme } from '@/lib/model/common';
+import type { AppTheme } from '@/lib/styles/theme';
 
 export default function NotAuthorised(): ReactNode {
   const theme: AppTheme = useTheme();

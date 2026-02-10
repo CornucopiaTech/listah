@@ -28,7 +28,7 @@ import { Error } from '@/components/common/Error';
 import { encodeState } from '@/lib/helper/encoders';
 import TableFooter from "@/components/tags/Footer";
 import type { ITagResponse } from "@/lib/model/tags";
-import type { AppTheme } from '@/lib/model/common';
+import type { AppTheme } from '@/lib/styles/theme';
 
 
 export default function Tags(): ReactNode {

@@ -1,6 +1,6 @@
 
 import * as z from "zod";
-import type { Theme } from '@mui/material/styles';
+// import type { Theme, ThemeOptions } from '@mui/material/styles';
 
 
 export interface IEnvConfig {
@@ -12,42 +12,6 @@ export interface IEnvConfig {
   apiReadCategory: string;
   apiReadTag: string;
   authKey: string;
-}
-
-
-export interface AppTheme extends Theme {
-  palette: Theme['palette'] & {
-    tertiary: {
-      main: string;
-      // light: '#4f7b7b',
-      // dark: '#0b1f1f',
-    },
-    error: {
-      main: string;
-      // light: '#4f7b7b',
-      // dark: '#0b1f1f',
-      // contrastText: '#153131',
-    },
-    nav: {
-      main: string;
-      // light: string;
-      // dark: string;
-    },
-    tagChip: {
-      main: string;
-      contrastText: string;
-      // light: string;
-      // dark: string;
-    },
-    categoryChip: {
-      main: string;
-      contrastText: string;
-    },
-    containedButton: {
-      main: string;
-      contrastText: string;
-    }
-  }
 }
 
 
@@ -113,3 +77,4 @@ export interface Audit {
 //   totalRecordCount: number;
 //   pagination: Pagination;
 // }
+

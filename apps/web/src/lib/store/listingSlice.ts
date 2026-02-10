@@ -36,7 +36,7 @@ export const createListingSlice = (set: any) => ({
   setCheckedTag: (checkedTag: Set<string>) => set(() => ({ checkedTag })),
   setFromDate: (fromDate: string) => set(() => ({ fromDate })),
   setToDate: (toDate: string) => set(() => ({ toDate })),
-  reset: () => set(() => ({ ...listingInitState })),
+  reset: () => set(listingInitState),
 });
 
 

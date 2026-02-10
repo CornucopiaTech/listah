@@ -40,7 +40,7 @@ import {
 import Header from "@/components/tag/Header";
 import TableFooter from "@/components/tag/Footer";
 import ItemModal from "@/components/common/ItemModal";
-import type { AppTheme } from '@/lib/model/common';
+import type { AppTheme } from '@/lib/styles/theme';
 
 
 

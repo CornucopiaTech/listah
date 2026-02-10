@@ -36,7 +36,7 @@ import {
 import ItemModal from "@/components/common/ItemModal";
 import Header from "@/components/category/Header";
 import TableFooter from "@/components/category/Footer";
-import type { AppTheme } from '@/lib/model/common';
+import type { AppTheme } from '@/lib/styles/theme';
 
 
 export default function Content(): ReactNode {

@@ -23,6 +23,12 @@
 - Define secrets to store db connection information
 - Pass defined secret to cloud run.
 
+
+<!-- Web -->
+Define consistent styled components for all pages.
+
+
+
 <!-- environment: ${{ github.ref == 'refs/heads/master' && 'prod' || github.ref == 'refs/heads/release' && 'release' || 'dev' }} -->
 
 

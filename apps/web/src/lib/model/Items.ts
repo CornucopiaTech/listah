@@ -1,4 +1,7 @@
 import * as z from "zod";
+import type { StateCreator, StoreMutatorIdentifier } from 'zustand';
+
+
 
 export type AuditUpdaterEnum = "AUDIT_UPDATER_ENUM_UNSPECIFIED" | "AUDIT_UPDATER_ENUM_FRONTEND" | "AUDIT_UPDATER_ENUM_SYSOPS";
 
@@ -115,6 +118,24 @@ export interface IListingActions {
   reset: () => void
 }
 export interface IListingStore extends IListingState, IListingActions { };
+
+
+
+// Define a type for the middlewares you are using.
+// Example uses 'zustand/devtools' and 'zustand/persist'.
+// Adjust the identifiers based on your actual middlewares.
+type Mutators = [
+  ['zustand/devtools', never],
+  ['zustand/persist', unknown] // Use 'unknown' if the persist options are complex
+];
+
+// Utility type for slice creators that handles middleware arguments
+export type ListingStoreSlice<T extends keyof IListingStore> = StateCreator<
+  IListingStore,
+  Mutators, // The mutators your store uses
+  [],
+  IListingStore[T] // The specific slice type
+>;
 
 
 

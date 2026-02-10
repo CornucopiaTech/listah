@@ -27,7 +27,7 @@ import { Error } from '@/components/common/Error';
 import { encodeState } from '@/lib/helper/encoders';
 import TableFooter from "@/components/categories/Footer";
 import type { ICategoryResponse } from "@/lib/model/categories";
-import type { AppTheme } from '@/lib/model/common';
+import type { AppTheme } from '@/lib/styles/theme';
 
 
 

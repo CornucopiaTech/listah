@@ -1,12 +1,10 @@
 import { createTheme as createMaterialTheme } from '@mui/material/styles';
-
-import { red, } from '@mui/material/colors';
-
-import type { AppTheme } from '@/lib/model/common';
+import type { ThemeOptions } from '@mui/material/styles';
 
 
 
-const theme: AppTheme = {
+
+const theme: ThemeOptions = {
   palette: {
     primary: {
       // main: 'rgba(21, 49, 49, 0.03)', //Deep Green
@@ -28,7 +26,7 @@ const theme: AppTheme = {
       // dark: '#0b1f1f',
     },
     error: {
-      main: red.A400,
+      main: "#ff1744",
       light: '#4f7b7b',
       dark: '#0b1f1f',
       contrastText: '#153131',
@@ -53,8 +51,10 @@ const theme: AppTheme = {
       contrastText: '#f9fafaff',
     }
   }
-}
+} as ThemeOptions
 
 
 // Create a theme instance.
 export const materialTheme = createMaterialTheme(theme);
+
+export type AppTheme = typeof materialTheme;

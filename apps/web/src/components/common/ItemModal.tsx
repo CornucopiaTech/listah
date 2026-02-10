@@ -56,7 +56,7 @@ import { itemGroupOptions } from '@/lib/helper/querying';
 import { Error } from '@/components/common/Alerts';
 import { postItem } from "@/lib/helper/fetchers";
 import { DEFAULT_ITEM } from "@/lib/helper/defaults";
-import type { AppTheme } from '@/lib/model/common';
+import type { AppTheme } from '@/lib/styles/theme';
 
 
 

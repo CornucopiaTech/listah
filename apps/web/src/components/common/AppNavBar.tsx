@@ -11,7 +11,7 @@ import { SignedIn, SignedOut, SignInButton, UserButton} from '@clerk/clerk-react
 
 
 import { AppBarHeight } from '@/lib/model/appNavBarModel';
-import type { AppTheme } from '@/lib/model/common';
+import type { AppTheme } from '@/lib/styles/theme';
 
 
 export default function AppNavBar() {
