@@ -7,7 +7,7 @@ export const ZTagRequest = z.object({
   userId: z.string().catch(''),
   pagination: ZPagination.nullish(),
 });
-export interface ITagRequest extends z.infer<typeof ZTagRequest>{ }; // eslint-disable-line @typescript-eslint/no-empty-object-type
+export type ITagRequest = z.infer<typeof ZTagRequest>; // eslint-disable-line @typescript-eslint/no-empty-object-type
 
 
 export const ZTagResponse = z.object({
@@ -19,5 +19,5 @@ export const ZTagResponse = z.object({
   })),
   totalRecordCount: z.nullish(z.number().catch(0)),
 });
-export interface ITagResponse extends z.infer<typeof ZTagResponse>{ }; // eslint-disable-line @typescript-eslint/no-empty-object-type
+export type ITagResponse = z.infer<typeof ZTagResponse>; // eslint-disable-line @typescript-eslint/no-empty-object-type
 

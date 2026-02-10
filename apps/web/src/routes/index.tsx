@@ -1,6 +1,8 @@
 import { createFileRoute} from '@tanstack/react-router';
 
 
+import Box from '@mui/material/Box';
+import AppNavBar from '@/components/common/AppNavBar';
 
 
 export const Route = createFileRoute('/')({
@@ -10,8 +12,11 @@ export const Route = createFileRoute('/')({
 
 function Home() {
   return (
-    <div>
-      Hello World. I am home
-    </div>
-  )
+    <Box sx={{ height: '100%', }}>
+      <AppNavBar />
+      <div>
+        Hello World. I am home
+      </div>
+    </Box >
+  );
 }

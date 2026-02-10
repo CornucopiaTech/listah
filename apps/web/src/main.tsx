@@ -9,6 +9,7 @@ import { enableMapSet } from 'immer';
 import { ThemeProvider, } from '@mui/material/styles';
 
 
+
 // Internal imports
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
@@ -18,8 +19,8 @@ import NotFound from '@/components/common/NotFound';
 import { Error } from '@/components/common/Error';
 import * as theme from '@/lib/styles/theme';
 import { ConfigContext } from '@/lib/context/configContext';
-import type { IEnvConfig } from "@/lib/model/common";
-
+// import type { IEnvConfig } from "@/lib/model/common";
+import {config }from '@/config';
 
 enableMapSet();
 export const queryClient = new QueryClient();
@@ -50,15 +51,29 @@ declare module '@tanstack/react-router' {
   }
 }
 
-let config: IEnvConfig = {} as IEnvConfig;
-fetch('/config.json').then(
-  r => r.json()
-).then(
-  r => {
-    config = r;
-  }
-).catch(() => (config = {} as IEnvConfig))
+// let config: IEnvConfig = {} as IEnvConfig;
+// fetch('/config.json').then(
+//   r => r.json()
+// ).then(
+//   r => {
+//     config = r;
+//   }
+// ).catch(() => (config = {} as IEnvConfig))
+
+
+// try {
+//   const filePath: string = path.join(import.meta.dirname, 'config.json');
+//   // Specify 'utf-8' encoding to get a string, otherwise a Buffer is returned
+//   const content: string = fs.readFileSync(filePath, 'utf-8');
+//   console.log(content);
+// } catch (err) {
+//   console.error(err);
+// }
+
 console.info("config after fetching", config);
+
+
+
 
 function Wrapper( { children }: { children: React.ReactNode } ) {
 

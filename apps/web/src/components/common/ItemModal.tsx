@@ -38,7 +38,7 @@ import { Icon } from "@iconify/react";
 
 
 // Internal imports
-import { useBoundStore } from '@/lib/store/boundStore';
+import { useBoundStore, type  TBoundStore } from '@/lib/store/boundStore';
 import type {
   IItem,
   IItemsSearch,
@@ -62,7 +62,7 @@ import type { AppTheme } from '@/lib/styles/theme';
 
 export default function ItemModal(): ReactNode {
   const theme: AppTheme = useTheme();
-  const store = useBoundStore((state) => state);
+  const store: TBoundStore = useBoundStore((state) => state);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const queryClient = useQueryClient();
   const { tagFilter: tagName, categoryFilter: categoryName } = useParams({ strict: false });
@@ -124,8 +124,10 @@ export default function ItemModal(): ReactNode {
     store.setMessage("Item updated");
   }
 
-  function getSimpleField(key: string){
+  // function getSimpleField(key: string){
+  function getSimpleField(key: "id" | "tag" | "summary" | "userId" | "category" | "description" | "note" | "softDelete" | "reactivateAt" | `tag[${number}]`){
     const sx = (key == "id" || key == "userId") ? { display: 'none' } : {}
+    // const nameKey = key as string;
     return (
       <form.Field
         key={`item-${key}`}
@@ -225,7 +227,7 @@ export default function ItemModal(): ReactNode {
     );
   }
 
-  const fields: string[] = ['id', 'userId', 'summary', 'category', 'description', 'note'];
+  const fields: ("id" | "userId" | "summary" | "category" | "description" | "note")[] = ['id', 'userId', 'summary', 'category', 'description', 'note'];
   const dialogSx = {
     display: 'block',
     maxWidth: "lg",
@@ -243,7 +245,7 @@ export default function ItemModal(): ReactNode {
       <form onSubmit={handleSubmit}>
         <DialogContent sx={dialogSx} >
           <Stack spacing={2}>
-            { fields.map((fds: string) => getSimpleField(fds)) }
+            {fields.map((fds: ("id" | "userId" | "summary" | "category" | "description" | "note")) => getSimpleField(fds)) }
             { getTagField() }
           </Stack>
         </DialogContent>

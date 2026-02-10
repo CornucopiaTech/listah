@@ -23,7 +23,7 @@ import {
 
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
 import { categoryGroupOptions } from '@/lib/helper/querying';
-import { useBoundStore } from '@/lib/store/boundStore';
+import { useBoundStore, type  TBoundStore } from '@/lib/store/boundStore';
 import type {  IItemsSearch } from '@/lib/model/Items';
 import Loading from '@/components/common/Loading';
 import { Error } from '@/components/common/Error';
@@ -31,7 +31,7 @@ import type { ICategoryResponse } from "@/lib/model/categories";
 
 
 export default function CategoryDrawer(): ReactNode {
-  const store = useBoundStore((state) => state);
+  const store: TBoundStore = useBoundStore((state) => state);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
 
 

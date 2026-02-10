@@ -7,7 +7,7 @@ export const ZCategoryRequest = z.object({
   userId: z.string().catch(''),
   pagination: ZPagination.nullish(),
 });
-export interface ICategoryRequest extends z.infer<typeof ZCategoryRequest>{ }; // eslint-disable-line @typescript-eslint/no-empty-object-type
+export type ICategoryRequest = z.infer<typeof ZCategoryRequest>; // eslint-disable-line @typescript-eslint/no-empty-object-type
 
 
 export const ZCategoryResponse = z.object({
@@ -19,5 +19,5 @@ export const ZCategoryResponse = z.object({
   })),
   totalRecordCount: z.nullish(z.number().catch(0)),
 });
-export interface ICategoryResponse extends z.infer<typeof ZCategoryResponse>{ }; // eslint-disable-line @typescript-eslint/no-empty-object-type
+export type ICategoryResponse = z.infer<typeof ZCategoryResponse>; // eslint-disable-line @typescript-eslint/no-empty-object-type
 

@@ -20,7 +20,7 @@ import { Virtuoso } from 'react-virtuoso';
 
 
 
-import { useBoundStore } from '@/lib/store/boundStore';
+import { useBoundStore, type  TBoundStore } from '@/lib/store/boundStore';
 import type { IItemsSearch } from '@/lib/model/Items';
 import Loading from '@/components/common/Loading';
 import { Error } from '@/components/common/Error';
@@ -30,7 +30,7 @@ import type { ITagResponse } from "@/lib/model/tags";
 
 
 export default function TagDrawer(): ReactNode {
-  const store = useBoundStore((state) => state);
+  const store: TBoundStore = useBoundStore((state) => state);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
 
 

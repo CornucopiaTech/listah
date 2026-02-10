@@ -22,7 +22,7 @@ import Divider from '@mui/material/Divider';
 
 
 
-import { useBoundStore } from '@/lib/store/boundStore';
+import { useBoundStore, type  TBoundStore } from '@/lib/store/boundStore';
 import type {
   IItem,
   IItemsSearch,
@@ -46,7 +46,7 @@ import type { AppTheme } from '@/lib/styles/theme';
 
 export default function Content(): ReactNode {
   const theme: AppTheme = useTheme();
-  const store = useBoundStore((state) => state);
+  const store: TBoundStore = useBoundStore((state) => state);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const {
       isPending, isError, data, error

@@ -1,4 +1,7 @@
-{
+import type { IEnvConfig } from "@/lib/model/common";
+
+
+export const config: IEnvConfig = {
   "apiName": "__API_NAME__",
   "apiVersion": "__API_VERSION__",
   "apiUrl": "__API_URL__",
