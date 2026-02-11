@@ -4,14 +4,16 @@ import * as z from "zod";
 
 
 export interface IEnvConfig {
-  apiName: string;
   apiVersion: string;
   apiUrl: string;
-  apiReadItem: string;
-  apiUpdateItem: string;
-  apiReadCategory: string;
-  apiReadTag: string;
   authKey: string;
+}
+
+export interface IApiEndpointConfig {
+  readItem: string;
+  updateItem: string;
+  readCategory: string;
+  readTag: string;
 }
 
 

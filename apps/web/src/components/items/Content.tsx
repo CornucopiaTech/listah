@@ -15,7 +15,7 @@ import * as z from "zod";
 import { Virtuoso } from 'react-virtuoso';
 import Chip from '@mui/material/Chip';
 import { useTheme } from '@mui/material/styles';
-import Grid from '@mui/material/Grid';
+// import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 
@@ -81,7 +81,6 @@ export default function Content(): ReactNode {
 
   function handleItemclick(itemId: string) {
     store.setDisplayId(itemId);
-    // store.setItemModal(true);
     store.setModal(true);
   }
 
@@ -91,16 +90,15 @@ export default function Content(): ReactNode {
     const itemId: string = item.id ? item.id : "";
     return (
       <Fragment>
-        <Grid container key={item.id}
+        {/* <Grid container key={item.id}
               size={{ md: 10, xs: 12 }}
               sx={{
                 '&:hover': {
                   backgroundColor: theme.palette.nav.main, // Color on hover
                 },
-                p: 1,
               }}
           onClick={() => { handleItemclick(itemId); }}>
-          <Grid size={7} >
+          <Grid size={8} >
             <Typography variant="body1" sx={{
               alignContent: 'center',
               display: 'flex', width: '100%', flexWrap: 'wrap',
@@ -108,7 +106,7 @@ export default function Content(): ReactNode {
               {dis}
             </Typography>
           </Grid>
-          <Grid size={5} >
+          <Grid size={4} >
             <Chip
               key={item.category} label={item.category}
               sx={{
@@ -132,7 +130,54 @@ export default function Content(): ReactNode {
               ))
             }
           </Grid>
-        </Grid>
+        </Grid> */}
+
+        <Box key={item.id}
+          sx={{
+            '&:hover': {
+            backgroundColor: theme.palette.nav.main, // Color on hover
+            },
+            p: 0.3,
+          }}
+          onClick={() => { handleItemclick(itemId); }}>
+          <Box
+            sx={{
+              display: 'inline-flex',
+              justifyContent: 'flex-start',
+              mr: 12,
+            }}
+          >
+            <Typography variant="body1" >{dis}</Typography>
+          </Box>
+          <Box
+            sx={{
+              display: 'inline-flex', justifyContent: 'flex-end',
+            }}
+          >
+            <Chip
+              key={item.category} label={item.category}
+              sx={{
+                textTransform: 'capitalize',
+                bgcolor: theme.palette.categoryChip.main,
+                color: theme.palette.categoryChip.contrastText,
+                mx: 1,
+              }}
+            />
+            {
+              item.tag && item.tag.slice(0, MAX_TAG_CHIPS_DISPLAY).map((tag, i) => (
+                <Chip
+                  key={tag + i} label={tag}
+                  sx={{
+                    textTransform: 'capitalize',
+                    bgcolor: theme.palette.tagChip.main,
+                    color: theme.palette.tagChip.contrastText,
+                    mx: 1,
+                  }}
+                />
+              ))
+            }
+          </Box>
+        </Box>
         <Divider />
       </Fragment>
     );

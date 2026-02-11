@@ -32,19 +32,19 @@ const theme: ThemeOptions = {
       contrastText: '#153131',
     },
     nav: {
-      main: 'rgba(21, 49, 49, 0.05)',
+      main: 'rgba(186, 255, 201, 1)' //'rgba(21, 49, 49, 0.1)',
       // light: '#4f7b7b',
       // dark: '#0b1f1f',
     },
     tagChip: {
-      main: '#153131',
-      contrastText: '#f9fafaff',
+      main: 'rgba(180, 233, 169, 1)', //'rgb(180, 233, 169)',
+      contrastText: '#153131', //'#f9fafaff',
       // light: '#4f7b7b',
       // dark: '#0b1f1f',
     },
     categoryChip: {
-      main: '#e83904ff',
-      contrastText: '#f9fafaff',
+      main: 'rgba(255, 184, 79, 1)', //'rgb(251, 247, 189)', //'#e83904ff',
+      contrastText: '#153131', //'#f9fafaff',
     },
     containedButton: {
       main: '#153131',

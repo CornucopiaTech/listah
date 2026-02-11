@@ -1,5 +1,6 @@
 
 import type { IItem, IItemsSearch } from '@/lib/model/Items';
+import type { IApiEndpointConfig } from '@/lib/model/common';
 import type { IUser } from '@/lib/model/auth';
 
 
@@ -50,7 +51,7 @@ export const DEFAULT_ITEM: IItem = {
   // audit: null,
 };
 
-export const MAX_TAG_CHIPS_DISPLAY = 3;
+export const MAX_TAG_CHIPS_DISPLAY = 2;
 
 export const MAX_ITEM_SUMMARY_LENGTH = 100;
 export const MAX_ITEM_GRID_SUMMARY_LENGTH = 50;
@@ -59,3 +60,10 @@ export const ITEM_LIST_HEIGHT = 30;
 export const MAX_ITEM_CATEGORY_LIST_HEIGHT = 600;
 export const MAX_ITEM_LIST_HEIGHT = 700;
 export const ITEM_CATEGORY_LIST_HEIGHT_BUFFER = 60;
+
+export const API_ENDPOINTS: IApiEndpointConfig = {
+  readItem: "listah.v1.ItemService/Read",
+  updateItem: "listah.v1.ItemService/Update",
+  readCategory: "istah.v1.CategoryService/Read",
+  readTag: "istah.v1.TagService/Read",
+}

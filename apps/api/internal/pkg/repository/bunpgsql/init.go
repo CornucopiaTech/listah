@@ -5,13 +5,10 @@ import (
 	"cornucopia/listah/apps/api/internal/pkg/logging"
 	"fmt"
 	"time"
-
-	"github.com/pkg/errors"
-
 	"log"
-
+	"strings"
+	"github.com/pkg/errors"
 	"github.com/uptrace/opentelemetry-go-extra/otelsql"
-
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
 	"github.com/uptrace/bun/driver/pgdriver"
@@ -28,7 +25,7 @@ type Repository struct {
 func Init(cfg *config.Config, logger *logging.Factory) *Repository {
 	var disableTls bool
 
-	switch cfg.Env {
+	switch strings.ToUpper(cfg.Env) {
 	case "LOCAL":
 		disableTls = true
 	default:

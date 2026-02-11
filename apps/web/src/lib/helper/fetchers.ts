@@ -3,6 +3,9 @@
 import type { IItem, IItemResponse, IItemsSearch } from '@/lib/model/Items';
 import type { ICategoryResponse } from "@/lib/model/categories";
 import type { ITagResponse } from "@/lib/model/tags";
+import { API_ENDPOINTS } from '@/lib/helper/defaults';
+// import { config } from '@/config';
+import  config from '@/config.json';
 
 
 export async function postItem(item: IItem) {
@@ -23,14 +26,14 @@ export async function postItem(item: IItem) {
 
 
 export async function getItem(opts: IItemsSearch): Promise<IItemResponse> {
-  const url = `/api/readItem`;
-  // const url = `/api/${process.env.SERVER_STATE.ITEMS_READ}`;
+  const url = `${config.apiUrl}/${API_ENDPOINTS.readItem}`;
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify(opts),
     headers: { "Content-Type": "application/json", "Accept": "*/*" },
   });
   const res = await fetch(req);
+  console.info("In getItem - res ", res);
   if (!res.ok) {
     console.error("Error in getItem: ", res.statusText);
     console.info(res);

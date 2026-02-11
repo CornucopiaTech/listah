@@ -1,0 +1,40 @@
+services:
+  db:
+    container_name: db
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    volumes:
+      - ./local/db_data:/var/lib/postgresql/
+    ports:
+      - "5434:5432"
+
+  liquibase:
+    container_name: liquibase
+    image: liquibase/liquibase:latest
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+    volumes:
+      - ../liquibase/changelog/:/liquibase/changelog/
+      - ./postgresql-42.7.9.jar:/liquibase/lib/postgresql-42.7.9.jar
+    environment:
+      LIQUIBASE_COMMAND_URL: ${LIQUIBASE_CONNECTION_URL} //Automatically Read from .env file
+      LIQUIBASE_COMMAND_USERNAME: ${POSTGRES_USER}
+      LIQUIBASE_COMMAND_PASSWORD: ${POSTGRES_PASSWORD}
+      LIQUIBASE_COMMAND_CHANGELOG_FILE: changelog.yaml
+      LIQUIBASE_LOG_LEVEL: INFO
+      LIQUIBASE_COMMAND_DRIVER: org.postgresql.Driver
+      LIQUIBASE_CLASSPATH: /liquibase/lib/postgresql-42.7.9.jar
+    command: "update "
+
+networks:
+  default:
+    driver: bridge

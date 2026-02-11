@@ -10,7 +10,7 @@
     "schema": "./infra/prisma/schema"
   },
   "scripts": {
-    "api:dev": "clear && source .env.dev && cd ./apps/api && nodemon -e go --watch '*.go' --watch '../../internal/**/**/*.go' --signal SIGTERM --exec 'go' run .",
+    "api:dev": "cd ./apps/api && nodemon -e go --watch '*.go' --watch '../../internal/**/**/*.go' --signal SIGTERM --exec 'go' run .",
     "api:lint": "clear && WK_DIR=\"$(pwd)\" && echo $WK_DIR && cd \"$WK_DIR/apps/api/\" && golangci-lint run  && cd \"$WK_DIR/internal\" && golangci-lint run",
     "api:tidy": "WK_DIR=\"$(pwd)\" && echo $WK_DIR && cd \"$WK_DIR/apps/api/\" && go mod tidy  && cd \"$WK_DIR/internal\" && go mod tidy",
     "buf:gen": "clear && rm -rf ./internal/pkg/proto && buf generate",
@@ -34,7 +34,7 @@
     "@mui/material": "^7.3.1",
     "@mui/x-date-pickers": "^8.11.0",
     "@radix-ui/themes": "^3.2.1",
-    "@redocly/cli": "^2.14.5",
+    "@redocly/cli": "^2.17.0",
     "@tanstack/react-router": "^1.131.31",
     "@tanstack/react-router-devtools": "^1.131.31",
     "@types/react": "^19.1.12",

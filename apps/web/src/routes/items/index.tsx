@@ -11,7 +11,6 @@ import { useUser } from '@clerk/clerk-react'
 
 
 import Content from "@/components/items/Content";
-// import Page from '@/components/items/Page';
 import NotFound from '@/components/common/NotFound';
 import { validateItemsUrlSearch } from '@/lib/helper/validator';
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
@@ -37,7 +36,6 @@ function Items(): ReactNode {
   return (
     <MainContainer>
       <ItemSearchQueryContext value={pQ}>
-        {/* <Page /> */}
         <Content />
       </ItemSearchQueryContext>
     </MainContainer>

@@ -11,6 +11,7 @@ import (
 
 type appNetworkConfig struct {
 	Address string
+	AllowedOrigins string
 }
 
 
@@ -89,8 +90,12 @@ func loadApi() *appNetworkConfig {
 	var ap string
 	mustMapEnv(&ap, "PORT")
 
+	var ao string
+	mustMapEnv(&ao, "ALLOWED_ORIGINS")
+
 	return &appNetworkConfig{
 		Address: net.JoinHostPort("0.0.0.0", ap),
+		AllowedOrigins: ao,
 	}
 }
 

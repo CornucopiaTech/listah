@@ -4,10 +4,7 @@ import viteReact from '@vitejs/plugin-react'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
 import { fileURLToPath, URL } from 'node:url'
 
-
-// const config = await fetch('/config.json').then(r => r.json());
-// console.info("config", config);
-
+import { config } from './src/config';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -25,32 +22,13 @@ export default defineConfig({
     },
   },
   server: {
-    // proxy: {
-    //   // "/api/readItem": { // The prefix for API requests in your frontend
-    //   //   target: config.apiUrl, // The URL of your backend server
-    //   //   changeOrigin: true, // Ensures the request appears to come from the target domain
-    //   //   rewrite: config.apiReadItem,
-    //   //   // rewrite: (path) => path.replace(/^\/api/, config.apiReadItem), // Remove the /api prefix when forwarding the request
-    //   //   // secure: false, // Set to true for production with valid SSL certificates, false for development with self-signed certificates
-    //   // },
-    //   "/api/readItem": {
-    //     target: config.apiUrl,
-    //     changeOrigin: true,
-    //     rewrite: (path) => config.apiReadItem
-    //   },
-    //   "/api/updateItem": {
-    //     target: config.apiUrl,
-    //     changeOrigin: true,
-    //   },
-    //   "/api/readCategory": {
-    //     target: config.apiUrl,
-    //     changeOrigin: true,
-    //   },
-    //   "/api/readTag": {
-    //     target: config.apiUrl,
-    //     changeOrigin: true,
-    //   },
-    // },
+    proxy: {
+      "/api": {
+        target: config.apiUrl,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
   },
   // define: {
   //   'process.env': {
@@ -70,3 +48,10 @@ export default defineConfig({
   //   // 'process.env': process.env,
   // },
 })
+
+
+// http://localhost:8080/listah.v1.ItemService/Read
+// http://localhost:3000/api/listah.v1.ItemService/Read
+// http://localhost:8080/api/listah.v1.ItemService/Read
+// http://localhost:8080/listah.v1.ItemService/Read
+//
