@@ -63,12 +63,12 @@ resource "google_cloud_run_v2_service" "app" {
         }
       }
       env {
-        name = "API_URL"
+        name  = "API_URL"
         value = var.api_url
       }
       env {
         name  = "AUTH_KEY"
-        value = "${var.auth_key}"
+        value = var.auth_key
       }
       env {
         name  = "APP_NAME"

@@ -108,7 +108,7 @@ resource "google_cloud_run_v2_service" "app" {
         }
       }
       env {
-        name = "ALLOWED_ORIGINS"
+        name  = "ALLOWED_ORIGINS"
         value = var.known_origins
       }
       env {

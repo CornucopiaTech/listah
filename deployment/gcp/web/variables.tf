@@ -36,6 +36,6 @@ variable "project" {
 
 variable "image_tag" { type = string }
 variable "auth_key" {
-  type = string
-  sensitive   = true
+  type      = string
+  sensitive = true
 }
