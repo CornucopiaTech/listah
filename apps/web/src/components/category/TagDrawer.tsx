@@ -1,8 +1,14 @@
 
+
 import {
-  Fragment,
   useContext,
-  type ReactNode,
+  Fragment,
+} from "react";
+import type {
+  ChangeEvent,
+  // MouseEvent,
+  ReactNode,
+  // FormEvent,
 } from 'react';
 import {
   useQuery,
@@ -16,17 +22,20 @@ import { Virtuoso } from 'react-virtuoso';
 
 
 
-import { useBoundStore } from '@/lib/store/boundStore';
+import {
+  useBoundStore,
+  type TBoundStore
+} from '@/lib/store/boundStore';
 import type { IItemsSearch } from '@/lib/model/Items';
 import Loading from '@/components/common/Loading';
 import { Error } from '@/components/common/Error';
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
 import { tagGroupOptions } from '@/lib/helper/querying';
-
+import type { ITagResponse } from "@/lib/model/tags";
 
 
 export default function TagDrawer(): ReactNode {
-  const store = useBoundStore((state) => state);
+  const store: TBoundStore = useBoundStore((state) => state);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
 
 
@@ -34,7 +43,7 @@ export default function TagDrawer(): ReactNode {
   const textPaddingLeft: number = 2;
   const textPaddingBottom: number = 1;
 
-  function handleTagCheck(e, tagName: string) {
+  function handleTagCheck(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, tagName: string) {
     e.stopPropagation();
     const newChecked: Set<string> = store.checkedTag.union(new Set([tagName]))
     if (store.checkedTag.has(tagName)) {
@@ -43,12 +52,13 @@ export default function TagDrawer(): ReactNode {
     store.setCheckedTag(newChecked);
   }
 
+  const uId = query && query.userId ? query.userId : "";
   const {
     isPending,
     isError,
     data,
     error
-  }: UseQueryResult<string[]> = useQuery(tagGroupOptions(query.userId));
+  }: UseQueryResult<ITagResponse> = useQuery(tagGroupOptions(uId));
 
 
   if (isPending) { return <Loading />; }
@@ -62,7 +72,7 @@ export default function TagDrawer(): ReactNode {
 
   return (
     <Fragment>
-      <Typography variant="body" component="div" sx={typoSx}> Tag </Typography>
+      <Typography variant="body1" component="div" sx={typoSx}> Tag </Typography>
       < Virtuoso
         style={{ height: '35vh' }}
         data={tag}

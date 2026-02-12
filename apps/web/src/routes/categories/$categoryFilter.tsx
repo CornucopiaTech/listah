@@ -4,9 +4,6 @@ import {
   createFileRoute,
   useParams,
 } from '@tanstack/react-router';
-// import {
-//   useContext,
-// } from 'react';
 import type {
   ReactNode,
 } from 'react';
@@ -35,11 +32,10 @@ function Items(): ReactNode {
   if (!isSignedIn) return <NotAuthorised />
 
   const query = validateItemsUrlSearch(Route.useSearch());
-  const pQ = {...query, userId: user?.id ?? ''};
 
   const { categoryFilter } = useParams({ strict: false });
+  const pQ = { ...query, userId: user?.id ?? '', categoryFilter: categoryFilter ? [categoryFilter] : [] };
 
-  console.log("In index - category", categoryFilter)
 
   if (!categoryFilter){
     return (
@@ -50,8 +46,6 @@ function Items(): ReactNode {
       </MainContainer>
     );
   }
-  // pQ = { ...query, userId: user?.id ?? '', categoryFilter: [category] };
-  // pQ = { ...query, userId: user?.id ?? '', categoryFilter: [category] };
 
   return (
     <MainContainer>

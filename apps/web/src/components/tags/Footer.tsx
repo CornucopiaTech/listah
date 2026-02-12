@@ -1,7 +1,11 @@
-
 import {
   useContext,
-  type ReactNode,
+  // Fragment,
+} from 'react';
+import type {
+  ReactNode,
+  ChangeEvent,
+  MouseEvent,
 } from 'react';
 import {
   useQuery,
@@ -20,7 +24,7 @@ import Loading from '@/components/common/Loading';
 import { Error } from '@/components/common/Alerts';
 import { tagGroupOptions } from '@/lib/helper/querying';
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
-
+import type { ITagResponse } from "@/lib/model/tags";
 
 
 export default function TableFooter(): ReactNode {
@@ -28,14 +32,17 @@ export default function TableFooter(): ReactNode {
   const navigate = useNavigate();
 
 
-  function handlePageChange(event: React.ChangeEvent<unknown>, value: number) {
-    event.stopPropagation();
+  function handlePageChange(
+      event: MouseEvent<HTMLButtonElement> | null,
+      value: number
+    ) {
+    event && event.stopPropagation();
     const q = { ...query, pageNumber: value };
     const encoded = encodeState(q);
     navigate({ to: "/tags", search: { s: encoded } });
   };
 
-  function handlePageSizeChange(e: React.ChangeEvent<unknown>) {
+  function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     console.log("In handlePageChange - e ", e);
     const q = { ...query, pageSize: parseInt(e.target.value, 10), pageNumber: 0 };
     const encoded = encodeState(q);
@@ -44,11 +51,11 @@ export default function TableFooter(): ReactNode {
     navigate({ to: "/tags", search: { s: encoded } });
   };
 
-
+  const uId = query && query.userId ? query.userId : "";
 
   const {
     isPending, isError, data, error
-  }: UseQueryResult<string[]> = useQuery(tagGroupOptions(query.userId));
+  }: UseQueryResult<ITagResponse> = useQuery(tagGroupOptions(uId));
 
   // ToDo: Explore using middleware to set the userId
 

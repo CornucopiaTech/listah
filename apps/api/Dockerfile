@@ -7,7 +7,7 @@ WORKDIR /app
 RUN apk update && apk add --no-cache ca-certificates git
 
 # Copy your CA certificate file into the system's trust store
-COPY db_ca.crt /usr/local/share/ca-certificates/
+COPY db_ca.crt /usr/local/share/ca-certificates/db_ca.crt
 # Update the CA certificates in the builder environment
 RUN update-ca-certificates
 

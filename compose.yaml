@@ -1,3 +1,0 @@
-include:
-   - infra/docker/instrumentation.yaml
-   - infra/docker/data.yaml

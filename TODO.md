@@ -19,8 +19,19 @@
 - Send error message when server side mutation fails.
 
 
+<!-- Devops -->
+- Conditionally run build engine when specific files are changed.
+
+<!-- Web -->
+Define consistent styled components for all pages.
+
+
+
+<!-- environment: ${{ github.ref == 'refs/heads/master' && 'prod' || github.ref == 'refs/heads/release' && 'release' || 'dev' }} -->
+
 
 # Done
+- Pass the output of Tofu that are needed across workflows
 - Define home page. Redirect to /categories
 - Define categories page as a list of categories and each category can be clicked to get a list of items in the category.
 - Define tag page as a list of tags and each tag can be clicked to get a list of items in the tag.
@@ -41,3 +52,5 @@
 - Define a modal for creating new items. :: Defined Dialog that displays items
 - Define item view page :: Defined Dialog that displays items
 - Define the entire content of the item listing inside the link tag. :: Use Dialog box and set background on hover.
+- Define secrets to store db connection information
+- Pass defined secret to cloud run.

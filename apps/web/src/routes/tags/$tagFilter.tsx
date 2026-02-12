@@ -35,8 +35,6 @@ function Items(): ReactNode {
   if (!isSignedIn) return <NotAuthorised />
 
   const query = validateItemsUrlSearch(Route.useSearch());
-  console.log("initial query - ", query)
-
   const pQ = {...query, userId: user?.id ?? ''};
 
   const { tagFilter } = useParams({ strict: false });
@@ -45,7 +43,7 @@ function Items(): ReactNode {
     return (
       <MainContainer>
         <ItemSearchQueryContext value={pQ}>
-          < Tags />
+          <Tags />
         </ItemSearchQueryContext>
       </MainContainer>
     );

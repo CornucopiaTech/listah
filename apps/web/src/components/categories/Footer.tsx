@@ -1,7 +1,11 @@
 
 import {
   useContext,
-  type ReactNode,
+} from 'react';
+import type {
+  ReactNode,
+  ChangeEvent,
+  MouseEvent,
 } from 'react';
 import {
   useQuery,
@@ -20,21 +24,24 @@ import Loading from '@/components/common/Loading';
 import { Error } from '@/components/common/Alerts';
 import { categoryGroupOptions } from '@/lib/helper/querying';
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
-
+import type { ICategoryResponse } from "@/lib/model/categories";
 
 
 export default function TableFooter(): ReactNode {
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const navigate = useNavigate();
 
-  function handlePageChange(event: React.ChangeEvent<unknown>, value: number) {
-    event.stopPropagation();
+  function handlePageChange(
+    event: MouseEvent<HTMLButtonElement> | null,
+    value: number
+  ) {
+    event && event.stopPropagation();
     const q = { ...query, pageNumber: value };
     const encoded = encodeState(q);
     navigate({ to: "/categories", search: { s: encoded } });
   };
 
-  function handlePageSizeChange(e: React.ChangeEvent<unknown>) {
+  function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     console.log("In handlePageChange - e ", e);
     const q = { ...query, pageSize: parseInt(e.target.value, 10), pageNumber: 0 };
     const encoded = encodeState(q);
@@ -43,11 +50,11 @@ export default function TableFooter(): ReactNode {
     navigate({ to: "/categories", search: { s: encoded } });
   };
 
-
+  const uId = query && query.userId ? query.userId : "";
 
   const {
     isPending, isError, data, error
-  }: UseQueryResult<string[]> = useQuery(categoryGroupOptions(query.userId));
+  }: UseQueryResult<ICategoryResponse> = useQuery(categoryGroupOptions(uId));
 
   // ToDo: Explore using middleware to set the userId
 

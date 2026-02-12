@@ -14,7 +14,6 @@ import NotAuthorised from '@/components/common/NotAuthorised';
 
 
 export const Route = createFileRoute("/categories")({
-  // loader: itemLoader,
   component: Items,
   notFoundComponent: NotFound,
 });

@@ -1,5 +1,8 @@
 import ReactDOM from 'react-dom/client'
-import { RouterProvider, createRouter } from '@tanstack/react-router'
+import {
+  RouterProvider,
+  createRouter
+} from '@tanstack/react-router'
 import {
   QueryClient,
   QueryClientProvider
@@ -7,6 +10,7 @@ import {
 import { ClerkProvider } from '@clerk/clerk-react'
 import { enableMapSet } from 'immer';
 import { ThemeProvider, } from '@mui/material/styles';
+
 
 
 // Internal imports
@@ -19,14 +23,20 @@ import { Error } from '@/components/common/Error';
 import * as theme from '@/lib/styles/theme';
 
 
+declare global {
+  interface Window {
+    runtimeConfig: {
+      authKey: string;
+      apiUrl: string;
+    };
+  }
+}
+
+export { };
 
 enableMapSet();
 export const queryClient = new QueryClient();
 
-
-if (!process.env.AUTH_CONFIG.CLERK_KEY) {
-  throw new Error('Add your Clerk Publishable Key to the .env file')
-}
 
 const router = createRouter({
   routeTree,
@@ -35,7 +45,6 @@ const router = createRouter({
   defaultNotFoundComponent: NotFound,
   Wrap: Wrapper,
   context: {
-    // auth: undefined!, // We'll inject this when we render
     queryClient,
   },
   defaultPreload: 'intent',
@@ -55,9 +64,10 @@ declare module '@tanstack/react-router' {
 
 
 function Wrapper( { children }: { children: React.ReactNode } ) {
+  const aKey = window.runtimeConfig.authKey;
   return (
     <ThemeProvider theme={theme.materialTheme}>
-      <ClerkProvider publishableKey={process.env.AUTH_CONFIG.CLERK_KEY}>
+      <ClerkProvider publishableKey={aKey}>
         <QueryClientProvider client={queryClient}>
           {children}
         </QueryClientProvider>
@@ -66,25 +76,32 @@ function Wrapper( { children }: { children: React.ReactNode } ) {
   )
 };
 
-
-// Render the app
-const rootElement = document.getElementById('app')
-if (rootElement && !rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement)
-  root.render(
-    <RouterProvider
-      router={router}
-      defaultPreload="intent"
-      defaultPendingMs={0}
-      defaultPendingMinMs={0}
-      context={{
-        queryClient,
-        // analytics,
-        // auth,
-      }}
-    />
-  )
+async function loadConfig() {
+  const res = await fetch('/config.json');
+  const config = await res.json();
+  window.runtimeConfig = config;
 }
+
+loadConfig().then(
+  () => {
+    const rootElement = document.getElementById('app')
+    if (rootElement && !rootElement.innerHTML) {
+      const root = ReactDOM.createRoot(rootElement)
+      root.render(
+        <RouterProvider
+          router={router}
+          defaultPreload="intent"
+          defaultPendingMs={0}
+          defaultPendingMinMs={0}
+          context={{
+            queryClient,
+          }}
+        />
+      )
+    }
+});
+
+
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

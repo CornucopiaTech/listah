@@ -1,0 +1,63 @@
+name: Delete All
+run-name: Delete All for ${{ vars.APP_NAME }} by @${{ github.actor }}
+on:
+  workflow_dispatch:
+
+jobs:
+  delete-all:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    env:
+      TF_VAR_gcp_project_id: ${{ secrets.GCP_PROJECT_ID }}
+      TF_VAR_aws_account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+      TF_VAR_aws_region: ${{ vars.AWS_REGION }}
+      TF_VAR_gcp_region: ${{ vars.GCP_REGION }}
+      TF_VAR_state_management_bucket_name: ${{ secrets.STATE_MANAGEMENT_BUCKET_NAME }}
+      TF_VAR_state_management_prefix: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+      TF_VAR_project: ${{ vars.APP_NAME }}
+      TF_VAR_environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+      TF_LOG: DEBUG
+    outputs:
+      output1: ${{ steps.tofu_apply.outputs.db_certs }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Authenticate to Google Cloud
+        uses: 'google-github-actions/auth@v3'
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_WORKLOAD_SERVICE_ACCOUNT }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@main # Or a specific version
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: latest
+
+      - name: Clear App
+        run: |
+          cd './delete_deployment/app'
+          tofu init
+          tofu destroy -auto-approve
+
+      # - name: Clear Data
+      #   run: |
+      #     cd './delete_deployment/data'
+      #     tofu init
+      #     tofu destroy -auto-approve
+
+      # - name: Clear Networking
+      #   run: |
+      #     cd './delete_deployment/networking'
+      #     tofu init
+      #     tofu destroy -auto-approve

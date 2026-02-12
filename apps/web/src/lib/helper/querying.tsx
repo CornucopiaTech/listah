@@ -1,9 +1,11 @@
 
 import {
   queryOptions,
+  type QueryClient
 } from '@tanstack/react-query';
 
 
+import type { IItemsSearch } from '@/lib/model/Items';
 import { getItem, getCategory, getTag } from '@/lib/helper/fetchers';
 import { validateItemsUrlSearch } from '@/lib/helper/validator';
 import { DefaultQueryParams, } from '@/lib/helper/defaults';
@@ -11,7 +13,7 @@ import { DefaultQueryParams, } from '@/lib/helper/defaults';
 
 
 
-export function itemGroupOptions(opts: ZItemsSearch) {
+export function itemGroupOptions(opts: IItemsSearch) {
   return queryOptions({
     queryKey: ["item", opts],
     queryFn: () => getItem(opts),
@@ -52,29 +54,34 @@ export function categoryGroupOptions(opts: string) {
 // }
 
 
-export function getQueryOptions(q) {
+export function getQueryOptions(q: IItemsSearch): object[] {
+  const uId = q && q.userId ? q.userId : "";
   return [
     itemGroupOptions(q),
-    tagGroupOptions(q.userId),
-    categoryGroupOptions(q.userId),
+    tagGroupOptions(uId),
+    categoryGroupOptions(uId),
   ]
 }
 
 
-export function itemLoader({ params, search, context }) {
-  console.info("In itemsLoader ", params, search, context);
-  let query;
+export function itemLoader(
+  {
+    search, context
+  }: {
+      search: { s: string },
+      context: { queryClient: QueryClient }
+  }
+) {
+  let query: IItemsSearch;
   if (!search || Object.keys(search).length === 0 || !search.s) {
     query = DefaultQueryParams
-    console.info("In ItemPage - using default");
   } else {
     query = validateItemsUrlSearch(search);
   }
-  console.info("In itemsLoader - query", query);
+  const uId = query && query.userId ? query.userId : "";
 
   // Kick off the fetching of some slower data, but do not await it
   context.queryClient.prefetchQuery(itemGroupOptions(query));
-  context.queryClient.prefetchQuery(categoryGroupOptions(query.userId));
-  context.queryClient.prefetchQuery(tagGroupOptions(query.userId));
-
+  context.queryClient.prefetchQuery(categoryGroupOptions(uId));
+  context.queryClient.prefetchQuery(tagGroupOptions(uId));
 }

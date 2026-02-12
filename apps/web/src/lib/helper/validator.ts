@@ -2,12 +2,13 @@
 // import { ZItemsSearch } from '@/lib/model/Items';
 import { decodeState } from '@/lib/helper/encoders';
 import { DefaultQueryParams } from '@/lib/helper/defaults';
+import type { IItemsSearch } from '@/lib/model/Items';
 
 
-export function validateItemsUrlSearch(params: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+
+export function validateItemsUrlSearch(params: any): IItemsSearch { // eslint-disable-line @typescript-eslint/no-explicit-any
   if (!params || Object.keys(params).length === 0  || !params.s) {
     console.info("In validateItemQueryParams - using default");
-    // return null;
     return DefaultQueryParams;
   }
 
@@ -18,7 +19,7 @@ export function validateItemsUrlSearch(params: any) { // eslint-disable-line @ty
 
   console.info("In validateItemQueryParams - Decoded ");
   console.info(dcd);
-  return dcd;
+  return dcd as IItemsSearch;
   // console.info("In validateItemQueryParams - Parsed ");
   // console.info(parsed);
   // return parsed.data

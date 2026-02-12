@@ -22,9 +22,13 @@ import Divider from '@mui/material/Divider';
 
 
 
-import { useBoundStore } from '@/lib/store/boundStore';
-import type { IItem, IItemsSearch } from '@/lib/model/Items';
-import { ZItems, } from '@/lib/model/Items';
+import { useBoundStore, type  TBoundStore } from '@/lib/store/boundStore';
+import type {
+  IItem,
+  IItemsSearch,
+  IItemResponse
+} from '@/lib/model/Items';
+import { ZItemResponse, } from '@/lib/model/Items';
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
 import Loading from '@/components/common/Loading';
 import { itemGroupOptions } from '@/lib/helper/querying';
@@ -36,22 +40,23 @@ import {
 import Header from "@/components/tag/Header";
 import TableFooter from "@/components/tag/Footer";
 import ItemModal from "@/components/common/ItemModal";
+import type { AppTheme } from '@/lib/styles/theme';
 
 
 
 export default function Content(): ReactNode {
-  const theme: object = useTheme();
-  const store = useBoundStore((state) => state);
+  const theme: AppTheme = useTheme();
+  const store: TBoundStore = useBoundStore((state) => state);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const {
       isPending, isError, data, error
-  }: UseQueryResult<string[]> = useQuery(itemGroupOptions(query));
+  }: UseQueryResult<IItemResponse> = useQuery(itemGroupOptions(query));
 
   if (isPending) { return <Loading />; }
   if (isError) { return <Error message={error.message} /> ;}
 
   try{
-    ZItems.parse(data);
+    ZItemResponse.parse(data);
   } catch(error){
     if(error instanceof z.ZodError){
       console.info("Zod issue - ", error.issues);
@@ -77,12 +82,12 @@ export default function Content(): ReactNode {
   function handleItemclick(itemId: string) {
     store.setDisplayId(itemId);
     store.setModal(true);
-    // store.setTagModal(true);
   }
 
   function eachItem(item: IItem): ReactNode {
     let dis: string = item.summary? item.summary : "";
     dis = dis.length > MAX_ITEM_SUMMARY_LENGTH ? dis.slice(0, MAX_ITEM_SUMMARY_LENGTH) + "..." : dis;
+    const itemId = item.id ? item.id : "";
     return (
       <Fragment>
         <Grid container key={item.id}
@@ -93,9 +98,9 @@ export default function Content(): ReactNode {
                 },
                 p: 1,
               }}
-              onClick={() => { handleItemclick (item.id); }}>
+          onClick={() => { handleItemclick(itemId); }}>
           <Grid size={7} >
-            <Typography variant="body" sx={{
+            <Typography variant="body1" sx={{
               alignContent: 'center',
               display: 'flex', width: '100%', flexWrap: 'wrap',
             }}>
@@ -140,7 +145,6 @@ export default function Content(): ReactNode {
         < Header handleAddItem={handleItemclick}/>
       </Box>
       {/* <Icon icon="material-symbols:arrow-downward" width="24" height="24" /> */}
-      {/* {store.tagModal && <Detail />} */}
       {store.modal && <ItemModal />}
       <Virtuoso key="data-content"
         style={{

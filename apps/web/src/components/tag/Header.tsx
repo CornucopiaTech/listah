@@ -1,9 +1,13 @@
+
 import {
   useContext,
   useEffect,
+  // Fragment,
 } from 'react';
 import type {
   ReactNode,
+  // ChangeEvent,
+  // MouseEvent,
 } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -19,7 +23,7 @@ import {
 
 import { encodeState } from '@/lib/helper/encoders';
 import { ITEMS_URL } from '@/lib/helper/defaults';
-import { useBoundStore } from '@/lib/store/boundStore';
+import { useBoundStore, type  TBoundStore } from '@/lib/store/boundStore';
 import type { IItemsSearch } from '@/lib/model/Items';
 import CategoryDrawer from '@/components/items/CategoryDrawer';
 import TagDrawer from '@/components/items/TagDrawer';
@@ -29,8 +33,8 @@ import { Success } from '@/components/common/Alerts';
 
 
 
-export default function Header({ handleAddItem }: { handleAddItem: (item: str) => void}): ReactNode {
-  const store = useBoundStore((state) => state);
+export default function Header({ handleAddItem }: { handleAddItem: (item: string) => void}): ReactNode {
+  const store: TBoundStore = useBoundStore((state) => state);
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const navigate = useNavigate();
 

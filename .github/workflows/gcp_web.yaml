@@ -1,0 +1,119 @@
+
+name: Deploy Web Infra
+run-name: Deploy Web Infra to ${{ vars.APP_NAME }} by @${{ github.actor }}
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+
+jobs:
+  deploy-app:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    defaults:
+      run:
+        working-directory: 'deployment/gcp/web'
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    env:
+      IMAGE_NAME_TAG: ${{ vars.APP_NAME }}-web:${GITHUB_SHA::7}
+      TF_VAR_gcp_project_id: ${{ secrets.GCP_PROJECT_ID }}
+      TF_VAR_aws_account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+      TF_VAR_aws_region: ${{ vars.AWS_REGION }}
+      TF_VAR_gcp_region: ${{ vars.GCP_REGION }}
+      TF_VAR_state_management_bucket_name: ${{ secrets.STATE_MANAGEMENT_BUCKET_NAME }}
+      TF_VAR_state_management_prefix: gcp/${{ inputs.environment }}
+      TF_VAR_project: ${{ vars.APP_NAME }}
+      TF_VAR_environment: ${{ inputs.environment }}
+      TF_LOG: DEBUG
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Authenticate to Google Cloud
+        uses: 'google-github-actions/auth@v3'
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_WORKLOAD_SERVICE_ACCOUNT }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@main # Or a specific version
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Set up Cloud SDK
+        uses: 'google-github-actions/setup-gcloud@v3'
+        with:
+          version: '>= 363.0.0'
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GCP Artifact Registry
+        run: |-
+            gcloud auth configure-docker ${{ vars.GCP_REGION }}-docker.pkg.dev
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: latest
+
+
+      - name: Retrieve Outputs from Data Job Using Tofu Output
+        run: |
+          echo "pwd - $(pwd)"
+          cd ${{ github.workspace }}/deployment/gcp/data
+          tofu init
+          echo "REPO_URI="$(tofu output -raw artifact_repo_uri)"" >> ${GITHUB_ENV}
+          echo "pwd - $(pwd)"
+
+      # - name: Retrieve Outputs from Api Job Using Tofu Output
+      #   run: |
+      #     echo -e "\n\nBegin api retrieval in $(pwd)"
+      #     cd ${{ github.workspace }}/deployment/gcp/api
+      #     tofu init
+      #     echo -e "\n\nApi Output Url - $(tofu output -json api_urls)"
+      #     api_uri="$(tofu output -json api_urls | jq '.[1]')"
+      #     echo -e "\n\nParsed Api Output Url - ${api_uri}"
+      #     echo "API_URL="${api_uri}"" >> ${GITHUB_ENV}
+      #     echo -e "\n\nEnd api retrieval in $(pwd)"
+
+      - name: Initialise OpenTofu
+        run: tofu fmt -check
+
+      - name: OpenTofu Init
+        run: tofu init
+
+      - name: OpenTofu Validate
+        run: tofu validate
+
+      - name: Build, Tag, and Push Docker Image to Container Repository Using Tofu Output
+        run: |-
+          echo "pwd - $(pwd)"
+          echo "repo_uri - ${{ env.REPO_URI }}"
+          echo "image_name - ${{ env.IMAGE_NAME_TAG }}"
+          image_full_name="${{ env.REPO_URI }}/${{ env.IMAGE_NAME_TAG }}"
+          echo "IMAGE_FULL_NAME="${image_full_name}"" >> ${GITHUB_ENV}
+          echo "image_full_name - ${image_full_name}"
+
+          cd ${{ github.workspace }}/apps/web
+          docker build . -t "${image_full_name}"
+          docker push "${image_full_name}"
+          echo "pwd - $(pwd)"
+
+      - name: OpenTofu Plan
+        run:
+          tofu plan -out=tfplan
+        env:
+          TF_VAR_image_tag: ${{ env.IMAGE_FULL_NAME }}
+
+      - name: OpenTofu Apply
+        run: tofu apply -auto-approve tfplan
+        env:
+          TF_VAR_image_tag: ${{ env.IMAGE_FULL_NAME }}

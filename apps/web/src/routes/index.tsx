@@ -1,14 +1,22 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute} from '@tanstack/react-router';
 
 
+import Box from '@mui/material/Box';
+import AppNavBar from '@/components/common/AppNavBar';
 
 
 export const Route = createFileRoute('/')({
-  component: () => <div> Hello World. I am home</div>,
-  beforeLoad: () => {
-    throw redirect({
-      to: '/categories',
-      replace: true, // This option makes it a "permanent" history change
-    })
-  },
+  component: Home,
 })
+
+
+function Home() {
+  return (
+    <Box sx={{ height: '100%', }}>
+      <AppNavBar />
+      <div>
+        Hello World. I am home
+      </div>
+    </Box >
+  );
+}

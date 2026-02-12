@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"golang.org/x/net/http2/h2c"
 	"golang.org/x/net/http2"
+	"strings"
 
 
 	"cornucopia/listah/apps/api/internal/app/bootstrap"
@@ -23,9 +24,7 @@ import (
 
 
 func handle(i *bootstrap.Infra) http.Handler {
-	allowedOrigins := []string{
-		"0.0.0.0",
-	}
+	allowedOrigins := strings.Split(strings.TrimSpace(i.Config.Api.AllowedOrigins), ",")
 	mux := chi.NewRouter()
 	mux.Use(cors.Handler(cors.Options{
     AllowedOrigins:   allowedOrigins,

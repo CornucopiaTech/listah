@@ -6,7 +6,6 @@ import type {
   ReactNode,
 } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { Virtuoso } from 'react-virtuoso';
@@ -27,24 +26,28 @@ import Loading from '@/components/common/Loading';
 import { Error } from '@/components/common/Error';
 import { encodeState } from '@/lib/helper/encoders';
 import TableFooter from "@/components/categories/Footer";
+import type { ICategoryResponse } from "@/lib/model/categories";
+import type { AppTheme } from '@/lib/styles/theme';
+
+
 
 
 export default function Categories(): ReactNode {
-  const theme: object = useTheme();
+  const theme: AppTheme = useTheme();
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const navigate = useNavigate();
 
-
+  const uId = query && query.userId ? query.userId : ""
   const {
     isPending, isError, data, error
-  }: UseQueryResult<string[]> = useQuery(categoryGroupOptions(query.userId));
+  }: UseQueryResult<ICategoryResponse | void> = useQuery(categoryGroupOptions(uId));
 
   // ToDo: Explore using middleware to set the userId
 
   if (isPending) { return <Loading />; }
   if (isError) { return <Error message={error.message} />; }
 
-  const category = data.category ? data.category : [];
+  const category = data && data.category ? data.category : [];
 
 
   function handleCategoryClick(categoryName: string) {
@@ -69,7 +72,9 @@ export default function Categories(): ReactNode {
                 p: 1,
               }}
           onClick={() => { handleCategoryClick(catName); }}>
-          <Typography variant="body" sx={{
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          <Typography variant="body1" sx={{
             alignContent: 'center',
             display: 'flex', width: '100%', flexWrap: 'wrap',
           }}>

@@ -1,0 +1,106 @@
+
+name: Deploy Data Infra
+run-name: Deploy Data Infra to ${{ vars.APP_NAME }} by @${{ github.actor }}
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+jobs:
+  data_deployment:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    defaults:
+      run:
+        working-directory: './deployment/gcp/data'
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    env:
+      TF_VAR_gcp_project_id: ${{ secrets.GCP_PROJECT_ID }}
+      TF_VAR_aws_account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+      TF_VAR_aws_region: ${{ vars.AWS_REGION }}
+      TF_VAR_gcp_region: ${{ vars.GCP_REGION }}
+      TF_VAR_state_management_bucket_name: ${{ secrets.STATE_MANAGEMENT_BUCKET_NAME }}
+      TF_VAR_state_management_prefix: gcp/${{ inputs.environment }}
+      TF_VAR_project: ${{ vars.APP_NAME }}
+      TF_VAR_environment: ${{ inputs.environment }}
+      TF_VAR_instance_tier: ${{ vars.GCP_DB_INSTANCE_TIER }}
+      TF_VAR_db_edition: "ENTERPRISE"
+      TF_LOG: DEBUG
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Authenticate to Google Cloud
+        uses: 'google-github-actions/auth@v3'
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_WORKLOAD_SERVICE_ACCOUNT }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@main # Or a specific version
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: latest
+
+      - name: OpenTofu Format
+        run: tofu fmt -check
+
+      - name: OpenTofu Init
+        run: tofu init
+
+      - name: OpenTofu Validate
+        run: tofu validate
+
+      - name: OpenTofu Plan
+        run: tofu plan -out=tfplan
+
+      - id: tofu_apply
+        name: OpenTofu Apply
+        run:  |
+          tofu apply -auto-approve tfplan
+
+      - name: Setup Liquibase
+        uses: liquibase/setup-liquibase@v2
+        with:
+          version: '5.0.0'
+          edition: 'community'
+
+      - name: Install PostgreSQL Driver
+        run: liquibase lpm add postgresql --global
+
+      - name: Set Liquibase Environmental Variables
+        run: |
+          echo "$(pwd)"
+          echo "DB_USERNAME="$(tofu output -raw db_username)"" >> ${GITHUB_ENV}
+          echo "DB_USER_PASSWORD="$(tofu output -raw db_userpassword)"" >> ${GITHUB_ENV}
+          echo "DB_DBNAME="$(tofu output -raw db_dbname)"" >> ${GITHUB_ENV}
+          echo "CONNECTION_NAME="$(tofu output -raw db_connection_name)"" >> ${GITHUB_ENV}
+          echo "LB_CONN_PORT=9000" >> ${GITHUB_ENV}
+
+      - name: Setup Cloud Sql Proxy
+        run: |
+          curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.20.0/cloud-sql-proxy.linux.amd64
+
+          chmod +x cloud-sql-proxy
+
+          nohup ./cloud-sql-proxy --port "${{ env.LB_CONN_PORT }}" "${{ env.CONNECTION_NAME }}" &> /dev/null &
+
+      - name: Migrate Schema using Liquibase
+        run: |
+          echo "$(pwd)"
+          liquibase update \
+            --changelog-file="liquibase/changelog/changelog.yaml"\
+            --url="jdbc:postgresql://127.0.0.1:9000/${{ env.DB_DBNAME }}" \
+            --log-level=INFO \
+            --username="${{ env.DB_USERNAME}}" \
+            --password="${{ env.DB_USER_PASSWORD }}"

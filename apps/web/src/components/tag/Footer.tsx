@@ -1,8 +1,12 @@
 
 import {
-  Fragment,
   useContext,
-  type ReactNode,
+  // Fragment,
+} from 'react';
+import type {
+  ReactNode,
+  ChangeEvent,
+  MouseEvent,
 } from 'react';
 import {
   useQuery,
@@ -11,54 +15,16 @@ import {
 import {
   useNavigate,
 } from '@tanstack/react-router';
-import Pagination from '@mui/material/Pagination';
 import TablePagination from '@mui/material/TablePagination';
 
 
 
 import { encodeState } from '@/lib/helper/encoders';
-import type { ZItems, IItemsSearch } from '@/lib/model/Items';
+import type { IItemResponse, IItemsSearch } from '@/lib/model/Items';
 import Loading from '@/components/common/Loading';
 import { ErrorAlerts } from '@/components/common/ErrorAlert';
 import { itemGroupOptions } from '@/lib/helper/querying';
 import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
-
-
-
-export function Footer(): ReactNode {
-  const query: IItemsSearch = useContext(ItemSearchQueryContext);
-  const navigate = useNavigate();
-
-
-  function handlePageChange(event: React.ChangeEvent<unknown>, value: number) {
-    event.stopPropagation();
-    const q = { ...query, pageNumber: value };
-    const encoded = encodeState(q);
-    navigate({ to: "/tags/", search: { s: encoded } });
-  };
-
-
-  const {
-    isPending, isError, data, error
-  }: UseQueryResult<ZItems> = useQuery(itemGroupOptions(query));
-
-
-  if (isPending) { return <Loading />; }
-  if (isError) { return <ErrorAlerts>Error: {error.message}</ErrorAlerts>; }
-
-
-  const totalRecords: number = data.pageSize ? data.pageSize : 1;
-  const maxPages = Math.ceil(totalRecords / query.pageSize);
-
-  return (
-    <Fragment>
-      <Pagination
-        count={maxPages} page={query.pageNumber}
-        onChange={handlePageChange}
-      />
-    </Fragment>
-  );
-}
 
 
 
@@ -67,20 +33,23 @@ export default function TableFooter(): ReactNode {
   const navigate = useNavigate();
 
 
-  function handlePageChange(event: React.ChangeEvent<unknown>, value: number) {
-    event.stopPropagation();
+  function handlePageChange(
+    event: MouseEvent<HTMLButtonElement> | null,
+    value: number
+  ) {
+    event && event.stopPropagation();
     const q = { ...query, pageNumber: value };
     const encoded = encodeState(q);
-    navigate({ to: ITEMS_URL, search: { s: encoded } });
+    navigate({ to: "/items", search: { s: encoded } });
   };
 
-  function handlePageSizeChange(e: React.ChangeEvent<unknown>) {
+  function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     console.log("In handlePageChange - e ", e);
     const q = { ...query, pageSize: parseInt(e.target.value, 10), pageNumber: 0 };
     const encoded = encodeState(q);
     console.info("In handlePageChange - q ", q);
     console.info("In handlePageChange - Encoded ", encoded);
-    navigate({ to: ITEMS_URL, search: { s: encoded } });
+    navigate({ to: "/items", search: { s: encoded } });
   };
 
 
@@ -90,7 +59,7 @@ export default function TableFooter(): ReactNode {
     isError,
     data,
     error
-  }: UseQueryResult<ZItems> = useQuery(itemGroupOptions(query));
+  }: UseQueryResult<IItemResponse> = useQuery(itemGroupOptions(query));
 
 
   if (isPending) { return <Loading />; }

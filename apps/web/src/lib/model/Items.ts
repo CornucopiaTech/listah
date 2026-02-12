@@ -1,5 +1,7 @@
 import * as z from "zod";
 
+
+
 export type AuditUpdaterEnum = "AUDIT_UPDATER_ENUM_UNSPECIFIED" | "AUDIT_UPDATER_ENUM_FRONTEND" | "AUDIT_UPDATER_ENUM_SYSOPS";
 
 const auditEnum = [
@@ -13,7 +15,7 @@ export const ZTraceBaggage = z.object({
   tracestate: z.nullish(z.string()),
   b3: z.nullish(z.string()),
 });
-export interface ITraceBaggage extends z.infer<typeof ZTraceBaggage>{ }; // eslint-disable-line @typescript-eslint/no-empty-object-type
+export type ITraceBaggage = z.infer<typeof ZTraceBaggage>; // eslint-disable-line @typescript-eslint/no-empty-object-type
 
 
 export const ZAudit = z.object({
@@ -24,7 +26,7 @@ export const ZAudit = z.object({
   deletedBy: z.nullish(z.enum(auditEnum)),
   deletedAt: z.nullish(z.iso.datetime()),
 });
-export interface IAudit extends z.infer<typeof ZAudit>{ }; // eslint-disable-line @typescript-eslint/no-empty-object-type
+export type IAudit = z.infer<typeof ZAudit>; // eslint-disable-line @typescript-eslint/no-empty-object-type
 
 
 
@@ -37,20 +39,19 @@ export const ZItem = z.object({
   note: z.nullish(z.string()),
   tag: z.nullish(z.array(z.string())),
   softDelete: z.nullish(z.boolean()),
-  properties: z.nullish(z.unknown()),
+  // properties: z.nullish(z.unknown()),
   reactivateAt: z.nullish(z.string()),
-  audit: z.nullish(ZAudit),
+  // audit: z.nullish(ZAudit),
 });
-export interface IItem extends z.infer<typeof ZItem>{ }; // eslint-disable-line @typescript-eslint/no-empty-object-type
+export type IItem = z.infer<typeof ZItem>; // eslint-disable-line @typescript-eslint/no-empty-object-type
 
 
 
-export const ZItems = z.object({
+export const ZItemRequest = z.object({
   items: z.array(ZItem).catch([]),
   userId: z.string().catch(''),
   category: z.array(z.string()).catch([]),
   tag: z.array(z.string()).catch([]),
-
 
   pageSize: z.number().catch(10),
   page: z.number().catch(1),
@@ -62,33 +63,48 @@ export const ZItems = z.object({
   fromDate: z.string().catch('1970-01-01'),
   toDate: z.string().catch('2099-12-31'),
 });
-export interface ZItems extends z.infer<typeof ZItems>{ }; // eslint-disable-line @typescript-eslint/no-empty-object-type
+export type IItemRequest = z.infer<typeof ZItemRequest>; // eslint-disable-line @typescript-eslint/no-empty-object-type
+
+
+export const ZItemResponse = z.object({
+  items: z.array(ZItem).catch([]),
+  userId: z.string().catch(''),
+  category: z.array(z.string()).catch([]),
+  tag: z.array(z.string()).catch([]),
+
+  pageSize: z.number().catch(10),
+  page: z.number().catch(1),
+  sort: z.string().catch('asc'),
+
+  categoryFilter: z.array(z.string()).catch([]),
+  tagFilter: z.array(z.string()).catch([]),
+  searchQuery: z.string().catch(''),
+  fromDate: z.string().catch('1970-01-01'),
+  toDate: z.string().catch('2099-12-31'),
+});
+export type IItemResponse = z.infer<typeof ZItemResponse>; // eslint-disable-line @typescript-eslint/no-empty-object-type
 
 
 
 // Items Store
-export interface IListingState {
-  message: string;
-  drawer: boolean;
-  modal: boolean;
-  itemModal: boolean;
-  categoryModal: boolean;
-  tagModal: boolean;
-  displayId: string;
-  searchQuery: string;
-  checkedTag: Set<string>;
-  checkedCategory: Set<string>;
-  fromDate: string;
-  toDate: string;
+export type  IListingState = {
+  message: string
+  drawer: boolean
+  modal: boolean
+  displayId: string
+  searchQuery: string
+  checkedTag: Set<string>
+  checkedCategory: Set<string>
+  fromDate: string
+  toDate: string
 }
 
 
-export interface IListingActions {
+export type IListingActions = {
   setMessage: (message: string) => void
   setDrawer: (drawer: boolean) => void
   setModal: (modal: boolean) => void
-  setDetailModal: (detailModal: boolean) => void
-  setNewItemModal: (newItemModal: boolean) => void
+  setDisplayId: (displayId: string) => void
   setSearchQuery: (searchQuery: string) => void
   setCheckedTag: (checkedTag: Set<string>) => void
   setCheckedCategory: (checkedCategory: Set<string>) => void
@@ -96,7 +112,40 @@ export interface IListingActions {
   setToDate: (toDate: string) => void
   reset: () => void
 }
-export interface IListingStore extends IListingState, IListingActions { };
+export type IListingSlice = IListingState & IListingActions;  // eslint-disable-line @typescript-eslint/no-empty-object-type
+
+
+
+// Items Store
+export type  IDetailState = {
+  message: string
+  drawer: boolean
+  modal: boolean
+  displayId: string
+  searchQuery: string
+  checkedTag: Set<string>
+  checkedCategory: Set<string>
+  fromDate: string
+  toDate: string
+}
+
+
+export type IDetailActions = {
+  setMessage: (message: string) => void
+  setDrawer: (drawer: boolean) => void
+  setModal: (modal: boolean) => void
+  setDisplayId: (displayId: string) => void
+  setSearchQuery: (searchQuery: string) => void
+  setCheckedTag: (checkedTag: Set<string>) => void
+  setCheckedCategory: (checkedCategory: Set<string>) => void
+  setFromDate: (fromDate: string) => void
+  setToDate: (toDate: string) => void
+  reset: () => void
+}
+export type IDetailSlice = IDetailState & IDetailActions;  // eslint-disable-line @typescript-eslint/no-empty-object-type
+export type IStore = IDetailSlice & IListingSlice;  // eslint-disable-line @typescript-eslint/no-empty-object-type
+
+
 
 
 
@@ -114,4 +163,4 @@ export const ZItemsSearch = z.object({
 })
 
 
-export interface IItemsSearch extends z.infer<typeof ZItemsSearch>{ }; // eslint-disable-line @typescript-eslint/no-empty-object-type
+export type IItemsSearch = z.infer<typeof ZItemsSearch>; // eslint-disable-line @typescript-eslint/no-empty-object-type

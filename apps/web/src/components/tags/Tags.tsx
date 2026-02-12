@@ -27,17 +27,19 @@ import Loading from '@/components/common/Loading';
 import { Error } from '@/components/common/Error';
 import { encodeState } from '@/lib/helper/encoders';
 import TableFooter from "@/components/tags/Footer";
+import type { ITagResponse } from "@/lib/model/tags";
+import type { AppTheme } from '@/lib/styles/theme';
 
 
 export default function Tags(): ReactNode {
-  const theme: object = useTheme();
+  const theme: AppTheme = useTheme();
   const query: IItemsSearch = useContext(ItemSearchQueryContext);
   const navigate = useNavigate();
-
+  const uId = query && query.userId ? query.userId : "";
 
   const {
     isPending, isError, data, error
-  }: UseQueryResult<string[]> = useQuery(tagGroupOptions(query.userId));
+  }: UseQueryResult<ITagResponse> = useQuery(tagGroupOptions(uId));
 
   // ToDo: Explore using middleware to set the userId
 
@@ -51,7 +53,7 @@ export default function Tags(): ReactNode {
     const q = { ...query, tagFilter: [tagName]}
     const dq = encodeState(q);
     navigate({
-      to: '/tags/{-$tagFilter}',
+      to: '/tags/$tagFilter',
       params: { tagFilter: tagName },
       search: {s: dq},
     })
@@ -69,7 +71,7 @@ export default function Tags(): ReactNode {
                 p: 1,
               }}
           onClick={() => { handleTagClick(catName); }}>
-          <Typography variant="body" sx={{
+          <Typography variant="body1" sx={{
             alignContent: 'center',
             display: 'flex', width: '100%', flexWrap: 'wrap',
           }}>
