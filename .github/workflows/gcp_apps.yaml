@@ -159,6 +159,7 @@ jobs:
       - name: Plan and Apply OpenTofu for Api to set the known origins.
         run: |-
           cd ${{ github.workspace }}/deployment/gcp/api
+          tofu init
           tofu plan -out=tfplan
           tofu apply -auto-approve tfplan
         env:

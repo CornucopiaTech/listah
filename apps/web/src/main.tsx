@@ -18,10 +18,21 @@ import Loading from '@/components/common/Loading';
 import NotFound from '@/components/common/NotFound';
 import { Error } from '@/components/common/Error';
 import * as theme from '@/lib/styles/theme';
-import { ConfigContext } from '@/lib/context/configContext';
-// import type { IEnvConfig } from "@/lib/model/common";
-// import {config }from '@/config';
-import config from '@/config.json';
+// import { ConfigContext } from '@/lib/context/configContext';
+// import config from './config.json';
+
+
+declare global {
+  interface Window {
+    runtimeConfig: {
+      authKey: string;
+      apiUrl: string;
+      // Add other properties from your runtime config here
+    };
+  }
+}
+
+export { };
 
 enableMapSet();
 export const queryClient = new QueryClient();
@@ -52,42 +63,52 @@ declare module '@tanstack/react-router' {
   }
 }
 
-console.info("config after fetching", config);
-
 
 function Wrapper( { children }: { children: React.ReactNode } ) {
+  const aKey = window.runtimeConfig.authKey;
   return (
-    <ConfigContext value={config}>
+    // <ConfigContext value={config}>
     <ThemeProvider theme={theme.materialTheme}>
-      <ClerkProvider publishableKey={config.authKey}>
+      <ClerkProvider publishableKey={aKey}>
         <QueryClientProvider client={queryClient}>
           {children}
         </QueryClientProvider>
       </ClerkProvider>
     </ThemeProvider>
-    </ConfigContext>
+    // </ConfigContext>
   )
 };
 
-
-// Render the app
-const rootElement = document.getElementById('app')
-if (rootElement && !rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement)
-  root.render(
-    <RouterProvider
-      router={router}
-      defaultPreload="intent"
-      defaultPendingMs={0}
-      defaultPendingMinMs={0}
-      context={{
-        queryClient,
-        // analytics,
-        // auth,
-      }}
-    />
-  )
+async function loadConfig() {
+  const res = await fetch('/config.json');
+  const config = await res.json();
+  window.runtimeConfig = config;
 }
+
+loadConfig().then(
+  () => {
+    // ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    // Render the app
+    const rootElement = document.getElementById('app')
+    if (rootElement && !rootElement.innerHTML) {
+      const root = ReactDOM.createRoot(rootElement)
+      root.render(
+        <RouterProvider
+          router={router}
+          defaultPreload="intent"
+          defaultPendingMs={0}
+          defaultPendingMinMs={0}
+          context={{
+            queryClient,
+            // analytics,
+            // auth,
+          }}
+        />
+      )
+    }
+});
+
+
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
