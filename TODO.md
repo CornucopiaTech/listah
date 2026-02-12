@@ -20,9 +20,7 @@
 
 
 <!-- Devops -->
-- Define secrets to store db connection information
-- Pass defined secret to cloud run.
-
+- Conditionally run build engine when specific files are changed.
 
 <!-- Web -->
 Define consistent styled components for all pages.
@@ -54,3 +52,5 @@ Define consistent styled components for all pages.
 - Define a modal for creating new items. :: Defined Dialog that displays items
 - Define item view page :: Defined Dialog that displays items
 - Define the entire content of the item listing inside the link tag. :: Use Dialog box and set background on hover.
+- Define secrets to store db connection information
+- Pass defined secret to cloud run.

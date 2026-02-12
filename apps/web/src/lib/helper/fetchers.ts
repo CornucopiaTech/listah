@@ -4,14 +4,10 @@ import type { IItem, IItemResponse, IItemsSearch } from '@/lib/model/Items';
 import type { ICategoryResponse } from "@/lib/model/categories";
 import type { ITagResponse } from "@/lib/model/tags";
 import { API_ENDPOINTS } from '@/lib/helper/defaults';
-// import { config } from '@/config';
-// import  config from '@/config.json';
 
 
 export async function postItem(item: IItem) {
-  console.info("In postItem - item", item);
-  const url = `/api/updateItem`;
-  // const url = `/api/${process.env.SERVER_STATE.ITEMS_UPDATE}`;
+  const url = `${window.runtimeConfig.apiUrl}/${API_ENDPOINTS.updateItem}`;
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify({ items: [item] }),
@@ -33,10 +29,7 @@ export async function getItem(opts: IItemsSearch): Promise<IItemResponse> {
     headers: { "Content-Type": "application/json", "Accept": "*/*" },
   });
   const res = await fetch(req);
-  console.info("In getItem - res ", res);
   if (!res.ok) {
-    console.error("Error in getItem: ", res.statusText);
-    console.info(res);
     throw new Error('Network response was not ok');
   }
 
@@ -46,8 +39,7 @@ export async function getItem(opts: IItemsSearch): Promise<IItemResponse> {
 
 
 export async function getTag(userId: string): Promise<ITagResponse> {
-  const url = `/api/readTag`;
-  // const url = `/api/${process.env.SERVER_STATE.TAG_READ}`;
+  const url = `${window.runtimeConfig.apiUrl}/${API_ENDPOINTS.readTag}`;
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify({ userId }),
@@ -55,7 +47,6 @@ export async function getTag(userId: string): Promise<ITagResponse> {
   });
   const res = await fetch(req);
   if (!res.ok) {
-    console.error("Error in getTag: ", res.statusText);
     throw new Error('Network response was not ok');
   }
   return await res.json();
@@ -63,8 +54,7 @@ export async function getTag(userId: string): Promise<ITagResponse> {
 
 
 export async function getCategory(userId: string): Promise<ICategoryResponse> {
-  const url = `/api/readCategory`;
-  // const url = `/api/${process.env.SERVER_STATE.CATEGORY_READ}`;
+  const url = `${window.runtimeConfig.apiUrl}/${API_ENDPOINTS.readCategory}`;
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify({ userId: userId }),
@@ -72,7 +62,6 @@ export async function getCategory(userId: string): Promise<ICategoryResponse> {
   });
   const res = await fetch(req);
   if (!res.ok) {
-    console.error("Error in getCategory: ", res.statusText);
     throw new Error('Network response was not ok');
   }
   return await res.json();

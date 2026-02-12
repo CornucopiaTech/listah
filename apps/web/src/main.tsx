@@ -1,5 +1,8 @@
 import ReactDOM from 'react-dom/client'
-import { RouterProvider, createRouter } from '@tanstack/react-router'
+import {
+  RouterProvider,
+  createRouter
+} from '@tanstack/react-router'
 import {
   QueryClient,
   QueryClientProvider
@@ -18,8 +21,6 @@ import Loading from '@/components/common/Loading';
 import NotFound from '@/components/common/NotFound';
 import { Error } from '@/components/common/Error';
 import * as theme from '@/lib/styles/theme';
-// import { ConfigContext } from '@/lib/context/configContext';
-// import config from './config.json';
 
 
 declare global {
@@ -27,7 +28,6 @@ declare global {
     runtimeConfig: {
       authKey: string;
       apiUrl: string;
-      // Add other properties from your runtime config here
     };
   }
 }
@@ -45,7 +45,6 @@ const router = createRouter({
   defaultNotFoundComponent: NotFound,
   Wrap: Wrapper,
   context: {
-    // auth: undefined!, // We'll inject this when we render
     queryClient,
   },
   defaultPreload: 'intent',
@@ -67,7 +66,6 @@ declare module '@tanstack/react-router' {
 function Wrapper( { children }: { children: React.ReactNode } ) {
   const aKey = window.runtimeConfig.authKey;
   return (
-    // <ConfigContext value={config}>
     <ThemeProvider theme={theme.materialTheme}>
       <ClerkProvider publishableKey={aKey}>
         <QueryClientProvider client={queryClient}>
@@ -75,7 +73,6 @@ function Wrapper( { children }: { children: React.ReactNode } ) {
         </QueryClientProvider>
       </ClerkProvider>
     </ThemeProvider>
-    // </ConfigContext>
   )
 };
 
@@ -87,8 +84,6 @@ async function loadConfig() {
 
 loadConfig().then(
   () => {
-    // ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-    // Render the app
     const rootElement = document.getElementById('app')
     if (rootElement && !rootElement.innerHTML) {
       const root = ReactDOM.createRoot(rootElement)
@@ -100,8 +95,6 @@ loadConfig().then(
           defaultPendingMinMs={0}
           context={{
             queryClient,
-            // analytics,
-            // auth,
           }}
         />
       )

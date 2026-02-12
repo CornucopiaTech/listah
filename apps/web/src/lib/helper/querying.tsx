@@ -73,20 +73,16 @@ export function itemLoader(
       context: { queryClient: QueryClient }
   }
 ) {
-  console.info("In itemsLoader ", params, search, context);
   let query: IItemsSearch;
   if (!search || Object.keys(search).length === 0 || !search.s) {
     query = DefaultQueryParams
-    console.info("In ItemPage - using default");
   } else {
     query = validateItemsUrlSearch(search);
   }
-  console.info("In itemsLoader - query", query);
   const uId = query && query.userId ? query.userId : "";
 
   // Kick off the fetching of some slower data, but do not await it
   context.queryClient.prefetchQuery(itemGroupOptions(query));
   context.queryClient.prefetchQuery(categoryGroupOptions(uId));
   context.queryClient.prefetchQuery(tagGroupOptions(uId));
-
 }

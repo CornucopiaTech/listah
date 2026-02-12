@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
-import * as fs from 'fs';
+// import * as fs from 'fs';
 
-import path from 'path';
+// import path from 'path';
 
 console.log(import.meta.filename);
 console.log(import.meta.dirname);

@@ -21,7 +21,7 @@ jobs:
     env:
       API_IMAGE_NAME_TAG: ${{ vars.APP_NAME }}-api:${GITHUB_SHA::7}
       WEB_IMAGE_NAME_TAG: ${{ vars.APP_NAME }}-web:${GITHUB_SHA::7}
-      # IMAGE_NAME_TAG: ${{ vars.APP_NAME }}-api:${GITHUB_SHA::7}
+
       TF_VAR_gcp_project_id: ${{ secrets.GCP_PROJECT_ID }}
       TF_VAR_aws_account_id: ${{ secrets.AWS_ACCOUNT_ID }}
       TF_VAR_aws_region: ${{ vars.AWS_REGION }}
@@ -66,7 +66,8 @@ jobs:
         with:
           tofu_version: latest
 
-      # The api also needs the db certs from the output of the data job to build successfully. Once the api is built and deployed, we can then build and deploy web.
+      # The api needs the db certs from the output of the data job
+      #     to be able to access the database.
       - name: Retrieve Outputs from Data Job Using Tofu Output
         run: |
           echo "pwd - $(pwd)"
@@ -77,7 +78,14 @@ jobs:
           echo "REPO_URI="$(tofu output -raw artifact_repo_uri)"" >> ${GITHUB_ENV}
           echo "pwd - $(pwd)"
 
-      # Build ai for the first time. Web and api have a circular dependency. The api image needs to be built and pushed to the container registry to get the image url to set as an environment variable for the web deployment. The api needs the url of the web to include as a known origin for cors. The environment variable that stores the CORS origin will be updated after the build and deployment of the web image.
+      # Build api for the first time.
+      # Web and api have a circular dependency. The api image needs to be built
+      #     and pushed to the container registry to get the image url to set as
+      #     an environment variable for the web deployment.
+      # The api needs the url of the web to include as a known origin for cors.
+      # The environment variable that stores the CORS origin will be updated after
+      #   the build and deployment of the web image. Web will read the api url from
+      #   the output of the api deployment.
       - name: Build, Tag, and Push Docker Api Image to Container Repository Using Tofu Output
         run: |-
           echo "pwd - $(pwd)"
@@ -105,17 +113,15 @@ jobs:
           TF_VAR_image_tag: ${{ env.API_IMAGE_FULL_NAME }}
           TF_VAR_known_origins: "a,b,c"
 
-      # - name: Retrieve Outputs from Api Job Using Tofu Output
-      #   run: |
-      #     echo -e "\n\nBegin api retrieval in $(pwd)"
-      #     cd ${{ github.workspace }}/deployment/gcp/api
-      #     echo -e "\n\nApi Output Url - $(tofu output -json api_urls)"
-      #     api_uri="$(tofu output -json api_urls | jq '.[1]')"
-      #     echo -e "\n\nParsed Api Output Url - ${api_uri}"
-      #     echo "API_URL="${api_uri}"" >> ${GITHUB_ENV}
-      #     echo -e "\n\nEnd api retrieval in $(pwd)"
-
-      # Build web. Web needs the url from the output of the api build to set as an environment variable at deployment. Web and api have a circular dependency. The api image needs to be built and pushed to the container registry to get the image url to set as an environment variable for the web deployment. The api needs the url of the web to include as a known origin for cors. The environment variable that stores the CORS origin will be updated after the build and deployment of the web image. Web will read the api url from the output of the api deployment.
+      # Build web. Web needs the url from the output of the api build to set
+      #     as an environment variable at deployment.
+      # Web and api have a circular dependency. The api image needs to be built
+      #     and pushed to the container registry to get the image url to set as
+      #     an environment variable for the web deployment.
+      # The api needs the url of the web to include as a known origin for cors.
+      # The environment variable that stores the CORS origin will be updated after
+      #   the build and deployment of the web image. Web will read the api url from
+      #   the output of the api deployment.
       - name: Build, Tag, and Push Docker Web Image to Container Repository Using Tofu Output
         run: |-
           echo "pwd - $(pwd)"
@@ -143,7 +149,10 @@ jobs:
           TF_VAR_api_url: ${{ env.API_URL }}
           TF_VAR_auth_key: ${{ secrets.CLERK_AUTH_KEY }}
 
-      # Retrieve the url for the deployed web app from the outputs of the web deployment to set as an environment variable for the api deployment. This is needed to update the known origins variable for the api deployment to allow for CORS.
+      # Retrieve the url for the deployed web app from the outputs of the web deployment
+      #     to set as an environment variable for the api deployment.
+      # This is needed to update the known origins variable for the api deployment
+      #     to allow for CORS.
       - name: Retrieve Outputs from Web Job Using Tofu Output
         run: |
           echo -e "\n\nBegin web retrieval in $(pwd)"
@@ -151,7 +160,7 @@ jobs:
           echo -e "\n\nWeb Output Url - $(tofu output -json web_urls)"
           web_uri_0="$(tofu output -json web_urls | jq '.[0]')"
           web_uri_1="$(tofu output -json web_urls | jq '.[1]')"
-          web_uris="${web_uri_0},${web_uri_1}"
+          web_uris="${web_uri_0}:8080,${web_uri_1}:8080"
           echo -e "\n\nParsed Web Output Url - ${web_uris}"
           echo "WEB_URLS="${web_uris}"" >> ${GITHUB_ENV}
           echo -e "\n\nEnd web retrieval in $(pwd)"

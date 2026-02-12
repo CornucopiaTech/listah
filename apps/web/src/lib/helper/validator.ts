@@ -9,7 +9,6 @@ import type { IItemsSearch } from '@/lib/model/Items';
 export function validateItemsUrlSearch(params: any): IItemsSearch { // eslint-disable-line @typescript-eslint/no-explicit-any
   if (!params || Object.keys(params).length === 0  || !params.s) {
     console.info("In validateItemQueryParams - using default");
-    // return null;
     return DefaultQueryParams;
   }
 

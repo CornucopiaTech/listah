@@ -1,7 +1,5 @@
 
 import * as z from "zod";
-// import type { Theme, ThemeOptions } from '@mui/material/styles';
-
 
 export interface IEnvConfig {
   apiVersion: string;
@@ -18,13 +16,6 @@ export interface IApiEndpointConfig {
 
 
 export type AuditUpdaterEnum = "AUDIT_UPDATER_ENUM_UNSPECIFIED" | "AUDIT_UPDATER_ENUM_FRONTEND" | "AUDIT_UPDATER_ENUM_SYSOPS";
-
-
-// export interface Pagination {
-//   pageNumber: number;
-//   recordsPerPage: number;
-//   sortCondition: Map<string, string> | null;
-// }
 
 
 export const ZPagination = z.object({
@@ -51,32 +42,4 @@ export interface Audit {
     deletedBy: AuditUpdaterEnum;
     deletedAt: string;
 }
-
-// export interface IItem{
-//   id: string | null;
-//   userId: string | null;
-//   summary: string | null;
-//   category: string | null;
-//   description: string | null;
-//   note: string | null;
-//   tag: string[] | null;
-//   softDelete: boolean | null;
-//   properties: { [index: string]: string } | null;
-//   reactivateAt: string | null;
-//   audit?: Audit | null;
-// }
-
-// export interface Pagination {
-//   pageNumber: number;
-//   recordsPerPage: number;
-//   sortCondition: Map<string, string> | null;
-// }
-
-// export interface ZItems {
-//   items: IItem;
-//   tag: string[];
-//   categories: string[];
-//   totalRecordCount: number;
-//   pagination: Pagination;
-// }
 

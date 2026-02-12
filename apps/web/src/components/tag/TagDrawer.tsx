@@ -84,7 +84,6 @@ export default function TagDrawer(): ReactNode {
                     store.checkedTag.has(item) ||
                     query.tagFilter.indexOf(item) !== -1
                   }
-                  // checked={query.tagFilter.indexOf(item) !== -1}
                   onChange={(e) => handleTagCheck(e, item)}
                 />
               }

@@ -82,7 +82,6 @@ export default function Content(): ReactNode {
   function handleItemclick(itemId: string) {
     store.setDisplayId(itemId);
     store.setModal(true);
-    // store.setTagModal(true);
   }
 
   function eachItem(item: IItem): ReactNode {
