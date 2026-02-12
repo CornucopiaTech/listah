@@ -66,9 +66,8 @@ export function getQueryOptions(q: IItemsSearch): object[] {
 
 export function itemLoader(
   {
-    params, search, context
+    search, context
   }: {
-      params: object,
       search: { s: string },
       context: { queryClient: QueryClient }
   }
