@@ -103,7 +103,7 @@ jobs:
           tofu apply -auto-approve tfplan
         env:
           TF_VAR_image_tag: ${{ env.API_IMAGE_FULL_NAME }}
-          TF_VAR_known_origins: ""
+          TF_VAR_known_origins: "a,b,c"
 
       # - name: Retrieve Outputs from Api Job Using Tofu Output
       #   run: |
