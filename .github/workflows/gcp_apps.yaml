@@ -160,7 +160,7 @@ jobs:
           echo -e "\n\nWeb Output Url - $(tofu output -json web_urls)"
           web_uri_0="$(tofu output -json web_urls | jq '.[0]')"
           web_uri_1="$(tofu output -json web_urls | jq '.[1]')"
-          web_uris="${web_uri_0}:8080,${web_uri_1}:8080"
+          web_uris="${web_uri_0},${web_uri_1},${web_uri_0}:8080,${web_uri_1}:8080"
           echo -e "\n\nParsed Web Output Url - ${web_uris}"
           echo "WEB_URLS="${web_uris}"" >> ${GITHUB_ENV}
           echo -e "\n\nEnd web retrieval in $(pwd)"
