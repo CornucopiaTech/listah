@@ -12,5 +12,7 @@ sed -i "s|__API_URL__|${API_URL}|g" $CONFIG_FILE
 sed -i "s|__AUTH_KEY__|${AUTH_KEY}|g" $CONFIG_FILE
 
 echo "$(cat $CONFIG_FILE)"
+echo "${API_URL}"
+echo "${AUTH_KEY}"
 
 exec nginx -g "daemon off;"

@@ -34,3 +34,5 @@ variable "project" {
 }
 
 variable "image_tag" { type = string }
+
+variable "known_origins" { type = string }

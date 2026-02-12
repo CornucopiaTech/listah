@@ -1,0 +1,166 @@
+
+name: Deploy App Infra
+run-name: Deploy App Infra to ${{ vars.APP_NAME }} by @${{ github.actor }}
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+
+jobs:
+  deploy-app:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    defaults:
+      run:
+        working-directory: 'deployment/gcp'
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    env:
+      API_IMAGE_NAME_TAG: ${{ vars.APP_NAME }}-api:${GITHUB_SHA::7}
+      WEB_IMAGE_NAME_TAG: ${{ vars.APP_NAME }}-web:${GITHUB_SHA::7}
+      # IMAGE_NAME_TAG: ${{ vars.APP_NAME }}-api:${GITHUB_SHA::7}
+      TF_VAR_gcp_project_id: ${{ secrets.GCP_PROJECT_ID }}
+      TF_VAR_aws_account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+      TF_VAR_aws_region: ${{ vars.AWS_REGION }}
+      TF_VAR_gcp_region: ${{ vars.GCP_REGION }}
+      TF_VAR_state_management_bucket_name: ${{ secrets.STATE_MANAGEMENT_BUCKET_NAME }}
+      TF_VAR_state_management_prefix: gcp/${{ inputs.environment }}
+      TF_VAR_project: ${{ vars.APP_NAME }}
+      TF_VAR_environment: ${{ inputs.environment }}
+      TF_LOG: DEBUG
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Authenticate to Google Cloud
+        uses: 'google-github-actions/auth@v3'
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_WORKLOAD_SERVICE_ACCOUNT }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@main # Or a specific version
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Set up Cloud SDK
+        uses: 'google-github-actions/setup-gcloud@v3'
+        with:
+          version: '>= 363.0.0'
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GCP Artifact Registry
+        run: |-
+            gcloud auth configure-docker ${{ vars.GCP_REGION }}-docker.pkg.dev
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: latest
+
+      # The api also needs the db certs from the output of the data job to build successfully. Once the api is built and deployed, we can then build and deploy web.
+      - name: Retrieve Outputs from Data Job Using Tofu Output
+        run: |
+          echo "pwd - $(pwd)"
+          cd ${{ github.workspace }}/deployment/gcp/data
+          tofu init
+
+          echo "DB_CERTS="$(tofu output -raw db_client_cert)"" >> ${GITHUB_ENV}
+          echo "REPO_URI="$(tofu output -raw artifact_repo_uri)"" >> ${GITHUB_ENV}
+          echo "pwd - $(pwd)"
+
+      # Build ai for the first time. Web and api have a circular dependency. The api image needs to be built and pushed to the container registry to get the image url to set as an environment variable for the web deployment. The api needs the url of the web to include as a known origin for cors. The environment variable that stores the CORS origin will be updated after the build and deployment of the web image.
+      - name: Build, Tag, and Push Docker Api Image to Container Repository Using Tofu Output
+        run: |-
+          echo "pwd - $(pwd)"
+          echo "repo_uri - ${{ env.REPO_URI }}"
+          echo "api_image_name - ${{ env.API_IMAGE_NAME_TAG }}"
+          api_image_full_name="${{ env.REPO_URI }}/${{ env.API_IMAGE_NAME_TAG }}"
+          echo "API_IMAGE_FULL_NAME="${api_image_full_name}"" >> ${GITHUB_ENV}
+          echo "api_image_full_name - ${api_image_full_name}"
+
+          cd ${{ github.workspace }}/apps/api
+          echo "${{ env.DB_CERTS }}" > ./db_ca.crt
+          docker build . -t "${api_image_full_name}"
+          docker push "${api_image_full_name}"
+          echo "pwd - $(pwd)"
+
+      - name: Initialise, Check, Validate, Plan and Apply OpenTofu for Api
+        run: |-
+          cd ${{ github.workspace }}/deployment/gcp/api/
+          tofu fmt -check
+          tofu init
+          tofu validate
+          tofu plan -out=tfplan
+          tofu apply -auto-approve tfplan
+        env:
+          TF_VAR_image_tag: ${{ env.API_IMAGE_FULL_NAME }}
+          TF_VAR_known_origins: ""
+
+      # - name: Retrieve Outputs from Api Job Using Tofu Output
+      #   run: |
+      #     echo -e "\n\nBegin api retrieval in $(pwd)"
+      #     cd ${{ github.workspace }}/deployment/gcp/api
+      #     echo -e "\n\nApi Output Url - $(tofu output -json api_urls)"
+      #     api_uri="$(tofu output -json api_urls | jq '.[1]')"
+      #     echo -e "\n\nParsed Api Output Url - ${api_uri}"
+      #     echo "API_URL="${api_uri}"" >> ${GITHUB_ENV}
+      #     echo -e "\n\nEnd api retrieval in $(pwd)"
+
+      # Build web. Web needs the url from the output of the api build to set as an environment variable at deployment. Web and api have a circular dependency. The api image needs to be built and pushed to the container registry to get the image url to set as an environment variable for the web deployment. The api needs the url of the web to include as a known origin for cors. The environment variable that stores the CORS origin will be updated after the build and deployment of the web image. Web will read the api url from the output of the api deployment.
+      - name: Build, Tag, and Push Docker Web Image to Container Repository Using Tofu Output
+        run: |-
+          echo "pwd - $(pwd)"
+          echo "repo_uri - ${{ env.REPO_URI }}"
+          echo "web_image_name - ${{ env.WEB_IMAGE_NAME_TAG }}"
+          web_image_full_name="${{ env.REPO_URI }}/${{ env.WEB_IMAGE_NAME_TAG }}"
+          echo "WEB_IMAGE_FULL_NAME="${web_image_full_name}"" >> ${GITHUB_ENV}
+          echo "web_image_full_name - ${web_image_full_name}"
+
+          cd ${{ github.workspace }}/apps/web
+          docker build . -t "${web_image_full_name}"
+          docker push "${web_image_full_name}"
+          echo "pwd - $(pwd)"
+
+      - name: Initialise, Check, Validate, Plan and Apply OpenTofu for Web
+        run: |-
+          cd ${{ github.workspace }}/deployment/gcp/web
+          tofu fmt -check
+          tofu init
+          tofu validate
+          tofu plan -out=tfplan
+          tofu apply -auto-approve tfplan
+        env:
+          TF_VAR_image_tag: ${{ env.WEB_IMAGE_FULL_NAME }}
+          TF_VAR_api_url: ${{ env.API_URL }}
+          TF_VAR_auth_key: ${{ secrets.CLERK_AUTH_KEY }}
+
+      # Retrieve the url for the deployed web app from the outputs of the web deployment to set as an environment variable for the api deployment. This is needed to update the known origins variable for the api deployment to allow for CORS.
+      - name: Retrieve Outputs from Web Job Using Tofu Output
+        run: |
+          echo -e "\n\nBegin web retrieval in $(pwd)"
+          cd ${{ github.workspace }}/deployment/gcp/web
+          echo -e "\n\nWeb Output Url - $(tofu output -json web_urls)"
+          web_uri_0="$(tofu output -json web_urls | jq '.[0]')"
+          web_uri_1="$(tofu output -json web_urls | jq '.[1]')"
+          web_uris="${web_uri_0},${web_uri_1}"
+          echo -e "\n\nParsed Web Output Url - ${web_uris}"
+          echo "WEB_URLS="${web_uris}"" >> ${GITHUB_ENV}
+          echo -e "\n\nEnd web retrieval in $(pwd)"
+
+      - name: Plan and Apply OpenTofu for Api to set the known origins.
+        run: |-
+          cd ${{ github.workspace }}/deployment/gcp/api
+          tofu plan -out=tfplan
+          tofu apply -auto-approve tfplan
+        env:
+          TF_VAR_image_tag: ${{ env.API_IMAGE_FULL_NAME }}
+          TF_VAR_known_origins: ${{ env.WEB_URLS }}

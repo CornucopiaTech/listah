@@ -102,8 +102,7 @@ jobs:
           echo "IMAGE_FULL_NAME="${image_full_name}"" >> ${GITHUB_ENV}
           echo "image_full_name - ${image_full_name}"
 
-          cd ${{ github.workspace }}/apps/api
-          echo "${{ env.DB_CERTS }}" > ./db_ca.crt
+          cd ${{ github.workspace }}/apps/web
           docker build . -t "${image_full_name}"
           docker push "${image_full_name}"
           echo "pwd - $(pwd)"

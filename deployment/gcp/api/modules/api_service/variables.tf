@@ -28,3 +28,4 @@ variable "vpc_id" { type = string }
 variable "subnet_id" { type = string }
 variable "project_id" { type = string }
 variable "image_tag" { type = string }
+variable "known_origins" { type = string }

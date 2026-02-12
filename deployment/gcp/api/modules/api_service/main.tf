@@ -108,6 +108,10 @@ resource "google_cloud_run_v2_service" "app" {
         }
       }
       env {
+        name = "ALLOWED_ORIGINS"
+        value = var.known_origins
+      }
+      env {
         name = "POSTGRES_PASSWORD"
         value_source {
           secret_key_ref {
@@ -150,7 +154,7 @@ resource "google_cloud_run_v2_service" "app" {
       }
       env {
         name  = "TRACE_FREQ_SEC"
-        value = 5
+        value = 60
       }
       env {
         name  = "APP_NAME"
