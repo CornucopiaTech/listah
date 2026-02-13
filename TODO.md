@@ -1,4 +1,11 @@
 # To Do
+- Add functionality to add item from items, categories, or tags pages.
+- Add landing page for application
+- Add better page when no content exists. Current page is blank without prompting user to the fact that no content exists.
+
+
+
+
 - Consider adding category filter and tag filter to the drawer for  page listing items for only a particular tag or category.
 - Add breadcrumbs for ease of navigation
 - Explore using middleware to set the userId
