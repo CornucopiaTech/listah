@@ -20,7 +20,8 @@ import reportWebVitals from './reportWebVitals.ts'
 import Loading from '@/components/common/Loading';
 import NotFound from '@/components/common/NotFound';
 import { Error } from '@/components/common/Error';
-import * as theme from '@/lib/styles/theme';
+// import * as theme from '@/lib/styles/theme';
+import theme from '@/system/theme';
 
 
 declare global {
@@ -66,7 +67,8 @@ declare module '@tanstack/react-router' {
 function Wrapper( { children }: { children: React.ReactNode } ) {
   const aKey = window.runtimeConfig.authKey;
   return (
-    <ThemeProvider theme={theme.materialTheme}>
+    <ThemeProvider theme={theme}>
+    {/* <ThemeProvider theme={theme.materialTheme}> */}
       <ClerkProvider publishableKey={aKey}>
         <QueryClientProvider client={queryClient}>
           {children}

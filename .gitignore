@@ -52,3 +52,6 @@ docker/local
 
 # Env variables
 .env
+
+
+storybook-static
