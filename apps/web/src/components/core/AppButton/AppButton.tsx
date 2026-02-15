@@ -1,5 +1,6 @@
 import { Button, type ButtonProps } from "@mui/material";
-import { useTheme } from '@mui/material/styles';
+// import { useTheme } from '@mui/material/styles';
+import { AppH6ButtonTypography } from "../Typography/ButtonTypography";
 
 export type AppButtonProps = ButtonProps & {
   variantType?: "primary" | "secondary";
@@ -8,13 +9,12 @@ export type AppButtonProps = ButtonProps & {
 
 declare module '@mui/material/Button' {
   interface ButtonPropsColorOverrides {
-    custom: true;
+    primary: true;
   }
 }
 
 export function AppButton({ label, }: { label: string; }) {
-  const theme = useTheme();
-  const color = theme.palette.primary.main as string;
+  // const theme = useTheme();
   return (
     <Button color={"primary"} variant='contained' disableElevation >
       {label}
@@ -24,7 +24,7 @@ export function AppButton({ label, }: { label: string; }) {
 
 export function AppButtonOutlined({ label, }: { label: string; }) {
   return (
-    <Button type="button" variant='contained' disableElevation >
+    <Button variant='contained' disableElevation >
       {label}
     </Button>
   );
@@ -32,8 +32,11 @@ export function AppButtonOutlined({ label, }: { label: string; }) {
 
 export function AppButtonContained({ label, }: { label: string; }) {
   return (
-    <Button type="button" variant='contained'  >
-      {label}
+    <Button variant='contained' sx={{ padding: 2, margin: 2, borderRadius: 24, width: "100%", textTransform: 'none'}} >
+      <AppH6ButtonTypography>
+        {label}
+      </AppH6ButtonTypography>
+
     </Button>
   );
 }

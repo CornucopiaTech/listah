@@ -1,18 +1,18 @@
 import { createTheme } from "@mui/material/styles";
 import { lightPalette }from "@/system/theme/palette";
 import {typography} from "@/system/tokens/typography";
-import components from "@/system/theme//components";
+import {components} from "@/system/theme//components";
 
 
-declare module '@mui/material/styles' {
-  interface Palette {
-    custom: Palette['primary'];
-  }
+// declare module '@mui/material/styles' {
+//   interface Palette {
+//     custom: Palette['primary'];
+//   }
 
-  interface PaletteOptions {
-    custom?: PaletteOptions['primary'];
-  }
-}
+//   interface PaletteOptions {
+//     custom?: PaletteOptions['primary'];
+//   }
+// }
 
 
 const theme = createTheme({
@@ -25,7 +25,11 @@ const theme = createTheme({
     "0px 6px 18px rgba(0,0,0,0.08)",
     ...Array(21).fill("none") // keep unused shadows simple
   ],
-  components
+  components,
+  shape: {
+    borderRadius: 1
+  },
 });
 
 export default theme;
+export type AppTheme = typeof theme;

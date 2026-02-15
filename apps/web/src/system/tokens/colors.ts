@@ -1,21 +1,45 @@
-export const colourTokens = {
-  bg: {
-    primary: 'rgb(111, 143, 114)',
-    secondary: 'rgb(242, 166, 90)',
-    surface: 'rgb(232, 226, 216)',
-    // error: '#ff0000',
-    // success: '#00ff00',
+export const color = {
+  pacificblue: {
+    light: "#58b4bc",
+    main: "#378289",
+    dark: "#163437",
+    contrastText: "#e9efdc",
+    "0": "#ffffff",
+    "50": "#def0f2",
+    "100": "#bce1e4",
+    "200": "#9bd2d7",
+    "300": "#79c3ca",
+    "400": "#58b4bc",
+    "500": "#429ea6",
+    "600": "#378289",
+    "700": "#2c686d",
+    "800": "#214e52",
+    "900": "#163437",
+    "950": "#0b1a1b"
   },
-  text: {
-    primary: '#000000',
-    secondary: '#1c1c1e',
-    error: '#ff0000',
-    success: '#00ff00',
-  },
-  border: {
-    primary: '#0070f3',
-    secondary: '#1c1c1e',
-    error: '#ff0000',
-    success: '#00ff00',
-  }
+  // teagreen: {
+  //   light: "#def0f2",
+  //   main: "#378289",
+  //   dark: "#163437",
+  //   contrastText: "#e9efdc",
+  //   200: "#9bd2d7",
+  //   300: "#79c3ca",
+  //   400: "#58b4bc",
+  //   500: "#429ea6",
+  //   600: "#378289",
+  //   700: "#2c686d",
+  //   800: "#214e52",
+  //   900: "#163437",
+  // },
 }
+
+
+
+// export const likes: string[] = [
+//   "#280004", //Rich mahogany
+// ]
+// export const genColours: string[][] = [
+//   [{"name":"Cotton Rose","hex":"e5c2c0","rgb":[229,194,192],"cmyk":[0,15,16,10],"hsb":[3,16,90],"hsl":[3,42,83],"lab":[81,12,6]},{"name":"Celadon","hex":"8fd5a6","rgb":[143,213,166],"cmyk":[33,0,22,16],"hsb":[140,33,84],"hsl":[140,45,70],"lab":[80,-32,16]},{"name":"Shamrock","hex":"329f5b","rgb":[50,159,91],"cmyk":[69,0,43,38],"hsb":[143,69,62],"hsl":[143,52,41],"lab":[58,-46,27]},{"name":"Sea Green","hex":"0c8346","rgb":[12,131,70],"cmyk":[91,0,47,49],"hsb":[149,91,51],"hsl":[149,83,28],"lab":[48,-45,25]},{"name":"Stormy Teal","hex":"0d5d56","rgb":[13,93,86],"cmyk":[86,0,8,64],"hsb":[175,86,36],"hsl":[175,75,21],"lab":[35,-24,-2]}],
+
+//   [{"name":"Rosy Taupe","hex":"cc998d","rgb":[204,153,141],"cmyk":[0,25,31,20],"hsb":[11,31,80],"hsl":[11,38,68],"lab":[68,17,14]},{"name":"Pacific Blue","hex":"429ea6","rgb":[66,158,166],"cmyk":[60,5,0,35],"hsb":[185,60,65],"hsl":[185,43,45],"lab":[60,-25,-12]},{"name":"Yale Blue","hex":"153b50","rgb":[21,59,80],"cmyk":[74,26,0,69],"hsb":[201,74,31],"hsl":[201,58,20],"lab":[23,-6,-17]},{"name":"Violet","hex":"e980fc","rgb":[233,128,252],"cmyk":[8,49,0,1],"hsb":[291,49,99],"hsl":[291,95,75],"lab":[69,59,-45]},{"name":"Tea Green","hex":"d3dfb8","rgb":[211,223,184],"cmyk":[5,0,17,13],"hsb":[78,17,87],"hsl":[78,38,80],"lab":[87,-11,18]}]
+// ]
