@@ -1,6 +1,6 @@
 import { Button, type ButtonProps } from "@mui/material";
 // import { useTheme } from '@mui/material/styles';
-import { AppH6ButtonTypography } from "../Typography/ButtonTypography";
+import { AppH6ButtonTypography } from "./ButtonTypography";
 
 export type AppButtonProps = ButtonProps & {
   variantType?: "primary" | "secondary";

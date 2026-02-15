@@ -8,22 +8,12 @@ import { styled, } from '@mui/material/styles';
 
 import type { AppTheme } from '@/system/theme';
 
-// export function HeroTypography(){
-//   return
-// }
-
 
 const AppTypography = styled(Typography)(({ theme }: { theme: AppTheme }) => ({
   color: theme.palette.primary.main,
-  // fontWeight: 'bold',
   textAlign: "center"
 }));
 
-const AppButtonTypography = styled(Typography)(({ theme }: { theme: AppTheme }) => ({
-  color: theme.palette.primary.contrastText,
-  // fontWeight: 'bold',
-  textAlign: "center"
-}));
 
 export function AppHeroTypography({ children }: { children: ReactNode }){
   return (
@@ -50,10 +40,3 @@ export function AppH6Typography({ children }: { children: ReactNode }){
   )
 }
 
-
-
-export function AppBody1ButtonTypography({ children }: { children: ReactNode }){
-  return (
-    <AppButtonTypography variant="body1">{ children }</AppButtonTypography>
-  )
-}

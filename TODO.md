@@ -1,4 +1,14 @@
 # To Do
+
+- Add table for saved filters by user_id
+- Add service for saved filters
+- Add ability to get all saved filters and the number of items that match the filter.
+- Add ability to get all distinct tags ad the number of items that match the filter.
+
+
+
+
+## Retired
 - Add functionality to add item from items, categories, or tags pages.
 - Add landing page for application
 - Add better page when no content exists. Current page is blank without prompting user to the fact that no content exists.

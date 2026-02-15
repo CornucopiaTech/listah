@@ -1,9 +1,9 @@
 import { Fragment } from "react";
 
 
-import { AppHeroPaper } from "@/components/core/AppPaper/AppPaper";
-import { AppButtonContained } from "@/components/core/AppButton/AppButton";
-import { AppHeroTypography, AppH6Typography } from "@/components/core/Typography/Typography";
+import { AppHeroPaper } from "@/components/core/AppPaper";
+import { AppButtonContained } from "@/components/core/AppButton";
+import { AppHeroTypography, AppH6Typography } from "@/components/core/Typography";
 
 
 export function Landing(){
