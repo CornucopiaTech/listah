@@ -9,14 +9,24 @@ import type { AppTheme } from '@/system/theme';
 
 
 
-export const AppListHeaderBar = styled(Box)(({ theme }: { theme: AppTheme }) => ({
+export const ListHeaderBar = styled(Box)(({ theme }: { theme: AppTheme }) => ({
   width: "100%",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
   textAlign: "center",
-  borderRadius: 4,
+  // borderRadius: "4px",
   padding: 1,
   backgroundColor: theme.palette.primary.main,
 }));
+
+
+
+export function AppListHeaderBar( { children }: { children: React.ReactNode }) {
+  return (
+    <ListHeaderBar sx={{borderRadius: "4px 4px 0px 0px"}}>
+      {children}
+    </ListHeaderBar>
+  );
+};
 

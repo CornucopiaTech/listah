@@ -1,9 +1,11 @@
+
+
 import type { ReactNode } from "react";
 import { Fragment } from "react";
 
 
 import type { CategoryGroup } from '@/lib/model/common';
-import { CategoryList } from "../core/CategoryList";
+import { CategoryList } from "@/components/core/CategoryList";
 
 
 
@@ -17,7 +19,7 @@ import { CategoryList } from "../core/CategoryList";
 
 const emptyModelData: CategoryGroup[] = [];
 
-export function SavedFilterList(): ReactNode {
+export function SavedFilterListLayout(): ReactNode {
 
   return (
     <Fragment>

@@ -46,9 +46,6 @@ export const DEFAULT_ITEM: IItem = {
   note: "",
   tag: [],
   softDelete: false,
-  // properties: {},
-  // reactivateAt: null,
-  // audit: null,
 };
 
 export const MAX_TAG_CHIPS_DISPLAY = 2;
