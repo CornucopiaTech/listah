@@ -2,7 +2,6 @@
 import * as z from "zod";
 
 export interface IEnvConfig {
-  apiVersion: string;
   apiUrl: string;
   authKey: string;
 }
@@ -23,7 +22,7 @@ export const ZPagination = z.object({
   recordsPerPage: z.number().catch(10),
   sortCondition: z.string().catch(''),
 });
-export interface IPagination extends z.infer<typeof ZPagination>{ }; // eslint-disable-line @typescript-eslint/no-empty-object-type
+export type IPagination = z.infer<typeof ZPagination>; // eslint-disable-line @typescript-eslint/no-empty-object-type
 
 
 
@@ -35,11 +34,15 @@ export interface TraceBaggage {
 
 
 export interface Audit {
-    createdBy: AuditUpdaterEnum;
-    createdAt: string;
-    updatedBy: AuditUpdaterEnum;
-    updatedAt: string;
-    deletedBy: AuditUpdaterEnum;
-    deletedAt: string;
+  createdBy: AuditUpdaterEnum;
+  createdAt: string;
+  updatedBy: AuditUpdaterEnum;
+  updatedAt: string;
+  deletedBy: AuditUpdaterEnum;
+  deletedAt: string;
 }
 
+export interface CategoryGroup {
+  title: string;
+  numberOfItems: number;
+}

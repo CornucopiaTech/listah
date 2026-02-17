@@ -1,9 +1,9 @@
 import { Outlet, createRootRoute } from '@tanstack/react-router';
-import CssBaseline from '@mui/material/CssBaseline';
 import { Fragment } from 'react';
 
 
 import NotFound from '@/components/common/NotFound';
+import { AppContainer } from '@/components/layout/AppContainer';
 
 
 
@@ -24,8 +24,9 @@ export const Route = createRootRoute({
   }),
   component: () => (
     <Fragment>
-      <CssBaseline />
-      <Outlet />
+      <AppContainer>
+        <Outlet />
+      </AppContainer>
     </Fragment>
   ),
   notFoundComponent: NotFound,

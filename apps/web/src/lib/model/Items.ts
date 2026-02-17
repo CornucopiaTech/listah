@@ -92,6 +92,7 @@ export type  IListingState = {
   drawer: boolean
   modal: boolean
   displayId: string
+  displayItem: IItem
   searchQuery: string
   checkedTag: Set<string>
   checkedCategory: Set<string>
@@ -105,6 +106,7 @@ export type IListingActions = {
   setDrawer: (drawer: boolean) => void
   setModal: (modal: boolean) => void
   setDisplayId: (displayId: string) => void
+  setDisplayItem: (displayItem: IItem) => void
   setSearchQuery: (searchQuery: string) => void
   setCheckedTag: (checkedTag: Set<string>) => void
   setCheckedCategory: (checkedCategory: Set<string>) => void

@@ -66,7 +66,8 @@ export default function NotAuthorised(): ReactNode {
               variant="h3" noWrap
               component="div"
               sx={{
-                color: theme.palette.containedButton.main,
+                // color: theme.palette.containedButton.main,
+                color: theme.palette.primary.main,
                 textTransform: 'none',
               }}
             >
@@ -83,7 +84,8 @@ export default function NotAuthorised(): ReactNode {
               variant="h3" noWrap
               component="div"
               sx={{
-                color: theme.palette.containedButton.main,
+                // color: theme.palette.containedButton.main,
+                color: theme.palette.primary.main,
                 textTransform: 'none',
               }}
               >
