@@ -43,15 +43,6 @@ const (
 	ItemServiceDeleteProcedure = "/listah.v1.ItemService/Delete"
 )
 
-// These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
-var (
-	itemServiceServiceDescriptor      = v1.File_v1_item_proto.Services().ByName("ItemService")
-	itemServiceCreateMethodDescriptor = itemServiceServiceDescriptor.Methods().ByName("Create")
-	itemServiceReadMethodDescriptor   = itemServiceServiceDescriptor.Methods().ByName("Read")
-	itemServiceUpdateMethodDescriptor = itemServiceServiceDescriptor.Methods().ByName("Update")
-	itemServiceDeleteMethodDescriptor = itemServiceServiceDescriptor.Methods().ByName("Delete")
-)
-
 // ItemServiceClient is a client for the listah.v1.ItemService service.
 type ItemServiceClient interface {
 	Create(context.Context, *connect.Request[v1.ItemServiceCreateRequest]) (*connect.Response[v1.ItemServiceCreateResponse], error)
@@ -69,30 +60,31 @@ type ItemServiceClient interface {
 // http://api.acme.com or https://acme.com/grpc).
 func NewItemServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) ItemServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
+	itemServiceMethods := v1.File_v1_item_proto.Services().ByName("ItemService").Methods()
 	return &itemServiceClient{
 		create: connect.NewClient[v1.ItemServiceCreateRequest, v1.ItemServiceCreateResponse](
 			httpClient,
 			baseURL+ItemServiceCreateProcedure,
-			connect.WithSchema(itemServiceCreateMethodDescriptor),
+			connect.WithSchema(itemServiceMethods.ByName("Create")),
 			connect.WithClientOptions(opts...),
 		),
 		read: connect.NewClient[v1.ItemServiceReadRequest, v1.ItemServiceReadResponse](
 			httpClient,
 			baseURL+ItemServiceReadProcedure,
-			connect.WithSchema(itemServiceReadMethodDescriptor),
+			connect.WithSchema(itemServiceMethods.ByName("Read")),
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
 		update: connect.NewClient[v1.ItemServiceUpdateRequest, v1.ItemServiceUpdateResponse](
 			httpClient,
 			baseURL+ItemServiceUpdateProcedure,
-			connect.WithSchema(itemServiceUpdateMethodDescriptor),
+			connect.WithSchema(itemServiceMethods.ByName("Update")),
 			connect.WithClientOptions(opts...),
 		),
 		delete: connect.NewClient[v1.ItemServiceDeleteRequest, v1.ItemServiceDeleteResponse](
 			httpClient,
 			baseURL+ItemServiceDeleteProcedure,
-			connect.WithSchema(itemServiceDeleteMethodDescriptor),
+			connect.WithSchema(itemServiceMethods.ByName("Delete")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -140,29 +132,30 @@ type ItemServiceHandler interface {
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
 func NewItemServiceHandler(svc ItemServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	itemServiceMethods := v1.File_v1_item_proto.Services().ByName("ItemService").Methods()
 	itemServiceCreateHandler := connect.NewUnaryHandler(
 		ItemServiceCreateProcedure,
 		svc.Create,
-		connect.WithSchema(itemServiceCreateMethodDescriptor),
+		connect.WithSchema(itemServiceMethods.ByName("Create")),
 		connect.WithHandlerOptions(opts...),
 	)
 	itemServiceReadHandler := connect.NewUnaryHandler(
 		ItemServiceReadProcedure,
 		svc.Read,
-		connect.WithSchema(itemServiceReadMethodDescriptor),
+		connect.WithSchema(itemServiceMethods.ByName("Read")),
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
 	itemServiceUpdateHandler := connect.NewUnaryHandler(
 		ItemServiceUpdateProcedure,
 		svc.Update,
-		connect.WithSchema(itemServiceUpdateMethodDescriptor),
+		connect.WithSchema(itemServiceMethods.ByName("Update")),
 		connect.WithHandlerOptions(opts...),
 	)
 	itemServiceDeleteHandler := connect.NewUnaryHandler(
 		ItemServiceDeleteProcedure,
 		svc.Delete,
-		connect.WithSchema(itemServiceDeleteMethodDescriptor),
+		connect.WithSchema(itemServiceMethods.ByName("Delete")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/listah.v1.ItemService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

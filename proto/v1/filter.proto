@@ -10,21 +10,21 @@ import "google/protobuf/timestamp.proto";
 import "gnostic/openapi/v3/annotations.proto";
 
 
-message TagCategoryQuery {
-  string tag = 1;
+message FilterCategoryQuery {
+  string filter = 1;
   string row_count = 2 [json_name = "rowCount"];
 }
 
 
 
-message TagServiceCategoryReadRequest {
+message FilterServiceCategoryReadRequest {
   string user_id = 1 [json_name = "userId"];
   int32 pageSize = 300 [json_name = "pageSize"];
   int32 pageNumber = 301 [json_name = "pageNumber"];
   string sortQuery = 302 [json_name = "sortQuery"];
 }
-message TagServiceCategoryReadResponse {
-  repeated TagCategoryQuery tags = 1;
+message FilterServiceCategoryReadResponse {
+  repeated FilterCategoryQuery filters = 1;
   //
   string userId = 200 [json_name = "userId"];
   int32 pageSize = 300 [json_name = "pageSize"];
@@ -32,16 +32,16 @@ message TagServiceCategoryReadResponse {
   string sortQuery = 302 [json_name = "sortQuery"];
 }
 
-message TagServiceItemReadRequest {
+message FilterServiceItemReadRequest {
   string user_id = 1 [json_name = "userId"];
-  string tag = 2;
+  repeated string filters = 2;
   int32 pageSize = 300 [json_name = "pageSize"];
   int32 pageNumber = 301 [json_name = "pageNumber"];
   string sortQuery = 302 [json_name = "sortQuery"];
 }
-message TagServiceItemReadResponse {
+message FilterServiceItemReadResponse {
   repeated Item items = 1;
-  string tag = 2;
+  repeated string filters = 2;
   string userId = 200 [json_name = "userId"];
   int32 pageSize = 300 [json_name = "pageSize"];
   int32 pageNumber = 301 [json_name = "pageNumber"];
@@ -49,13 +49,13 @@ message TagServiceItemReadResponse {
 }
 
 
-service TagService {
-  rpc ReadCategory(TagServiceCategoryReadRequest) returns (TagServiceCategoryReadResponse){
+service FilterService {
+  rpc ReadCategory(FilterServiceCategoryReadRequest) returns (FilterServiceCategoryReadResponse){
     option idempotency_level = NO_SIDE_EFFECTS;
-    option (gnostic.openapi.v3.operation).description = "Read Item Count By Tag Category";
+    option (gnostic.openapi.v3.operation).description = "Read Item Count By Filter Category";
   }
-  rpc ReadItem(TagServiceItemReadRequest) returns (TagServiceItemReadResponse){
+  rpc ReadItem(FilterServiceItemReadRequest) returns (FilterServiceItemReadResponse){
     option idempotency_level = NO_SIDE_EFFECTS;
-    option (gnostic.openapi.v3.operation).description = "Read Item By Tag Category";
+    option (gnostic.openapi.v3.operation).description = "Read Item By Filter Category";
   }
 }

@@ -5,9 +5,12 @@ import { Fragment } from "react";
 
 import { ItemList } from "@/components/core/ItemList";
 import type { IItem } from "@/lib/model/Items";
-import { useBoundStore, type TBoundStore } from '@/lib/store/boundStore';
+import {
+  useBoundStore,
+  type TBoundStore
+} from '@/lib/store/boundStore';
 import { AppItemModal } from "@/components/core/AppItemModal";
-
+import { DEFAULT_ITEM } from "@/lib/helper/defaults";
 
 const modelData: IItem[] = [
   {
@@ -148,10 +151,16 @@ const modelData: IItem[] = [
 ];
 
 export function ItemListLayout(): ReactNode {
+
+  // ToDo: Define mutation
+  const mutateItem = (anitem: IItem) => console.log(anitem);
   const store: TBoundStore = useBoundStore((state) => state);
+
+
+
   return (
     <Fragment>
-      {store.modal && <AppItemModal />}
+      {store.modal && <AppItemModal mutateItem={mutateItem} />}
       <ItemList title="Category - CHANGE ME " data={modelData} />
     </Fragment>
   );

@@ -33,19 +33,16 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// TagServiceReadProcedure is the fully-qualified name of the TagService's Read RPC.
-	TagServiceReadProcedure = "/listah.v1.TagService/Read"
-)
-
-// These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
-var (
-	tagServiceServiceDescriptor    = v1.File_v1_tag_proto.Services().ByName("TagService")
-	tagServiceReadMethodDescriptor = tagServiceServiceDescriptor.Methods().ByName("Read")
+	// TagServiceReadCategoryProcedure is the fully-qualified name of the TagService's ReadCategory RPC.
+	TagServiceReadCategoryProcedure = "/listah.v1.TagService/ReadCategory"
+	// TagServiceReadItemProcedure is the fully-qualified name of the TagService's ReadItem RPC.
+	TagServiceReadItemProcedure = "/listah.v1.TagService/ReadItem"
 )
 
 // TagServiceClient is a client for the listah.v1.TagService service.
 type TagServiceClient interface {
-	Read(context.Context, *connect.Request[v1.TagServiceReadRequest]) (*connect.Response[v1.TagServiceReadResponse], error)
+	ReadCategory(context.Context, *connect.Request[v1.TagServiceCategoryReadRequest]) (*connect.Response[v1.TagServiceCategoryReadResponse], error)
+	ReadItem(context.Context, *connect.Request[v1.TagServiceItemReadRequest]) (*connect.Response[v1.TagServiceItemReadResponse], error)
 }
 
 // NewTagServiceClient constructs a client for the listah.v1.TagService service. By default, it uses
@@ -57,11 +54,19 @@ type TagServiceClient interface {
 // http://api.acme.com or https://acme.com/grpc).
 func NewTagServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) TagServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
+	tagServiceMethods := v1.File_v1_tag_proto.Services().ByName("TagService").Methods()
 	return &tagServiceClient{
-		read: connect.NewClient[v1.TagServiceReadRequest, v1.TagServiceReadResponse](
+		readCategory: connect.NewClient[v1.TagServiceCategoryReadRequest, v1.TagServiceCategoryReadResponse](
 			httpClient,
-			baseURL+TagServiceReadProcedure,
-			connect.WithSchema(tagServiceReadMethodDescriptor),
+			baseURL+TagServiceReadCategoryProcedure,
+			connect.WithSchema(tagServiceMethods.ByName("ReadCategory")),
+			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
+			connect.WithClientOptions(opts...),
+		),
+		readItem: connect.NewClient[v1.TagServiceItemReadRequest, v1.TagServiceItemReadResponse](
+			httpClient,
+			baseURL+TagServiceReadItemProcedure,
+			connect.WithSchema(tagServiceMethods.ByName("ReadItem")),
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
@@ -70,17 +75,24 @@ func NewTagServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...
 
 // tagServiceClient implements TagServiceClient.
 type tagServiceClient struct {
-	read *connect.Client[v1.TagServiceReadRequest, v1.TagServiceReadResponse]
+	readCategory *connect.Client[v1.TagServiceCategoryReadRequest, v1.TagServiceCategoryReadResponse]
+	readItem     *connect.Client[v1.TagServiceItemReadRequest, v1.TagServiceItemReadResponse]
 }
 
-// Read calls listah.v1.TagService.Read.
-func (c *tagServiceClient) Read(ctx context.Context, req *connect.Request[v1.TagServiceReadRequest]) (*connect.Response[v1.TagServiceReadResponse], error) {
-	return c.read.CallUnary(ctx, req)
+// ReadCategory calls listah.v1.TagService.ReadCategory.
+func (c *tagServiceClient) ReadCategory(ctx context.Context, req *connect.Request[v1.TagServiceCategoryReadRequest]) (*connect.Response[v1.TagServiceCategoryReadResponse], error) {
+	return c.readCategory.CallUnary(ctx, req)
+}
+
+// ReadItem calls listah.v1.TagService.ReadItem.
+func (c *tagServiceClient) ReadItem(ctx context.Context, req *connect.Request[v1.TagServiceItemReadRequest]) (*connect.Response[v1.TagServiceItemReadResponse], error) {
+	return c.readItem.CallUnary(ctx, req)
 }
 
 // TagServiceHandler is an implementation of the listah.v1.TagService service.
 type TagServiceHandler interface {
-	Read(context.Context, *connect.Request[v1.TagServiceReadRequest]) (*connect.Response[v1.TagServiceReadResponse], error)
+	ReadCategory(context.Context, *connect.Request[v1.TagServiceCategoryReadRequest]) (*connect.Response[v1.TagServiceCategoryReadResponse], error)
+	ReadItem(context.Context, *connect.Request[v1.TagServiceItemReadRequest]) (*connect.Response[v1.TagServiceItemReadResponse], error)
 }
 
 // NewTagServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -89,17 +101,27 @@ type TagServiceHandler interface {
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
 func NewTagServiceHandler(svc TagServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
-	tagServiceReadHandler := connect.NewUnaryHandler(
-		TagServiceReadProcedure,
-		svc.Read,
-		connect.WithSchema(tagServiceReadMethodDescriptor),
+	tagServiceMethods := v1.File_v1_tag_proto.Services().ByName("TagService").Methods()
+	tagServiceReadCategoryHandler := connect.NewUnaryHandler(
+		TagServiceReadCategoryProcedure,
+		svc.ReadCategory,
+		connect.WithSchema(tagServiceMethods.ByName("ReadCategory")),
+		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
+		connect.WithHandlerOptions(opts...),
+	)
+	tagServiceReadItemHandler := connect.NewUnaryHandler(
+		TagServiceReadItemProcedure,
+		svc.ReadItem,
+		connect.WithSchema(tagServiceMethods.ByName("ReadItem")),
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/listah.v1.TagService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case TagServiceReadProcedure:
-			tagServiceReadHandler.ServeHTTP(w, r)
+		case TagServiceReadCategoryProcedure:
+			tagServiceReadCategoryHandler.ServeHTTP(w, r)
+		case TagServiceReadItemProcedure:
+			tagServiceReadItemHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -109,6 +131,10 @@ func NewTagServiceHandler(svc TagServiceHandler, opts ...connect.HandlerOption) 
 // UnimplementedTagServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedTagServiceHandler struct{}
 
-func (UnimplementedTagServiceHandler) Read(context.Context, *connect.Request[v1.TagServiceReadRequest]) (*connect.Response[v1.TagServiceReadResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.TagService.Read is not implemented"))
+func (UnimplementedTagServiceHandler) ReadCategory(context.Context, *connect.Request[v1.TagServiceCategoryReadRequest]) (*connect.Response[v1.TagServiceCategoryReadResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.TagService.ReadCategory is not implemented"))
+}
+
+func (UnimplementedTagServiceHandler) ReadItem(context.Context, *connect.Request[v1.TagServiceItemReadRequest]) (*connect.Response[v1.TagServiceItemReadResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.TagService.ReadItem is not implemented"))
 }

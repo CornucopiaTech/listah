@@ -17,11 +17,9 @@ type Item struct {
 	Id            string `bun:",pk"`
 	UserId        string
 	Summary       string
-	Category      string
 	Description   string
 	Note          string
 	Tag          []string `bun:"type:jsonb"`
-	Properties    map[string]string
 	SoftDelete    bool `bun:",nullzero,default:false"`
 	ReactivateAt  time.Time
 	Audit         Audit
@@ -33,8 +31,8 @@ var ItemConflictFields = []string{
 }
 
 var ItemResolveFields = []string{
-	"summary", "category", "description", "note", "tag",
-	"properties", "reactivate_at", "audit", "soft_delete",
+	"summary", "description", "note", "tag",
+	"reactivate_at", "audit", "soft_delete",
 	// "audit.updated_by", "audit.deleted_by",
 	// "audit.updated_at", "audit.deleted_at",
 }
@@ -55,11 +53,9 @@ func IItemToItemModel(msg []*pb.Item, genId bool) ([]*Item, error) {
 			Id:           id,
 			UserId:       v.GetUserId(),
 			Summary:      v.GetSummary(),
-			Category:     v.GetCategory(),
 			Description:  v.GetDescription(),
 			Note:         v.GetNote(),
 			Tag:         v.GetTag(),
-			Properties:   v.GetProperties(),
 			SoftDelete:   v.GetSoftDelete(),
 			ReactivateAt: v.GetReactivateAt().AsTime(),
 			Audit: Audit{
@@ -99,9 +95,6 @@ func IItemToItemModelUpsertSafe(msg []*pb.Item, genId bool) ([]*Item, error) {
 		if (v.GetSummary() != ""){
 			newItem.Summary = v.GetSummary()
 		}
-		if (v.GetCategory() != ""){
-			newItem.Category = v.GetCategory()
-		}
 		if (v.GetDescription() != ""){
 			newItem.Description = v.GetDescription()
 		}
@@ -110,9 +103,6 @@ func IItemToItemModelUpsertSafe(msg []*pb.Item, genId bool) ([]*Item, error) {
 		}
 		if (len(v.GetTag()) != 0){
 			newItem.Tag = v.GetTag()
-		}
-		if (len(v.GetProperties()) != 0){
-			newItem.Properties = v.GetProperties()
 		}
 		if (v.GetReactivateAt() != nil){
 			newItem.ReactivateAt = v.GetReactivateAt().AsTime()
@@ -133,11 +123,9 @@ func ItemModelToIItem(m []*Item) ([]*pb.Item, error) {
 			Id:           v.Id,
 			UserId:       v.UserId,
 			Summary:      v.Summary,
-			Category:     v.Category,
 			Description:  &v.Description,
 			Note:         &v.Note,
 			Tag:         v.Tag,
-			Properties:   v.Properties,
 			SoftDelete:   &v.SoftDelete,
 			ReactivateAt: timestamppb.New(v.ReactivateAt),
 			Audit: &pb.Audit{
@@ -154,7 +142,7 @@ func ItemModelToIItem(m []*Item) ([]*pb.Item, error) {
 }
 
 func IItemToWhereClause(msg *pb.ItemServiceReadRequest) ([]model.WhereClause, error) {
-	if len(msg.GetUserId()) == 0 {
+	if msg.GetUserId() == "" {
 		return nil, errors.New("no userId sent with request")
 	}
 
@@ -173,24 +161,13 @@ func IItemToWhereClause(msg *pb.ItemServiceReadRequest) ([]model.WhereClause, er
 	}
 
 
-
-	// Add category to where clause
-	if len(msg.GetCategoryFilter()) != 0 {
-		w = append(w, model.WhereClause{
-			Placeholder: "? IN (?)",
-			Column:      "category",
-			Value:       bun.In(msg.GetCategoryFilter()),
-		})
-	}
-
-
 	// tag
-	if len(msg.GetTagFilter()) != 0 {
+	if len(msg.GetFilter()) != 0 {
 		w = append(w, model.WhereClause{
 			Placeholder: "?::JSONB IN (?)",
 			Column:      "tag",
 			// Value:       bun.In(pgdialect.Array(msg.GetTagFilter())), //Not working
-			Value:       bun.In(msg.GetTagFilter()),
+			Value:       bun.In(msg.GetFilter()),
 			// Value:       pgdialect.Array(msg.GetTagFilter()),
 		})
 	}
@@ -205,17 +182,6 @@ func IItemToWhereClause(msg *pb.ItemServiceReadRequest) ([]model.WhereClause, er
 	// 	})
 	// }
 
-
-	// // properties
-	// if len(msg.GetProperties()) != 0 {
-	// 	for k, v := range msg.GetProperties() {
-	// 		w = append(w, model.WhereClause{
-	// 			Placeholder: fmt.Sprintf("?::VARCHAR = ?::VARCHAR"),
-	// 			Column:      fmt.Sprintf("properties ->> '%s'", k),
-	// 			Value:       v,
-	// 		})
-	// 	}
-	// }
 
 	// softDelete
 	w = append(w, model.WhereClause{

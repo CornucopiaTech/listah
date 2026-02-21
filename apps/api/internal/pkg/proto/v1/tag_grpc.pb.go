@@ -19,14 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TagService_Read_FullMethodName = "/listah.v1.TagService/Read"
+	TagService_ReadCategory_FullMethodName = "/listah.v1.TagService/ReadCategory"
+	TagService_ReadItem_FullMethodName     = "/listah.v1.TagService/ReadItem"
 )
 
 // TagServiceClient is the client API for TagService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TagServiceClient interface {
-	Read(ctx context.Context, in *TagServiceReadRequest, opts ...grpc.CallOption) (*TagServiceReadResponse, error)
+	ReadCategory(ctx context.Context, in *TagServiceCategoryReadRequest, opts ...grpc.CallOption) (*TagServiceCategoryReadResponse, error)
+	ReadItem(ctx context.Context, in *TagServiceItemReadRequest, opts ...grpc.CallOption) (*TagServiceItemReadResponse, error)
 }
 
 type tagServiceClient struct {
@@ -37,10 +39,20 @@ func NewTagServiceClient(cc grpc.ClientConnInterface) TagServiceClient {
 	return &tagServiceClient{cc}
 }
 
-func (c *tagServiceClient) Read(ctx context.Context, in *TagServiceReadRequest, opts ...grpc.CallOption) (*TagServiceReadResponse, error) {
+func (c *tagServiceClient) ReadCategory(ctx context.Context, in *TagServiceCategoryReadRequest, opts ...grpc.CallOption) (*TagServiceCategoryReadResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(TagServiceReadResponse)
-	err := c.cc.Invoke(ctx, TagService_Read_FullMethodName, in, out, cOpts...)
+	out := new(TagServiceCategoryReadResponse)
+	err := c.cc.Invoke(ctx, TagService_ReadCategory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tagServiceClient) ReadItem(ctx context.Context, in *TagServiceItemReadRequest, opts ...grpc.CallOption) (*TagServiceItemReadResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TagServiceItemReadResponse)
+	err := c.cc.Invoke(ctx, TagService_ReadItem_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +63,8 @@ func (c *tagServiceClient) Read(ctx context.Context, in *TagServiceReadRequest, 
 // All implementations should embed UnimplementedTagServiceServer
 // for forward compatibility.
 type TagServiceServer interface {
-	Read(context.Context, *TagServiceReadRequest) (*TagServiceReadResponse, error)
+	ReadCategory(context.Context, *TagServiceCategoryReadRequest) (*TagServiceCategoryReadResponse, error)
+	ReadItem(context.Context, *TagServiceItemReadRequest) (*TagServiceItemReadResponse, error)
 }
 
 // UnimplementedTagServiceServer should be embedded to have
@@ -61,8 +74,11 @@ type TagServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedTagServiceServer struct{}
 
-func (UnimplementedTagServiceServer) Read(context.Context, *TagServiceReadRequest) (*TagServiceReadResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Read not implemented")
+func (UnimplementedTagServiceServer) ReadCategory(context.Context, *TagServiceCategoryReadRequest) (*TagServiceCategoryReadResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadCategory not implemented")
+}
+func (UnimplementedTagServiceServer) ReadItem(context.Context, *TagServiceItemReadRequest) (*TagServiceItemReadResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadItem not implemented")
 }
 func (UnimplementedTagServiceServer) testEmbeddedByValue() {}
 
@@ -84,20 +100,38 @@ func RegisterTagServiceServer(s grpc.ServiceRegistrar, srv TagServiceServer) {
 	s.RegisterService(&TagService_ServiceDesc, srv)
 }
 
-func _TagService_Read_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TagServiceReadRequest)
+func _TagService_ReadCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TagServiceCategoryReadRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TagServiceServer).Read(ctx, in)
+		return srv.(TagServiceServer).ReadCategory(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TagService_Read_FullMethodName,
+		FullMethod: TagService_ReadCategory_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TagServiceServer).Read(ctx, req.(*TagServiceReadRequest))
+		return srv.(TagServiceServer).ReadCategory(ctx, req.(*TagServiceCategoryReadRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TagService_ReadItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TagServiceItemReadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TagServiceServer).ReadItem(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TagService_ReadItem_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TagServiceServer).ReadItem(ctx, req.(*TagServiceItemReadRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -110,8 +144,12 @@ var TagService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*TagServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Read",
-			Handler:    _TagService_Read_Handler,
+			MethodName: "ReadCategory",
+			Handler:    _TagService_ReadCategory_Handler,
+		},
+		{
+			MethodName: "ReadItem",
+			Handler:    _TagService_ReadItem_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

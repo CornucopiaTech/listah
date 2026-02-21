@@ -19,6 +19,8 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
+	fmt.Printf("\n\n\nUserId -  %s\n\n\n", req.Msg.GetUserId())
+
 
 	readModel := []*v1model.Item{}
 	whereClause, err := v1model.IItemToWhereClause(req.Msg)
@@ -42,7 +44,7 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 	}
 
 	offset := pSize * (pNum - 1)
-	numTags := req.Msg.GetTagFilter()
+	numTags := req.Msg.GetFilter()
 	var recordCnt int
 
 	if len(numTags) > 0 {
@@ -71,11 +73,8 @@ func (s *Server) Read(ctx context.Context, req *connect.Request[pb.ItemServiceRe
 	resm := &pb.ItemServiceReadResponse{
 		Items: rs,
 		UserId: userId,
-		TagFilter: req.Msg.GetTagFilter(),
-		CategoryFilter: req.Msg.GetCategoryFilter(),
+		Filter: req.Msg.GetFilter(),
 		SearchQuery: req.Msg.GetSearchQuery(),
-		FromDate: req.Msg.GetFromDate(),
-		ToDate: req.Msg.GetToDate(),
 		PageSize: int32(recordCnt),
 		PageNumber: int32(pNum),
 		SortQuery: sortT,

@@ -38,30 +38,39 @@ import { Icon } from "@iconify/react";
 
 
 // Internal imports
-import { DEFAULT_ITEM } from "@/lib/helper/defaults";
 import { AppResetButton } from "@/components/core/AppButton";
-import { useBoundStore, type  TBoundStore } from '@/lib/store/boundStore';
-import type {
-  IItem,
-} from "@/lib/model/Items";
 import {
   SpaceBetweenBox,
 } from "@/components/basics/Box";
-// import type { AppTheme } from '@/lib/styles/theme';
 import { AppH6ButtonTypography } from "@/components/core/ButtonTypography";
+import type { IItem } from "@/lib/model/Items";
+import {
+  useBoundStore,
+  type TBoundStore
+} from '@/lib/store/boundStore';
 
-
-
-export function AppItemModal(): ReactNode {
-  // const theme: AppTheme = useTheme();
-
+export function AppItemModal(
+  {
+    mutateItem
+  }: {
+    mutateItem: (anItem: IItem) => void
+  }
+): ReactNode {
+  const store: TBoundStore = useBoundStore((state) => state);
   const item: IItem = useBoundStore((state) => state.displayItem);
 
-  // ToDo: Define mutation
-  const mutateItem = (anitem: IItem) => console.log(anitem);
-
-
-  const store: TBoundStore = useBoundStore((state) => state);
+  function closeModal(){
+    store.setModal(false);
+    store.setDisplayId("");
+    store.setDisplayItem(DEFAULT_ITEM);
+  }
+  function handleSubmit(e: FormEvent<HTMLFormElement>){
+    e.preventDefault()
+    e.stopPropagation()
+    form.handleSubmit()
+    closeModal()
+    store.setMessage("Item updated");
+  }
   const form = useForm({
     defaultValues: item,
     onSubmit: ({ value }) => {
@@ -74,22 +83,6 @@ export function AppItemModal(): ReactNode {
       mutateItem(submitValue);
     },
   });
-
-
-  function handleSubmit(e: FormEvent<HTMLFormElement>){
-    e.preventDefault()
-    e.stopPropagation()
-    form.handleSubmit()
-    closeModal()
-    store.setMessage("Item updated");
-  }
-
-
-  function closeModal(){
-    store.setModal(false);
-    store.setDisplayId("");
-    store.setDisplayItem(DEFAULT_ITEM);
-  }
 
   function getSimpleField(key: "id" | "tag" | "summary" | "userId" | "category" | "description" | "note" | "softDelete" | "reactivateAt" | `tag[${number}]`){
     const sx = (key == "id" || key == "userId") ? { display: 'none' } : {}
@@ -125,7 +118,6 @@ export function AppItemModal(): ReactNode {
 
               </Grid>
           </Grid>
-
         }
       />
     );

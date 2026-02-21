@@ -1,56 +1,56 @@
 package v1
 
-import (
-	"context"
-	"fmt"
-	"cornucopia/listah/apps/api/internal/pkg/model"
-	v1model "cornucopia/listah/apps/api/internal/pkg/model/v1"
-	pb "cornucopia/listah/apps/api/internal/pkg/proto/v1"
+// import (
+// 	"context"
+// 	"fmt"
+// 	"cornucopia/listah/apps/api/internal/pkg/model"
+// 	v1model "cornucopia/listah/apps/api/internal/pkg/model/v1"
+// 	pb "cornucopia/listah/apps/api/internal/pkg/proto/v1"
 
-	"connectrpc.com/connect"
-	"github.com/pkg/errors"
-	"go.opentelemetry.io/otel"
-)
+// 	"connectrpc.com/connect"
+// 	"github.com/pkg/errors"
+// 	"go.opentelemetry.io/otel"
+// )
 
-func (s *Server) Update(ctx context.Context, req *connect.Request[pb.ItemServiceUpdateRequest]) (*connect.Response[pb.ItemServiceUpdateResponse], error) {
-	rpcName := "Update"
-	rpcLogName := fmt.Sprintf("POST /%v/%v", svcName, rpcName)
-
-
-	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
-	defer span.End()
-	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
+// func (s *Server) Update(ctx context.Context, req *connect.Request[pb.ItemServiceUpdateRequest]) (*connect.Response[pb.ItemServiceUpdateResponse], error) {
+// 	rpcName := "Update"
+// 	rpcLogName := fmt.Sprintf("POST /%v/%v", svcName, rpcName)
 
 
-	// Create model for repository from request message
-	insertions, err := v1model.IItemToItemModelUpsertSafe(req.Msg.Items, false)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Error getting item model for insertion", errors.Cause(err).Error())
-		return nil, err
-	}
+// 	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
+// 	defer span.End()
+// 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
 
-	w := model.UpsertInfo{
-		Conflict: v1model.ItemConflictFields,
-		Resolve: v1model.ItemResolveFields,
-	}
+// 	// Create model for repository from request message
+// 	insertions, err := v1model.IItemToItemModelUpsertSafe(req.Msg.Items, false)
+// 	if err != nil {
+// 		s.Logger.LogError(ctx, svcName, rpcName, "Error getting item model for insertion", errors.Cause(err).Error())
+// 		return nil, err
+// 	}
 
-	_, err = s.BunRepo.Item.Upsert(ctx, &insertions, &w)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Repository  update error", errors.Cause(err).Error())
-		return nil, err
-	}
-	s.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository update")
 
-	// Get the ids of the inserted items
+// 	w := model.UpsertInfo{
+// 		Conflict: v1model.ItemConflictFields,
+// 		Resolve: v1model.ItemResolveFields,
+// 	}
 
-	rs := []string{}
-	for _, v := range insertions {
-		rs = append(rs,  v.Id)
-	}
+// 	_, err = s.BunRepo.Item.Upsert(ctx, &insertions, &w)
+// 	if err != nil {
+// 		s.Logger.LogError(ctx, svcName, rpcName, "Repository  update error", errors.Cause(err).Error())
+// 		return nil, err
+// 	}
+// 	s.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository update")
 
-	resm := &pb.ItemServiceUpdateResponse{ ItemIds: rs,}
+// 	// Get the ids of the inserted items
 
-	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item update. Updated %d items", len(insertions)))
-	return connect.NewResponse(resm), nil
-}
+// 	rs := []string{}
+// 	for _, v := range insertions {
+// 		rs = append(rs,  v.Id)
+// 	}
+
+// 	resm := &pb.ItemServiceUpdateResponse{ ItemIds: rs,}
+
+// 	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item update. Updated %d items", len(insertions)))
+// 	return connect.NewResponse(resm), nil
+// }

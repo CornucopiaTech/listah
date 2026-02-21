@@ -1,14 +1,13 @@
 -- Get tags and count of items for each tag
-SELECT
-    atag,
-    COUNT(*) AS row_count
+SELECT atag, COUNT(*) AS row_count
 FROM (
-    SELECT DISTINCT id, jsonb_array_elements_text(tag::JSONB) AS atag
-    FROM apps.items
-    WHERE tag::VARCHAR != 'null'
+  SELECT DISTINCT id, jsonb_array_elements_text(tag::JSONB) AS atag
+  FROM apps.items
+  WHERE tag::VARCHAR != 'null'
 ) AS expanded
-GROUP BY atag
-ORDER BY row_count DESC, atag;
+GROUP BY 1
+ORDER BY 1
+;
 
 
 --  Get all items that have all of the tags specifed tag
