@@ -80,11 +80,11 @@ export function TagListLayout(): ReactNode {
 
   function handleItemclick(it: ICategory) {
     console.log("In handleItemclick - e ");
-    const q = { ...query, filter: [it], pageNumber: 0 };
+    const q = { ...query, filter: [it.category], pageNumber: 0 };
     const encoded = encodeState(q);
     console.info("In handlePageChange - q ", q);
     console.info("In handlePageChange - Encoded ", encoded);
-    navigate({ to: "/nto-found", search: { s: encoded }, params: {filter: [it]} });
+    navigate({ to: "/items/", search: { s: encoded }, });
   }
   const totalRecords: number = data.pageSize ? data.pageSize : 1;
 

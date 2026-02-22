@@ -1,6 +1,7 @@
 
 
-// Items Store
+
+// Tag Store
 export type  IListingState = {
   message: string
   drawer: boolean

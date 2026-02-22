@@ -2,7 +2,12 @@ import type { StateCreator } from 'zustand';
 
 
 
-import type { IListingState, IListingSlice, IStore, IItem } from '@/lib/model/item';
+import type {  IItem } from '@/lib/model/item';
+import type {
+  IListingState,
+   IListingSlice,
+   IStore,
+} from '@/lib/model/store';
 import { DEFAULT_ITEM } from '../helper/defaults';
 
 

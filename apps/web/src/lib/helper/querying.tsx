@@ -36,6 +36,24 @@ export function categoryGroupOptions(opts: ICategoryRequest) {
   })
 }
 
+export function savedFilterGroupOptions(opts: ICategoryRequest) {
+  return queryOptions({
+    queryKey: ["savedFilter", opts],
+    queryFn: () => getCategory(opts),
+    staleTime: 60,
+    // staleTime: 24 * 60 * 60 * 1000,
+  })
+}
+
+export function tagGroupOptions(opts: ICategoryRequest) {
+  return queryOptions({
+    queryKey: ["tag", opts],
+    queryFn: () => getCategory(opts),
+    staleTime: 60,
+    // staleTime: 24 * 60 * 60 * 1000,
+  })
+}
+
 
 export function getQueryOptions(q: IItemRequest | ICategoryRequest): object[] {
   return [

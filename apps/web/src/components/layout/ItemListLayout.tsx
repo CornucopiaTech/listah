@@ -1,10 +1,18 @@
-import type { ReactNode } from "react";
+import type {
+  ReactNode,
+  ChangeEvent,
+  MouseEvent,
+} from 'react';
 import { Fragment } from "react";
 import {
   useQuery,
   type UseQueryResult,
 } from '@tanstack/react-query';
 import * as z from "zod";
+import {
+  useNavigate,
+} from '@tanstack/react-router';
+
 
 
 import { ItemList } from "@/components/core/ItemList";
@@ -26,11 +34,12 @@ import { useSearchQuery } from '@/lib/context/queryContext';
 import { itemGroupOptions } from '@/lib/helper/querying';
 import Loading from '@/components/common/Loading';
 import { Error } from '@/components/common/Error';
-
+import { encodeState } from '@/lib/helper/encoders';
 
 
 export function ItemListLayout(): ReactNode {
   // ToDo: Define mutation
+  const navigate = useNavigate();
   const mutateItem = (anitem: IItem) => console.log(anitem);
   const store: TBoundStore = useBoundStore((state) => state);
   const query: IItemRequest = useSearchQuery();
@@ -54,11 +63,39 @@ export function ItemListLayout(): ReactNode {
   }
 
   const items: IItem[] = data && data.items ? data.items : [];
+  const totalRecords: number = data.pageSize ? data.pageSize : 1;
+
+
+  function handlePageChange(
+    event: MouseEvent<HTMLButtonElement> | null,
+    value: number
+  ) {
+    event && event.stopPropagation();
+    const q = { ...query, pageNumber: value };
+    const encoded = encodeState(q);
+    navigate({ to: "/items", search: { s: encoded } });
+  };
+
+  function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    console.log("In handlePageChange - e ", e);
+    const q = { ...query, pageSize: parseInt(e.target.value, 10), pageNumber: 0 };
+    const encoded = encodeState(q);
+    console.info("In handlePageChange - q ", q);
+    console.info("In handlePageChange - Encoded ", encoded);
+    navigate({ to: "/items", search: { s: encoded } });
+  };
 
   return (
     <Fragment>
       {store.modal && <AppItemModal mutateItem={mutateItem} />}
-      <ItemList title="Category - CHANGE ME " data={items} />
+      <ItemList
+        title={`Category - ${query.filter[0]} `}
+        data={items}
+        count={totalRecords} page={query.pageNumber}
+        onPageChange={handlePageChange}
+        rowsPerPage={query.pageSize}
+        onRowsPerPageChange={handlePageSizeChange}
+      />
     </Fragment>
   );
 }
