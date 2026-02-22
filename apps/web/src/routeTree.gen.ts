@@ -9,217 +9,54 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as PreviousitemsRouteRouteImport } from './routes/previousitems/route'
-import { Route as PreviousTagsRouteRouteImport } from './routes/previous-tags/route'
-import { Route as CategoriesRouteRouteImport } from './routes/categories/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as PreviousitemsIndexRouteImport } from './routes/previousitems/index'
-import { Route as PreviousTagsIndexRouteImport } from './routes/previous-tags/index'
 import { Route as ItemsIndexRouteImport } from './routes/items/index'
-import { Route as CategoriesIndexRouteImport } from './routes/categories/index'
-import { Route as Char123filterChar125IndexRouteImport } from './routes/${filter}/index'
-import { Route as PreviousTagsTagFilterRouteImport } from './routes/previous-tags/$tagFilter'
-import { Route as CategoriesChar123CategoryFilterChar125RouteImport } from './routes/categories/{-$categoryFilter}'
-import { Route as CategoriesCategoryFilterRouteImport } from './routes/categories/$categoryFilter'
 
-const PreviousitemsRouteRoute = PreviousitemsRouteRouteImport.update({
-  id: '/previousitems',
-  path: '/previousitems',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PreviousTagsRouteRoute = PreviousTagsRouteRouteImport.update({
-  id: '/previous-tags',
-  path: '/previous-tags',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CategoriesRouteRoute = CategoriesRouteRouteImport.update({
-  id: '/categories',
-  path: '/categories',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const PreviousitemsIndexRoute = PreviousitemsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => PreviousitemsRouteRoute,
-} as any)
-const PreviousTagsIndexRoute = PreviousTagsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => PreviousTagsRouteRoute,
 } as any)
 const ItemsIndexRoute = ItemsIndexRouteImport.update({
   id: '/items/',
   path: '/items/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CategoriesIndexRoute = CategoriesIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => CategoriesRouteRoute,
-} as any)
-const Char123filterChar125IndexRoute =
-  Char123filterChar125IndexRouteImport.update({
-    id: '/${filter}/',
-    path: '/${filter}/',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const PreviousTagsTagFilterRoute = PreviousTagsTagFilterRouteImport.update({
-  id: '/$tagFilter',
-  path: '/$tagFilter',
-  getParentRoute: () => PreviousTagsRouteRoute,
-} as any)
-const CategoriesChar123CategoryFilterChar125Route =
-  CategoriesChar123CategoryFilterChar125RouteImport.update({
-    id: '/{-$categoryFilter}',
-    path: '/{-$categoryFilter}',
-    getParentRoute: () => CategoriesRouteRoute,
-  } as any)
-const CategoriesCategoryFilterRoute =
-  CategoriesCategoryFilterRouteImport.update({
-    id: '/$categoryFilter',
-    path: '/$categoryFilter',
-    getParentRoute: () => CategoriesRouteRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/categories': typeof CategoriesRouteRouteWithChildren
-  '/previous-tags': typeof PreviousTagsRouteRouteWithChildren
-  '/previousitems': typeof PreviousitemsRouteRouteWithChildren
-  '/categories/$categoryFilter': typeof CategoriesCategoryFilterRoute
-  '/categories/{-$categoryFilter}': typeof CategoriesChar123CategoryFilterChar125Route
-  '/previous-tags/$tagFilter': typeof PreviousTagsTagFilterRoute
-  '/${filter}': typeof Char123filterChar125IndexRoute
-  '/categories/': typeof CategoriesIndexRoute
   '/items': typeof ItemsIndexRoute
-  '/previous-tags/': typeof PreviousTagsIndexRoute
-  '/previousitems/': typeof PreviousitemsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/categories/$categoryFilter': typeof CategoriesCategoryFilterRoute
-  '/categories/{-$categoryFilter}': typeof CategoriesChar123CategoryFilterChar125Route
-  '/previous-tags/$tagFilter': typeof PreviousTagsTagFilterRoute
-  '/${filter}': typeof Char123filterChar125IndexRoute
-  '/categories': typeof CategoriesIndexRoute
   '/items': typeof ItemsIndexRoute
-  '/previous-tags': typeof PreviousTagsIndexRoute
-  '/previousitems': typeof PreviousitemsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/categories': typeof CategoriesRouteRouteWithChildren
-  '/previous-tags': typeof PreviousTagsRouteRouteWithChildren
-  '/previousitems': typeof PreviousitemsRouteRouteWithChildren
-  '/categories/$categoryFilter': typeof CategoriesCategoryFilterRoute
-  '/categories/{-$categoryFilter}': typeof CategoriesChar123CategoryFilterChar125Route
-  '/previous-tags/$tagFilter': typeof PreviousTagsTagFilterRoute
-  '/${filter}/': typeof Char123filterChar125IndexRoute
-  '/categories/': typeof CategoriesIndexRoute
   '/items/': typeof ItemsIndexRoute
-  '/previous-tags/': typeof PreviousTagsIndexRoute
-  '/previousitems/': typeof PreviousitemsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/categories'
-    | '/previous-tags'
-    | '/previousitems'
-    | '/categories/$categoryFilter'
-    | '/categories/{-$categoryFilter}'
-    | '/previous-tags/$tagFilter'
-    | '/${filter}'
-    | '/categories/'
-    | '/items'
-    | '/previous-tags/'
-    | '/previousitems/'
+  fullPaths: '/' | '/items'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/categories/$categoryFilter'
-    | '/categories/{-$categoryFilter}'
-    | '/previous-tags/$tagFilter'
-    | '/${filter}'
-    | '/categories'
-    | '/items'
-    | '/previous-tags'
-    | '/previousitems'
-  id:
-    | '__root__'
-    | '/'
-    | '/categories'
-    | '/previous-tags'
-    | '/previousitems'
-    | '/categories/$categoryFilter'
-    | '/categories/{-$categoryFilter}'
-    | '/previous-tags/$tagFilter'
-    | '/${filter}/'
-    | '/categories/'
-    | '/items/'
-    | '/previous-tags/'
-    | '/previousitems/'
+  to: '/' | '/items'
+  id: '__root__' | '/' | '/items/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CategoriesRouteRoute: typeof CategoriesRouteRouteWithChildren
-  PreviousTagsRouteRoute: typeof PreviousTagsRouteRouteWithChildren
-  PreviousitemsRouteRoute: typeof PreviousitemsRouteRouteWithChildren
-  Char123filterChar125IndexRoute: typeof Char123filterChar125IndexRoute
   ItemsIndexRoute: typeof ItemsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/previousitems': {
-      id: '/previousitems'
-      path: '/previousitems'
-      fullPath: '/previousitems'
-      preLoaderRoute: typeof PreviousitemsRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/previous-tags': {
-      id: '/previous-tags'
-      path: '/previous-tags'
-      fullPath: '/previous-tags'
-      preLoaderRoute: typeof PreviousTagsRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/categories': {
-      id: '/categories'
-      path: '/categories'
-      fullPath: '/categories'
-      preLoaderRoute: typeof CategoriesRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/previousitems/': {
-      id: '/previousitems/'
-      path: '/'
-      fullPath: '/previousitems/'
-      preLoaderRoute: typeof PreviousitemsIndexRouteImport
-      parentRoute: typeof PreviousitemsRouteRoute
-    }
-    '/previous-tags/': {
-      id: '/previous-tags/'
-      path: '/'
-      fullPath: '/previous-tags/'
-      preLoaderRoute: typeof PreviousTagsIndexRouteImport
-      parentRoute: typeof PreviousTagsRouteRoute
     }
     '/items/': {
       id: '/items/'
@@ -228,91 +65,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ItemsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/categories/': {
-      id: '/categories/'
-      path: '/'
-      fullPath: '/categories/'
-      preLoaderRoute: typeof CategoriesIndexRouteImport
-      parentRoute: typeof CategoriesRouteRoute
-    }
-    '/${filter}/': {
-      id: '/${filter}/'
-      path: '/${filter}'
-      fullPath: '/${filter}'
-      preLoaderRoute: typeof Char123filterChar125IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/previous-tags/$tagFilter': {
-      id: '/previous-tags/$tagFilter'
-      path: '/$tagFilter'
-      fullPath: '/previous-tags/$tagFilter'
-      preLoaderRoute: typeof PreviousTagsTagFilterRouteImport
-      parentRoute: typeof PreviousTagsRouteRoute
-    }
-    '/categories/{-$categoryFilter}': {
-      id: '/categories/{-$categoryFilter}'
-      path: '/{-$categoryFilter}'
-      fullPath: '/categories/{-$categoryFilter}'
-      preLoaderRoute: typeof CategoriesChar123CategoryFilterChar125RouteImport
-      parentRoute: typeof CategoriesRouteRoute
-    }
-    '/categories/$categoryFilter': {
-      id: '/categories/$categoryFilter'
-      path: '/$categoryFilter'
-      fullPath: '/categories/$categoryFilter'
-      preLoaderRoute: typeof CategoriesCategoryFilterRouteImport
-      parentRoute: typeof CategoriesRouteRoute
-    }
   }
 }
 
-interface CategoriesRouteRouteChildren {
-  CategoriesCategoryFilterRoute: typeof CategoriesCategoryFilterRoute
-  CategoriesChar123CategoryFilterChar125Route: typeof CategoriesChar123CategoryFilterChar125Route
-  CategoriesIndexRoute: typeof CategoriesIndexRoute
-}
-
-const CategoriesRouteRouteChildren: CategoriesRouteRouteChildren = {
-  CategoriesCategoryFilterRoute: CategoriesCategoryFilterRoute,
-  CategoriesChar123CategoryFilterChar125Route:
-    CategoriesChar123CategoryFilterChar125Route,
-  CategoriesIndexRoute: CategoriesIndexRoute,
-}
-
-const CategoriesRouteRouteWithChildren = CategoriesRouteRoute._addFileChildren(
-  CategoriesRouteRouteChildren,
-)
-
-interface PreviousTagsRouteRouteChildren {
-  PreviousTagsTagFilterRoute: typeof PreviousTagsTagFilterRoute
-  PreviousTagsIndexRoute: typeof PreviousTagsIndexRoute
-}
-
-const PreviousTagsRouteRouteChildren: PreviousTagsRouteRouteChildren = {
-  PreviousTagsTagFilterRoute: PreviousTagsTagFilterRoute,
-  PreviousTagsIndexRoute: PreviousTagsIndexRoute,
-}
-
-const PreviousTagsRouteRouteWithChildren =
-  PreviousTagsRouteRoute._addFileChildren(PreviousTagsRouteRouteChildren)
-
-interface PreviousitemsRouteRouteChildren {
-  PreviousitemsIndexRoute: typeof PreviousitemsIndexRoute
-}
-
-const PreviousitemsRouteRouteChildren: PreviousitemsRouteRouteChildren = {
-  PreviousitemsIndexRoute: PreviousitemsIndexRoute,
-}
-
-const PreviousitemsRouteRouteWithChildren =
-  PreviousitemsRouteRoute._addFileChildren(PreviousitemsRouteRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CategoriesRouteRoute: CategoriesRouteRouteWithChildren,
-  PreviousTagsRouteRoute: PreviousTagsRouteRouteWithChildren,
-  PreviousitemsRouteRoute: PreviousitemsRouteRouteWithChildren,
-  Char123filterChar125IndexRoute: Char123filterChar125IndexRoute,
   ItemsIndexRoute: ItemsIndexRoute,
 }
 export const routeTree = rootRouteImport

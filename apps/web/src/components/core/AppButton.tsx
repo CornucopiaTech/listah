@@ -1,11 +1,8 @@
 import { Button, type ButtonProps } from "@mui/material";
-// import { useTheme } from '@mui/material/styles';
 import { styled } from '@mui/material/styles';
 
 
 
-
-import { AppH6ButtonTypography } from "@/components/core/ButtonTypography";
 import type { AppTheme } from '@/system/theme';
 
 
@@ -65,4 +62,5 @@ export const AppButtonContained = styled(Button)(({ theme }: { theme: AppTheme }
   borderRadius: 24,
   width: "100%",
   textTransform: 'none',
+  background: theme.palette.primary.main
 }));

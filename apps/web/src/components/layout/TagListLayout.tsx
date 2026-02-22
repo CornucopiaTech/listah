@@ -64,14 +64,16 @@ export function TagListLayout(): ReactNode {
     value: number
   ) {
     event && event.stopPropagation();
-    const q = { ...query, pageNumber: value };
+    const q: ICategoryRequest = { ...query, pageNumber: value };
     const encoded = encodeState(q);
     navigate({ to: "/", search: { s: encoded } });
   };
 
   function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     console.log("In handlePageChange - e ", e);
-    const q = { ...query, pageSize: parseInt(e.target.value, 10), pageNumber: 0 };
+    const q: ICategoryRequest = {
+      ...query, pageSize: parseInt(e.target.value, 10), pageNumber: 0,
+    };
     const encoded = encodeState(q);
     console.info("In handlePageChange - q ", q);
     console.info("In handlePageChange - Encoded ", encoded);
@@ -79,12 +81,16 @@ export function TagListLayout(): ReactNode {
   };
 
   function handleItemclick(it: ICategory) {
-    console.log("In handleItemclick - e ");
-    const q = { ...query, filter: [it.category], pageNumber: 0 };
+    console.log("In handleItemclick");
+    const ct = it && it.category ? it.category : "";
+    const q: ICategoryRequest = {
+      ...query, filter: [ct],
+      pageNumber: 0, searchQuery: "",
+    };
     const encoded = encodeState(q);
     console.info("In handlePageChange - q ", q);
     console.info("In handlePageChange - Encoded ", encoded);
-    navigate({ to: "/items/", search: { s: encoded }, });
+    navigate({ to: "/items", search: { s: encoded }, });
   }
   const totalRecords: number = data.pageSize ? data.pageSize : 1;
 

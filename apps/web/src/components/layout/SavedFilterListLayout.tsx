@@ -58,7 +58,7 @@ export function SavedFilterListLayout(): ReactNode {
     }
   }
 
-  const categories: ICategory[] = data && data.categories ? data.categories : [];
+  // const categories: ICategory[] = data && data.categories ? data.categories : [];
 
 
 
@@ -81,7 +81,7 @@ export function SavedFilterListLayout(): ReactNode {
     navigate({ to: "/", search: { s: encoded } });
   };
 
-  const totalRecords: number = data.pageSize ? data.pageSize : 1;
+  // const totalRecords: number = data.pageSize ? data.pageSize : 1;
 
 
   return (

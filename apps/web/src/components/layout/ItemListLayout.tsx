@@ -29,7 +29,6 @@ import {
   type TBoundStore
 } from '@/lib/store/boundStore';
 import { AppItemModal } from "@/components/core/AppItemModal";
-// import { DEFAULT_ITEM } from "@/lib/helper/defaults";
 import { useSearchQuery } from '@/lib/context/queryContext';
 import { itemGroupOptions } from '@/lib/helper/querying';
 import Loading from '@/components/common/Loading';
@@ -38,9 +37,7 @@ import { encodeState } from '@/lib/helper/encoders';
 
 
 export function ItemListLayout(): ReactNode {
-  // ToDo: Define mutation
   const navigate = useNavigate();
-  const mutateItem = (anitem: IItem) => console.log(anitem);
   const store: TBoundStore = useBoundStore((state) => state);
   const query: IItemRequest = useSearchQuery();
   const {
@@ -85,11 +82,13 @@ export function ItemListLayout(): ReactNode {
     navigate({ to: "/items", search: { s: encoded } });
   };
 
+  const titleName = query.searchQuery != "" ? `Items like '${query.searchQuery}'` : `Items in ${query.filter[0]}`
+
   return (
     <Fragment>
-      {store.modal && <AppItemModal mutateItem={mutateItem} />}
+      {store.modal && <AppItemModal />}
       <ItemList
-        title={`Category - ${query.filter[0]} `}
+        title={titleName}
         data={items}
         count={totalRecords} page={query.pageNumber}
         onPageChange={handlePageChange}

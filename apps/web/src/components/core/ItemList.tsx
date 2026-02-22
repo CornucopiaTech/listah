@@ -55,7 +55,8 @@ export function ItemList(
   }
 
   function handleItemClick(anitem: IItem) {
-    store.setDisplayId(anitem.id);
+    const itId: string = anitem && anitem.id ? anitem.id : ""
+    store.setDisplayId(itId);
     store.setDisplayItem(anitem);
     store.setModal(true);
   }

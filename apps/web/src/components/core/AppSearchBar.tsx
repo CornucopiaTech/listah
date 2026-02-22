@@ -1,23 +1,47 @@
-import type { ReactNode } from 'react';
+import type {
+  ReactNode,
+} from 'react';
 import { Fragment } from 'react';
-
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
-// import TextField from '@mui/material/TextField';
 import Stack from "@mui/material/Stack";
+import {
+  useNavigate,
+} from '@tanstack/react-router';
+
+
+
+import type {
+  IItemRequest,
+} from "@/lib/model/item";
+import { useSearchQuery } from '@/lib/context/queryContext';
+import { encodeState } from '@/lib/helper/encoders';
 
 
 
 import { AppSearchPaper } from '@/components/core/AppPaper';
-// import type { AppTheme } from '@/system/theme';
 import { useBoundStore, type TBoundStore } from '@/lib/store/boundStore';
 
 
 export function AppSearchBar(): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
+  const query: IItemRequest = useSearchQuery();
+  const navigate = useNavigate();
   const textValue = store.searchQuery ? store.searchQuery : "";
   const placeholderText = "Filter by keyword in title, description, or note";
+
+  function handleSearchSubmit() {
+    console.log("In handleItemclick - e ");
+    const q: IItemRequest = {
+      ...query, filter: [],
+      pageNumber: 0, searchQuery: store.searchQuery,
+    };
+    const encoded = encodeState(q);
+    console.info("In handlePageChange - q ", q);
+    console.info("In handlePageChange - Encoded ", encoded);
+    navigate({ to: "/items", search: { s: encoded }, });
+  }
 
   return (
     <Fragment>
@@ -36,37 +60,11 @@ export function AppSearchBar(): ReactNode {
             }}
             value={textValue}
           />
-          <IconButton type="button" aria-label="search">
+          <IconButton type="button" aria-label="search" onClick={handleSearchSubmit}>
             <SearchIcon />
           </IconButton>
         </Stack>
       </AppSearchPaper>
-      {/* <Paper
-        sx={{
-          p: '2px 4px',
-          display: 'flex',
-          alignItems: 'center',
-          // width: "75vw", margin: "2vh auto",
-          width: "100%", //margin: 0,
-          borderRadius: 8
-        }}>
-        <TextField
-          fullWidth
-          multiline
-          label=""
-          variant="standard"
-          id="outlined-size-small"
-          size="small"
-          value={textValue}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            store.setSearchQuery(event.target.value);
-          }}
-          // sx={{border: "none", width: "100%", textDecoration: "none"}}
-        />
-        <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-          <SearchIcon />
-        </IconButton>
-      </Paper> */}
     </Fragment>
   );
 }

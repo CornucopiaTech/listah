@@ -4,7 +4,6 @@ import {
 } from "react";
 import type {
   ChangeEvent,
-  // MouseEvent,
   ReactNode,
   FormEvent,
 } from 'react';
@@ -15,7 +14,6 @@ import {
   useQueryClient,
   useMutation,
 } from '@tanstack/react-query';
-// import { z } from 'zod'
 import {
   v4 as uuidv4,
 } from 'uuid';
@@ -56,7 +54,7 @@ import type {
 
 
 
-type itemFields = "id" | "tag" | "title" | "userId" | "category" | "description" | "note" | "softDelete" | "reactivateAt" | `tag[${number}]`
+type itemFields = "id" | "tag" | "title" | "userId" | "description" | "note" | "softDelete" | "reactivateAt" | `tag[${number}]`
 
 export function AppItemModal(): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
@@ -99,7 +97,7 @@ export function AppItemModal(): ReactNode {
     defaultValues: item,
     onSubmit: ({ value }) => {
       const itemId = value.id && value.id != "" ? value.id : uuidv4();
-      const userId = value.userId != "" ? value.userId : user.id;
+      const userId = user && user.id ? user.id : value.userId;
       const submitValue = {
       ...value,
         userId,

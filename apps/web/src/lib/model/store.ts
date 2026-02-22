@@ -1,4 +1,7 @@
 
+import type {
+  IItem,
+} from "@/lib/model/item";
 
 
 // Tag Store

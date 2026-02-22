@@ -43,13 +43,13 @@ func (a *item) ReadItem(ctx context.Context, m *[]*v1model.Item, s *model.ItemSe
 
 
 	if s.SearchQuery != "" {
-		n := fmt.Sprintf(`
+		n := `
 			AND (
-				title LIKE '%%v%' OR
-				description LIKE %%v%' OR
-				note LIKE %%v%'
+				title LIKE '%`+ s.SearchQuery + `%' OR
+				description LIKE '%`+ s.SearchQuery + `%' OR
+				note LIKE '%`+ s.SearchQuery + `%'
 			)
-		`, s.SearchQuery)
+		`
 		query = query + n
 	}
 	if s.Filter != "" {
