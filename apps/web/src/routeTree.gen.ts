@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as TagsIndexRouteImport } from './routes/tags/index'
 import { Route as ItemsIndexRouteImport } from './routes/items/index'
 import { Route as CategoriesIndexRouteImport } from './routes/categories/index'
+import { Route as Char123filterChar125IndexRouteImport } from './routes/${filter}/index'
 import { Route as TagsTagFilterRouteImport } from './routes/tags/$tagFilter'
 import { Route as CategoriesChar123CategoryFilterChar125RouteImport } from './routes/categories/{-$categoryFilter}'
 import { Route as CategoriesCategoryFilterRouteImport } from './routes/categories/$categoryFilter'
@@ -55,6 +56,12 @@ const CategoriesIndexRoute = CategoriesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => CategoriesRouteRoute,
 } as any)
+const Char123filterChar125IndexRoute =
+  Char123filterChar125IndexRouteImport.update({
+    id: '/${filter}/',
+    path: '/${filter}/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const TagsTagFilterRoute = TagsTagFilterRouteImport.update({
   id: '/$tagFilter',
   path: '/$tagFilter',
@@ -81,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/categories/$categoryFilter': typeof CategoriesCategoryFilterRoute
   '/categories/{-$categoryFilter}': typeof CategoriesChar123CategoryFilterChar125Route
   '/tags/$tagFilter': typeof TagsTagFilterRoute
+  '/${filter}': typeof Char123filterChar125IndexRoute
   '/categories/': typeof CategoriesIndexRoute
   '/items/': typeof ItemsIndexRoute
   '/tags/': typeof TagsIndexRoute
@@ -90,6 +98,7 @@ export interface FileRoutesByTo {
   '/categories/$categoryFilter': typeof CategoriesCategoryFilterRoute
   '/categories/{-$categoryFilter}': typeof CategoriesChar123CategoryFilterChar125Route
   '/tags/$tagFilter': typeof TagsTagFilterRoute
+  '/${filter}': typeof Char123filterChar125IndexRoute
   '/categories': typeof CategoriesIndexRoute
   '/items': typeof ItemsIndexRoute
   '/tags': typeof TagsIndexRoute
@@ -103,6 +112,7 @@ export interface FileRoutesById {
   '/categories/$categoryFilter': typeof CategoriesCategoryFilterRoute
   '/categories/{-$categoryFilter}': typeof CategoriesChar123CategoryFilterChar125Route
   '/tags/$tagFilter': typeof TagsTagFilterRoute
+  '/${filter}/': typeof Char123filterChar125IndexRoute
   '/categories/': typeof CategoriesIndexRoute
   '/items/': typeof ItemsIndexRoute
   '/tags/': typeof TagsIndexRoute
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/categories/$categoryFilter'
     | '/categories/{-$categoryFilter}'
     | '/tags/$tagFilter'
+    | '/${filter}'
     | '/categories/'
     | '/items/'
     | '/tags/'
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '/categories/$categoryFilter'
     | '/categories/{-$categoryFilter}'
     | '/tags/$tagFilter'
+    | '/${filter}'
     | '/categories'
     | '/items'
     | '/tags'
@@ -138,6 +150,7 @@ export interface FileRouteTypes {
     | '/categories/$categoryFilter'
     | '/categories/{-$categoryFilter}'
     | '/tags/$tagFilter'
+    | '/${filter}/'
     | '/categories/'
     | '/items/'
     | '/tags/'
@@ -148,6 +161,7 @@ export interface RootRouteChildren {
   CategoriesRouteRoute: typeof CategoriesRouteRouteWithChildren
   ItemsRouteRoute: typeof ItemsRouteRouteWithChildren
   TagsRouteRoute: typeof TagsRouteRouteWithChildren
+  Char123filterChar125IndexRoute: typeof Char123filterChar125IndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -200,6 +214,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/categories/'
       preLoaderRoute: typeof CategoriesIndexRouteImport
       parentRoute: typeof CategoriesRouteRoute
+    }
+    '/${filter}/': {
+      id: '/${filter}/'
+      path: '/${filter}'
+      fullPath: '/${filter}'
+      preLoaderRoute: typeof Char123filterChar125IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/tags/$tagFilter': {
       id: '/tags/$tagFilter'
@@ -273,6 +294,7 @@ const rootRouteChildren: RootRouteChildren = {
   CategoriesRouteRoute: CategoriesRouteRouteWithChildren,
   ItemsRouteRoute: ItemsRouteRouteWithChildren,
   TagsRouteRoute: TagsRouteRouteWithChildren,
+  Char123filterChar125IndexRoute: Char123filterChar125IndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

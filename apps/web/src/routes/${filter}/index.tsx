@@ -9,11 +9,11 @@ import { useUser } from '@clerk/clerk-react';
 import { validateItemsUrlSearch } from '@/lib/helper/validator';
 import { SearchQueryContext } from '@/lib/context/queryContext';
 import Loading from '@/components/common/Loading';
+import { ListItems } from "@/pages/ListItems";
 import { Landing } from '@/pages/Landing';
-import { Home } from '@/pages/Home';
 
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/${filter}/')({
   component: Page,
 })
 
@@ -28,7 +28,7 @@ function Page(): ReactNode {
 
   return (
     <SearchQueryContext value={pQ}>
-      <Home />
+      <ListItems />
     </SearchQueryContext>
   );
 }

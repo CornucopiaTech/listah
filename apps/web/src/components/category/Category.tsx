@@ -23,9 +23,9 @@ import Divider from '@mui/material/Divider';
 
 
 import { useBoundStore, type TBoundStore } from '@/lib/store/boundStore';
-import type { IItemResponse, IItem, IItemsSearch } from '@/lib/model/Items';
-import { ZItemResponse, } from '@/lib/model/Items';
-import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
+import type { IItemResponse, IItem, IItemsSearch } from '@/lib/model/item';
+import { ZItemResponse, } from '@/lib/model/item';
+import { ItemSearchQueryContext } from '@/lib/context/queryContext';
 import Loading from '@/components/common/Loading';
 import { itemGroupOptions } from '@/lib/helper/querying';
 import { Error } from '@/components/common/Error';

@@ -26,10 +26,10 @@ import {
   useBoundStore,
   type TBoundStore
 } from '@/lib/store/boundStore';
-import type { IItemsSearch } from '@/lib/model/Items';
+import type { IItemsSearch } from '@/lib/model/item';
 import Loading from '@/components/common/Loading';
 import { Error } from '@/components/common/Error';
-import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
+import { ItemSearchQueryContext } from '@/lib/context/queryContext';
 import { tagGroupOptions } from '@/lib/helper/querying';
 import type { ITagResponse } from "@/lib/model/tags";
 

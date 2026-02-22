@@ -30,6 +30,10 @@ type Category struct {
 	RowCount int
 }
 
+type RowCount struct {
+	RowCount int
+}
+
 type ReadPagination struct {
 	PageNumber int32
 	PageSize int32

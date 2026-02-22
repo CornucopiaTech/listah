@@ -20,10 +20,10 @@ import {
 import { encodeState } from '@/lib/helper/encoders';
 import { ITEMS_URL } from '@/lib/helper/defaults';
 import { useBoundStore, type  TBoundStore } from '@/lib/store/boundStore';
-import type { IItemsSearch } from '@/lib/model/Items';
+import type { IItemsSearch } from '@/lib/model/item';
 import CategoryDrawer from '@/components/items/CategoryDrawer';
 import TagDrawer from '@/components/items/TagDrawer';
-import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
+import { ItemSearchQueryContext } from '@/lib/context/queryContext';
 import { Success } from '@/components/common/Alerts';
 
 

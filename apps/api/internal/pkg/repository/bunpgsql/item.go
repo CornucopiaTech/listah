@@ -15,8 +15,8 @@ import (
 var svcName string = "PgDB"
 
 type Item interface {
-	ReadItem(ctx context.Context, m *[]*v1model.Item, s *model.ItemSearch) error
-	ReadCategory(ctx context.Context, m *[]*v1model.Category, s *model.ItemSearch) error
+	ReadItem(ctx context.Context, m *[]*v1model.Item, s *model.ItemSearch) (int, error)
+	ReadCategory(ctx context.Context, m *[]*v1model.Category, s *model.ItemSearch) (int, error)
 	Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (interface{}, error)
 }
 
@@ -26,7 +26,7 @@ type item struct {
 }
 
 
-func (a *item) ReadItem(ctx context.Context, m *[]*v1model.Item, s *model.ItemSearch) error {
+func (a *item) ReadItem(ctx context.Context, m *[]*v1model.Item, s *model.ItemSearch) (int, error) {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Read")
 	defer span.End()
 
@@ -41,20 +41,32 @@ func (a *item) ReadItem(ctx context.Context, m *[]*v1model.Item, s *model.ItemSe
 		WHERE user_id::VARCHAR = '%v'
 	`, s.UserId)
 
+
 	if s.SearchQuery != "" {
-		query = query + fmt.Sprintf(`
+		n := fmt.Sprintf(`
 			AND (
 				title LIKE '%%v%' OR
 				description LIKE %%v%' OR
 				note LIKE %%v%'
 			)
 		`, s.SearchQuery)
+		query = query + n
 	}
 	if s.Filter != "" {
-		query = query + fmt.Sprintf(` AND (
+		n := fmt.Sprintf(` AND (
 			tag::VARCHAR != 'null' AND tag::JSONB ?| array[%v]
 		) `, s.Filter)
+		query = query + n
 	}
+
+	countq := fmt.Sprintf(`SELECT COUNT(*) row_count FROM (%v)`, query)
+	recCnt := []*v1model.RowCount{}
+	err := a.db.NewRaw(countq).Scan(ctx, &recCnt)
+	if err != nil {
+		a.logger.LogError(ctx, svcName, activity, "Error occurred while getting total population", errors.Cause(err).Error())
+		return 0, err
+	}
+
 	if s.SortQuery != "" {
 		query = query + fmt.Sprintf(` ORDER BY %v `, s.SortQuery)
 	}
@@ -64,19 +76,18 @@ func (a *item) ReadItem(ctx context.Context, m *[]*v1model.Item, s *model.ItemSe
 	if s.Offset != 0 {
 		query = query + fmt.Sprintf(` OFFSET %d `, s.Offset)
 	}
-	err := a.db.
-		NewRaw(query).
-		Scan(ctx, m)
+
+	err = a.db.NewRaw(query).Scan(ctx, m)
 	if err != nil {
 		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
-		return err
+		return 0, err
 	}
 
 	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
-	return nil
+	return recCnt[0].RowCount, nil
 }
 
-func (a *item) ReadCategory(ctx context.Context, m *[]*v1model.Category, s *model.ItemSearch) error {
+func (a *item) ReadCategory(ctx context.Context, m *[]*v1model.Category, s *model.ItemSearch) (int, error) {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Read")
 	defer span.End()
 
@@ -94,22 +105,29 @@ func (a *item) ReadCategory(ctx context.Context, m *[]*v1model.Category, s *mode
 		ORDER BY 1
 	`, s.UserId)
 
+	countq := fmt.Sprintf(`SELECT COUNT(*) row_count FROM (%v)`, query)
+	recCnt := []*v1model.RowCount{}
+	err := a.db.NewRaw(countq).Scan(ctx, &recCnt)
+	if err != nil {
+		a.logger.LogError(ctx, svcName, activity, "Error occurred while getting total population", errors.Cause(err).Error())
+		return 0, err
+	}
+
+
 	if s.Limit != 0 {
 		query = query + fmt.Sprintf(` LIMIT %d `, s.Limit)
 	}
 	if s.Offset != 0 {
 		query = query + fmt.Sprintf(` OFFSET %d `, s.Offset)
 	}
-	err := a.db.
-		NewRaw(query).
-		Scan(ctx, m)
+	err = a.db.NewRaw(query).Scan(ctx, m)
 	if err != nil {
 		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
-		return err
+		return 0, err
 	}
 
 	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
-	return nil
+	return recCnt[0].RowCount, nil
 }
 
 

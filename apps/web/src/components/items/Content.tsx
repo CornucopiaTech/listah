@@ -27,9 +27,9 @@ import type {
   IItem,
   IItemsSearch,
   IItemResponse,
-} from "@/lib/model/Items";
-import { ZItemResponse } from '@/lib/model/Items';
-import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
+} from "@/lib/model/item";
+import { ZItemResponse } from '@/lib/model/item';
+import { ItemSearchQueryContext } from '@/lib/context/queryContext';
 import Loading from '@/components/common/Loading';
 import { itemGroupOptions } from '@/lib/helper/querying';
 import { Error } from '@/components/common/Error';

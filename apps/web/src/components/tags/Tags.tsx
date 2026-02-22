@@ -20,9 +20,9 @@ import {
 
 
 
-import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
+import { ItemSearchQueryContext } from '@/lib/context/queryContext';
 import { tagGroupOptions } from '@/lib/helper/querying';
-import type {  IItemsSearch } from '@/lib/model/Items';
+import type {  IItemsSearch } from '@/lib/model/item';
 import Loading from '@/components/common/Loading';
 import { Error } from '@/components/common/Error';
 import { encodeState } from '@/lib/helper/encoders';

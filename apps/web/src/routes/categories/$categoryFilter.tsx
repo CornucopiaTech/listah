@@ -14,7 +14,7 @@ import Categories from '@/components/categories/Categories';
 import Category from '@/components/category/Category';
 import NotFound from '@/components/common/NotFound';
 import { validateItemsUrlSearch } from '@/lib/helper/validator';
-import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
+import { ItemSearchQueryContext } from '@/lib/context/queryContext';
 import Loading from '@/components/common/Loading';
 import NotAuthorised from '@/components/common/NotAuthorised';
 import { MainContainer } from '@/components/basics/Container';

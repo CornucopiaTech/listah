@@ -21,10 +21,10 @@ import {
 } from '@tanstack/react-query';
 
 
-import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
+import { ItemSearchQueryContext } from '@/lib/context/queryContext';
 import { categoryGroupOptions } from '@/lib/helper/querying';
 import { useBoundStore, type  TBoundStore } from '@/lib/store/boundStore';
-import type {  IItemsSearch } from '@/lib/model/Items';
+import type {  IItemsSearch } from '@/lib/model/item';
 import Loading from '@/components/common/Loading';
 import { Error } from '@/components/common/Error';
 import type { ICategoryResponse } from "@/lib/model/categories";

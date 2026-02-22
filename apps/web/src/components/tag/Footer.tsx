@@ -20,11 +20,11 @@ import TablePagination from '@mui/material/TablePagination';
 
 
 import { encodeState } from '@/lib/helper/encoders';
-import type { IItemResponse, IItemsSearch } from '@/lib/model/Items';
+import type { IItemResponse, IItemsSearch } from '@/lib/model/item';
 import Loading from '@/components/common/Loading';
 import { ErrorAlerts } from '@/components/common/ErrorAlert';
 import { itemGroupOptions } from '@/lib/helper/querying';
-import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
+import { ItemSearchQueryContext } from '@/lib/context/queryContext';
 
 
 

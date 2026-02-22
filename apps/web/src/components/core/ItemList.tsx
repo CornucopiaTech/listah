@@ -11,7 +11,7 @@ import { AppListHeaderBar } from "@/components/core/AppListHeaderBar";
 import { AppH5ButtonTypography } from "@/components/core/ButtonTypography";
 import { AppH6Typography } from "@/components/core/Typography";
 import { AppSectionStack } from "@/components/core/AppBox";
-import type { IItem } from "@/lib/model/Items";
+import type { IItem } from "@/lib/model/item";
 import { useBoundStore, type TBoundStore } from '@/lib/store/boundStore';
 
 
@@ -27,7 +27,7 @@ export function ItemList(
   const store: TBoundStore = useBoundStore((state) => state);
 
   function eachItem(itemKey: number, item: IItem): ReactNode {
-    let dis: string = item.summary ? item.summary : "";
+    let dis: string = item.title ? item.title : "";
     return (
       <ListItem
         style={{ height: 50, width: "100%", }} key={itemKey + dis}

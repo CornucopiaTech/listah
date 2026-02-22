@@ -2,7 +2,7 @@ import type { StateCreator } from 'zustand';
 
 
 
-import type { IListingState, IListingSlice, IStore, IItem } from '@/lib/model/Items';
+import type { IListingState, IListingSlice, IStore, IItem } from '@/lib/model/item';
 import { DEFAULT_ITEM } from '../helper/defaults';
 
 
@@ -40,5 +40,3 @@ export const createListingSlice: StateCreator<
     setToDate: (toDate: string) => set(() => ({ toDate })),
     reset: () => set(listingInitState),
   });
-
-

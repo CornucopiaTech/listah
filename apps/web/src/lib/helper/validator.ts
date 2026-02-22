@@ -2,7 +2,7 @@
 // import { ZItemsSearch } from '@/lib/model/Items';
 import { decodeState } from '@/lib/helper/encoders';
 import { DefaultQueryParams } from '@/lib/helper/defaults';
-import type { IItemsSearch } from '@/lib/model/Items';
+import type { IItemsSearch } from '@/lib/model/item';
 
 
 

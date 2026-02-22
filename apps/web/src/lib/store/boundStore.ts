@@ -9,7 +9,7 @@ import type { ExtractState } from 'zustand';
 
 import { createListingSlice } from './listingSlice';
 import { createDetailSlice } from './detailSlice';
-import type { IStore } from '@/lib/model/Items';
+import type { IStore } from '@/lib/model/item';
 
 
 

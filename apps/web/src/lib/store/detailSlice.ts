@@ -2,7 +2,7 @@ import type { StateCreator } from 'zustand';
 
 
 
-import type { IListingState, IDetailSlice, IStore } from '@/lib/model/Items';
+import type { IListingState, IDetailSlice, IStore } from '@/lib/model/item';
 
 
 

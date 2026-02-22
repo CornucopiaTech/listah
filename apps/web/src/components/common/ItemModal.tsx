@@ -43,14 +43,14 @@ import type {
   IItem,
   IItemsSearch,
   IItemResponse,
-} from "@/lib/model/Items";
+} from "@/lib/model/item";
 import {
   ZItem
-} from "@/lib/model/Items";
+} from "@/lib/model/item";
 import {
   SpaceBetweenBox,
 } from "@/components/basics/Box";
-import { ItemSearchQueryContext } from '@/lib/context/itemSearchQueryContext';
+import { ItemSearchQueryContext } from '@/lib/context/queryContext';
 import Loading from '@/components/common/Loading';
 import { itemGroupOptions } from '@/lib/helper/querying';
 import { Error } from '@/components/common/Alerts';

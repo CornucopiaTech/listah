@@ -43,7 +43,7 @@ import {
   SpaceBetweenBox,
 } from "@/components/basics/Box";
 import { AppH6ButtonTypography } from "@/components/core/ButtonTypography";
-import type { IItem } from "@/lib/model/Items";
+import type { IItem } from "@/lib/model/item";
 import {
   useBoundStore,
   type TBoundStore

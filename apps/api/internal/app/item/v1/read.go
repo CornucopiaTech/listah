@@ -31,12 +31,11 @@ func (s *Server) ReadItem(ctx context.Context, req *connect.Request[pb.ItemServi
 
 	readModel := []*v1model.Item{}
 
-	err = s.BunRepo.Item.ReadItem(ctx, &readModel, sq)
+	recordCnt, err := s.BunRepo.Item.ReadItem(ctx, &readModel, sq)
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
 		return nil, err
 	}
-	recordCnt := len(readModel)
 	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d items from repository", recordCnt))
 
 
@@ -89,12 +88,11 @@ func (s *Server) ReadCategory(ctx context.Context, req *connect.Request[pb.ItemS
 
 	readModel := []*v1model.Category{}
 
-	err = s.BunRepo.Item.ReadCategory(ctx, &readModel, sq)
+	recordCnt, err := s.BunRepo.Item.ReadCategory(ctx, &readModel, sq)
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
 		return nil, err
 	}
-	recordCnt := len(readModel)
 	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d items from repository", recordCnt))
 
 
