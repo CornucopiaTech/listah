@@ -7,42 +7,31 @@ console.log(import.meta.filename);
 console.log(import.meta.dirname);
 
 
+
 export function getData(arraySize) {
   let numTags = 5;
   let maxTags = 20;
-  let maxUsers = 20;
-  let maxCategories = 20;
+  let maxUsers = 5;
   let maxUniqueTags = 5;
-  let maxUniqueProps = 5;
-  let maxUniqueUsers = 5;
-  let maxUniqueCategories = 5;
+  let maxUniqueUsers = 3;
   let allTags = faker.helpers.multiple(() => faker.word.noun(), { count: maxTags });
-  let allCategory = faker.helpers.multiple(() => faker.word.noun(), { count: maxCategories });
   let allUserIds = faker.helpers.multiple(() => faker.string.uuid(), { count: maxUsers });
   let updaters = ["AUDIT_UPDATER_ENUM_UNSPECIFIED", "AUDIT_UPDATER_ENUM_FRONTEND", "AUDIT_UPDATER_ENUM_SYSOPS"];
 
   allTags = faker.helpers.uniqueArray(allTags, maxUniqueTags);
-  allCategory = faker.helpers.uniqueArray(allCategory, maxUniqueCategories);
   allUserIds = faker.helpers.uniqueArray(allUserIds, maxUniqueUsers);
 
   let combFaked = faker.helpers.multiple(
       () => ({
         id: faker.string.uuid(),
         userId: faker.helpers.arrayElement(allUserIds),
-        category: faker.helpers.arrayElement(allCategory),
-        summary: faker.lorem.sentence(),
+        title: faker.lorem.sentence(),
         description: faker.lorem.paragraphs(),
         note: faker.lorem.sentence(),
-        tag: faker.helpers.multiple(
+        tag: faker.helpers.uniqueArray(faker.helpers.multiple(
           () => (faker.helpers.arrayElement(allTags)),
-          { count: faker.helpers.arrayElement([...Array(numTags).keys()]) }
-        ),
-        properties: Object.fromEntries(
-          faker.helpers.multiple(
-            () => ([faker.word.sample(), faker.word.sample()]),
-            { count: faker.helpers.arrayElement([...Array(maxUniqueProps).keys()]) }
-          )
-        ),
+          { count: faker.helpers.arrayElement([...Array(maxTags).keys()]) }
+        ), maxTags),
         reactivateAt: faker.helpers.arrayElement([faker.date.future(), null]),
         audit: {
           "created_by": faker.helpers.arrayElement(updaters),
@@ -66,7 +55,7 @@ export function getData(arraySize) {
 
 
 async function loadData(maxLoaded, maxGen) {
-  const url = "http://localhost:8080/listah.v1.ItemService/Create";
+  const url = "http://localhost:8080/listah.v1.ItemService/Upsert";
   for (let i = 0; i < maxLoaded; i++){
     try {
       const data = getData(maxGen);
@@ -89,4 +78,4 @@ async function loadData(maxLoaded, maxGen) {
 }
 
 
-loadData(1000, 200)
+loadData(100, 500)

@@ -19,20 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ItemService_Create_FullMethodName = "/listah.v1.ItemService/Create"
-	ItemService_Read_FullMethodName   = "/listah.v1.ItemService/Read"
-	ItemService_Update_FullMethodName = "/listah.v1.ItemService/Update"
-	ItemService_Delete_FullMethodName = "/listah.v1.ItemService/Delete"
+	ItemService_ReadItem_FullMethodName     = "/listah.v1.ItemService/ReadItem"
+	ItemService_ReadCategory_FullMethodName = "/listah.v1.ItemService/ReadCategory"
+	ItemService_Upsert_FullMethodName       = "/listah.v1.ItemService/Upsert"
 )
 
 // ItemServiceClient is the client API for ItemService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ItemServiceClient interface {
-	Create(ctx context.Context, in *ItemServiceCreateRequest, opts ...grpc.CallOption) (*ItemServiceCreateResponse, error)
-	Read(ctx context.Context, in *ItemServiceReadRequest, opts ...grpc.CallOption) (*ItemServiceReadResponse, error)
-	Update(ctx context.Context, in *ItemServiceUpdateRequest, opts ...grpc.CallOption) (*ItemServiceUpdateResponse, error)
-	Delete(ctx context.Context, in *ItemServiceDeleteRequest, opts ...grpc.CallOption) (*ItemServiceDeleteResponse, error)
+	ReadItem(ctx context.Context, in *ItemServiceReadItemRequest, opts ...grpc.CallOption) (*ItemServiceReadItemResponse, error)
+	ReadCategory(ctx context.Context, in *ItemServiceReadCategoryRequest, opts ...grpc.CallOption) (*ItemServiceReadCategoryResponse, error)
+	Upsert(ctx context.Context, in *ItemServiceUpsertRequest, opts ...grpc.CallOption) (*ItemServiceUpsertResponse, error)
 }
 
 type itemServiceClient struct {
@@ -43,40 +41,30 @@ func NewItemServiceClient(cc grpc.ClientConnInterface) ItemServiceClient {
 	return &itemServiceClient{cc}
 }
 
-func (c *itemServiceClient) Create(ctx context.Context, in *ItemServiceCreateRequest, opts ...grpc.CallOption) (*ItemServiceCreateResponse, error) {
+func (c *itemServiceClient) ReadItem(ctx context.Context, in *ItemServiceReadItemRequest, opts ...grpc.CallOption) (*ItemServiceReadItemResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ItemServiceCreateResponse)
-	err := c.cc.Invoke(ctx, ItemService_Create_FullMethodName, in, out, cOpts...)
+	out := new(ItemServiceReadItemResponse)
+	err := c.cc.Invoke(ctx, ItemService_ReadItem_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itemServiceClient) Read(ctx context.Context, in *ItemServiceReadRequest, opts ...grpc.CallOption) (*ItemServiceReadResponse, error) {
+func (c *itemServiceClient) ReadCategory(ctx context.Context, in *ItemServiceReadCategoryRequest, opts ...grpc.CallOption) (*ItemServiceReadCategoryResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ItemServiceReadResponse)
-	err := c.cc.Invoke(ctx, ItemService_Read_FullMethodName, in, out, cOpts...)
+	out := new(ItemServiceReadCategoryResponse)
+	err := c.cc.Invoke(ctx, ItemService_ReadCategory_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itemServiceClient) Update(ctx context.Context, in *ItemServiceUpdateRequest, opts ...grpc.CallOption) (*ItemServiceUpdateResponse, error) {
+func (c *itemServiceClient) Upsert(ctx context.Context, in *ItemServiceUpsertRequest, opts ...grpc.CallOption) (*ItemServiceUpsertResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ItemServiceUpdateResponse)
-	err := c.cc.Invoke(ctx, ItemService_Update_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *itemServiceClient) Delete(ctx context.Context, in *ItemServiceDeleteRequest, opts ...grpc.CallOption) (*ItemServiceDeleteResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ItemServiceDeleteResponse)
-	err := c.cc.Invoke(ctx, ItemService_Delete_FullMethodName, in, out, cOpts...)
+	out := new(ItemServiceUpsertResponse)
+	err := c.cc.Invoke(ctx, ItemService_Upsert_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -87,10 +75,9 @@ func (c *itemServiceClient) Delete(ctx context.Context, in *ItemServiceDeleteReq
 // All implementations should embed UnimplementedItemServiceServer
 // for forward compatibility.
 type ItemServiceServer interface {
-	Create(context.Context, *ItemServiceCreateRequest) (*ItemServiceCreateResponse, error)
-	Read(context.Context, *ItemServiceReadRequest) (*ItemServiceReadResponse, error)
-	Update(context.Context, *ItemServiceUpdateRequest) (*ItemServiceUpdateResponse, error)
-	Delete(context.Context, *ItemServiceDeleteRequest) (*ItemServiceDeleteResponse, error)
+	ReadItem(context.Context, *ItemServiceReadItemRequest) (*ItemServiceReadItemResponse, error)
+	ReadCategory(context.Context, *ItemServiceReadCategoryRequest) (*ItemServiceReadCategoryResponse, error)
+	Upsert(context.Context, *ItemServiceUpsertRequest) (*ItemServiceUpsertResponse, error)
 }
 
 // UnimplementedItemServiceServer should be embedded to have
@@ -100,17 +87,14 @@ type ItemServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedItemServiceServer struct{}
 
-func (UnimplementedItemServiceServer) Create(context.Context, *ItemServiceCreateRequest) (*ItemServiceCreateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+func (UnimplementedItemServiceServer) ReadItem(context.Context, *ItemServiceReadItemRequest) (*ItemServiceReadItemResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadItem not implemented")
 }
-func (UnimplementedItemServiceServer) Read(context.Context, *ItemServiceReadRequest) (*ItemServiceReadResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Read not implemented")
+func (UnimplementedItemServiceServer) ReadCategory(context.Context, *ItemServiceReadCategoryRequest) (*ItemServiceReadCategoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadCategory not implemented")
 }
-func (UnimplementedItemServiceServer) Update(context.Context, *ItemServiceUpdateRequest) (*ItemServiceUpdateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
-}
-func (UnimplementedItemServiceServer) Delete(context.Context, *ItemServiceDeleteRequest) (*ItemServiceDeleteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+func (UnimplementedItemServiceServer) Upsert(context.Context, *ItemServiceUpsertRequest) (*ItemServiceUpsertResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Upsert not implemented")
 }
 func (UnimplementedItemServiceServer) testEmbeddedByValue() {}
 
@@ -132,74 +116,56 @@ func RegisterItemServiceServer(s grpc.ServiceRegistrar, srv ItemServiceServer) {
 	s.RegisterService(&ItemService_ServiceDesc, srv)
 }
 
-func _ItemService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ItemServiceCreateRequest)
+func _ItemService_ReadItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ItemServiceReadItemRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItemServiceServer).Create(ctx, in)
+		return srv.(ItemServiceServer).ReadItem(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItemService_Create_FullMethodName,
+		FullMethod: ItemService_ReadItem_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItemServiceServer).Create(ctx, req.(*ItemServiceCreateRequest))
+		return srv.(ItemServiceServer).ReadItem(ctx, req.(*ItemServiceReadItemRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItemService_Read_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ItemServiceReadRequest)
+func _ItemService_ReadCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ItemServiceReadCategoryRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItemServiceServer).Read(ctx, in)
+		return srv.(ItemServiceServer).ReadCategory(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItemService_Read_FullMethodName,
+		FullMethod: ItemService_ReadCategory_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItemServiceServer).Read(ctx, req.(*ItemServiceReadRequest))
+		return srv.(ItemServiceServer).ReadCategory(ctx, req.(*ItemServiceReadCategoryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItemService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ItemServiceUpdateRequest)
+func _ItemService_Upsert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ItemServiceUpsertRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItemServiceServer).Update(ctx, in)
+		return srv.(ItemServiceServer).Upsert(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItemService_Update_FullMethodName,
+		FullMethod: ItemService_Upsert_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItemServiceServer).Update(ctx, req.(*ItemServiceUpdateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ItemService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ItemServiceDeleteRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ItemServiceServer).Delete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ItemService_Delete_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItemServiceServer).Delete(ctx, req.(*ItemServiceDeleteRequest))
+		return srv.(ItemServiceServer).Upsert(ctx, req.(*ItemServiceUpsertRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -212,20 +178,16 @@ var ItemService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ItemServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Create",
-			Handler:    _ItemService_Create_Handler,
+			MethodName: "ReadItem",
+			Handler:    _ItemService_ReadItem_Handler,
 		},
 		{
-			MethodName: "Read",
-			Handler:    _ItemService_Read_Handler,
+			MethodName: "ReadCategory",
+			Handler:    _ItemService_ReadCategory_Handler,
 		},
 		{
-			MethodName: "Update",
-			Handler:    _ItemService_Update_Handler,
-		},
-		{
-			MethodName: "Delete",
-			Handler:    _ItemService_Delete_Handler,
+			MethodName: "Upsert",
+			Handler:    _ItemService_Upsert_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -33,31 +33,20 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// ItemServiceCreateProcedure is the fully-qualified name of the ItemService's Create RPC.
-	ItemServiceCreateProcedure = "/listah.v1.ItemService/Create"
-	// ItemServiceReadProcedure is the fully-qualified name of the ItemService's Read RPC.
-	ItemServiceReadProcedure = "/listah.v1.ItemService/Read"
-	// ItemServiceUpdateProcedure is the fully-qualified name of the ItemService's Update RPC.
-	ItemServiceUpdateProcedure = "/listah.v1.ItemService/Update"
-	// ItemServiceDeleteProcedure is the fully-qualified name of the ItemService's Delete RPC.
-	ItemServiceDeleteProcedure = "/listah.v1.ItemService/Delete"
-)
-
-// These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
-var (
-	itemServiceServiceDescriptor      = v1.File_v1_item_proto.Services().ByName("ItemService")
-	itemServiceCreateMethodDescriptor = itemServiceServiceDescriptor.Methods().ByName("Create")
-	itemServiceReadMethodDescriptor   = itemServiceServiceDescriptor.Methods().ByName("Read")
-	itemServiceUpdateMethodDescriptor = itemServiceServiceDescriptor.Methods().ByName("Update")
-	itemServiceDeleteMethodDescriptor = itemServiceServiceDescriptor.Methods().ByName("Delete")
+	// ItemServiceReadItemProcedure is the fully-qualified name of the ItemService's ReadItem RPC.
+	ItemServiceReadItemProcedure = "/listah.v1.ItemService/ReadItem"
+	// ItemServiceReadCategoryProcedure is the fully-qualified name of the ItemService's ReadCategory
+	// RPC.
+	ItemServiceReadCategoryProcedure = "/listah.v1.ItemService/ReadCategory"
+	// ItemServiceUpsertProcedure is the fully-qualified name of the ItemService's Upsert RPC.
+	ItemServiceUpsertProcedure = "/listah.v1.ItemService/Upsert"
 )
 
 // ItemServiceClient is a client for the listah.v1.ItemService service.
 type ItemServiceClient interface {
-	Create(context.Context, *connect.Request[v1.ItemServiceCreateRequest]) (*connect.Response[v1.ItemServiceCreateResponse], error)
-	Read(context.Context, *connect.Request[v1.ItemServiceReadRequest]) (*connect.Response[v1.ItemServiceReadResponse], error)
-	Update(context.Context, *connect.Request[v1.ItemServiceUpdateRequest]) (*connect.Response[v1.ItemServiceUpdateResponse], error)
-	Delete(context.Context, *connect.Request[v1.ItemServiceDeleteRequest]) (*connect.Response[v1.ItemServiceDeleteResponse], error)
+	ReadItem(context.Context, *connect.Request[v1.ItemServiceReadItemRequest]) (*connect.Response[v1.ItemServiceReadItemResponse], error)
+	ReadCategory(context.Context, *connect.Request[v1.ItemServiceReadCategoryRequest]) (*connect.Response[v1.ItemServiceReadCategoryResponse], error)
+	Upsert(context.Context, *connect.Request[v1.ItemServiceUpsertRequest]) (*connect.Response[v1.ItemServiceUpsertResponse], error)
 }
 
 // NewItemServiceClient constructs a client for the listah.v1.ItemService service. By default, it
@@ -69,30 +58,26 @@ type ItemServiceClient interface {
 // http://api.acme.com or https://acme.com/grpc).
 func NewItemServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) ItemServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
+	itemServiceMethods := v1.File_v1_item_proto.Services().ByName("ItemService").Methods()
 	return &itemServiceClient{
-		create: connect.NewClient[v1.ItemServiceCreateRequest, v1.ItemServiceCreateResponse](
+		readItem: connect.NewClient[v1.ItemServiceReadItemRequest, v1.ItemServiceReadItemResponse](
 			httpClient,
-			baseURL+ItemServiceCreateProcedure,
-			connect.WithSchema(itemServiceCreateMethodDescriptor),
-			connect.WithClientOptions(opts...),
-		),
-		read: connect.NewClient[v1.ItemServiceReadRequest, v1.ItemServiceReadResponse](
-			httpClient,
-			baseURL+ItemServiceReadProcedure,
-			connect.WithSchema(itemServiceReadMethodDescriptor),
+			baseURL+ItemServiceReadItemProcedure,
+			connect.WithSchema(itemServiceMethods.ByName("ReadItem")),
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
-		update: connect.NewClient[v1.ItemServiceUpdateRequest, v1.ItemServiceUpdateResponse](
+		readCategory: connect.NewClient[v1.ItemServiceReadCategoryRequest, v1.ItemServiceReadCategoryResponse](
 			httpClient,
-			baseURL+ItemServiceUpdateProcedure,
-			connect.WithSchema(itemServiceUpdateMethodDescriptor),
+			baseURL+ItemServiceReadCategoryProcedure,
+			connect.WithSchema(itemServiceMethods.ByName("ReadCategory")),
+			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
-		delete: connect.NewClient[v1.ItemServiceDeleteRequest, v1.ItemServiceDeleteResponse](
+		upsert: connect.NewClient[v1.ItemServiceUpsertRequest, v1.ItemServiceUpsertResponse](
 			httpClient,
-			baseURL+ItemServiceDeleteProcedure,
-			connect.WithSchema(itemServiceDeleteMethodDescriptor),
+			baseURL+ItemServiceUpsertProcedure,
+			connect.WithSchema(itemServiceMethods.ByName("Upsert")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -100,38 +85,31 @@ func NewItemServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 
 // itemServiceClient implements ItemServiceClient.
 type itemServiceClient struct {
-	create *connect.Client[v1.ItemServiceCreateRequest, v1.ItemServiceCreateResponse]
-	read   *connect.Client[v1.ItemServiceReadRequest, v1.ItemServiceReadResponse]
-	update *connect.Client[v1.ItemServiceUpdateRequest, v1.ItemServiceUpdateResponse]
-	delete *connect.Client[v1.ItemServiceDeleteRequest, v1.ItemServiceDeleteResponse]
+	readItem     *connect.Client[v1.ItemServiceReadItemRequest, v1.ItemServiceReadItemResponse]
+	readCategory *connect.Client[v1.ItemServiceReadCategoryRequest, v1.ItemServiceReadCategoryResponse]
+	upsert       *connect.Client[v1.ItemServiceUpsertRequest, v1.ItemServiceUpsertResponse]
 }
 
-// Create calls listah.v1.ItemService.Create.
-func (c *itemServiceClient) Create(ctx context.Context, req *connect.Request[v1.ItemServiceCreateRequest]) (*connect.Response[v1.ItemServiceCreateResponse], error) {
-	return c.create.CallUnary(ctx, req)
+// ReadItem calls listah.v1.ItemService.ReadItem.
+func (c *itemServiceClient) ReadItem(ctx context.Context, req *connect.Request[v1.ItemServiceReadItemRequest]) (*connect.Response[v1.ItemServiceReadItemResponse], error) {
+	return c.readItem.CallUnary(ctx, req)
 }
 
-// Read calls listah.v1.ItemService.Read.
-func (c *itemServiceClient) Read(ctx context.Context, req *connect.Request[v1.ItemServiceReadRequest]) (*connect.Response[v1.ItemServiceReadResponse], error) {
-	return c.read.CallUnary(ctx, req)
+// ReadCategory calls listah.v1.ItemService.ReadCategory.
+func (c *itemServiceClient) ReadCategory(ctx context.Context, req *connect.Request[v1.ItemServiceReadCategoryRequest]) (*connect.Response[v1.ItemServiceReadCategoryResponse], error) {
+	return c.readCategory.CallUnary(ctx, req)
 }
 
-// Update calls listah.v1.ItemService.Update.
-func (c *itemServiceClient) Update(ctx context.Context, req *connect.Request[v1.ItemServiceUpdateRequest]) (*connect.Response[v1.ItemServiceUpdateResponse], error) {
-	return c.update.CallUnary(ctx, req)
-}
-
-// Delete calls listah.v1.ItemService.Delete.
-func (c *itemServiceClient) Delete(ctx context.Context, req *connect.Request[v1.ItemServiceDeleteRequest]) (*connect.Response[v1.ItemServiceDeleteResponse], error) {
-	return c.delete.CallUnary(ctx, req)
+// Upsert calls listah.v1.ItemService.Upsert.
+func (c *itemServiceClient) Upsert(ctx context.Context, req *connect.Request[v1.ItemServiceUpsertRequest]) (*connect.Response[v1.ItemServiceUpsertResponse], error) {
+	return c.upsert.CallUnary(ctx, req)
 }
 
 // ItemServiceHandler is an implementation of the listah.v1.ItemService service.
 type ItemServiceHandler interface {
-	Create(context.Context, *connect.Request[v1.ItemServiceCreateRequest]) (*connect.Response[v1.ItemServiceCreateResponse], error)
-	Read(context.Context, *connect.Request[v1.ItemServiceReadRequest]) (*connect.Response[v1.ItemServiceReadResponse], error)
-	Update(context.Context, *connect.Request[v1.ItemServiceUpdateRequest]) (*connect.Response[v1.ItemServiceUpdateResponse], error)
-	Delete(context.Context, *connect.Request[v1.ItemServiceDeleteRequest]) (*connect.Response[v1.ItemServiceDeleteResponse], error)
+	ReadItem(context.Context, *connect.Request[v1.ItemServiceReadItemRequest]) (*connect.Response[v1.ItemServiceReadItemResponse], error)
+	ReadCategory(context.Context, *connect.Request[v1.ItemServiceReadCategoryRequest]) (*connect.Response[v1.ItemServiceReadCategoryResponse], error)
+	Upsert(context.Context, *connect.Request[v1.ItemServiceUpsertRequest]) (*connect.Response[v1.ItemServiceUpsertResponse], error)
 }
 
 // NewItemServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -140,41 +118,35 @@ type ItemServiceHandler interface {
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
 func NewItemServiceHandler(svc ItemServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
-	itemServiceCreateHandler := connect.NewUnaryHandler(
-		ItemServiceCreateProcedure,
-		svc.Create,
-		connect.WithSchema(itemServiceCreateMethodDescriptor),
-		connect.WithHandlerOptions(opts...),
-	)
-	itemServiceReadHandler := connect.NewUnaryHandler(
-		ItemServiceReadProcedure,
-		svc.Read,
-		connect.WithSchema(itemServiceReadMethodDescriptor),
+	itemServiceMethods := v1.File_v1_item_proto.Services().ByName("ItemService").Methods()
+	itemServiceReadItemHandler := connect.NewUnaryHandler(
+		ItemServiceReadItemProcedure,
+		svc.ReadItem,
+		connect.WithSchema(itemServiceMethods.ByName("ReadItem")),
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
-	itemServiceUpdateHandler := connect.NewUnaryHandler(
-		ItemServiceUpdateProcedure,
-		svc.Update,
-		connect.WithSchema(itemServiceUpdateMethodDescriptor),
+	itemServiceReadCategoryHandler := connect.NewUnaryHandler(
+		ItemServiceReadCategoryProcedure,
+		svc.ReadCategory,
+		connect.WithSchema(itemServiceMethods.ByName("ReadCategory")),
+		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
-	itemServiceDeleteHandler := connect.NewUnaryHandler(
-		ItemServiceDeleteProcedure,
-		svc.Delete,
-		connect.WithSchema(itemServiceDeleteMethodDescriptor),
+	itemServiceUpsertHandler := connect.NewUnaryHandler(
+		ItemServiceUpsertProcedure,
+		svc.Upsert,
+		connect.WithSchema(itemServiceMethods.ByName("Upsert")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/listah.v1.ItemService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case ItemServiceCreateProcedure:
-			itemServiceCreateHandler.ServeHTTP(w, r)
-		case ItemServiceReadProcedure:
-			itemServiceReadHandler.ServeHTTP(w, r)
-		case ItemServiceUpdateProcedure:
-			itemServiceUpdateHandler.ServeHTTP(w, r)
-		case ItemServiceDeleteProcedure:
-			itemServiceDeleteHandler.ServeHTTP(w, r)
+		case ItemServiceReadItemProcedure:
+			itemServiceReadItemHandler.ServeHTTP(w, r)
+		case ItemServiceReadCategoryProcedure:
+			itemServiceReadCategoryHandler.ServeHTTP(w, r)
+		case ItemServiceUpsertProcedure:
+			itemServiceUpsertHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -184,18 +156,14 @@ func NewItemServiceHandler(svc ItemServiceHandler, opts ...connect.HandlerOption
 // UnimplementedItemServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedItemServiceHandler struct{}
 
-func (UnimplementedItemServiceHandler) Create(context.Context, *connect.Request[v1.ItemServiceCreateRequest]) (*connect.Response[v1.ItemServiceCreateResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.Create is not implemented"))
+func (UnimplementedItemServiceHandler) ReadItem(context.Context, *connect.Request[v1.ItemServiceReadItemRequest]) (*connect.Response[v1.ItemServiceReadItemResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.ReadItem is not implemented"))
 }
 
-func (UnimplementedItemServiceHandler) Read(context.Context, *connect.Request[v1.ItemServiceReadRequest]) (*connect.Response[v1.ItemServiceReadResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.Read is not implemented"))
+func (UnimplementedItemServiceHandler) ReadCategory(context.Context, *connect.Request[v1.ItemServiceReadCategoryRequest]) (*connect.Response[v1.ItemServiceReadCategoryResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.ReadCategory is not implemented"))
 }
 
-func (UnimplementedItemServiceHandler) Update(context.Context, *connect.Request[v1.ItemServiceUpdateRequest]) (*connect.Response[v1.ItemServiceUpdateResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.Update is not implemented"))
-}
-
-func (UnimplementedItemServiceHandler) Delete(context.Context, *connect.Request[v1.ItemServiceDeleteRequest]) (*connect.Response[v1.ItemServiceDeleteResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.Delete is not implemented"))
+func (UnimplementedItemServiceHandler) Upsert(context.Context, *connect.Request[v1.ItemServiceUpsertRequest]) (*connect.Response[v1.ItemServiceUpsertResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.Upsert is not implemented"))
 }

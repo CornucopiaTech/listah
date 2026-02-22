@@ -26,10 +26,7 @@ databaseChangeLog:
                     constraints:
                       nullable:  false
                 - column:
-                    name:  summary
-                    type:  varchar
-                - column:
-                    name:  category
+                    name:  title
                     type:  varchar
                 - column:
                     name:  description
@@ -39,9 +36,6 @@ databaseChangeLog:
                     type:  varchar
                 - column:
                     name:  tag
-                    type:  json
-                - column:
-                    name:  properties
                     type:  json
                 - column:
                     name:  reactivate_at

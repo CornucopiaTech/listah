@@ -15,8 +15,6 @@ import (
 
 	"cornucopia/listah/apps/api/internal/app/bootstrap"
 	itemV1 "cornucopia/listah/apps/api/internal/app/item/v1"
-	categoryV1 "cornucopia/listah/apps/api/internal/app/category/v1"
-	tagV1 "cornucopia/listah/apps/api/internal/app/tag/v1"
 	"cornucopia/listah/apps/api/internal/pkg/middleware"
 	"cornucopia/listah/apps/api/internal/pkg/proto/v1/v1connect"
 
@@ -47,17 +45,6 @@ func handle(i *bootstrap.Infra) http.Handler {
 	// Handle Item connect-go generated paths
 	ip, ih := v1connect.NewItemServiceHandler(itemV1.NewServer(i), icp)
 	mux.Mount(ip, otelhttp.WithRouteTag(ip, ih))
-
-
-
-	// Handle Category connect-go generated paths
-	cp, ch := v1connect.NewCategoryServiceHandler(categoryV1.NewServer(i), icp)
-	mux.Mount(cp, otelhttp.WithRouteTag(cp, ch))
-
-	// Handle Tag connect-go generated paths
-	tp, th := v1connect.NewTagServiceHandler(tagV1.NewServer(i), icp)
-	mux.Mount(tp, otelhttp.WithRouteTag(tp, th))
-
 
 
 	handleDoc := func(w http.ResponseWriter, r *http.Request) {

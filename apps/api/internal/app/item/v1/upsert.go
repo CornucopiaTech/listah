@@ -12,7 +12,7 @@ import (
 	"go.opentelemetry.io/otel"
 )
 
-func (s *Server) Update(ctx context.Context, req *connect.Request[pb.ItemServiceUpdateRequest]) (*connect.Response[pb.ItemServiceUpdateResponse], error) {
+func (s *Server) Upsert(ctx context.Context, req *connect.Request[pb.ItemServiceUpsertRequest]) (*connect.Response[pb.ItemServiceUpsertResponse], error) {
 	rpcName := "Update"
 	rpcLogName := fmt.Sprintf("POST /%v/%v", svcName, rpcName)
 
@@ -23,7 +23,7 @@ func (s *Server) Update(ctx context.Context, req *connect.Request[pb.ItemService
 
 
 	// Create model for repository from request message
-	insertions, err := v1model.IItemToItemModelUpsertSafe(req.Msg.Items, false)
+	ins, res, err := v1model.ItemProtoToItemModel(req.Msg.Items, false)
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Error getting item model for insertion", errors.Cause(err).Error())
 		return nil, err
@@ -32,10 +32,10 @@ func (s *Server) Update(ctx context.Context, req *connect.Request[pb.ItemService
 
 	w := model.UpsertInfo{
 		Conflict: v1model.ItemConflictFields,
-		Resolve: v1model.ItemResolveFields,
+		Resolve: res,
 	}
 
-	_, err = s.BunRepo.Item.Upsert(ctx, &insertions, &w)
+	_, err = s.BunRepo.Item.Upsert(ctx, &ins, &w)
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Repository  update error", errors.Cause(err).Error())
 		return nil, err
@@ -45,12 +45,12 @@ func (s *Server) Update(ctx context.Context, req *connect.Request[pb.ItemService
 	// Get the ids of the inserted items
 
 	rs := []string{}
-	for _, v := range insertions {
+	for _, v := range ins {
 		rs = append(rs,  v.Id)
 	}
 
-	resm := &pb.ItemServiceUpdateResponse{ ItemIds: rs,}
+	resm := &pb.ItemServiceUpsertResponse{ ItemIds: rs,}
 
-	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item update. Updated %d items", len(insertions)))
+	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item update. Updated %d items", len(ins)))
 	return connect.NewResponse(resm), nil
 }

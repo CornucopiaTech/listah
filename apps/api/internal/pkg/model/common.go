@@ -18,27 +18,14 @@ type ApiLog struct {
 
 
 
-type Audit struct {
-	CreatedBy string
-	UpdatedBy string
-	DeletedBy string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time
-}
-
-
-type WhereClause struct {
-	Placeholder string
-	Column string
-	Value interface {}
-}
-
-
-type ItemWhereClause struct {
-	Placeholder string
-	Column string
-	Value []string
+type ItemSearch struct {
+	UserId string
+	Filter string
+	SearchQuery string
+	SortQuery string
+	Limit int
+	Offset int
+	PageNumber int
 }
 
 

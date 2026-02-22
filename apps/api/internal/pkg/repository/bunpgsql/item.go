@@ -6,19 +6,17 @@ import (
 	"cornucopia/listah/apps/api/internal/pkg/model"
 	"fmt"
 	"strings"
-
 	"github.com/pkg/errors"
 	"github.com/uptrace/bun"
 	"go.opentelemetry.io/otel"
+	v1model "cornucopia/listah/apps/api/internal/pkg/model/v1"
 )
 
 var svcName string = "PgDB"
 
 type Item interface {
-	Select(ctx context.Context, m interface{}, c *[]model.WhereClause, s string, o int, l int) (int, error)
-	Count(ctx context.Context, m interface{}, c *[]model.WhereClause, s string, o int, l int) error
-	Insert(ctx context.Context, m interface{}) error
-	Update(ctx context.Context, v interface{}, m interface{}, s []string, w []string, al string) error
+	ReadItem(ctx context.Context, m *[]*v1model.Item, s *model.ItemSearch) error
+	ReadCategory(ctx context.Context, m *[]*v1model.Category, s *model.ItemSearch) error
 	Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (interface{}, error)
 }
 
@@ -28,72 +26,47 @@ type item struct {
 }
 
 
-func (a *item) Select(ctx context.Context, m interface{}, c *[]model.WhereClause, s string, o int, l int) (int, error) {
-	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Select")
+func (a *item) ReadItem(ctx context.Context, m *[]*v1model.Item, s *model.ItemSearch) error {
+	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Read")
 	defer span.End()
 
-	var activity = "ItemSelect"
+	var activity = "ItemRead"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
-	qb := a.db.NewSelect().Model(m).QueryBuilder()
-	// Add where clause
-	for _, k := range *c {
-		qb = qb.Where(k.Placeholder, bun.Ident(k.Column), k.Value)
+	query := fmt.Sprintf(`
+		SELECT
+			"id", "user_id", "title", "description",
+			"note", "tag", "soft_delete", "reactivate_at"
+		FROM apps.items
+		WHERE user_id::VARCHAR = '%v'
+	`, s.UserId)
+
+	if s.SearchQuery != "" {
+		query = query + fmt.Sprintf(`
+			AND (
+				title LIKE '%%v%' OR
+				description LIKE %%v%' OR
+				note LIKE %%v%'
+			)
+		`, s.SearchQuery)
 	}
-	selectQuery := qb.Unwrap().(*bun.SelectQuery)
-
-	if (s != ""){
-		selectQuery = selectQuery.OrderExpr(s)
+	if s.Filter != "" {
+		query = query + fmt.Sprintf(` AND (
+			tag::VARCHAR != 'null' AND tag::JSONB ?| array[%v]
+		) `, s.Filter)
 	}
-	if ( l != 0){
-		selectQuery = selectQuery.Limit(l)
+	if s.SortQuery != "" {
+		query = query + fmt.Sprintf(` ORDER BY %v `, s.SortQuery)
 	}
-	if ( o != 0){
-		selectQuery = selectQuery.Offset(o)
+	if s.Limit != 0 {
+		query = query + fmt.Sprintf(` LIMIT %d `, s.Limit)
 	}
-
-	// count, err := selectQuery.OrderExpr(s).Limit(l).Offset(o).ScanAndCount(ctx)
-	count, err := selectQuery.ScanAndCount(ctx)
-	if err != nil {
-		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
-		return 0, err
+	if s.Offset != 0 {
+		query = query + fmt.Sprintf(` OFFSET %d `, s.Offset)
 	}
-
-	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
-	return count, nil
-}
-
-func (a *item) Count(ctx context.Context, m interface{}, c *[]model.WhereClause, s string, o int, l int) error {
-	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Select")
-	defer span.End()
-
-	var activity = "ItemSelect"
-	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
-
-	qb := a.db.NewSelect().Model(m).QueryBuilder()
-	// Add where clause
-	// qb = addWhere(qb, c)
-	for _, k := range *c {
-		qb = qb.Where(k.Placeholder, bun.Ident(k.Column), k.Value)
-	}
-	selectQuery := qb.Unwrap().(*bun.SelectQuery)
-
-	if err := selectQuery.OrderExpr(s).Limit(l).Offset(o).Scan(ctx); err != nil {
-		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
-		return err
-	}
-
-	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
-	return nil
-}
-
-func (a *item) Insert(ctx context.Context, m interface{}) error {
-	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Insert")
-	defer span.End()
-	var activity = "ItemInsert"
-	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
-
-	_, err := a.db.NewInsert().Model(m).Returning("*").Exec(ctx)
+	err := a.db.
+		NewRaw(query).
+		Scan(ctx, m)
 	if err != nil {
 		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
 		return err
@@ -103,28 +76,33 @@ func (a *item) Insert(ctx context.Context, m interface{}) error {
 	return nil
 }
 
-func (a *item) Update(ctx context.Context, v interface{},
-	m interface{}, s []string, w []string, al string) error {
-	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Update")
+func (a *item) ReadCategory(ctx context.Context, m *[]*v1model.Category, s *model.ItemSearch) error {
+	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Read")
 	defer span.End()
-	var activity = "ItemUpdate"
+
+	var activity = "ItemCategory"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
-	values := a.db.NewValues(v)
-	q := a.db.NewUpdate().With("_data", values).Model(m).TableExpr("_data")
+	query := fmt.Sprintf(`
+		SELECT category, COUNT(*) AS row_count
+		FROM (
+			SELECT DISTINCT id, jsonb_array_elements_text(tag::JSONB) AS category
+			FROM apps.items
+			WHERE tag::VARCHAR != 'null' AND user_id::VARCHAR = '%v'
+		) AS expanded
+		GROUP BY 1
+		ORDER BY 1
+	`, s.UserId)
 
-	for _, v := range s {
-		r := fmt.Sprintf("%v = _data.%v", bun.Ident(v), bun.Ident(v))
-		q = q.Set(r)
+	if s.Limit != 0 {
+		query = query + fmt.Sprintf(` LIMIT %d `, s.Limit)
 	}
-
-	for _, v := range w {
-		r := fmt.Sprintf("%v.%v = _data.%v", al, bun.Ident(v), bun.Ident(v))
-		q = q.Where(r)
+	if s.Offset != 0 {
+		query = query + fmt.Sprintf(` OFFSET %d `, s.Offset)
 	}
-
-	_, err := q.Exec(ctx)
-
+	err := a.db.
+		NewRaw(query).
+		Scan(ctx, m)
 	if err != nil {
 		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
 		return err
@@ -133,6 +111,7 @@ func (a *item) Update(ctx context.Context, v interface{},
 	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
 	return nil
 }
+
 
 func (a *item) Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (interface{}, error) {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Upsert")
@@ -142,7 +121,7 @@ func (a *item) Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	var conflict string
-	if len(c.Conflict) == 0 {
+	if len(c.Resolve) == 0 {
 		conflict = fmt.Sprintf("CONFLICT(%v) DO NOTHING",
 			strings.Join(c.Conflict, ", "))
 	} else {
@@ -150,7 +129,7 @@ func (a *item) Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (
 			strings.Join(c.Conflict, ", "))
 	}
 
-	q := a.db.NewInsert().Model(m).On(conflict)
+	q := a.db.NewInsert().Model(m).Ignore().On(conflict)
 
 	for _, v := range c.Resolve {
 		r := fmt.Sprintf("%v = Excluded.%v", v, v)
