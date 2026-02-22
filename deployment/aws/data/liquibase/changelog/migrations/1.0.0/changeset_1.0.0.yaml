@@ -26,10 +26,7 @@ databaseChangeLog:
                     constraints:
                       nullable:  false
                 - column:
-                    name:  summary
-                    type:  varchar
-                - column:
-                    name:  category
+                    name:  title
                     type:  varchar
                 - column:
                     name:  description
@@ -41,17 +38,17 @@ databaseChangeLog:
                     name:  tag
                     type:  json
                 - column:
-                    name:  properties
-                    type:  json
-                - column:
                     name:  reactivate_at
                     type:  timestamp
                 - column:
-                    name:  audit
-                    type:  json
-                - column:
                     name:  soft_delete
                     type:  boolean
+                - column:
+                    name:  updated_by
+                    type:  varchar
+                - column:
+                    name:  updated_at
+                    type:  timestamp
 
         -  addUniqueConstraint:
             columnNames:  id, user_id
