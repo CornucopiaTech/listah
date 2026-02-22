@@ -28,6 +28,8 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { Icon } from "@iconify/react";
+import { useUser } from '@clerk/clerk-react';
+
 
 
 // Internal imports
@@ -61,6 +63,7 @@ export function AppItemModal(): ReactNode {
   const item: IItem = useBoundStore((state) => state.displayItem);
   const query: IItemRequest = useSearchQuery();
   const queryClient = useQueryClient();
+  const { user } = useUser();
 
   // Define invalidating  mutation
   const mutation = useMutation({
@@ -96,8 +99,10 @@ export function AppItemModal(): ReactNode {
     defaultValues: item,
     onSubmit: ({ value }) => {
       const itemId = value.id && value.id != "" ? value.id : uuidv4();
+      const userId = value.userId != "" ? value.userId : user.id;
       const submitValue = {
       ...value,
+        userId,
       id: itemId,
       tag: value.tag?.filter((t) => t != "")
     }
@@ -206,7 +211,7 @@ export function AppItemModal(): ReactNode {
     );
   }
 
-  const fields: itemFields[] = ['id', 'userId', 'title', 'category', 'description', 'note'];
+  const fields: itemFields[] = ['id', 'userId', 'title', 'description', 'note'];
   const dialogSx = {
     display: 'block',
     maxWidth: "lg",

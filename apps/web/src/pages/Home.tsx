@@ -8,7 +8,7 @@ import {
   useBoundStore,
   type TBoundStore
 } from '@/lib/store/boundStore';
-
+import { AppItemModal } from "@/components/core/AppItemModal";
 
 export function Home() {
   const store: TBoundStore = useBoundStore((state) => state);

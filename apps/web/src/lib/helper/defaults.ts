@@ -38,7 +38,6 @@ export const DEFAULT_ITEM: IItem = {
   id: "",
   userId: "",
   title: "",
-  category: "",
   description: "",
   note: "",
   tag: [],
