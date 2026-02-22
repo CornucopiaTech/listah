@@ -1,313 +1,13 @@
 openapi: 3.1.0
 info: {}
 paths:
-  /listah.v1.CategoryService/Read:
-    get:
-      tags:
-        - listah.v1.CategoryService
-      summary: Read
-      description: Read Category
-      operationId: listah.v1.CategoryService.Read.get
-      parameters:
-        - name: Connect-Protocol-Version
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/connect-protocol-version'
-        - name: Connect-Timeout-Ms
-          in: header
-          schema:
-            $ref: '#/components/schemas/connect-timeout-header'
-        - name: message
-          in: query
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/listah.v1.CategoryServiceReadRequest'
-        - name: encoding
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/encoding'
-        - name: base64
-          in: query
-          schema:
-            $ref: '#/components/schemas/base64'
-        - name: compression
-          in: query
-          schema:
-            $ref: '#/components/schemas/compression'
-        - name: connect
-          in: query
-          schema:
-            $ref: '#/components/schemas/connect'
-      responses:
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/connect.error'
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/listah.v1.CategoryServiceReadResponse'
-    post:
-      tags:
-        - listah.v1.CategoryService
-      summary: Read
-      description: Read Category
-      operationId: listah.v1.CategoryService.Read
-      parameters:
-        - name: Connect-Protocol-Version
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/connect-protocol-version'
-        - name: Connect-Timeout-Ms
-          in: header
-          schema:
-            $ref: '#/components/schemas/connect-timeout-header'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/listah.v1.CategoryServiceReadRequest'
-        required: true
-      responses:
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/connect.error'
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/listah.v1.CategoryServiceReadResponse'
-  /listah.v1.FilterService/ReadCategory:
-    get:
-      tags:
-        - listah.v1.FilterService
-      summary: ReadCategory
-      description: Read Item Count By Filter Category
-      operationId: listah.v1.FilterService.ReadCategory.get
-      parameters:
-        - name: Connect-Protocol-Version
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/connect-protocol-version'
-        - name: Connect-Timeout-Ms
-          in: header
-          schema:
-            $ref: '#/components/schemas/connect-timeout-header'
-        - name: message
-          in: query
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/listah.v1.FilterServiceCategoryReadRequest'
-        - name: encoding
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/encoding'
-        - name: base64
-          in: query
-          schema:
-            $ref: '#/components/schemas/base64'
-        - name: compression
-          in: query
-          schema:
-            $ref: '#/components/schemas/compression'
-        - name: connect
-          in: query
-          schema:
-            $ref: '#/components/schemas/connect'
-      responses:
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/connect.error'
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/listah.v1.FilterServiceCategoryReadResponse'
-    post:
-      tags:
-        - listah.v1.FilterService
-      summary: ReadCategory
-      description: Read Item Count By Filter Category
-      operationId: listah.v1.FilterService.ReadCategory
-      parameters:
-        - name: Connect-Protocol-Version
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/connect-protocol-version'
-        - name: Connect-Timeout-Ms
-          in: header
-          schema:
-            $ref: '#/components/schemas/connect-timeout-header'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/listah.v1.FilterServiceCategoryReadRequest'
-        required: true
-      responses:
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/connect.error'
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/listah.v1.FilterServiceCategoryReadResponse'
-  /listah.v1.FilterService/ReadItem:
-    get:
-      tags:
-        - listah.v1.FilterService
-      summary: ReadItem
-      description: Read Item By Filter Category
-      operationId: listah.v1.FilterService.ReadItem.get
-      parameters:
-        - name: Connect-Protocol-Version
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/connect-protocol-version'
-        - name: Connect-Timeout-Ms
-          in: header
-          schema:
-            $ref: '#/components/schemas/connect-timeout-header'
-        - name: message
-          in: query
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/listah.v1.FilterServiceItemReadRequest'
-        - name: encoding
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/encoding'
-        - name: base64
-          in: query
-          schema:
-            $ref: '#/components/schemas/base64'
-        - name: compression
-          in: query
-          schema:
-            $ref: '#/components/schemas/compression'
-        - name: connect
-          in: query
-          schema:
-            $ref: '#/components/schemas/connect'
-      responses:
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/connect.error'
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/listah.v1.FilterServiceItemReadResponse'
-    post:
-      tags:
-        - listah.v1.FilterService
-      summary: ReadItem
-      description: Read Item By Filter Category
-      operationId: listah.v1.FilterService.ReadItem
-      parameters:
-        - name: Connect-Protocol-Version
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/connect-protocol-version'
-        - name: Connect-Timeout-Ms
-          in: header
-          schema:
-            $ref: '#/components/schemas/connect-timeout-header'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/listah.v1.FilterServiceItemReadRequest'
-        required: true
-      responses:
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/connect.error'
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/listah.v1.FilterServiceItemReadResponse'
-  /listah.v1.ItemService/Create:
-    post:
-      tags:
-        - listah.v1.ItemService
-      summary: Create
-      description: Create Item
-      operationId: listah.v1.ItemService.Create
-      parameters:
-        - name: Connect-Protocol-Version
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/connect-protocol-version'
-        - name: Connect-Timeout-Ms
-          in: header
-          schema:
-            $ref: '#/components/schemas/connect-timeout-header'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/listah.v1.ItemServiceCreateRequest'
-        required: true
-      responses:
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/connect.error'
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/listah.v1.ItemServiceCreateResponse'
-  /listah.v1.ItemService/Read:
+  /listah.v1.ItemService/ReadItem:
     get:
       tags:
         - listah.v1.ItemService
-      summary: Read
+      summary: ReadItem
       description: Read Item
-      operationId: listah.v1.ItemService.Read.get
+      operationId: listah.v1.ItemService.ReadItem.get
       parameters:
         - name: Connect-Protocol-Version
           in: header
@@ -323,7 +23,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/listah.v1.ItemServiceReadRequest'
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadItemRequest'
         - name: encoding
           in: query
           required: true
@@ -353,13 +53,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/listah.v1.ItemServiceReadResponse'
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadItemResponse'
     post:
       tags:
         - listah.v1.ItemService
-      summary: Read
+      summary: ReadItem
       description: Read Item
-      operationId: listah.v1.ItemService.Read
+      operationId: listah.v1.ItemService.ReadItem
       parameters:
         - name: Connect-Protocol-Version
           in: header
@@ -374,7 +74,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/listah.v1.ItemServiceReadRequest'
+              $ref: '#/components/schemas/listah.v1.ItemServiceReadItemRequest'
         required: true
       responses:
         default:
@@ -388,86 +88,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/listah.v1.ItemServiceReadResponse'
-  /listah.v1.ItemService/Update:
-    post:
-      tags:
-        - listah.v1.ItemService
-      summary: Update
-      description: Update Item
-      operationId: listah.v1.ItemService.Update
-      parameters:
-        - name: Connect-Protocol-Version
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/connect-protocol-version'
-        - name: Connect-Timeout-Ms
-          in: header
-          schema:
-            $ref: '#/components/schemas/connect-timeout-header'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/listah.v1.ItemServiceUpdateRequest'
-        required: true
-      responses:
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/connect.error'
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/listah.v1.ItemServiceUpdateResponse'
-  /listah.v1.ItemService/Delete:
-    post:
-      tags:
-        - listah.v1.ItemService
-      summary: Delete
-      description: Delete Item
-      operationId: listah.v1.ItemService.Delete
-      parameters:
-        - name: Connect-Protocol-Version
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/connect-protocol-version'
-        - name: Connect-Timeout-Ms
-          in: header
-          schema:
-            $ref: '#/components/schemas/connect-timeout-header'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/listah.v1.ItemServiceDeleteRequest'
-        required: true
-      responses:
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/connect.error'
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/listah.v1.ItemServiceDeleteResponse'
-  /listah.v1.TagService/ReadCategory:
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadItemResponse'
+  /listah.v1.ItemService/ReadCategory:
     get:
       tags:
-        - listah.v1.TagService
+        - listah.v1.ItemService
       summary: ReadCategory
-      description: Read Item Count By Tag Category
-      operationId: listah.v1.TagService.ReadCategory.get
+      description: Read Category
+      operationId: listah.v1.ItemService.ReadCategory.get
       parameters:
         - name: Connect-Protocol-Version
           in: header
@@ -483,7 +111,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/listah.v1.TagServiceCategoryReadRequest'
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadCategoryRequest'
         - name: encoding
           in: query
           required: true
@@ -513,13 +141,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/listah.v1.TagServiceCategoryReadResponse'
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadCategoryResponse'
     post:
       tags:
-        - listah.v1.TagService
+        - listah.v1.ItemService
       summary: ReadCategory
-      description: Read Item Count By Tag Category
-      operationId: listah.v1.TagService.ReadCategory
+      description: Read Category
+      operationId: listah.v1.ItemService.ReadCategory
       parameters:
         - name: Connect-Protocol-Version
           in: header
@@ -534,7 +162,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/listah.v1.TagServiceCategoryReadRequest'
+              $ref: '#/components/schemas/listah.v1.ItemServiceReadCategoryRequest'
         required: true
       responses:
         default:
@@ -548,66 +176,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/listah.v1.TagServiceCategoryReadResponse'
-  /listah.v1.TagService/ReadItem:
-    get:
-      tags:
-        - listah.v1.TagService
-      summary: ReadItem
-      description: Read Item By Tag Category
-      operationId: listah.v1.TagService.ReadItem.get
-      parameters:
-        - name: Connect-Protocol-Version
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/connect-protocol-version'
-        - name: Connect-Timeout-Ms
-          in: header
-          schema:
-            $ref: '#/components/schemas/connect-timeout-header'
-        - name: message
-          in: query
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/listah.v1.TagServiceItemReadRequest'
-        - name: encoding
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/encoding'
-        - name: base64
-          in: query
-          schema:
-            $ref: '#/components/schemas/base64'
-        - name: compression
-          in: query
-          schema:
-            $ref: '#/components/schemas/compression'
-        - name: connect
-          in: query
-          schema:
-            $ref: '#/components/schemas/connect'
-      responses:
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/connect.error'
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/listah.v1.TagServiceItemReadResponse'
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadCategoryResponse'
+  /listah.v1.ItemService/Upsert:
     post:
       tags:
-        - listah.v1.TagService
-      summary: ReadItem
-      description: Read Item By Tag Category
-      operationId: listah.v1.TagService.ReadItem
+        - listah.v1.ItemService
+      summary: Upsert
+      description: Upsert Item
+      operationId: listah.v1.ItemService.Upsert
       parameters:
         - name: Connect-Protocol-Version
           in: header
@@ -622,7 +198,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/listah.v1.TagServiceItemReadRequest'
+              $ref: '#/components/schemas/listah.v1.ItemServiceUpsertRequest'
         required: true
       responses:
         default:
@@ -636,7 +212,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/listah.v1.TagServiceItemReadResponse'
+                $ref: '#/components/schemas/listah.v1.ItemServiceUpsertResponse'
 components:
   schemas:
     listah.v1.AuditUpdaterEnum:
@@ -646,6 +222,36 @@ components:
         - AUDIT_UPDATER_ENUM_UNSPECIFIED
         - AUDIT_UPDATER_ENUM_FRONTEND
         - AUDIT_UPDATER_ENUM_SYSOPS
+    listah.v1.Pagination:
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          title: page_number
+          format: int32
+        recordsPerPage:
+          type: integer
+          title: records_per_page
+          format: int32
+        sortCondition:
+          type: object
+          title: sort_condition
+          additionalProperties:
+            type: string
+            title: value
+      title: Pagination
+      additionalProperties: false
+    listah.v1.Pagination.SortConditionEntry:
+      type: object
+      properties:
+        key:
+          type: string
+          title: key
+        value:
+          type: string
+          title: value
+      title: SortConditionEntry
+      additionalProperties: false
     google.protobuf.Timestamp:
       type: string
       format: date-time
@@ -739,28 +345,17 @@ components:
          the Joda Time's [`ISODateTimeFormat.dateTime()`](
          http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
          ) to obtain a formatter capable of generating timestamps in this format.
-    listah.v1.Audit:
+    listah.v1.Category:
       type: object
       properties:
-        created_by:
-          title: created_by
-          $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
-        created_at:
-          title: created_at
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
-        updated_by:
-          title: updated_by
-          $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
-        updated_at:
-          title: updated_at
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
-        deleted_by:
-          title: deleted_by
-          $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
-        deleted_at:
-          title: deleted_at
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
-      title: Audit
+        category:
+          type: string
+          title: category
+        rowCount:
+          type: integer
+          title: row_count
+          format: int32
+      title: Category
       additionalProperties: false
     listah.v1.Item:
       type: object
@@ -771,9 +366,9 @@ components:
         userId:
           type: string
           title: user_id
-        summary:
+        title:
           type: string
-          title: summary
+          title: title
         description:
           type: string
           title: description
@@ -795,73 +390,153 @@ components:
           title: reactivate_at
           nullable: true
           $ref: '#/components/schemas/google.protobuf.Timestamp'
-        audit:
-          title: audit
+        updated_by:
+          title: updated_by
           nullable: true
-          $ref: '#/components/schemas/listah.v1.Audit'
+          $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
+        updated_at:
+          title: updated_at
+          nullable: true
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
       title: Item
       additionalProperties: false
-    listah.v1.Pagination:
-      type: object
-      properties:
-        pageNumber:
-          type: integer
-          title: page_number
-          format: int32
-        recordsPerPage:
-          type: integer
-          title: records_per_page
-          format: int32
-        sortCondition:
-          type: object
-          title: sort_condition
-          additionalProperties:
-            type: string
-            title: value
-          description: int32 total_record_count = 3;
-      title: Pagination
-      additionalProperties: false
-    listah.v1.Pagination.SortConditionEntry:
-      type: object
-      properties:
-        key:
-          type: string
-          title: key
-        value:
-          type: string
-          title: value
-      title: SortConditionEntry
-      additionalProperties: false
-    listah.v1.CategoryServiceReadRequest:
+    listah.v1.ItemServiceReadCategoryRequest:
       type: object
       properties:
         userId:
           type: string
-          title: user_id
-        pagination:
-          title: pagination
-          nullable: true
-          $ref: '#/components/schemas/listah.v1.Pagination'
-      title: CategoryServiceReadRequest
-      additionalProperties: false
-    listah.v1.CategoryServiceReadResponse:
-      type: object
-      properties:
-        category:
+          title: userId
+        filter:
           type: array
           items:
             type: string
-          title: category
-        pagination:
-          title: pagination
-          nullable: true
-          $ref: '#/components/schemas/listah.v1.Pagination'
-        totalRecordCount:
+          title: filter
+        searchQuery:
+          type: string
+          title: searchQuery
+        pageSize:
           type: integer
-          title: total_record_count
+          title: pageSize
           format: int32
-          nullable: true
-      title: CategoryServiceReadResponse
+        pageNumber:
+          type: integer
+          title: pageNumber
+          format: int32
+        sortQuery:
+          type: string
+          title: sortQuery
+      title: ItemServiceReadCategoryRequest
+      additionalProperties: false
+    listah.v1.ItemServiceReadCategoryResponse:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.Category'
+          title: categories
+        userId:
+          type: string
+          title: userId
+        filter:
+          type: array
+          items:
+            type: string
+          title: filter
+        searchQuery:
+          type: string
+          title: searchQuery
+        pageSize:
+          type: integer
+          title: pageSize
+          format: int32
+        pageNumber:
+          type: integer
+          title: pageNumber
+          format: int32
+        sortQuery:
+          type: string
+          title: sortQuery
+      title: ItemServiceReadCategoryResponse
+      additionalProperties: false
+    listah.v1.ItemServiceReadItemRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+          title: userId
+        filter:
+          type: array
+          items:
+            type: string
+          title: filter
+        searchQuery:
+          type: string
+          title: searchQuery
+        pageSize:
+          type: integer
+          title: pageSize
+          format: int32
+        pageNumber:
+          type: integer
+          title: pageNumber
+          format: int32
+        sortQuery:
+          type: string
+          title: sortQuery
+      title: ItemServiceReadItemRequest
+      additionalProperties: false
+    listah.v1.ItemServiceReadItemResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.Item'
+          title: items
+        userId:
+          type: string
+          title: userId
+        filter:
+          type: array
+          items:
+            type: string
+          title: filter
+        searchQuery:
+          type: string
+          title: searchQuery
+        pageSize:
+          type: integer
+          title: pageSize
+          format: int32
+        pageNumber:
+          type: integer
+          title: pageNumber
+          format: int32
+        sortQuery:
+          type: string
+          title: sortQuery
+      title: ItemServiceReadItemResponse
+      additionalProperties: false
+    listah.v1.ItemServiceUpsertRequest:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.Item'
+          title: items
+      title: ItemServiceUpsertRequest
+      additionalProperties: false
+    listah.v1.ItemServiceUpsertResponse:
+      type: object
+      properties:
+        itemIds:
+          type: array
+          items:
+            type: string
+          title: item_ids
+      title: ItemServiceUpsertResponse
       additionalProperties: false
     encoding:
       title: encoding
@@ -942,350 +617,6 @@ components:
           additionalProperties: true
       additionalProperties: true
       description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
-    listah.v1.FilterCategoryQuery:
-      type: object
-      properties:
-        filter:
-          type: string
-          title: filter
-        rowCount:
-          type: string
-          title: row_count
-      title: FilterCategoryQuery
-      additionalProperties: false
-    listah.v1.FilterServiceCategoryReadRequest:
-      type: object
-      properties:
-        userId:
-          type: string
-          title: user_id
-        pageSize:
-          type: integer
-          title: pageSize
-          format: int32
-        pageNumber:
-          type: integer
-          title: pageNumber
-          format: int32
-        sortQuery:
-          type: string
-          title: sortQuery
-      title: FilterServiceCategoryReadRequest
-      additionalProperties: false
-    listah.v1.FilterServiceCategoryReadResponse:
-      type: object
-      properties:
-        filters:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.FilterCategoryQuery'
-          title: filters
-        userId:
-          type: string
-          title: userId
-        pageSize:
-          type: integer
-          title: pageSize
-          format: int32
-        pageNumber:
-          type: integer
-          title: pageNumber
-          format: int32
-        sortQuery:
-          type: string
-          title: sortQuery
-      title: FilterServiceCategoryReadResponse
-      additionalProperties: false
-    listah.v1.FilterServiceItemReadRequest:
-      type: object
-      properties:
-        userId:
-          type: string
-          title: user_id
-        filters:
-          type: array
-          items:
-            type: string
-          title: filters
-        pageSize:
-          type: integer
-          title: pageSize
-          format: int32
-        pageNumber:
-          type: integer
-          title: pageNumber
-          format: int32
-        sortQuery:
-          type: string
-          title: sortQuery
-      title: FilterServiceItemReadRequest
-      additionalProperties: false
-    listah.v1.FilterServiceItemReadResponse:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.Item'
-          title: items
-        filters:
-          type: array
-          items:
-            type: string
-          title: filters
-        userId:
-          type: string
-          title: userId
-        pageSize:
-          type: integer
-          title: pageSize
-          format: int32
-        pageNumber:
-          type: integer
-          title: pageNumber
-          format: int32
-        sortQuery:
-          type: string
-          title: sortQuery
-      title: FilterServiceItemReadResponse
-      additionalProperties: false
-    listah.v1.ItemServiceCreateRequest:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.Item'
-          title: items
-        audit:
-          title: audit
-          nullable: true
-          $ref: '#/components/schemas/listah.v1.Audit'
-      title: ItemServiceCreateRequest
-      additionalProperties: false
-    listah.v1.ItemServiceCreateResponse:
-      type: object
-      properties:
-        itemIds:
-          type: array
-          items:
-            type: string
-          title: item_ids
-      title: ItemServiceCreateResponse
-      additionalProperties: false
-    listah.v1.ItemServiceDeleteRequest:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.Item'
-          title: items
-        audit:
-          title: audit
-          nullable: true
-          $ref: '#/components/schemas/listah.v1.Audit'
-      title: ItemServiceDeleteRequest
-      additionalProperties: false
-    listah.v1.ItemServiceDeleteResponse:
-      type: object
-      properties:
-        itemIds:
-          type: array
-          items:
-            type: string
-          title: item_ids
-      title: ItemServiceDeleteResponse
-      additionalProperties: false
-    listah.v1.ItemServiceReadRequest:
-      type: object
-      properties:
-        userId:
-          type: string
-          title: userId
-        filter:
-          type: array
-          items:
-            type: string
-          title: filter
-        searchQuery:
-          type: string
-          title: searchQuery
-        pageSize:
-          type: integer
-          title: pageSize
-          format: int32
-        pageNumber:
-          type: integer
-          title: pageNumber
-          format: int32
-        sortQuery:
-          type: string
-          title: sortQuery
-      title: ItemServiceReadRequest
-      additionalProperties: false
-    listah.v1.ItemServiceReadResponse:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.Item'
-          title: items
-        userId:
-          type: string
-          title: userId
-        filter:
-          type: array
-          items:
-            type: string
-          title: filter
-        searchQuery:
-          type: string
-          title: searchQuery
-        pageSize:
-          type: integer
-          title: pageSize
-          format: int32
-        pageNumber:
-          type: integer
-          title: pageNumber
-          format: int32
-        sortQuery:
-          type: string
-          title: sortQuery
-      title: ItemServiceReadResponse
-      additionalProperties: false
-    listah.v1.ItemServiceUpdateRequest:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.Item'
-          title: items
-        audit:
-          title: audit
-          nullable: true
-          $ref: '#/components/schemas/listah.v1.Audit'
-      title: ItemServiceUpdateRequest
-      additionalProperties: false
-    listah.v1.ItemServiceUpdateResponse:
-      type: object
-      properties:
-        itemIds:
-          type: array
-          items:
-            type: string
-          title: item_ids
-      title: ItemServiceUpdateResponse
-      additionalProperties: false
-    listah.v1.TagCategoryQuery:
-      type: object
-      properties:
-        tag:
-          type: string
-          title: tag
-        rowCount:
-          type: string
-          title: row_count
-      title: TagCategoryQuery
-      additionalProperties: false
-    listah.v1.TagServiceCategoryReadRequest:
-      type: object
-      properties:
-        userId:
-          type: string
-          title: user_id
-        pageSize:
-          type: integer
-          title: pageSize
-          format: int32
-        pageNumber:
-          type: integer
-          title: pageNumber
-          format: int32
-        sortQuery:
-          type: string
-          title: sortQuery
-      title: TagServiceCategoryReadRequest
-      additionalProperties: false
-    listah.v1.TagServiceCategoryReadResponse:
-      type: object
-      properties:
-        tags:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.TagCategoryQuery'
-          title: tags
-        userId:
-          type: string
-          title: userId
-        pageSize:
-          type: integer
-          title: pageSize
-          format: int32
-        pageNumber:
-          type: integer
-          title: pageNumber
-          format: int32
-        sortQuery:
-          type: string
-          title: sortQuery
-      title: TagServiceCategoryReadResponse
-      additionalProperties: false
-    listah.v1.TagServiceItemReadRequest:
-      type: object
-      properties:
-        userId:
-          type: string
-          title: user_id
-        tag:
-          type: string
-          title: tag
-        pageSize:
-          type: integer
-          title: pageSize
-          format: int32
-        pageNumber:
-          type: integer
-          title: pageNumber
-          format: int32
-        sortQuery:
-          type: string
-          title: sortQuery
-      title: TagServiceItemReadRequest
-      additionalProperties: false
-    listah.v1.TagServiceItemReadResponse:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.Item'
-          title: items
-        tag:
-          type: string
-          title: tag
-        userId:
-          type: string
-          title: userId
-        pageSize:
-          type: integer
-          title: pageSize
-          format: int32
-        pageNumber:
-          type: integer
-          title: pageNumber
-          format: int32
-        sortQuery:
-          type: string
-          title: sortQuery
-      title: TagServiceItemReadResponse
-      additionalProperties: false
 security: []
 tags:
-  - name: listah.v1.CategoryService
-  - name: listah.v1.FilterService
   - name: listah.v1.ItemService
-  - name: listah.v1.TagService

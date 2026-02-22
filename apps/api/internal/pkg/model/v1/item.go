@@ -4,75 +4,120 @@ import (
 	"cornucopia/listah/apps/api/internal/pkg/model"
 	pb "cornucopia/listah/apps/api/internal/pkg/proto/v1"
 	"time"
-	// "fmt"
-	// "github.com/uptrace/bun/dialect/pgdialect"
+	"strings"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/uptrace/bun"
 	"errors"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+
 type Item struct {
 	bun.BaseModel `bun:"table:apps.items,alias:it"`
 	Id            string `bun:",pk"`
 	UserId        string
-	Summary       string
+	Title       string
 	Description   string
 	Note          string
 	Tag          []string `bun:"type:jsonb"`
 	SoftDelete    bool `bun:",nullzero,default:false"`
 	ReactivateAt  time.Time
-	Audit         Audit
+}
+
+type Category struct {
+	Category        string
+	RowCount int
+}
+
+type ReadPagination struct {
+	PageNumber int32
+	PageSize int32
+	SortCondition string
 }
 
 
+var svcName string = "listah.v1.ItemService"
 var ItemConflictFields = []string{
 	"id", "user_id",
 }
-
-var ItemResolveFields = []string{
-	"summary", "description", "note", "tag",
-	"reactivate_at", "audit", "soft_delete",
-	// "audit.updated_by", "audit.deleted_by",
-	// "audit.updated_at", "audit.deleted_at",
+var defaultReadPagination = ReadPagination {
+	PageNumber: 1,
+	PageSize: 100,
+	SortCondition: "user_id ASC, title ASC",
 }
 
 
 
+func MsgToItemSearch(msg *pb.ItemServiceReadItemRequest) (*model.ItemSearch, error) {
+	if msg.GetUserId() == "" {
+		return nil, errors.New("no userId sent with request")
+	}
+	pSize := int(msg.GetPageSize())
+	pNum := int(msg.GetPageNumber())
+	sortT := msg.GetSortQuery()
+
+	if pSize <= 0 {
+		pSize = int(defaultReadPagination.PageSize)
+	}
+	if pNum <= 0 {
+		pNum = int(defaultReadPagination.PageNumber)
+	}
+	if sortT == "" {
+		sortT = defaultReadPagination.SortCondition
+	}
+	offset := pSize * (pNum - 1)
+
+	s := []string{}
+	for _, v := range msg.GetFilter() {
+		s = append(s, fmt.Sprintf(`'%v'`, v),)
+	}
 
 
+	i := model.ItemSearch{
+		UserId: msg.GetUserId(),
+		Filter: strings.Join(s, ", "),
+		SearchQuery: msg.GetSearchQuery(),
+		SortQuery: sortT,
+		Limit: pSize,
+		Offset: offset,
+		PageNumber: pNum,
+	}
+	return &i, nil
+}
 
-func IItemToItemModel(msg []*pb.Item, genId bool) ([]*Item, error) {
-	items := []*Item{}
-	for _, v := range msg {
-		id := v.GetId()
-		if id == "" && genId {
-			id = uuid.Must(uuid.NewV7()).String()
-		}
-		items = append(items, &Item{
-			Id:           id,
-			UserId:       v.GetUserId(),
-			Summary:      v.GetSummary(),
-			Description:  v.GetDescription(),
-			Note:         v.GetNote(),
-			Tag:         v.GetTag(),
-			SoftDelete:   v.GetSoftDelete(),
-			ReactivateAt: v.GetReactivateAt().AsTime(),
-			Audit: Audit{
-				CreatedBy: v.Audit.GetCreatedBy(),
-				CreatedAt: v.Audit.GetCreatedAt().AsTime(),
-				UpdatedBy: v.Audit.GetUpdatedBy(),
-				UpdatedAt: v.Audit.GetUpdatedAt().AsTime(),
-				DeletedBy: v.Audit.GetDeletedBy(),
-				DeletedAt: v.Audit.GetDeletedAt().AsTime(),
-			},
+func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
+	items := []*pb.Item{}
+	for _, v := range m {
+		items = append(items, &pb.Item{
+			Id:           v.Id,
+			UserId:       v.UserId,
+			Title:      v.Title,
+			Description:  &v.Description,
+			Note:         &v.Note,
+			Tag:         v.Tag,
+			SoftDelete:   &v.SoftDelete,
+			ReactivateAt: timestamppb.New(v.ReactivateAt),
 		})
 	}
 	return items, nil
 }
 
-func IItemToItemModelUpsertSafe(msg []*pb.Item, genId bool) ([]*Item, error) {
+func CategoryModelToCategoryProto(m []*Category) ([]*pb.Category, error) {
+	c := []*pb.Category{}
+	for _, v := range m {
+		c = append(c, &pb.Category{
+				Category: v.Category,
+				RowCount: int32(v.RowCount),
+		})
+	}
+	return c, nil
+}
+
+func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, []string, error) {
 	items := []*Item{}
+
+	check :=  map[string]bool{}
 	for _, v := range msg {
 		id := v.GetId()
 		if id == "" && genId {
@@ -81,114 +126,40 @@ func IItemToItemModelUpsertSafe(msg []*pb.Item, genId bool) ([]*Item, error) {
 		newItem := &Item{
 			Id:           id,
 			UserId:       v.GetUserId(),
-				Audit: Audit{
-				CreatedBy: v.Audit.GetCreatedBy(),
-				CreatedAt: v.Audit.GetCreatedAt().AsTime(),
-				UpdatedBy: v.Audit.GetUpdatedBy(),
-				UpdatedAt: v.Audit.GetUpdatedAt().AsTime(),
-				DeletedBy: v.Audit.GetDeletedBy(),
-				DeletedAt: v.Audit.GetDeletedAt().AsTime(),
-			},
 		}
 
 		// Set values that have not been set to nil
-		if (v.GetSummary() != ""){
-			newItem.Summary = v.GetSummary()
+		if (v.GetTitle() != ""){
+			newItem.Title = v.GetTitle()
+			check["title"] = true
 		}
 		if (v.GetDescription() != ""){
 			newItem.Description = v.GetDescription()
+			check["description"] = true
 		}
 		if (v.GetNote() != ""){
 			newItem.Note = v.GetNote()
+			check["note"] = true
 		}
 		if (len(v.GetTag()) != 0){
 			newItem.Tag = v.GetTag()
+			check["tag"] = true
 		}
 		if (v.GetReactivateAt() != nil){
 			newItem.ReactivateAt = v.GetReactivateAt().AsTime()
+			check["reactivate_at"] = true
 		}
 		if (v.GetSoftDelete()){
 			newItem.SoftDelete = v.GetSoftDelete()
+			check["soft_delete"] = true
 		}
-
 		items = append(items, newItem)
 	}
-	return items, nil
-}
 
-func ItemModelToIItem(m []*Item) ([]*pb.Item, error) {
-	items := []*pb.Item{}
-	for _, v := range m {
-		items = append(items, &pb.Item{
-			Id:           v.Id,
-			UserId:       v.UserId,
-			Summary:      v.Summary,
-			Description:  &v.Description,
-			Note:         &v.Note,
-			Tag:         v.Tag,
-			SoftDelete:   &v.SoftDelete,
-			ReactivateAt: timestamppb.New(v.ReactivateAt),
-			Audit: &pb.Audit{
-				CreatedBy: v.Audit.CreatedBy,
-				CreatedAt: timestamppb.New(v.Audit.CreatedAt),
-				UpdatedBy: v.Audit.UpdatedBy,
-				UpdatedAt: timestamppb.New(v.Audit.UpdatedAt),
-				DeletedBy: v.Audit.DeletedBy,
-				DeletedAt: timestamppb.New(v.Audit.DeletedAt),
-			},
-		})
-	}
-	return items, nil
-}
-
-func IItemToWhereClause(msg *pb.ItemServiceReadRequest) ([]model.WhereClause, error) {
-	if msg.GetUserId() == "" {
-		return nil, errors.New("no userId sent with request")
+	res := []string{}
+	for k,_ := range check{
+		res = append(res, k)
 	}
 
-	w := []model.WhereClause{}
-
-
-	// ToDo: add search text, from date, to date
-	// ToDo: allow admin to filter by other users' items
-	// Add userId to where clause
-	if msg.GetUserId() != "" {
-		w = append(w, model.WhereClause{
-			Placeholder: "? = ?",
-			Column:      "user_id",
-			Value:       msg.GetUserId(),
-		})
-	}
-
-
-	// tag
-	if len(msg.GetFilter()) != 0 {
-		w = append(w, model.WhereClause{
-			Placeholder: "?::JSONB IN (?)",
-			Column:      "tag",
-			// Value:       bun.In(pgdialect.Array(msg.GetTagFilter())), //Not working
-			Value:       bun.In(msg.GetFilter()),
-			// Value:       pgdialect.Array(msg.GetTagFilter()),
-		})
-	}
-
-	// // tag -- Not working
-	// if len(msg.GetTagFilter()) != 0 {
-	// 	w = append(w, model.WhereClause{
-	// 		Placeholder: "? IN (?)",
-	// 		Column:      "tag",
-	// 		// Value:       bun.In(pgdialect.Array(msg.GetTagFilter())), //Not working
-	// 		Value:       bun.In(pgdialect.Array(msg.GetTagFilter())),
-	// 	})
-	// }
-
-
-	// softDelete
-	w = append(w, model.WhereClause{
-		Placeholder: "? = ? ",
-		Column:      "soft_delete",
-		Value:       false,
-	})
-
-	return w, nil
+	return items, res, nil
 }

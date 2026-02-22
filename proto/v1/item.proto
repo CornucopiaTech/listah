@@ -12,68 +12,88 @@ import "gnostic/openapi/v3/annotations.proto";
 
 
 
-
-
-message ItemServiceCreateRequest {
-  repeated Item items = 1;
-  optional Audit audit = 50;
+message Item {
+  string id = 1;
+  string user_id = 2 [json_name = "userId"];
+  string title = 3;
+  optional string description = 4;
+  optional string note = 5;
+  repeated string tag = 6;
+  optional bool soft_delete = 7;
+  optional google.protobuf.Timestamp reactivate_at = 100 [json_name = "reactivateAt"];
+  optional AuditUpdaterEnum updated_by = 500 [json_name = "updated_by"];
+  optional google.protobuf.Timestamp updated_at = 501 [json_name = "updated_at"];
 }
-message ItemServiceCreateResponse {
+
+
+
+message Category {
+  string category = 1;
+  int32 row_count = 2 [json_name = "rowCount"];
+}
+
+
+
+
+message ItemServiceReadItemRequest {
+  string userId = 500 [json_name = "userId"];
+  repeated string filter = 501;
+  string searchQuery = 502 [json_name = "searchQuery"];
+  int32 pageSize = 1000 [json_name = "pageSize"];
+  int32 pageNumber = 1001 [json_name = "pageNumber"];
+  string sortQuery = 1002 [json_name = "sortQuery"];
+}
+message ItemServiceReadItemResponse {
+  repeated Item items = 1;
+
+  string userId = 500 [json_name = "userId"];
+  repeated string filter = 501;
+  string searchQuery = 502 [json_name = "searchQuery"];
+  int32 pageSize = 1000 [json_name = "pageSize"];
+  int32 pageNumber = 1001 [json_name = "pageNumber"];
+  string sortQuery = 1002 [json_name = "sortQuery"];
+}
+
+
+message ItemServiceReadCategoryRequest {
+  string userId = 500 [json_name = "userId"];
+  repeated string filter = 501;
+  string searchQuery = 502 [json_name = "searchQuery"];
+  int32 pageSize = 1000 [json_name = "pageSize"];
+  int32 pageNumber = 1001 [json_name = "pageNumber"];
+  string sortQuery = 1002 [json_name = "sortQuery"];
+}
+message ItemServiceReadCategoryResponse {
+  repeated Category categories = 1;
+
+  string userId = 500 [json_name = "userId"];
+  repeated string filter = 501;
+  string searchQuery = 502 [json_name = "searchQuery"];
+  int32 pageSize = 1000 [json_name = "pageSize"];
+  int32 pageNumber = 1001 [json_name = "pageNumber"];
+  string sortQuery = 1002 [json_name = "sortQuery"];
+}
+
+message ItemServiceUpsertRequest {
+  repeated Item items = 1;
+}
+message ItemServiceUpsertResponse {
   repeated string item_ids = 1;
 }
-
-message ItemServiceReadRequest {
-  string userId = 200 [json_name = "userId"];
-  repeated string filter = 201 [json_name = "filter"];
-  string searchQuery = 203 [json_name = "searchQuery"];
-  int32 pageSize = 300 [json_name = "pageSize"];
-  int32 pageNumber = 301 [json_name = "pageNumber"];
-  string sortQuery = 302 [json_name = "sortQuery"];
-}
-message ItemServiceReadResponse {
-  repeated Item items = 1;
-
-  string userId = 200 [json_name = "userId"];
-  repeated string filter = 201 [json_name = "filter"];
-  string searchQuery = 203 [json_name = "searchQuery"];
-  int32 pageSize = 300 [json_name = "pageSize"];
-  int32 pageNumber = 301 [json_name = "pageNumber"];
-  string sortQuery = 302 [json_name = "sortQuery"];
-}
-
-message ItemServiceUpdateRequest {
-  repeated Item items = 1;
-  optional Audit audit = 100;
-}
-message ItemServiceUpdateResponse {
-  repeated string item_ids = 1;
-}
-
-message ItemServiceDeleteRequest {
-  repeated Item items = 1;
-  optional Audit audit = 100;
-}
-message ItemServiceDeleteResponse {
-  repeated string item_ids = 1;
-}
-
 
 
 service ItemService {
-  rpc Create(ItemServiceCreateRequest) returns (ItemServiceCreateResponse){
-    option (gnostic.openapi.v3.operation).description = "Create Item";
-  }
-
-  rpc Read(ItemServiceReadRequest) returns (ItemServiceReadResponse){
+  rpc ReadItem(ItemServiceReadItemRequest) returns (ItemServiceReadItemResponse){
     option idempotency_level = NO_SIDE_EFFECTS;
     option (gnostic.openapi.v3.operation).description = "Read Item";
   }
-
-  rpc Update(ItemServiceUpdateRequest) returns (ItemServiceUpdateResponse){
-    option (gnostic.openapi.v3.operation).description = "Update Item";
+  rpc ReadCategory(ItemServiceReadCategoryRequest) returns (ItemServiceReadCategoryResponse){
+    option idempotency_level = NO_SIDE_EFFECTS;
+    option (gnostic.openapi.v3.operation).description = "Read Category";
   }
 
-  rpc Delete(ItemServiceDeleteRequest) returns (ItemServiceDeleteResponse){
-    option (gnostic.openapi.v3.operation).description = "Delete Item";
+  rpc Upsert(ItemServiceUpsertRequest) returns (ItemServiceUpsertResponse){
+    option (gnostic.openapi.v3.operation).description = "Upsert Item";
   }
+
 }

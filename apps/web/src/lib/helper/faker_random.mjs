@@ -25,7 +25,7 @@ export function getData(arraySize) {
       () => ({
         id: faker.string.uuid(),
         userId: faker.helpers.arrayElement(allUserIds),
-        summary: faker.lorem.sentence(),
+        title: faker.lorem.sentence(),
         description: faker.lorem.paragraphs(),
         note: faker.lorem.sentence(),
         tag: faker.helpers.uniqueArray(faker.helpers.multiple(
@@ -55,7 +55,7 @@ export function getData(arraySize) {
 
 
 async function loadData(maxLoaded, maxGen) {
-  const url = "http://localhost:8080/listah.v1.ItemService/Create";
+  const url = "http://localhost:8080/listah.v1.ItemService/Upsert";
   for (let i = 0; i < maxLoaded; i++){
     try {
       const data = getData(maxGen);
