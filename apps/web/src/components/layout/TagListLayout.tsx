@@ -78,12 +78,20 @@ export function TagListLayout(): ReactNode {
     navigate({ to: "/", search: { s: encoded } });
   };
 
+  function handleItemclick(it: ICategory) {
+    console.log("In handleItemclick - e ");
+    const q = { ...query, filter: [it], pageNumber: 0 };
+    const encoded = encodeState(q);
+    console.info("In handlePageChange - q ", q);
+    console.info("In handlePageChange - Encoded ", encoded);
+    navigate({ to: "/nto-found", search: { s: encoded }, params: {filter: [it]} });
+  }
   const totalRecords: number = data.pageSize ? data.pageSize : 1;
 
 
   return (
     <CategoryList title="Tags" data={categories}
-      handleItemClick={() => (1 + 1)}
+      handleItemClick={handleItemclick}
       count={totalRecords} page={query.pageNumber}
       onPageChange={handlePageChange}
       rowsPerPage={query.pageSize}

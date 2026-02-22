@@ -58,7 +58,6 @@ export function CategoryList(
     );
   }
 
-
   return (
     <Fragment>
       <AppCategoryListPaper>
