@@ -1,18 +1,15 @@
 
-import type { IItem, IItemsSearch } from '@/lib/model/Items';
+import type { IItem, IItemRequest } from '@/lib/model/item';
 import type { IApiEndpointConfig } from '@/lib/model/common';
 import type { IUser } from '@/lib/model/auth';
 
 
-export const DefaultQueryParams: IItemsSearch = {
-  userId: undefined,
-  categoryFilter: [],
-  tagFilter: [],
-  pageNumber: 0,
-  pageSize: 25,
+export const DefaultQueryParams: IItemRequest = {
+  userId: "",
+  filter: [],
   searchQuery: '',
-  fromDate: "",
-  toDate: "",
+  pageSize: 100,
+  pageNumber: 0,
   sortQuery: '',
 };
 
@@ -40,8 +37,7 @@ export const DEFAULT_USER: IUser = {
 export const DEFAULT_ITEM: IItem = {
   id: "",
   userId: "",
-  summary: "",
-  category: "",
+  title: "",
   description: "",
   note: "",
   tag: [],
@@ -59,8 +55,7 @@ export const MAX_ITEM_LIST_HEIGHT = 700;
 export const ITEM_CATEGORY_LIST_HEIGHT_BUFFER = 60;
 
 export const API_ENDPOINTS: IApiEndpointConfig = {
-  readItem: "listah.v1.ItemService/Read",
-  updateItem: "listah.v1.ItemService/Update",
-  readCategory: "istah.v1.CategoryService/Read",
-  readTag: "istah.v1.TagService/Read",
+  readItem: "listah.v1.ItemService/ReadItem",
+  readCategory: "listah.v1.ItemService/ReadCategory",
+  updateItem: "listah.v1.ItemService/Upsert",
 }

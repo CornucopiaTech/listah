@@ -1,11 +1,8 @@
 import { Button, type ButtonProps } from "@mui/material";
-// import { useTheme } from '@mui/material/styles';
 import { styled } from '@mui/material/styles';
 
 
 
-
-import { AppH6ButtonTypography } from "@/components/core/ButtonTypography";
 import type { AppTheme } from '@/system/theme';
 
 
@@ -48,13 +45,22 @@ export function AppButtonOutlined({ label, }: { label: string; }) {
   );
 }
 
-export function AppButtonContained({ label, }: { label: string; }) {
-  return (
-    <Button variant='contained' sx={{ padding: 2, margin: 2, borderRadius: 24, width: "100%", textTransform: 'none'}} >
-      <AppH6ButtonTypography>
-        {label}
-      </AppH6ButtonTypography>
+// export function AppButtonContained({ label, }: { label: string; }) {
+//   return (
+//     <Button variant='contained' sx={{ padding: 2, margin: 2, borderRadius: 24, width: "100%", textTransform: 'none'}} >
+//       <AppH6ButtonTypography>
+//         {label}
+//       </AppH6ButtonTypography>
 
-    </Button>
-  );
-}
+//     </Button>
+//   );
+// }
+
+export const AppButtonContained = styled(Button)(({ theme }: { theme: AppTheme }) => ({
+  padding: "2%",
+  margin: "2%",
+  borderRadius: 24,
+  width: "100%",
+  textTransform: 'none',
+  background: theme.palette.primary.main
+}));

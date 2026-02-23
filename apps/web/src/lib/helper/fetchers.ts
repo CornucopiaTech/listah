@@ -1,8 +1,14 @@
 
 
-import type { IItem, IItemResponse, IItemsSearch } from '@/lib/model/Items';
-import type { ICategoryResponse } from "@/lib/model/categories";
-import type { ITagResponse } from "@/lib/model/tags";
+import type {
+  IItemRequest,
+  IItem,
+  IItemResponse,
+} from '@/lib/model/item';
+import type {
+  ICategoryRequest,
+  ICategoryResponse
+} from '@/lib/model/category';
 import { API_ENDPOINTS } from '@/lib/helper/defaults';
 
 
@@ -20,8 +26,7 @@ export async function postItem(item: IItem) {
   return await res.json();
 }
 
-
-export async function getItem(opts: IItemsSearch): Promise<IItemResponse> {
+export async function getItem(opts: IItemRequest): Promise<IItemResponse> {
   const url = `${window.runtimeConfig.apiUrl}/${API_ENDPOINTS.readItem}`;
   const req = new Request(url, {
     method: "POST",
@@ -37,27 +42,11 @@ export async function getItem(opts: IItemsSearch): Promise<IItemResponse> {
   return data;
 }
 
-
-export async function getTag(userId: string): Promise<ITagResponse> {
-  const url = `${window.runtimeConfig.apiUrl}/${API_ENDPOINTS.readTag}`;
-  const req = new Request(url, {
-    method: "POST",
-    body: JSON.stringify({ userId }),
-    headers: { "Content-Type": "application/json", "Accept": "*/*" },
-  });
-  const res = await fetch(req);
-  if (!res.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return await res.json();
-}
-
-
-export async function getCategory(userId: string): Promise<ICategoryResponse> {
+export async function getCategory(opts: ICategoryRequest): Promise<ICategoryResponse> {
   const url = `${window.runtimeConfig.apiUrl}/${API_ENDPOINTS.readCategory}`;
   const req = new Request(url, {
     method: "POST",
-    body: JSON.stringify({ userId: userId }),
+    body: JSON.stringify(opts),
     headers: { "Content-Type": "application/json", "Accept": "*/*" },
   });
   const res = await fetch(req);

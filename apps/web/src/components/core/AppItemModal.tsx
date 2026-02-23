@@ -1,11 +1,9 @@
 
 import {
-  useContext,
   Fragment,
 } from "react";
 import type {
   ChangeEvent,
-  // MouseEvent,
   ReactNode,
   FormEvent,
 } from 'react';
@@ -13,20 +11,13 @@ import {
   useForm,
 } from "@tanstack/react-form";
 import {
-  useQuery,
   useQueryClient,
   useMutation,
-  type UseQueryResult,
 } from '@tanstack/react-query';
-import {
-  useParams,
-} from '@tanstack/react-router';
-// import { z } from 'zod'
 import {
   v4 as uuidv4,
 } from 'uuid';
 import TextField from '@mui/material/TextField';
-import { useTheme } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -35,29 +26,60 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { Icon } from "@iconify/react";
+import { useUser } from '@clerk/clerk-react';
+
 
 
 // Internal imports
 import { AppResetButton } from "@/components/core/AppButton";
 import {
   SpaceBetweenBox,
-} from "@/components/basics/Box";
+} from "@/components/core/Box";
 import { AppH6ButtonTypography } from "@/components/core/ButtonTypography";
-import type { IItem } from "@/lib/model/Items";
 import {
   useBoundStore,
   type TBoundStore
 } from '@/lib/store/boundStore';
+import { DEFAULT_ITEM } from '@/lib/helper/defaults';
+import {
+  ZItem
+} from "@/lib/model/item";
+import { postItem } from "@/lib/helper/fetchers";
+import { useSearchQuery } from '@/lib/context/queryContext';
+import type {
+  IItem,
+  IItemRequest,
+} from "@/lib/model/item";
 
-export function AppItemModal(
-  {
-    mutateItem
-  }: {
-    mutateItem: (anItem: IItem) => void
-  }
-): ReactNode {
+
+
+
+type itemFields = "id" | "tag" | "title" | "userId" | "description" | "note" | "softDelete" | "reactivateAt" | `tag[${number}]`
+
+export function AppItemModal(): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
   const item: IItem = useBoundStore((state) => state.displayItem);
+  const query: IItemRequest = useSearchQuery();
+  const queryClient = useQueryClient();
+  const { user } = useUser();
+
+  // Define invalidating  mutation
+  const mutation = useMutation({
+    mutationFn: (mutateItem: IItem) => {
+      const mi = ZItem.parse(mutateItem);
+      return postItem(mi);
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["item", query] }),
+        queryClient.invalidateQueries({ queryKey: ["tag", query] }),
+        queryClient.invalidateQueries({ queryKey: ["savedFilter", query] }),
+        queryClient.invalidateQueries({ queryKey: ["category", query] }),
+      ])
+    },
+  });
+
+
 
   function closeModal(){
     store.setModal(false);
@@ -75,16 +97,18 @@ export function AppItemModal(
     defaultValues: item,
     onSubmit: ({ value }) => {
       const itemId = value.id && value.id != "" ? value.id : uuidv4();
+      const userId = user && user.id ? user.id : value.userId;
       const submitValue = {
       ...value,
+        userId,
       id: itemId,
       tag: value.tag?.filter((t) => t != "")
     }
-      mutateItem(submitValue);
+      mutation.mutate(submitValue);
     },
   });
 
-  function getSimpleField(key: "id" | "tag" | "summary" | "userId" | "category" | "description" | "note" | "softDelete" | "reactivateAt" | `tag[${number}]`){
+  function getSimpleField(key: itemFields){
     const sx = (key == "id" || key == "userId") ? { display: 'none' } : {}
     return (
       <form.Field
@@ -185,7 +209,7 @@ export function AppItemModal(
     );
   }
 
-  const fields: ("id" | "userId" | "summary" | "category" | "description" | "note")[] = ['id', 'userId', 'summary', 'category', 'description', 'note'];
+  const fields: itemFields[] = ['id', 'userId', 'title', 'description', 'note'];
   const dialogSx = {
     display: 'block',
     maxWidth: "lg",
@@ -207,7 +231,7 @@ export function AppItemModal(
       <form onSubmit={handleSubmit}>
         <DialogContent sx={dialogSx} >
           <Stack spacing={2}>
-            {fields.map((fds: ("id" | "userId" | "summary" | "category" | "description" | "note")) => getSimpleField(fds)) }
+            {fields.map((fds: itemFields) => getSimpleField(fds)) }
             { getTagField() }
           </Stack>
         </DialogContent>

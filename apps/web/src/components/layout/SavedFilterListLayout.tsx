@@ -1,33 +1,96 @@
 
 
-import type { ReactNode } from "react";
-import { Fragment } from "react";
+import type {
+  ReactNode,
+  ChangeEvent,
+  MouseEvent,
+} from 'react';
+import {
+  useQuery,
+  type UseQueryResult,
+} from '@tanstack/react-query';
+import * as z from "zod";
+import {
+  useNavigate,
+} from '@tanstack/react-router';
 
 
-import type { CategoryGroup } from '@/lib/model/common';
+
+import type {
+  ICategory,
+  ICategoryRequest,
+  ICategoryResponse,
+} from "@/lib/model/category";
+import {
+  ZCategoryResponse,
+} from "@/lib/model/category";
 import { CategoryList } from "@/components/core/CategoryList";
+import { useSearchQuery } from '@/lib/context/queryContext';
+import { categoryGroupOptions } from '@/lib/helper/querying';
+import Loading from '@/components/common/Loading';
+import { Error } from '@/components/common/Error';
+import { encodeState } from '@/lib/helper/encoders';
 
 
 
-// const modelData: CategoryGroup[] = [
-//   { title: "Saved Filter 1", numberOfItems: 10 },
-//   { title: "Saved Filter 2", numberOfItems: 20 },
-//   { title: "Saved Filter 3", numberOfItems: 30 },
-//   { title: "Saved Filter 4", numberOfItems: 40 },
-//   { title: "Saved Filter 5", numberOfItems: 50 },
-// ];
-
-const emptyModelData: CategoryGroup[] = [];
+const emptyModelData: ICategory[] = [];
 
 export function SavedFilterListLayout(): ReactNode {
+  const query: ICategoryRequest = useSearchQuery();
+  const navigate = useNavigate();
+  const {
+    isPending, isError, data, error
+  }: UseQueryResult<ICategoryResponse> = useQuery(categoryGroupOptions(query));
+
+
+  if (isPending) { return <Loading />; }
+  if (isError) { return <Error message={error.message} />; }
+
+  try{
+    ZCategoryResponse.parse(data);
+  } catch(error){
+    if(error instanceof z.ZodError){
+      console.info("Zod issue - ", error.issues);
+      return <Error message="An error occurred. Please try again" />;
+    } else {
+      console.info("Other issue - ", error);
+      return <Error message="An error occurred. Please try again" />;
+    }
+  }
+
+  // const categories: ICategory[] = data && data.categories ? data.categories : [];
+
+
+
+  function handlePageChange(
+    event: MouseEvent<HTMLButtonElement> | null,
+    value: number
+  ) {
+    event && event.stopPropagation();
+    const q = { ...query, pageNumber: value };
+    const encoded = encodeState(q);
+    navigate({ to: "/", search: { s: encoded } });
+  };
+
+  function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    console.log("In handlePageChange - e ", e);
+    const q = { ...query, pageSize: parseInt(e.target.value, 10), pageNumber: 0 };
+    const encoded = encodeState(q);
+    console.info("In handlePageChange - q ", q);
+    console.info("In handlePageChange - Encoded ", encoded);
+    navigate({ to: "/", search: { s: encoded } });
+  };
+
+  // const totalRecords: number = data.pageSize ? data.pageSize : 1;
+
 
   return (
-    <Fragment>
-      {/* <CategoryList title="Saved Filters" data={modelData} /> */}
-      <CategoryList
-          title="Saved Filters" data={emptyModelData}
-          handleItemClick={ () => (1 + 1) }
-      />
-    </Fragment>
+    <CategoryList title="Tags" data={emptyModelData}
+      handleItemClick={() => (1 + 1)}
+      count={0} page={0}
+      onPageChange={handlePageChange}
+      rowsPerPage={0}
+      onRowsPerPageChange={handlePageSizeChange}
+    />
   );
 }

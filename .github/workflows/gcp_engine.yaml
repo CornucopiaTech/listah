@@ -9,47 +9,27 @@ on:
 
 
 jobs:
-  # deploy_networking:
-  #   permissions:
-  #     contents: read
-  #     id-token: write # Required for Workload Identity Federation
-  #   uses: './.github/workflows/gcp_networking.yaml'
-  #   with:
-  #     environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
-  #   secrets: inherit
+  deploy_networking:
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    uses: './.github/workflows/gcp_networking.yaml'
+    with:
+      environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit
 
-  # run_data_deploy:
-  #   needs: [deploy_networking]
-  #   permissions:
-  #     contents: read
-  #     id-token: write # Required for Workload Identity Federation
-  #   uses: './.github/workflows/gcp_data.yaml'
-  #   with:
-  #     environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
-  #   secrets: inherit
-
-  # deploy_app:
-  #   # needs: [run_data_deploy]
-  #   permissions:
-  #     contents: read
-  #     id-token: write # Required for Workload Identity Federation
-  #   uses: './.github/workflows/gcp_api.yaml'
-  #   with:
-  #     environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
-  #   secrets: inherit
-
-  # deploy_web:
-  #   # needs: [deploy_app]
-  #   permissions:
-  #     contents: read
-  #     id-token: write # Required for Workload Identity Federation
-  #   uses: './.github/workflows/gcp_web.yaml'
-  #   with:
-  #     environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
-  #   secrets: inherit
+  run_data_deploy:
+    needs: [deploy_networking]
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    uses: './.github/workflows/gcp_data.yaml'
+    with:
+      environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit
 
   deploy_app:
-    # needs: [deploy_app]
+    needs: [run_data_deploy]
     permissions:
       contents: read
       id-token: write # Required for Workload Identity Federation
