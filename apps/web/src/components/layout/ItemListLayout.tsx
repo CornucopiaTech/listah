@@ -32,7 +32,7 @@ import { AppItemModal } from "@/components/core/AppItemModal";
 import { useSearchQuery } from '@/lib/context/queryContext';
 import { itemGroupOptions } from '@/lib/helper/querying';
 import Loading from '@/components/common/Loading';
-import { Error } from '@/components/common/Error';
+import { ErrorAlert} from "@/components/core/Alerts";
 import { encodeState } from '@/lib/helper/encoders';
 
 
@@ -45,17 +45,17 @@ export function ItemListLayout(): ReactNode {
   }: UseQueryResult<IItemResponse> = useQuery(itemGroupOptions(query));
 
   if (isPending) { return <Loading />; }
-  if (isError) { return <Error message={error.message} />; }
+  if (isError) { return <ErrorAlert message={error.message} />; }
 
   try{
     ZItemResponse.parse(data);
   } catch(error){
     if(error instanceof z.ZodError){
       console.info("Zod issue - ", error.issues);
-      return <Error message="An error occurred. Please try again" />;
+      return <ErrorAlert message="An error occurred. Please try again" />;
     } else {
       console.info("Other issue - ", error);
-      return <Error message="An error occurred. Please try again" />;
+      return <ErrorAlert message="An error occurred. Please try again" />;
     }
   }
 
@@ -82,7 +82,7 @@ export function ItemListLayout(): ReactNode {
     navigate({ to: "/items", search: { s: encoded } });
   };
 
-  const titleName = query.searchQuery != "" ? `Items like '${query.searchQuery}'` : `Items in ${query.filter[0]}`
+  const titleName = query.searchQuery != "" ? `Items like '${query.searchQuery}'` : `Items in #${query.filter[0]}`
 
   return (
     <Fragment>

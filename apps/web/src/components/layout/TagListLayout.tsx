@@ -28,7 +28,7 @@ import { CategoryList } from "@/components/core/CategoryList";
 import { useSearchQuery } from '@/lib/context/queryContext';
 import { categoryGroupOptions } from '@/lib/helper/querying';
 import Loading from '@/components/common/Loading';
-import { Error } from '@/components/common/Error';
+import { ErrorAlert} from "@/components/core/Alerts";
 import { encodeState } from '@/lib/helper/encoders';
 
 
@@ -41,17 +41,17 @@ export function TagListLayout(): ReactNode {
 
 
   if (isPending) { return <Loading />; }
-  if (isError) { return <Error message={error.message} />; }
+  if (isError) { return <ErrorAlert message={error.message} />; }
 
   try{
     ZCategoryResponse.parse(data);
   } catch(error){
     if(error instanceof z.ZodError){
       console.info("Zod issue - ", error.issues);
-      return <Error message="An error occurred. Please try again" />;
+      return <ErrorAlert message="An error occurred. Please try again" />;
     } else {
       console.info("Other issue - ", error);
-      return <Error message="An error occurred. Please try again" />;
+      return <ErrorAlert message="An error occurred. Please try again" />;
     }
   }
 
