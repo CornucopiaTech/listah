@@ -19,9 +19,20 @@ export const AppBox = styled(Box)(({ theme }: { theme: AppTheme }) => ({
 }));
 
 
+export function AppModalStack({ children }: { children: ReactNode }): ReactNode {
+  return (
+    <Stack direction={{ sm: "column", md: "row" }} spacing={4}
+      sx={{
+        maxWidth: "100%", width: "100%",}} justifyContent="center" alignItems="center">
+      {children}
+    </Stack>
+  );
+}
+
+
 export function AppListStack({ children }: { children: ReactNode }): ReactNode {
   return (
-    <Stack direction={{ xs: "column", sm: "row" }} spacing={4}
+    <Stack direction={{ sm: "column", md: "row" }} spacing={4}
       sx={{
         maxWidth: "100%", width: "100%",}} justifyContent="center" alignItems="center">
       {children}
@@ -59,4 +70,3 @@ export function AppContainerStack({ children }: { children: ReactNode }): ReactN
     </Stack>
   );
 }
-

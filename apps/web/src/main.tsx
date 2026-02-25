@@ -1,3 +1,5 @@
+import { StrictMode } from 'react';
+import type { ReactNode } from "react";
 import ReactDOM from 'react-dom/client'
 import {
   RouterProvider,
@@ -19,7 +21,7 @@ import { routeTree } from './routeTree.gen'
 import reportWebVitals from './reportWebVitals.ts'
 import Loading from '@/components/common/Loading';
 import NotFound from '@/components/common/NotFound';
-import { Error } from '@/components/common/Error';
+import { ErrorAlert} from "@/components/core/Alerts";
 import theme from '@/system/theme';
 
 
@@ -41,7 +43,7 @@ export const queryClient = new QueryClient();
 const router = createRouter({
   routeTree,
   defaultPendingComponent: Loading,
-  defaultErrorComponent: ({ error }) => <Error message={error.message} />,
+  defaultErrorComponent: ({ error }) => <ErrorAlert message={error.message} />,
   defaultNotFoundComponent: NotFound,
   Wrap: Wrapper,
   context: {
@@ -63,7 +65,8 @@ declare module '@tanstack/react-router' {
 }
 
 
-function Wrapper( { children }: { children: React.ReactNode } ) {
+
+function Wrapper( { children }: { children: ReactNode } ) {
   const aKey = window.runtimeConfig.authKey;
   return (
     <ThemeProvider theme={theme}>
@@ -82,21 +85,32 @@ async function loadConfig() {
   window.runtimeConfig = config;
 }
 
+function StrictModeWrapper({ children }: { children: ReactNode}) {
+  if (process.env.NODE_ENV === "development") {
+    return <StrictMode>{children}</StrictMode>
+  }
+  return children
+}
+
+console.info("Node environment", process.env.NODE_ENV)
 loadConfig().then(
   () => {
     const rootElement = document.getElementById('app')
     if (rootElement && !rootElement.innerHTML) {
-      const root = ReactDOM.createRoot(rootElement)
+      const root = ReactDOM.createRoot(rootElement);
       root.render(
-        <RouterProvider
-          router={router}
-          defaultPreload="intent"
-          defaultPendingMs={0}
-          defaultPendingMinMs={0}
-          context={{
-            queryClient,
-          }}
-        />
+        <StrictModeWrapper>
+          <RouterProvider
+            router={router}
+            defaultPreload="intent"
+            defaultPendingMs={0}
+            defaultPendingMinMs={0}
+            context={{
+              queryClient,
+            }}
+          />
+        </StrictModeWrapper>
+
       )
     }
 });

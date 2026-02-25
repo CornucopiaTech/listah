@@ -27,7 +27,9 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { Icon } from "@iconify/react";
 import { useUser } from '@clerk/clerk-react';
-
+import InputAdornment from '@mui/material/InputAdornment';
+import Tooltip from '@mui/material/Tooltip';
+import { useTheme } from "@mui/material";
 
 
 // Internal imports
@@ -36,6 +38,7 @@ import {
   SpaceBetweenBox,
 } from "@/components/core/Box";
 import { AppH6ButtonTypography } from "@/components/core/ButtonTypography";
+import { AppBody1Typography } from "@/components/core/Typography";
 import {
   useBoundStore,
   type TBoundStore
@@ -50,7 +53,8 @@ import type {
   IItem,
   IItemRequest,
 } from "@/lib/model/item";
-
+import { ErrorAlert, SuccessAlert } from "@/components/core/Alerts";
+import type { AppTheme } from '@/system/theme';
 
 
 
@@ -62,6 +66,7 @@ export function AppItemModal(): ReactNode {
   const query: IItemRequest = useSearchQuery();
   const queryClient = useQueryClient();
   const { user } = useUser();
+  const theme: AppTheme = useTheme();
 
   // Define invalidating  mutation
   const mutation = useMutation({
@@ -77,8 +82,16 @@ export function AppItemModal(): ReactNode {
         queryClient.invalidateQueries({ queryKey: ["category", query] }),
       ])
     },
+    onError: (error) => {
+      console.log(error);
+      store.setMessage(error.message);
+    },
   });
 
+  const form = useForm({
+    defaultValues: item,
+    onSubmit: formSubmission,
+  });
 
 
   function closeModal(){
@@ -86,16 +99,15 @@ export function AppItemModal(): ReactNode {
     store.setDisplayId("");
     store.setDisplayItem(DEFAULT_ITEM);
   }
-  function handleSubmit(e: FormEvent<HTMLFormElement>){
+  function onFormSubmit(e: FormEvent<HTMLFormElement>){
     e.preventDefault()
     e.stopPropagation()
-    form.handleSubmit()
-    closeModal()
-    store.setMessage("Item updated");
+    //Note: form.handleSubmit is automatically called on form submit. it does not need to be called again. Calling it again results in the form getting sent multiple times.
+
+    //Note:  Modal should not be closed after form submission so success or error feedback can be sent to the user.
   }
-  const form = useForm({
-    defaultValues: item,
-    onSubmit: ({ value }) => {
+
+  function formSubmission({ value }: { value: IItem }) {
       const itemId = value.id && value.id != "" ? value.id : uuidv4();
       const userId = user && user.id ? user.id : value.userId;
       const submitValue = {
@@ -104,9 +116,9 @@ export function AppItemModal(): ReactNode {
       id: itemId,
       tag: value.tag?.filter((t) => t != "")
     }
-      mutation.mutate(submitValue);
-    },
-  });
+    mutation.mutate(submitValue);
+  }
+
 
   function getSimpleField(key: itemFields){
     const sx = (key == "id" || key == "userId") ? { display: 'none' } : {}
@@ -117,7 +129,7 @@ export function AppItemModal(): ReactNode {
         children={
           (field) =>
             <Grid container sx={{width: '100%'}} spacing={1}>
-              <Grid size={11}>
+              <Grid size={12}>
                 <TextField
                   fullWidth
                   multiline
@@ -130,16 +142,21 @@ export function AppItemModal(): ReactNode {
                   sx={sx}
                   size="small"
                   variant="standard"
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <Tooltip title="clear content">
+                            <Icon
+                              icon="material-symbols-light:cancel-outline"
+                              width="24" height="24"
+                              onClick={() => field.handleChange("")}
+                            />
+                          </Tooltip>
+                        </InputAdornment>),
+                    },
+                  }}
                 />
-              </Grid>
-              <Grid size={1}>
-                <Icon
-                  icon="material-symbols-light:cancel-outline"
-                  width="24" height="24"
-                  onClick={() => field.handleChange("")}
-                  style={sx}
-                />
-
               </Grid>
           </Grid>
         }
@@ -156,51 +173,48 @@ export function AppItemModal(): ReactNode {
               <Button
                 onClick={() => field.pushValue('')}
                 type="button">
-                Add new tag
+                  <AppBody1Typography>Add new tag</AppBody1Typography>
+
               </Button>
               {
                 field.state.value &&
-                <Grid container spacing={1}>
-                  {
-                    field.state.value.map(
-                      (_, i) => {
-                        return <form.Field key={i} name={`tag[${i}]`}>
-                          {
-                            (subField) => {
-                              return (
-                                <Grid size={{ xs: 12, md: 6 }}
-                                  sx={{
-                                    px: 1,
-                                    // display: 'flex', justifyContent: 'space-around', alignItems: "center"
-                                  }}
-                                  >
-                                  <TextField
-                                    multiline
-                                    id={"item-tag-" + i}
-                                    value={subField.state.value}
-                                    // value={subField.state.value ? subField.state.value : _}
-                                    label={"tag-" + (i + 1)}
-                                    onChange={
-                                      (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
-                                        subField.handleChange(e.target.value)
-                                    }
-                                    size="small"
-                                    variant="standard"
-                                  />
-                                  <Icon
-                                    icon="material-symbols:close-rounded"
-                                    width="24" height="24"
-                                    onClick={() => subField.handleChange("")}
-                                  />
-                                </Grid>
-                              )
-                            }
-                          }
-                        </form.Field>
+                <Grid container spacing={1}>{
+                  field.state.value.map((_, i) => {
+                    return <form.Field key={i} name={`tag[${i}]`}>{
+                      (subField) => {
+                        return (
+                          <Grid size={{ xs:12, sm: 6, md: 6 }}>
+                            <TextField
+                              multiline
+                              id={"item-tag-" + i}
+                              value={subField.state.value}
+                              label={"tag[" + (i + 1) + "]"}
+                              onChange={
+                                (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
+                                  subField.handleChange(e.target.value)
+                              }
+                              size="small"
+                              variant="standard"
+                              slotProps={{
+                                input: {
+                                  endAdornment: (<InputAdornment position="end">
+                                    <Tooltip title="clear content">
+                                      <Icon
+                                        icon="material-symbols-light:cancel-outline"
+                                        width="24" height="24"
+                                        onClick={() => subField.handleChange("")}
+                                      />
+                                    </Tooltip>
+                                  </InputAdornment>),
+                                },
+                              }}
+                            />
+                          </Grid>
+                        )
                       }
-                    )
-                  }
-                </Grid>
+                    }</form.Field>
+                  })
+                }</Grid>
               }
             </Fragment>
           )
@@ -213,13 +227,26 @@ export function AppItemModal(): ReactNode {
   const dialogSx = {
     display: 'block',
     maxWidth: "lg",
-    overflow: 'scroll',
     height: '70vh',
     maxHeight: 720,
+    overflow: 'auto',
+      '&::-webkit-scrollbar': {
+      width: '15px', // width of the entire scrollbar
+    },
+    '&::-webkit-scrollbar-track': {
+      background: theme.palette.background.paper, // color of the tracking area
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.background.default, // color of the scroll thumb
+      borderRadius: '10px', // roundness of the scroll thumb
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: theme.palette.background.default,
+    },
   }
 
   return (
-    <Dialog fullWidth open={store.modal} onClose={closeModal}>
+    <Dialog fullWidth open={store.modal} onClose={closeModal} >
       <IconButton aria-label="delete"
           sx={{
             display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
@@ -228,7 +255,20 @@ export function AppItemModal(): ReactNode {
         <Icon icon="material-symbols-light:close-rounded" width="40" height="40" />
       </IconButton>
 
-      <form onSubmit={handleSubmit}>
+      {mutation.error && (
+        <Fragment>
+          <ErrorAlert message={mutation.error.message} />
+          <h5 onClick={() => mutation.reset()}>{mutation.error.message}</h5>
+        </Fragment>
+      )}
+
+      {mutation.isSuccess && (
+        <Fragment>
+          <SuccessAlert message="Item updated!" />
+        </Fragment>
+      )}
+
+      <form onSubmit={onFormSubmit}>
         <DialogContent sx={dialogSx} >
           <Stack spacing={2}>
             {fields.map((fds: itemFields) => getSimpleField(fds)) }

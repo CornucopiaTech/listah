@@ -62,7 +62,11 @@ export const AppHeroPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
 
 export function AppCategoryListPaper({ children }: { children: ReactNode }) {
   return (
-    <AppStyledPaper elevation={8} sx={{borderRadius: 4,width: "50%",}}>
+    <AppStyledPaper elevation={8} sx={{
+        borderRadius: 4,
+        width: { sm: "100%", md: "50%" },
+        // width: "50%",
+      }}>
       {children}
     </AppStyledPaper>
   );

@@ -20,12 +20,20 @@ declare module '@mui/material/Button' {
 }
 
 export const AppResetButton = styled(Button)(({ theme }: { theme: AppTheme }) => ({
-  padding: theme.spacing(2),
-  margin: theme.spacing(2),
-  borderRadius: 24,
+  padding: theme.spacing(1),
+  margin: theme.spacing(1),
+  borderRadius: 30,//"1%",
   width: "100%",
   textTransform: 'none',
 }));
+
+// export const AppResetButton = styled(Button)(({ theme }: { theme: AppTheme }) => ({
+//   padding: theme.spacing(2),
+//   margin: theme.spacing(2),
+//   borderRadius: 24,
+//   width: "100%",
+//   textTransform: 'none',
+// }));
 
 
 export function AppButton({ label, }: { label: string; }) {
