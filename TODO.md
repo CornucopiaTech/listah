@@ -4,7 +4,7 @@
 - Add service for saved filters
 - Add ability to get all saved filters and the number of items that match the filter.
 - Add ability to get all distinct tags ad the number of items that match the filter.
-
+- Define -1 limit to mean to restriction on the limit to retrieve from page.
 
 
 

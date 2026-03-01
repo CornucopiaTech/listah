@@ -25,8 +25,6 @@ message Item {
   optional google.protobuf.Timestamp updated_at = 501 [json_name = "updated_at"];
 }
 
-
-
 message Category {
   string category = 1;
   int32 row_count = 2 [json_name = "rowCount"];
@@ -55,7 +53,33 @@ message ItemServiceReadItemResponse {
 }
 
 
-message ItemServiceReadCategoryRequest {
+// message ItemServiceReadCategoryRequest {
+//   string userId = 500 [json_name = "userId"];
+//   repeated string filter = 501;
+//   string searchQuery = 502 [json_name = "searchQuery"];
+//   int32 pageSize = 1000 [json_name = "pageSize"];
+//   int32 pageNumber = 1001 [json_name = "pageNumber"];
+//   string sortQuery = 1002 [json_name = "sortQuery"];
+// }
+// message ItemServiceReadCategoryResponse {
+//   repeated Category categories = 1;
+
+//   string userId = 500 [json_name = "userId"];
+//   repeated string filter = 501;
+//   string searchQuery = 502 [json_name = "searchQuery"];
+//   int32 pageSize = 1000 [json_name = "pageSize"];
+//   int32 pageNumber = 1001 [json_name = "pageNumber"];
+//   string sortQuery = 1002 [json_name = "sortQuery"];
+// }
+// message ItemServiceUpsertRequest {
+//   repeated Item items = 1;
+// }
+// message ItemServiceUpsertResponse {
+//   repeated string item_ids = 1;
+// }
+
+
+message ItemServiceReadTagCategoryRequest {
   string userId = 500 [json_name = "userId"];
   repeated string filter = 501;
   string searchQuery = 502 [json_name = "searchQuery"];
@@ -63,7 +87,7 @@ message ItemServiceReadCategoryRequest {
   int32 pageNumber = 1001 [json_name = "pageNumber"];
   string sortQuery = 1002 [json_name = "sortQuery"];
 }
-message ItemServiceReadCategoryResponse {
+message ItemServiceReadTagCategoryResponse {
   repeated Category categories = 1;
 
   string userId = 500 [json_name = "userId"];
@@ -74,10 +98,39 @@ message ItemServiceReadCategoryResponse {
   string sortQuery = 1002 [json_name = "sortQuery"];
 }
 
-message ItemServiceUpsertRequest {
+
+message ItemServiceReadSavedFilterCategoryRequest {
+  string userId = 500 [json_name = "userId"];
+  repeated string filter = 501;
+  string searchQuery = 502 [json_name = "searchQuery"];
+  int32 pageSize = 1000 [json_name = "pageSize"];
+  int32 pageNumber = 1001 [json_name = "pageNumber"];
+  string sortQuery = 1002 [json_name = "sortQuery"];
+}
+message ItemServiceReadSavedFilterCategoryResponse {
+  repeated Category categories = 1;
+
+  string userId = 500 [json_name = "userId"];
+  repeated string filter = 501;
+  string searchQuery = 502 [json_name = "searchQuery"];
+  int32 pageSize = 1000 [json_name = "pageSize"];
+  int32 pageNumber = 1001 [json_name = "pageNumber"];
+  string sortQuery = 1002 [json_name = "sortQuery"];
+}
+
+
+message ItemServiceUpsertItemRequest {
   repeated Item items = 1;
 }
-message ItemServiceUpsertResponse {
+message ItemServiceUpsertItemResponse {
+  repeated string item_ids = 1;
+}
+
+
+message ItemServiceUpsertSavedFilterRequest {
+  repeated Item items = 1;
+}
+message ItemServiceUpsertSavedFilterResponse {
   repeated string item_ids = 1;
 }
 
@@ -87,13 +140,20 @@ service ItemService {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (gnostic.openapi.v3.operation).description = "Read Item";
   }
-  rpc ReadCategory(ItemServiceReadCategoryRequest) returns (ItemServiceReadCategoryResponse){
+  rpc ReadTagCategory(ItemServiceReadTagCategoryRequest) returns (ItemServiceReadTagCategoryResponse){
     option idempotency_level = NO_SIDE_EFFECTS;
-    option (gnostic.openapi.v3.operation).description = "Read Category";
+    option (gnostic.openapi.v3.operation).description = "Read Tag Category";
+  }
+  rpc ReadSavedFilterCategory(ItemServiceReadSavedFilterCategoryRequest) returns (ItemServiceReadSavedFilterCategoryResponse){
+    option idempotency_level = NO_SIDE_EFFECTS;
+    option (gnostic.openapi.v3.operation).description = "Read Saved Filter Category";
   }
 
-  rpc Upsert(ItemServiceUpsertRequest) returns (ItemServiceUpsertResponse){
+  rpc UpsertItem(ItemServiceUpsertItemRequest) returns (ItemServiceUpsertItemResponse){
     option (gnostic.openapi.v3.operation).description = "Upsert Item";
+  }
+  rpc UpsertSavedFilter(ItemServiceUpsertSavedFilterRequest) returns (ItemServiceUpsertSavedFilterResponse){
+    option (gnostic.openapi.v3.operation).description = "Upsert Saved Filter";
   }
 
 }

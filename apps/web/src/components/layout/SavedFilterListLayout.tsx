@@ -85,7 +85,7 @@ export function SavedFilterListLayout(): ReactNode {
 
 
   return (
-    <CategoryList title="Tags" data={emptyModelData}
+    <CategoryList title="Saved Filters" data={emptyModelData}
       handleItemClick={() => (1 + 1)}
       count={0} page={0}
       onPageChange={handlePageChange}

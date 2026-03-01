@@ -58,7 +58,7 @@ export function ItemList(
     const itId: string = anitem && anitem.id ? anitem.id : ""
     store.setDisplayId(itId);
     store.setDisplayItem(anitem);
-    store.setModal(true);
+    store.setItemModal(true);
   }
 
   return (
