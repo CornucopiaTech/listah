@@ -86,7 +86,7 @@ export function ItemListLayout(): ReactNode {
 
   return (
     <Fragment>
-      {store.modal && <AppItemModal />}
+      {store.itemModal && <AppItemModal />}
       <ItemList
         title={titleName}
         data={items}

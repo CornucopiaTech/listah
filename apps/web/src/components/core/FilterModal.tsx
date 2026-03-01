@@ -60,7 +60,7 @@ import type { AppTheme } from '@/system/theme';
 
 type itemFields = "id" | "tag" | "title" | "userId" | "description" | "note" | "softDelete" | "reactivateAt" | `tag[${number}]`
 
-export function AppItemModal(): ReactNode {
+export function AppFilterModal(): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
   const item: IItem = useBoundStore((state) => state.displayItem);
   const query: IItemRequest = useSearchQuery();
@@ -94,12 +94,12 @@ export function AppItemModal(): ReactNode {
   });
 
 
-  function closeModal(){
+  function closeModal() {
     store.setItemModal(false);
     store.setDisplayId("");
     store.setDisplayItem(DEFAULT_ITEM);
   }
-  function onFormSubmit(e: FormEvent<HTMLFormElement>){
+  function onFormSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     e.stopPropagation()
     //Note: form.handleSubmit is automatically called on form submit. it does not need to be called again. Calling it again results in the form getting sent multiple times.
@@ -108,11 +108,11 @@ export function AppItemModal(): ReactNode {
   }
 
   function formSubmission({ value }: { value: IItem }) {
-      const itemId = value.id && value.id != "" ? value.id : uuidv4();
-      const userId = user && user.id ? user.id : value.userId;
-      const submitValue = {
+    const itemId = value.id && value.id != "" ? value.id : uuidv4();
+    const userId = user && user.id ? user.id : value.userId;
+    const submitValue = {
       ...value,
-        userId,
+      userId,
       id: itemId,
       tag: value.tag?.filter((t) => t != "")
     }
@@ -120,7 +120,7 @@ export function AppItemModal(): ReactNode {
   }
 
 
-  function getSimpleField(key: itemFields){
+  function getSimpleField(key: itemFields) {
     const sx = (key == "id" || key == "userId") ? { display: 'none' } : {}
     return (
       <form.Field
@@ -128,7 +128,7 @@ export function AppItemModal(): ReactNode {
         name={key}
         children={
           (field) =>
-            <Grid container sx={{width: '100%'}} spacing={1}>
+            <Grid container sx={{ width: '100%' }} spacing={1}>
               <Grid size={12}>
                 <TextField
                   fullWidth
@@ -158,13 +158,13 @@ export function AppItemModal(): ReactNode {
                   }}
                 />
               </Grid>
-          </Grid>
+            </Grid>
         }
       />
     );
   }
 
-  function getTagField(){
+  function getTagField() {
     return (
       <form.Field name="tag" mode="array">
         {
@@ -173,7 +173,7 @@ export function AppItemModal(): ReactNode {
               <Button
                 onClick={() => field.pushValue('')}
                 type="button">
-                  <AppBody1Typography>Add new tag</AppBody1Typography>
+                <AppBody1Typography>Add new tag</AppBody1Typography>
 
               </Button>
               {
@@ -183,7 +183,7 @@ export function AppItemModal(): ReactNode {
                     return <form.Field key={i} name={`tag[${i}]`}>{
                       (subField) => {
                         return (
-                          <Grid size={{ xs:12, sm: 6, md: 6 }}>
+                          <Grid size={{ xs: 12, sm: 6, md: 6 }}>
                             <TextField
                               multiline
                               id={"item-tag-" + i}
@@ -230,7 +230,7 @@ export function AppItemModal(): ReactNode {
     height: '70vh',
     maxHeight: 720,
     overflow: 'auto',
-      '&::-webkit-scrollbar': {
+    '&::-webkit-scrollbar': {
       width: '15px', // width of the entire scrollbar
     },
     '&::-webkit-scrollbar-track': {
@@ -248,9 +248,9 @@ export function AppItemModal(): ReactNode {
   return (
     <Dialog fullWidth open={store.itemModal} onClose={closeModal} >
       <IconButton aria-label="delete"
-          sx={{
-            display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
-          }}
+        sx={{
+          display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
+        }}
         onClick={closeModal}>
         <Icon icon="material-symbols-light:close-rounded" width="40" height="40" />
       </IconButton>
@@ -271,8 +271,8 @@ export function AppItemModal(): ReactNode {
       <form onSubmit={onFormSubmit}>
         <DialogContent sx={dialogSx} >
           <Stack spacing={2}>
-            {fields.map((fds: itemFields) => getSimpleField(fds)) }
-            { getTagField() }
+            {fields.map((fds: itemFields) => getSimpleField(fds))}
+            {getTagField()}
           </Stack>
         </DialogContent>
         <DialogActions>
