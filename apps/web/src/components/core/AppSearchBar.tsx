@@ -13,9 +13,9 @@ import {
 
 
 import type {
-  IItemRequest,
+  IItemReadRequest,
 } from "@/lib/model/item";
-import { useSearchQuery } from '@/lib/context/queryContext';
+import { useItemSearchQuery } from '@/lib/context/queryContext';
 import { encodeState } from '@/lib/helper/encoders';
 
 
@@ -26,21 +26,21 @@ import { useBoundStore, type TBoundStore } from '@/lib/store/boundStore';
 
 export function AppSearchBar(): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
-  const query: IItemRequest = useSearchQuery();
+  const query: IItemReadRequest = useItemSearchQuery();
   const navigate = useNavigate();
   const textValue = store.searchQuery ? store.searchQuery : "";
   const placeholderText = "Filter by keyword in title, description, or note";
 
   function handleSearchSubmit() {
     console.log("In handleItemclick - e ");
-    const q: IItemRequest = {
+    const q: IItemReadRequest = {
       ...query, filter: [],
       pageNumber: 0, searchQuery: store.searchQuery,
     };
     const encoded = encodeState(q);
     console.info("In handlePageChange - q ", q);
     console.info("In handlePageChange - Encoded ", encoded);
-    navigate({ to: "/items", search: { s: encoded }, });
+    navigate({ to: "/items/$title", search: { s: encoded }, params: { title: store.searchQuery } });
   }
 
   return (

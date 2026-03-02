@@ -48,10 +48,10 @@ import {
   ZItem
 } from "@/lib/model/item";
 import { postItem } from "@/lib/helper/fetchers";
-import { useSearchQuery } from '@/lib/context/queryContext';
+import { useItemSearchQuery } from '@/lib/context/queryContext';
 import type {
   IItem,
-  IItemRequest,
+  IItemReadRequest,
 } from "@/lib/model/item";
 import { ErrorAlert, SuccessAlert } from "@/components/core/Alerts";
 import type { AppTheme } from '@/system/theme';
@@ -63,7 +63,7 @@ type itemFields = "id" | "tag" | "title" | "userId" | "description" | "note" | "
 export function AppFilterModal(): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
   const item: IItem = useBoundStore((state) => state.displayItem);
-  const query: IItemRequest = useSearchQuery();
+  const query: IItemReadRequest = useItemSearchQuery();
   const queryClient = useQueryClient();
   const { user } = useUser();
   const theme: AppTheme = useTheme();

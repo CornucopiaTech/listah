@@ -5,7 +5,7 @@
 - Add ability to get all saved filters and the number of items that match the filter.
 - Add ability to get all distinct tags ad the number of items that match the filter.
 - Define -1 limit to mean to restriction on the limit to retrieve from page.
-
+- Make sure the user with the bearer token is the same as the user sent in the data being updated.
 
 
 ## Retired

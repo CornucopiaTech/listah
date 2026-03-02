@@ -1,16 +1,34 @@
 
-import type { IItem, IItemRequest } from '@/lib/model/item';
+import type { IItem, IItemReadRequest } from '@/lib/model/item';
+import type {
+  THomeQueryParams } from '@/lib/model/home';
+
 import type { IApiEndpointConfig } from '@/lib/model/common';
 import type { IUser } from '@/lib/model/auth';
 
 
-export const DefaultQueryParams: IItemRequest = {
+export const DefaultQueryParams: IItemReadRequest = {
   userId: "",
   filter: [],
   searchQuery: '',
   pageSize: 100,
   pageNumber: 0,
   sortQuery: '',
+};
+
+export const DefaultHomeQueryParams: THomeQueryParams = {
+  tag: {
+    userId: "",
+    pageSize: 100,
+    pageNumber: 0,
+    sortQuery: 'category ASC',
+  },
+  savedFilter: {
+    userId: "",
+    pageSize: 100,
+    pageNumber: 0,
+    sortQuery: 'category ASC',
+  }
 };
 
 
@@ -56,6 +74,8 @@ export const ITEM_CATEGORY_LIST_HEIGHT_BUFFER = 60;
 
 export const API_ENDPOINTS: IApiEndpointConfig = {
   readItem: "listah.v1.ItemService/ReadItem",
-  readCategory: "listah.v1.ItemService/ReadCategory",
-  updateItem: "listah.v1.ItemService/Upsert",
+  readTag: "listah.v1.ItemService/ReadTag",
+  readSavedFilter: "listah.v1.ItemService/ReadSavedFilter",
+  updateItem: "listah.v1.ItemService/UpsertItem",
+  updateSavedFilter: "listah.v1.ItemService/UpsertSavedFilter",
 }

@@ -23,7 +23,7 @@
     "packageManager": "npm@10.9.0",
     "devDependencies": {
         "@bufbuild/buf": "^1.53.0",
-        "@redocly/cli": "^2.14.4",
+        "@redocly/cli": "^2.20.0",
         "nodemon": "^1.0.2"
     }
 }

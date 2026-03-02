@@ -13,7 +13,13 @@ import { ListItems } from "@/pages/ListItems";
 import { Landing } from '@/pages/Landing';
 
 
-export const Route = createFileRoute('/items/')({
+export const Route = createFileRoute('/items/$title')({
+  beforeLoad: async ({ search }) => {
+    const { isSignedIn, isLoaded } = useUser();
+    if (!isLoaded) return <Loading />
+    if (!isSignedIn) return <Landing />
+    console.info("In items/$title route before load - search ", search)
+  },
   component: Page,
 })
 

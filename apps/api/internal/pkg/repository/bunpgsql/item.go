@@ -16,7 +16,9 @@ var svcName string = "PgDB"
 
 type Item interface {
 	ReadItem(ctx context.Context, m *[]*v1model.Item, s *model.ItemSearch) (int, error)
-	ReadCategory(ctx context.Context, m *[]*v1model.Category, s *model.ItemSearch) (int, error)
+	// ReadCategory(ctx context.Context, m *[]*v1model.Category, s *model.ItemSearch) (int, error)
+	ReadTag(ctx context.Context, m *[]*v1model.Category, s *model.ItemSearch) (int, error)
+	ReadSavedFilter(ctx context.Context, m *[]*v1model.Category, s *model.ItemSearch) (int, error)
 	Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (interface{}, error)
 }
 
@@ -33,29 +35,37 @@ func (a *item) ReadItem(ctx context.Context, m *[]*v1model.Item, s *model.ItemSe
 	var activity = "ItemRead"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
-	query := fmt.Sprintf(`
-		SELECT
-			"id", "user_id", "title", "description",
-			"note", "tag", "soft_delete", "reactivate_at"
-		FROM apps.items
-		WHERE user_id::VARCHAR = '%v'
-	`, s.UserId)
+	query := `
+		SELECT it."id", it."user_id", it."title", it."description",
+			it."note", it."tag", it."soft_delete", it."reactivate_at"
+		FROM apps.items it
+			FULL OUTER JOIN apps.saved_filters sf
+				ON sf.user_id = it.user_id
+				AND it.tag::JSONB @> sf.tags::jsonb
+		WHERE it.user_id::VARCHAR = '` + s.UserId + `'
+	`
 
 
 	if s.SearchQuery != "" {
 		n := `
 			AND (
-				title LIKE '%`+ s.SearchQuery + `%' OR
-				description LIKE '%`+ s.SearchQuery + `%' OR
-				note LIKE '%`+ s.SearchQuery + `%'
+				it.title LIKE '%`+ s.SearchQuery + `%' OR
+				it.description LIKE '%`+ s.SearchQuery + `%' OR
+				it.note LIKE '%`+ s.SearchQuery + `%'
 			)
 		`
 		query = query + n
 	}
-	if s.Filter != "" {
+	if s.Tags != "" {
 		n := fmt.Sprintf(` AND (
-			tag::VARCHAR != 'null' AND tag::JSONB ?| array[%v]
-		) `, s.Filter)
+			it.tag::VARCHAR = %v OR it.tag::VARCHAR != 'null' AND it.tag::JSONB ?| array[%v]
+		) `, s.Tags)
+		query = query + n
+	}
+	if s.SavedFilters != "" {
+		n := fmt.Sprintf(` AND (
+			sf.name IS NOT NULL AND sf.id IN (%v)
+		) `, s.SavedFilters)
 		query = query + n
 	}
 
@@ -70,10 +80,10 @@ func (a *item) ReadItem(ctx context.Context, m *[]*v1model.Item, s *model.ItemSe
 	if s.SortQuery != "" {
 		query = query + fmt.Sprintf(` ORDER BY %v `, s.SortQuery)
 	}
-	if s.Limit != 0 {
+	if s.Limit > 0 {
 		query = query + fmt.Sprintf(` LIMIT %d `, s.Limit)
 	}
-	if s.Offset != 0 {
+	if s.Offset > 0 {
 		query = query + fmt.Sprintf(` OFFSET %d `, s.Offset)
 	}
 
@@ -87,21 +97,25 @@ func (a *item) ReadItem(ctx context.Context, m *[]*v1model.Item, s *model.ItemSe
 	return recCnt[0].RowCount, nil
 }
 
-func (a *item) ReadCategory(ctx context.Context, m *[]*v1model.Category, s *model.ItemSearch) (int, error) {
-	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Read")
+func (a *item) ReadTag(ctx context.Context, m *[]*v1model.Category, s *model.ItemSearch) (int, error) {
+	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Read Tag Group")
 	defer span.End()
 
-	var activity = "ItemCategory"
+	var activity = "Read Tag Group"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	query := fmt.Sprintf(`
-		SELECT category, COUNT(*) AS row_count
+		SELECT 'null' id, category, COUNT(*) AS row_count
 		FROM (
 			SELECT DISTINCT id, jsonb_array_elements_text(tag::JSONB) AS category
 			FROM apps.items
 			WHERE tag::VARCHAR != 'null' AND user_id::VARCHAR = '%v'
+			UNION ALL
+			SELECT DISTINCT id, 'null' AS category
+			FROM apps.items
+			WHERE tag::VARCHAR = 'null'
 		) AS expanded
-		GROUP BY 1
+		GROUP BY 1, 2
 		ORDER BY 1
 	`, s.UserId)
 
@@ -114,10 +128,52 @@ func (a *item) ReadCategory(ctx context.Context, m *[]*v1model.Category, s *mode
 	}
 
 
-	if s.Limit != 0 {
+	if s.Limit > 0 {
 		query = query + fmt.Sprintf(` LIMIT %d `, s.Limit)
 	}
-	if s.Offset != 0 {
+	if s.Offset > 0 {
+		query = query + fmt.Sprintf(` OFFSET %d `, s.Offset)
+	}
+	err = a.db.NewRaw(query).Scan(ctx, m)
+	if err != nil {
+		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
+		return 0, err
+	}
+
+	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
+	return recCnt[0].RowCount, nil
+}
+
+func (a *item) ReadSavedFilter(ctx context.Context, m *[]*v1model.Category, s *model.ItemSearch) (int, error) {
+	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Read")
+	defer span.End()
+
+	var activity = "ItemSavedFilter"
+	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
+
+	query := fmt.Sprintf(`
+		SELECT sf.id, sf."name" category, COUNT(*) row_count
+		FROM apps.items it
+			INNER JOIN apps.saved_filters sf
+				ON sf.user_id = it.user_id
+				AND it.tag::JSONB @> sf.tags::jsonb
+		WHERE it.user_id::VARCHAR = '%v'
+		GROUP BY 1, 2
+	`, s.UserId)
+
+	countq := fmt.Sprintf(`SELECT COUNT(*) row_count FROM (%v)`, query)
+	recCnt := []*v1model.RowCount{}
+	err := a.db.NewRaw(countq).Scan(ctx, &recCnt)
+	if err != nil {
+		a.logger.LogError(ctx, svcName, activity, "Error occurred while getting total population", errors.Cause(err).Error())
+		return 0, err
+	}
+
+
+	if s.Limit > 0 {
+		query = query + fmt.Sprintf(` LIMIT %d `, s.Limit)
+	}
+	if s.Offset > 0 {
 		query = query + fmt.Sprintf(` OFFSET %d `, s.Offset)
 	}
 	err = a.db.NewRaw(query).Scan(ctx, m)

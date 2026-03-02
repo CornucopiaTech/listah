@@ -55,7 +55,7 @@ export function getData(arraySize) {
 
 
 async function loadData(maxLoaded, maxGen) {
-  const url = "http://localhost:8080/listah.v1.ItemService/Upsert";
+  const url = "http://localhost:8080/listah.v1.ItemService/UpsertItem";
   for (let i = 0; i < maxLoaded; i++){
     try {
       const data = getData(maxGen);

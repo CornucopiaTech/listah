@@ -52,21 +52,12 @@ jobs:
         with:
           tofu_version: latest
 
-      - name: OpenTofu Format
-        run: tofu fmt -check
-
-      - name: OpenTofu Init
-        run: tofu init
-
-      - name: OpenTofu Validate
-        run: tofu validate
-
-      - name: OpenTofu Plan
-        run: tofu plan -out=tfplan
-
-      - id: tofu_apply
-        name: OpenTofu Apply
-        run:  |
+      - name: OpenTofu Format, Prepare and Apply
+        run: |
+          tofu fmt -check
+          tofu init
+          tofu validate
+          tofu plan -out=tfplan
           tofu apply -auto-approve tfplan
 
       - name: Setup Liquibase
@@ -99,7 +90,7 @@ jobs:
         run: |
           echo "$(pwd)"
           liquibase update \
-            --changelog-file="liquibase/changelog/changelog.yaml"\
+            --changelog-file="${{ github.workspace }}/liquibase/changelog/changelog.yaml"\
             --url="jdbc:postgresql://127.0.0.1:9000/${{ env.DB_DBNAME }}" \
             --log-level=INFO \
             --username="${{ env.DB_USERNAME}}" \

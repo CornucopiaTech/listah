@@ -1,34 +1,58 @@
-import { createFileRoute} from '@tanstack/react-router';
+import {
+  createFileRoute,
+  Navigate,
+} from '@tanstack/react-router';
 
 import type {
   ReactNode,
 } from 'react';
 import { useUser } from '@clerk/clerk-react';
+import { Protect } from '@clerk/clerk-react'
 
 
-import { validateItemsUrlSearch } from '@/lib/helper/validator';
-import { SearchQueryContext } from '@/lib/context/queryContext';
+
+
 import Loading from '@/components/common/Loading';
 import { Landing } from '@/pages/Landing';
 import { Home } from '@/pages/Home';
+import { DefaultHomeQueryParams } from '@/lib/helper/defaults';
+import { encodeState } from '@/lib/helper/encoders';
+
 
 
 export const Route = createFileRoute('/')({
+  // beforeLoad: ({ search, context}) => {
+  //   // console.info("In / route before load - context ", context);
+  //   // console.info("In / route before load - search ", search);
+  // },
   component: Page,
 })
 
 
 function Page(): ReactNode {
-  const { isSignedIn, user, isLoaded } = useUser();
+  // const context = Route.useRouteContext()
+  const { isSignedIn, isLoaded } = useUser();
+  const search = Route.useSearch();
+
   if (!isLoaded) return <Loading />
   if (!isSignedIn) return <Landing />
 
-  const query = validateItemsUrlSearch(Route.useSearch());
-  const pQ = {...query, userId: user?.id ?? ''};
+  if (!search || Object.keys(search).length === 0 || !search.s) {
+    console.info("In validateHomeUrlSearch - using default");
+    // return encodeState(DefaultHomeQueryParams) as unknown as string;
+    return <Navigate
+      to="/"
+      search={{s: encodeState(DefaultHomeQueryParams) as unknown as string}}
+      replace
+    />
+  }
+
+
+
 
   return (
-    <SearchQueryContext value={pQ}>
+    <Protect>
       <Home />
-    </SearchQueryContext>
+    </Protect>
   );
 }

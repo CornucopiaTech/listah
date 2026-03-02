@@ -17,7 +17,7 @@ export const ZItem = z.object({
 });
 export type IItem = z.infer<typeof ZItem>;
 
-export const ZItemRequest = z.object({
+export const ZItemReadRequest = z.object({
   userId: z.string().catch(''),
   filter: z.array(z.string()).catch([]),
   searchQuery: z.string().catch(''),
@@ -26,9 +26,9 @@ export const ZItemRequest = z.object({
   sortQuery: z.string().catch('user_id ASC, title ASC'),
 
 });
-export type IItemRequest = z.infer<typeof ZItemRequest>;
+export type IItemReadRequest = z.infer<typeof ZItemReadRequest>;
 
-export const ZItemResponse = z.object({
+export const ZItemReadResponse = z.object({
   items: z.array(ZItem).catch([]),
   userId: z.string().catch(''),
   filter: z.array(z.string()).catch([]),
@@ -37,4 +37,4 @@ export const ZItemResponse = z.object({
   pageNumber: z.number().catch(1),
   sortQuery: z.string().catch('user_id ASC, title ASC'),
 });
-export type IItemResponse = z.infer<typeof ZItemResponse>;
+export type IItemReadResponse = z.infer<typeof ZItemReadResponse>;

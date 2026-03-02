@@ -11,25 +11,29 @@ import {
 import * as z from "zod";
 import {
   useNavigate,
+  useParams
 } from '@tanstack/react-router';
+// import { useParams } from '@tanstack/react-router'
+import Box from '@mui/material/Box';
+
 
 
 
 import { ItemList } from "@/components/core/ItemList";
 import type {
   IItem,
-  IItemRequest,
-  IItemResponse,
+  IItemReadRequest,
+  IItemReadResponse,
 } from "@/lib/model/item";
 import {
-  ZItemResponse,
+  ZItemReadResponse,
 } from "@/lib/model/item";
 import {
   useBoundStore,
   type TBoundStore
 } from '@/lib/store/boundStore';
 import { AppItemModal } from "@/components/core/AppItemModal";
-import { useSearchQuery } from '@/lib/context/queryContext';
+import { useItemSearchQuery } from '@/lib/context/queryContext';
 import { itemGroupOptions } from '@/lib/helper/querying';
 import Loading from '@/components/common/Loading';
 import { ErrorAlert} from "@/components/core/Alerts";
@@ -38,17 +42,35 @@ import { encodeState } from '@/lib/helper/encoders';
 
 export function ItemListLayout(): ReactNode {
   const navigate = useNavigate();
+  const title = useParams({
+    // from: "/items/$title",
+    // select: (params) => params.title,
+     strict: false
+
+  });
+  // const { title } = params;
+  console.info("In ItemListLayout - title ", title);
   const store: TBoundStore = useBoundStore((state) => state);
-  const query: IItemRequest = useSearchQuery();
+  const query: IItemReadRequest = useItemSearchQuery();
   const {
     isPending, isError, data, error
-  }: UseQueryResult<IItemResponse> = useQuery(itemGroupOptions(query));
+  }: UseQueryResult<IItemReadResponse> = useQuery(itemGroupOptions(query));
 
-  if (isPending) { return <Loading />; }
+  if (isPending) {
+    return (
+      <Box key="data-content"
+        style={{
+          height: `60vh`,
+          width: '100%', display: 'block', overflow: 'auto',
+        }}>
+        <Loading />
+      </Box>
+    );
+  }
   if (isError) { return <ErrorAlert message={error.message} />; }
 
   try{
-    ZItemResponse.parse(data);
+    ZItemReadResponse.parse(data);
   } catch(error){
     if(error instanceof z.ZodError){
       console.info("Zod issue - ", error.issues);
@@ -82,12 +104,14 @@ export function ItemListLayout(): ReactNode {
     navigate({ to: "/items", search: { s: encoded } });
   };
 
-  const titleName = query.searchQuery != "" ? `Items like '${query.searchQuery}'` : `Items in #${query.filter[0]}`
+  // const titleName = query.searchQuery != "" ? `Items like '${query.searchQuery}'` : `Items in #${query.filter[0]}`
+  const titleName = title.title ? `Items in #${title.title}` : "All Items";
 
   return (
     <Fragment>
       {store.itemModal && <AppItemModal />}
       <ItemList
+        // title={title}
         title={titleName}
         data={items}
         count={totalRecords} page={query.pageNumber}

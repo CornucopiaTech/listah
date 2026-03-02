@@ -64,8 +64,8 @@ export function AppCategoryListPaper({ children }: { children: ReactNode }) {
   return (
     <AppStyledPaper elevation={8} sx={{
         borderRadius: 4,
-        width: { sm: "100%", md: "50%" },
-        // width: "50%",
+        width: { sm: "100%", md: "50%" }, height: "100%",
+        // width: "50%", heigh
       }}>
       {children}
     </AppStyledPaper>

@@ -1,3 +1,5 @@
+import Box from '@mui/material/Box';
+
 
 import { AppSearchBar } from "@/components/core/AppSearchBar";
 import { TagListLayout } from "@/components/layout/TagListLayout";
@@ -24,7 +26,14 @@ export function Home() {
       <AppSearchBar />
       <AppListStack>
         <SavedFilterListLayout />
-        <TagListLayout />
+
+        <Box key="data-content"
+          style={{
+            height: `60vh`,
+            width: '100%', display: 'block', overflow: 'auto',
+          }}>
+          <TagListLayout />
+        </Box>
       </AppListStack>
       <HomeFab />
     </AppPageStack>

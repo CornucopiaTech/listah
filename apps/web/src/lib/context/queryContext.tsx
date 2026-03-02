@@ -1,7 +1,11 @@
 
 import { createContext, useContext } from "react";
-import { DefaultQueryParams, } from '@/lib/helper/defaults';
+import { DefaultQueryParams, DefaultHomeQueryParams } from '@/lib/helper/defaults';
 
 
-export const SearchQueryContext = createContext(DefaultQueryParams);
-export const useSearchQuery = () => useContext(SearchQueryContext);
+export const ItemSearchQueryContext = createContext(DefaultQueryParams);
+export const useItemSearchQuery = () => useContext(ItemSearchQueryContext);
+
+
+export const HomeSearchQueryContext = createContext(DefaultHomeQueryParams);
+export const useHomeSearchQuery = () => useContext(HomeSearchQueryContext);
