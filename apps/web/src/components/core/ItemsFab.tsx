@@ -10,7 +10,7 @@ export function ItemsFab() {
     <Box sx={{ position: "fixed", bottom: 16, right: 16, zIndex: 1000 }} >
       <Stack spacing={2}>
         <NewItemFab />
-        <Fab color="secondary"> <EditIcon /> </Fab>
+        <Fab color="secondary" size="medium" > <EditIcon /> </Fab>
       </Stack>
     </Box>
   );

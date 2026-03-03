@@ -37,7 +37,7 @@ export const createListingSlice: StateCreator<
     setMessage: (message: string) => set(() => ({ message })),
     setDrawer: (drawer: boolean) => set(() => ({ drawer })),
     setItemModal: (itemModal: boolean) => set(() => ({ itemModal })),
-    setFilterModal: (modal: boolean) => set(() => ({ modal })),
+    setFilterModal: (filterModal: boolean) => set(() => ({ filterModal })),
     setDisplayId: (displayId: string) => set(() => ({ displayId })),
     setDisplayItem: (displayItem: IItem) => set(() => ({ displayItem })),
     setSearchQuery: (searchQuery: string) => set(() => ({ searchQuery })),

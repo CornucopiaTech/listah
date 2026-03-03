@@ -31,20 +31,14 @@ export function setItemsUrlSearch(params: any): IItemReadRequest { // eslint-dis
 
 export function validateItemsUrlSearch(params: any): IItemReadRequest { // eslint-disable-line @typescript-eslint/no-explicit-any
   if (!params || Object.keys(params).length === 0  || !params.s) {
-    // console.info("In validateItemQueryParams - using default");
     return DefaultQueryParams;
   }
-
-  // console.info("In validateItemQueryParams - Raw ");
-  // console.info(params);
   const dcd = decodeState(params.s);
   // const parsed = ZItemsSearch.safeParse(dcd);
 
   // console.info("In validateItemQueryParams - Decoded ");
   // console.info(dcd);
   return dcd as IItemReadRequest;
-  // console.info("In validateItemQueryParams - Parsed ");
-  // console.info(parsed);
   // return parsed.data
 
 }

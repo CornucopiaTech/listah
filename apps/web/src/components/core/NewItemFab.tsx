@@ -21,6 +21,6 @@ export function NewItemFab() {
   }
 
   return (
-    <Fab color="primary" onClick={handleItemClick}> <AddIcon /> </Fab>
+    <Fab color="primary" size="medium" onClick={handleItemClick}> <AddIcon /> </Fab>
   );
 }

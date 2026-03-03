@@ -19,7 +19,7 @@ export function FilterFab() {
   }
 
   return (
-    <Fab color="primary" onClick={handleFilterClick}>
+    <Fab color="primary" size="medium" onClick={handleFilterClick}>
       <Icon icon="material-symbols:filter-alt" width="24" height="24" />
     </Fab>
   );

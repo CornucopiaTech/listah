@@ -17,9 +17,6 @@ import type {
 } from "@/lib/model/item";
 import { useItemSearchQuery } from '@/lib/context/queryContext';
 import { encodeState } from '@/lib/helper/encoders';
-
-
-
 import { AppSearchPaper } from '@/components/core/AppPaper';
 import { useBoundStore, type TBoundStore } from '@/lib/store/boundStore';
 

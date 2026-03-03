@@ -1,5 +1,6 @@
 
 import {
+  forwardRef,
   Fragment,
 } from "react";
 import type {
@@ -30,6 +31,13 @@ import { useUser } from '@clerk/clerk-react';
 import InputAdornment from '@mui/material/InputAdornment';
 import Tooltip from '@mui/material/Tooltip';
 import { useTheme } from "@mui/material";
+import {
+  useQuery,
+  type UseQueryResult,
+} from '@tanstack/react-query';
+import { VirtuosoGrid } from 'react-virtuoso'
+import Chip from '@mui/material/Chip';
+
 
 
 // Internal imports
@@ -37,7 +45,7 @@ import { AppResetButton } from "@/components/core/AppButton";
 import {
   SpaceBetweenBox,
 } from "@/components/core/Box";
-import { AppH6ButtonTypography } from "@/components/core/ButtonTypography";
+import { AppH6ButtonTypography, AppBody1ButtonTypography } from "@/components/core/ButtonTypography";
 import { AppBody1Typography } from "@/components/core/Typography";
 import {
   useBoundStore,
@@ -48,25 +56,54 @@ import {
   ZItem
 } from "@/lib/model/item";
 import { postItem } from "@/lib/helper/fetchers";
-import { useItemSearchQuery } from '@/lib/context/queryContext';
+import {  } from '@/lib/context/queryContext';
 import type {
   IItem,
   IItemReadRequest,
 } from "@/lib/model/item";
 import { ErrorAlert, SuccessAlert } from "@/components/core/Alerts";
 import type { AppTheme } from '@/system/theme';
+import { DefaultHomeQueryParams } from '@/lib/helper/defaults';
+import type {
+  THomeQueryParams
+} from '@/lib/model/home';
+import type {
+  ITagCategory,
+  ITagCategoryReadResponse,
+} from "@/lib/model/tag";
+import {
+  ZTagCategoryReadResponse,
+} from "@/lib/model/tag";
+import { tagGroupOptions } from '@/lib/helper/querying';
 
 
 
-type itemFields = "id" | "tag" | "title" | "userId" | "description" | "note" | "softDelete" | "reactivateAt" | `tag[${number}]`
+
 
 export function AppFilterModal(): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
   const item: IItem = useBoundStore((state) => state.displayItem);
-  const query: IItemReadRequest = useItemSearchQuery();
   const queryClient = useQueryClient();
   const { user } = useUser();
   const theme: AppTheme = useTheme();
+
+  const query: THomeQueryParams = {
+    savedFilter: {
+      ...DefaultHomeQueryParams.savedFilter,
+      userId: user.id,
+      pageSize: -1,
+    },
+    tag: {
+      ...DefaultHomeQueryParams.tag,
+      userId: user.id,
+      pageSize: -1,
+    }
+  }
+
+  const {
+    isPending, isError, data, error
+  }: UseQueryResult<ITagCategoryReadResponse> = useQuery(tagGroupOptions(query.tag));
+
 
   // Define invalidating  mutation
   const mutation = useMutation({
@@ -95,7 +132,7 @@ export function AppFilterModal(): ReactNode {
 
 
   function closeModal() {
-    store.setItemModal(false);
+    store.setFilterModal(false);
     store.setDisplayId("");
     store.setDisplayItem(DEFAULT_ITEM);
   }
@@ -108,125 +145,62 @@ export function AppFilterModal(): ReactNode {
   }
 
   function formSubmission({ value }: { value: IItem }) {
-    const itemId = value.id && value.id != "" ? value.id : uuidv4();
-    const userId = user && user.id ? user.id : value.userId;
-    const submitValue = {
-      ...value,
-      userId,
-      id: itemId,
-      tag: value.tag?.filter((t) => t != "")
-    }
-    mutation.mutate(submitValue);
+    console.info("In formSubmission - value ", value);
+    // mutation.mutate(submitValue);
   }
 
 
-  function getSimpleField(key: itemFields) {
-    const sx = (key == "id" || key == "userId") ? { display: 'none' } : {}
+  const gridComponents = {
+    List: forwardRef(({ style, children, ...props }, ref) => (
+      <div
+        ref={ref}
+        {...props}
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          ...style,
+        }}
+      >
+        {children}
+      </div>
+    )),
+    Item: ({ children, ...props }) => (
+      <div
+        {...props}
+        style={{
+          padding: '2%',
+          width: 'fit-content',
+          display: 'flex',
+          flex: 'wrap',
+          // alignContent: 'stretch',
+          boxSizing: 'border-box',
+        }}
+      >
+        {children}
+      </div>
+    ),
+  }
+
+  function handleItemClick(it: ITagCategory) {
+  }
+
+  function eachItem(itemKey: number, item: ITagCategory): ReactNode {
+    const tc: string = item && item.category ? item.category : ""
     return (
-      <form.Field
-        key={`item-${key}`}
-        name={key}
-        children={
-          (field) =>
-            <Grid container sx={{ width: '100%' }} spacing={1}>
-              <Grid size={12}>
-                <TextField
-                  fullWidth
-                  multiline
-                  id={`item-${key}`}
-                  key={`item-${key}`}
-                  value={field.state.value}
-                  label={key}
-                  onChange={
-                    (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-                  sx={sx}
-                  size="small"
-                  variant="standard"
-                  slotProps={{
-                    input: {
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <Tooltip title="clear content">
-                            <Icon
-                              icon="material-symbols-light:cancel-outline"
-                              width="24" height="24"
-                              onClick={() => field.handleChange("")}
-                            />
-                          </Tooltip>
-                        </InputAdornment>),
-                    },
-                  }}
-                />
-              </Grid>
-            </Grid>
-        }
+      <Chip
+        color="primary"
+        sx={{ color: theme.palette.background.default, cursor: "pointer" }}
+        label={<AppBody1ButtonTypography>#{tc}</AppBody1ButtonTypography>}
+        onClick={() => handleItemClick(item)}
       />
-    );
+    )
   }
 
-  function getTagField() {
-    return (
-      <form.Field name="tag" mode="array">
-        {
-          (field) => (
-            <Fragment>
-              <Button
-                onClick={() => field.pushValue('')}
-                type="button">
-                <AppBody1Typography>Add new tag</AppBody1Typography>
 
-              </Button>
-              {
-                field.state.value &&
-                <Grid container spacing={1}>{
-                  field.state.value.map((_, i) => {
-                    return <form.Field key={i} name={`tag[${i}]`}>{
-                      (subField) => {
-                        return (
-                          <Grid size={{ xs: 12, sm: 6, md: 6 }}>
-                            <TextField
-                              multiline
-                              id={"item-tag-" + i}
-                              value={subField.state.value}
-                              label={"tag[" + (i + 1) + "]"}
-                              onChange={
-                                (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
-                                  subField.handleChange(e.target.value)
-                              }
-                              size="small"
-                              variant="standard"
-                              slotProps={{
-                                input: {
-                                  endAdornment: (<InputAdornment position="end">
-                                    <Tooltip title="clear content">
-                                      <Icon
-                                        icon="material-symbols-light:cancel-outline"
-                                        width="24" height="24"
-                                        onClick={() => subField.handleChange("")}
-                                      />
-                                    </Tooltip>
-                                  </InputAdornment>),
-                                },
-                              }}
-                            />
-                          </Grid>
-                        )
-                      }
-                    }</form.Field>
-                  })
-                }</Grid>
-              }
-            </Fragment>
-          )
-        }
-      </form.Field>
-    );
-  }
-
-  const fields: itemFields[] = ['id', 'userId', 'title', 'description', 'note'];
   const dialogSx = {
     display: 'block',
     maxWidth: "lg",
+    width: "lg",
     height: '70vh',
     maxHeight: 720,
     overflow: 'auto',
@@ -244,9 +218,13 @@ export function AppFilterModal(): ReactNode {
       background: theme.palette.background.default,
     },
   }
+  const categories: ITagCategory[] = data && data.categories ? data.categories : [];
+
+  console.info("In AppFilterModal - categories ", categories);
+
 
   return (
-    <Dialog fullWidth open={store.itemModal} onClose={closeModal} >
+    <Dialog fullWidth open={store.filterModal} onClose={closeModal} >
       <IconButton aria-label="delete"
         sx={{
           display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
@@ -270,10 +248,14 @@ export function AppFilterModal(): ReactNode {
 
       <form onSubmit={onFormSubmit}>
         <DialogContent sx={dialogSx} >
-          <Stack spacing={2}>
-            {fields.map((fds: itemFields) => getSimpleField(fds))}
-            {getTagField()}
-          </Stack>
+          {
+            categories && categories.length > 0 && <VirtuosoGrid
+              style={{ height: "65vh" }}
+              totalCount={categories.length}
+              components={gridComponents}
+              itemContent={(index) => eachItem(index, categories[index])}
+            />
+          }
         </DialogContent>
         <DialogActions>
           <form.Subscribe
