@@ -37,6 +37,7 @@ import {
 } from '@tanstack/react-query';
 import { VirtuosoGrid } from 'react-virtuoso'
 import Chip from '@mui/material/Chip';
+import DoneIcon from '@mui/icons-material/Done';
 
 
 
@@ -75,6 +76,7 @@ import {
   ZTagCategoryReadResponse,
 } from "@/lib/model/tag";
 import { tagGroupOptions } from '@/lib/helper/querying';
+import { id } from "zod/v4/locales";
 
 
 
@@ -82,7 +84,6 @@ import { tagGroupOptions } from '@/lib/helper/querying';
 
 export function AppFilterModal(): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
-  const item: IItem = useBoundStore((state) => state.displayItem);
   const queryClient = useQueryClient();
   const { user } = useUser();
   const theme: AppTheme = useTheme();
@@ -125,11 +126,6 @@ export function AppFilterModal(): ReactNode {
     },
   });
 
-  const form = useForm({
-    defaultValues: item,
-    onSubmit: formSubmission,
-  });
-
 
   function closeModal() {
     store.setFilterModal(false);
@@ -146,6 +142,24 @@ export function AppFilterModal(): ReactNode {
 
   function formSubmission({ value }: { value: IItem }) {
     console.info("In formSubmission - value ", value);
+
+    let checkedCategories: string[] = [];
+
+    Object.keys(value).forEach(key => {
+      const val = value[key];
+      console.log(key, val);
+      if (val && key !== "___filterName") {
+        checkedCategories.push(key);
+      }
+    });
+
+    const submitValue = {
+    id: uuidv4(),
+    userId: user.id,
+      name: value["___filterName"],
+      tags: checkedCategories,
+    }
+    console.info("In formSubmission - submitvalue ", submitValue);
     // mutation.mutate(submitValue);
   }
 
@@ -181,18 +195,28 @@ export function AppFilterModal(): ReactNode {
     ),
   }
 
-  function handleItemClick(it: ITagCategory) {
-  }
-
-  function eachItem(itemKey: number, item: ITagCategory): ReactNode {
+  function eachItem(item: ITagCategory): ReactNode {
     const tc: string = item && item.category ? item.category : ""
     return (
-      <Chip
-        color="primary"
-        sx={{ color: theme.palette.background.default, cursor: "pointer" }}
-        label={<AppBody1ButtonTypography>#{tc}</AppBody1ButtonTypography>}
-        onClick={() => handleItemClick(item)}
+      <form.Field
+        key={`item-${tc}`}
+        name={tc}
+        children={
+          (field) =>
+          <Chip
+            color="primary"
+            icon={field.state.value && <DoneIcon />}
+            sx={{ color: theme.palette.background.default, cursor: "pointer" }}
+            label={<AppBody1ButtonTypography>#{tc}</AppBody1ButtonTypography>}
+            onClick={() => {
+              console.log("In onClick - field ",tc, field.state.value)
+              field.handleChange(!field.state.value)
+            }
+          }
+          />
+        }
       />
+
     )
   }
 
@@ -222,6 +246,19 @@ export function AppFilterModal(): ReactNode {
 
   console.info("In AppFilterModal - categories ", categories);
 
+  // Define object for form default values based on categories. Each category is a boolean field in the form that indicates whether the category is selected or not. The field name is the category name. For example, if there are categories "Work" and "Personal", the form will have fields "Work" and "Personal" that are boolean values indicating whether each category is selected or not. Additionally, there is a field for the filter name called "___filterName". This field is used to capture the name of the filter being created or edited. It is separate from the category fields and is used to identify the filter.
+  const defaultFormObject = categories.reduce((obj, item, index) => {
+    obj[item.category] = false;
+    return obj;
+  }, {});
+
+
+  console.log('obj', defaultFormObject);
+
+  const form = useForm({
+    defaultValues: defaultFormObject,
+    onSubmit: formSubmission,
+  });
 
   return (
     <Dialog fullWidth open={store.filterModal} onClose={closeModal} >
@@ -249,12 +286,51 @@ export function AppFilterModal(): ReactNode {
       <form onSubmit={onFormSubmit}>
         <DialogContent sx={dialogSx} >
           {
-            categories && categories.length > 0 && <VirtuosoGrid
-              style={{ height: "65vh" }}
-              totalCount={categories.length}
-              components={gridComponents}
-              itemContent={(index) => eachItem(index, categories[index])}
-            />
+            categories && categories.length > 0 &&
+            <Fragment>
+              <form.Field
+                key={`Filter Name`}
+                name={`___filterName`}
+                children={
+                  (field) =>
+                  <TextField
+                    fullWidth
+                    multiline
+                    id={`Filter Name`}
+                    key={`___filterName`}
+                    value={field.state.value}
+                    label={`Filter Name`}
+                    onChange={
+                      (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
+                    size="small"
+                    variant="standard"
+                    slotProps={{
+                      input: {
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <Tooltip title="clear content">
+                              <Icon
+                                icon="material-symbols-light:cancel-outline"
+                                width="24" height="24"
+                                onClick={() => field.handleChange("")}
+                              />
+                            </Tooltip>
+                          </InputAdornment>),
+                      },
+                    }}
+                  />
+                }
+              />
+              <VirtuosoGrid
+                style={{ height: "65vh" }}
+                totalCount={categories.length}
+                components={gridComponents}
+                itemContent={
+                  (index) => eachItem(categories[index])
+                }
+              />
+            </Fragment>
+
           }
         </DialogContent>
         <DialogActions>
