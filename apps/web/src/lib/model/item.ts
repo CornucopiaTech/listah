@@ -4,22 +4,23 @@ import * as z from "zod";
 
 // Item Definitions
 export const ZItem = z.object({
-  id: z.nullish(z.string()),
-  userId: z.nullish(z.string()),
-  title: z.nullish(z.string()),
-  category: z.nullish(z.string()),
-  description: z.nullish(z.string()),
-  note: z.nullish(z.string()),
-  tag: z.nullish(z.array(z.string())),
-  softDelete: z.nullish(z.boolean()),
-  reactivateAt: z.nullish(z.string()),
+  id: z.string().catch(''),
+  userId: z.string().catch(''),
+  title: z.string().catch(''),
+  category: z.string().catch(''),
+  description: z.string().catch(''),
+  note: z.string().catch(''),
+  tag: z.array(z.string()).catch([]),
+  softDelete: z.boolean().catch(false),
+  reactivateAt: z.string().catch(''),
 
 });
 export type IItem = z.infer<typeof ZItem>;
 
 export const ZItemReadRequest = z.object({
   userId: z.string().catch(''),
-  filter: z.array(z.string()).catch([]),
+  tags: z.array(z.string()).catch([]),
+  savedFilters: z.array(z.string()).catch([]),
   searchQuery: z.string().catch(''),
   pageSize: z.number().catch(100),
   pageNumber: z.number().catch(1),
@@ -31,7 +32,8 @@ export type IItemReadRequest = z.infer<typeof ZItemReadRequest>;
 export const ZItemReadResponse = z.object({
   items: z.array(ZItem).catch([]),
   userId: z.string().catch(''),
-  filter: z.array(z.string()).catch([]),
+  tags: z.array(z.string()).catch([]),
+  savedFilters: z.array(z.string()).catch([]),
   searchQuery: z.string().catch(''),
   pageSize: z.number().catch(100),
   pageNumber: z.number().catch(1),

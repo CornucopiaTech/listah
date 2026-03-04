@@ -6,6 +6,10 @@
 - Add ability to get all distinct tags ad the number of items that match the filter.
 - Define -1 limit to mean to restriction on the limit to retrieve from page.
 - Make sure the user with the bearer token is the same as the user sent in the data being updated.
+- Add form validation to ensure a form for new/updating items always has a tag
+- Add form validation to ensure a form for new/updating filters always has a name and at least one tag.
+- Create a mechanism to view and update filters.
+- Create a mechanism to clone filters.
 
 
 ## Retired

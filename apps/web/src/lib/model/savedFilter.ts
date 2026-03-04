@@ -4,19 +4,19 @@ import * as z from "zod";
 
 // SavedFilter Definitions
 export const ZSavedFilter = z.object({
-  id: z.nullish(z.string()),
-  userId: z.nullish(z.string()),
-  name: z.nullish(z.string()),
-    tags: z.nullish(z.array(z.string())),
-    savedFilters: z.nullish(z.array(z.string())),
+  id: z.string().catch(''),
+  userId: z.string().catch(''),
+  name: z.string().catch(''),
+  tags: z.array(z.string()).catch([]),
+  savedFilters: z.array(z.string()).catch([]),
 });
 export type ISavedFilter = z.infer<typeof ZSavedFilter>;
 
 
 
 export const ZSavedFilterCategory = z.object({
-  id: z.nullish(z.string()),
-  category: z.nullish(z.string()),
+  id: z.string().catch(''),
+  category: z.string().catch(''),
   rowCount: z.number().catch(1),
 });
 export type ISavedFilterCategory = z.infer<typeof ZSavedFilterCategory>;

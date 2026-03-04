@@ -10,7 +10,6 @@ import type {
 } from 'react';
 import {
   useForm,
-  useStore,
 } from "@tanstack/react-form";
 import {
   useQueryClient,
@@ -64,8 +63,8 @@ import type {
   ITagCategory,
   ITagCategoryReadResponse,
 } from "@/lib/model/tag";
-import {  tagGroupOptions } from '@/lib/helper/querying';
-import type { ISavedFilter, } from "@/lib/model/savedFilter";
+import { savedFilterGroupOptions, tagGroupOptions } from '@/lib/helper/querying';
+import type { ISavedFilter, ISavedFilterCategory, ISavedFilterCategoryReadResponse } from "@/lib/model/savedFilter";
 import  { ZSavedFilter } from "@/lib/model/savedFilter";
 
 
@@ -86,8 +85,17 @@ export function AppFilterModal(): ReactNode {
   }
 
   const {
-    isPending, isError, data, error
+    isPending: isTagPending, isError: isTagError, data: tagData, error: tagError
   }: UseQueryResult<ITagCategoryReadResponse> = useQuery(tagGroupOptions(query.tag));
+
+
+  const {
+    isPending: isSavedFilterPending, isError: isSavedFilterError, data: savedFilterData, error: savedFilterError
+  }: UseQueryResult<ISavedFilterCategoryReadResponse> = useQuery(savedFilterGroupOptions(query.savedFilter));
+
+  const isPending = isTagPending || isSavedFilterPending;
+  const isError = isTagError || isSavedFilterError;
+  const error = tagError || savedFilterError;
 
 
   // Define invalidating  mutation
@@ -183,8 +191,8 @@ export function AppFilterModal(): ReactNode {
       background: theme.palette.background.default,
     },
   }
-  const tagCategories: ITagCategory[] = data && data.categories ? data.categories : [];
-
+  const tagCategories: ITagCategory[] = tagData && tagData.categories ? tagData.categories : [];
+  const savedFilterCategories: ISavedFilterCategory[] = savedFilterData && savedFilterData.categories ? savedFilterData.categories : [];
 
 
   // Define object for form default values based on tagCategories. Each category is a boolean field in the form that indicates whether the category is selected or not. The field name is the category name. For example, if there are tagCategories "Work" and "Personal", the form will have fields "Work" and "Personal" that are boolean values indicating whether each category is selected or not. Additionally, there is a field for the filter name called "___filterName". This field is used to capture the name of the filter being created or edited. It is separate from the category fields and is used to identify the filter.
@@ -192,20 +200,24 @@ export function AppFilterModal(): ReactNode {
     "___filterName": ""
   }
   defaultFormData = tagCategories.reduce((acc: any, item: ITagCategory) => {
-    acc[item.category] = false;
+    acc["tag__" + item.category] = false;
+    return acc;
+  }, defaultFormData);
+  defaultFormData = savedFilterCategories.reduce((acc: any, item: ISavedFilterCategory) => {
+    acc["savedFilter__" + item.category] = false;
     return acc;
   }, defaultFormData);
 
-
-  const formData: any[] = [...tagCategories];
+  const formData: any[] = [...tagCategories, ...savedFilterCategories];
 
   console.info("defaultFormData ", defaultFormData);
   console.info("formData ", formData);
 
   function eachItem(idx: number): ReactNode {
     const chipLabel = formData[idx] && formData[idx].category ? formData[idx].category : "";
+    const formLabel = defaultFormData.filters[idx] && defaultFormData.filters[idx].category ? defaultFormData.filters[idx].category : "";
     return (
-      <form.Field key={`item-${chipLabel}`} name={chipLabel} children={
+      <form.Field key={`item-${formLabel}`} name={formLabel} children={
         (field) =>
           <Chip
             color="primary"
@@ -227,8 +239,6 @@ export function AppFilterModal(): ReactNode {
     defaultValues: defaultFormData,
     onSubmit: formSubmission,
   });
-
-  const formErrorMap = useStore(form.store, (state) => state.errorMap)
 
   return (
     <Dialog fullWidth open={store.filterModal} onClose={closeModal} >
@@ -253,13 +263,6 @@ export function AppFilterModal(): ReactNode {
           <SuccessAlert message="Item updated!" />
         </Fragment>
       )}
-      {
-        formErrorMap.onChange && (
-          <div>
-            <em>There was an error on the form: {formErrorMap.onChange}</em>
-          </div>
-        )
-      }
 
       <form onSubmit={onFormSubmit}>
         <DialogContent sx={dialogSx} >
@@ -274,7 +277,7 @@ export function AppFilterModal(): ReactNode {
             <AppH6Typography> No items found </AppH6Typography>
           }
           {
-            tagCategories && tagCategories.length > 0 &&
+            ((tagCategories && tagCategories.length > 0)  || (savedFilterCategories && savedFilterCategories.length > 0)) &&
             <Fragment>
               <form.Field
                 key={`Filter Name`}
@@ -296,8 +299,8 @@ export function AppFilterModal(): ReactNode {
                 }
               />
               <VirtuosoGrid
-                style={{ height: "70vh", width: '100%' }}
-                totalCount={tagCategories.length}
+                style={{ height: "60vh" }}
+                totalCount={tagCategories.length + savedFilterCategories.length}
                 components={gridComponents}
                 itemContent={
                   (index) => eachItem(index)

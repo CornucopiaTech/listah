@@ -24,6 +24,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Chip from '@mui/material/Chip';
 import TablePagination from '@mui/material/TablePagination';
+import { useTheme } from "@mui/material";
 
 
 
@@ -48,6 +49,7 @@ import { DefaultQueryParams } from '@/lib/helper/defaults';
 import { AppH6Typography } from "@/components/core/Typography";
 
 
+
 function OuterBox( { children }: { children: ReactNode}): ReactNode {
   return (
     <Box key="data-content"
@@ -67,6 +69,7 @@ export function TagListLayout(): ReactNode {
   let search = decodeState(routeSearch.s) as THomeQueryParams;
   const navigate = useNavigate();
   const { user, } = useUser();
+
 
   const query: THomeQueryParams = {
     savedFilter: {...search.savedFilter, userId: user.id},
@@ -107,7 +110,7 @@ export function TagListLayout(): ReactNode {
     const q: IItemReadRequest = {
       ...DefaultQueryParams,
       userId: query.tag.userId,
-      filter: [ct],
+      tags: [ct],
     };
     const encoded = encodeState(q);
     console.info("In handlePageChange - q ", q);

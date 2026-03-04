@@ -57,19 +57,23 @@ func (a *item) ReadItem(ctx context.Context, m *[]*v1model.Item, s *model.ItemSe
 		query = query + n
 	}
 	if s.Tags != "" {
-		n := fmt.Sprintf(` AND (
-			it.tag::VARCHAR = %v OR it.tag::VARCHAR != 'null' AND it.tag::JSONB ?| array[%v]
-		) `, s.Tags)
+		n := ` AND (
+			it.tag::VARCHAR = ` + s.Tags + ` OR it.tag::VARCHAR != 'null' AND it.tag::JSONB ?| array[` + s.Tags + `]
+		) `
 		query = query + n
 	}
 	if s.SavedFilters != "" {
-		n := fmt.Sprintf(` AND (
-			sf.name IS NOT NULL AND sf.id IN (%v)
-		) `, s.SavedFilters)
+		n := ` AND (
+			sf.name IS NOT NULL AND sf.id IN (` + s.SavedFilters +`)
+		) `
 		query = query + n
 	}
 
-	countq := fmt.Sprintf(`SELECT COUNT(*) row_count FROM (%v)`, query)
+	countq := `
+		SELECT COUNT(*) row_count
+		FROM (
+			` + query + `
+		)`
 	recCnt := []*v1model.RowCount{}
 	err := a.db.NewRaw(countq).Scan(ctx, &recCnt)
 	if err != nil {
@@ -152,12 +156,12 @@ func (a *item) ReadSavedFilter(ctx context.Context, m *[]*v1model.Category, s *m
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
 	query := fmt.Sprintf(`
-		SELECT sf.id, sf."name" category, COUNT(*) row_count
-		FROM apps.items it
-			INNER JOIN apps.saved_filters sf
+		SELECT sf.id, sf."name" category, SUM(CASE WHEN it.id IS NOT NULL THEN 1 ELSE 0 END) row_count
+		FROM apps.saved_filters sf
+			LEFT JOIN apps.items it
 				ON sf.user_id = it.user_id
 				AND it.tag::JSONB @> sf.tags::jsonb
-		WHERE it.user_id::VARCHAR = '%v'
+		WHERE sf.user_id::VARCHAR = '%v'
 		GROUP BY 1, 2
 	`, s.UserId)
 

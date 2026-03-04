@@ -30,6 +30,8 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { Icon } from "@iconify/react";
 import { useUser } from '@clerk/clerk-react';
+import InputAdornment from '@mui/material/InputAdornment';
+import Tooltip from '@mui/material/Tooltip';
 import { useTheme } from "@mui/material";
 
 
@@ -160,6 +162,20 @@ export function AppItemModal(): ReactNode {
                   sx={sx}
                   size="small"
                   variant="standard"
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <Tooltip title="clear content">
+                            <Icon
+                              icon="material-symbols-light:cancel-outline"
+                              width="24" height="24"
+                              onClick={() => field.handleChange("")}
+                            />
+                          </Tooltip>
+                        </InputAdornment>),
+                    },
+                  }}
                 />
               </Grid>
           </Grid>
@@ -182,7 +198,7 @@ export function AppItemModal(): ReactNode {
               </Button>
               {
                 field.state.value &&
-                <Grid container spacing={1} sx={{width: '100%'}}>{
+                <Grid container spacing={1.5}>{
                   field.state.value.map((_, i) => {
                     return <form.Field key={i} name={`tag[${i}]`}>{
                       (subField) => {
@@ -199,6 +215,19 @@ export function AppItemModal(): ReactNode {
                               }
                               size="small"
                               variant="standard"
+                              slotProps={{
+                                input: {
+                                  endAdornment: (<InputAdornment position="end">
+                                    <Tooltip title="clear content">
+                                      <Icon
+                                        icon="material-symbols-light:cancel-outline"
+                                        width="24" height="24"
+                                        onClick={() => subField.handleChange("")}
+                                      />
+                                    </Tooltip>
+                                  </InputAdornment>),
+                                },
+                              }}
                             />
                           </Grid>
                         )
@@ -261,7 +290,7 @@ export function AppItemModal(): ReactNode {
 
       <form onSubmit={onFormSubmit}>
         <DialogContent sx={dialogSx} >
-          <Stack spacing={3} sx={{ width: '100%' }} >
+          <Stack spacing={2}>
             {fields.map((fds: itemFields) => getSimpleField(fds)) }
             { getTagField() }
           </Stack>

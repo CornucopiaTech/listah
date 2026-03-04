@@ -47,6 +47,7 @@ import { DefaultQueryParams } from '@/lib/helper/defaults';
 import { AppH6Typography } from "@/components/core/Typography";
 
 
+
 function OuterBox( { children }: { children: ReactNode}): ReactNode {
   return (
     <Box key="data-content"
@@ -66,8 +67,8 @@ export function SavedFilterListLayout(): ReactNode {
   const { user, } = useUser();
 
   const query = {
-    savedFilter: { ...search.savedFilter, userId: user.id },
-    tag: { ...search.tag, userId: user.id }
+    savedFilter: { ...search.savedFilter, userId: user?.id || ""},
+    tag: { ...search.tag, userId: user?.id || "" },
   }
 
   const {
@@ -89,29 +90,23 @@ export function SavedFilterListLayout(): ReactNode {
   };
 
   function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    console.log("In handlePageChange - e ", e);
     const q: THomeQueryParams = {
       ...query,
       savedFilter: {...query.savedFilter, pageSize: parseInt(e.target.value, 10), pageNumber: 0,}
     };
     const encoded = encodeState(q);
-    console.info("In handlePageChange - q ", q);
-    console.info("In handlePageChange - Encoded ", encoded);
     navigate({ to: "/", search: { s: encoded } });
   };
 
   function handleItemClick(it: ISavedFilterCategory) {
-    console.log("In handleItemclick");
     const ct = it && it.id ? it.id : "";
     const q: IItemReadRequest = {
       ...DefaultQueryParams,
       userId: query.savedFilter.userId,
-      filter: [ct],
+      savedFilters: [ct],
     };
     const encoded = encodeState(q);
-    console.info("In handlePageChange - q ", q);
-    console.info("In handlePageChange - Encoded ", encoded);
-    navigate({ to: "/items/$title", search: { s: encoded }, params: { title: it.category} });
+    navigate({ to: "/items/$title", search: { s: encoded }, params: { title: it?.category || "" } });
   }
   function eachItem(itemKey: number, item: ISavedFilterCategory): ReactNode {
     const tc: string = item.category ? item.category : ""
@@ -123,7 +118,7 @@ export function SavedFilterListLayout(): ReactNode {
       >
         <ListItemButton>
           <ListItemText primary={tc} />
-          <Chip sx={{background: "primary"}} label={item.rowCount} />
+          <Chip sx={{background: "primary"}} label={item.rowCount ? item.rowCount.toString() : "0"} />
         </ListItemButton>
       </ListItem>
     );

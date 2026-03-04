@@ -10,7 +10,6 @@ import type {
 } from 'react';
 import {
   useForm,
-  useStore,
 } from "@tanstack/react-form";
 import {
   useQueryClient,
@@ -64,8 +63,8 @@ import type {
   ITagCategory,
   ITagCategoryReadResponse,
 } from "@/lib/model/tag";
-import {  tagGroupOptions } from '@/lib/helper/querying';
-import type { ISavedFilter, } from "@/lib/model/savedFilter";
+import { tagGroupOptions } from '@/lib/helper/querying';
+import type { ISavedFilter } from "@/lib/model/savedFilter";
 import  { ZSavedFilter } from "@/lib/model/savedFilter";
 
 
@@ -161,6 +160,30 @@ export function AppFilterModal(): ReactNode {
     ),
   }
 
+  function eachItem(item: ITagCategory): ReactNode {
+    const tc: string = item && item.category ? item.category : ""
+    return (
+      <form.Field
+        key={`item-${tc}`}
+        name={tc}
+        children={
+          (field) =>
+          <Chip
+            color="primary"
+            icon={field.state.value && <DoneIcon />}
+            sx={{ color: theme.palette.background.default, cursor: "pointer" }}
+            label={<AppBody1ButtonTypography>#{tc}</AppBody1ButtonTypography>}
+            onClick={() => {
+              field.handleChange(!field.state.value)
+            }
+          }
+          />
+        }
+      />
+
+    )
+  }
+
 
   const dialogSx = {
     display: 'block',
@@ -186,49 +209,17 @@ export function AppFilterModal(): ReactNode {
   const tagCategories: ITagCategory[] = data && data.categories ? data.categories : [];
 
 
-
   // Define object for form default values based on tagCategories. Each category is a boolean field in the form that indicates whether the category is selected or not. The field name is the category name. For example, if there are tagCategories "Work" and "Personal", the form will have fields "Work" and "Personal" that are boolean values indicating whether each category is selected or not. Additionally, there is a field for the filter name called "___filterName". This field is used to capture the name of the filter being created or edited. It is separate from the category fields and is used to identify the filter.
-  let defaultFormData: any = {
-    "___filterName": ""
-  }
-  defaultFormData = tagCategories.reduce((acc: any, item: ITagCategory) => {
-    acc[item.category] = false;
-    return acc;
-  }, defaultFormData);
+  const defaultFormObject: any = tagCategories.reduce((obj, item: ITagCategory, _) => {
+    obj[item.category] = false;
+    return obj;
+  }, {});
 
-
-  const formData: any[] = [...tagCategories];
-
-  console.info("defaultFormData ", defaultFormData);
-  console.info("formData ", formData);
-
-  function eachItem(idx: number): ReactNode {
-    const chipLabel = formData[idx] && formData[idx].category ? formData[idx].category : "";
-    return (
-      <form.Field key={`item-${chipLabel}`} name={chipLabel} children={
-        (field) =>
-          <Chip
-            color="primary"
-            icon={field.state.value && <DoneIcon />}
-            sx={{ color: theme.palette.background.default, cursor: "pointer" }}
-            label={<AppBody1ButtonTypography>#{chipLabel}</AppBody1ButtonTypography>}
-            onClick={() => {
-              console.log(`${chipLabel} onClick: ${field.state.value}=>${!field.state.value}`);
-              field.handleChange(!field.state.value)
-            }}
-          />
-      }
-      />
-    )
-  }
-
-
+  defaultFormObject["___filterName"] = "";
   const form = useForm({
-    defaultValues: defaultFormData,
+    defaultValues: defaultFormObject,
     onSubmit: formSubmission,
   });
-
-  const formErrorMap = useStore(form.store, (state) => state.errorMap)
 
   return (
     <Dialog fullWidth open={store.filterModal} onClose={closeModal} >
@@ -239,6 +230,7 @@ export function AppFilterModal(): ReactNode {
         onClick={closeModal}>
         <Icon icon="material-symbols-light:close-rounded" width="40" height="40" />
       </IconButton>
+
 
 
       {mutation.error && (
@@ -253,13 +245,6 @@ export function AppFilterModal(): ReactNode {
           <SuccessAlert message="Item updated!" />
         </Fragment>
       )}
-      {
-        formErrorMap.onChange && (
-          <div>
-            <em>There was an error on the form: {formErrorMap.onChange}</em>
-          </div>
-        )
-      }
 
       <form onSubmit={onFormSubmit}>
         <DialogContent sx={dialogSx} >
@@ -281,29 +266,30 @@ export function AppFilterModal(): ReactNode {
                 name={`___filterName`}
                 children={
                   (field) =>
-                    <TextField
-                      fullWidth
-                      multiline
-                      id={`Filter Name`}
-                      key={`___filterName`}
-                      value={field.state.value}
-                      label={`Filter Name`}
-                      onChange={
-                        (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-                      size="small"
-                      variant="standard"
-                    />
+                  <TextField
+                    fullWidth
+                    multiline
+                    id={`Filter Name`}
+                    key={`___filterName`}
+                    value={field.state.value}
+                    label={`Filter Name`}
+                    onChange={
+                      (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
+                    size="small"
+                    variant="standard"
+                  />
                 }
               />
               <VirtuosoGrid
-                style={{ height: "70vh", width: '100%' }}
+                style={{ height: "65vh" }}
                 totalCount={tagCategories.length}
                 components={gridComponents}
                 itemContent={
-                  (index) => eachItem(index)
+                  (index) => eachItem(tagCategories[index])
                 }
               />
             </Fragment>
+
           }
         </DialogContent>
         <DialogActions>

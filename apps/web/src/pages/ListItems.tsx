@@ -4,7 +4,7 @@ import {
 
 
 import { AppItemModal } from "@/components/core/AppItemModal";
-import { AppSearchBar } from "@/components/core/AppSearchBar";
+import { AppItemsSearchBar } from "@/components/core/AppSearchBar";
 import { ItemListLayout } from "@/components/layout/ItemListLayout";
 import {
   AppPageStack,
@@ -25,7 +25,7 @@ export function ListItems() {
   const store: TBoundStore = useBoundStore((state) => state);
   return (
     <AppPageStack>
-      <AppSearchBar />
+      <AppItemsSearchBar />
       <AppItemListPaper>
         <AppSectionStack>
           <AppListHeaderBar key="header">

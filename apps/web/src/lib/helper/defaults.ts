@@ -9,7 +9,8 @@ import type { IUser } from '@/lib/model/auth';
 
 export const DefaultQueryParams: IItemReadRequest = {
   userId: "",
-  filter: [],
+  savedFilters: [],
+  tags: [],
   searchQuery: '',
   pageSize: 100,
   pageNumber: 0,

@@ -42,7 +42,7 @@ var ItemConflictFields = []string{
 var defaultReadPagination = ReadPagination {
 	PageNumber: 1,
 	PageSize: 100,
-	SortCondition: "user_id ASC, title ASC",
+	SortCondition: "title ASC",
 }
 
 
@@ -68,9 +68,8 @@ func MsgToItemSearch(msg *pb.ItemServiceReadItemRequest) (*model.ItemSearch, err
 
 	s := []string{}
 	for _, v := range msg.GetSavedFilters() {
-		s = append(s, fmt.Sprintf(`"%v"`, v),)
+		s = append(s, fmt.Sprintf(`'%v'`, v),)
 	}
-	// ss = fmt.Sprintf(`'[%v]'`, strings.Join(s, ", "))
 
 	t := []string{}
 	for _, v := range msg.GetTags() {
@@ -81,7 +80,6 @@ func MsgToItemSearch(msg *pb.ItemServiceReadItemRequest) (*model.ItemSearch, err
 	i := model.ItemSearch{
 		UserId: msg.GetUserId(),
 		Tags: strings.Join(t, ", "),
-		// SavedFilters: ss,
 		SavedFilters: strings.Join(s, ", "),
 		SearchQuery: msg.GetSearchQuery(),
 		SortQuery: sortT,

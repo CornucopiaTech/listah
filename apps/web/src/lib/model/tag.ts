@@ -4,7 +4,7 @@ import * as z from "zod";
 
 // Tag Definitions
 export const ZTagCategory = z.object({
-  category: z.nullish(z.string()),
+  category: z.string().catch(''),
   rowCount: z.number().catch(1),
 });
 export type ITagCategory = z.infer<typeof ZTagCategory>;
