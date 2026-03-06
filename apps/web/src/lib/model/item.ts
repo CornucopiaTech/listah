@@ -7,7 +7,6 @@ export const ZItem = z.object({
   id: z.string().catch(''),
   userId: z.string().catch(''),
   title: z.string().catch(''),
-  category: z.string().catch(''),
   description: z.string().catch(''),
   note: z.string().catch(''),
   tag: z.array(z.string()).catch([]),

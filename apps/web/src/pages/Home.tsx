@@ -20,7 +20,6 @@ import { AppListHeaderBar } from '@/components/core/AppListHeaderBar';
 import { AppH5ButtonTypography } from '@/components/core/ButtonTypography';
 
 
-
 export function Home() {
   const store: TBoundStore = useBoundStore((state) => state);
   return (

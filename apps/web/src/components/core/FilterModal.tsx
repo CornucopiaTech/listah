@@ -51,10 +51,7 @@ import {
   type TBoundStore
 } from '@/lib/store/boundStore';
 import { postSavedFilter } from "@/lib/helper/fetchers";
-import type {
-  IItem,
-} from "@/lib/model/item";
-import { ErrorAlert, SuccessAlert } from "@/components/core/Alerts";
+import { ErrorAlert, WarnAlert, SuccessAlert } from "@/components/core/Alerts";
 import type { AppTheme } from '@/system/theme';
 import { DefaultHomeQueryParams } from '@/lib/helper/defaults';
 import type {
@@ -119,22 +116,26 @@ export function AppFilterModal(): ReactNode {
     //Note:  Modal should not be closed after form submission so success or error feedback can be sent to the user.
   }
 
-  function formSubmission({ value }: { value: IItem }) {
+  type FormObjectType = {
+    [key: string]: string | boolean;
+  };
+
+  function formSubmission({ value }: {value: FormObjectType}): void {
     console.info("In formSubmission - value ", value);
     let checkedCategories: string[] = [];
 
     Object.keys(value).forEach(key => {
-      const val = value[key];
-      if (val && key !== "___filterName") {
+      if (key !== "___filterName" && value[key]) {
         checkedCategories.push(key);
       }
     });
 
     const submitValue = {
-    id: uuidv4(),
-    userId: user?.id || "",
-      name: value["___filterName"],
+      id: uuidv4(),
+      userId: user?.id || "",
+      name: value["___filterName"] as string,
       tags: checkedCategories,
+      savedFilters: [],
     }
     console.info("In formSubmission - submitvalue ", submitValue);
     mutation.mutate(submitValue);
@@ -142,7 +143,7 @@ export function AppFilterModal(): ReactNode {
 
 
   const gridComponents = {
-    List: forwardRef(({ style, children, ...props }, ref) => (
+    List: forwardRef(({ style, children, ...props }: { style: any, children: ReactNode, props: any}, ref: any) => (
       <div ref={ref} {...props}
           style={{display: 'flex', flexWrap: 'wrap', ...style,}}>
         {children}
@@ -209,6 +210,7 @@ export function AppFilterModal(): ReactNode {
         (field) =>
           <Chip
             color="primary"
+            // @ts-ignore
             icon={field.state.value && <DoneIcon />}
             sx={{ color: theme.palette.background.default, cursor: "pointer" }}
             label={<AppBody1ButtonTypography>#{chipLabel}</AppBody1ButtonTypography>}
@@ -226,6 +228,47 @@ export function AppFilterModal(): ReactNode {
   const form = useForm({
     defaultValues: defaultFormData,
     onSubmit: formSubmission,
+    validators: {
+      // Add validators to the form the same way you would add them to a field
+      onChange({ value }: { value: FormObjectType }) {
+        const fname = value["___filterName"] as string;
+        if (fname.length < 1) {
+          return "You must enter a filter name";
+        }
+
+        let checked: string[] = [];
+        Object.keys(value).forEach(key => {
+          const val = value[key];
+          if (val && key !== "___filterName") {
+            checked.push(key);
+          }
+        });
+
+        if (checked.length < 1) {
+          return "You must select at least one tag category";
+        }
+        return undefined
+      },
+      onBlur({ value }: { value: FormObjectType }) {
+        const fname = value["___filterName"] as string;
+        if (fname.length < 1) {
+          return "You must enter a filter name";
+        }
+
+        let checked: string[] = [];
+        Object.keys(value).forEach(key => {
+          const val = value[key];
+          if (val && key !== "___filterName") {
+            checked.push(key);
+          }
+        });
+
+        if (checked.length < 1) {
+          return "You must select at least one tag category";
+        }
+        return undefined
+      },
+    },
   });
 
   const formErrorMap = useStore(form.store, (state) => state.errorMap)
@@ -241,29 +284,8 @@ export function AppFilterModal(): ReactNode {
       </IconButton>
 
 
-      {mutation.error && (
-        <Fragment>
-          <ErrorAlert message={mutation.error.message} />
-          <h5 onClick={() => mutation.reset()}>{mutation.error.message}</h5>
-        </Fragment>
-      )}
-
-      {mutation.isSuccess && (
-        <Fragment>
-          <SuccessAlert message="Item updated!" />
-        </Fragment>
-      )}
-      {
-        formErrorMap.onChange && (
-          <div>
-            <em>There was an error on the form: {formErrorMap.onChange}</em>
-          </div>
-        )
-      }
-
       <form onSubmit={onFormSubmit}>
         <DialogContent sx={dialogSx} >
-          <AppTitleTypography> Add a new filter </AppTitleTypography>
           {isPending &&<LinearProgress />}
           {
             !isPending && isError &&
@@ -273,14 +295,38 @@ export function AppFilterModal(): ReactNode {
             !isError && !isPending && tagCategories.length == 0 &&
             <AppH6Typography> No items found </AppH6Typography>
           }
+          {mutation.error && (
+            <Fragment>
+              <ErrorAlert message={mutation.error.message} />
+              <h5 onClick={() => mutation.reset()}>{mutation.error.message}</h5>
+            </Fragment>
+          )}
+          {mutation.isSuccess && (
+            <Fragment>
+              <SuccessAlert message="Item updated!" />
+            </Fragment>
+          )}
+          {
+            formErrorMap.onChange && (<WarnAlert message={`${formErrorMap.onChange}`} />)
+          }
+          {
+            formErrorMap.onBlur && (<ErrorAlert message={`${formErrorMap.onBlur}`} />)
+          }
+          <AppTitleTypography> Add a new filter </AppTitleTypography>
           {
             tagCategories && tagCategories.length > 0 &&
             <Fragment>
               <form.Field
                 key={`Filter Name`}
                 name={`___filterName`}
+                validators={{
+                  onBlur: ({ value }: {value: any}) =>
+                    value.length < 1 ? 'You must enter a filter name' : undefined,
+                }}
+
                 children={
                   (field) =>
+                  <Fragment>
                     <TextField
                       fullWidth
                       multiline
@@ -293,11 +339,17 @@ export function AppFilterModal(): ReactNode {
                       size="small"
                       variant="standard"
                     />
+                    {!field.state.meta.isValid && (
+                        <ErrorAlert message={field.state.meta.errors.join(', ')} />
+                    )}
+                  </Fragment>
+
                 }
               />
               <VirtuosoGrid
                 style={{ height: "70vh", width: '100%' }}
                 totalCount={tagCategories.length}
+                // @ts-ignore
                 components={gridComponents}
                 itemContent={
                   (index) => eachItem(index)

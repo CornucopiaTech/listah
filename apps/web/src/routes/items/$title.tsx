@@ -19,7 +19,7 @@ export const Route = createFileRoute('/items/$title')({
 
 
 function Page(): ReactNode {
-  const search = Route.useSearch();
+  const search: { s: string } = Route.useSearch();
   if (!search || Object.keys(search).length === 0 || !search.s) {
     return <Navigate
       to="/"

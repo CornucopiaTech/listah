@@ -79,7 +79,7 @@ export function setHomeUrlSearch(params: any): string { // eslint-disable-line @
 
   console.info("In validateHomeUrlSearch - Decoded ");
   console.info(dcd);
-  return dcd as THomeQueryParams;
+  return dcd as string;
   // console.info("In validateItemQueryParams - Parsed ");
   // console.info(parsed);
   // return parsed.data

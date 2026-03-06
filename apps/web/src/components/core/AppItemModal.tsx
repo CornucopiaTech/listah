@@ -67,9 +67,9 @@ export function AppItemModal(): ReactNode {
   const { user } = useUser();
   const item: IItem = useBoundStore((state) => state.displayItem);
   const routeApi = getRouteApi('/items/$title');
-  const routeSearch = routeApi.useSearch()
-  let search = decodeState(routeSearch.s) as IItemReadRequest;
-  const query: IItemReadRequest = { ...search, userId: user.id };
+  const routeSearch: { s: string } = routeApi.useSearch()
+  let search: IItemReadRequest = decodeState(routeSearch.s) as IItemReadRequest;
+  const query: IItemReadRequest = { ...search, userId: user?.id || "" };
   const queryClient = useQueryClient();
 
   const theme: AppTheme = useTheme();
@@ -77,12 +77,12 @@ export function AppItemModal(): ReactNode {
   const catQuery = {
     savedFilter: {
       ...DefaultHomeQueryParams.savedFilter,
-      userId: user.id,
+      userId: user?.id || "",
       pageSize: -1,
     },
     tag: {
       ...DefaultHomeQueryParams.tag,
-      userId: user.id,
+      userId: user?.id || "",
       pageSize: -1,
     }
   }

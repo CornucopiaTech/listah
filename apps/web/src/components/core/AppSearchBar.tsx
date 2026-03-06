@@ -27,9 +27,9 @@ export function AppHomeSearchBar(): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
   const { user } = useUser();
   const routeApi = getRouteApi('/');
-  const routeSearch = routeApi.useSearch()
-  let search = decodeState(routeSearch.s) as IItemReadRequest;
-  const query: IItemReadRequest = { ...search, userId: user.id };
+  const routeSearch: { s: string } = routeApi.useSearch()
+  let search: IItemReadRequest = decodeState(routeSearch.s) as IItemReadRequest;
+  const query: IItemReadRequest = { ...search, userId: user?.id || "" };
   const navigate = useNavigate();
   const textValue = store.searchQuery ? store.searchQuery : "";
   const placeholderText = "Filter by keyword in title, description, or note";
@@ -37,7 +37,7 @@ export function AppHomeSearchBar(): ReactNode {
   function handleSearchSubmit() {
     console.log("In handleItemclick - e ");
     const q: IItemReadRequest = {
-      ...query, filter: [],
+      ...query, savedFilters: [], tags:[],
       pageNumber: 0, searchQuery: store.searchQuery,
     };
     const encoded = encodeState(q);
@@ -78,9 +78,9 @@ export function AppItemsSearchBar(): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
   const { user } = useUser();
   const routeApi = getRouteApi('/items/$title');
-  const routeSearch = routeApi.useSearch()
-  let search = decodeState(routeSearch.s) as IItemReadRequest;
-  const query: IItemReadRequest = { ...search, userId: user.id };
+  const routeSearch: { s: string } = routeApi.useSearch()
+  let search: IItemReadRequest = decodeState(routeSearch.s) as IItemReadRequest;
+  const query: IItemReadRequest = { ...search, userId: user?.id || "" };
   const navigate = useNavigate();
   const textValue = store.searchQuery ? store.searchQuery : "";
   const placeholderText = "Filter by keyword in title, description, or note";
@@ -88,7 +88,7 @@ export function AppItemsSearchBar(): ReactNode {
   function handleSearchSubmit() {
     console.log("In handleItemclick - e ");
     const q: IItemReadRequest = {
-      ...query, filter: [],
+      ...query, savedFilters: [], tags: [],
       pageNumber: 0, searchQuery: store.searchQuery,
     };
     const encoded = encodeState(q);

@@ -62,17 +62,14 @@ function OuterBox({ children, }: { children: ReactNode}): ReactNode {
 
 export function ItemListLayout(): ReactNode {
   const routeApi = getRouteApi('/items/$title');
-  const routeSearch = routeApi.useSearch()
-  let search = decodeState(routeSearch.s) as IItemReadRequest;
+  const routeSearch: { s: string } = routeApi.useSearch()
+  let search: IItemReadRequest = decodeState(routeSearch.s) as IItemReadRequest;
   const navigate = useNavigate();
   const { user, } = useUser();
   const title = useParams({strict: false}).title;
   const store: TBoundStore = useBoundStore((state) => state);
 
-  const query = {...search, userId: user.id};
-
-  console.info("In ItemListLayout - title ", title);
-  console.info("In ItemListLayout - query ", query);
+  const query = {...search, userId: user?.id || ""};
 
   const {
     isPending, isError, data, error
@@ -104,7 +101,7 @@ export function ItemListLayout(): ReactNode {
     navigate({
       to: "/items/$title",
       search: { s: encoded },
-      params: { title: title.title }
+      params: { title: title || "" }
     });
   };
 
@@ -124,7 +121,8 @@ export function ItemListLayout(): ReactNode {
     navigate({
       to: "/items/$title",
       search: { s: encoded },
-      params: { title: title.title }
+      params: { title: title || ""
+}
     });
   };
 

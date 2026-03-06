@@ -24,7 +24,6 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Chip from '@mui/material/Chip';
 import TablePagination from '@mui/material/TablePagination';
-import { useTheme } from "@mui/material";
 
 
 
@@ -65,15 +64,15 @@ function OuterBox( { children }: { children: ReactNode}): ReactNode {
 
 export function TagListLayout(): ReactNode {
   const routeApi = getRouteApi('/');
-  const routeSearch = routeApi.useSearch()
+  const routeSearch: { s: string} = routeApi.useSearch()
   let search = decodeState(routeSearch.s) as THomeQueryParams;
   const navigate = useNavigate();
   const { user, } = useUser();
 
 
   const query: THomeQueryParams = {
-    savedFilter: {...search.savedFilter, userId: user.id},
-    tag: {...search.tag, userId: user.id}
+    savedFilter: {...search.savedFilter, userId: user?.id || ""},
+    tag: { ...search.tag, userId: user?.id || "" }
   }
 
   const {

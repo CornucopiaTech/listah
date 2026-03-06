@@ -61,7 +61,7 @@ function OuterBox( { children }: { children: ReactNode}): ReactNode {
 }
 export function SavedFilterListLayout(): ReactNode {
   const routeApi = getRouteApi('/');
-  const routeSearch = routeApi.useSearch()
+  const routeSearch: { s: string} = routeApi.useSearch()
   let search = decodeState(routeSearch.s) as THomeQueryParams;
   const navigate = useNavigate();
   const { user, } = useUser();
