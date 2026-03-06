@@ -11,7 +11,8 @@ import type { AppTheme } from '@/system/theme';
 
 const AppTypography = styled(Typography)(({ theme }: { theme: AppTheme }) => ({
   color: theme.palette.primary.main,
-  textAlign: "center"
+  textAlign: "center",
+  whiteSpace: 'pre-line',
 }));
 
 
@@ -36,7 +37,7 @@ export function AppBody1Typography({ children }: { children: ReactNode }){
 
 export function AppH6Typography({ children }: { children: ReactNode }){
   return (
-    <AppTypography variant="h6">{ children }</AppTypography>
+    <AppTypography variant="h6" sx={{whiteSpace: 'pre-line' }}>{ children }</AppTypography>
   )
 }
 

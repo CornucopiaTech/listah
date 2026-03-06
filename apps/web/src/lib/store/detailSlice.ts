@@ -3,17 +3,15 @@ import type { StateCreator } from 'zustand';
 
 
 
-import type { IListingState, IDetailSlice, IStore } from '@/lib/model/store';
-import { DEFAULT_ITEM } from '../helper/defaults';
+import type { IDetailState, IDetailSlice, IStore } from '@/lib/model/store';
 
 
 
-export const listingInitState: IListingState = {
+export const listingInitState: IDetailState = {
   message: "",
   drawer: false,
   modal: false,
   displayId: '',
-  displayItem: DEFAULT_ITEM,
   searchQuery: '',
   checkedTag: new Set<string>([]),
   checkedCategory: new Set<string>([]),

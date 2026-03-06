@@ -17,10 +17,10 @@ export function NewItemFab() {
   function handleItemClick() {
     store.setDisplayId("");
     store.setDisplayItem(DEFAULT_ITEM);
-    store.setModal(true);
+    store.setItemModal(true);
   }
 
   return (
-    <Fab color="primary" onClick={handleItemClick}> <AddIcon /> </Fab>
+    <Fab color="primary" size="medium" onClick={handleItemClick}> <AddIcon /> </Fab>
   );
 }

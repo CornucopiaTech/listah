@@ -1,9 +1,31 @@
 # To Do
-- Add url to the message saved for each request.
-- Add table for saved filters by user_id
+- Add url to the message saved for each request in the database.
+- Make sure the user with the bearer token is the same as the user sent in the data being updated.
+- Create a mechanism to view and update filters.
+- Create a mechanism to clone filters.
+
+
+## Done
+- Add form validation to ensure a form for new/updating items always has a tag
+- Add form validation to ensure a form for new/updating filters always has a name and at least one tag.
 - Add service for saved filters
 - Add ability to get all saved filters and the number of items that match the filter.
 - Add ability to get all distinct tags ad the number of items that match the filter.
+- Send error message when server side mutation fails.
+
+
+
+<!-- Devops -->
+- Conditionally run build engine when specific files are changed.
+
+<!-- Web -->
+Define consistent styled components for all pages.
+
+
+
+
+## Cancelled
+- Define -1 limit to mean to restriction on the limit to retrieve from page.
 
 
 
@@ -33,14 +55,7 @@
 - Calculate the size of the Virtuoso height from the pageSize and a fixed size per row of the table.
 - Add capability to add new property
 - Add capability to delete property
-- Send error message when server side mutation fails.
 
-
-<!-- Devops -->
-- Conditionally run build engine when specific files are changed.
-
-<!-- Web -->
-Define consistent styled components for all pages.
 
 
 
@@ -48,6 +63,8 @@ Define consistent styled components for all pages.
 
 
 # Done
+
+- Add table for saved filters by user_id
 - Pass the output of Tofu that are needed across workflows
 - Define home page. Redirect to /categories
 - Define categories page as a list of categories and each category can be clicked to get a list of items in the category.

@@ -20,7 +20,8 @@ type ApiLog struct {
 
 type ItemSearch struct {
 	UserId string
-	Filter string
+	Tags string
+	SavedFilters string
 	SearchQuery string
 	SortQuery string
 	Limit int

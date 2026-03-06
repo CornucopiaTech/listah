@@ -25,21 +25,15 @@ type Item struct {
 	ReactivateAt  time.Time
 }
 
-type Category struct {
-	Category        string
-	RowCount int
-}
-
-type RowCount struct {
-	RowCount int
-}
-
 type ReadPagination struct {
 	PageNumber int32
 	PageSize int32
 	SortCondition string
 }
 
+type RowCount struct {
+	RowCount int
+}
 
 var svcName string = "listah.v1.ItemService"
 var ItemConflictFields = []string{
@@ -48,7 +42,7 @@ var ItemConflictFields = []string{
 var defaultReadPagination = ReadPagination {
 	PageNumber: 1,
 	PageSize: 100,
-	SortCondition: "user_id ASC, title ASC",
+	SortCondition: "title ASC",
 }
 
 
@@ -73,14 +67,20 @@ func MsgToItemSearch(msg *pb.ItemServiceReadItemRequest) (*model.ItemSearch, err
 	offset := pSize * (pNum - 1)
 
 	s := []string{}
-	for _, v := range msg.GetFilter() {
+	for _, v := range msg.GetSavedFilters() {
 		s = append(s, fmt.Sprintf(`'%v'`, v),)
+	}
+
+	t := []string{}
+	for _, v := range msg.GetTags() {
+		t = append(t, fmt.Sprintf(`'%v'`, v),)
 	}
 
 
 	i := model.ItemSearch{
 		UserId: msg.GetUserId(),
-		Filter: strings.Join(s, ", "),
+		Tags: strings.Join(t, ", "),
+		SavedFilters: strings.Join(s, ", "),
 		SearchQuery: msg.GetSearchQuery(),
 		SortQuery: sortT,
 		Limit: pSize,
@@ -105,17 +105,6 @@ func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
 		})
 	}
 	return items, nil
-}
-
-func CategoryModelToCategoryProto(m []*Category) ([]*pb.Category, error) {
-	c := []*pb.Category{}
-	for _, v := range m {
-		c = append(c, &pb.Category{
-				Category: v.Category,
-				RowCount: int32(v.RowCount),
-		})
-	}
-	return c, nil
 }
 
 func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, []string, error) {

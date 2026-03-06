@@ -26,21 +26,28 @@ paths:
                 $ref: '#/components/schemas/listah.v1.ItemServiceReadItemRequest'
         - name: encoding
           in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/encoding'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/encoding'
         - name: base64
           in: query
-          schema:
-            $ref: '#/components/schemas/base64'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/base64'
         - name: compression
           in: query
-          schema:
-            $ref: '#/components/schemas/compression'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/compression'
         - name: connect
           in: query
-          schema:
-            $ref: '#/components/schemas/connect'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect-protocol-version'
       responses:
         default:
           description: Error
@@ -114,21 +121,28 @@ paths:
                 $ref: '#/components/schemas/listah.v1.ItemServiceReadCategoryRequest'
         - name: encoding
           in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/encoding'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/encoding'
         - name: base64
           in: query
-          schema:
-            $ref: '#/components/schemas/base64'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/base64'
         - name: compression
           in: query
-          schema:
-            $ref: '#/components/schemas/compression'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/compression'
         - name: connect
           in: query
-          schema:
-            $ref: '#/components/schemas/connect'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect-protocol-version'
       responses:
         default:
           description: Error
@@ -177,13 +191,72 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/listah.v1.ItemServiceReadCategoryResponse'
-  /listah.v1.ItemService/Upsert:
+  /listah.v1.ItemService/ReadTag:
+    get:
+      tags:
+        - listah.v1.ItemService
+      summary: ReadTag
+      description: Read Tag
+      operationId: listah.v1.ItemService.ReadTag.get
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadTagRequest'
+        - name: encoding
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/encoding'
+        - name: base64
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/base64'
+        - name: compression
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/compression'
+        - name: connect
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect-protocol-version'
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadTagResponse'
     post:
       tags:
         - listah.v1.ItemService
-      summary: Upsert
-      description: Upsert Item
-      operationId: listah.v1.ItemService.Upsert
+      summary: ReadTag
+      description: Read Tag
+      operationId: listah.v1.ItemService.ReadTag
       parameters:
         - name: Connect-Protocol-Version
           in: header
@@ -198,7 +271,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/listah.v1.ItemServiceUpsertRequest'
+              $ref: '#/components/schemas/listah.v1.ItemServiceReadTagRequest'
         required: true
       responses:
         default:
@@ -212,7 +285,174 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/listah.v1.ItemServiceUpsertResponse'
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadTagResponse'
+  /listah.v1.ItemService/ReadSavedFilter:
+    get:
+      tags:
+        - listah.v1.ItemService
+      summary: ReadSavedFilter
+      description: Read Saved Filter
+      operationId: listah.v1.ItemService.ReadSavedFilter.get
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadSavedFilterRequest'
+        - name: encoding
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/encoding'
+        - name: base64
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/base64'
+        - name: compression
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/compression'
+        - name: connect
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect-protocol-version'
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadSavedFilterResponse'
+    post:
+      tags:
+        - listah.v1.ItemService
+      summary: ReadSavedFilter
+      description: Read Saved Filter
+      operationId: listah.v1.ItemService.ReadSavedFilter
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.ItemServiceReadSavedFilterRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadSavedFilterResponse'
+  /listah.v1.ItemService/UpsertItem:
+    post:
+      tags:
+        - listah.v1.ItemService
+      summary: UpsertItem
+      description: Upsert Item
+      operationId: listah.v1.ItemService.UpsertItem
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.ItemServiceUpsertItemRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceUpsertItemResponse'
+  /listah.v1.ItemService/UpsertSavedFilter:
+    post:
+      tags:
+        - listah.v1.ItemService
+      summary: UpsertSavedFilter
+      description: Upsert Saved Filter
+      operationId: listah.v1.ItemService.UpsertSavedFilter
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.ItemServiceUpsertSavedFilterRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceUpsertSavedFilterResponse'
 components:
   schemas:
     listah.v1.AuditUpdaterEnum:
@@ -347,36 +587,95 @@ components:
          ) to obtain a formatter capable of generating timestamps in this format.
     listah.v1.Category:
       type: object
+      allOf:
+        - anyOf:
+            - required:
+                - id
+            - not:
+                anyOf:
+                  - required:
+                      - id
+      anyOf:
+        - required:
+            - id
+        - not:
+            anyOf:
+              - required:
+                  - id
       properties:
         category:
           type: string
           title: category
         rowCount:
           type: integer
-          title: row_count
+          title: rowCount
           format: int32
+        id:
+          type: string
+          title: id
       title: Category
       additionalProperties: false
     listah.v1.Item:
       type: object
+      allOf:
+        - anyOf:
+            - required:
+                - description
+            - not:
+                anyOf:
+                  - required:
+                      - description
+        - anyOf:
+            - required:
+                - note
+            - not:
+                anyOf:
+                  - required:
+                      - note
+        - anyOf:
+            - required:
+                - reactivateAt
+            - not:
+                anyOf:
+                  - required:
+                      - reactivateAt
+        - anyOf:
+            - required:
+                - softDelete
+            - not:
+                anyOf:
+                  - required:
+                      - softDelete
+        - anyOf:
+            - required:
+                - updated_at
+            - not:
+                anyOf:
+                  - required:
+                      - updated_at
+        - anyOf:
+            - required:
+                - updated_by
+            - not:
+                anyOf:
+                  - required:
+                      - updated_by
       properties:
         id:
           type: string
           title: id
         userId:
           type: string
-          title: user_id
+          title: userId
         title:
           type: string
           title: title
         description:
           type: string
           title: description
-          nullable: true
         note:
           type: string
           title: note
-          nullable: true
         tag:
           type: array
           items:
@@ -384,20 +683,19 @@ components:
           title: tag
         softDelete:
           type: boolean
-          title: soft_delete
-          nullable: true
+          title: softDelete
         reactivateAt:
-          title: reactivate_at
-          nullable: true
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: reactivateAt
         updated_by:
-          title: updated_by
-          nullable: true
-          $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
+          title: updatedBy
         updated_at:
-          title: updated_at
-          nullable: true
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: updatedAt
       title: Item
       additionalProperties: false
     listah.v1.ItemServiceReadCategoryRequest:
@@ -406,14 +704,16 @@ components:
         userId:
           type: string
           title: userId
-        filter:
+        tags:
           type: array
           items:
             type: string
-          title: filter
-        searchQuery:
-          type: string
-          title: searchQuery
+          title: tags
+        savedFilters:
+          type: array
+          items:
+            type: string
+          title: savedFilters
         pageSize:
           type: integer
           title: pageSize
@@ -438,14 +738,16 @@ components:
         userId:
           type: string
           title: userId
-        filter:
+        tags:
           type: array
           items:
             type: string
-          title: filter
-        searchQuery:
-          type: string
-          title: searchQuery
+          title: tags
+        savedFilters:
+          type: array
+          items:
+            type: string
+          title: savedFilters
         pageSize:
           type: integer
           title: pageSize
@@ -465,11 +767,16 @@ components:
         userId:
           type: string
           title: userId
-        filter:
+        tags:
           type: array
           items:
             type: string
-          title: filter
+          title: tags
+        savedFilters:
+          type: array
+          items:
+            type: string
+          title: savedFilters
         searchQuery:
           type: string
           title: searchQuery
@@ -497,11 +804,16 @@ components:
         userId:
           type: string
           title: userId
-        filter:
+        tags:
           type: array
           items:
             type: string
-          title: filter
+          title: tags
+        savedFilters:
+          type: array
+          items:
+            type: string
+          title: savedFilters
         searchQuery:
           type: string
           title: searchQuery
@@ -518,7 +830,93 @@ components:
           title: sortQuery
       title: ItemServiceReadItemResponse
       additionalProperties: false
-    listah.v1.ItemServiceUpsertRequest:
+    listah.v1.ItemServiceReadSavedFilterRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+          title: userId
+        pageSize:
+          type: integer
+          title: pageSize
+          format: int32
+        pageNumber:
+          type: integer
+          title: pageNumber
+          format: int32
+        sortQuery:
+          type: string
+          title: sortQuery
+      title: ItemServiceReadSavedFilterRequest
+      additionalProperties: false
+    listah.v1.ItemServiceReadSavedFilterResponse:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.Category'
+          title: categories
+        userId:
+          type: string
+          title: userId
+        pageSize:
+          type: integer
+          title: pageSize
+          format: int32
+        pageNumber:
+          type: integer
+          title: pageNumber
+          format: int32
+        sortQuery:
+          type: string
+          title: sortQuery
+      title: ItemServiceReadSavedFilterResponse
+      additionalProperties: false
+    listah.v1.ItemServiceReadTagRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+          title: userId
+        pageSize:
+          type: integer
+          title: pageSize
+          format: int32
+        pageNumber:
+          type: integer
+          title: pageNumber
+          format: int32
+        sortQuery:
+          type: string
+          title: sortQuery
+      title: ItemServiceReadTagRequest
+      additionalProperties: false
+    listah.v1.ItemServiceReadTagResponse:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.Category'
+          title: categories
+        userId:
+          type: string
+          title: userId
+        pageSize:
+          type: integer
+          title: pageSize
+          format: int32
+        pageNumber:
+          type: integer
+          title: pageNumber
+          format: int32
+        sortQuery:
+          type: string
+          title: sortQuery
+      title: ItemServiceReadTagResponse
+      additionalProperties: false
+    listah.v1.ItemServiceUpsertItemRequest:
       type: object
       properties:
         items:
@@ -526,17 +924,61 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
-      title: ItemServiceUpsertRequest
+      title: ItemServiceUpsertItemRequest
       additionalProperties: false
-    listah.v1.ItemServiceUpsertResponse:
+    listah.v1.ItemServiceUpsertItemResponse:
       type: object
       properties:
         itemIds:
           type: array
           items:
             type: string
-          title: item_ids
-      title: ItemServiceUpsertResponse
+          title: itemIds
+      title: ItemServiceUpsertItemResponse
+      additionalProperties: false
+    listah.v1.ItemServiceUpsertSavedFilterRequest:
+      type: object
+      properties:
+        savedFilters:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.SavedFilter'
+          title: savedFilters
+      title: ItemServiceUpsertSavedFilterRequest
+      additionalProperties: false
+    listah.v1.ItemServiceUpsertSavedFilterResponse:
+      type: object
+      properties:
+        savedFilterIds:
+          type: array
+          items:
+            type: string
+          title: savedFilterIds
+      title: ItemServiceUpsertSavedFilterResponse
+      additionalProperties: false
+    listah.v1.SavedFilter:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+        userId:
+          type: string
+          title: userId
+        name:
+          type: string
+          title: name
+        tags:
+          type: array
+          items:
+            type: string
+          title: tags
+        savedFilter:
+          type: array
+          items:
+            type: string
+          title: savedFilters
+      title: SavedFilter
       additionalProperties: false
     encoding:
       title: encoding
@@ -555,11 +997,6 @@ components:
         - gzip
         - br
       description: Which compression algorithm to use for this request
-    connect:
-      title: connect
-      enum:
-        - v1
-      description: Define the version of the Connect protocol
     connect-protocol-version:
       type: number
       title: Connect-Protocol-Version
@@ -577,24 +1014,23 @@ components:
         code:
           type: string
           examples:
-            - not_found
+            - CodeNotFound
           enum:
-            - canceled
-            - unknown
-            - invalid_argument
-            - deadline_exceeded
-            - not_found
-            - already_exists
-            - permission_denied
-            - resource_exhausted
-            - failed_precondition
-            - aborted
-            - out_of_range
-            - unimplemented
-            - internal
-            - unavailable
-            - data_loss
-            - unauthenticated
+            - CodeCanceled
+            - CodeUnknown
+            - CodeInvalidArgument
+            - CodeDeadlineExceeded
+            - CodeNotFound
+            - CodeAlreadyExists
+            - CodePermissionDenied
+            - CodeResourceExhausted
+            - CodeFailedPrecondition
+            - CodeAborted
+            - CodeOutOfRange
+            - CodeInternal
+            - CodeUnavailable
+            - CodeDataLoss
+            - CodeUnauthenticated
           description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
         message:
           type: string

@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-// import { Fragment } from 'react';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import Stack from "@mui/material/Stack";
@@ -10,7 +9,7 @@ import type { AppTheme } from '@/system/theme';
 
 
 export const AppBox = styled(Box)(({ theme }: { theme: AppTheme }) => ({
-  maxWidth: "77vw",
+  maxWidth: "80vw",
   // height: "100%",
   display: "flex",
   justifyContent: "center",
@@ -55,7 +54,7 @@ export function AppSectionStack({ children }: { children: ReactNode }): ReactNod
 export function AppPageStack({ children }: { children: ReactNode }): ReactNode {
   return (
     <Stack direction="column" spacing={2}
-      sx={{ width: "80vw", maxWidth: "80vw", }} justifyContent="center" alignItems="center">
+      sx={{ width: "90vw", maxWidth: "90vw", }} justifyContent="center" alignItems="center">
       {children}
     </Stack>
   );

@@ -1,9 +1,9 @@
-import { StrictMode } from 'react';
+import { StrictMode, useEffect, useMemo } from 'react';
 import type { ReactNode } from "react";
 import ReactDOM from 'react-dom/client'
 import {
   RouterProvider,
-  createRouter
+  createRouter,
 } from '@tanstack/react-router'
 import {
   QueryClient,
@@ -12,7 +12,7 @@ import {
 import { ClerkProvider } from '@clerk/clerk-react'
 import { enableMapSet } from 'immer';
 import { ThemeProvider, } from '@mui/material/styles';
-
+import { useUser } from '@clerk/clerk-react';
 
 
 // Internal imports
@@ -48,6 +48,7 @@ const router = createRouter({
   Wrap: Wrapper,
   context: {
     queryClient,
+    user: undefined,
   },
   defaultPreload: 'intent',
   // Since we're using React Query, we don't want loader calls to ever be stale
@@ -67,14 +68,11 @@ declare module '@tanstack/react-router' {
 
 
 function Wrapper( { children }: { children: ReactNode } ) {
-  const aKey = window.runtimeConfig.authKey;
   return (
     <ThemeProvider theme={theme}>
-      <ClerkProvider publishableKey={aKey}>
         <QueryClientProvider client={queryClient}>
           {children}
         </QueryClientProvider>
-      </ClerkProvider>
     </ThemeProvider>
   )
 };
@@ -92,24 +90,52 @@ function StrictModeWrapper({ children }: { children: ReactNode}) {
   return children
 }
 
+function App() {
+  const { user, } = useUser();
+
+  console.info("In App component - user ", user);
+
+  // Use a useMemo for the context value to ensure stable object reference
+  const routerContext = useMemo(() => {
+    return {
+      user,
+      queryClient
+    }
+  }, [user])
+
+  // Invalidate the router when the context state changes
+  useEffect(() => {
+    // This tells the router to recompute the context for all routes
+    router.invalidate();
+  }, [routerContext, router])
+
+  return (
+    <StrictModeWrapper>
+      <RouterProvider
+        router={router}
+        defaultPreload="intent"
+        defaultPendingMs={0}
+        defaultPendingMinMs={0}
+        context={{
+          queryClient,
+          user,
+        }}
+      />
+    </StrictModeWrapper>
+  )
+}
+
 console.info("Node environment", process.env.NODE_ENV)
 loadConfig().then(
   () => {
+    const aKey = window.runtimeConfig.authKey;
     const rootElement = document.getElementById('app')
     if (rootElement && !rootElement.innerHTML) {
       const root = ReactDOM.createRoot(rootElement);
       root.render(
-        <StrictModeWrapper>
-          <RouterProvider
-            router={router}
-            defaultPreload="intent"
-            defaultPendingMs={0}
-            defaultPendingMinMs={0}
-            context={{
-              queryClient,
-            }}
-          />
-        </StrictModeWrapper>
+      <ClerkProvider publishableKey={aKey}>
+          <App />
+      </ClerkProvider>
 
       )
     }

@@ -1,5 +1,7 @@
 import { Outlet, createRootRoute } from '@tanstack/react-router';
-import { Fragment } from 'react';
+import { Fragment, type ReactNode } from 'react';
+
+
 
 
 import NotFound from '@/components/common/NotFound';
@@ -22,12 +24,17 @@ export const Route = createRootRoute({
       },
     ],
   }),
-  component: () => (
+  component: Root,
+  notFoundComponent: NotFound,
+})
+
+
+function Root(): ReactNode {
+  return (
     <Fragment>
       <AppContainer>
         <Outlet />
       </AppContainer>
     </Fragment>
-  ),
-  notFoundComponent: NotFound,
-})
+  );
+}

@@ -38,11 +38,16 @@ paths:
                   userId:
                     type: string
                     title: userId
-                  filter:
+                  tags:
                     type: array
                     items:
                       type: string
-                    title: filter
+                    title: tags
+                  savedFilters:
+                    type: array
+                    items:
+                      type: string
+                    title: savedFilters
                   searchQuery:
                     type: string
                     title: searchQuery
@@ -61,35 +66,43 @@ paths:
                 additionalProperties: false
         - name: encoding
           in: query
-          required: true
-          schema:
-            title: encoding
-            enum: &ref_4
-              - proto
-              - json
-            description: Define which encoding or 'Message-Codec' to use
+          content:
+            application/json:
+              schema:
+                title: encoding
+                enum: &ref_4
+                  - proto
+                  - json
+                description: Define which encoding or 'Message-Codec' to use
         - name: base64
           in: query
-          schema:
-            type: boolean
-            title: base64
-            description: Specifies if the message query param is base64 encoded, which may be required for binary data
+          content:
+            application/json:
+              schema:
+                type: boolean
+                title: base64
+                description: Specifies if the message query param is base64 encoded, which may be required for binary data
         - name: compression
           in: query
-          schema:
-            title: compression
-            enum: &ref_5
-              - identity
-              - gzip
-              - br
-            description: Which compression algorithm to use for this request
+          content:
+            application/json:
+              schema:
+                title: compression
+                enum: &ref_5
+                  - identity
+                  - gzip
+                  - br
+                description: Which compression algorithm to use for this request
         - name: connect
           in: query
-          schema:
-            title: connect
-            enum: &ref_6
-              - v1
-            description: Define the version of the Connect protocol
+          content:
+            application/json:
+              schema:
+                type: number
+                title: Connect-Protocol-Version
+                enum: *ref_0
+                description: Define the version of the Connect protocol
+                const: 1
       responses:
         '200':
           description: Success
@@ -102,24 +115,65 @@ paths:
                     type: array
                     items:
                       type: object
-                      properties: &ref_9
+                      allOf: &ref_15
+                        - anyOf:
+                            - required:
+                                - description
+                            - not:
+                                anyOf:
+                                  - required:
+                                      - description
+                        - anyOf:
+                            - required:
+                                - note
+                            - not:
+                                anyOf:
+                                  - required:
+                                      - note
+                        - anyOf:
+                            - required:
+                                - reactivateAt
+                            - not:
+                                anyOf:
+                                  - required:
+                                      - reactivateAt
+                        - anyOf:
+                            - required:
+                                - softDelete
+                            - not:
+                                anyOf:
+                                  - required:
+                                      - softDelete
+                        - anyOf:
+                            - required:
+                                - updated_at
+                            - not:
+                                anyOf:
+                                  - required:
+                                      - updated_at
+                        - anyOf:
+                            - required:
+                                - updated_by
+                            - not:
+                                anyOf:
+                                  - required:
+                                      - updated_by
+                      properties: &ref_16
                         id:
                           type: string
                           title: id
                         userId:
                           type: string
-                          title: user_id
+                          title: userId
                         title:
                           type: string
                           title: title
                         description:
                           type: string
                           title: description
-                          nullable: true
                         note:
                           type: string
                           title: note
-                          nullable: true
                         tag:
                           type: array
                           items:
@@ -127,217 +181,222 @@ paths:
                           title: tag
                         softDelete:
                           type: boolean
-                          title: soft_delete
-                          nullable: true
+                          title: softDelete
                         reactivateAt:
-                          title: reactivate_at
-                          nullable: true
-                          type: string
-                          format: date-time
-                          description: |-
-                            A Timestamp represents a point in time independent of any time zone or local
-                             calendar, encoded as a count of seconds and fractions of seconds at
-                             nanosecond resolution. The count is relative to an epoch at UTC midnight on
-                             January 1, 1970, in the proleptic Gregorian calendar which extends the
-                             Gregorian calendar backwards to year one.
+                          allOf:
+                            - type: string
+                              format: date-time
+                              description: |-
+                                A Timestamp represents a point in time independent of any time zone or local
+                                 calendar, encoded as a count of seconds and fractions of seconds at
+                                 nanosecond resolution. The count is relative to an epoch at UTC midnight on
+                                 January 1, 1970, in the proleptic Gregorian calendar which extends the
+                                 Gregorian calendar backwards to year one.
 
-                             All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-                             second table is needed for interpretation, using a [24-hour linear
-                             smear](https://developers.google.com/time/smear).
+                                 All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+                                 second table is needed for interpretation, using a [24-hour linear
+                                 smear](https://developers.google.com/time/smear).
 
-                             The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-                             restricting to that range, we ensure that we can convert to and from [RFC
-                             3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+                                 The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+                                 restricting to that range, we ensure that we can convert to and from [RFC
+                                 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
 
-                             # Examples
+                                 # Examples
 
-                             Example 1: Compute Timestamp from POSIX `time()`.
+                                 Example 1: Compute Timestamp from POSIX `time()`.
 
-                                 Timestamp timestamp;
-                                 timestamp.set_seconds(time(NULL));
-                                 timestamp.set_nanos(0);
+                                     Timestamp timestamp;
+                                     timestamp.set_seconds(time(NULL));
+                                     timestamp.set_nanos(0);
 
-                             Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+                                 Example 2: Compute Timestamp from POSIX `gettimeofday()`.
 
-                                 struct timeval tv;
-                                 gettimeofday(&tv, NULL);
+                                     struct timeval tv;
+                                     gettimeofday(&tv, NULL);
 
-                                 Timestamp timestamp;
-                                 timestamp.set_seconds(tv.tv_sec);
-                                 timestamp.set_nanos(tv.tv_usec * 1000);
+                                     Timestamp timestamp;
+                                     timestamp.set_seconds(tv.tv_sec);
+                                     timestamp.set_nanos(tv.tv_usec * 1000);
 
-                             Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+                                 Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
 
-                                 FILETIME ft;
-                                 GetSystemTimeAsFileTime(&ft);
-                                 UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+                                     FILETIME ft;
+                                     GetSystemTimeAsFileTime(&ft);
+                                     UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
 
-                                 // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-                                 // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-                                 Timestamp timestamp;
-                                 timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-                                 timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+                                     // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+                                     // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+                                     Timestamp timestamp;
+                                     timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+                                     timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
 
-                             Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+                                 Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
 
-                                 long millis = System.currentTimeMillis();
+                                     long millis = System.currentTimeMillis();
 
-                                 Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-                                     .setNanos((int) ((millis % 1000) * 1000000)).build();
+                                     Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+                                         .setNanos((int) ((millis % 1000) * 1000000)).build();
 
-                             Example 5: Compute Timestamp from Java `Instant.now()`.
+                                 Example 5: Compute Timestamp from Java `Instant.now()`.
 
-                                 Instant now = Instant.now();
+                                     Instant now = Instant.now();
 
-                                 Timestamp timestamp =
-                                     Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-                                         .setNanos(now.getNano()).build();
+                                     Timestamp timestamp =
+                                         Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+                                             .setNanos(now.getNano()).build();
 
-                             Example 6: Compute Timestamp from current time in Python.
+                                 Example 6: Compute Timestamp from current time in Python.
 
-                                 timestamp = Timestamp()
-                                 timestamp.GetCurrentTime()
+                                     timestamp = Timestamp()
+                                     timestamp.GetCurrentTime()
 
-                             # JSON Mapping
+                                 # JSON Mapping
 
-                             In JSON format, the Timestamp type is encoded as a string in the
-                             [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
-                             format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
-                             where {year} is always expressed using four digits while {month}, {day},
-                             {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
-                             seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
-                             are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
-                             is required. A proto3 JSON serializer should always use UTC (as indicated by
-                             "Z") when printing the Timestamp type and a proto3 JSON parser should be
-                             able to accept both UTC and other timezones (as indicated by an offset).
+                                 In JSON format, the Timestamp type is encoded as a string in the
+                                 [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
+                                 format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
+                                 where {year} is always expressed using four digits while {month}, {day},
+                                 {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
+                                 seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
+                                 are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
+                                 is required. A proto3 JSON serializer should always use UTC (as indicated by
+                                 "Z") when printing the Timestamp type and a proto3 JSON parser should be
+                                 able to accept both UTC and other timezones (as indicated by an offset).
 
-                             For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
-                             01:30 UTC on January 15, 2017.
+                                 For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
+                                 01:30 UTC on January 15, 2017.
 
-                             In JavaScript, one can convert a Date object to this format using the
-                             standard
-                             [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-                             method. In Python, a standard `datetime.datetime` object can be converted
-                             to this format using
-                             [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
-                             the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
-                             the Joda Time's [`ISODateTimeFormat.dateTime()`](
-                             http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
-                             ) to obtain a formatter capable of generating timestamps in this format.
+                                 In JavaScript, one can convert a Date object to this format using the
+                                 standard
+                                 [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+                                 method. In Python, a standard `datetime.datetime` object can be converted
+                                 to this format using
+                                 [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
+                                 the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
+                                 the Joda Time's [`ISODateTimeFormat.dateTime()`](
+                                 http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
+                                 ) to obtain a formatter capable of generating timestamps in this format.
+                          title: reactivateAt
                         updated_by:
-                          title: updated_by
-                          nullable: true
-                          type: string
-                          enum: &ref_10
-                            - AUDIT_UPDATER_ENUM_UNSPECIFIED
-                            - AUDIT_UPDATER_ENUM_FRONTEND
-                            - AUDIT_UPDATER_ENUM_SYSOPS
+                          allOf:
+                            - type: string
+                              title: AuditUpdaterEnum
+                              enum: &ref_17
+                                - AUDIT_UPDATER_ENUM_UNSPECIFIED
+                                - AUDIT_UPDATER_ENUM_FRONTEND
+                                - AUDIT_UPDATER_ENUM_SYSOPS
+                          title: updatedBy
                         updated_at:
-                          title: updated_at
-                          nullable: true
-                          type: string
-                          format: date-time
-                          description: |-
-                            A Timestamp represents a point in time independent of any time zone or local
-                             calendar, encoded as a count of seconds and fractions of seconds at
-                             nanosecond resolution. The count is relative to an epoch at UTC midnight on
-                             January 1, 1970, in the proleptic Gregorian calendar which extends the
-                             Gregorian calendar backwards to year one.
+                          allOf:
+                            - type: string
+                              format: date-time
+                              description: |-
+                                A Timestamp represents a point in time independent of any time zone or local
+                                 calendar, encoded as a count of seconds and fractions of seconds at
+                                 nanosecond resolution. The count is relative to an epoch at UTC midnight on
+                                 January 1, 1970, in the proleptic Gregorian calendar which extends the
+                                 Gregorian calendar backwards to year one.
 
-                             All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-                             second table is needed for interpretation, using a [24-hour linear
-                             smear](https://developers.google.com/time/smear).
+                                 All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+                                 second table is needed for interpretation, using a [24-hour linear
+                                 smear](https://developers.google.com/time/smear).
 
-                             The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-                             restricting to that range, we ensure that we can convert to and from [RFC
-                             3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+                                 The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+                                 restricting to that range, we ensure that we can convert to and from [RFC
+                                 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
 
-                             # Examples
+                                 # Examples
 
-                             Example 1: Compute Timestamp from POSIX `time()`.
+                                 Example 1: Compute Timestamp from POSIX `time()`.
 
-                                 Timestamp timestamp;
-                                 timestamp.set_seconds(time(NULL));
-                                 timestamp.set_nanos(0);
+                                     Timestamp timestamp;
+                                     timestamp.set_seconds(time(NULL));
+                                     timestamp.set_nanos(0);
 
-                             Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+                                 Example 2: Compute Timestamp from POSIX `gettimeofday()`.
 
-                                 struct timeval tv;
-                                 gettimeofday(&tv, NULL);
+                                     struct timeval tv;
+                                     gettimeofday(&tv, NULL);
 
-                                 Timestamp timestamp;
-                                 timestamp.set_seconds(tv.tv_sec);
-                                 timestamp.set_nanos(tv.tv_usec * 1000);
+                                     Timestamp timestamp;
+                                     timestamp.set_seconds(tv.tv_sec);
+                                     timestamp.set_nanos(tv.tv_usec * 1000);
 
-                             Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+                                 Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
 
-                                 FILETIME ft;
-                                 GetSystemTimeAsFileTime(&ft);
-                                 UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+                                     FILETIME ft;
+                                     GetSystemTimeAsFileTime(&ft);
+                                     UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
 
-                                 // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-                                 // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-                                 Timestamp timestamp;
-                                 timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-                                 timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+                                     // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+                                     // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+                                     Timestamp timestamp;
+                                     timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+                                     timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
 
-                             Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+                                 Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
 
-                                 long millis = System.currentTimeMillis();
+                                     long millis = System.currentTimeMillis();
 
-                                 Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-                                     .setNanos((int) ((millis % 1000) * 1000000)).build();
+                                     Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+                                         .setNanos((int) ((millis % 1000) * 1000000)).build();
 
-                             Example 5: Compute Timestamp from Java `Instant.now()`.
+                                 Example 5: Compute Timestamp from Java `Instant.now()`.
 
-                                 Instant now = Instant.now();
+                                     Instant now = Instant.now();
 
-                                 Timestamp timestamp =
-                                     Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-                                         .setNanos(now.getNano()).build();
+                                     Timestamp timestamp =
+                                         Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+                                             .setNanos(now.getNano()).build();
 
-                             Example 6: Compute Timestamp from current time in Python.
+                                 Example 6: Compute Timestamp from current time in Python.
 
-                                 timestamp = Timestamp()
-                                 timestamp.GetCurrentTime()
+                                     timestamp = Timestamp()
+                                     timestamp.GetCurrentTime()
 
-                             # JSON Mapping
+                                 # JSON Mapping
 
-                             In JSON format, the Timestamp type is encoded as a string in the
-                             [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
-                             format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
-                             where {year} is always expressed using four digits while {month}, {day},
-                             {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
-                             seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
-                             are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
-                             is required. A proto3 JSON serializer should always use UTC (as indicated by
-                             "Z") when printing the Timestamp type and a proto3 JSON parser should be
-                             able to accept both UTC and other timezones (as indicated by an offset).
+                                 In JSON format, the Timestamp type is encoded as a string in the
+                                 [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
+                                 format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
+                                 where {year} is always expressed using four digits while {month}, {day},
+                                 {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
+                                 seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
+                                 are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
+                                 is required. A proto3 JSON serializer should always use UTC (as indicated by
+                                 "Z") when printing the Timestamp type and a proto3 JSON parser should be
+                                 able to accept both UTC and other timezones (as indicated by an offset).
 
-                             For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
-                             01:30 UTC on January 15, 2017.
+                                 For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
+                                 01:30 UTC on January 15, 2017.
 
-                             In JavaScript, one can convert a Date object to this format using the
-                             standard
-                             [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-                             method. In Python, a standard `datetime.datetime` object can be converted
-                             to this format using
-                             [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
-                             the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
-                             the Joda Time's [`ISODateTimeFormat.dateTime()`](
-                             http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
-                             ) to obtain a formatter capable of generating timestamps in this format.
+                                 In JavaScript, one can convert a Date object to this format using the
+                                 standard
+                                 [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+                                 method. In Python, a standard `datetime.datetime` object can be converted
+                                 to this format using
+                                 [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
+                                 the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
+                                 the Joda Time's [`ISODateTimeFormat.dateTime()`](
+                                 http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
+                                 ) to obtain a formatter capable of generating timestamps in this format.
+                          title: updatedAt
                       title: Item
                       additionalProperties: false
                     title: items
                   userId:
                     type: string
                     title: userId
-                  filter:
+                  tags:
                     type: array
                     items:
                       type: string
-                    title: filter
+                    title: tags
+                  savedFilters:
+                    type: array
+                    items:
+                      type: string
+                    title: savedFilters
                   searchQuery:
                     type: string
                     title: searchQuery
@@ -364,31 +423,30 @@ paths:
                   code:
                     type: string
                     examples:
-                      - not_found
+                      - CodeNotFound
                     enum:
-                      - canceled
-                      - unknown
-                      - invalid_argument
-                      - deadline_exceeded
-                      - not_found
-                      - already_exists
-                      - permission_denied
-                      - resource_exhausted
-                      - failed_precondition
-                      - aborted
-                      - out_of_range
-                      - unimplemented
-                      - internal
-                      - unavailable
-                      - data_loss
-                      - unauthenticated
+                      - CodeCanceled
+                      - CodeUnknown
+                      - CodeInvalidArgument
+                      - CodeDeadlineExceeded
+                      - CodeNotFound
+                      - CodeAlreadyExists
+                      - CodePermissionDenied
+                      - CodeResourceExhausted
+                      - CodeFailedPrecondition
+                      - CodeAborted
+                      - CodeOutOfRange
+                      - CodeInternal
+                      - CodeUnavailable
+                      - CodeDataLoss
+                      - CodeUnauthenticated
                     description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
                   message:
                     type: string
                     description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
                   detail:
                     type: object
-                    properties: &ref_14
+                    properties: &ref_23
                       type:
                         type: string
                       value:
@@ -482,18 +540,20 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_7
+                properties: &ref_6
                   userId:
                     type: string
                     title: userId
-                  filter:
+                  tags:
                     type: array
                     items:
                       type: string
-                    title: filter
-                  searchQuery:
-                    type: string
-                    title: searchQuery
+                    title: tags
+                  savedFilters:
+                    type: array
+                    items:
+                      type: string
+                    title: savedFilters
                   pageSize:
                     type: integer
                     title: pageSize
@@ -509,29 +569,38 @@ paths:
                 additionalProperties: false
         - name: encoding
           in: query
-          required: true
-          schema:
-            title: encoding
-            enum: *ref_4
-            description: Define which encoding or 'Message-Codec' to use
+          content:
+            application/json:
+              schema:
+                title: encoding
+                enum: *ref_4
+                description: Define which encoding or 'Message-Codec' to use
         - name: base64
           in: query
-          schema:
-            type: boolean
-            title: base64
-            description: Specifies if the message query param is base64 encoded, which may be required for binary data
+          content:
+            application/json:
+              schema:
+                type: boolean
+                title: base64
+                description: Specifies if the message query param is base64 encoded, which may be required for binary data
         - name: compression
           in: query
-          schema:
-            title: compression
-            enum: *ref_5
-            description: Which compression algorithm to use for this request
+          content:
+            application/json:
+              schema:
+                title: compression
+                enum: *ref_5
+                description: Which compression algorithm to use for this request
         - name: connect
           in: query
-          schema:
-            title: connect
-            enum: *ref_6
-            description: Define the version of the Connect protocol
+          content:
+            application/json:
+              schema:
+                type: number
+                title: Connect-Protocol-Version
+                enum: *ref_0
+                description: Define the version of the Connect protocol
+                const: 1
       responses:
         '200':
           description: Success
@@ -539,33 +608,53 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_8
+                properties: &ref_7
                   categories:
                     type: array
                     items:
                       type: object
-                      properties: &ref_11
+                      allOf: &ref_8
+                        - anyOf:
+                            - required:
+                                - id
+                            - not:
+                                anyOf:
+                                  - required:
+                                      - id
+                      anyOf: &ref_9
+                        - required:
+                            - id
+                        - not:
+                            anyOf:
+                              - required:
+                                  - id
+                      properties: &ref_10
                         category:
                           type: string
                           title: category
                         rowCount:
                           type: integer
-                          title: row_count
+                          title: rowCount
                           format: int32
+                        id:
+                          type: string
+                          title: id
                       title: Category
                       additionalProperties: false
                     title: categories
                   userId:
                     type: string
                     title: userId
-                  filter:
+                  tags:
                     type: array
                     items:
                       type: string
-                    title: filter
-                  searchQuery:
-                    type: string
-                    title: searchQuery
+                    title: tags
+                  savedFilters:
+                    type: array
+                    items:
+                      type: string
+                    title: savedFilters
                   pageSize:
                     type: integer
                     title: pageSize
@@ -616,7 +705,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: *ref_7
+              properties: *ref_6
               title: ItemServiceReadCategoryRequest
               additionalProperties: false
         required: true
@@ -627,7 +716,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_8
+                properties: *ref_7
                 title: ItemServiceReadCategoryResponse
                 additionalProperties: false
         default:
@@ -640,13 +729,136 @@ paths:
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
-  /listah.v1.ItemService/Upsert:
+  /listah.v1.ItemService/ReadTag:
+    get:
+      tags:
+        - listah.v1.ItemService
+      summary: ReadTag
+      description: Read Tag
+      operationId: listah.v1.ItemService.ReadTag.get
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            type: number
+            title: Connect-Protocol-Version
+            enum: *ref_0
+            description: Define the version of the Connect protocol
+            const: 1
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            type: number
+            title: Connect-Timeout-Ms
+            description: Define the timeout, in ms
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: &ref_11
+                  userId:
+                    type: string
+                    title: userId
+                  pageSize:
+                    type: integer
+                    title: pageSize
+                    format: int32
+                  pageNumber:
+                    type: integer
+                    title: pageNumber
+                    format: int32
+                  sortQuery:
+                    type: string
+                    title: sortQuery
+                title: ItemServiceReadTagRequest
+                additionalProperties: false
+        - name: encoding
+          in: query
+          content:
+            application/json:
+              schema:
+                title: encoding
+                enum: *ref_4
+                description: Define which encoding or 'Message-Codec' to use
+        - name: base64
+          in: query
+          content:
+            application/json:
+              schema:
+                type: boolean
+                title: base64
+                description: Specifies if the message query param is base64 encoded, which may be required for binary data
+        - name: compression
+          in: query
+          content:
+            application/json:
+              schema:
+                title: compression
+                enum: *ref_5
+                description: Which compression algorithm to use for this request
+        - name: connect
+          in: query
+          content:
+            application/json:
+              schema:
+                type: number
+                title: Connect-Protocol-Version
+                enum: *ref_0
+                description: Define the version of the Connect protocol
+                const: 1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: &ref_12
+                  categories:
+                    type: array
+                    items:
+                      type: object
+                      allOf: *ref_8
+                      anyOf: *ref_9
+                      properties: *ref_10
+                      title: Category
+                      additionalProperties: false
+                    title: categories
+                  userId:
+                    type: string
+                    title: userId
+                  pageSize:
+                    type: integer
+                    title: pageSize
+                    format: int32
+                  pageNumber:
+                    type: integer
+                    title: pageNumber
+                    format: int32
+                  sortQuery:
+                    type: string
+                    title: sortQuery
+                title: ItemServiceReadTagResponse
+                additionalProperties: false
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: *ref_3
+                title: Connect Error
+                additionalProperties: true
+                description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
     post:
       tags:
         - listah.v1.ItemService
-      summary: Upsert
-      description: Upsert Item
-      operationId: listah.v1.ItemService.Upsert
+      summary: ReadTag
+      description: Read Tag
+      operationId: listah.v1.ItemService.ReadTag
       parameters:
         - name: Connect-Protocol-Version
           in: header
@@ -668,16 +880,8 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_12
-                items:
-                  type: array
-                  items:
-                    type: object
-                    properties: *ref_9
-                    title: Item
-                    additionalProperties: false
-                  title: items
-              title: ItemServiceUpsertRequest
+              properties: *ref_11
+              title: ItemServiceReadTagRequest
               additionalProperties: false
         required: true
       responses:
@@ -687,13 +891,333 @@ paths:
             application/json:
               schema:
                 type: object
+                properties: *ref_12
+                title: ItemServiceReadTagResponse
+                additionalProperties: false
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: *ref_3
+                title: Connect Error
+                additionalProperties: true
+                description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
+  /listah.v1.ItemService/ReadSavedFilter:
+    get:
+      tags:
+        - listah.v1.ItemService
+      summary: ReadSavedFilter
+      description: Read Saved Filter
+      operationId: listah.v1.ItemService.ReadSavedFilter.get
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            type: number
+            title: Connect-Protocol-Version
+            enum: *ref_0
+            description: Define the version of the Connect protocol
+            const: 1
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            type: number
+            title: Connect-Timeout-Ms
+            description: Define the timeout, in ms
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                type: object
                 properties: &ref_13
+                  userId:
+                    type: string
+                    title: userId
+                  pageSize:
+                    type: integer
+                    title: pageSize
+                    format: int32
+                  pageNumber:
+                    type: integer
+                    title: pageNumber
+                    format: int32
+                  sortQuery:
+                    type: string
+                    title: sortQuery
+                title: ItemServiceReadSavedFilterRequest
+                additionalProperties: false
+        - name: encoding
+          in: query
+          content:
+            application/json:
+              schema:
+                title: encoding
+                enum: *ref_4
+                description: Define which encoding or 'Message-Codec' to use
+        - name: base64
+          in: query
+          content:
+            application/json:
+              schema:
+                type: boolean
+                title: base64
+                description: Specifies if the message query param is base64 encoded, which may be required for binary data
+        - name: compression
+          in: query
+          content:
+            application/json:
+              schema:
+                title: compression
+                enum: *ref_5
+                description: Which compression algorithm to use for this request
+        - name: connect
+          in: query
+          content:
+            application/json:
+              schema:
+                type: number
+                title: Connect-Protocol-Version
+                enum: *ref_0
+                description: Define the version of the Connect protocol
+                const: 1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: &ref_14
+                  categories:
+                    type: array
+                    items:
+                      type: object
+                      allOf: *ref_8
+                      anyOf: *ref_9
+                      properties: *ref_10
+                      title: Category
+                      additionalProperties: false
+                    title: categories
+                  userId:
+                    type: string
+                    title: userId
+                  pageSize:
+                    type: integer
+                    title: pageSize
+                    format: int32
+                  pageNumber:
+                    type: integer
+                    title: pageNumber
+                    format: int32
+                  sortQuery:
+                    type: string
+                    title: sortQuery
+                title: ItemServiceReadSavedFilterResponse
+                additionalProperties: false
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: *ref_3
+                title: Connect Error
+                additionalProperties: true
+                description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
+    post:
+      tags:
+        - listah.v1.ItemService
+      summary: ReadSavedFilter
+      description: Read Saved Filter
+      operationId: listah.v1.ItemService.ReadSavedFilter
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            type: number
+            title: Connect-Protocol-Version
+            enum: *ref_0
+            description: Define the version of the Connect protocol
+            const: 1
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            type: number
+            title: Connect-Timeout-Ms
+            description: Define the timeout, in ms
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: *ref_13
+              title: ItemServiceReadSavedFilterRequest
+              additionalProperties: false
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: *ref_14
+                title: ItemServiceReadSavedFilterResponse
+                additionalProperties: false
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: *ref_3
+                title: Connect Error
+                additionalProperties: true
+                description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
+  /listah.v1.ItemService/UpsertItem:
+    post:
+      tags:
+        - listah.v1.ItemService
+      summary: UpsertItem
+      description: Upsert Item
+      operationId: listah.v1.ItemService.UpsertItem
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            type: number
+            title: Connect-Protocol-Version
+            enum: *ref_0
+            description: Define the version of the Connect protocol
+            const: 1
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            type: number
+            title: Connect-Timeout-Ms
+            description: Define the timeout, in ms
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: &ref_18
+                items:
+                  type: array
+                  items:
+                    type: object
+                    allOf: *ref_15
+                    properties: *ref_16
+                    title: Item
+                    additionalProperties: false
+                  title: items
+              title: ItemServiceUpsertItemRequest
+              additionalProperties: false
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: &ref_19
                   itemIds:
                     type: array
                     items:
                       type: string
-                    title: item_ids
-                title: ItemServiceUpsertResponse
+                    title: itemIds
+                title: ItemServiceUpsertItemResponse
+                additionalProperties: false
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: *ref_3
+                title: Connect Error
+                additionalProperties: true
+                description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
+  /listah.v1.ItemService/UpsertSavedFilter:
+    post:
+      tags:
+        - listah.v1.ItemService
+      summary: UpsertSavedFilter
+      description: Upsert Saved Filter
+      operationId: listah.v1.ItemService.UpsertSavedFilter
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            type: number
+            title: Connect-Protocol-Version
+            enum: *ref_0
+            description: Define the version of the Connect protocol
+            const: 1
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            type: number
+            title: Connect-Timeout-Ms
+            description: Define the timeout, in ms
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: &ref_20
+                savedFilters:
+                  type: array
+                  items:
+                    type: object
+                    properties: &ref_22
+                      id:
+                        type: string
+                        title: id
+                      userId:
+                        type: string
+                        title: userId
+                      name:
+                        type: string
+                        title: name
+                      tags:
+                        type: array
+                        items:
+                          type: string
+                        title: tags
+                      savedFilter:
+                        type: array
+                        items:
+                          type: string
+                        title: savedFilters
+                    title: SavedFilter
+                    additionalProperties: false
+                  title: savedFilters
+              title: ItemServiceUpsertSavedFilterRequest
+              additionalProperties: false
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: &ref_21
+                  savedFilterIds:
+                    type: array
+                    items:
+                      type: string
+                    title: savedFilterIds
+                title: ItemServiceUpsertSavedFilterResponse
                 additionalProperties: false
         default:
           description: Error
@@ -710,7 +1234,7 @@ components:
     listah.v1.AuditUpdaterEnum:
       type: string
       title: AuditUpdaterEnum
-      enum: *ref_10
+      enum: *ref_17
     listah.v1.Pagination:
       type: object
       properties:
@@ -836,22 +1360,25 @@ components:
          ) to obtain a formatter capable of generating timestamps in this format.
     listah.v1.Category:
       type: object
-      properties: *ref_11
+      allOf: *ref_8
+      anyOf: *ref_9
+      properties: *ref_10
       title: Category
       additionalProperties: false
     listah.v1.Item:
       type: object
-      properties: *ref_9
+      allOf: *ref_15
+      properties: *ref_16
       title: Item
       additionalProperties: false
     listah.v1.ItemServiceReadCategoryRequest:
       type: object
-      properties: *ref_7
+      properties: *ref_6
       title: ItemServiceReadCategoryRequest
       additionalProperties: false
     listah.v1.ItemServiceReadCategoryResponse:
       type: object
-      properties: *ref_8
+      properties: *ref_7
       title: ItemServiceReadCategoryResponse
       additionalProperties: false
     listah.v1.ItemServiceReadItemRequest:
@@ -864,15 +1391,50 @@ components:
       properties: *ref_2
       title: ItemServiceReadItemResponse
       additionalProperties: false
-    listah.v1.ItemServiceUpsertRequest:
-      type: object
-      properties: *ref_12
-      title: ItemServiceUpsertRequest
-      additionalProperties: false
-    listah.v1.ItemServiceUpsertResponse:
+    listah.v1.ItemServiceReadSavedFilterRequest:
       type: object
       properties: *ref_13
-      title: ItemServiceUpsertResponse
+      title: ItemServiceReadSavedFilterRequest
+      additionalProperties: false
+    listah.v1.ItemServiceReadSavedFilterResponse:
+      type: object
+      properties: *ref_14
+      title: ItemServiceReadSavedFilterResponse
+      additionalProperties: false
+    listah.v1.ItemServiceReadTagRequest:
+      type: object
+      properties: *ref_11
+      title: ItemServiceReadTagRequest
+      additionalProperties: false
+    listah.v1.ItemServiceReadTagResponse:
+      type: object
+      properties: *ref_12
+      title: ItemServiceReadTagResponse
+      additionalProperties: false
+    listah.v1.ItemServiceUpsertItemRequest:
+      type: object
+      properties: *ref_18
+      title: ItemServiceUpsertItemRequest
+      additionalProperties: false
+    listah.v1.ItemServiceUpsertItemResponse:
+      type: object
+      properties: *ref_19
+      title: ItemServiceUpsertItemResponse
+      additionalProperties: false
+    listah.v1.ItemServiceUpsertSavedFilterRequest:
+      type: object
+      properties: *ref_20
+      title: ItemServiceUpsertSavedFilterRequest
+      additionalProperties: false
+    listah.v1.ItemServiceUpsertSavedFilterResponse:
+      type: object
+      properties: *ref_21
+      title: ItemServiceUpsertSavedFilterResponse
+      additionalProperties: false
+    listah.v1.SavedFilter:
+      type: object
+      properties: *ref_22
+      title: SavedFilter
       additionalProperties: false
     encoding:
       title: encoding
@@ -886,10 +1448,6 @@ components:
       title: compression
       enum: *ref_5
       description: Which compression algorithm to use for this request
-    connect:
-      title: connect
-      enum: *ref_6
-      description: Define the version of the Connect protocol
     connect-protocol-version:
       type: number
       title: Connect-Protocol-Version
@@ -908,6 +1466,6 @@ components:
       description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
     google.protobuf.Any:
       type: object
-      properties: *ref_14
+      properties: *ref_23
       additionalProperties: true
       description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.

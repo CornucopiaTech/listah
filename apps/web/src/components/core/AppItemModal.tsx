@@ -8,6 +8,9 @@ import type {
   FormEvent,
 } from 'react';
 import {
+  getRouteApi,
+} from '@tanstack/react-router';
+import {
   useForm,
 } from "@tanstack/react-form";
 import {
@@ -27,8 +30,6 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { Icon } from "@iconify/react";
 import { useUser } from '@clerk/clerk-react';
-import InputAdornment from '@mui/material/InputAdornment';
-import Tooltip from '@mui/material/Tooltip';
 import { useTheme } from "@mui/material";
 
 
@@ -48,13 +49,14 @@ import {
   ZItem
 } from "@/lib/model/item";
 import { postItem } from "@/lib/helper/fetchers";
-import { useSearchQuery } from '@/lib/context/queryContext';
 import type {
   IItem,
-  IItemRequest,
+  IItemReadRequest,
 } from "@/lib/model/item";
 import { ErrorAlert, SuccessAlert } from "@/components/core/Alerts";
 import type { AppTheme } from '@/system/theme';
+import { decodeState } from "@/lib/helper/encoders";
+import { DefaultHomeQueryParams } from '@/lib/helper/defaults';
 
 
 
@@ -62,11 +64,28 @@ type itemFields = "id" | "tag" | "title" | "userId" | "description" | "note" | "
 
 export function AppItemModal(): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
-  const item: IItem = useBoundStore((state) => state.displayItem);
-  const query: IItemRequest = useSearchQuery();
-  const queryClient = useQueryClient();
   const { user } = useUser();
+  const item: IItem = useBoundStore((state) => state.displayItem);
+  const routeApi = getRouteApi('/items/$title');
+  const routeSearch: { s: string } = routeApi.useSearch()
+  let search: IItemReadRequest = decodeState(routeSearch.s) as IItemReadRequest;
+  const query: IItemReadRequest = { ...search, userId: user?.id || "" };
+  const queryClient = useQueryClient();
+
   const theme: AppTheme = useTheme();
+
+  const catQuery = {
+    savedFilter: {
+      ...DefaultHomeQueryParams.savedFilter,
+      userId: user?.id || "",
+      pageSize: -1,
+    },
+    tag: {
+      ...DefaultHomeQueryParams.tag,
+      userId: user?.id || "",
+      pageSize: -1,
+    }
+  }
 
   // Define invalidating  mutation
   const mutation = useMutation({
@@ -77,9 +96,8 @@ export function AppItemModal(): ReactNode {
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["item", query] }),
-        queryClient.invalidateQueries({ queryKey: ["tag", query] }),
-        queryClient.invalidateQueries({ queryKey: ["savedFilter", query] }),
-        queryClient.invalidateQueries({ queryKey: ["category", query] }),
+        queryClient.invalidateQueries({ queryKey: ["tag", catQuery.tag] }),
+        queryClient.invalidateQueries({ queryKey: ["savedFilter", catQuery.savedFilter] }),
       ])
     },
     onError: (error) => {
@@ -95,7 +113,7 @@ export function AppItemModal(): ReactNode {
 
 
   function closeModal(){
-    store.setModal(false);
+    store.setItemModal(false);
     store.setDisplayId("");
     store.setDisplayItem(DEFAULT_ITEM);
   }
@@ -142,20 +160,6 @@ export function AppItemModal(): ReactNode {
                   sx={sx}
                   size="small"
                   variant="standard"
-                  slotProps={{
-                    input: {
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <Tooltip title="clear content">
-                            <Icon
-                              icon="material-symbols-light:cancel-outline"
-                              width="24" height="24"
-                              onClick={() => field.handleChange("")}
-                            />
-                          </Tooltip>
-                        </InputAdornment>),
-                    },
-                  }}
                 />
               </Grid>
           </Grid>
@@ -178,7 +182,7 @@ export function AppItemModal(): ReactNode {
               </Button>
               {
                 field.state.value &&
-                <Grid container spacing={1}>{
+                <Grid container spacing={1} sx={{width: '100%'}}>{
                   field.state.value.map((_, i) => {
                     return <form.Field key={i} name={`tag[${i}]`}>{
                       (subField) => {
@@ -195,19 +199,6 @@ export function AppItemModal(): ReactNode {
                               }
                               size="small"
                               variant="standard"
-                              slotProps={{
-                                input: {
-                                  endAdornment: (<InputAdornment position="end">
-                                    <Tooltip title="clear content">
-                                      <Icon
-                                        icon="material-symbols-light:cancel-outline"
-                                        width="24" height="24"
-                                        onClick={() => subField.handleChange("")}
-                                      />
-                                    </Tooltip>
-                                  </InputAdornment>),
-                                },
-                              }}
                             />
                           </Grid>
                         )
@@ -246,7 +237,7 @@ export function AppItemModal(): ReactNode {
   }
 
   return (
-    <Dialog fullWidth open={store.modal} onClose={closeModal} >
+    <Dialog fullWidth open={store.itemModal} onClose={closeModal} >
       <IconButton aria-label="delete"
           sx={{
             display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
@@ -270,7 +261,7 @@ export function AppItemModal(): ReactNode {
 
       <form onSubmit={onFormSubmit}>
         <DialogContent sx={dialogSx} >
-          <Stack spacing={2}>
+          <Stack spacing={3} sx={{ width: '100%' }} >
             {fields.map((fds: itemFields) => getSimpleField(fds)) }
             { getTagField() }
           </Stack>

@@ -5,6 +5,8 @@ import type {
   ChangeEvent,
   MouseEvent,
 } from 'react';
+import { Fragment } from "react";
+import { Virtuoso } from 'react-virtuoso';
 import {
   useQuery,
   type UseQueryResult,
@@ -12,50 +14,70 @@ import {
 import * as z from "zod";
 import {
   useNavigate,
+  getRouteApi,
 } from '@tanstack/react-router';
+import { useUser } from '@clerk/clerk-react';
+import Box from '@mui/material/Box';
+import LinearProgress from '@mui/material/LinearProgress';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import Chip from '@mui/material/Chip';
+import TablePagination from '@mui/material/TablePagination';
 
 
 
+import type { IItemReadRequest } from '@/lib/model/item';
 import type {
-  ICategory,
-  ICategoryRequest,
-  ICategoryResponse,
-} from "@/lib/model/category";
+  THomeQueryParams
+} from '@/lib/model/home';
+import type {
+  ITagCategory,
+  ITagCategoryReadResponse,
+} from "@/lib/model/tag";
 import {
-  ZCategoryResponse,
-} from "@/lib/model/category";
-import { CategoryList } from "@/components/core/CategoryList";
-import { useSearchQuery } from '@/lib/context/queryContext';
-import { categoryGroupOptions } from '@/lib/helper/querying';
-import Loading from '@/components/common/Loading';
+  ZTagCategoryReadResponse,
+} from "@/lib/model/tag";
+import { tagGroupOptions } from '@/lib/helper/querying';
 import { ErrorAlert} from "@/components/core/Alerts";
-import { encodeState } from '@/lib/helper/encoders';
+import {
+  decodeState,
+  encodeState
+} from '@/lib/helper/encoders';
+import { DefaultQueryParams } from '@/lib/helper/defaults';
+import { AppH6Typography } from "@/components/core/Typography";
+
+
+
+function OuterBox( { children }: { children: ReactNode}): ReactNode {
+  return (
+    <Box key="data-content"
+      sx={{
+        height: `60vh`,
+        width: '100%', display: 'block', overflow: 'auto',
+      }}>
+      {children}
+    </Box>
+  );
+}
 
 
 export function TagListLayout(): ReactNode {
-  const query: ICategoryRequest = useSearchQuery();
+  const routeApi = getRouteApi('/');
+  const routeSearch: { s: string} = routeApi.useSearch()
+  let search = decodeState(routeSearch.s) as THomeQueryParams;
   const navigate = useNavigate();
-  const {
-    isPending, isError, data, error
-  }: UseQueryResult<ICategoryResponse> = useQuery(categoryGroupOptions(query));
+  const { user, } = useUser();
 
 
-  if (isPending) { return <Loading />; }
-  if (isError) { return <ErrorAlert message={error.message} />; }
-
-  try{
-    ZCategoryResponse.parse(data);
-  } catch(error){
-    if(error instanceof z.ZodError){
-      console.info("Zod issue - ", error.issues);
-      return <ErrorAlert message="An error occurred. Please try again" />;
-    } else {
-      console.info("Other issue - ", error);
-      return <ErrorAlert message="An error occurred. Please try again" />;
-    }
+  const query: THomeQueryParams = {
+    savedFilter: {...search.savedFilter, userId: user?.id || ""},
+    tag: { ...search.tag, userId: user?.id || "" }
   }
 
-  const categories: ICategory[] = data && data.categories ? data.categories : [];
+  const {
+    isPending, isError, data, error
+  }: UseQueryResult<ITagCategoryReadResponse> = useQuery(tagGroupOptions(query.tag));
 
 
 
@@ -64,15 +86,16 @@ export function TagListLayout(): ReactNode {
     value: number
   ) {
     event && event.stopPropagation();
-    const q: ICategoryRequest = { ...query, pageNumber: value };
+    const q: THomeQueryParams = { ...query, tag: { ...query.tag, pageNumber: value } };
     const encoded = encodeState(q);
     navigate({ to: "/", search: { s: encoded } });
   };
 
   function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     console.log("In handlePageChange - e ", e);
-    const q: ICategoryRequest = {
-      ...query, pageSize: parseInt(e.target.value, 10), pageNumber: 0,
+    const q: THomeQueryParams = {
+      ...query,
+      tag: {...query.tag, pageSize: parseInt(e.target.value, 10), pageNumber: 0,}
     };
     const encoded = encodeState(q);
     console.info("In handlePageChange - q ", q);
@@ -80,28 +103,85 @@ export function TagListLayout(): ReactNode {
     navigate({ to: "/", search: { s: encoded } });
   };
 
-  function handleItemclick(it: ICategory) {
+  function handleItemClick(it: ITagCategory) {
     console.log("In handleItemclick");
     const ct = it && it.category ? it.category : "";
-    const q: ICategoryRequest = {
-      ...query, filter: [ct],
-      pageNumber: 0, searchQuery: "",
+    const q: IItemReadRequest = {
+      ...DefaultQueryParams,
+      userId: query.tag.userId,
+      tags: [ct],
     };
     const encoded = encodeState(q);
     console.info("In handlePageChange - q ", q);
     console.info("In handlePageChange - Encoded ", encoded);
-    navigate({ to: "/items", search: { s: encoded }, });
+    navigate({ to: "/items/$title", search: { s: encoded }, params: { title: it.category } });
   }
-  const totalRecords: number = data.pageSize ? data.pageSize : 1;
+
+  function eachItem(itemKey: number, item: ITagCategory): ReactNode {
+    const tc: string = item.category ? item.category : ""
+    return (
+      <ListItem
+        style={{ height: 50, width: "100%", }} key={itemKey + tc}
+        component="div" disablePadding
+        onClick={() => handleItemClick(item) }
+      >
+        <ListItemButton>
+          <ListItemText primary={tc} />
+          <Chip sx={{background: "primary"}} label={item.rowCount} />
+        </ListItemButton>
+      </ListItem>
+    );
+  }
+
+
+  let errMsg: string = isError && error && error instanceof Error ? error.message : "";
+  try{
+    ZTagCategoryReadResponse.parse(data);
+  } catch(error: any){
+    errMsg = "An error occurred. Please try again";
+    if(error instanceof z.ZodError){
+      console.info("Zod issue - ", error.issues);
+    } else {
+      console.info("Other issue - ", error);
+    }
+  }
+
+  const totalRecords: number = data && data.pageSize ? data.pageSize : 1;
+  const categories: ITagCategory[] = data && data.categories ? data.categories : [];
 
 
   return (
-    <CategoryList title="Tags" data={categories}
-      handleItemClick={handleItemclick}
-      count={totalRecords} page={query.pageNumber}
-      onPageChange={handlePageChange}
-      rowsPerPage={query.pageSize}
-      onRowsPerPageChange={handlePageSizeChange}
-    />
+    <Fragment>
+      {
+        isPending &&
+        <OuterBox><LinearProgress /></OuterBox>
+      }
+      {
+        !isPending && (isError || errMsg !== "") &&
+        <OuterBox><ErrorAlert message={errMsg ? errMsg : error?.message || "An error occurred. Please try again"} /></OuterBox>
+      }
+      {
+        categories.length > 0 && <Virtuoso key="data-content"
+          style={{
+            height: `65vh`, width: '100%', display: 'block', overflow: 'auto',
+          }}
+          data={categories}
+          itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
+        />
+      }
+      {
+        !isError && !isPending && categories.length == 0 &&
+        <OuterBox><AppH6Typography> No items found </AppH6Typography></OuterBox>
+      }
+
+      <TablePagination
+        component="div"
+        count={totalRecords} page={query.tag.pageNumber}
+        onPageChange={handlePageChange}
+        rowsPerPage={query.tag.pageSize}
+        onRowsPerPageChange={handlePageSizeChange}
+      />
+
+    </Fragment>
   );
 }
