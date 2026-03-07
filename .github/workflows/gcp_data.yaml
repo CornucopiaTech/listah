@@ -78,7 +78,7 @@ jobs:
           echo "CONNECTION_NAME="$(tofu output -raw db_connection_name)"" >> ${GITHUB_ENV}
           echo "LB_CONN_PORT=9000" >> ${GITHUB_ENV}
           echo "LB_CHANGELOG_PATH="${{ github.workspace }}/liquibase/changelog/changelog.yaml"" >> ${GITHUB_ENV}
-          echo "LB_CHANGELOG_URL="jdbc:postgresql://127.0.0.1:9000/${{ env.DB_DBNAME }}"" >> ${GITHUB_ENV}
+          echo "LB_URL="jdbc:postgresql://127.0.0.1:9000/"$(tofu output -raw db_dbname)"" >> ${GITHUB_ENV}
 
       - name: Setup Cloud Sql Proxy
         run: |
@@ -95,10 +95,10 @@ jobs:
           echo "$(pwd)"
           echo "${{ github.workspace }}"
           echo "${{ env.LB_CHANGELOG_PATH }}"
-          echo "${{ env.LB_CHANGELOG_URL }}"
+          echo "${{ env.LB_URL }}"
           liquibase update \
             --changelog-file="${{ env.LB_CHANGELOG_PATH }}"\
-            --url="${{ env.LB_CHANGELOG_URL }}" \
+            --url="${{ env.LB_URL }}" \
             --log-level=INFO \
             --username="${{ env.DB_USERNAME}}" \
             --password="${{ env.DB_USER_PASSWORD }}"
