@@ -28,7 +28,7 @@ jobs:
       TF_VAR_environment: ${{ inputs.environment }}
       TF_VAR_instance_tier: ${{ vars.GCP_DB_INSTANCE_TIER }}
       TF_VAR_db_edition: "ENTERPRISE"
-      TF_LOG: DEBUG
+      # TF_LOG: DEBUG
 
     steps:
       - name: Checkout
@@ -56,9 +56,9 @@ jobs:
         run: |
           tofu fmt -check
           tofu init
-          tofu validate
-          tofu plan -out=tfplan
-          tofu apply -auto-approve tfplan
+          # tofu validate
+          # tofu plan -out=tfplan
+          # tofu apply -auto-approve tfplan
 
       - name: Setup Liquibase
         uses: liquibase/setup-liquibase@v2
@@ -74,9 +74,13 @@ jobs:
           echo "$(pwd)"
           echo "DB_USERNAME="$(tofu output -raw db_username)"" >> ${GITHUB_ENV}
           echo "DB_USER_PASSWORD="$(tofu output -raw db_userpassword)"" >> ${GITHUB_ENV}
-          echo "DB_DBNAME="$(tofu output -raw db_dbname)"" >> ${GITHUB_ENV}
+          db_name="$(tofu output -raw db_dbname)"
+          echo "DB name is: ${db_name}"
+          echo "DB_DBNAME="$db_name"" >> ${GITHUB_ENV}
           echo "CONNECTION_NAME="$(tofu output -raw db_connection_name)"" >> ${GITHUB_ENV}
           echo "LB_CONN_PORT=9000" >> ${GITHUB_ENV}
+          echo "LB_CHANGELOG_PATH="${{ github.workspace }}/liquibase/changelog/changelog.yaml"" >> ${GITHUB_ENV}
+          echo "LB_URL="jdbc:postgresql://127.0.0.1:9000/$db_name"" >> ${GITHUB_ENV}
 
       - name: Setup Cloud Sql Proxy
         run: |
@@ -86,12 +90,22 @@ jobs:
 
           nohup ./cloud-sql-proxy --port "${{ env.LB_CONN_PORT }}" "${{ env.CONNECTION_NAME }}" &> /dev/null &
 
+      # --changelog-file="${{ github.workspace }}/liquibase/changelog/changelog.yaml"\
+      # --changelog-file="../../../../liquibase/changelog/changelog.yaml"\
       - name: Migrate Schema using Liquibase
         run: |
           echo "$(pwd)"
+          echo "${{ github.workspace }}"
+          echo "${{ env.LB_CHANGELOG_PATH }}"
+          echo "${{ env.LB_URL }}"
+          echo "$(ls "${{ env.LB_CHANGELOG_PATH }}")"
+          echo "$(ls "../../../liquibase/changelog/changelog.yaml")"
+          echo "$(realpath "../../../liquibase/changelog/changelog.yaml")"
+
+
           liquibase update \
-            --changelog-file="${{ github.workspace }}/liquibase/changelog/changelog.yaml"\
-            --url="jdbc:postgresql://127.0.0.1:9000/${{ env.DB_DBNAME }}" \
+            --changelog-file="../../../liquibase/changelog/changelog.yaml"\
+            --url="${{ env.LB_URL }}" \
             --log-level=INFO \
             --username="${{ env.DB_USERNAME}}" \
             --password="${{ env.DB_USER_PASSWORD }}"

@@ -1,13 +1,20 @@
 databaseChangeLog:
   - preConditions:
       - runningAs:
-          username:  listah-admin
+          username:  listah-db-admin
   - changeSet:
       id:  "1.0.1"
       author:  "Kelechi Berquist"
       labels: "root-migration"
       context: "0.0.0"
       comment: "Initial migration"
+      preconditions:
+        - onFail: MARK_RAN # Options: HALT, CONTINUE, MARK_RAN, WARN
+          not:
+            - uniqueConstraintExists:
+              constraintName: constraint_unique_saved_filters_id_user_id
+              schemaName: apps
+              tableName: saved_filters
       changes:
         - createTable:
               schemaName: apps

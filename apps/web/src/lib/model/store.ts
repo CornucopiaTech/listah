@@ -10,6 +10,7 @@ export type  IListingState = {
   drawer: boolean
   itemModal: boolean
   filterModal: boolean
+  selectMode: boolean
   displayId: string
   displayItem: IItem
   searchQuery: string
@@ -23,6 +24,7 @@ export type IListingActions = {
   setDrawer: (drawer: boolean) => void
   setItemModal: (itemModal: boolean) => void
   setFilterModal: (filterModal: boolean) => void
+  setSelectMode: (selectMode: boolean) => void
   setDisplayId: (displayId: string) => void
   setDisplayItem: (displayItem: IItem) => void
   setSearchQuery: (searchQuery: string) => void
