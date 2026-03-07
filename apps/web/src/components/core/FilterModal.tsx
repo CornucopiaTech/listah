@@ -210,7 +210,8 @@ export function AppFilterModal(): ReactNode {
 
   // Define object for form default values based on tagCategories. Each category is a boolean field in the form that indicates whether the category is selected or not. The field name is the category name. For example, if there are tagCategories "Work" and "Personal", the form will have fields "Work" and "Personal" that are boolean values indicating whether each category is selected or not. Additionally, there is a field for the filter name called "___filterName". This field is used to capture the name of the filter being created or edited. It is separate from the category fields and is used to identify the filter.
   let defaultFormData: any = {
-    "___filterName": ""
+    "___filterName": "",
+    "id": ""
   }
   defaultFormData = tagCategories.reduce((acc: any, item: ITagCategory) => {
     acc[item.category] = false;
@@ -288,12 +289,19 @@ export function AppFilterModal(): ReactNode {
     },
   });
 
+  function handleClone(){
+    const fname = form.state.values.___filterName || "";
+    form.setFieldValue('id', uuidv4());
+    form.setFieldValue('___filterName', "[Clone of] - " + fname);
+  }
 
   const saveIcon = form.state.isSubmitting ? "material-symbols:hourglass-top" : form.state.canSubmit ? "material-symbols:save-sharp" : "lucide:save-off";
   const saveTooltip = !form.state.canSubmit ? "Unable to save" : "Save";
-
+  const cloneIcon = form.state.values.id == "" ? "tabler:copy-off" : "material-symbols:content-copy-sharp";
+  const cloneTooltip = form.state.values.id == "" ? "Unable to clone" : "Clone";
 
   const formActions = [
+    { name: cloneTooltip, icon: cloneIcon, onClick: handleClone },
     { name: saveTooltip, icon: saveIcon, onClick: form.handleSubmit },
     { name: "Reset", icon: "material-symbols-light:restart-alt", onClick: form.reset },
   ]

@@ -6,12 +6,18 @@ import {
 import type {
   ReactNode,
 } from 'react';
-import { Protect } from '@clerk/clerk-react';
+import {
+  Protect,
+  useUser
+} from '@clerk/clerk-react';
+import LinearProgress from '@mui/material/LinearProgress';
 
 
-import { ListItems } from "@/pages/ListItems";
+
+import { ListItems } from "@/components/pages/ListItems";
 import { DefaultQueryParams } from '@/lib/helper/defaults';
 import { encodeState } from '@/lib/helper/encoders';
+import { Landing } from '@/components/pages/Landing';
 
 export const Route = createFileRoute('/items/$title')({
   component: Page,
@@ -19,6 +25,10 @@ export const Route = createFileRoute('/items/$title')({
 
 
 function Page(): ReactNode {
+  const { isSignedIn, isLoaded, } = useUser();
+  if (!isLoaded) return <LinearProgress />
+  if (!isSignedIn) return <Landing />
+
   const search: { s: string } = Route.useSearch();
   if (!search || Object.keys(search).length === 0 || !search.s) {
     return <Navigate

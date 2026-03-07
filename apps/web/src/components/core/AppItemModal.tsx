@@ -296,11 +296,9 @@ export function AppItemModal(
 
 
   const formActions = [
-    {
-      name: cloneTooltip, icon: cloneIcon, onClick: handleClone
-    },
-    { name: deleteTooltip, icon: deleteIcon, onClick: handleDelete},
-    { name: saveTooltip, icon: saveIcon, onClick: form.handleSubmit},
+    {name: cloneTooltip, icon: cloneIcon, onClick: handleClone},
+    {name: deleteTooltip, icon: deleteIcon, onClick: handleDelete},
+    {name: saveTooltip, icon: saveIcon, onClick: form.handleSubmit},
     {name: "Reset", icon: "material-symbols-light:restart-alt", onClick: form.reset},
   ]
   const formErrorMap = useStore(form.store, (state) => state.errorMap)

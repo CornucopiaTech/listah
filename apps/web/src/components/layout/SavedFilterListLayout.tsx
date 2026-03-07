@@ -52,7 +52,7 @@ function OuterBox( { children }: { children: ReactNode}): ReactNode {
   return (
     <Box key="data-content"
       sx={{
-        height: `60vh`,
+        height: `65vh`,
         width: '100%', display: 'block', overflow: 'auto',
       }}>
       {children}

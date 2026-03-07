@@ -1,6 +1,9 @@
 
 
-import { AppHomeSearchBar } from "@/components/core/AppSearchBar";
+import {
+  AppSearchBar,
+  // AppHomeSearchBar
+} from "@/components/core/AppSearchBar";
 import { TagListLayout } from "@/components/layout/TagListLayout";
 import { SavedFilterListLayout } from "@/components/layout/SavedFilterListLayout";
 import {
@@ -26,11 +29,12 @@ export function Home() {
     <AppPageStack>
       {store.itemModal && <AppItemModal route="/"/>}
       {store.filterModal && <AppFilterModal />}
-      <AppHomeSearchBar />
+      <AppSearchBar route="/" />
+      {/* <AppHomeSearchBar /> */}
       <AppListStack>
         <AppCategoryListPaper>
           <AppSectionStack>
-            <AppListHeaderBar key="header">"
+            <AppListHeaderBar key="header">
               <AppH5ButtonTypography> Saved Filters </AppH5ButtonTypography>
             </AppListHeaderBar>
             <SavedFilterListLayout />
@@ -39,7 +43,7 @@ export function Home() {
 
         <AppCategoryListPaper>
           <AppSectionStack>
-            <AppListHeaderBar key="header">"
+            <AppListHeaderBar key="header">
               <AppH5ButtonTypography> Tags </AppH5ButtonTypography>
             </AppListHeaderBar>
             <TagListLayout />
