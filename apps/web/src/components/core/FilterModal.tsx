@@ -2,6 +2,7 @@
 import {
   forwardRef,
   Fragment,
+  useEffect,
 } from "react";
 import type {
   ChangeEvent,
@@ -40,12 +41,12 @@ import LinearProgress from '@mui/material/LinearProgress';
 
 
 // Internal imports
-import { AppResetButton } from "@/components/core/AppButton";
-import {
-  SpaceBetweenBox,
-} from "@/components/core/Box";
-import { AppH6ButtonTypography, AppBody1ButtonTypography } from "@/components/core/ButtonTypography";
-import { AppTitleTypography, AppH6Typography } from "@/components/core/Typography";
+import SpeedDial from '@mui/material/SpeedDial';
+import SpeedDialIcon from '@mui/material/SpeedDialIcon';
+import SpeedDialAction from '@mui/material/SpeedDialAction';
+import Box from '@mui/material/Box';
+import { AppBody1ButtonTypography } from "@/components/core/ButtonTypography";
+import { AppH6Typography } from "@/components/core/Typography";
 import {
   useBoundStore,
   type TBoundStore
@@ -104,10 +105,28 @@ export function AppFilterModal(): ReactNode {
     },
   });
 
-
   function closeModal() {
     store.setFilterModal(false);
   }
+
+  useEffect(() => {
+      // if (!form.state.isSubmitted) return;
+      if (!mutation.isSuccess) return;
+
+      const timer = setTimeout(
+        () => {
+          console.log("Timer fired after 2 seconds");
+          closeModal();
+        }, 2000);
+      return () => clearTimeout(timer); // cleanup
+    }, [mutation.isSuccess]
+  );
+  // }, [form.state.isSubmitted, mutation.isSuccess]);
+
+
+
+
+
   function onFormSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     e.stopPropagation()
@@ -167,8 +186,9 @@ export function AppFilterModal(): ReactNode {
     display: 'block',
     maxWidth: "lg",
     width: "lg",
-    height: '70vh',
-    maxHeight: 720,
+    height: 'fit-content',
+    // height: '70vh',
+    // maxHeight: 720,
     overflow: 'auto',
     '&::-webkit-scrollbar': {
       width: '15px', // width of the entire scrollbar
@@ -200,8 +220,6 @@ export function AppFilterModal(): ReactNode {
 
   const formData: any[] = [...tagCategories];
 
-  console.info("defaultFormData ", defaultFormData);
-  console.info("formData ", formData);
 
   function eachItem(idx: number): ReactNode {
     const chipLabel = formData[idx] && formData[idx].category ? formData[idx].category : "";
@@ -229,11 +247,10 @@ export function AppFilterModal(): ReactNode {
     defaultValues: defaultFormData,
     onSubmit: formSubmission,
     validators: {
-      // Add validators to the form the same way you would add them to a field
       onChange({ value }: { value: FormObjectType }) {
         const fname = value["___filterName"] as string;
         if (fname.length < 1) {
-          return "You must enter a filter name";
+          return "Filter name is required";
         }
 
         let checked: string[] = [];
@@ -245,14 +262,14 @@ export function AppFilterModal(): ReactNode {
         });
 
         if (checked.length < 1) {
-          return "You must select at least one tag category";
+          return "At least one tag is required";
         }
         return undefined
       },
       onBlur({ value }: { value: FormObjectType }) {
         const fname = value["___filterName"] as string;
         if (fname.length < 1) {
-          return "You must enter a filter name";
+          return "Filter name is required";
         }
 
         let checked: string[] = [];
@@ -264,13 +281,22 @@ export function AppFilterModal(): ReactNode {
         });
 
         if (checked.length < 1) {
-          return "You must select at least one tag category";
+          return "At least one tag is required";
         }
         return undefined
       },
     },
   });
 
+
+  const saveIcon = form.state.isSubmitting ? "material-symbols:hourglass-top" : form.state.canSubmit ? "material-symbols:save-sharp" : "lucide:save-off";
+  const saveTooltip = !form.state.canSubmit ? "Unable to save" : "Save";
+
+
+  const formActions = [
+    { name: saveTooltip, icon: saveIcon, onClick: form.handleSubmit },
+    { name: "Reset", icon: "material-symbols-light:restart-alt", onClick: form.reset },
+  ]
   const formErrorMap = useStore(form.store, (state) => state.errorMap)
 
   return (
@@ -312,7 +338,7 @@ export function AppFilterModal(): ReactNode {
           {
             formErrorMap.onBlur && (<ErrorAlert message={`${formErrorMap.onBlur}`} />)
           }
-          <AppTitleTypography> Add a new filter </AppTitleTypography>
+          <AppH6Typography> Add a new filter </AppH6Typography>
           {
             tagCategories && tagCategories.length > 0 &&
             <Fragment>
@@ -347,7 +373,7 @@ export function AppFilterModal(): ReactNode {
                 }
               />
               <VirtuosoGrid
-                style={{ height: "70vh", width: '100%' }}
+                style={{ height: "60vh", width: '100%' }}
                 totalCount={tagCategories.length}
                 // @ts-ignore
                 components={gridComponents}
@@ -361,30 +387,28 @@ export function AppFilterModal(): ReactNode {
         <DialogActions>
           <form.Subscribe
             selector={(state) => [state.canSubmit, state.isSubmitting]}
-            children={([canSubmit, isSubmitting]) => (
-              <SpaceBetweenBox sx={{}}>
-                <AppResetButton
-                  type="submit"
-                  variant="contained"
-                  disabled={!canSubmit}
-                  onClick={form.handleSubmit}
+            children={() => (
+              <Box sx={{ transform: 'translateZ(0px)', flexGrow: 1 }}>
+                <SpeedDial
+                  ariaLabel="SpeedDial basic example"
+                  sx={{ position: 'absolute', bottom: 16, right: 16 }}
+                  icon={<SpeedDialIcon />}
                 >
-                  <AppH6ButtonTypography>
-                    {isSubmitting ? '...' : 'Submit'}
-                  </AppH6ButtonTypography>
-                </AppResetButton>
-
-                <AppResetButton
-                  type="reset"
-                  variant="contained"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    form.reset()
-                  }}
-                >
-                  <AppH6ButtonTypography>Reset</AppH6ButtonTypography>
-                </AppResetButton>
-              </SpaceBetweenBox>
+                  {formActions.map((action) => (
+                    <SpeedDialAction
+                      key={action.name}
+                      icon={<Icon icon={action.icon} width="36" height="36" />}
+                      // @ts-ignore
+                      onClick={action.onClick}
+                      slotProps={{
+                        tooltip: {
+                          title: action.name,
+                        },
+                      }}
+                    />
+                  ))}
+                </SpeedDial>
+              </Box>
             )}
           />
         </DialogActions>

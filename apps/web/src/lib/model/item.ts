@@ -11,7 +11,7 @@ export const ZItem = z.object({
   note: z.string().catch(''),
   tag: z.array(z.string()).catch([]),
   softDelete: z.boolean().catch(false),
-  reactivateAt: z.string().catch(''),
+  // reactivateAt: z.string().catch(''),
 
 });
 export type IItem = z.infer<typeof ZItem>;

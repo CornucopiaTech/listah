@@ -13,7 +13,6 @@ import {
 } from '@tanstack/react-router';
 import {
   useForm,
-  useStore,
 } from "@tanstack/react-form";
 import {
   useQueryClient,
@@ -33,13 +32,14 @@ import IconButton from '@mui/material/IconButton';
 import { Icon } from "@iconify/react";
 import { useUser } from '@clerk/clerk-react';
 import { useTheme } from "@mui/material";
-import SpeedDial from '@mui/material/SpeedDial';
-import SpeedDialIcon from '@mui/material/SpeedDialIcon';
-import SpeedDialAction from '@mui/material/SpeedDialAction';
-import Box from '@mui/material/Box';
 
 
 // Internal imports
+import { AppResetButton } from "@/components/core/AppButton";
+import {
+  SpaceBetweenBox,
+} from "@/components/core/Box";
+import { AppH6ButtonTypography } from "@/components/core/ButtonTypography";
 import { AppBody1Typography } from "@/components/core/Typography";
 import {
   useBoundStore,
@@ -54,14 +54,14 @@ import type {
   IItem,
   IItemReadRequest,
 } from "@/lib/model/item";
-import { ErrorAlert, SuccessAlert, WarnAlert } from "@/components/core/Alerts";
+import { ErrorAlert, SuccessAlert } from "@/components/core/Alerts";
 import type { AppTheme } from '@/system/theme';
 import { decodeState } from "@/lib/helper/encoders";
 import { DefaultHomeQueryParams } from '@/lib/helper/defaults';
 
 
 
-type itemFields = "id" | "tag" | "title" | "userId" | "description" | "note" | "softDelete" | `tag[${number}]`
+type itemFields = "id" | "tag" | "title" | "userId" | "description" | "note" | "softDelete" |  `tag[${number}]`
 
 export function AppItemModal(
   { route }: { route: "/" | "/items/$title"  }
@@ -80,27 +80,18 @@ export function AppItemModal(
   const form = useForm({
     defaultValues: item,
     onSubmit: formSubmission,
-    validators: {
-      onChange({ value }: { value: IItem }) {
-        if (value.title.length < 1) {
-          return "Item title is required";
-        }
-        if (value.tag.length < 1) {
-          return "A least one tag is required";
-        }
-        return undefined
-      },
-      onBlur({ value }: { value: IItem }) {
-        if (value.title.length < 1) {
-          return "Item title is required";
-        }
-        if (value.tag.length < 1) {
-          return "A least one tag is required";
-        }
-        return undefined
-      },
-    },
   });
+  useEffect(() => {
+    if (!form.state.isSubmitted) return;
+
+    const timer = setTimeout(
+      () => {
+        console.log("Timer fired after 2 seconds");
+        closeModal();
+      }, 2000);
+    return () => clearTimeout(timer); // cleanup
+  }, [form.state.isSubmitted]);
+
   const catQuery = {
     savedFilter: {
       ...DefaultHomeQueryParams.savedFilter,
@@ -129,19 +120,11 @@ export function AppItemModal(
     },
     onError: (error) => {
       console.log(error);
+      store.setMessage(error.message);
     },
   });
-  useEffect(() => {
-    if (!form.state.isSubmitted) return;
-    if (!mutation.isSuccess) return;
 
-    const timer = setTimeout(
-      () => {
-        console.log("Timer fired after 2 seconds");
-        closeModal();
-      }, 2000);
-    return () => clearTimeout(timer); // cleanup
-  }, [form.state.isSubmitted, mutation.isSuccess]);
+
 
 
   function closeModal(){
@@ -149,6 +132,7 @@ export function AppItemModal(
     store.setDisplayId("");
     store.setDisplayItem(DEFAULT_ITEM);
   }
+
 
   function onFormSubmit(e: FormEvent<HTMLFormElement>){
     e.preventDefault()
@@ -249,17 +233,6 @@ export function AppItemModal(
     );
   }
 
-  function handleDelete(){
-    form.setFieldValue('softDelete', true);
-    form.handleSubmit();
-  }
-
-  function handleClone(){
-    const title = form.state.values.title || "";
-    form.setFieldValue('id', uuidv4());
-    form.setFieldValue('title', "[Clone of] - " + title);
-  }
-
   const fields: itemFields[] = ['id', 'userId', 'title', 'description', 'note'];
   const dialogSx = {
     display: 'block',
@@ -282,29 +255,6 @@ export function AppItemModal(
     },
   }
 
-
-
-
-
-  const deleteIcon = form.state.isSubmitting ? "ic:baseline-auto-delete" : (!form.state.canSubmit || form.state.values.id == "") ? "mdi:delete-off" : "ic:sharp-delete" ;
-  const deleteTooltip = (!form.state.canSubmit || form.state.values.id == "") ? "Unable to delete" : "Delete";
-
-  const saveIcon = form.state.isSubmitting ? "material-symbols:hourglass-top" : form.state.canSubmit ? "material-symbols:save-sharp" : "lucide:save-off";
-  const saveTooltip = !form.state.canSubmit ? "Unable to save" : "Save";
-  const cloneIcon = form.state.values.id == "" ? "tabler:copy-off" : "material-symbols:content-copy-sharp";
-  const cloneTooltip = form.state.values.id == "" ? "Unable to clone" : "Clone";
-
-
-  const formActions = [
-    {
-      name: cloneTooltip, icon: cloneIcon, onClick: handleClone
-    },
-    { name: deleteTooltip, icon: deleteIcon, onClick: handleDelete},
-    { name: saveTooltip, icon: saveIcon, onClick: form.handleSubmit},
-    {name: "Reset", icon: "material-symbols-light:restart-alt", onClick: form.reset},
-  ]
-  const formErrorMap = useStore(form.store, (state) => state.errorMap)
-
   return (
     <Dialog fullWidth open={store.itemModal} onClose={closeModal} >
       <IconButton aria-label="delete"
@@ -312,26 +262,23 @@ export function AppItemModal(
         onClick={closeModal}>
         <Icon icon="material-symbols-light:close-rounded" width="40" height="40" />
       </IconButton>
+
+      {mutation.error && (
+        <Fragment>
+          <ErrorAlert message={mutation.error.message} />
+          <h5 onClick={() => mutation.reset()}>{mutation.error.message}</h5>
+        </Fragment>
+      )}
+
+      {mutation.isSuccess && (
+        <Fragment>
+          <SuccessAlert message="Item updated!" />
+        </Fragment>
+      )}
+
       <form onSubmit={onFormSubmit}>
         <DialogContent sx={dialogSx} >
           <Stack spacing={3} sx={{ width: '100%' }} >
-            {mutation.error && (
-              <Fragment>
-                <ErrorAlert message={mutation.error.message} />
-                <h5 onClick={() => mutation.reset()}>{mutation.error.message}</h5>
-              </Fragment>
-            )}
-            {mutation.isSuccess && (
-              <Fragment>
-                <SuccessAlert message="Item updated!" />
-              </Fragment>
-            )}
-            {
-              formErrorMap.onChange && (<WarnAlert message={`${formErrorMap.onChange}`} />)
-            }
-            {
-              formErrorMap.onBlur && (<ErrorAlert message={`${formErrorMap.onBlur}`} />)
-            }
             {fields.map((fds: itemFields) => getSimpleField(fds)) }
             { getTagField() }
           </Stack>
@@ -339,28 +286,50 @@ export function AppItemModal(
         <DialogActions>
           <form.Subscribe
             selector={(state) => [state.canSubmit, state.isSubmitting, state.values.title]}
-            children={() => (
-              <Box sx={{ transform: 'translateZ(0px)', flexGrow: 1 }}>
-                <SpeedDial
-                  ariaLabel="SpeedDial basic example"
-                  sx={{ position: 'absolute', bottom: 16, right: 16 }}
-                  icon={<SpeedDialIcon />}
-                >
-                  {formActions.map((action) => (
-                    <SpeedDialAction
-                      key={action.name}
-                      icon={<Icon icon={action.icon} width="36" height="36" />}
-                      // @ts-ignore
-                      onClick={action.onClick}
-                      slotProps={{
-                        tooltip: {
-                          title: action.name,
-                        },
+            children={([canSubmit, isSubmitting, title]) => (
+              <SpaceBetweenBox sx={{}}>
+                <AppResetButton
+                      variant="contained"
+                      onClick={() => {
+                        form.setFieldValue('id', uuidv4());
+                        form.setFieldValue('title', "[Clone of] - " + title);
                       }}
-                    />
-                  ))}
-                </SpeedDial>
-              </Box>
+                    >
+                  <AppH6ButtonTypography>Clone</AppH6ButtonTypography>
+                </AppResetButton>
+                <AppResetButton
+                    type="submit"
+                    variant="contained"
+                    disabled={!canSubmit}
+                    onClick={() => {
+                      form.setFieldValue('softDelete', true);
+                      form.handleSubmit();
+                    }}
+                  >
+                  <AppH6ButtonTypography>Delete</AppH6ButtonTypography>
+                </AppResetButton>
+                <AppResetButton
+                    type="submit"
+                    variant="contained"
+                    disabled={!canSubmit}
+                    onClick={form.handleSubmit}
+                  >
+                  <AppH6ButtonTypography>
+                    {isSubmitting ? '...' : 'Submit'}
+                  </AppH6ButtonTypography>
+                </AppResetButton>
+
+                <AppResetButton
+                    type="reset"
+                    variant="contained"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      form.reset()
+                    }}
+                  >
+                  <AppH6ButtonTypography>Reset</AppH6ButtonTypography>
+                </AppResetButton>
+              </SpaceBetweenBox>
             )}
           />
         </DialogActions>
@@ -368,5 +337,3 @@ export function AppItemModal(
     </Dialog>
   );
 }
-
-

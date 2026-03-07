@@ -24,7 +24,7 @@ export function Home() {
   const store: TBoundStore = useBoundStore((state) => state);
   return (
     <AppPageStack>
-      {store.itemModal && <AppItemModal />}
+      {store.itemModal && <AppItemModal route="/"/>}
       {store.filterModal && <AppFilterModal />}
       <AppHomeSearchBar />
       <AppListStack>

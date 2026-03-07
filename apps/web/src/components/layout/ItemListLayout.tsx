@@ -21,6 +21,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import TablePagination from '@mui/material/TablePagination';
+import Checkbox from '@mui/material/Checkbox';
 
 
 import type {
@@ -113,30 +114,42 @@ export function ItemListLayout(): ReactNode {
   }
 
   function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    console.log("In handlePageChange - e ", e);
     const q = { ...query, pageSize: parseInt(e.target.value, 10), pageNumber: 0 };
     const encoded = encodeState(q);
-    console.info("In handlePageChange - q ", q);
-    console.info("In handlePageChange - Encoded ", encoded);
     navigate({
       to: "/items/$title",
       search: { s: encoded },
-      params: { title: title || ""
-}
+      params: { title: title || ""}
     });
   };
 
   function eachItem(itemKey: number, item: IItem): ReactNode {
     let dis: string = item.title ? item.title : "";
     return (
-      <ListItem
-        style={{ height: 50, width: "100%", }} key={itemKey + dis}
-        component="div" disablePadding
-        onClick={() => handleItemClick(item) }>
-        <ListItemButton>
-          <ListItemText primary={dis} />
-        </ListItemButton>
-      </ListItem>
+      <Fragment>
+        {
+          !store.selectMode &&
+          <ListItem
+            style={{ height: 50, width: "100%", }} key={itemKey + dis}
+            component="div" disablePadding
+            onClick={() => handleItemClick(item)}>
+            <ListItemButton>
+              <ListItemText primary={dis} />
+            </ListItemButton>
+          </ListItem>
+        }
+        {
+          store.selectMode && <ListItem
+            style={{ height: 50, width: "100%", }} key={itemKey + dis}
+            component="div" disablePadding >
+            <ListItemButton>
+              <ListItemText primary={dis} />
+              <Checkbox checked={true}
+                onChange={() => store.setSelectMode(!store.selectMode)} size="small" />
+            </ListItemButton>
+          </ListItem>
+        }
+      </Fragment>
     );
   }
 

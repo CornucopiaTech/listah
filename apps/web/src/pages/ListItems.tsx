@@ -31,7 +31,7 @@ export function ListItems() {
           <AppListHeaderBar key="header">
             <AppH5ButtonTypography> Items in #{title} </AppH5ButtonTypography>
           </AppListHeaderBar>
-          {store.itemModal && <AppItemModal />}
+          {store.itemModal && <AppItemModal route={"/items/$title"}/>}
           <ItemListLayout />
         </AppSectionStack>
         <ItemsFab />

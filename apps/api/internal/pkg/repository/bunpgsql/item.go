@@ -43,6 +43,7 @@ func (a *item) ReadItem(ctx context.Context, m *[]*v1model.Item, s *model.ItemSe
 				ON sf.user_id = it.user_id
 				AND it.tag::JSONB @> sf.tags::jsonb
 		WHERE it.user_id::VARCHAR = '` + s.UserId + `'
+			AND (it.soft_delete = false OR it.soft_delete IS NULL)
 	`
 
 
@@ -112,12 +113,14 @@ func (a *item) ReadTag(ctx context.Context, m *[]*v1model.Category, s *model.Ite
 		SELECT 'null' id, category, COUNT(*) AS row_count
 		FROM (
 			SELECT DISTINCT id, jsonb_array_elements_text(tag::JSONB) AS category
-			FROM apps.items
+			FROM apps.items it
 			WHERE tag::VARCHAR != 'null' AND user_id::VARCHAR = '%v'
+				AND (it.soft_delete = false OR it.soft_delete IS NULL)
 			UNION ALL
 			SELECT DISTINCT id, 'null' AS category
-			FROM apps.items
+			FROM apps.items it
 			WHERE tag::VARCHAR = 'null'
+				AND (it.soft_delete = false OR it.soft_delete IS NULL)
 		) AS expanded
 		GROUP BY 1, 2
 		ORDER BY 1
@@ -162,6 +165,7 @@ func (a *item) ReadSavedFilter(ctx context.Context, m *[]*v1model.Category, s *m
 				ON sf.user_id = it.user_id
 				AND it.tag::JSONB @> sf.tags::jsonb
 		WHERE sf.user_id::VARCHAR = '%v'
+				AND (it.soft_delete = false OR it.soft_delete IS NULL)
 		GROUP BY 1, 2
 	`, s.UserId)
 
