@@ -86,11 +86,13 @@ jobs:
 
           nohup ./cloud-sql-proxy --port "${{ env.LB_CONN_PORT }}" "${{ env.CONNECTION_NAME }}" &> /dev/null &
 
+      # --changelog-file="${{ github.workspace }}/liquibase/changelog/changelog.yaml"\
       - name: Migrate Schema using Liquibase
         run: |
           echo "$(pwd)"
+          echo "${{ github.workspace }}"
           liquibase update \
-            --changelog-file="${{ github.workspace }}/liquibase/changelog/changelog.yaml"\
+            --changelog-file="../../../../liquibase/changelog/changelog.yaml"\
             --url="jdbc:postgresql://127.0.0.1:9000/${{ env.DB_DBNAME }}" \
             --log-level=INFO \
             --username="${{ env.DB_USERNAME}}" \
