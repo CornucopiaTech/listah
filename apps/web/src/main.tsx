@@ -13,13 +13,13 @@ import { ClerkProvider } from '@clerk/clerk-react'
 import { enableMapSet } from 'immer';
 import { ThemeProvider, } from '@mui/material/styles';
 import { useUser } from '@clerk/clerk-react';
+import LinearProgress from '@mui/material/LinearProgress';
 
 
 // Internal imports
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
 import reportWebVitals from './reportWebVitals.ts'
-import Loading from '@/components/common/Loading';
 import NotFound from '@/components/common/NotFound';
 import { ErrorAlert} from "@/components/core/Alerts";
 import theme from '@/system/theme';
@@ -42,7 +42,7 @@ export const queryClient = new QueryClient();
 
 const router = createRouter({
   routeTree,
-  defaultPendingComponent: Loading,
+  defaultPendingComponent: LinearProgress,
   defaultErrorComponent: ({ error }) => <ErrorAlert message={error.message} />,
   defaultNotFoundComponent: NotFound,
   Wrap: Wrapper,
@@ -51,8 +51,6 @@ const router = createRouter({
     user: undefined,
   },
   defaultPreload: 'intent',
-  // Since we're using React Query, we don't want loader calls to ever be stale
-  // This will ensure that the loader is always called when the route is preloaded or visited
   defaultPreloadStaleTime: 0,
   scrollRestoration: true,
 })
@@ -70,9 +68,9 @@ declare module '@tanstack/react-router' {
 function Wrapper( { children }: { children: ReactNode } ) {
   return (
     <ThemeProvider theme={theme}>
-        <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
           {children}
-        </QueryClientProvider>
+      </QueryClientProvider>
     </ThemeProvider>
   )
 };

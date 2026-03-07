@@ -45,36 +45,37 @@ export const AppHeroPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
 
 export function AppSearchPaper({ children }: { children: ReactNode }) {
   return (
-    <AppStyledPaper elevation={8} sx={{
-      width: "94%",
-    }}>
+    <AppStyledPaper elevation={8} sx={{width: "100%",}}>
       {children}
     </AppStyledPaper>
   );
 }
-export function AppCategoryListPaper({ children }: { children: ReactNode }) {
+
+export function AppCategoryListPaper(
+  { children }: { children: ReactNode }
+) {
   return (
     <AppStyledPaper elevation={8} sx={{
-        borderRadius: 4,
-        width: { sm: "94%", md: "45%" }, height: "80vh",
+        borderRadius: 4, width: { sm: "100%", md: "50%" }, height: "80vh",
       }}>
       {children}
     </AppStyledPaper>
   );
 }
 
+export function AppItemListPaper(
+  { children }: { children: ReactNode }
+) {
+  return (
+    <AppStyledPaper
+        elevation={8}
+        sx={{borderRadius: 4, width: "100%", height: "80vh",
+        }}>
+      {children}
+    </AppStyledPaper>
+  );
+}
 
-export const AppItemListPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
-  width: "94%",
-  maxWidth: "94%",
-  height: "80vh",
-  display: "flex",
-  flexWrap: 'wrap',
-  justifyContent: "center",
-  alignContent: "center",
-  backgroundColor: theme.palette.background.paper,
-  borderRadius: 4,
-}));
 
 export const AppListPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
   // width: "50vw",

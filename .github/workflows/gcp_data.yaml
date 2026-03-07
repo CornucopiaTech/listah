@@ -56,9 +56,9 @@ jobs:
         run: |
           tofu fmt -check
           tofu init
-          # tofu validate
-          # tofu plan -out=tfplan
-          # tofu apply -auto-approve tfplan
+          tofu validate
+          tofu plan -out=tfplan
+          tofu apply -auto-approve tfplan
 
       - name: Setup Liquibase
         uses: liquibase/setup-liquibase@v2
@@ -90,18 +90,13 @@ jobs:
 
           nohup ./cloud-sql-proxy --port "${{ env.LB_CONN_PORT }}" "${{ env.CONNECTION_NAME }}" &> /dev/null &
 
-      # --changelog-file="${{ github.workspace }}/liquibase/changelog/changelog.yaml"\
-      # --changelog-file="../../../../liquibase/changelog/changelog.yaml"\
       - name: Migrate Schema using Liquibase
         run: |
+          echo "${{ env.LB_URL }}"
           echo "$(pwd)"
           echo "${{ github.workspace }}"
           echo "${{ env.LB_CHANGELOG_PATH }}"
-          echo "${{ env.LB_URL }}"
-          echo "$(ls "${{ env.LB_CHANGELOG_PATH }}")"
-          echo "$(ls "../../../liquibase/changelog/changelog.yaml")"
           echo "$(realpath "../../../liquibase/changelog/changelog.yaml")"
-
 
           liquibase update \
             --changelog-file="../../../liquibase/changelog/changelog.yaml"\

@@ -4,7 +4,7 @@ import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import Box from '@mui/material/Box';
 import { Icon } from "@iconify/react";
-
+// import { useTheme } from "@mui/material";
 
 
 import {
@@ -12,9 +12,11 @@ import {
   type TBoundStore
 } from '@/lib/store/boundStore';
 import { DEFAULT_ITEM } from "@/lib/helper/defaults";
+// import type { AppTheme } from '@/system/theme';
 
 
 export function HomeFab() {
+  // const theme: AppTheme = useTheme();
   const store: TBoundStore = useBoundStore((state) => state);
 
   function handleFilterClick() {
@@ -39,7 +41,7 @@ export function HomeFab() {
     <Box sx={{ position: "fixed", bottom: 26, right: 6, zIndex: 1000 }}>
       <SpeedDial
         ariaLabel="SpeedDial basic example"
-        sx={{ position: "fixed", bottom: 26, right: 6, zIndex: 1000 }}
+        // FabProps={{ style: { backgroundColor: theme.palette.secondary.main }}}
         icon={<SpeedDialIcon />}
       >
         {formActions.map((action) => (

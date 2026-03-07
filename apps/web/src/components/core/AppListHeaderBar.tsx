@@ -1,5 +1,4 @@
-// import type { ReactNode } from 'react';
-// import { Fragment } from 'react';
+
 
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
@@ -15,7 +14,6 @@ export const ListHeaderBar = styled(Box)(({ theme }: { theme: AppTheme }) => ({
   justifyContent: "center",
   alignItems: "center",
   textAlign: "center",
-  // borderRadius: "4px",
   padding: 1,
   backgroundColor: theme.palette.primary.main,
 }));
