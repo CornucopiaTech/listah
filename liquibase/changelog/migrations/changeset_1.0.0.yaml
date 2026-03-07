@@ -1,7 +1,7 @@
 databaseChangeLog:
   - preConditions:
       - runningAs:
-          username:  listah-admin
+          username:  listah-db-admin
   - changeSet:
       id:  "1.0.0"
       author:  "Kelechi Berquist"

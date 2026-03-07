@@ -100,6 +100,7 @@ jobs:
           echo "${{ env.LB_URL }}"
           echo "$(ls "${{ env.LB_CHANGELOG_PATH }}")"
           echo "$(ls "../../../liquibase/changelog/changelog.yaml")"
+          echo "$(realpath "../../../liquibase/changelog/changelog.yaml")"
 
 
           liquibase update \
