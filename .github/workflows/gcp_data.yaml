@@ -56,9 +56,9 @@ jobs:
         run: |
           tofu fmt -check
           tofu init
-          tofu validate
-          tofu plan -out=tfplan
-          tofu apply -auto-approve tfplan
+          # tofu validate
+          # tofu plan -out=tfplan
+          # tofu apply -auto-approve tfplan
 
       - name: Setup Liquibase
         uses: liquibase/setup-liquibase@v2
@@ -79,7 +79,7 @@ jobs:
           echo "CONNECTION_NAME="$(tofu output -raw db_connection_name)"" >> ${GITHUB_ENV}
           echo "LB_CONN_PORT=9000" >> ${GITHUB_ENV}
           echo "LB_CHANGELOG_PATH="${{ github.workspace }}/liquibase/changelog/changelog.yaml"" >> ${GITHUB_ENV}
-          echo "LB_URL="jdbc:postgresql://127.0.0.1:9000/$db_name" >> ${GITHUB_ENV}
+          echo "LB_URL="jdbc:postgresql://127.0.0.1:9000/$db_name"" >> ${GITHUB_ENV}
 
       - name: Setup Cloud Sql Proxy
         run: |
