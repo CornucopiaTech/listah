@@ -103,7 +103,7 @@ jobs:
 
 
           liquibase update \
-            --changelog-file="${{ env.LB_CHANGELOG_PATH }}"\
+            --changelog-file="../../../liquibase/changelog/changelog.yaml"\
             --url="${{ env.LB_URL }}" \
             --log-level=INFO \
             --username="${{ env.DB_USERNAME}}" \
