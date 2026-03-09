@@ -34,7 +34,6 @@ declare global {
   }
 }
 
-export { };
 
 enableMapSet();
 export const queryClient = new QueryClient();
