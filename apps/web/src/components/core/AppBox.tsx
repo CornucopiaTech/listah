@@ -54,7 +54,7 @@ export function AppSectionStack({ children }: { children: ReactNode }): ReactNod
 export function AppPageStack({ children }: { children: ReactNode }): ReactNode {
   return (
     <Stack direction="column" spacing={2}
-      sx={{ width: "90vw", maxWidth: "90vw", }} justifyContent="center" alignItems="center">
+      sx={{ width: "100%", maxWidth: "100%", }} justifyContent="center" alignItems="center">
       {children}
     </Stack>
   );
@@ -64,7 +64,7 @@ export function AppPageStack({ children }: { children: ReactNode }): ReactNode {
 export function AppContainerStack({ children }: { children: ReactNode }): ReactNode {
   return (
     <Stack direction="column" spacing={2}
-      sx={{ width: "100%", maxWidth: "100%", m:0, p: 0}} justifyContent="center" alignItems="center">
+       sx={{ width: "100vw", maxWidth: "100vw", }} justifyContent="center" alignItems="center">
       {children}
     </Stack>
   );
