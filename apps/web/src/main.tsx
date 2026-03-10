@@ -14,6 +14,8 @@ import { enableMapSet } from 'immer';
 import { ThemeProvider, } from '@mui/material/styles';
 import { useUser } from '@clerk/clerk-react';
 import LinearProgress from '@mui/material/LinearProgress';
+import Box from '@mui/material/Box';
+
 
 
 // Internal imports
@@ -131,7 +133,10 @@ loadConfig().then(
       const root = ReactDOM.createRoot(rootElement);
       root.render(
       <ClerkProvider publishableKey={aKey}>
-          <App />
+          {/* <App /> */}
+          <Box sx={{ overflowX: "hidden" }}>
+            <App />
+          </Box>
       </ClerkProvider>
 
       )

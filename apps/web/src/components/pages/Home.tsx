@@ -10,7 +10,7 @@ import {
   AppListStack,
   AppPageStack,
   AppSectionStack
-} from "@/components/core/AppBox";
+} from "@/components/core/AppStack";
 import { HomeFab } from "@/components/core/HomeFab";
 import { AppFilterModal } from "@/components/core/FilterModal";
 import {

@@ -16,7 +16,6 @@ import { DEFAULT_ITEM } from "@/lib/helper/defaults";
 
 
 export function HomeFab() {
-  // const theme: AppTheme = useTheme();
   const store: TBoundStore = useBoundStore((state) => state);
 
   function handleFilterClick() {
@@ -38,7 +37,11 @@ export function HomeFab() {
   ]
 
   return (
-    <Box sx={{ position: "fixed", bottom: 26, right: 6, zIndex: 1000 }}>
+    <Box sx={{
+      position: "fixed",
+      bottom: { xs: 16, sm: 24, md: 32 },   // responsive spacing
+      right: { xs: 16, sm: 24, md: 32 },    // responsive spacing
+      }}>
       <SpeedDial
         ariaLabel="SpeedDial basic example"
         // FabProps={{ style: { backgroundColor: theme.palette.secondary.main }}}

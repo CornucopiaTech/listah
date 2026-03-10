@@ -5,7 +5,9 @@ import type {
   ChangeEvent,
   MouseEvent,
 } from 'react';
-import { Fragment } from "react";
+import {
+  Fragment,
+} from "react";
 import { Virtuoso } from 'react-virtuoso';
 import {
   useQuery,
@@ -24,6 +26,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Chip from '@mui/material/Chip';
 import TablePagination from '@mui/material/TablePagination';
+
 
 
 
@@ -51,16 +54,14 @@ import { AppH6Typography } from "@/components/core/Typography";
 
 function OuterBox( { children }: { children: ReactNode}): ReactNode {
   return (
-    <Box key="data-content"
-      sx={{
-        height: `60vh`,
-        width: '100%', display: 'block', overflow: 'auto',
-      }}>
-      {children}
-    </Box>
+    <Fragment>
+      <Box key="data-content" sx={{ height: `calc(100vh - 300px)`, width: '100%', }}>
+        {children}
+      </Box>
+    </Fragment>
+
   );
 }
-
 
 export function TagListLayout(): ReactNode {
   const routeApi = getRouteApi('/');
@@ -121,7 +122,7 @@ export function TagListLayout(): ReactNode {
     const tc: string = item.category ? item.category : ""
     return (
       <ListItem
-        style={{ height: 50, width: "100%", }} key={itemKey + tc}
+        key={itemKey + tc}
         component="div" disablePadding
         onClick={() => handleItemClick(item) }
       >
@@ -150,6 +151,7 @@ export function TagListLayout(): ReactNode {
   const categories: ITagCategory[] = data && data.categories ? data.categories : [];
 
 
+
   return (
     <Fragment>
       {
@@ -161,17 +163,15 @@ export function TagListLayout(): ReactNode {
         <OuterBox><ErrorAlert message={errMsg ? errMsg : error?.message || "An error occurred. Please try again"} /></OuterBox>
       }
       {
+        !isError && !isPending && categories.length == 0 &&
+        <OuterBox><AppH6Typography> No items found </AppH6Typography></OuterBox>
+      }
+      {
         categories.length > 0 && <Virtuoso key="data-content"
-          style={{
-            height: `65vh`, width: '100%', display: 'block', overflow: 'auto',
-          }}
+          style={{ height: `calc(100vh - 300px)`, width: '100%', }}
           data={categories}
           itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
         />
-      }
-      {
-        !isError && !isPending && categories.length == 0 &&
-        <OuterBox><AppH6Typography> No items found </AppH6Typography></OuterBox>
       }
 
       <TablePagination
@@ -181,7 +181,6 @@ export function TagListLayout(): ReactNode {
         rowsPerPage={query.tag.pageSize}
         onRowsPerPageChange={handlePageSizeChange}
       />
-
     </Fragment>
   );
 }
