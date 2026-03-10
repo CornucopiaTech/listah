@@ -9,7 +9,10 @@ import Container from '@mui/material/Container';
 
 
 
-import AppNavBar from '@/components/core/AppNavBar';
+import {
+  // AppNavBar,
+  AppTabNavBar,
+} from '@/components/core/AppNavBar';
 import {
   AppContainerStack,
 } from "@/components/core/AppStack";
@@ -22,7 +25,8 @@ export function AppContainer({ children }: { children: ReactNode }) {
     <Fragment>
       <CssBaseline />
         <AppContainerStack >
-          <AppNavBar />
+          {/* <AppNavBar /> */}
+        <AppTabNavBar />
           <Container maxWidth="xl">
             {children}
           </Container>
