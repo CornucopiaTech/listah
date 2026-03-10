@@ -1,71 +1,72 @@
-import type { ReactNode } from "react";
+
+import type { ReactNode } from 'react';
 import Box from '@mui/material/Box';
-import { styled } from '@mui/material/styles';
-import Stack from "@mui/material/Stack";
 
 
-import type { AppTheme } from '@/system/theme';
-
-
-
-export const AppBox = styled(Box)(({ theme }: { theme: AppTheme }) => ({
-  maxWidth: "80vw",
-  // height: "100%",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  backgroundColor: theme.palette.background.default,
-}));
-
-
-export function AppModalStack({ children }: { children: ReactNode }): ReactNode {
+export function SpaceBetweenBox({ children, sx}: { children: ReactNode, sx?: any}): ReactNode {
   return (
-    <Stack direction={{ sm: "column", md: "row" }} spacing={4}
+    <Box
       sx={{
-        maxWidth: "100%", width: "100%",}} justifyContent="center" alignItems="center">
+        ...sx,
+        justifyContent: 'space-between', alignContent: 'center',
+        display: 'flex', width: '100%',
+      }}>
       {children}
-    </Stack>
+    </Box>
   );
 }
 
 
-export function AppListStack({ children }: { children: ReactNode }): ReactNode {
+export function FlexEndBox({ children, sx}: { children: ReactNode, sx?: any}): ReactNode {
   return (
-    <Stack direction={{ sm: "column", md: "row" }} spacing={4}
+    <Box
       sx={{
-        maxWidth: "100%", width: "100%",}} justifyContent="center" alignItems="center">
+        ...sx,
+        justifyContent: 'flex-end', alignContent: 'center',
+        display: 'flex', width: '100%',
+      }}>
       {children}
-    </Stack>
+    </Box>
   );
 }
 
-
-export function AppSectionStack({ children }: { children: ReactNode }): ReactNode {
+export function FlexStartBox({ children, sx}: { children: ReactNode, sx?: any}): ReactNode {
   return (
-    <Stack direction="column" spacing={2}
+    <Box
       sx={{
-        maxWidth: "100%", width: "100%",}} justifyContent="center" alignItems="center">
+        ...sx,
+        justifyContent: 'flex-start', alignContent: 'center',
+        display: 'flex', width: '100%',
+      }}>
       {children}
-    </Stack>
+    </Box>
   );
 }
 
 
-export function AppPageStack({ children }: { children: ReactNode }): ReactNode {
+export function SpaceAroundBox({ children, sx}: { children: ReactNode, sx?: any}): ReactNode {
   return (
-    <Stack direction="column" spacing={2}
-      sx={{ width: "100%", maxWidth: "100%", }} justifyContent="center" alignItems="center">
+    <Box
+      sx={{
+        ...sx,
+        justifyContent: 'space-around', alignContent: 'center',
+        display: 'flex', width: '100%',
+      }}>
       {children}
-    </Stack>
+    </Box>
   );
 }
 
 
-export function AppContainerStack({ children }: { children: ReactNode }): ReactNode {
+export function CentredBox({ children, sx}: { children: ReactNode, sx?: any}): ReactNode {
   return (
-    <Stack direction="column" spacing={2}
-       sx={{ width: "100vw", maxWidth: "100vw", }} justifyContent="center" alignItems="center">
+    <Box
+      sx={{
+        ...sx,
+        justifyContent: 'center', alignContent: 'center',
+        display: 'flex', width: '100%', flexWrap: 'wrap',
+      }}>
       {children}
-    </Stack>
+    </Box>
   );
 }

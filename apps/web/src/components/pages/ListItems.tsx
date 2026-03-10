@@ -6,17 +6,17 @@ import {
 import { AppItemModal } from "@/components/core/AppItemModal";
 import {
   AppSearchBar,
-  // AppItemsSearchBar
 } from "@/components/core/AppSearchBar";
 import { ItemListLayout } from "@/components/layout/ItemListLayout";
 import {
   AppPageStack,
   AppSectionStack
-} from "@/components/core/AppBox";
+} from "@/components/core/AppStack";
 import { ItemsFab } from "@/components/core/ItemsFab";
 import { AppItemListPaper } from "@/components/core/AppPaper";
 import { AppListHeaderBar } from "@/components/core/AppListHeaderBar";
 import { AppH5ButtonTypography } from "@/components/core/ButtonTypography";
+// import { HomeBreadcrumbs } from '@/components/core/HomeBreadcrumb';
 import {
   useBoundStore,
   type TBoundStore
@@ -28,9 +28,9 @@ export function ListItems() {
   const store: TBoundStore = useBoundStore((state) => state);
   return (
     <AppPageStack>
+      {/* <HomeBreadcrumbs /> */}
       {store.itemModal && <AppItemModal route={"/items/$title"} />}
       <AppSearchBar route="/items/$title" />
-      {/* <AppItemsSearchBar /> */}
       <AppItemListPaper>
         <AppSectionStack>
           <AppListHeaderBar key="header">

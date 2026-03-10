@@ -51,26 +51,24 @@ export function AppSearchPaper({ children }: { children: ReactNode }) {
   );
 }
 
-export function AppCategoryListPaper(
-  { children }: { children: ReactNode }
-) {
+export function AppCategoryListPaper({ sx, children }: { sx?: any, children: ReactNode }) {
   return (
-    <AppStyledPaper elevation={8} sx={{
-        borderRadius: 4, width: { sm: "100%", md: "50%" }, height: "80vh",
+    <AppStyledPaper elevation={8} sx={{ ...sx,
+        borderRadius: 4,
+        width: { sm: "100%", md: "50%" },
+        maxWidth: { sm: "100%", md: "50%" },
+      height: "fit-content",
       }}>
       {children}
     </AppStyledPaper>
   );
 }
 
-export function AppItemListPaper(
-  { children }: { children: ReactNode }
-) {
+export function AppItemListPaper({ children }: { children: ReactNode }) {
   return (
     <AppStyledPaper
         elevation={8}
-        sx={{borderRadius: 4, width: "100%", height: "80vh",
-        }}>
+      sx={{ borderRadius: 4, width: "100%", maxWidth: "100%", height: "fit-content",}}>
       {children}
     </AppStyledPaper>
   );
@@ -79,7 +77,7 @@ export function AppItemListPaper(
 
 export const AppListPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
   // width: "50vw",
-  maxWidth: "50vw",
+  maxWidth: "50%",
   // height: "70vh",
   display: "flex",
   flexWrap: 'wrap',

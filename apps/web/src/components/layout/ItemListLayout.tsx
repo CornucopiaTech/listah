@@ -51,11 +51,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 
 function OuterBox({ children, }: { children: ReactNode}): ReactNode {
   return (
-    <Box key="data-content"
-      sx={{
-        height: `60vh`,
-        width: '100%', display: 'block', overflow: 'auto',
-      }}>
+    <Box key="data-content" sx={{ height: `calc(100vh - 300px)`, width: '100%', }}>
       {children}
     </Box>
   );
@@ -129,8 +125,7 @@ export function ItemListLayout(): ReactNode {
       <Fragment>
         {
           !store.selectMode &&
-          <ListItem
-            style={{ height: 50, width: "100%", }} key={itemKey + dis}
+          <ListItem key={itemKey + dis}
             component="div" disablePadding
             onClick={() => handleItemClick(item)}>
             <ListItemButton>
@@ -139,8 +134,7 @@ export function ItemListLayout(): ReactNode {
           </ListItem>
         }
         {
-          store.selectMode && <ListItem
-            style={{ height: 50, width: "100%", }} key={itemKey + dis}
+          store.selectMode && <ListItem key={itemKey + dis}
             component="div" disablePadding >
             <ListItemButton>
               <ListItemText primary={dis} />
@@ -168,9 +162,7 @@ export function ItemListLayout(): ReactNode {
       }
       {
         items.length > 0 && <Virtuoso key="data-content"
-          style={{
-            height: `65vh`, width: '100%', display: 'block', overflow: 'auto',
-          }}
+          style={{ height: `calc(100vh - 300px)`, width: '100%', }}
           data={items}
           itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
         />
