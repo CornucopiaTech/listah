@@ -15,33 +15,39 @@ const AppButtonTypography = styled(Typography)(({ theme }: { theme: AppTheme }) 
   // padding: '0.5em',
 }));
 
-export function AppHeroButtonTypography({ children }: { children: ReactNode }){
+export function AppHeroButtonTypography({ children, sx }: { children: ReactNode, sx?: any }){
   return (
-    <AppButtonTypography variant="h1">{ children }</AppButtonTypography>
+    <AppButtonTypography variant="h1" sx={{ ...sx }}>{ children }</AppButtonTypography>
   )
 }
 
-export function AppTitleButtonTypography({ children }: { children: ReactNode }){
+export function AppTitleButtonTypography({ children, sx }: { children: ReactNode, sx?: any }){
   return (
-    <AppButtonTypography variant="h3">{ children }</AppButtonTypography>
+    <AppButtonTypography variant="h3" sx={{ ...sx }}>{ children }</AppButtonTypography>
   )
 }
 
-export function AppBody1ButtonTypography({ children }: { children: ReactNode }){
+export function AppBody1ButtonTypography({ children, sx }: { children: ReactNode, sx?: any }){
   return (
-    <AppButtonTypography variant="body1">{ children }</AppButtonTypography>
+    <AppButtonTypography variant="body1" sx={{...sx}}>{ children }</AppButtonTypography>
   )
 }
 
-export function AppH5ButtonTypography({ children }: { children: ReactNode }) {
+export function AppH4ButtonTypography({ children, sx }: { children: ReactNode, sx?: any }) {
   return (
-    <AppButtonTypography variant="h5" sx={{}}>{children}</AppButtonTypography>
+    <AppButtonTypography variant="h4" sx={{ ...sx, display: "inline-flex", alignItems: 'center' , alignContent: 'center' }}>{children}</AppButtonTypography>
   )
 }
 
-export function AppH6ButtonTypography({ children }: { children: ReactNode }){
+export function AppH5ButtonTypography({ children, sx }: { children: ReactNode, sx?: any }) {
   return (
-    <AppButtonTypography variant="h6" sx={{ display: 'flex', alignItems: 'center', }}>{ children }</AppButtonTypography>
+    <AppButtonTypography variant="h5" sx={{...sx}}>{children}</AppButtonTypography>
+  )
+}
+
+export function AppH6ButtonTypography({ children, sx }: { children: ReactNode, sx?: any }){
+  return (
+    <AppButtonTypography variant="h6" sx={{ ...sx, display: 'flex', alignItems: 'center', }}>{ children }</AppButtonTypography>
   )
 }
 

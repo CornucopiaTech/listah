@@ -7,6 +7,8 @@ import type { IApiEndpointConfig } from '@/lib/model/common';
 import type { IUser } from '@/lib/model/auth';
 
 
+export const AppBarHeight =  64;
+
 export const DefaultQueryParams: IItemReadRequest = {
   userId: "",
   savedFilters: [],
