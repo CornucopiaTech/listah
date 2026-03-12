@@ -1,14 +1,14 @@
 package v1
 
 import (
-	"context"
 	"fmt"
-	"cornucopia/listah/apps/api/internal/pkg/model"
-	v1model "cornucopia/listah/apps/api/internal/pkg/model/v1"
-	pb "cornucopia/listah/apps/api/internal/pkg/proto/v1"
-	"connectrpc.com/connect"
+	"context"
+	v1model "cornucopia/listah/internal/pkg/model/v1"
+	pb "cornucopia/listah/internal/pkg/proto/v1"
 	"github.com/pkg/errors"
+	"connectrpc.com/connect"
 	"go.opentelemetry.io/otel"
+	// "go.mongodb.org/mongo-driver/v2/bson"
 )
 
 
@@ -16,86 +16,31 @@ func (s *Server) UpsertItem(ctx context.Context, req *connect.Request[pb.ItemSer
 	rpcName := "Update"
 	rpcLogName := fmt.Sprintf("POST /%v/%v", svcName, rpcName)
 
-
-	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
+	ctx, span := otel.Tracer("item-service").Start(ctx, "upsert")
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
-
-	// Create model for repository from request message
-	ins, res, err := v1model.ItemProtoToItemModel(req.Msg.Items, true)
+	// Upsert model for repository
+	imod, err :=  v1model.UpsertItemModelFromRequest(req.Msg)
 	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Error getting item model for insertion", errors.Cause(err).Error())
+		s.Logger.LogError(ctx, svcName, rpcName, "Error getting item model for upsert", errors.Cause(err).Error())
 		return nil, err
 	}
+	fmt.Printf("\n\n\n\nUpsertd Item Mode: %+v\n\n\n\n", imod[0])
 
-
-	w := model.UpsertInfo{
-		Conflict: v1model.ItemConflictFields,
-		Resolve: res,
-	}
-
-	_, err = s.BunRepo.Item.Upsert(ctx, &ins, &w)
+	// Insert model in repository
+	err = s.MongoRepo.Item.Upsert(ctx, imod)
 	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Repository  update error", errors.Cause(err).Error())
+		s.Logger.LogError(ctx, svcName, rpcName, "Repository  upsert error", errors.Cause(err).Error())
 		return nil, err
 	}
-	s.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository update")
-
-	// Get the ids of the inserted items
-
-	rs := []string{}
-	for _, v := range ins {
-		rs = append(rs,  v.Id)
+	s.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository upsert. Writing response")
+	iIds := []string{}
+	for _, om := range imod{
+		iIds = append(iIds, om.Id)
 	}
-
-	resm := &pb.ItemServiceUpsertItemResponse{ ItemIds: rs,}
-
-	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item update. Updated %d items", len(ins)))
-	return connect.NewResponse(resm), nil
-}
-
-
-
-func (s *Server) UpsertSavedFilter(ctx context.Context, req *connect.Request[pb.ItemServiceUpsertSavedFilterRequest]) (*connect.Response[pb.ItemServiceUpsertSavedFilterResponse], error) {
-	rpcName := "UpsertSavedFilter"
-	rpcLogName := fmt.Sprintf("POST /%v/%v", svcName, rpcName)
-
-
-	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
-	defer span.End()
-	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
-
-
-	// Create model for repository from request message
-	ins, res, err := v1model.SavedFilterProtoToSavedFilterModel(req.Msg.SavedFilters, true)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Error getting saved filter model for insertion", errors.Cause(err).Error())
-		return nil, err
+	res := &pb.ItemServiceUpsertItemResponse{
+		ItemIds: iIds,
 	}
-
-
-	w := model.UpsertInfo{
-		Conflict: v1model.ItemConflictFields,
-		Resolve: res,
-	}
-
-	_, err = s.BunRepo.Item.Upsert(ctx, &ins, &w)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Repository  update error", errors.Cause(err).Error())
-		return nil, err
-	}
-	s.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository update")
-
-	// Get the ids of the inserted items
-
-	rs := []string{}
-	for _, v := range ins {
-		rs = append(rs,  v.Id)
-	}
-
-	resm := &pb.ItemServiceUpsertSavedFilterResponse{ SavedFilterIds: rs,}
-
-	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item update. Updated %d items", len(ins)))
-	return connect.NewResponse(resm), nil
+	return connect.NewResponse(res), nil
 }

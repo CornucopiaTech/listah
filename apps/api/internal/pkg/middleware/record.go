@@ -2,9 +2,10 @@ package middleware
 
 import (
 	"context"
-	"cornucopia/listah/apps/api/internal/app/bootstrap"
-	"cornucopia/listah/apps/api/internal/pkg/model"
+	"cornucopia/listah/internal/app/bootstrap"
+	"cornucopia/listah/internal/pkg/model"
 	"errors"
+	// "fmt"
 
 	"connectrpc.com/connect"
 	"github.com/google/uuid"
@@ -70,6 +71,10 @@ func RecordRequestInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFu
 			req connect.AnyRequest,
 		) (connect.AnyResponse, error) {
 			// Log request in db in middleware
+			// fmt.Println("\n\n\ncalling:", req.Spec().Procedure)
+			// fmt.Println("\n\nrequest:", req.Any())
+			// fmt.Println("\n\n\n\n\n")
+
 			reqModel := model.ApiLog{
 				Id:      uuid.Must(uuid.NewV7()).String(),
 				RequestSource:      "api",
@@ -77,8 +82,9 @@ func RecordRequestInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFu
 				SpanId:  trace.SpanFromContext(ctx).SpanContext().SpanID().String(),
 				Request: req,
 				RequestTime: time.Now().UTC(),
+				Uri: req.Spec().Procedure,
 			}
-			err := infra.BunRepo.ApiLog.Insert(ctx, &reqModel)
+			err := infra.MongoRepo.ApiLog.Insert(ctx, &reqModel)
 			if err != nil {
 				infra.Logger.LogInfo(ctx, "middleware", "middleware", "Unable to record request")
 			}

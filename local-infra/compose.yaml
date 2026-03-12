@@ -1,3 +1,4 @@
 include:
    - ./instrumentation.yaml
    - ./data.yaml
+   - ./mongo-data.yaml

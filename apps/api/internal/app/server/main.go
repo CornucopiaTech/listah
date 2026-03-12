@@ -9,8 +9,8 @@ import (
 	"os/signal"
 	"time"
 
-	"cornucopia/listah/apps/api/internal/app/bootstrap"
-	"cornucopia/listah/apps/api/internal/pkg/telemetry"
+	"cornucopia/listah/internal/app/bootstrap"
+	"cornucopia/listah/internal/pkg/telemetry"
 )
 
 func Run() (err error) {
@@ -34,7 +34,7 @@ func Run() (err error) {
 
 	//
 	// Get route handler
-	handler := handle(i)
+	handler := handle(i, ctx)
 
 	// Start HTTP server.
 	srv := &http.Server{

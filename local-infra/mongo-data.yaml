@@ -6,8 +6,8 @@ services:
     restart: always
     environment:
       ENV: local
-    env_file: .env.local
+    env_file: .env
     volumes:
-       - ./local/db_data:/var/lib/mongodb/
+       - ./db_data/mongodb/:/var/lib/mongodb/
     ports:
       - "27017:27017"
