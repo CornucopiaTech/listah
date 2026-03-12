@@ -1,12 +1,8 @@
-module cornucopia/listah/apps/api
+module cornucopia/listah
 
 go 1.24.1
 
-//replace cornucopia/listah/internal => ../../internal
-
 require (
-	//cornucopia/listah/internal v0.0.0-00010101000000-000000000000
-	github.com/joho/godotenv v1.5.1
 	github.com/pkg/errors v0.9.1
 	google.golang.org/grpc v1.71.0
 )
@@ -20,9 +16,6 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/uptrace/bun v1.2.16
-	github.com/uptrace/bun/dialect/pgdialect v1.2.16
-	github.com/uptrace/bun/driver/pgdriver v1.2.16
-	github.com/uptrace/opentelemetry-go-extra/otelsql v0.3.2
 	github.com/uptrace/opentelemetry-go-extra/otelzap v0.3.2
 	go.mongodb.org/mongo-driver/v2 v2.1.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.60.0
@@ -73,5 +66,4 @@ require (
 	google.golang.org/genproto/googleapis/api v0.0.0-20250303144028-a0af3efb3deb // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250227231956-55c901821b1e // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	mellium.im/sasl v0.3.2 // indirect
 )

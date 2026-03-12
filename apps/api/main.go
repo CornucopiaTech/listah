@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/grpclog"
 
 
-	"cornucopia/listah/apps/api/internal/app/server"
+	"cornucopia/listah/internal/app/server"
 )
 
 func main() {

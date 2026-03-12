@@ -2,7 +2,7 @@ syntax = "proto3";
 package listah.v1;
 
 
-option go_package = "cornucopia/listah/apps/api/internal/pkg/proto/v1";
+option go_package = "cornucopia/listah/internal/pkg/proto/v1";
 
 
 import "v1/commons.proto";
@@ -16,13 +16,12 @@ message Item {
   string id = 1;
   string userId = 2 [json_name = "userId"];
   string title = 3;
-  optional string description = 4;
-  optional string note = 5;
-  repeated string tag = 6;
-  optional bool softDelete = 7;
+  map<string,string> properties = 4;
+  repeated string tags = 5;
+  optional bool softDelete = 6;
   optional google.protobuf.Timestamp reactivateAt = 100 [json_name = "reactivateAt"];
-  optional AuditUpdaterEnum updatedBy = 500 [json_name = "updated_by"];
-  optional google.protobuf.Timestamp updatedAt = 501 [json_name = "updated_at"];
+  optional AuditUpdaterEnum updatedBy = 500 [json_name = "updatedBy"];
+  optional google.protobuf.Timestamp updatedAt = 501 [json_name = "updatedAt"];
 }
 message Category {
   string category = 1;
@@ -38,11 +37,19 @@ message SavedFilter {
 }
 
 
+message ItemServiceCreateItemRequest {
+  repeated Item items = 1;
+}
+message ItemServiceCreateItemResponse {
+  repeated string itemIds = 1;
+}
+
 message ItemServiceReadItemRequest {
   string userId = 500 [json_name = "userId"];
   repeated string tags = 501;
   repeated string savedFilters = 502;
   string searchQuery = 503 [json_name = "searchQuery"];
+  repeated string itemIds = 504;
   int32 pageSize = 1000 [json_name = "pageSize"];
   int32 pageNumber = 1001 [json_name = "pageNumber"];
   string sortQuery = 1002 [json_name = "sortQuery"];
@@ -54,88 +61,11 @@ message ItemServiceReadItemResponse {
   repeated string tags = 501;
   repeated string savedFilters = 502;
   string searchQuery = 503 [json_name = "searchQuery"];
+  repeated string itemIds = 504;
   int32 pageSize = 1000 [json_name = "pageSize"];
   int32 pageNumber = 1001 [json_name = "pageNumber"];
   string sortQuery = 1002 [json_name = "sortQuery"];
 }
-
-
-// message ItemServiceReadCategoryRequest {
-//   string userId = 500 [json_name = "userId"];
-//   repeated string filter = 501;
-//   string searchQuery = 502 [json_name = "searchQuery"];
-//   int32 pageSize = 1000 [json_name = "pageSize"];
-//   int32 pageNumber = 1001 [json_name = "pageNumber"];
-//   string sortQuery = 1002 [json_name = "sortQuery"];
-// }
-// message ItemServiceReadCategoryResponse {
-//   repeated Category categories = 1;
-
-//   string userId = 500 [json_name = "userId"];
-//   repeated string filter = 501;
-//   string searchQuery = 502 [json_name = "searchQuery"];
-//   int32 pageSize = 1000 [json_name = "pageSize"];
-//   int32 pageNumber = 1001 [json_name = "pageNumber"];
-//   string sortQuery = 1002 [json_name = "sortQuery"];
-// }
-// message ItemServiceUpsertRequest {
-//   repeated Item items = 1;
-// }
-// message ItemServiceUpsertResponse {
-//   repeated string item_ids = 1;
-// }
-
-
-message ItemServiceReadTagCategoryRequest {
-  string userId = 500 [json_name = "userId"];
-  repeated string tags = 501;
-  repeated string savedFilters = 502;
-  int32 pageSize = 1000 [json_name = "pageSize"];
-  int32 pageNumber = 1001 [json_name = "pageNumber"];
-  string sortQuery = 1002 [json_name = "sortQuery"];
-}
-message ItemServiceReadTagCategoryResponse {
-  repeated Category categories = 1;
-
-  string userId = 500 [json_name = "userId"];
-  repeated string tags = 501;
-  repeated string savedFilters = 502;
-  int32 pageSize = 1000 [json_name = "pageSize"];
-  int32 pageNumber = 1001 [json_name = "pageNumber"];
-  string sortQuery = 1002 [json_name = "sortQuery"];
-}
-
-
-message ItemServiceReadTagRequest {
-  string userId = 500 [json_name = "userId"];
-  int32 pageSize = 1000 [json_name = "pageSize"];
-  int32 pageNumber = 1001 [json_name = "pageNumber"];
-  string sortQuery = 1002 [json_name = "sortQuery"];
-}
-message ItemServiceReadTagResponse {
-  repeated Category categories = 1;
-  string userId = 500 [json_name = "userId"];
-  int32 pageSize = 1000 [json_name = "pageSize"];
-  int32 pageNumber = 1001 [json_name = "pageNumber"];
-  string sortQuery = 1002 [json_name = "sortQuery"];
-}
-
-
-message ItemServiceReadSavedFilterRequest {
-  string userId = 500 [json_name = "userId"];
-  int32 pageSize = 1000 [json_name = "pageSize"];
-  int32 pageNumber = 1001 [json_name = "pageNumber"];
-  string sortQuery = 1002 [json_name = "sortQuery"];
-}
-message ItemServiceReadSavedFilterResponse {
-  repeated Category categories = 1;
-  string userId = 500 [json_name = "userId"];
-  int32 pageSize = 1000 [json_name = "pageSize"];
-  int32 pageNumber = 1001 [json_name = "pageNumber"];
-  string sortQuery = 1002 [json_name = "sortQuery"];
-}
-
-
 message ItemServiceUpsertItemRequest {
   repeated Item items = 1;
 }
@@ -144,43 +74,15 @@ message ItemServiceUpsertItemResponse {
 }
 
 
-message ItemServiceUpsertSavedFilterRequest {
-  repeated SavedFilter savedFilters = 1;
-}
-message ItemServiceUpsertSavedFilterResponse {
-  repeated string savedFilterIds = 1;
-}
-
-
 service ItemService {
+  rpc CreateItem(ItemServiceCreateItemRequest) returns (ItemServiceCreateItemResponse){
+    option (gnostic.openapi.v3.operation).description = "Create Item";
+  }
   rpc ReadItem(ItemServiceReadItemRequest) returns (ItemServiceReadItemResponse){
     option idempotency_level = NO_SIDE_EFFECTS;
     option (gnostic.openapi.v3.operation).description = "Read Item";
   }
-  rpc ReadTagCategory(ItemServiceReadTagCategoryRequest) returns (ItemServiceReadTagCategoryResponse){
-    option idempotency_level = NO_SIDE_EFFECTS;
-    option (gnostic.openapi.v3.operation).description = "Read Tag Category";
-  }
-  rpc ReadSavedFilterCategory(ItemServiceReadSavedFilterCategoryRequest) returns (ItemServiceReadSavedFilterCategoryResponse){
-    option idempotency_level = NO_SIDE_EFFECTS;
-    option (gnostic.openapi.v3.operation).description = "Read Saved Filter Category";
-  }
-
-  rpc ReadTag(ItemServiceReadTagRequest) returns (ItemServiceReadTagResponse){
-    option idempotency_level = NO_SIDE_EFFECTS;
-    option (gnostic.openapi.v3.operation).description = "Read Tag";
-  }
-
-  rpc ReadSavedFilter(ItemServiceReadSavedFilterRequest) returns (ItemServiceReadSavedFilterResponse){
-    option idempotency_level = NO_SIDE_EFFECTS;
-    option (gnostic.openapi.v3.operation).description = "Read Saved Filter";
-  }
-
   rpc UpsertItem(ItemServiceUpsertItemRequest) returns (ItemServiceUpsertItemResponse){
     option (gnostic.openapi.v3.operation).description = "Upsert Item";
   }
-  rpc UpsertSavedFilter(ItemServiceUpsertSavedFilterRequest) returns (ItemServiceUpsertSavedFilterResponse){
-    option (gnostic.openapi.v3.operation).description = "Upsert Saved Filter";
-  }
-
 }

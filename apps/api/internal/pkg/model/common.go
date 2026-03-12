@@ -1,36 +1,32 @@
 package model
 
 import (
-	"github.com/uptrace/bun"
-	"time"
 	"connectrpc.com/connect"
+	"time"
 )
 
 type ApiLog struct {
-	bun.BaseModel `bun:"table:instrumentation.logs,alias:lg"`
-	Id            string `bun:",pk"`
+	RequestTime   time.Time
+	Request       connect.AnyRequest
+	Id            string `bson:"_id"`
 	RequestSource string
 	TraceId       string
 	SpanId        string
-	Request       connect.AnyRequest
-	RequestTime  time.Time
+	Uri        string
 }
-
-
 
 type ItemSearch struct {
-	UserId string
-	Tags string
+	UserId       string
+	Tags         string
 	SavedFilters string
-	SearchQuery string
-	SortQuery string
-	Limit int
-	Offset int
-	PageNumber int
+	SearchQuery  string
+	SortQuery    string
+	Limit        int
+	Offset       int
+	PageNumber   int
 }
-
 
 type UpsertInfo struct {
 	Conflict []string
-	Resolve []string
+	Resolve  []string
 }

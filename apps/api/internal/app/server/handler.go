@@ -11,17 +11,19 @@ import (
 	"golang.org/x/net/http2/h2c"
 	"golang.org/x/net/http2"
 	"strings"
+	"context"
+	"github.com/pkg/errors"
 
 
-	"cornucopia/listah/apps/api/internal/app/bootstrap"
-	itemV1 "cornucopia/listah/apps/api/internal/app/item/v1"
-	"cornucopia/listah/apps/api/internal/pkg/middleware"
-	"cornucopia/listah/apps/api/internal/pkg/proto/v1/v1connect"
+	"cornucopia/listah/internal/app/bootstrap"
+	itemV1 "cornucopia/listah/internal/app/item/v1"
+	"cornucopia/listah/internal/pkg/middleware"
+	"cornucopia/listah/internal/pkg/proto/v1/v1connect"
 
 )
 
 
-func handle(i *bootstrap.Infra) http.Handler {
+func handle(i *bootstrap.Infra, ctx context.Context) http.Handler {
 	allowedOrigins := strings.Split(strings.TrimSpace(i.Config.Api.AllowedOrigins), ",")
 	mux := chi.NewRouter()
 	mux.Use(cors.Handler(cors.Options{
@@ -54,8 +56,13 @@ func handle(i *bootstrap.Infra) http.Handler {
 	}
 	mux.Mount("/", otelhttp.WithRouteTag("/", http.HandlerFunc(handleDoc)))
 
+
+
 	handleHealth := func (w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Ready")
+		_, err := fmt.Fprintf(w, "Ready")
+		if err != nil {
+			i.Logger.LogError(ctx, "Handler", "GET /health", "Error writing health", errors.Cause(err).Error())
+		}
 	}
 	mux.Mount("/health", otelhttp.WithRouteTag("/health", http.HandlerFunc(handleHealth)))
 

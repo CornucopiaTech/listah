@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"cornucopia/listah/apps/api/internal/app/bootstrap"
+	"cornucopia/listah/internal/app/bootstrap"
 
 	gerrors "github.com/pkg/errors"
 

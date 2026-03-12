@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"cornucopia/listah/apps/api/internal/app/bootstrap"
+	"cornucopia/listah/internal/app/bootstrap"
 	"log"
 
 	"connectrpc.com/connect"
