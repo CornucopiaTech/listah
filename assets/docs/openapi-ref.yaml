@@ -390,8 +390,7 @@ components:
             - $ref: '#/components/schemas/google.protobuf.Timestamp'
           title: reactivateAt
         updatedBy:
-          allOf:
-            - $ref: '#/components/schemas/listah.v1.AuditUpdaterEnum'
+          type: string
           title: updatedBy
         updatedAt:
           allOf:

@@ -9,11 +9,11 @@ console.log(import.meta.dirname);
 
 
 export function getData(arraySize) {
-  let numTags = 5;
-  let maxTags = 20;
+  let maxTags = 10;
   let maxUsers = 5;
-  let maxUniqueTags = 5;
+  let maxUniqueTags = 3;
   let maxUniqueUsers = 3;
+  let maxProps = 10;
   let allTags = faker.helpers.multiple(() => faker.word.noun(), { count: maxTags });
   let allUserIds = faker.helpers.multiple(() => faker.string.uuid(), { count: maxUsers });
   let updaters = ["AUDIT_UPDATER_ENUM_UNSPECIFIED", "AUDIT_UPDATER_ENUM_FRONTEND", "AUDIT_UPDATER_ENUM_SYSOPS"];
@@ -28,11 +28,17 @@ export function getData(arraySize) {
         title: faker.lorem.sentence(),
         description: faker.lorem.paragraphs(),
         note: faker.lorem.sentence(),
-        tag: faker.helpers.uniqueArray(faker.helpers.multiple(
+        tags: faker.helpers.uniqueArray(faker.helpers.multiple(
           () => (faker.helpers.arrayElement(allTags)),
           { count: faker.helpers.arrayElement([...Array(maxTags).keys()]) }
         ), maxTags),
         reactivateAt: faker.helpers.arrayElement([faker.date.future(), null]),
+        properties: Object.fromEntries(
+          faker.helpers.multiple(
+            () => ([faker.word.sample(), faker.word.sample()]),
+            { count: faker.helpers.arrayElement([...Array(maxProps).keys()]) }
+          )
+        ),
         audit: {
           "created_by": faker.helpers.arrayElement(updaters),
           "created_at": faker.date.past(),
@@ -78,4 +84,4 @@ async function loadData(maxLoaded, maxGen) {
 }
 
 
-loadData(100, 500)
+loadData(10, 5000)

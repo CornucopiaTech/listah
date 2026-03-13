@@ -35,9 +35,21 @@ export function AppBody1Typography({ children }: { children: ReactNode }){
 }
 
 
-export function AppH6Typography({ children }: { children: ReactNode }){
+export function AppH6Typography({ children, sx }: { children: ReactNode, sx?: any }) {
   return (
-    <AppTypography variant="h6" sx={{whiteSpace: 'pre-line' }}>{ children }</AppTypography>
+    <AppTypography variant="h6" sx={{...sx, whiteSpace: 'pre-line' }}>{children}</AppTypography>
+  )
+}
+
+export function AppH4Typography({ children, sx }: { children: ReactNode, sx?: any }) {
+  return (
+    <AppTypography variant="h4" sx={{ ...sx, whiteSpace: 'pre-line' }}>{children}</AppTypography>
+  )
+}
+
+export function AppH5Typography({ children, sx }: { children: ReactNode, sx?: any }){
+  return (
+    <AppTypography variant="h5" sx={{...sx, whiteSpace: 'pre-line' }}>{ children }</AppTypography>
   )
 }
 
