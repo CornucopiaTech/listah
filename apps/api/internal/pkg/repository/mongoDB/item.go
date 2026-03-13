@@ -1,9 +1,7 @@
 package mongoDB
 
 import (
-	// "fmt"
 	"context"
-	// "strings"
 	"cornucopia/listah/internal/pkg/logging"
 	v1model "cornucopia/listah/internal/pkg/model/v1"
 
@@ -20,7 +18,8 @@ type EmptyInterface []interface{}
 type Item interface {
 	Read(ctx context.Context, m *[]*v1model.Item, readFilter any) error
 	Insert(ctx context.Context, m []*v1model.Item) ([]string, error)
-	Upsert(ctx context.Context, m []*v1model.Item ) error
+	Update(ctx context.Context, m []*v1model.ItemUpdate) error
+	Replace(ctx context.Context, m []*v1model.ItemReplace) error
 }
 
 type itemAgent struct {
@@ -30,20 +29,23 @@ type itemAgent struct {
 }
 
 func (a *itemAgent) Read(ctx context.Context, m *[]*v1model.Item, readFilter any) error {
-	ctx, span := otel.Tracer("item-repository").Start(ctx, "Read many")
+	ctx, span := otel.Tracer("item-repository").Start(ctx, "Read")
 	defer span.End()
-	a.logger.For(ctx).Info("Reading many from item by filter")
+	a.logger.For(ctx).Info("Reading from item")
 
-	cursor, err := a.collection.Find(ctx, readFilter)
+	sort := bson.D{{Key: "title", Value: 1}}
+	opts := options.Find().SetSort(sort)
+
+	cursor, err := a.collection.Find(ctx, readFilter, opts)
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		a.logger.For(ctx).Error("Document could not be found for given filter", zap.String("cause", errors.Cause(err).Error()))
-		return err
+		a.logger.For(ctx).Error("Document could not be found", zap.String("cause", errors.Cause(err).Error()))
+		return nil
 	} else if err != nil {
-		a.logger.For(ctx).Error("Error occurred in repository while reading many from item using filter", zap.String("cause", errors.Cause(err).Error()))
+		a.logger.For(ctx).Error("Error occurred in repository while reading from item", zap.String("cause", errors.Cause(err).Error()))
 		return err
 	}
 
-	if err := cursor.All(context.TODO(), m); err != nil {
+	if err := cursor.All(ctx, m); err != nil {
 		a.logger.For(ctx).Error("Error occurred while marshalling find results into model", zap.String("cause", errors.Cause(err).Error()))
 		return err
 	}
@@ -51,12 +53,10 @@ func (a *itemAgent) Read(ctx context.Context, m *[]*v1model.Item, readFilter any
 	return nil
 }
 
-
-func (a *itemAgent) Insert(ctx context.Context, m []*v1model.Item )  ([]string, error) {
+func (a *itemAgent) Insert(ctx context.Context, m []*v1model.Item) ([]string, error) {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "insert")
 	defer span.End()
 	a.logger.For(ctx).Info("Inserting into item")
-
 
 	queryOpts := options.InsertMany().SetOrdered(false)
 	res, err := a.collection.InsertMany(ctx, m, queryOpts)
@@ -74,24 +74,37 @@ func (a *itemAgent) Insert(ctx context.Context, m []*v1model.Item )  ([]string, 
 	return insertions, nil
 }
 
-
-func (a *itemAgent) Upsert(ctx context.Context, m []*v1model.Item ) error {
-	ctx, span := otel.Tracer("item-repository").Start(ctx, "upsert")
+func (a *itemAgent) Update(ctx context.Context, m []*v1model.ItemUpdate) error {
+	ctx, span := otel.Tracer("item-repository").Start(ctx, "update")
 	defer span.End()
-	a.logger.For(ctx).Info("Upserting into item")
+	a.logger.For(ctx).Info("Updating into item")
 	// https://www.mongodb.com/docs/drivers/go/current/crud/query/retrieve/#std-label-golang-retrieve
 
+	opts := options.FindOneAndUpdate().SetUpsert(true).SetReturnDocument(options.After)
 	for _, om := range m {
-		filter := map[string] []map[string] string {
-			"$and": []map[string] string{
-				map[string] string{"_id": om.Id},
-				map[string] string{"userId": om.UserId},
-			},
-		}
-		opts := options.FindOneAndReplace().SetUpsert(true).SetReturnDocument(options.After)
 		var replacedDocument bson.M
 		err := a.collection.
-			FindOneAndReplace(ctx, filter, om, opts).
+			FindOneAndUpdate(ctx, om.Filter, om.Update, opts).
+			Decode(&replacedDocument)
+		if err != nil {
+			a.logger.For(ctx).Error("Error occurred in repository while updating item", zap.String("cause", errors.Cause(err).Error()))
+			return err
+		}
+	}
+	return nil
+}
+
+func (a *itemAgent) Replace(ctx context.Context, m []*v1model.ItemReplace) error {
+	ctx, span := otel.Tracer("item-repository").Start(ctx, "replace")
+	defer span.End()
+	a.logger.For(ctx).Info("Replacing item")
+	// https://www.mongodb.com/docs/drivers/go/current/crud/query/retrieve/#std-label-golang-retrieve
+
+	opts := options.FindOneAndReplace().SetUpsert(true) //.SetReturnDocument(options.After)
+	for _, om := range m {
+		var replacedDocument bson.M
+		err := a.collection.
+			FindOneAndReplace(ctx, om.Filter, om.Replace, opts).
 			Decode(&replacedDocument)
 		if err != nil {
 			a.logger.For(ctx).Error("Error occurred in repository while replacing item", zap.String("cause", errors.Cause(err).Error()))

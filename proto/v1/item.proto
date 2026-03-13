@@ -20,7 +20,7 @@ message Item {
   repeated string tags = 5;
   optional bool softDelete = 6;
   optional google.protobuf.Timestamp reactivateAt = 100 [json_name = "reactivateAt"];
-  optional AuditUpdaterEnum updatedBy = 500 [json_name = "updatedBy"];
+  optional string updatedBy = 500 [json_name = "updatedBy"];
   optional google.protobuf.Timestamp updatedAt = 501 [json_name = "updatedAt"];
 }
 message Category {

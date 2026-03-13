@@ -33,7 +33,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_7
+              properties: &ref_6
                 items:
                   type: array
                   items:
@@ -187,13 +187,7 @@ paths:
                                ) to obtain a formatter capable of generating timestamps in this format.
                         title: reactivateAt
                       updatedBy:
-                        allOf:
-                          - type: string
-                            title: AuditUpdaterEnum
-                            enum: &ref_6
-                              - AUDIT_UPDATER_ENUM_UNSPECIFIED
-                              - AUDIT_UPDATER_ENUM_FRONTEND
-                              - AUDIT_UPDATER_ENUM_SYSOPS
+                        type: string
                         title: updatedBy
                       updatedAt:
                         allOf:
@@ -303,7 +297,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_8
+                properties: &ref_7
                   itemIds:
                     type: array
                     items:
@@ -344,7 +338,7 @@ paths:
                     description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
                   detail:
                     type: object
-                    properties: &ref_11
+                    properties: &ref_12
                       type:
                         type: string
                       value:
@@ -428,7 +422,7 @@ paths:
             application/json:
               schema:
                 title: encoding
-                enum: &ref_9
+                enum: &ref_10
                   - proto
                   - json
                 description: Define which encoding or 'Message-Codec' to use
@@ -446,7 +440,7 @@ paths:
             application/json:
               schema:
                 title: compression
-                enum: &ref_10
+                enum: &ref_11
                   - identity
                   - gzip
                   - br
@@ -573,12 +567,81 @@ paths:
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
+  /listah.v1.ItemService/UpsertItem:
+    post:
+      tags:
+        - listah.v1.ItemService
+      summary: UpsertItem
+      description: Upsert Item
+      operationId: listah.v1.ItemService.UpsertItem
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            type: number
+            title: Connect-Protocol-Version
+            enum: *ref_0
+            description: Define the version of the Connect protocol
+            const: 1
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            type: number
+            title: Connect-Timeout-Ms
+            description: Define the timeout, in ms
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: &ref_8
+                items:
+                  type: array
+                  items:
+                    type: object
+                    allOf: *ref_1
+                    properties: *ref_2
+                    title: Item
+                    additionalProperties: false
+                  title: items
+              title: ItemServiceUpsertItemRequest
+              additionalProperties: false
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: &ref_9
+                  itemIds:
+                    type: array
+                    items:
+                      type: string
+                    title: itemIds
+                title: ItemServiceUpsertItemResponse
+                additionalProperties: false
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: *ref_3
+                title: Connect Error
+                additionalProperties: true
+                description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
 components:
   schemas:
     listah.v1.AuditUpdaterEnum:
       type: string
       title: AuditUpdaterEnum
-      enum: *ref_6
+      enum:
+        - AUDIT_UPDATER_ENUM_UNSPECIFIED
+        - AUDIT_UPDATER_ENUM_FRONTEND
+        - AUDIT_UPDATER_ENUM_SYSOPS
     listah.v1.Pagination:
       type: object
       properties:
@@ -751,12 +814,12 @@ components:
       additionalProperties: false
     listah.v1.ItemServiceCreateItemRequest:
       type: object
-      properties: *ref_7
+      properties: *ref_6
       title: ItemServiceCreateItemRequest
       additionalProperties: false
     listah.v1.ItemServiceCreateItemResponse:
       type: object
-      properties: *ref_8
+      properties: *ref_7
       title: ItemServiceCreateItemResponse
       additionalProperties: false
     listah.v1.ItemServiceReadItemRequest:
@@ -768,6 +831,16 @@ components:
       type: object
       properties: *ref_5
       title: ItemServiceReadItemResponse
+      additionalProperties: false
+    listah.v1.ItemServiceUpsertItemRequest:
+      type: object
+      properties: *ref_8
+      title: ItemServiceUpsertItemRequest
+      additionalProperties: false
+    listah.v1.ItemServiceUpsertItemResponse:
+      type: object
+      properties: *ref_9
+      title: ItemServiceUpsertItemResponse
       additionalProperties: false
     listah.v1.SavedFilter:
       type: object
@@ -795,7 +868,7 @@ components:
       additionalProperties: false
     encoding:
       title: encoding
-      enum: *ref_9
+      enum: *ref_10
       description: Define which encoding or 'Message-Codec' to use
     base64:
       type: boolean
@@ -803,7 +876,7 @@ components:
       description: Specifies if the message query param is base64 encoded, which may be required for binary data
     compression:
       title: compression
-      enum: *ref_10
+      enum: *ref_11
       description: Which compression algorithm to use for this request
     connect-protocol-version:
       type: number
@@ -823,6 +896,6 @@ components:
       description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
     google.protobuf.Any:
       type: object
-      properties: *ref_11
+      properties: *ref_12
       additionalProperties: true
       description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.

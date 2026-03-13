@@ -26,14 +26,16 @@ import Box from '@mui/material/Box';
 
 
 import {
-  AppH4ButtonTypography,
   AppH5ButtonTypography,
-  AppH6ButtonTypography,
 } from "@/components/core/ButtonTypography";
+
+import {
+  AppH4Typography,
+  AppH5Typography,
+} from "@/components/core/Typography";
 import { AppBarHeight } from '@/lib/helper/defaults';
 import type { AppTheme } from '@/lib/styles/theme';
 import { SpaceAroundBox, SpaceBetweenBox } from "@/components/core/AppBox";
-import { transform } from "zod";
 
 
 
@@ -147,42 +149,66 @@ export function AppTabNavBar() {
   const [value, setValue] = useState(0);
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
+    event.stopPropagation();
     setValue(newValue);
   };
 
   return (
     <SpaceBetweenBox sx={{ borderBottom: 1, borderColor: 'divider', width: '100%', alignItems: 'center', alignContent: 'center', p: "0.51%"}}>
       <Link
-        underline="hover" key="home" href="/"
+        underline="none" key="home" href="/"
         sx={{ color: theme.palette.primary.contrastText,}}>
 
-        <AppH4ButtonTypography>
+        <AppH4Typography>
           Listah
-        </AppH4ButtonTypography>
+        </AppH4Typography>
       </Link>
       <SpaceAroundBox sx={{ }}>
 
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example"  >
           <Tab
             label={
-              <AppH5ButtonTypography sx={{ display: 'inline-flex', textTransform: 'none' }}>
-                Tags
-              </AppH5ButtonTypography>
+            <Link
+                underline="none" key="home" href="/"
+              sx={{ color: theme.palette.primary.contrastText,}}>
+              <AppH5Typography sx={{textTransform: "none"}}>
+                Home
+              </AppH5Typography>
+            </Link>
             } {...a11yProps(0)}
           />
           <Tab
             label={
-              <AppH5ButtonTypography sx={{ display: 'inline-flex', textTransform: 'none' }}>
-                Saved Filters
-              </AppH5ButtonTypography>
+              <Link
+                underline="none" key="home" href="/tags"
+                sx={{ color: theme.palette.primary.contrastText, }}>
+                <AppH5Typography sx={{textTransform: "none"}}>
+                  Tags
+                </AppH5Typography>
+              </Link>
             } {...a11yProps(1)}
           />
           <Tab
             label={
-              <AppH5ButtonTypography sx={{ display: 'inline-flex', textTransform: 'none' }}>
-                Items
-              </AppH5ButtonTypography>
+              <Link
+                underline="none" key="filters" href="/saved-filters"
+                sx={{ color: theme.palette.primary.contrastText, }}>
+                <AppH5Typography sx={{textTransform: "none"}}>
+                  Saved Filters
+                </AppH5Typography>
+              </Link>
             } {...a11yProps(2)}
+          />
+          <Tab
+            label={
+              <Link
+                underline="none" key="items" href="/items"
+                sx={{ color: theme.palette.primary.contrastText, }}>
+                <AppH5Typography sx={{textTransform: "none"}}>
+                  Items
+                </AppH5Typography>
+              </Link>
+            } {...a11yProps(3)}
           />
           </Tabs>
       </SpaceAroundBox>

@@ -9,7 +9,6 @@ import (
 	"github.com/pkg/errors"
 	"connectrpc.com/connect"
 	"go.opentelemetry.io/otel"
-	// "go.mongodb.org/mongo-driver/v2/bson"
 )
 
 
@@ -24,7 +23,11 @@ func (s *Server) CreateItem(ctx context.Context, req *connect.Request[pb.ItemSer
 	// Create model for repository
 	var riq = &pb.ItemServiceUpsertItemRequest{}
 	err := model.MarshalCopyProto(req.Msg, riq)
-	imod, err :=  v1model.UpsertItemModelFromRequest(riq)
+	if err != nil {
+		s.Logger.LogError(ctx, svcName, rpcName, "Error marshalling request for insertion", errors.Cause(err).Error())
+		return nil, err
+	}
+	imod, err :=  v1model.InsertItemQueryFromRequest(riq)
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Error getting item model for insertion", errors.Cause(err).Error())
 		return nil, err
