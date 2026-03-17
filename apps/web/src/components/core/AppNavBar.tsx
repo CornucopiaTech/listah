@@ -1,6 +1,7 @@
 
 import type {
   SyntheticEvent,
+  ReactNode
 } from "react"
 
 
@@ -14,7 +15,7 @@ import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
 import Toolbar from '@mui/material/Toolbar';
 import { useTheme } from '@mui/material/styles';
-import { SignedIn, SignedOut, SignInButton, UserButton} from '@clerk/clerk-react';
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
 import { Icon } from "@iconify/react";
 import Tooltip from '@mui/material/Tooltip';
 import Link from '@mui/material/Link';
@@ -40,7 +41,7 @@ import { SpaceAroundBox, SpaceBetweenBox } from "@/components/core/AppBox";
 
 
 interface TabPanelProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
   index: number;
   value: number;
 }
@@ -49,15 +50,15 @@ export function AppNavBar() {
   const theme: AppTheme = useTheme();
   return (
     <AppBar position="static"
-        sx={{
-          bgcolor: theme.palette.primary.light, width: '100%', height: AppBarHeight,
-        }}
+      sx={{
+        bgcolor: theme.palette.primary.light, width: '100%', height: AppBarHeight,
+      }}
       elevation={1}
-      >
+    >
       <Toolbar sx={{
-          justifyContent: 'space-between', alignContent: 'center', alignItems: 'center',
-          display: 'flex', flexWrap: 'wrap', width: '100%', p: "1%"
-        }}>
+        justifyContent: 'space-between', alignContent: 'center', alignItems: 'center',
+        display: 'flex', flexWrap: 'wrap', width: '100%', p: "1%"
+      }}>
         <Link
           underline="hover" key="home" href="/"
           sx={{ color: theme.palette.primary.contrastText, p: 0, m: 0, display: 'flex', alignItems: 'center', }}>
@@ -154,27 +155,27 @@ export function AppTabNavBar() {
   };
 
   return (
-    <SpaceBetweenBox sx={{ borderBottom: 1, borderColor: 'divider', width: '100%', alignItems: 'center', alignContent: 'center', p: "0.51%"}}>
+    <SpaceBetweenBox sx={{ borderBottom: 1, borderColor: 'divider', width: '100%', alignItems: 'center', alignContent: 'center', p: "0.51%" }}>
       <Link
         underline="none" key="home" href="/"
-        sx={{ color: theme.palette.primary.contrastText,}}>
+        sx={{ color: theme.palette.primary.contrastText, }}>
 
         <AppH4Typography>
           Listah
         </AppH4Typography>
       </Link>
-      <SpaceAroundBox sx={{ }}>
+      <SpaceAroundBox sx={{}}>
 
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example"  >
           <Tab
             label={
-            <Link
+              <Link
                 underline="none" key="home" href="/"
-              sx={{ color: theme.palette.primary.contrastText,}}>
-              <AppH5Typography sx={{textTransform: "none"}}>
-                Home
-              </AppH5Typography>
-            </Link>
+                sx={{ color: theme.palette.primary.contrastText, }}>
+                <AppH5Typography sx={{ textTransform: "none" }}>
+                  Home
+                </AppH5Typography>
+              </Link>
             } {...a11yProps(0)}
           />
           <Tab
@@ -182,7 +183,7 @@ export function AppTabNavBar() {
               <Link
                 underline="none" key="home" href="/tags"
                 sx={{ color: theme.palette.primary.contrastText, }}>
-                <AppH5Typography sx={{textTransform: "none"}}>
+                <AppH5Typography sx={{ textTransform: "none" }}>
                   Tags
                 </AppH5Typography>
               </Link>
@@ -193,7 +194,7 @@ export function AppTabNavBar() {
               <Link
                 underline="none" key="filters" href="/saved-filters"
                 sx={{ color: theme.palette.primary.contrastText, }}>
-                <AppH5Typography sx={{textTransform: "none"}}>
+                <AppH5Typography sx={{ textTransform: "none" }}>
                   Saved Filters
                 </AppH5Typography>
               </Link>
@@ -204,13 +205,13 @@ export function AppTabNavBar() {
               <Link
                 underline="none" key="items" href="/items"
                 sx={{ color: theme.palette.primary.contrastText, }}>
-                <AppH5Typography sx={{textTransform: "none"}}>
+                <AppH5Typography sx={{ textTransform: "none" }}>
                   Items
                 </AppH5Typography>
               </Link>
             } {...a11yProps(3)}
           />
-          </Tabs>
+        </Tabs>
       </SpaceAroundBox>
     </SpaceBetweenBox>
   );
