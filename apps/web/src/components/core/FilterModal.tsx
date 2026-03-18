@@ -30,7 +30,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import IconButton from '@mui/material/IconButton';
 import { Icon } from "@iconify/react";
-import { useUser } from '@clerk/clerk-react';
+import { useUser } from '@clerk/react';
 import { useTheme } from "@mui/material";
 import { VirtuosoGrid } from 'react-virtuoso'
 import Chip from '@mui/material/Chip';
@@ -62,9 +62,9 @@ import type {
   ITagCategory,
   ITagCategoryReadResponse,
 } from "@/lib/model/tag";
-import {  tagGroupOptions } from '@/lib/helper/querying';
+import { tagGroupOptions } from '@/lib/helper/querying';
 import type { ISavedFilter, } from "@/lib/model/savedFilter";
-import  { ZSavedFilter } from "@/lib/model/savedFilter";
+import { ZSavedFilter } from "@/lib/model/savedFilter";
 
 
 
@@ -110,16 +110,16 @@ export function AppFilterModal(): ReactNode {
   }
 
   useEffect(() => {
-      // if (!form.state.isSubmitted) return;
-      if (!mutation.isSuccess) return;
+    // if (!form.state.isSubmitted) return;
+    if (!mutation.isSuccess) return;
 
-      const timer = setTimeout(
-        () => {
-          console.log("Timer fired after 2 seconds");
-          closeModal();
-        }, 2000);
-      return () => clearTimeout(timer); // cleanup
-    }, [mutation.isSuccess]
+    const timer = setTimeout(
+      () => {
+        console.log("Timer fired after 2 seconds");
+        closeModal();
+      }, 2000);
+    return () => clearTimeout(timer); // cleanup
+  }, [mutation.isSuccess]
   );
   // }, [form.state.isSubmitted, mutation.isSuccess]);
 
@@ -139,7 +139,7 @@ export function AppFilterModal(): ReactNode {
     [key: string]: string | boolean;
   };
 
-  function formSubmission({ value }: {value: FormObjectType}): void {
+  function formSubmission({ value }: { value: FormObjectType }): void {
     console.info("In formSubmission - value ", value);
     let checkedCategories: string[] = [];
 
@@ -162,13 +162,13 @@ export function AppFilterModal(): ReactNode {
 
 
   const gridComponents = {
-    List: forwardRef(({ style, children, ...props }: { style: any, children: ReactNode, props: any}, ref: any) => (
+    List: forwardRef(({ style, children, ...props }: { style: any, children: ReactNode, props: any }, ref: any) => (
       <div ref={ref} {...props}
-          style={{display: 'flex', flexWrap: 'wrap', ...style,}}>
+        style={{ display: 'flex', flexWrap: 'wrap', ...style, }}>
         {children}
       </div>
     )),
-    Item: ({ children, ...props }: { children: ReactNode; [key: string]: unknown }) => (
+    Item: ({ children, ...props }: { children: ReactNode;[key: string]: unknown }) => (
       <div
         {...props}
         style={{
@@ -289,7 +289,7 @@ export function AppFilterModal(): ReactNode {
     },
   });
 
-  function handleClone(){
+  function handleClone() {
     const fname = form.state.values.___filterName || "";
     form.setFieldValue('id', uuidv4());
     form.setFieldValue('___filterName', "[Clone of] - " + fname);
@@ -320,7 +320,7 @@ export function AppFilterModal(): ReactNode {
 
       <form onSubmit={onFormSubmit}>
         <DialogContent sx={dialogSx} >
-          {isPending &&<LinearProgress />}
+          {isPending && <LinearProgress />}
           {
             !isPending && isError &&
             <ErrorAlert message={error?.message || "An error occurred. Please try again"} />
@@ -354,29 +354,29 @@ export function AppFilterModal(): ReactNode {
                 key={`Filter Name`}
                 name={`___filterName`}
                 validators={{
-                  onBlur: ({ value }: {value: any}) =>
+                  onBlur: ({ value }: { value: any }) =>
                     value.length < 1 ? 'You must enter a filter name' : undefined,
                 }}
 
                 children={
                   (field) =>
-                  <Fragment>
-                    <TextField
-                      fullWidth
-                      multiline
-                      id={`Filter Name`}
-                      key={`___filterName`}
-                      value={field.state.value}
-                      label={`Filter Name`}
-                      onChange={
-                        (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-                      size="small"
-                      variant="standard"
-                    />
-                    {!field.state.meta.isValid && (
+                    <Fragment>
+                      <TextField
+                        fullWidth
+                        multiline
+                        id={`Filter Name`}
+                        key={`___filterName`}
+                        value={field.state.value}
+                        label={`Filter Name`}
+                        onChange={
+                          (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
+                        size="small"
+                        variant="standard"
+                      />
+                      {!field.state.meta.isValid && (
                         <ErrorAlert message={field.state.meta.errors.join(', ')} />
-                    )}
-                  </Fragment>
+                      )}
+                    </Fragment>
 
                 }
               />

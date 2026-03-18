@@ -15,7 +15,7 @@ import {
   useParams
 } from '@tanstack/react-router';
 import Box from '@mui/material/Box';
-import { useUser } from '@clerk/clerk-react';
+import { useUser } from '@clerk/react';
 import { Virtuoso } from 'react-virtuoso';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -38,7 +38,7 @@ import {
 } from '@/lib/store/boundStore';
 
 import { itemGroupOptions } from '@/lib/helper/querying';
-import { ErrorAlert} from "@/components/core/Alerts";
+import { ErrorAlert } from "@/components/core/Alerts";
 import {
   decodeState,
   encodeState
@@ -49,7 +49,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 
 
 
-function OuterBox({ children, }: { children: ReactNode}): ReactNode {
+function OuterBox({ children, }: { children: ReactNode }): ReactNode {
   return (
     <Box key="data-content" sx={{ height: `calc(100vh - 300px)`, width: '100%', }}>
       {children}
@@ -63,10 +63,10 @@ export function ItemListLayout(): ReactNode {
   let search: IItemReadRequest = decodeState(routeSearch.s) as IItemReadRequest;
   const navigate = useNavigate();
   const { user, } = useUser();
-  const title = useParams({strict: false}).title;
+  const title = useParams({ strict: false }).title;
   const store: TBoundStore = useBoundStore((state) => state);
 
-  const query = {...search, userId: user?.id || ""};
+  const query = { ...search, userId: user?.id || "" };
 
   const {
     isPending, isError, data, error
@@ -74,11 +74,11 @@ export function ItemListLayout(): ReactNode {
 
 
   let errMsg: string = isError && error && error instanceof Error ? error.message : "";
-  try{
+  try {
     ZItemReadResponse.parse(data);
-  } catch(error){
+  } catch (error) {
     errMsg = "An error occurred. Please try again";
-    if(error instanceof z.ZodError){
+    if (error instanceof z.ZodError) {
       console.info("Zod issue - ", error.issues);
     } else {
       console.info("Other issue - ", error);
@@ -115,7 +115,7 @@ export function ItemListLayout(): ReactNode {
     navigate({
       to: "/items/$title",
       search: { s: encoded },
-      params: { title: title || ""}
+      params: { title: title || "" }
     });
   };
 

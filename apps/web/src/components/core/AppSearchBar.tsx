@@ -10,7 +10,7 @@ import {
   useNavigate,
   getRouteApi,
 } from '@tanstack/react-router';
-import { useUser } from '@clerk/clerk-react';
+import { useUser } from '@clerk/react';
 
 
 import type {
@@ -37,7 +37,7 @@ export function AppSearchBar({ route }: { route: "/" | "/items/$title" }): React
   function handleSearchSubmit() {
     console.log("In handleItemclick - e ");
     const q: IItemReadRequest = {
-      ...query, savedFilters: [], tags:[],
+      ...query, savedFilters: [], tags: [],
       pageNumber: 0, searchQuery: store.searchQuery,
     };
     const encoded = encodeState(q);
@@ -48,7 +48,7 @@ export function AppSearchBar({ route }: { route: "/" | "/items/$title" }): React
     <Fragment>
       <AppSearchPaper>
         <Stack direction="row" spacing={2}
-          sx={{maxWidth: "100%", width: "100%", p: "1%"}} justifyContent="center" alignItems="center">
+          sx={{ maxWidth: "100%", width: "100%", p: "1%" }} justifyContent="center" alignItems="center">
           <InputBase
             sx={{ ml: 1, flex: 1, width: "90%" }}
             placeholder={placeholderText}
@@ -84,7 +84,7 @@ export function AppHomeSearchBar(): ReactNode {
   function handleSearchSubmit() {
     console.log("In handleItemclick - e ");
     const q: IItemReadRequest = {
-      ...query, savedFilters: [], tags:[],
+      ...query, savedFilters: [], tags: [],
       pageNumber: 0, searchQuery: store.searchQuery,
     };
     const encoded = encodeState(q);
@@ -95,7 +95,7 @@ export function AppHomeSearchBar(): ReactNode {
     <Fragment>
       <AppSearchPaper>
         <Stack direction="row" spacing={2}
-          sx={{maxWidth: "100%", width: "100%", p: "1%"}} justifyContent="center" alignItems="center">
+          sx={{ maxWidth: "100%", width: "100%", p: "1%" }} justifyContent="center" alignItems="center">
           <InputBase
             sx={{ ml: 1, flex: 1, width: "90%" }}
             placeholder={placeholderText}
@@ -144,7 +144,7 @@ export function AppItemsSearchBar(): ReactNode {
     <Fragment>
       <AppSearchPaper>
         <Stack direction="row" spacing={2}
-          sx={{maxWidth: "100%", width: "100%", p: "1%"}} justifyContent="center" alignItems="center">
+          sx={{ maxWidth: "100%", width: "100%", p: "1%" }} justifyContent="center" alignItems="center">
           <InputBase
             sx={{ ml: 1, flex: 1, width: "90%" }}
             placeholder={placeholderText}
@@ -165,4 +165,3 @@ export function AppItemsSearchBar(): ReactNode {
     </Fragment>
   );
 }
-

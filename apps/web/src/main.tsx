@@ -9,10 +9,10 @@ import {
   QueryClient,
   QueryClientProvider
 } from '@tanstack/react-query';
-import { ClerkProvider } from '@clerk/clerk-react'
+import { ClerkProvider } from '@clerk/react'
 import { enableMapSet } from 'immer';
 import { ThemeProvider, } from '@mui/material/styles';
-import { useUser } from '@clerk/clerk-react';
+import { useUser } from '@clerk/react';
 import LinearProgress from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
 

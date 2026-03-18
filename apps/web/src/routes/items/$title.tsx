@@ -2,14 +2,16 @@ import {
   createFileRoute,
   Navigate,
 } from '@tanstack/react-router';
-
 import type {
   ReactNode,
 } from 'react';
 import {
-  Protect,
+  Fragment,
+} from 'react';
+import {
   useUser
-} from '@clerk/clerk-react';
+} from '@clerk/react';
+import { Show, RedirectToSignIn } from '@clerk/react';
 import LinearProgress from '@mui/material/LinearProgress';
 
 
@@ -33,14 +35,15 @@ function Page(): ReactNode {
   if (!search || Object.keys(search).length === 0 || !search.s) {
     return <Navigate
       to="/"
-      search={{ s: encodeState(DefaultQueryParams) as unknown as string}}
+      search={{ s: encodeState(DefaultQueryParams) as unknown as string }}
       replace
     />
   }
 
   return (
-    <Protect>
-      <ListItems />
-    </Protect>
+    <Fragment>
+      <Show when="signed-in"> <ListItems /> </Show>
+      <Show when="signed-out"> <RedirectToSignIn /> </Show>
+    </Fragment>
   );
 }

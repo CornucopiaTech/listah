@@ -31,7 +31,7 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { Icon } from "@iconify/react";
-import { useUser } from '@clerk/clerk-react';
+import { useUser } from '@clerk/react';
 import { useTheme } from "@mui/material";
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
@@ -64,7 +64,7 @@ import { DefaultHomeQueryParams } from '@/lib/helper/defaults';
 type itemFields = "id" | "tag" | "title" | "userId" | "description" | "note" | "softDelete" | `tag[${number}]`
 
 export function AppItemModal(
-  { route }: { route: "/" | "/items/$title"  }
+  { route }: { route: "/" | "/items/$title" }
 ): ReactNode {
 
 
@@ -144,13 +144,13 @@ export function AppItemModal(
   }, [form.state.isSubmitted, mutation.isSuccess]);
 
 
-  function closeModal(){
+  function closeModal() {
     store.setItemModal(false);
     store.setDisplayId("");
     store.setDisplayItem(DEFAULT_ITEM);
   }
 
-  function onFormSubmit(e: FormEvent<HTMLFormElement>){
+  function onFormSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     e.stopPropagation()
     //Note: form.handleSubmit is automatically called on form submit. it does not need to be called again. Calling it again results in the form getting sent multiple times.
@@ -164,7 +164,7 @@ export function AppItemModal(
     const userId = user && user.id ? user.id : value.userId;
     const submitValue = {
       ...value,
-        userId,
+      userId,
       id: itemId,
       tag: value.tag?.filter((t) => t != "")
     }
@@ -173,7 +173,7 @@ export function AppItemModal(
 
   }
 
-  function getSimpleField(key: itemFields){
+  function getSimpleField(key: itemFields) {
     const sx = (key == "id" || key == "userId") ? { display: 'none' } : {}
     return (
       <form.Field
@@ -181,7 +181,7 @@ export function AppItemModal(
         name={key}
         children={
           (field) =>
-            <Grid container sx={{width: '100%'}} spacing={1}>
+            <Grid container sx={{ width: '100%' }} spacing={1}>
               <Grid size={12}>
                 <TextField
                   fullWidth
@@ -197,13 +197,13 @@ export function AppItemModal(
                   variant="standard"
                 />
               </Grid>
-          </Grid>
+            </Grid>
         }
       />
     );
   }
 
-  function getTagField(){
+  function getTagField() {
     return (
       <form.Field name="tag" mode="array">
         {
@@ -212,17 +212,17 @@ export function AppItemModal(
               <Button
                 onClick={() => field.pushValue('')}
                 type="button">
-                  <AppBody1Typography>Add new tag</AppBody1Typography>
+                <AppBody1Typography>Add new tag</AppBody1Typography>
 
               </Button>
               {
                 field.state.value &&
-                <Grid container spacing={1} sx={{width: '100%'}}>{
+                <Grid container spacing={1} sx={{ width: '100%' }}>{
                   field.state.value.map((_, i) => {
                     return <form.Field key={i} name={`tag[${i}]`}>{
                       (subField) => {
                         return (
-                          <Grid size={{ xs:12, sm: 6, md: 6 }}>
+                          <Grid size={{ xs: 12, sm: 6, md: 6 }}>
                             <TextField
                               multiline
                               id={"item-tag-" + i}
@@ -249,12 +249,12 @@ export function AppItemModal(
     );
   }
 
-  function handleDelete(){
+  function handleDelete() {
     form.setFieldValue('softDelete', true);
     form.handleSubmit();
   }
 
-  function handleClone(){
+  function handleClone() {
     const title = form.state.values.title || "";
     form.setFieldValue('id', uuidv4());
     form.setFieldValue('title', "[Clone of] - " + title);
@@ -267,7 +267,7 @@ export function AppItemModal(
     height: '70vh',
     maxHeight: 720,
     overflow: 'auto',
-      '&::-webkit-scrollbar': {
+    '&::-webkit-scrollbar': {
       width: '15px', // width of the entire scrollbar
     },
     '&::-webkit-scrollbar-track': {
@@ -286,7 +286,7 @@ export function AppItemModal(
 
 
 
-  const deleteIcon = form.state.isSubmitting ? "ic:baseline-auto-delete" : (!form.state.canSubmit || form.state.values.id == "") ? "mdi:delete-off" : "ic:sharp-delete" ;
+  const deleteIcon = form.state.isSubmitting ? "ic:baseline-auto-delete" : (!form.state.canSubmit || form.state.values.id == "") ? "mdi:delete-off" : "ic:sharp-delete";
   const deleteTooltip = (!form.state.canSubmit || form.state.values.id == "") ? "Unable to delete" : "Delete";
 
   const saveIcon = form.state.isSubmitting ? "material-symbols:hourglass-top" : form.state.canSubmit ? "material-symbols:save-sharp" : "lucide:save-off";
@@ -296,17 +296,17 @@ export function AppItemModal(
 
 
   const formActions = [
-    {name: cloneTooltip, icon: cloneIcon, onClick: handleClone},
-    {name: deleteTooltip, icon: deleteIcon, onClick: handleDelete},
-    {name: saveTooltip, icon: saveIcon, onClick: form.handleSubmit},
-    {name: "Reset", icon: "material-symbols-light:restart-alt", onClick: form.reset},
+    { name: cloneTooltip, icon: cloneIcon, onClick: handleClone },
+    { name: deleteTooltip, icon: deleteIcon, onClick: handleDelete },
+    { name: saveTooltip, icon: saveIcon, onClick: form.handleSubmit },
+    { name: "Reset", icon: "material-symbols-light:restart-alt", onClick: form.reset },
   ]
   const formErrorMap = useStore(form.store, (state) => state.errorMap)
 
   return (
     <Dialog fullWidth open={store.itemModal} onClose={closeModal} >
       <IconButton aria-label="delete"
-          sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}
+        sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}
         onClick={closeModal}>
         <Icon icon="material-symbols-light:close-rounded" width="40" height="40" />
       </IconButton>
@@ -330,8 +330,8 @@ export function AppItemModal(
             {
               formErrorMap.onBlur && (<ErrorAlert message={`${formErrorMap.onBlur}`} />)
             }
-            {fields.map((fds: itemFields) => getSimpleField(fds)) }
-            { getTagField() }
+            {fields.map((fds: itemFields) => getSimpleField(fds))}
+            {getTagField()}
           </Stack>
         </DialogContent>
         <DialogActions>
@@ -366,5 +366,3 @@ export function AppItemModal(
     </Dialog>
   );
 }
-
-

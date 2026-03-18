@@ -18,7 +18,7 @@ import {
   useNavigate,
   getRouteApi,
 } from '@tanstack/react-router';
-import { useUser } from '@clerk/clerk-react';
+import { useUser } from '@clerk/react';
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
 import ListItem from '@mui/material/ListItem';
@@ -41,14 +41,14 @@ import {
   ZSavedFilterCategoryReadResponse,
 } from "@/lib/model/savedFilter";
 import { savedFilterGroupOptions } from '@/lib/helper/querying';
-import { ErrorAlert} from "@/components/core/Alerts";
+import { ErrorAlert } from "@/components/core/Alerts";
 import { encodeState, decodeState } from '@/lib/helper/encoders';
 import { DefaultQueryParams } from '@/lib/helper/defaults';
 import { AppH6Typography } from "@/components/core/Typography";
 
 
 
-function OuterBox( { children }: { children: ReactNode}): ReactNode {
+function OuterBox({ children }: { children: ReactNode }): ReactNode {
   return (
     <Box key="data-content" sx={{ height: `calc(100vh - 300px)`, width: '100%', }}>
       {children}
@@ -57,13 +57,13 @@ function OuterBox( { children }: { children: ReactNode}): ReactNode {
 }
 export function SavedFilterListLayout(): ReactNode {
   const routeApi = getRouteApi('/');
-  const routeSearch: { s: string} = routeApi.useSearch()
+  const routeSearch: { s: string } = routeApi.useSearch()
   let search = decodeState(routeSearch.s) as THomeQueryParams;
   const navigate = useNavigate();
   const { user, } = useUser();
 
   const query = {
-    savedFilter: { ...search.savedFilter, userId: user?.id || ""},
+    savedFilter: { ...search.savedFilter, userId: user?.id || "" },
     tag: { ...search.tag, userId: user?.id || "" },
   }
 
@@ -88,7 +88,7 @@ export function SavedFilterListLayout(): ReactNode {
   function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const q: THomeQueryParams = {
       ...query,
-      savedFilter: {...query.savedFilter, pageSize: parseInt(e.target.value, 10), pageNumber: 0,}
+      savedFilter: { ...query.savedFilter, pageSize: parseInt(e.target.value, 10), pageNumber: 0, }
     };
     const encoded = encodeState(q);
     navigate({ to: "/", search: { s: encoded } });
@@ -110,11 +110,11 @@ export function SavedFilterListLayout(): ReactNode {
       <ListItem
         key={itemKey + tc}
         component="div" disablePadding
-        onClick={() => handleItemClick(item) }
+        onClick={() => handleItemClick(item)}
       >
         <ListItemButton>
           <ListItemText primary={tc} />
-          <Chip sx={{background: "primary"}} label={item.rowCount ? item.rowCount.toString() : "0"} />
+          <Chip sx={{ background: "primary" }} label={item.rowCount ? item.rowCount.toString() : "0"} />
         </ListItemButton>
       </ListItem>
     );
@@ -143,7 +143,7 @@ export function SavedFilterListLayout(): ReactNode {
         isPending &&
         <OuterBox><LinearProgress /></OuterBox>
       }
-     {
+      {
         !isPending && (isError || errMsg !== "") &&
         <OuterBox><ErrorAlert message={errMsg ? errMsg : error?.message || "An error occurred. Please try again"} /></OuterBox>
       }
@@ -153,7 +153,7 @@ export function SavedFilterListLayout(): ReactNode {
       }
       {
         categories.length > 0 && <Virtuoso key="data-content"
-          style={{ height: `calc(100vh - 300px)`, width: '100%',}}
+          style={{ height: `calc(100vh - 300px)`, width: '100%', }}
           data={categories}
           itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
         />

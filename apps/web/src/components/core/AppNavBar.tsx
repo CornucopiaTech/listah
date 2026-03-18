@@ -3,19 +3,14 @@ import type {
   SyntheticEvent,
   ReactNode
 } from "react"
-
-
 import {
   useState,
 } from "react"
-
-
-
 import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
 import Toolbar from '@mui/material/Toolbar';
 import { useTheme } from '@mui/material/styles';
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
+import { Show, SignInButton, UserButton } from '@clerk/react';
 import { Icon } from "@iconify/react";
 import Tooltip from '@mui/material/Tooltip';
 import Link from '@mui/material/Link';
@@ -29,7 +24,6 @@ import Box from '@mui/material/Box';
 import {
   AppH5ButtonTypography,
 } from "@/components/core/ButtonTypography";
-
 import {
   AppH4Typography,
   AppH5Typography,
@@ -69,21 +63,23 @@ export function AppNavBar() {
           </AppH5ButtonTypography>
         </Link>
 
-        <SignedOut>
-          <SignInButton mode="modal">
-            <Tooltip title="Log in to your account" placement="bottom">
-              <Avatar sx={{ bgcolor: theme.palette.primary.light, width: 40, height: 40, }} variant="rounded">
-                <Icon icon="material-symbols:login-rounded" width="40" height="40" />
-              </Avatar>
-            </Tooltip>
-            {/* <Typography variant="h6" noWrap component="div">
+        <Show when="signed-out">
+          <Tooltip title="Log in to your account" placement="bottom">
+            <Avatar sx={{ bgcolor: theme.palette.primary.light, width: 40, height: 40, }} variant="rounded">
+              <Icon icon="material-symbols:login-rounded" width="40" height="40" />
+
+            </Avatar>
+
+          </Tooltip>
+          <SignInButton>
+            <AppH5ButtonTypography >
               Sign In
-            </Typography> */}
+            </AppH5ButtonTypography>
           </SignInButton>
-        </SignedOut>
-        <SignedIn>
+        </Show>
+        <Show when="signed-in">
           <UserButton />
-        </SignedIn>
+        </Show>
       </Toolbar>
     </AppBar>
   );
@@ -119,6 +115,7 @@ export function PrevAppTabNavBar() {
   const [value, setValue] = useState(0);
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
+    event.stopPropagation();
     setValue(newValue);
   };
 

@@ -18,7 +18,7 @@ import {
   useNavigate,
   getRouteApi,
 } from '@tanstack/react-router';
-import { useUser } from '@clerk/clerk-react';
+import { useUser } from '@clerk/react';
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
 import ListItem from '@mui/material/ListItem';
@@ -42,7 +42,7 @@ import {
   ZTagCategoryReadResponse,
 } from "@/lib/model/tag";
 import { tagGroupOptions } from '@/lib/helper/querying';
-import { ErrorAlert} from "@/components/core/Alerts";
+import { ErrorAlert } from "@/components/core/Alerts";
 import {
   decodeState,
   encodeState
@@ -52,7 +52,7 @@ import { AppH6Typography } from "@/components/core/Typography";
 
 
 
-function OuterBox( { children }: { children: ReactNode}): ReactNode {
+function OuterBox({ children }: { children: ReactNode }): ReactNode {
   return (
     <Fragment>
       <Box key="data-content" sx={{ height: `calc(100vh - 300px)`, width: '100%', }}>
@@ -65,14 +65,14 @@ function OuterBox( { children }: { children: ReactNode}): ReactNode {
 
 export function TagListLayout(): ReactNode {
   const routeApi = getRouteApi('/');
-  const routeSearch: { s: string} = routeApi.useSearch()
+  const routeSearch: { s: string } = routeApi.useSearch()
   let search = decodeState(routeSearch.s) as THomeQueryParams;
   const navigate = useNavigate();
   const { user, } = useUser();
 
 
   const query: THomeQueryParams = {
-    savedFilter: {...search.savedFilter, userId: user?.id || ""},
+    savedFilter: { ...search.savedFilter, userId: user?.id || "" },
     tag: { ...search.tag, userId: user?.id || "" }
   }
 
@@ -96,7 +96,7 @@ export function TagListLayout(): ReactNode {
     console.log("In handlePageChange - e ", e);
     const q: THomeQueryParams = {
       ...query,
-      tag: {...query.tag, pageSize: parseInt(e.target.value, 10), pageNumber: 0,}
+      tag: { ...query.tag, pageSize: parseInt(e.target.value, 10), pageNumber: 0, }
     };
     const encoded = encodeState(q);
     console.info("In handlePageChange - q ", q);
@@ -124,11 +124,11 @@ export function TagListLayout(): ReactNode {
       <ListItem
         key={itemKey + tc}
         component="div" disablePadding
-        onClick={() => handleItemClick(item) }
+        onClick={() => handleItemClick(item)}
       >
         <ListItemButton>
           <ListItemText primary={tc} />
-          <Chip sx={{background: "primary"}} label={item.rowCount} />
+          <Chip sx={{ background: "primary" }} label={item.rowCount} />
         </ListItemButton>
       </ListItem>
     );
@@ -136,11 +136,11 @@ export function TagListLayout(): ReactNode {
 
 
   let errMsg: string = isError && error && error instanceof Error ? error.message : "";
-  try{
+  try {
     ZTagCategoryReadResponse.parse(data);
-  } catch(error: any){
+  } catch (error: any) {
     errMsg = "An error occurred. Please try again";
-    if(error instanceof z.ZodError){
+    if (error instanceof z.ZodError) {
       console.info("Zod issue - ", error.issues);
     } else {
       console.info("Other issue - ", error);
