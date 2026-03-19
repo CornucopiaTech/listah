@@ -13,7 +13,39 @@ enum AuditUpdaterEnum {
 }
 
 message Pagination {
-  int32 page_number = 1;
-  int32 records_per_page = 2;
-  map<string, string> sort_condition = 3;
+  int32 pageSize = 1;
+  int32 pageNumber = 2;
+  string sort = 3;
+}
+
+
+message Item {
+  string id = 1;
+  string userId = 2 [json_name = "userId"];
+  string name = 3;
+  map<string,string> props = 4;
+  repeated string tags = 5;
+  optional bool softDelete = 6;
+  optional string updatedBy = 500;
+  optional google.protobuf.Timestamp updatedAt = 501;
+}
+message Tag {
+  string id = 1;
+  string userId = 2;
+  string name = 3;
+  int32 count = 4;
+}
+
+message Filter {
+  string id = 1;
+  string userId = 2;
+  string name = 3;
+  repeated string tags = 4;
+  int32 count = 5;
+}
+
+message Search {
+  string text = 1;
+  repeated string tags = 2;
+  repeated string filters = 3;
 }

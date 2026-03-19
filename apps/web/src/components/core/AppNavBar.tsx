@@ -10,7 +10,8 @@ import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
 import Toolbar from '@mui/material/Toolbar';
 import { useTheme } from '@mui/material/styles';
-import { Show, SignInButton, UserButton } from '@clerk/react';
+// import { Show, SignInButton, UserButton } from '@clerk/react';
+import { Show, UserAvatar, SignInButton, UserButton } from '@clerk/react';
 import { Icon } from "@iconify/react";
 import Tooltip from '@mui/material/Tooltip';
 import Link from '@mui/material/Link';
@@ -111,7 +112,7 @@ function a11yProps(index: number) {
 }
 
 
-export function PrevAppTabNavBar() {
+export function SampleAppTabNavBar() {
   const [value, setValue] = useState(0);
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
@@ -152,7 +153,7 @@ export function AppTabNavBar() {
   };
 
   return (
-    <SpaceBetweenBox sx={{ borderBottom: 1, borderColor: 'divider', width: '100%', alignItems: 'center', alignContent: 'center', p: "0.51%" }}>
+    <SpaceBetweenBox sx={{ borderBottom: 1, borderColor: 'divider', width: '100%', alignItems: 'center', alignContent: 'center', p: "1%" }}>
       <Link
         underline="none" key="home" href="/"
         sx={{ color: theme.palette.primary.contrastText, }}>
@@ -162,19 +163,7 @@ export function AppTabNavBar() {
         </AppH4Typography>
       </Link>
       <SpaceAroundBox sx={{}}>
-
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example"  >
-          <Tab
-            label={
-              <Link
-                underline="none" key="home" href="/"
-                sx={{ color: theme.palette.primary.contrastText, }}>
-                <AppH5Typography sx={{ textTransform: "none" }}>
-                  Home
-                </AppH5Typography>
-              </Link>
-            } {...a11yProps(0)}
-          />
           <Tab
             label={
               <Link
@@ -184,7 +173,7 @@ export function AppTabNavBar() {
                   Tags
                 </AppH5Typography>
               </Link>
-            } {...a11yProps(1)}
+            } {...a11yProps(0)}
           />
           <Tab
             label={
@@ -195,7 +184,7 @@ export function AppTabNavBar() {
                   Saved Filters
                 </AppH5Typography>
               </Link>
-            } {...a11yProps(2)}
+            } {...a11yProps(1)}
           />
           <Tab
             label={
@@ -206,10 +195,32 @@ export function AppTabNavBar() {
                   Items
                 </AppH5Typography>
               </Link>
+            } {...a11yProps(2)}
+          />
+          <Tab
+            label={
+              <Link
+                underline="none" key="settings" href="/settings"
+                sx={{ color: theme.palette.primary.contrastText, }}>
+                <AppH5Typography sx={{ textTransform: "none" }}>
+                  Settings
+                </AppH5Typography>
+              </Link>
             } {...a11yProps(3)}
           />
         </Tabs>
       </SpaceAroundBox>
+
+      <Show when="signed-in">
+        <UserButton userProfileMode="modal" />
+      </Show>
+      <Show when="signed-out">
+        <SignInButton>
+          <AppH5Typography sx={{ width: "fit-content" }}>
+            Login
+          </AppH5Typography>
+        </SignInButton>
+      </Show>
     </SpaceBetweenBox>
   );
 }

@@ -18,6 +18,5 @@ export function Tags() {
         </Grid>
       </Box>
     </AppContainer >
-
   );
 }

@@ -39,14 +39,15 @@ const (
 	ItemServiceReadItemProcedure = "/listah.v1.ItemService/ReadItem"
 	// ItemServiceUpsertItemProcedure is the fully-qualified name of the ItemService's UpsertItem RPC.
 	ItemServiceUpsertItemProcedure = "/listah.v1.ItemService/UpsertItem"
-)
-
-// These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
-var (
-	itemServiceServiceDescriptor          = v1.File_v1_item_proto.Services().ByName("ItemService")
-	itemServiceCreateItemMethodDescriptor = itemServiceServiceDescriptor.Methods().ByName("CreateItem")
-	itemServiceReadItemMethodDescriptor   = itemServiceServiceDescriptor.Methods().ByName("ReadItem")
-	itemServiceUpsertItemMethodDescriptor = itemServiceServiceDescriptor.Methods().ByName("UpsertItem")
+	// ItemServiceReadTagProcedure is the fully-qualified name of the ItemService's ReadTag RPC.
+	ItemServiceReadTagProcedure = "/listah.v1.ItemService/ReadTag"
+	// ItemServiceUpsertTagProcedure is the fully-qualified name of the ItemService's UpsertTag RPC.
+	ItemServiceUpsertTagProcedure = "/listah.v1.ItemService/UpsertTag"
+	// ItemServiceReadFilterProcedure is the fully-qualified name of the ItemService's ReadFilter RPC.
+	ItemServiceReadFilterProcedure = "/listah.v1.ItemService/ReadFilter"
+	// ItemServiceUpsertFilterProcedure is the fully-qualified name of the ItemService's UpsertFilter
+	// RPC.
+	ItemServiceUpsertFilterProcedure = "/listah.v1.ItemService/UpsertFilter"
 )
 
 // ItemServiceClient is a client for the listah.v1.ItemService service.
@@ -54,6 +55,10 @@ type ItemServiceClient interface {
 	CreateItem(context.Context, *connect.Request[v1.ItemServiceCreateItemRequest]) (*connect.Response[v1.ItemServiceCreateItemResponse], error)
 	ReadItem(context.Context, *connect.Request[v1.ItemServiceReadItemRequest]) (*connect.Response[v1.ItemServiceReadItemResponse], error)
 	UpsertItem(context.Context, *connect.Request[v1.ItemServiceUpsertItemRequest]) (*connect.Response[v1.ItemServiceUpsertItemResponse], error)
+	ReadTag(context.Context, *connect.Request[v1.ItemServiceReadTagRequest]) (*connect.Response[v1.ItemServiceReadTagResponse], error)
+	UpsertTag(context.Context, *connect.Request[v1.ItemServiceUpsertTagRequest]) (*connect.Response[v1.ItemServiceUpsertTagResponse], error)
+	ReadFilter(context.Context, *connect.Request[v1.ItemServiceReadFilterRequest]) (*connect.Response[v1.ItemServiceReadFilterResponse], error)
+	UpsertFilter(context.Context, *connect.Request[v1.ItemServiceUpsertFilterRequest]) (*connect.Response[v1.ItemServiceUpsertFilterResponse], error)
 }
 
 // NewItemServiceClient constructs a client for the listah.v1.ItemService service. By default, it
@@ -65,24 +70,51 @@ type ItemServiceClient interface {
 // http://api.acme.com or https://acme.com/grpc).
 func NewItemServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) ItemServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
+	itemServiceMethods := v1.File_v1_item_proto.Services().ByName("ItemService").Methods()
 	return &itemServiceClient{
 		createItem: connect.NewClient[v1.ItemServiceCreateItemRequest, v1.ItemServiceCreateItemResponse](
 			httpClient,
 			baseURL+ItemServiceCreateItemProcedure,
-			connect.WithSchema(itemServiceCreateItemMethodDescriptor),
+			connect.WithSchema(itemServiceMethods.ByName("CreateItem")),
 			connect.WithClientOptions(opts...),
 		),
 		readItem: connect.NewClient[v1.ItemServiceReadItemRequest, v1.ItemServiceReadItemResponse](
 			httpClient,
 			baseURL+ItemServiceReadItemProcedure,
-			connect.WithSchema(itemServiceReadItemMethodDescriptor),
+			connect.WithSchema(itemServiceMethods.ByName("ReadItem")),
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
 		upsertItem: connect.NewClient[v1.ItemServiceUpsertItemRequest, v1.ItemServiceUpsertItemResponse](
 			httpClient,
 			baseURL+ItemServiceUpsertItemProcedure,
-			connect.WithSchema(itemServiceUpsertItemMethodDescriptor),
+			connect.WithSchema(itemServiceMethods.ByName("UpsertItem")),
+			connect.WithClientOptions(opts...),
+		),
+		readTag: connect.NewClient[v1.ItemServiceReadTagRequest, v1.ItemServiceReadTagResponse](
+			httpClient,
+			baseURL+ItemServiceReadTagProcedure,
+			connect.WithSchema(itemServiceMethods.ByName("ReadTag")),
+			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
+			connect.WithClientOptions(opts...),
+		),
+		upsertTag: connect.NewClient[v1.ItemServiceUpsertTagRequest, v1.ItemServiceUpsertTagResponse](
+			httpClient,
+			baseURL+ItemServiceUpsertTagProcedure,
+			connect.WithSchema(itemServiceMethods.ByName("UpsertTag")),
+			connect.WithClientOptions(opts...),
+		),
+		readFilter: connect.NewClient[v1.ItemServiceReadFilterRequest, v1.ItemServiceReadFilterResponse](
+			httpClient,
+			baseURL+ItemServiceReadFilterProcedure,
+			connect.WithSchema(itemServiceMethods.ByName("ReadFilter")),
+			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
+			connect.WithClientOptions(opts...),
+		),
+		upsertFilter: connect.NewClient[v1.ItemServiceUpsertFilterRequest, v1.ItemServiceUpsertFilterResponse](
+			httpClient,
+			baseURL+ItemServiceUpsertFilterProcedure,
+			connect.WithSchema(itemServiceMethods.ByName("UpsertFilter")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -90,9 +122,13 @@ func NewItemServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 
 // itemServiceClient implements ItemServiceClient.
 type itemServiceClient struct {
-	createItem *connect.Client[v1.ItemServiceCreateItemRequest, v1.ItemServiceCreateItemResponse]
-	readItem   *connect.Client[v1.ItemServiceReadItemRequest, v1.ItemServiceReadItemResponse]
-	upsertItem *connect.Client[v1.ItemServiceUpsertItemRequest, v1.ItemServiceUpsertItemResponse]
+	createItem   *connect.Client[v1.ItemServiceCreateItemRequest, v1.ItemServiceCreateItemResponse]
+	readItem     *connect.Client[v1.ItemServiceReadItemRequest, v1.ItemServiceReadItemResponse]
+	upsertItem   *connect.Client[v1.ItemServiceUpsertItemRequest, v1.ItemServiceUpsertItemResponse]
+	readTag      *connect.Client[v1.ItemServiceReadTagRequest, v1.ItemServiceReadTagResponse]
+	upsertTag    *connect.Client[v1.ItemServiceUpsertTagRequest, v1.ItemServiceUpsertTagResponse]
+	readFilter   *connect.Client[v1.ItemServiceReadFilterRequest, v1.ItemServiceReadFilterResponse]
+	upsertFilter *connect.Client[v1.ItemServiceUpsertFilterRequest, v1.ItemServiceUpsertFilterResponse]
 }
 
 // CreateItem calls listah.v1.ItemService.CreateItem.
@@ -110,11 +146,35 @@ func (c *itemServiceClient) UpsertItem(ctx context.Context, req *connect.Request
 	return c.upsertItem.CallUnary(ctx, req)
 }
 
+// ReadTag calls listah.v1.ItemService.ReadTag.
+func (c *itemServiceClient) ReadTag(ctx context.Context, req *connect.Request[v1.ItemServiceReadTagRequest]) (*connect.Response[v1.ItemServiceReadTagResponse], error) {
+	return c.readTag.CallUnary(ctx, req)
+}
+
+// UpsertTag calls listah.v1.ItemService.UpsertTag.
+func (c *itemServiceClient) UpsertTag(ctx context.Context, req *connect.Request[v1.ItemServiceUpsertTagRequest]) (*connect.Response[v1.ItemServiceUpsertTagResponse], error) {
+	return c.upsertTag.CallUnary(ctx, req)
+}
+
+// ReadFilter calls listah.v1.ItemService.ReadFilter.
+func (c *itemServiceClient) ReadFilter(ctx context.Context, req *connect.Request[v1.ItemServiceReadFilterRequest]) (*connect.Response[v1.ItemServiceReadFilterResponse], error) {
+	return c.readFilter.CallUnary(ctx, req)
+}
+
+// UpsertFilter calls listah.v1.ItemService.UpsertFilter.
+func (c *itemServiceClient) UpsertFilter(ctx context.Context, req *connect.Request[v1.ItemServiceUpsertFilterRequest]) (*connect.Response[v1.ItemServiceUpsertFilterResponse], error) {
+	return c.upsertFilter.CallUnary(ctx, req)
+}
+
 // ItemServiceHandler is an implementation of the listah.v1.ItemService service.
 type ItemServiceHandler interface {
 	CreateItem(context.Context, *connect.Request[v1.ItemServiceCreateItemRequest]) (*connect.Response[v1.ItemServiceCreateItemResponse], error)
 	ReadItem(context.Context, *connect.Request[v1.ItemServiceReadItemRequest]) (*connect.Response[v1.ItemServiceReadItemResponse], error)
 	UpsertItem(context.Context, *connect.Request[v1.ItemServiceUpsertItemRequest]) (*connect.Response[v1.ItemServiceUpsertItemResponse], error)
+	ReadTag(context.Context, *connect.Request[v1.ItemServiceReadTagRequest]) (*connect.Response[v1.ItemServiceReadTagResponse], error)
+	UpsertTag(context.Context, *connect.Request[v1.ItemServiceUpsertTagRequest]) (*connect.Response[v1.ItemServiceUpsertTagResponse], error)
+	ReadFilter(context.Context, *connect.Request[v1.ItemServiceReadFilterRequest]) (*connect.Response[v1.ItemServiceReadFilterResponse], error)
+	UpsertFilter(context.Context, *connect.Request[v1.ItemServiceUpsertFilterRequest]) (*connect.Response[v1.ItemServiceUpsertFilterResponse], error)
 }
 
 // NewItemServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -123,23 +183,50 @@ type ItemServiceHandler interface {
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
 func NewItemServiceHandler(svc ItemServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	itemServiceMethods := v1.File_v1_item_proto.Services().ByName("ItemService").Methods()
 	itemServiceCreateItemHandler := connect.NewUnaryHandler(
 		ItemServiceCreateItemProcedure,
 		svc.CreateItem,
-		connect.WithSchema(itemServiceCreateItemMethodDescriptor),
+		connect.WithSchema(itemServiceMethods.ByName("CreateItem")),
 		connect.WithHandlerOptions(opts...),
 	)
 	itemServiceReadItemHandler := connect.NewUnaryHandler(
 		ItemServiceReadItemProcedure,
 		svc.ReadItem,
-		connect.WithSchema(itemServiceReadItemMethodDescriptor),
+		connect.WithSchema(itemServiceMethods.ByName("ReadItem")),
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
 	itemServiceUpsertItemHandler := connect.NewUnaryHandler(
 		ItemServiceUpsertItemProcedure,
 		svc.UpsertItem,
-		connect.WithSchema(itemServiceUpsertItemMethodDescriptor),
+		connect.WithSchema(itemServiceMethods.ByName("UpsertItem")),
+		connect.WithHandlerOptions(opts...),
+	)
+	itemServiceReadTagHandler := connect.NewUnaryHandler(
+		ItemServiceReadTagProcedure,
+		svc.ReadTag,
+		connect.WithSchema(itemServiceMethods.ByName("ReadTag")),
+		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
+		connect.WithHandlerOptions(opts...),
+	)
+	itemServiceUpsertTagHandler := connect.NewUnaryHandler(
+		ItemServiceUpsertTagProcedure,
+		svc.UpsertTag,
+		connect.WithSchema(itemServiceMethods.ByName("UpsertTag")),
+		connect.WithHandlerOptions(opts...),
+	)
+	itemServiceReadFilterHandler := connect.NewUnaryHandler(
+		ItemServiceReadFilterProcedure,
+		svc.ReadFilter,
+		connect.WithSchema(itemServiceMethods.ByName("ReadFilter")),
+		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
+		connect.WithHandlerOptions(opts...),
+	)
+	itemServiceUpsertFilterHandler := connect.NewUnaryHandler(
+		ItemServiceUpsertFilterProcedure,
+		svc.UpsertFilter,
+		connect.WithSchema(itemServiceMethods.ByName("UpsertFilter")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/listah.v1.ItemService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -150,6 +237,14 @@ func NewItemServiceHandler(svc ItemServiceHandler, opts ...connect.HandlerOption
 			itemServiceReadItemHandler.ServeHTTP(w, r)
 		case ItemServiceUpsertItemProcedure:
 			itemServiceUpsertItemHandler.ServeHTTP(w, r)
+		case ItemServiceReadTagProcedure:
+			itemServiceReadTagHandler.ServeHTTP(w, r)
+		case ItemServiceUpsertTagProcedure:
+			itemServiceUpsertTagHandler.ServeHTTP(w, r)
+		case ItemServiceReadFilterProcedure:
+			itemServiceReadFilterHandler.ServeHTTP(w, r)
+		case ItemServiceUpsertFilterProcedure:
+			itemServiceUpsertFilterHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -169,4 +264,20 @@ func (UnimplementedItemServiceHandler) ReadItem(context.Context, *connect.Reques
 
 func (UnimplementedItemServiceHandler) UpsertItem(context.Context, *connect.Request[v1.ItemServiceUpsertItemRequest]) (*connect.Response[v1.ItemServiceUpsertItemResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.UpsertItem is not implemented"))
+}
+
+func (UnimplementedItemServiceHandler) ReadTag(context.Context, *connect.Request[v1.ItemServiceReadTagRequest]) (*connect.Response[v1.ItemServiceReadTagResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.ReadTag is not implemented"))
+}
+
+func (UnimplementedItemServiceHandler) UpsertTag(context.Context, *connect.Request[v1.ItemServiceUpsertTagRequest]) (*connect.Response[v1.ItemServiceUpsertTagResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.UpsertTag is not implemented"))
+}
+
+func (UnimplementedItemServiceHandler) ReadFilter(context.Context, *connect.Request[v1.ItemServiceReadFilterRequest]) (*connect.Response[v1.ItemServiceReadFilterResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.ReadFilter is not implemented"))
+}
+
+func (UnimplementedItemServiceHandler) UpsertFilter(context.Context, *connect.Request[v1.ItemServiceUpsertFilterRequest]) (*connect.Response[v1.ItemServiceUpsertFilterResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listah.v1.ItemService.UpsertFilter is not implemented"))
 }

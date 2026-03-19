@@ -1,8 +1,9 @@
 package model
 
 import (
-	"connectrpc.com/connect"
 	"time"
+
+	"connectrpc.com/connect"
 )
 
 type ApiLog struct {
@@ -12,7 +13,7 @@ type ApiLog struct {
 	RequestSource string
 	TraceId       string
 	SpanId        string
-	Uri        string
+	Uri           string
 }
 
 type ItemSearch struct {
@@ -25,6 +26,12 @@ type ItemSearch struct {
 	Offset       int
 	PageNumber   int
 }
+
+// type Pagination struct {
+// 	Sort       string
+// 	PageNumber int32
+// 	PageSize   int32
+// }
 
 type UpsertInfo struct {
 	Conflict []string

@@ -15,7 +15,7 @@ import { ThemeProvider, } from '@mui/material/styles';
 import { useUser } from '@clerk/react';
 import LinearProgress from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
-
+import { shadcn } from '@clerk/ui/themes'
 
 
 // Internal imports
@@ -23,8 +23,9 @@ import Box from '@mui/material/Box';
 import { routeTree } from './routeTree.gen'
 import reportWebVitals from './reportWebVitals.ts'
 import NotFound from '@/components/common/NotFound';
-import { ErrorAlert} from "@/components/core/Alerts";
+import { ErrorAlert } from "@/components/core/Alerts";
 import theme from '@/system/theme';
+// import * from
 
 
 declare global {
@@ -66,11 +67,11 @@ declare module '@tanstack/react-router' {
 
 
 
-function Wrapper( { children }: { children: ReactNode } ) {
+function Wrapper({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider theme={theme}>
       <QueryClientProvider client={queryClient}>
-          {children}
+        {children}
       </QueryClientProvider>
     </ThemeProvider>
   )
@@ -82,7 +83,7 @@ async function loadConfig() {
   window.runtimeConfig = config;
 }
 
-function StrictModeWrapper({ children }: { children: ReactNode}) {
+function StrictModeWrapper({ children }: { children: ReactNode }) {
   if (process.env.NODE_ENV === "development") {
     return <StrictMode>{children}</StrictMode>
   }
@@ -132,16 +133,19 @@ loadConfig().then(
     if (rootElement && !rootElement.innerHTML) {
       const root = ReactDOM.createRoot(rootElement);
       root.render(
-      <ClerkProvider publishableKey={aKey}>
+        <ClerkProvider publishableKey={aKey} appearance={{
+          // theme: shadcn,
+          theme: 'simple',
+        }}>
           {/* <App /> */}
           <Box sx={{ overflowX: "hidden" }}>
             <App />
           </Box>
-      </ClerkProvider>
+        </ClerkProvider>
 
       )
     }
-});
+  });
 
 
 

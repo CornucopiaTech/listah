@@ -6,14 +6,14 @@ import type {
   IItemReadResponse,
 } from '@/lib/model/item';
 import type {
-  ITagCategoryReadRequest,
-  ITagCategoryReadResponse
+  ITagReadRequest,
+  ITagReadResponse
 } from '@/lib/model/tag';
 import type {
   ISavedFilter,
-  ISavedFilterCategoryReadRequest,
-  ISavedFilterCategoryReadResponse
-} from '@/lib/model/savedFilter';
+  IFilterReadRequest,
+  IFilterReadResponse
+} from '@/lib/model/filter';
 
 import { API_ENDPOINTS } from '@/lib/helper/defaults';
 
@@ -63,7 +63,7 @@ export async function getItem(opts: IItemReadRequest): Promise<IItemReadResponse
 }
 
 
-export async function getTag(opts: ITagCategoryReadRequest): Promise<ITagCategoryReadResponse> {
+export async function getTag(opts: ITagReadRequest): Promise<ITagReadResponse> {
   const url = `${window.runtimeConfig.apiUrl}/${API_ENDPOINTS.readTag}`;
   const req = new Request(url, {
     method: "POST",
@@ -77,7 +77,7 @@ export async function getTag(opts: ITagCategoryReadRequest): Promise<ITagCategor
   return await res.json();
 }
 
-export async function getSavedFilter(opts: ISavedFilterCategoryReadRequest): Promise<ISavedFilterCategoryReadResponse> {
+export async function getSavedFilter(opts: IFilterReadRequest): Promise<IFilterReadResponse> {
   const url = `${window.runtimeConfig.apiUrl}/${API_ENDPOINTS.readSavedFilter}`;
   const req = new Request(url, {
     method: "POST",

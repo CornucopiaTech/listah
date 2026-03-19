@@ -7,8 +7,8 @@ import {
 import type {
   IItemReadRequest,
 } from '@/lib/model/item';
-import type { ITagCategoryReadRequest } from '@/lib/model/tag';
-import type { ISavedFilterCategoryReadRequest } from '@/lib/model/savedFilter';
+import type { ITagReadRequest } from '@/lib/model/tag';
+import type { IFilterReadRequest } from '@/lib/model/filter';
 import {
   getItem, getSavedFilter, getTag
 } from '@/lib/helper/fetchers';
@@ -25,7 +25,7 @@ export function itemGroupOptions(opts: IItemReadRequest) {
   })
 }
 
-export function savedFilterGroupOptions(opts: ISavedFilterCategoryReadRequest) {
+export function savedFilterGroupOptions(opts: IFilterReadRequest) {
   return queryOptions({
     queryKey: ["savedFilter", opts],
     queryFn: () => getSavedFilter(opts),
@@ -34,7 +34,7 @@ export function savedFilterGroupOptions(opts: ISavedFilterCategoryReadRequest) {
   })
 }
 
-export function tagGroupOptions(opts: ITagCategoryReadRequest) {
+export function tagGroupOptions(opts: ITagReadRequest) {
   return queryOptions({
     queryKey: ["tag", opts],
     queryFn: () => getTag(opts),
@@ -42,4 +42,3 @@ export function tagGroupOptions(opts: ITagCategoryReadRequest) {
     // staleTime: 24 * 60 * 60 * 1000,
   })
 }
-

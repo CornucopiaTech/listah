@@ -12,31 +12,8 @@ import "gnostic/openapi/v3/annotations.proto";
 
 
 
-message Item {
-  string id = 1;
-  string userId = 2 [json_name = "userId"];
-  string title = 3;
-  map<string,string> properties = 4;
-  repeated string tags = 5;
-  optional bool softDelete = 6;
-  optional google.protobuf.Timestamp reactivateAt = 100 [json_name = "reactivateAt"];
-  optional string updatedBy = 500 [json_name = "updatedBy"];
-  optional google.protobuf.Timestamp updatedAt = 501 [json_name = "updatedAt"];
-}
-message Category {
-  string category = 1;
-  int32 rowCount = 2 [json_name = "rowCount"];
-  optional string id = 100;
-}
-message SavedFilter {
-  string id = 1;
-  string userId = 2 [json_name = "userId"];
-  string name = 3;
-  repeated string tags = 4;
-  repeated string savedFilters = 5 [json_name = "savedFilter"];
-}
 
-
+// Item Messages
 message ItemServiceCreateItemRequest {
   repeated Item items = 1;
 }
@@ -46,32 +23,60 @@ message ItemServiceCreateItemResponse {
 
 message ItemServiceReadItemRequest {
   string userId = 500 [json_name = "userId"];
-  repeated string tags = 501;
-  repeated string savedFilters = 502;
-  string searchQuery = 503 [json_name = "searchQuery"];
-  repeated string itemIds = 504;
-  int32 pageSize = 1000 [json_name = "pageSize"];
-  int32 pageNumber = 1001 [json_name = "pageNumber"];
-  string sortQuery = 1002 [json_name = "sortQuery"];
+  Search query = 501;
+  Pagination pagination = 502;
 }
 message ItemServiceReadItemResponse {
   repeated Item items = 1;
 
   string userId = 500 [json_name = "userId"];
-  repeated string tags = 501;
-  repeated string savedFilters = 502;
-  string searchQuery = 503 [json_name = "searchQuery"];
-  repeated string itemIds = 504;
-  int32 pageSize = 1000 [json_name = "pageSize"];
-  int32 pageNumber = 1001 [json_name = "pageNumber"];
-  string sortQuery = 1002 [json_name = "sortQuery"];
+  Search query = 501;
+  Pagination pagination = 502;
 }
+
 message ItemServiceUpsertItemRequest {
   repeated Item items = 1;
 }
 message ItemServiceUpsertItemResponse {
   repeated string itemIds = 1;
 }
+
+
+// Tag Messages
+message ItemServiceReadTagRequest {
+  string userId = 500;
+  Pagination pagination = 502;
+}
+message ItemServiceReadTagResponse {
+  repeated Item tags = 1;
+  Pagination pagination = 502;
+}
+message ItemServiceUpsertTagRequest {
+  repeated Item tags = 1;
+}
+message ItemServiceUpsertTagResponse {
+  repeated string tagIds = 1;
+}
+
+
+// Filter Messages
+message ItemServiceReadFilterRequest {
+  string userId = 500;
+  Pagination pagination = 502;
+}
+message ItemServiceReadFilterResponse {
+  repeated Item tags = 1;
+  Pagination pagination = 502;
+}
+message ItemServiceUpsertFilterRequest {
+  repeated Item tags = 1;
+}
+message ItemServiceUpsertFilterResponse {
+  repeated string tagIds = 1;
+}
+
+
+
 
 
 service ItemService {
@@ -84,5 +89,19 @@ service ItemService {
   }
   rpc UpsertItem(ItemServiceUpsertItemRequest) returns (ItemServiceUpsertItemResponse){
     option (gnostic.openapi.v3.operation).description = "Upsert Item";
+  }
+  rpc ReadTag(ItemServiceReadTagRequest) returns (ItemServiceReadTagResponse){
+    option idempotency_level = NO_SIDE_EFFECTS;
+    option (gnostic.openapi.v3.operation).description = "Read Tag";
+  }
+  rpc UpsertTag(ItemServiceUpsertTagRequest) returns (ItemServiceUpsertTagResponse){
+    option (gnostic.openapi.v3.operation).description = "Upsert Tag";
+  }
+  rpc ReadFilter(ItemServiceReadFilterRequest) returns (ItemServiceReadFilterResponse){
+    option idempotency_level = NO_SIDE_EFFECTS;
+    option (gnostic.openapi.v3.operation).description = "Read Filter";
+  }
+  rpc UpsertFilter(ItemServiceUpsertFilterRequest) returns (ItemServiceUpsertFilterResponse){
+    option (gnostic.openapi.v3.operation).description = "Upsert Filter";
   }
 }

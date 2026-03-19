@@ -60,17 +60,21 @@ func SetupOTelSDK(ctx context.Context, i *bootstrap.Infra) (shutdown func(contex
 	// Create resource.
 	// The resource is used to identify the source of telemetry.
 	// It is used to group telemetry by the source.
-	res, err := resource.Merge(
-		resource.Default(),
-		resource.NewWithAttributes(
-			semconv.SchemaURL,
-			semconv.ServiceNameKey.String(i.Config.AppName),
-		),
+	res := resource.NewWithAttributes(
+		semconv.SchemaURL,
+		semconv.ServiceNameKey.String(i.Config.AppName),
 	)
-	if err != nil {
-		handleErr(err, "Failed to create a resource for Otel")
-		log.Fatalf("Failed to create a resource for Otel: %v", err)
-	}
+	// res, err := resource.Merge(
+	// 	resource.Default(),
+	// 	resource.NewWithAttributes(
+	// 		semconv.SchemaURL,
+	// 		semconv.ServiceNameKey.String(i.Config.AppName),
+	// 	),
+	// )
+	// if err != nil {
+	// 	handleErr(err, "Failed to create a resource for Otel")
+	// 	log.Fatalf("Failed to create a resource for Otel: %v", err)
+	// }
 
 	// Set up propagator.
 	prop := newPropagator()

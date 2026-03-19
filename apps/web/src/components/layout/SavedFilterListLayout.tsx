@@ -35,11 +35,11 @@ import type {
 } from '@/lib/model/home';
 import type {
   ISavedFilterCategory,
-  ISavedFilterCategoryReadResponse,
-} from "@/lib/model/savedFilter";
+  IFilterReadResponse,
+} from "@/lib/model/filter";
 import {
-  ZSavedFilterCategoryReadResponse,
-} from "@/lib/model/savedFilter";
+  ZFilterReadResponse,
+} from "@/lib/model/filter";
 import { savedFilterGroupOptions } from '@/lib/helper/querying';
 import { ErrorAlert } from "@/components/core/Alerts";
 import { encodeState, decodeState } from '@/lib/helper/encoders';
@@ -69,7 +69,7 @@ export function SavedFilterListLayout(): ReactNode {
 
   const {
     isPending, isError, data, error
-  }: UseQueryResult<ISavedFilterCategoryReadResponse> = useQuery(savedFilterGroupOptions(query.savedFilter));
+  }: UseQueryResult<IFilterReadResponse> = useQuery(savedFilterGroupOptions(query.savedFilter));
 
 
 
@@ -124,7 +124,7 @@ export function SavedFilterListLayout(): ReactNode {
 
   let errMsg: string = isError && error && error instanceof Error ? error.message : "";
   try {
-    ZSavedFilterCategoryReadResponse.parse(data);
+    ZFilterReadResponse.parse(data);
   } catch (error: any) {
     errMsg = "An error occurred. Please try again";
     if (error instanceof z.ZodError) {

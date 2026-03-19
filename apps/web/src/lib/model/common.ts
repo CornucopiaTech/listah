@@ -1,4 +1,4 @@
-
+import * as z from "zod";
 
 export interface IEnvConfig {
   apiUrl: string;
@@ -8,9 +8,9 @@ export interface IEnvConfig {
 export interface IApiEndpointConfig {
   readItem: string;
   readTag: string;
-  readSavedFilter: string;
+  readFilter: string;
   updateItem: string;
-  updateSavedFilter: string;
+  updateFilter: string;
 }
 
 
@@ -23,3 +23,19 @@ export interface TraceBaggage {
   tracestate?: string;
   b3?: string;
 }
+
+export const ZPagination = z.object({
+  pageSize: z.number().catch(100),
+  pageNumber: z.number().catch(1),
+  sort: z.string().catch('name'),
+
+});
+export type IPagination = z.infer<typeof ZPagination>;
+
+
+// export const ZCategory = z.object({
+//   id: z.string().catch(''),
+//   name: z.string().catch(''),
+//   count: z.number().catch(1),
+// });
+// export type ICategory = z.infer<typeof ZCategory>;

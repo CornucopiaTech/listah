@@ -11,7 +11,7 @@ import {
   useBoundStore,
   type TBoundStore
 } from '@/lib/store/boundStore';
-import { DEFAULT_ITEM } from "@/lib/helper/defaults";
+import { DefaultItem } from "@/lib/helper/defaults";
 // import type { AppTheme } from '@/system/theme';
 
 
@@ -24,7 +24,7 @@ export function HomeFab() {
 
   function handleNewItemClick() {
     store.setDisplayId("");
-    store.setDisplayItem(DEFAULT_ITEM);
+    store.setDisplayItem(DefaultItem);
     store.setItemModal(true);
   }
   const formActions = [
@@ -41,7 +41,7 @@ export function HomeFab() {
       position: "fixed",
       bottom: { xs: 16, sm: 24, md: 32 },   // responsive spacing
       right: { xs: 16, sm: 24, md: 32 },    // responsive spacing
-      }}>
+    }}>
       <SpeedDial
         ariaLabel="SpeedDial basic example"
         // FabProps={{ style: { backgroundColor: theme.palette.secondary.main }}}

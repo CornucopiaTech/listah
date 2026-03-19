@@ -60,11 +60,11 @@ import type {
 } from '@/lib/model/home';
 import type {
   ITagCategory,
-  ITagCategoryReadResponse,
+  ITagReadResponse,
 } from "@/lib/model/tag";
 import { tagGroupOptions } from '@/lib/helper/querying';
-import type { ISavedFilter, } from "@/lib/model/savedFilter";
-import { ZSavedFilter } from "@/lib/model/savedFilter";
+import type { ISavedFilter, } from "@/lib/model/filter";
+import { ZSavedFilter } from "@/lib/model/filter";
 
 
 
@@ -85,7 +85,7 @@ export function AppFilterModal(): ReactNode {
 
   const {
     isPending, isError, data, error
-  }: UseQueryResult<ITagCategoryReadResponse> = useQuery(tagGroupOptions(query.tag));
+  }: UseQueryResult<ITagReadResponse> = useQuery(tagGroupOptions(query.tag));
 
 
   // Define invalidating  mutation

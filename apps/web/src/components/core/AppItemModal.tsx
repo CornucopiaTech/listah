@@ -45,7 +45,7 @@ import {
   useBoundStore,
   type TBoundStore
 } from '@/lib/store/boundStore';
-import { DEFAULT_ITEM } from '@/lib/helper/defaults';
+import { DefaultItem } from '@/lib/helper/defaults';
 import {
   ZItem
 } from "@/lib/model/item";
@@ -147,7 +147,7 @@ export function AppItemModal(
   function closeModal() {
     store.setItemModal(false);
     store.setDisplayId("");
-    store.setDisplayItem(DEFAULT_ITEM);
+    store.setDisplayItem(DefaultItem);
   }
 
   function onFormSubmit(e: FormEvent<HTMLFormElement>) {

@@ -63,7 +63,7 @@ function OuterBox({ children }: { children: ReactNode }): ReactNode {
   );
 }
 
-export function TagListLayout(): ReactNode {
+export function SettingsTagList(): ReactNode {
   const routeApi = getRouteApi('/');
   const routeSearch: { s: string } = routeApi.useSearch()
   let search = decodeState(routeSearch.s) as THomeQueryParams;
