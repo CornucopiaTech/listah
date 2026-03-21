@@ -64,8 +64,8 @@ export const lightPalette = {
   //   disabled: ""
   // },
   background: {
-    default: color.dustyolive["100"],
-    paper: color.dustyolive["50"],
+    default: color.dustyolive["50"],
+    paper: color.dustyolive["0"],
 
   }
   // divider: "",

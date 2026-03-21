@@ -4,8 +4,8 @@
 //   AppSearchBar,
 //   // AppHomeSearchBar
 // } from "@/components/core/AppSearchBar";
-import { TagListLayout } from "@/components/layout/TagListLayout";
-import { SavedFilterListLayout } from "@/components/layout/SavedFilterListLayout";
+import { TagListLayout } from "@/components/layout/TagList";
+import { SavedFilterListLayout } from "@/components/layout/FilterList";
 import {
   AppListStack,
   AppPageStack,

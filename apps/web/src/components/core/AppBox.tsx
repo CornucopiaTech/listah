@@ -3,13 +3,14 @@ import type { ReactNode } from 'react';
 import Box from '@mui/material/Box';
 
 
-export function SpaceBetweenBox({ children, sx}: { children: ReactNode, sx?: any}): ReactNode {
+export function SpaceBetweenBox({ children, sx }: { children: ReactNode, sx?: any }): ReactNode {
   return (
     <Box
       sx={{
         ...sx,
         justifyContent: 'space-between', alignContent: 'center',
-        display: 'flex', width: '100%',
+        display: 'flex',
+        // width: '100%',
       }}>
       {children}
     </Box>
@@ -17,7 +18,7 @@ export function SpaceBetweenBox({ children, sx}: { children: ReactNode, sx?: any
 }
 
 
-export function FlexEndBox({ children, sx}: { children: ReactNode, sx?: any}): ReactNode {
+export function FlexEndBox({ children, sx }: { children: ReactNode, sx?: any }): ReactNode {
   return (
     <Box
       sx={{
@@ -30,7 +31,7 @@ export function FlexEndBox({ children, sx}: { children: ReactNode, sx?: any}): R
   );
 }
 
-export function FlexStartBox({ children, sx}: { children: ReactNode, sx?: any}): ReactNode {
+export function FlexStartBox({ children, sx }: { children: ReactNode, sx?: any }): ReactNode {
   return (
     <Box
       sx={{
@@ -44,13 +45,14 @@ export function FlexStartBox({ children, sx}: { children: ReactNode, sx?: any}):
 }
 
 
-export function SpaceAroundBox({ children, sx}: { children: ReactNode, sx?: any}): ReactNode {
+export function SpaceAroundBox({ children, sx }: { children: ReactNode, sx?: any }): ReactNode {
   return (
     <Box
       sx={{
         ...sx,
         justifyContent: 'space-around', alignContent: 'center',
-        display: 'flex', width: '100%',
+        display: 'flex',
+        // width: '100%',
       }}>
       {children}
     </Box>
@@ -58,7 +60,7 @@ export function SpaceAroundBox({ children, sx}: { children: ReactNode, sx?: any}
 }
 
 
-export function CentredBox({ children, sx}: { children: ReactNode, sx?: any}): ReactNode {
+export function CentredBox({ children, sx }: { children: ReactNode, sx?: any }): ReactNode {
   return (
     <Box
       sx={{

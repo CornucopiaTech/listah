@@ -26,51 +26,61 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Chip from '@mui/material/Chip';
 import TablePagination from '@mui/material/TablePagination';
-
-
-
 import type { IItemReadRequest } from '@/lib/model/item';
 import type {
-  THomeQueryParams
-} from '@/lib/model/home';
-import type {
-  ISavedFilterCategory,
+  IFilter,
+  IFilterReadRequest,
   IFilterReadResponse,
 } from "@/lib/model/filter";
 import {
   ZFilterReadResponse,
 } from "@/lib/model/filter";
-import { savedFilterGroupOptions } from '@/lib/helper/querying';
+import { filterGroupOptions } from '@/lib/helper/querying';
 import { ErrorAlert } from "@/components/core/Alerts";
 import { encodeState, decodeState } from '@/lib/helper/encoders';
-import { DefaultQueryParams } from '@/lib/helper/defaults';
+import {
+  DefaultItemRead,
+  ListBoxSize,
+} from '@/lib/helper/defaults';
 import { AppH6Typography } from "@/components/core/Typography";
 
 
 
 function OuterBox({ children }: { children: ReactNode }): ReactNode {
   return (
-    <Box key="data-content" sx={{ height: `calc(100vh - 300px)`, width: '100%', }}>
-      {children}
-    </Box>
+    <Fragment>
+      <Box key="data-content" sx={ListBoxSize}>
+        {children}
+      </Box>
+    </Fragment>
   );
 }
-export function SavedFilterListLayout(): ReactNode {
-  const routeApi = getRouteApi('/');
+export function FilterListLayout(): ReactNode {
+  const routeApi = getRouteApi('/filters/');
   const routeSearch: { s: string } = routeApi.useSearch()
-  let search = decodeState(routeSearch.s) as THomeQueryParams;
+  let search = decodeState(routeSearch.s) as IFilterReadRequest;
   const navigate = useNavigate();
   const { user, } = useUser();
 
-  const query = {
-    savedFilter: { ...search.savedFilter, userId: user?.id || "" },
-    tag: { ...search.tag, userId: user?.id || "" },
+  const query: IFilterReadRequest = { ...search, userId: user?.id || "" }
+
+  // const {
+  //   isPending, isError, data, error
+  // }: UseQueryResult<IFilterReadResponse> = useQuery(filterGroupOptions(query));
+  const isPending: boolean = false;
+  const isError: boolean = false;
+  const data: IFilterReadResponse = {
+    pagination: { pageSize: 8, pageNumber: 1, sort: "" },
+    filters: [
+      { id: "id 1", userId: query.userId, name: "filter name 1", tags: ["Tag 1"], count: 53 },
+      { id: "id 2", userId: query.userId, name: "filter name 2", tags: ["Tag 1"], count: 153 },
+      { id: "id 3", userId: query.userId, name: "filter name 3", tags: ["Tag 1"], count: 523 },
+      { id: "id 5", userId: query.userId, name: "filter name 5", tags: ["Tag 1"], count: 33 },
+      { id: "id 6", userId: query.userId, name: "filter name 6", tags: ["Tag 1"], count: 3 },
+      { id: "id 7", userId: query.userId, name: "filter name 7", tags: ["Tag 1"], count: 43 },
+      { id: "id 8", userId: query.userId, name: "filter name 8", tags: ["Tag 1"], count: 0 },
+    ]
   }
-
-  const {
-    isPending, isError, data, error
-  }: UseQueryResult<IFilterReadResponse> = useQuery(savedFilterGroupOptions(query.savedFilter));
-
 
 
 
@@ -80,32 +90,37 @@ export function SavedFilterListLayout(): ReactNode {
     value: number
   ) {
     event && event.stopPropagation();
-    const q: THomeQueryParams = { ...query, savedFilter: { ...query.savedFilter, pageNumber: value } };
+    const q: IFilterReadRequest = {
+      ...query, pagination: {
+        ...query.pagination, pageNumber: value
+      }
+    };
     const encoded = encodeState(q);
-    navigate({ to: "/", search: { s: encoded } });
+    navigate({ to: "/filters", search: { s: encoded } });
   };
 
   function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    const q: THomeQueryParams = {
-      ...query,
-      savedFilter: { ...query.savedFilter, pageSize: parseInt(e.target.value, 10), pageNumber: 0, }
+    const q: IFilterReadRequest = {
+      ...query, pagination: {
+        ...query.pagination, pageSize: parseInt(e.target.value, 10), pageNumber: 0,
+      }
     };
     const encoded = encodeState(q);
-    navigate({ to: "/", search: { s: encoded } });
+    navigate({ to: "/filters", search: { s: encoded } });
   };
 
-  function handleItemClick(it: ISavedFilterCategory) {
-    const ct = it && it.id ? it.id : "";
+  function handleItemClick(it: IFilter) {
+    const ct = it && it.name ? it.name : "";
     const q: IItemReadRequest = {
-      ...DefaultQueryParams,
-      userId: query.savedFilter.userId,
-      savedFilters: [ct],
+      ...DefaultItemRead,
+      userId: query.userId,
+      query: { ...DefaultItemRead.query, filters: [ct] },
     };
     const encoded = encodeState(q);
-    navigate({ to: "/items/$title", search: { s: encoded }, params: { title: it?.category || "" } });
+    navigate({ to: "/items/$title", search: { s: encoded }, params: { title: ct } });
   }
-  function eachItem(itemKey: number, item: ISavedFilterCategory): ReactNode {
-    const tc: string = item.category ? item.category : ""
+  function eachItem(itemKey: number, item: IFilter): ReactNode {
+    const tc = item && item.name ? item.name : "";
     return (
       <ListItem
         key={itemKey + tc}
@@ -114,7 +129,7 @@ export function SavedFilterListLayout(): ReactNode {
       >
         <ListItemButton>
           <ListItemText primary={tc} />
-          <Chip sx={{ background: "primary" }} label={item.rowCount ? item.rowCount.toString() : "0"} />
+          <Chip sx={{ background: "primary" }} label={item.count ? item.count.toString() : "0"} />
         </ListItemButton>
       </ListItem>
     );
@@ -134,8 +149,8 @@ export function SavedFilterListLayout(): ReactNode {
     }
   }
 
-  const totalRecords: number = data && data.pageSize ? data.pageSize : 1;
-  const categories: ISavedFilterCategory[] = data && data.categories ? data.categories : [];
+  const totalRecords: number = data && data.pagination && data.pagination.pageSize ? data.pagination.pageSize : 1;
+  const filters: IFilter[] = data && data.filters ? data.filters : [];
 
   return (
     <Fragment>
@@ -148,25 +163,22 @@ export function SavedFilterListLayout(): ReactNode {
         <OuterBox><ErrorAlert message={errMsg ? errMsg : error?.message || "An error occurred. Please try again"} /></OuterBox>
       }
       {
-        !isError && !isPending && categories.length == 0 &&
+        !isError && !isPending && filters.length == 0 &&
         <OuterBox><AppH6Typography> No items found </AppH6Typography></OuterBox>
       }
       {
-        categories.length > 0 && <Virtuoso key="data-content"
-          style={{ height: `calc(100vh - 300px)`, width: '100%', }}
-          data={categories}
+        filters.length > 0 && <Virtuoso key="data-content"
+          style={ListBoxSize} data={filters}
           itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
         />
       }
-
       <TablePagination
         component="div"
-        count={totalRecords} page={query.savedFilter.pageNumber}
+        count={totalRecords} page={query.pagination.pageNumber}
         onPageChange={handlePageChange}
-        rowsPerPage={query.savedFilter.pageSize}
+        rowsPerPage={query.pagination.pageSize}
         onRowsPerPageChange={handlePageSizeChange}
       />
-
     </Fragment>
   );
 }

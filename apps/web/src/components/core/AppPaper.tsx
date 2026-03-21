@@ -109,8 +109,8 @@ export function AppCategoryListPaper({ sx, children }: { sx?: any, children: Rea
     <AppStyledPaper elevation={8} sx={{
       ...sx,
       borderRadius: 4,
-      width: { sm: "100%", md: "50%" },
-      maxWidth: { sm: "100%", md: "50%" },
+      width: '100%',
+      maxWidth: '100%',
       height: "fit-content",
     }}>
       {children}

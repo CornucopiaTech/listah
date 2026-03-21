@@ -21,26 +21,28 @@ import {
   useBoundStore,
   type TBoundStore
 } from '@/lib/store/boundStore';
+import { AppContainer } from '@/components/layout/AppContainer';
+import {
+  AppCategoryListPaper,
+} from '@/components/core/AppPaper';
 
 
 export function ListItems() {
   const title = useParams({ strict: false }).title;
   const store: TBoundStore = useBoundStore((state) => state);
   return (
-    <AppPageStack>
-      {/* <HomeBreadcrumbs /> */}
-      {store.itemModal && <AppItemModal route={"/items/$title"} />}
-      <AppSearchBar route="/items/$title" />
-      <AppItemListPaper>
-        <AppSectionStack>
+    <AppContainer mw="md">
+      <AppPageStack>
+        {/* {store.itemModal && <AppItemModal route={"/items/$title"} />} */}
+        <AppSearchBar route="/items/$title" />
+        <AppCategoryListPaper>
           <AppListHeaderBar key="header">
             <AppH5ButtonTypography> Items in #{title} </AppH5ButtonTypography>
           </AppListHeaderBar>
-
           <ItemListLayout />
-        </AppSectionStack>
+        </AppCategoryListPaper>
         <ItemsFab />
-      </AppItemListPaper>
-    </AppPageStack>
+      </AppPageStack>
+    </AppContainer>
   );
 }

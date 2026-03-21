@@ -32,10 +32,8 @@ import TablePagination from '@mui/material/TablePagination';
 
 import type { IItemReadRequest } from '@/lib/model/item';
 import type {
-  THomeQueryParams
-} from '@/lib/model/home';
-import type {
-  ITagCategory,
+  ITag,
+  ITagReadRequest,
   ITagReadResponse,
 } from "@/lib/model/tag";
 import {
@@ -47,7 +45,10 @@ import {
   decodeState,
   encodeState
 } from '@/lib/helper/encoders';
-import { DefaultQueryParams } from '@/lib/helper/defaults';
+import {
+  DefaultItemRead,
+  ListBoxSize,
+} from '@/lib/helper/defaults';
 import { AppH6Typography } from "@/components/core/Typography";
 
 
@@ -55,31 +56,50 @@ import { AppH6Typography } from "@/components/core/Typography";
 function OuterBox({ children }: { children: ReactNode }): ReactNode {
   return (
     <Fragment>
-      <Box key="data-content" sx={{ height: `calc(100vh - 300px)`, width: '100%', }}>
+      <Box key="data-content" sx={ListBoxSize}>
         {children}
       </Box>
     </Fragment>
-
   );
 }
 
 export function TagListLayout(): ReactNode {
-  const routeApi = getRouteApi('/');
+  const routeApi = getRouteApi('/tags/');
   const routeSearch: { s: string } = routeApi.useSearch()
-  let search = decodeState(routeSearch.s) as THomeQueryParams;
+  let search = decodeState(routeSearch.s) as ITagReadRequest;
   const navigate = useNavigate();
   const { user, } = useUser();
 
 
-  const query: THomeQueryParams = {
-    savedFilter: { ...search.savedFilter, userId: user?.id || "" },
-    tag: { ...search.tag, userId: user?.id || "" }
+  const query: ITagReadRequest = { ...search, userId: user?.id || "" }
+
+  // const {
+  //   isPending, isError, data, error
+  // }: UseQueryResult<ITagReadResponse> = useQuery(tagGroupOptions(query));
+  const isPending: boolean = false;
+  const isError: boolean = false;
+  const data: ITagReadResponse = {
+    pagination: { pageSize: 8, pageNumber: 1, sort: "" },
+    tags: [
+      { id: "id 1", userId: query.userId, name: "tag name 1", count: 53 },
+      { id: "id 2", userId: query.userId, name: "tag name 2", count: 153 },
+      { id: "id 3", userId: query.userId, name: "tag name 3", count: 523 },
+      { id: "id 5", userId: query.userId, name: "tag name 5", count: 33 },
+      { id: "id 6", userId: query.userId, name: "tag name 6", count: 3 },
+      { id: "id 7", userId: query.userId, name: "tag name 7", count: 43 },
+      { id: "id 8", userId: query.userId, name: "tag name 8", count: 0 },
+    ]
   }
-
-  const {
-    isPending, isError, data, error
-  }: UseQueryResult<ITagReadResponse> = useQuery(tagGroupOptions(query.tag));
-
+  // const data: ITag[] = [
+  //   { id: "id 1", userId: query.userId, name: "name 1", count: 53 },
+  //   { id: "id 2", userId: query.userId, name: "name 2", count: 153 },
+  //   { id: "id 3", userId: query.userId, name: "name 3", count: 523 },
+  //   { id: "id 5", userId: query.userId, name: "name 5", count: 33 },
+  //   { id: "id 6", userId: query.userId, name: "name 6", count: 3 },
+  //   { id: "id 7", userId: query.userId, name: "name 7", count: 43 },
+  //   { id: "id 8", userId: query.userId, name: "name 8", count: 0 },
+  // ]
+  const error: Error = undefined;
 
 
   function handlePageChange(
@@ -87,39 +107,44 @@ export function TagListLayout(): ReactNode {
     value: number
   ) {
     event && event.stopPropagation();
-    const q: THomeQueryParams = { ...query, tag: { ...query.tag, pageNumber: value } };
+    const q: ITagReadRequest = {
+      ...query, pagination: {
+        ...query.pagination, pageNumber: value
+      }
+    };
     const encoded = encodeState(q);
-    navigate({ to: "/", search: { s: encoded } });
+    navigate({ to: "/tags", search: { s: encoded } });
   };
 
   function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     console.log("In handlePageChange - e ", e);
-    const q: THomeQueryParams = {
-      ...query,
-      tag: { ...query.tag, pageSize: parseInt(e.target.value, 10), pageNumber: 0, }
+    const q: ITagReadRequest = {
+      ...query, pagination: {
+        ...query.pagination, pageSize: parseInt(e.target.value, 10), pageNumber: 0,
+      }
     };
     const encoded = encodeState(q);
     console.info("In handlePageChange - q ", q);
     console.info("In handlePageChange - Encoded ", encoded);
-    navigate({ to: "/", search: { s: encoded } });
+    navigate({ to: "/tags", search: { s: encoded } });
   };
 
-  function handleItemClick(it: ITagCategory) {
+  function handleItemClick(it: ITag) {
     console.log("In handleItemclick");
-    const ct = it && it.category ? it.category : "";
+    const ct = it && it.name ? it.name : "";
     const q: IItemReadRequest = {
-      ...DefaultQueryParams,
-      userId: query.tag.userId,
-      tags: [ct],
+      ...DefaultItemRead,
+      userId: query.userId,
+      query: { ...DefaultItemRead.query, tags: [ct] },
     };
     const encoded = encodeState(q);
     console.info("In handlePageChange - q ", q);
     console.info("In handlePageChange - Encoded ", encoded);
-    navigate({ to: "/items/$title", search: { s: encoded }, params: { title: it.category } });
+    navigate({ to: "/items/$title", search: { s: encoded }, params: { title: ct } });
   }
 
-  function eachItem(itemKey: number, item: ITagCategory): ReactNode {
-    const tc: string = item.category ? item.category : ""
+  function eachItem(itemKey: number, item: ITag): ReactNode {
+    const tc = item && item.name ? item.name : "";
     return (
       <ListItem
         key={itemKey + tc}
@@ -128,7 +153,7 @@ export function TagListLayout(): ReactNode {
       >
         <ListItemButton>
           <ListItemText primary={tc} />
-          <Chip sx={{ background: "primary" }} label={item.rowCount} />
+          <Chip sx={{ background: "primary" }} label={item.count ? item.count.toString() : "0"} />
         </ListItemButton>
       </ListItem>
     );
@@ -147,8 +172,8 @@ export function TagListLayout(): ReactNode {
     }
   }
 
-  const totalRecords: number = data && data.pageSize ? data.pageSize : 1;
-  const categories: ITagCategory[] = data && data.categories ? data.categories : [];
+  const totalRecords: number = data && data.pagination && data.pagination.pageSize ? data.pagination.pageSize : 1;
+  const tags: ITag[] = data && data.tags ? data.tags : [];
 
 
 
@@ -163,22 +188,21 @@ export function TagListLayout(): ReactNode {
         <OuterBox><ErrorAlert message={errMsg ? errMsg : error?.message || "An error occurred. Please try again"} /></OuterBox>
       }
       {
-        !isError && !isPending && categories.length == 0 &&
+        !isError && !isPending && tags.length == 0 &&
         <OuterBox><AppH6Typography> No items found </AppH6Typography></OuterBox>
       }
       {
-        categories.length > 0 && <Virtuoso key="data-content"
-          style={{ height: `calc(100vh - 300px)`, width: '100%', }}
-          data={categories}
+        tags.length > 0 && <Virtuoso key="data-content"
+          style={ListBoxSize} data={tags}
           itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
         />
       }
 
       <TablePagination
         component="div"
-        count={totalRecords} page={query.tag.pageNumber}
+        count={totalRecords} page={query.pagination.pageNumber}
         onPageChange={handlePageChange}
-        rowsPerPage={query.tag.pageSize}
+        rowsPerPage={query.pagination.pageSize}
         onRowsPerPageChange={handlePageSizeChange}
       />
     </Fragment>

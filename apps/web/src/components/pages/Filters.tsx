@@ -3,7 +3,7 @@
 //   AppSearchBar,
 //   // AppHomeSearchBar
 // } from "@/components/core/AppSearchBar";
-import { TagListLayout } from "@/components/layout/TagList";
+import { FilterListLayout } from "@/components/layout/FilterList";
 import {
   AppPageStack,
 } from "@/components/core/AppStack";
@@ -23,7 +23,7 @@ import { AppContainer } from '@/components/layout/AppContainer';
 
 
 
-export function Tags() {
+export function Filters() {
   const store: TBoundStore = useBoundStore((state) => state);
   return (
     <AppContainer mw="md">
@@ -34,9 +34,9 @@ export function Tags() {
         {/* <AppHomeSearchBar /> */}
         <AppCategoryListPaper>
           <AppListHeaderBar key="header">
-            <AppH5ButtonTypography> Tags </AppH5ButtonTypography>
+            <AppH5ButtonTypography> Filters </AppH5ButtonTypography>
           </AppListHeaderBar>
-          <TagListLayout />
+          <FilterListLayout />
         </AppCategoryListPaper>
         <HomeFab />
       </AppPageStack>

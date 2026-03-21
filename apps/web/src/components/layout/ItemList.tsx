@@ -46,14 +46,19 @@ import {
 
 import { AppH6Typography } from "@/components/core/Typography";
 import LinearProgress from '@mui/material/LinearProgress';
+import {
+  DefaultItemRead,
+  ListBoxSize,
+} from '@/lib/helper/defaults';
 
 
-
-function OuterBox({ children, }: { children: ReactNode }): ReactNode {
+function OuterBox({ children }: { children: ReactNode }): ReactNode {
   return (
-    <Box key="data-content" sx={{ height: `calc(100vh - 300px)`, width: '100%', }}>
-      {children}
-    </Box>
+    <Fragment>
+      <Box key="data-content" sx={ListBoxSize}>
+        {children}
+      </Box>
+    </Fragment>
   );
 }
 
@@ -66,7 +71,7 @@ export function ItemListLayout(): ReactNode {
   const title = useParams({ strict: false }).title;
   const store: TBoundStore = useBoundStore((state) => state);
 
-  const query = { ...search, userId: user?.id || "" };
+  const query: IItemReadRequest = { ...search, userId: user?.id || "" };
 
   const {
     isPending, isError, data, error
@@ -120,7 +125,7 @@ export function ItemListLayout(): ReactNode {
   };
 
   function eachItem(itemKey: number, item: IItem): ReactNode {
-    let dis: string = item.title ? item.title : "";
+    let dis: string = item.name ? item.name : "";
     return (
       <Fragment>
         {
@@ -148,7 +153,7 @@ export function ItemListLayout(): ReactNode {
   }
 
   const items: IItem[] = data && data.items ? data.items : [];
-  const totalRecords: number = data && data.pageSize ? data.pageSize : 1;
+  const totalRecords: number = data && data.pagination && data.pagination.pageSize ? data.pagination.pageSize : 1;
 
   return (
     <Fragment>
@@ -162,8 +167,7 @@ export function ItemListLayout(): ReactNode {
       }
       {
         items.length > 0 && <Virtuoso key="data-content"
-          style={{ height: `calc(100vh - 300px)`, width: '100%', }}
-          data={items}
+          style={ListBoxSize} data={items}
           itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
         />
       }
@@ -173,9 +177,9 @@ export function ItemListLayout(): ReactNode {
       }
       <TablePagination
         component="div"
-        count={totalRecords} page={query.pageNumber}
+        count={totalRecords} page={query.pagination.pageNumber}
         onPageChange={handlePageChange}
-        rowsPerPage={query.pageSize}
+        rowsPerPage={query.pagination.pageSize}
         onRowsPerPageChange={handlePageSizeChange}
       />
     </Fragment>

@@ -1,3 +1,5 @@
+
+
 import {
   Fragment,
 } from 'react';
@@ -12,6 +14,7 @@ import Box from '@mui/material/Box';
 
 import {
   AppTabNavBar,
+  AppNavBar,
 } from '@/components/core/AppNavBar';
 
 
@@ -24,7 +27,8 @@ export function AppContainerShell() {
     <Fragment>
       <CssBaseline />
       <Box sx={{ width: "100vw", maxWidth: "100vw", height: `fit-content`, }}>
-        <AppTabNavBar />
+        <AppNavBar />
+        {/* <AppTabNavBar /> */}
         <Outlet />
       </Box>
     </Fragment>
@@ -35,7 +39,7 @@ export function AppContainerShell() {
 export function AppContainer({ children, mw }: { children: ReactNode, mw?: widthType }) {
   return (
     <Fragment>
-      <Container maxWidth={mw ? mw : "xl"} sx={{ marginTop: "5%" }}>
+      <Container maxWidth={mw ? mw : "xl"} sx={{ marginTop: "3%" }}>
         {children}
       </Container>
     </Fragment>

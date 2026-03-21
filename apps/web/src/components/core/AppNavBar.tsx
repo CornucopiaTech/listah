@@ -1,4 +1,5 @@
 
+import { useLocation } from '@tanstack/react-router';
 import type {
   SyntheticEvent,
   ReactNode
@@ -41,7 +42,7 @@ interface TabPanelProps {
   value: number;
 }
 
-export function AppNavBar() {
+export function AppNavBarV1() {
   const theme: AppTheme = useTheme();
   return (
     <AppBar position="static"
@@ -78,6 +79,58 @@ export function AppNavBar() {
             </AppH5ButtonTypography>
           </SignInButton>
         </Show>
+        <Show when="signed-in">
+          <UserButton />
+        </Show>
+      </Toolbar>
+    </AppBar>
+  );
+}
+
+
+export function AppNavBar() {
+  const theme: AppTheme = useTheme();
+  const pathname = useLocation({
+    select: (location) => location.pathname,
+  });
+  const filterActive = pathname == "/filters" ? "underline" : "none"
+  const tagActive = pathname == "/tags" ? "underline" : "none"
+  return (
+    <AppBar position="static"
+      sx={{
+        // bgcolor: theme.palette.primary.light,
+        width: '100%',
+        height: AppBarHeight,
+      }}
+      elevation={1}
+    >
+      <Toolbar sx={{
+        justifyContent: 'space-between', alignContent: 'center', alignItems: 'center',
+        display: 'flex', flexWrap: 'wrap', width: '100%', p: "1%",
+        bgcolor: theme.palette.background.default,
+      }}>
+        <Link underline="hover" key="home" href="/" >
+          <AppH5Typography> Listah </AppH5Typography>
+        </Link>
+
+        <Link underline={tagActive} key="home" href="/tags" >
+          <AppH5Typography> Tags </AppH5Typography>
+        </Link>
+
+        <Link underline={filterActive} key="filters" href="/filters" >
+          <AppH5Typography > Filters </AppH5Typography>
+        </Link>
+
+        <Show when="signed-out">
+          <Tooltip title="Log in to your account" placement="bottom">
+            <Avatar sx={{ bgcolor: theme.palette.primary.light, width: 40, height: 40, }} variant="rounded">
+              <Icon icon="material-symbols:login-rounded" width="40" height="40" />
+            </Avatar>
+
+          </Tooltip>
+          <SignInButton> <AppH5Typography > Sign In </AppH5Typography> </SignInButton>
+        </Show>
+
         <Show when="signed-in">
           <UserButton />
         </Show>
@@ -143,7 +196,7 @@ export function SampleAppTabNavBar() {
 }
 
 
-export function AppTabNavBar() {
+export function PrevAppTabNavBar() {
   const theme: AppTheme = useTheme();
   const [value, setValue] = useState(0);
 
@@ -162,6 +215,8 @@ export function AppTabNavBar() {
           Listah
         </AppH4Typography>
       </Link>
+
+
       <SpaceAroundBox sx={{}}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example"  >
           <Tab
@@ -178,10 +233,10 @@ export function AppTabNavBar() {
           <Tab
             label={
               <Link
-                underline="none" key="filters" href="/saved-filters"
+                underline="none" key="filters" href="/filters"
                 sx={{ color: theme.palette.primary.contrastText, }}>
                 <AppH5Typography sx={{ textTransform: "none" }}>
-                  Saved Filters
+                  Filters
                 </AppH5Typography>
               </Link>
             } {...a11yProps(1)}
@@ -207,6 +262,69 @@ export function AppTabNavBar() {
                 </AppH5Typography>
               </Link>
             } {...a11yProps(3)}
+          />
+        </Tabs>
+      </SpaceAroundBox>
+
+      <Show when="signed-in">
+        <UserButton userProfileMode="modal" />
+      </Show>
+      <Show when="signed-out">
+        <SignInButton>
+          <AppH5Typography sx={{ width: "fit-content" }}>
+            Login
+          </AppH5Typography>
+        </SignInButton>
+      </Show>
+    </SpaceBetweenBox>
+  );
+}
+
+
+export function AppTabNavBar() {
+  const theme: AppTheme = useTheme();
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event: SyntheticEvent, newValue: number) => {
+    event.stopPropagation();
+    setValue(newValue);
+  };
+
+  return (
+    <SpaceBetweenBox sx={{ borderBottom: 1, borderColor: 'divider', width: '100%', alignItems: 'center', alignContent: 'center', p: "1%" }}>
+      <Link
+        underline="none" key="home" href="/"
+        sx={{ color: theme.palette.primary.contrastText, }}>
+
+        <AppH4Typography>
+          Listah
+        </AppH4Typography>
+      </Link>
+
+
+      <SpaceAroundBox sx={{}}>
+        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example"  >
+          <Tab
+            label={
+              <Link
+                underline="none" key="home" href="/tags"
+                sx={{ color: theme.palette.primary.contrastText, }}>
+                <AppH5Typography sx={{ textTransform: "none" }}>
+                  Tags
+                </AppH5Typography>
+              </Link>
+            } //{...a11yProps(0)}
+          />
+          <Tab
+            label={
+              <Link
+                underline="none" key="filters" href="/filters"
+                sx={{ color: theme.palette.primary.contrastText, }}>
+                <AppH5Typography sx={{ textTransform: "none" }}>
+                  Filters
+                </AppH5Typography>
+              </Link>
+            } //{...a11yProps(1)}
           />
         </Tabs>
       </SpaceAroundBox>

@@ -25,9 +25,9 @@ export function itemGroupOptions(opts: IItemReadRequest) {
   })
 }
 
-export function savedFilterGroupOptions(opts: IFilterReadRequest) {
+export function filterGroupOptions(opts: IFilterReadRequest) {
   return queryOptions({
-    queryKey: ["savedFilter", opts],
+    queryKey: ["filter", opts],
     queryFn: () => getSavedFilter(opts),
     staleTime: 60,
     // staleTime: 24 * 60 * 60 * 1000,

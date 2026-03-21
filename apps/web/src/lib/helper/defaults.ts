@@ -15,7 +15,14 @@ import type { IFilterReadRequest } from '@/lib/model/filter';
 
 import type { IApiEndpointConfig } from '@/lib/model/common';
 import type { IUser } from '@/lib/model/auth';
+import { string } from "zod";
 
+
+export const ListBoxSize: {
+  height: string, width: string
+} = {
+  height: `calc(100vh - 300px)`, width: '100%',
+}
 
 export const AppBarHeight = 64;
 
@@ -60,18 +67,10 @@ export const DefaultFilterRead: IFilterReadRequest = {
   userId: "", pagination: { ...defaultPagination }
 };
 
-
-
-
-export const ITEMS_URL: string = '/items/';
-
-
 export const PAGE_SIZE_OPTIONS: { label: number, value: number }[] = [
   { label: 10, value: 10 }, { label: 25, value: 25 },
   { label: 50, value: 50 }, { label: 100, value: 100 }
 ]
-
-
 
 export const API_ENDPOINTS: IApiEndpointConfig = {
   readItem: "listah.v1.ItemService/ReadItem",
@@ -79,4 +78,9 @@ export const API_ENDPOINTS: IApiEndpointConfig = {
   readFilter: "listah.v1.ItemService/ReadFilter",
   updateItem: "listah.v1.ItemService/UpsertItem",
   updateFilter: "listah.v1.ItemService/UpsertFilter",
+}
+
+export const AppNavBarMap = {
+  "/filters": "Filters"
+
 }

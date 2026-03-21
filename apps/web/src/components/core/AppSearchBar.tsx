@@ -23,7 +23,7 @@ import { decodeState } from "@/lib/helper/encoders";
 
 
 
-export function AppSearchBar({ route }: { route: "/" | "/items/$title" }): ReactNode {
+export function AppSearchBar({ route }: { route: "/tag" | "/filter" | "/items/$title" }): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
   const { user } = useUser();
   const routeApi = getRouteApi(route);
