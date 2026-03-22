@@ -13,7 +13,6 @@ import Box from '@mui/material/Box';
 
 
 import {
-  AppTabNavBar,
   AppNavBar,
 } from '@/components/core/AppNavBar';
 
@@ -28,7 +27,6 @@ export function AppContainerShell() {
       <CssBaseline />
       <Box sx={{ width: "100vw", maxWidth: "100vw", height: `fit-content`, }}>
         <AppNavBar />
-        {/* <AppTabNavBar /> */}
         <Outlet />
       </Box>
     </Fragment>

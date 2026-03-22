@@ -42,6 +42,65 @@ interface TabPanelProps {
   value: number;
 }
 
+
+export function AppNavBar() {
+  const theme: AppTheme = useTheme();
+  const pathname = useLocation({
+    select: (location) => location.pathname,
+  });
+
+  console.log("Path name: - ", pathname);
+  const filterActive = pathname.includes("/filters") ? "underline" : "none"
+  const tagActive = pathname.includes("/tags") ? "underline" : "none"
+  const itemActive = pathname.includes("/items") ? "underline" : "none"
+  return (
+    <AppBar position="static"
+      sx={{
+        // bgcolor: theme.palette.primary.light,
+        width: '100%',
+        height: AppBarHeight,
+      }}
+      elevation={1}
+    >
+      <Toolbar sx={{
+        justifyContent: 'space-between', alignContent: 'center', alignItems: 'center',
+        display: 'flex', flexWrap: 'wrap', width: '100%', p: "1%",
+        bgcolor: theme.palette.background.default,
+      }}>
+        <Link underline="hover" key="home" href="/" >
+          <AppH5Typography> Listah </AppH5Typography>
+        </Link>
+
+        <Link underline={tagActive} key="tags" href="/tags" >
+          <AppH5Typography> Tags </AppH5Typography>
+        </Link>
+
+        <Link underline={filterActive} key="filters" href="/filters" >
+          <AppH5Typography > Filters </AppH5Typography>
+        </Link>
+
+        <Link underline={itemActive} key="items" href="/items" >
+          <AppH5Typography > Items </AppH5Typography>
+        </Link>
+
+        <Show when="signed-out" key="signout">
+          <Tooltip title="Log in to your account" placement="bottom">
+            <Avatar sx={{ bgcolor: theme.palette.primary.light, width: 40, height: 40, }} variant="rounded">
+              <Icon icon="material-symbols:login-rounded" width="40" height="40" />
+            </Avatar>
+
+          </Tooltip>
+          <SignInButton> <AppH5Typography > Sign In </AppH5Typography> </SignInButton>
+        </Show>
+
+        <Show when="signed-in" key="signin">
+          <UserButton />
+        </Show>
+      </Toolbar>
+    </AppBar>
+  );
+}
+
 export function AppNavBarV1() {
   const theme: AppTheme = useTheme();
   return (
@@ -79,58 +138,6 @@ export function AppNavBarV1() {
             </AppH5ButtonTypography>
           </SignInButton>
         </Show>
-        <Show when="signed-in">
-          <UserButton />
-        </Show>
-      </Toolbar>
-    </AppBar>
-  );
-}
-
-
-export function AppNavBar() {
-  const theme: AppTheme = useTheme();
-  const pathname = useLocation({
-    select: (location) => location.pathname,
-  });
-  const filterActive = pathname == "/filters" ? "underline" : "none"
-  const tagActive = pathname == "/tags" ? "underline" : "none"
-  return (
-    <AppBar position="static"
-      sx={{
-        // bgcolor: theme.palette.primary.light,
-        width: '100%',
-        height: AppBarHeight,
-      }}
-      elevation={1}
-    >
-      <Toolbar sx={{
-        justifyContent: 'space-between', alignContent: 'center', alignItems: 'center',
-        display: 'flex', flexWrap: 'wrap', width: '100%', p: "1%",
-        bgcolor: theme.palette.background.default,
-      }}>
-        <Link underline="hover" key="home" href="/" >
-          <AppH5Typography> Listah </AppH5Typography>
-        </Link>
-
-        <Link underline={tagActive} key="home" href="/tags" >
-          <AppH5Typography> Tags </AppH5Typography>
-        </Link>
-
-        <Link underline={filterActive} key="filters" href="/filters" >
-          <AppH5Typography > Filters </AppH5Typography>
-        </Link>
-
-        <Show when="signed-out">
-          <Tooltip title="Log in to your account" placement="bottom">
-            <Avatar sx={{ bgcolor: theme.palette.primary.light, width: 40, height: 40, }} variant="rounded">
-              <Icon icon="material-symbols:login-rounded" width="40" height="40" />
-            </Avatar>
-
-          </Tooltip>
-          <SignInButton> <AppH5Typography > Sign In </AppH5Typography> </SignInButton>
-        </Show>
-
         <Show when="signed-in">
           <UserButton />
         </Show>

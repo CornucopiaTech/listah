@@ -1,6 +1,6 @@
 import { StrictMode, useEffect, useMemo } from 'react';
 import type { ReactNode } from "react";
-import ReactDOM from 'react-dom/client'
+import ReactDOM from 'react-dom/client';
 import {
   RouterProvider,
   createRouter,
@@ -15,13 +15,12 @@ import { ThemeProvider, } from '@mui/material/styles';
 import { useUser } from '@clerk/react';
 import LinearProgress from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
-import { shadcn } from '@clerk/ui/themes'
 
 
 // Internal imports
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
-import reportWebVitals from './reportWebVitals.ts'
+// import reportWebVitals from './reportWebVitals.ts'
 import NotFound from '@/components/common/NotFound';
 import { ErrorAlert } from "@/components/core/Alerts";
 import theme from '@/system/theme';
@@ -92,14 +91,11 @@ function StrictModeWrapper({ children }: { children: ReactNode }) {
 
 function App() {
   const { user, } = useUser();
-
-  console.info("In App component - user ", user);
-
   // Use a useMemo for the context value to ensure stable object reference
   const routerContext = useMemo(() => {
     return {
       user,
-      queryClient
+      queryClient,
     }
   }, [user])
 
@@ -134,10 +130,8 @@ loadConfig().then(
       const root = ReactDOM.createRoot(rootElement);
       root.render(
         <ClerkProvider publishableKey={aKey} appearance={{
-          // theme: shadcn,
           theme: 'simple',
         }}>
-          {/* <App /> */}
           <Box sx={{ overflowX: "hidden" }}>
             <App />
           </Box>
@@ -152,4 +146,4 @@ loadConfig().then(
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals(console.log)
+// reportWebVitals(console.log)

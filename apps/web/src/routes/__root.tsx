@@ -1,5 +1,5 @@
 import { createRootRoute } from '@tanstack/react-router';
-
+import LinearProgress from '@mui/material/LinearProgress';
 
 
 
@@ -25,4 +25,5 @@ export const Route = createRootRoute({
   }),
   component: AppContainerShell,
   notFoundComponent: NotFound,
+  pendingComponent: LinearProgress,
 })

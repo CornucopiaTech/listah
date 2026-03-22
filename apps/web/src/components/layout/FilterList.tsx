@@ -117,7 +117,7 @@ export function FilterListLayout(): ReactNode {
       query: { ...DefaultItemRead.query, filters: [ct] },
     };
     const encoded = encodeState(q);
-    navigate({ to: "/items/$title", search: { s: encoded }, params: { title: ct } });
+    navigate({ to: "/items/{-$title}", search: { s: encoded }, params: { title: ct } });
   }
   function eachItem(itemKey: number, item: IFilter): ReactNode {
     const tc = item && item.name ? item.name : "";

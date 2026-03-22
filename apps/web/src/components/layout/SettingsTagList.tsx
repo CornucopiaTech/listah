@@ -115,7 +115,7 @@ export function SettingsTagList(): ReactNode {
     const encoded = encodeState(q);
     console.info("In handlePageChange - q ", q);
     console.info("In handlePageChange - Encoded ", encoded);
-    navigate({ to: "/items/$title", search: { s: encoded }, params: { title: it.category } });
+    navigate({ to: "/items/{-$title}", search: { s: encoded }, params: { title: it.category } });
   }
 
   function eachItem(itemKey: number, item: ITagCategory): ReactNode {

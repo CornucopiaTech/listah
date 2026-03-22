@@ -90,15 +90,6 @@ export function TagListLayout(): ReactNode {
       { id: "id 8", userId: query.userId, name: "tag name 8", count: 0 },
     ]
   }
-  // const data: ITag[] = [
-  //   { id: "id 1", userId: query.userId, name: "name 1", count: 53 },
-  //   { id: "id 2", userId: query.userId, name: "name 2", count: 153 },
-  //   { id: "id 3", userId: query.userId, name: "name 3", count: 523 },
-  //   { id: "id 5", userId: query.userId, name: "name 5", count: 33 },
-  //   { id: "id 6", userId: query.userId, name: "name 6", count: 3 },
-  //   { id: "id 7", userId: query.userId, name: "name 7", count: 43 },
-  //   { id: "id 8", userId: query.userId, name: "name 8", count: 0 },
-  // ]
   const error: Error = undefined;
 
 
@@ -113,7 +104,7 @@ export function TagListLayout(): ReactNode {
       }
     };
     const encoded = encodeState(q);
-    navigate({ to: "/tags", search: { s: encoded } });
+    navigate({ to: ".", search: { s: encoded } });
   };
 
   function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -126,7 +117,7 @@ export function TagListLayout(): ReactNode {
     const encoded = encodeState(q);
     console.info("In handlePageChange - q ", q);
     console.info("In handlePageChange - Encoded ", encoded);
-    navigate({ to: "/tags", search: { s: encoded } });
+    navigate({ to: ".", search: { s: encoded } });
   };
 
   function handleItemClick(it: ITag) {
@@ -140,7 +131,7 @@ export function TagListLayout(): ReactNode {
     const encoded = encodeState(q);
     console.info("In handlePageChange - q ", q);
     console.info("In handlePageChange - Encoded ", encoded);
-    navigate({ to: "/items/$title", search: { s: encoded }, params: { title: ct } });
+    navigate({ to: "/items/{-$title}", search: { s: encoded }, params: { title: ct } });
   }
 
   function eachItem(itemKey: number, item: ITag): ReactNode {

@@ -8,6 +8,7 @@ export const Route = createFileRoute('/')({
   beforeLoad: () => {
     throw redirect({
       to: '/tags',
+      // from: "/"
     })
   }
 })

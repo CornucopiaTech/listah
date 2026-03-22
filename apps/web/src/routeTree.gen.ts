@@ -14,7 +14,7 @@ import { Route as TagsIndexRouteImport } from './routes/tags/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as FiltersIndexRouteImport } from './routes/filters/index'
 import { Route as TagsNameRouteImport } from './routes/tags/$name'
-import { Route as ItemsTitleRouteImport } from './routes/items/$title'
+import { Route as ItemsChar123TitleChar125RouteImport } from './routes/items/{-$title}'
 import { Route as FiltersNameRouteImport } from './routes/filters/$name'
 
 const IndexRoute = IndexRouteImport.update({
@@ -42,11 +42,12 @@ const TagsNameRoute = TagsNameRouteImport.update({
   path: '/tags/$name',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ItemsTitleRoute = ItemsTitleRouteImport.update({
-  id: '/items/$title',
-  path: '/items/$title',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const ItemsChar123TitleChar125Route =
+  ItemsChar123TitleChar125RouteImport.update({
+    id: '/items/{-$title}',
+    path: '/items/{-$title}',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const FiltersNameRoute = FiltersNameRouteImport.update({
   id: '/filters/$name',
   path: '/filters/$name',
@@ -56,7 +57,7 @@ const FiltersNameRoute = FiltersNameRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/filters/$name': typeof FiltersNameRoute
-  '/items/$title': typeof ItemsTitleRoute
+  '/items/{-$title}': typeof ItemsChar123TitleChar125Route
   '/tags/$name': typeof TagsNameRoute
   '/filters/': typeof FiltersIndexRoute
   '/settings/': typeof SettingsIndexRoute
@@ -65,7 +66,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/filters/$name': typeof FiltersNameRoute
-  '/items/$title': typeof ItemsTitleRoute
+  '/items/{-$title}': typeof ItemsChar123TitleChar125Route
   '/tags/$name': typeof TagsNameRoute
   '/filters': typeof FiltersIndexRoute
   '/settings': typeof SettingsIndexRoute
@@ -75,7 +76,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/filters/$name': typeof FiltersNameRoute
-  '/items/$title': typeof ItemsTitleRoute
+  '/items/{-$title}': typeof ItemsChar123TitleChar125Route
   '/tags/$name': typeof TagsNameRoute
   '/filters/': typeof FiltersIndexRoute
   '/settings/': typeof SettingsIndexRoute
@@ -86,7 +87,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/filters/$name'
-    | '/items/$title'
+    | '/items/{-$title}'
     | '/tags/$name'
     | '/filters/'
     | '/settings/'
@@ -95,7 +96,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/filters/$name'
-    | '/items/$title'
+    | '/items/{-$title}'
     | '/tags/$name'
     | '/filters'
     | '/settings'
@@ -104,7 +105,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/filters/$name'
-    | '/items/$title'
+    | '/items/{-$title}'
     | '/tags/$name'
     | '/filters/'
     | '/settings/'
@@ -114,7 +115,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FiltersNameRoute: typeof FiltersNameRoute
-  ItemsTitleRoute: typeof ItemsTitleRoute
+  ItemsChar123TitleChar125Route: typeof ItemsChar123TitleChar125Route
   TagsNameRoute: typeof TagsNameRoute
   FiltersIndexRoute: typeof FiltersIndexRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
@@ -158,11 +159,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TagsNameRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/items/$title': {
-      id: '/items/$title'
-      path: '/items/$title'
-      fullPath: '/items/$title'
-      preLoaderRoute: typeof ItemsTitleRouteImport
+    '/items/{-$title}': {
+      id: '/items/{-$title}'
+      path: '/items/{-$title}'
+      fullPath: '/items/{-$title}'
+      preLoaderRoute: typeof ItemsChar123TitleChar125RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/filters/$name': {
@@ -178,7 +179,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   FiltersNameRoute: FiltersNameRoute,
-  ItemsTitleRoute: ItemsTitleRoute,
+  ItemsChar123TitleChar125Route: ItemsChar123TitleChar125Route,
   TagsNameRoute: TagsNameRoute,
   FiltersIndexRoute: FiltersIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,

@@ -15,7 +15,6 @@ import type { IFilterReadRequest } from '@/lib/model/filter';
 
 import type { IApiEndpointConfig } from '@/lib/model/common';
 import type { IUser } from '@/lib/model/auth';
-import { string } from "zod";
 
 
 export const ListBoxSize: {

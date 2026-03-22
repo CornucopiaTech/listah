@@ -47,7 +47,6 @@ import {
 import { AppH6Typography } from "@/components/core/Typography";
 import LinearProgress from '@mui/material/LinearProgress';
 import {
-  DefaultItemRead,
   ListBoxSize,
 } from '@/lib/helper/defaults';
 
@@ -62,8 +61,9 @@ function OuterBox({ children }: { children: ReactNode }): ReactNode {
   );
 }
 
+// export function ItemListLayout({ route }: { route: '/items/$title' | '/items/' }): ReactNode {
 export function ItemListLayout(): ReactNode {
-  const routeApi = getRouteApi('/items/$title');
+  const routeApi = getRouteApi('/items/{-$title}');
   const routeSearch: { s: string } = routeApi.useSearch()
   let search: IItemReadRequest = decodeState(routeSearch.s) as IItemReadRequest;
   const navigate = useNavigate();
@@ -73,9 +73,25 @@ export function ItemListLayout(): ReactNode {
 
   const query: IItemReadRequest = { ...search, userId: user?.id || "" };
 
-  const {
-    isPending, isError, data, error
-  }: UseQueryResult<IItemReadResponse> = useQuery(itemGroupOptions(query));
+  // const {
+  //   isPending, isError, data, error
+  // }: UseQueryResult<IItemReadResponse> = useQuery(itemGroupOptions(query));
+  const isPending: boolean = false;
+  const isError: boolean = false;
+  const data: IItemReadResponse = {
+    pagination: { pageSize: 8, pageNumber: 1, sort: "" },
+    query: query.query,
+    userId: query.userId,
+    items: [
+      { id: "id 1", userId: query.userId, name: "item name 1", tags: ["Tag 1"], props: { "valiant": "render", "towards": "manger" } },
+      { id: "id 2", userId: query.userId, name: "item name 2", tags: ["Tag 1"], props: { "valiant": "render", "towards": "manger" } },
+      { id: "id 3", userId: query.userId, name: "item name 3", tags: ["Tag 1"], props: { "valiant": "render", "towards": "manger" } },
+      { id: "id 5", userId: query.userId, name: "item name 5", tags: ["Tag 1"], props: { "valiant": "render", "towards": "manger" } },
+      { id: "id 6", userId: query.userId, name: "item name 6", tags: ["Tag 1"], props: { "render": "render", "casual": "manger" } },
+      { id: "id 7", userId: query.userId, name: "item name 7", tags: ["Tag 1"], props: { "tidy": "render", "condition": "manger" } },
+      { id: "id 8", userId: query.userId, name: "item name 8", tags: ["Tag 1"], props: { "valiant": "render", "concern": "manger" } },
+    ],
+  }
 
 
   let errMsg: string = isError && error && error instanceof Error ? error.message : "";
@@ -101,7 +117,7 @@ export function ItemListLayout(): ReactNode {
     const q = { ...query, pageNumber: value };
     const encoded = encodeState(q);
     navigate({
-      to: "/items/$title",
+      to: "/items/{-$title}",
       search: { s: encoded },
       params: { title: title || "" }
     });
@@ -118,7 +134,7 @@ export function ItemListLayout(): ReactNode {
     const q = { ...query, pageSize: parseInt(e.target.value, 10), pageNumber: 0 };
     const encoded = encodeState(q);
     navigate({
-      to: "/items/$title",
+      to: "/items/{-$title}",
       search: { s: encoded },
       params: { title: title || "" }
     });
@@ -154,6 +170,7 @@ export function ItemListLayout(): ReactNode {
 
   const items: IItem[] = data && data.items ? data.items : [];
   const totalRecords: number = data && data.pagination && data.pagination.pageSize ? data.pagination.pageSize : 1;
+
 
   return (
     <Fragment>

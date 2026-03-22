@@ -5,8 +5,14 @@
         "**/.server/**/*.ts",
         "**/.server/**/*.tsx",
         "**/.client/**/*.ts",
-        "**/.client/**/*.tsx"
-, "apps/tanstack-router/src/routes/items.index.tsx.bkup.2025-07-18-1448", "apps/web__vite/src/routes/item.$id.index.tsx.bkup", "apps/web__vite/src/app/items/ItemsListInitial.tsx.bkup.2025-07-18-0000", "apps/web/src/lib/store/slice_with_middleware.ts.bkup."    ],
+        "**/.client/**/*.tsx",
+        "apps/tanstack-router/src/routes/items.index.tsx.bkup.2025-07-18-1448",
+        "apps/web__vite/src/routes/item.$id.index.tsx.bkup",
+        "apps/web__vite/src/app/items/ItemsListInitial.tsx.bkup.2025-07-18-0000",
+        "apps/web/src/lib/store/slice_with_middleware.ts.bkup.",
+        "apps/web/src/routes/items/{-$title}.tsx",
+        "apps/web/src/routes/items/index.tsx.bkup.2026-03-21-2117"
+    ],
     "compilerOptions": {
         "lib": [
             "DOM",

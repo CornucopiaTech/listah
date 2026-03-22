@@ -41,7 +41,7 @@ export function AppSearchBar({ route }: { route: "/tag" | "/filter" | "/items/$t
       pageNumber: 0, searchQuery: store.searchQuery,
     };
     const encoded = encodeState(q);
-    navigate({ to: "/items/$title", search: { s: encoded }, params: { title: store.searchQuery } });
+    navigate({ to: "/items/{-$title}", search: { s: encoded }, params: { title: store.searchQuery } });
   }
 
   return (
@@ -88,7 +88,7 @@ export function AppHomeSearchBar(): ReactNode {
       pageNumber: 0, searchQuery: store.searchQuery,
     };
     const encoded = encodeState(q);
-    navigate({ to: "/items/$title", search: { s: encoded }, params: { title: store.searchQuery } });
+    navigate({ to: "/items/{-$title}", search: { s: encoded }, params: { title: store.searchQuery } });
   }
 
   return (
@@ -137,7 +137,7 @@ export function AppItemsSearchBar(): ReactNode {
       pageNumber: 0, searchQuery: store.searchQuery,
     };
     const encoded = encodeState(q);
-    navigate({ to: "/items/$title", search: { s: encoded }, params: { title: store.searchQuery } });
+    navigate({ to: "/items/{-$title}", search: { s: encoded }, params: { title: store.searchQuery } });
   }
 
   return (
