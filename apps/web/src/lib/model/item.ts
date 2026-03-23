@@ -4,12 +4,14 @@ import {
   ZPagination,
 } from "@/lib/model/common";
 
+
 // Item Definitions
 export const ZItem = z.object({
   id: z.string().catch(''),
   userId: z.string().catch(''),
   name: z.string().catch(''),
-  props: z.map(z.string(), z.any()),
+  note: z.string().catch(""),
+  props: z.any(),
   tags: z.array(z.string()).catch([]),
   softDelete: z.boolean().catch(false),
 });

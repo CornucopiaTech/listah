@@ -37,6 +37,8 @@ import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import Box from '@mui/material/Box';
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+
 
 
 // Internal imports
@@ -57,62 +59,99 @@ import type {
 import { ErrorAlert, SuccessAlert, WarnAlert } from "@/components/core/Alerts";
 import type { AppTheme } from '@/system/theme';
 import { decodeState } from "@/lib/helper/encoders";
-import { DefaultHomeQueryParams } from '@/lib/helper/defaults';
+import {
+  DefaultTagRead,
+  DefaultFilterRead,
+} from '@/lib/helper/defaults';
+import type {
+  ITag,
+  ITagReadRequest,
+  ITagReadResponse,
+} from "@/lib/model/tag";
 
 
 
-type itemFields = "id" | "tag" | "title" | "userId" | "description" | "note" | "softDelete" | `tag[${number}]`
+type itemFields = "id" | "userId" | "name" | "note" | `props[${number}]` | "softDelete" | `tags[${number}]`
 
 export function AppItemModal(
-  { route }: { route: "/" | "/items/$title" }
+  { route }: { route: "/items/{-$title}" }
 ): ReactNode {
 
 
   const store: TBoundStore = useBoundStore((state) => state);
   const { user } = useUser();
   const item: IItem = useBoundStore((state) => state.displayItem);
+  type IProps = {
+    key: string,
+    value: string
+  }
+  let itemProps: IProps[] = [];
+  for (const [k, v] of Object.entries(item.props)) {
+    itemProps.push({ key: k, value: v });
+  };
+
   const routeApi = getRouteApi(route);
   const routeSearch: { s: string } = routeApi.useSearch()
   let search: IItemReadRequest = decodeState(routeSearch.s) as IItemReadRequest;
   const query: IItemReadRequest = { ...search, userId: user?.id || "" };
   const queryClient = useQueryClient();
   const theme: AppTheme = useTheme();
+  const formData = { ...item, props: itemProps }
   const form = useForm({
-    defaultValues: item,
+    defaultValues: formData,
     onSubmit: formSubmission,
     validators: {
       onChange({ value }: { value: IItem }) {
-        if (value.title.length < 1) {
+        if (value.name.length < 1) {
           return "Item title is required";
         }
-        if (value.tag.length < 1) {
+        if (value.tags.length < 1) {
           return "A least one tag is required";
         }
         return undefined
       },
       onBlur({ value }: { value: IItem }) {
-        if (value.title.length < 1) {
+        if (value.name.length < 1) {
           return "Item title is required";
         }
-        if (value.tag.length < 1) {
+        if (value.tags.length < 1) {
           return "A least one tag is required";
         }
         return undefined
       },
     },
   });
-  const catQuery = {
-    savedFilter: {
-      ...DefaultHomeQueryParams.savedFilter,
-      userId: user?.id || "",
-      pageSize: -1,
-    },
-    tag: {
-      ...DefaultHomeQueryParams.tag,
-      userId: user?.id || "",
-      pageSize: -1,
-    }
+  const tagQuery = {
+    ...DefaultTagRead,
+    userId: user?.id || "",
+    pageSize: -1,
   }
+  const filterQuery = {
+    ...DefaultFilterRead,
+    userId: user?.id || "",
+    pageSize: -1,
+  }
+  // const {
+  //   isPending, isError, data, error
+  // }: UseQueryResult<ITagReadResponse> = useQuery(tagGroupOptions(query));
+  const isPending: boolean = false;
+  const isError: boolean = false;
+  const data: ITagReadResponse = {
+    pagination: { pageSize: 8, pageNumber: 1, sort: "" },
+    tags: [
+      { id: "id 1", userId: query.userId, name: "Tag name 1", count: 53 },
+      { id: "id 2", userId: query.userId, name: "Tag name 2", count: 153 },
+      { id: "id 3", userId: query.userId, name: "Tag name 3", count: 523 },
+      { id: "id 4", userId: query.userId, name: "Tag name 4", count: 23 },
+      { id: "id 5", userId: query.userId, name: "Tag name 5", count: 33 },
+      { id: "id 6", userId: query.userId, name: "Tag name 6", count: 3 },
+      { id: "id 7", userId: query.userId, name: "Tag name 7", count: 43 },
+      { id: "id 8", userId: query.userId, name: "Tag name 8", count: 0 },
+    ]
+  }
+  const error: Error = undefined;
+  const tags: ITag[] = data && data.tags ? data.tags : [];
+
 
   // Define invalidating  mutation
   const mutation = useMutation({
@@ -123,8 +162,8 @@ export function AppItemModal(
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["item", query] }),
-        queryClient.invalidateQueries({ queryKey: ["tag", catQuery.tag] }),
-        queryClient.invalidateQueries({ queryKey: ["savedFilter", catQuery.savedFilter] }),
+        queryClient.invalidateQueries({ queryKey: ["tag", tagQuery] }),
+        queryClient.invalidateQueries({ queryKey: ["filter", filterQuery] }),
       ])
     },
     onError: (error) => {
@@ -162,14 +201,19 @@ export function AppItemModal(
     console.log("In formSubmission - value ", value);
     const itemId = value.id && value.id != "" ? value.id : uuidv4();
     const userId = user && user.id ? user.id : value.userId;
+    const subProps = value.props.reduce((acc: any, i: IProps) => {
+      acc[i.key] = i.value;
+      return acc
+    }, {})
     const submitValue = {
       ...value,
       userId,
       id: itemId,
-      tag: value.tag?.filter((t) => t != "")
+      tags: value.tags?.filter((t) => t != ""),
+      props: subProps,
     }
     console.log("In formSubmission - submitValue ", submitValue);
-    mutation.mutate(submitValue);
+    // mutation.mutate(submitValue);
 
   }
 
@@ -204,8 +248,9 @@ export function AppItemModal(
   }
 
   function getTagField() {
+    // ToDo: Use Virtualised list for this.
     return (
-      <form.Field name="tag" mode="array">
+      <form.Field name="tags" mode="array">
         {
           (field) => (
             <Fragment>
@@ -213,27 +258,44 @@ export function AppItemModal(
                 onClick={() => field.pushValue('')}
                 type="button">
                 <AppBody1Typography>Add new tag</AppBody1Typography>
-
               </Button>
               {
                 field.state.value &&
                 <Grid container spacing={1} sx={{ width: '100%' }}>{
                   field.state.value.map((_, i) => {
-                    return <form.Field key={i} name={`tag[${i}]`}>{
+                    return <form.Field key={i} name={`tags[${i}]`}>{
                       (subField) => {
                         return (
                           <Grid size={{ xs: 12, sm: 6, md: 6 }}>
-                            <TextField
-                              multiline
+                            <Autocomplete
                               id={"item-tag-" + i}
+                              freeSolo
+                              options={tags.map((opt) => opt.name)}
                               value={subField.state.value}
-                              label={"tag[" + (i + 1) + "]"}
+                              inputValue={subField.state.value}
                               onChange={
-                                (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
-                                  subField.handleChange(e.target.value)
+                                (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, newValue: string) => {
+                                  // Handles ONLY changes from the provided options.
+                                  const tval = e && e.target && e.target.value ? e.target.value : "";
+                                  const sval = newValue ? newValue : tval;
+                                  // console.log("OnChange", tval, newValue, sval)
+                                  subField.handleChange(sval);
+                                }
                               }
-                              size="small"
-                              variant="standard"
+                              onInputChange={
+                                (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, newValue) => {
+                                  // Handles both handwritten and provided option value changes.
+                                  const tval = e && e.target && e.target.value ? e.target.value : "";
+                                  const sval = newValue ? newValue : tval;
+                                  // console.log("OnInputChange", tval, newValue, sval)
+                                  subField.handleChange(sval);
+                                }
+                              }
+                              renderInput={
+                                (params) => <TextField
+                                  {...params} label={"tag " + (i + 1)}
+                                />
+                              }
                             />
                           </Grid>
                         )
@@ -249,18 +311,77 @@ export function AppItemModal(
     );
   }
 
+  function getPropField() {
+    return (
+      <form.Field name="props" mode="array">
+        {
+          (field) => (
+            <Fragment>
+              <Button
+                onClick={() => field.pushValue({ key: "", value: "" })}
+                type="button">
+                <AppBody1Typography>Add new property</AppBody1Typography>
+              </Button>
+              {
+                field.state.value &&
+                <Stack spacing={3} sx={{ width: '100%' }}>{
+                  field.state.value.map((_, i) => {
+                    return <form.Field key={i} name={`props[${i}]`}>{
+                      (subField) => {
+                        return (
+                          <Stack direction="row" spacing={3} size={12}>
+                            <TextField
+                              multiline
+                              id={"item-prop-key-" + i}
+                              value={subField.state.value.key}
+                              label={"property key " + (i + 1)}
+                              onChange={
+                                (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
+                                  // subField.handleChange(e.target.value)
+                                  subField.handleChange({ ...subField.state.value, key: e.target.value })
+                              }
+                              size="small"
+                              variant="standard"
+                            />
+                            <TextField
+                              multiline
+                              id={"item-prop-key-" + i}
+                              value={subField.state.value.value}
+                              label={"property value " + (i + 1)}
+                              onChange={
+                                (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
+                                  // subField.handleChange(e.target.value)
+                                  subField.handleChange({ ...subField.state.value, value: e.target.value })
+                              }
+                              size="small"
+                              variant="standard"
+                            />
+                          </Stack>
+                        )
+                      }
+                    }</form.Field>
+                  })
+                }</Stack>
+              }
+            </Fragment>
+          )
+        }
+      </form.Field>
+    );
+  }
+
   function handleDelete() {
     form.setFieldValue('softDelete', true);
     form.handleSubmit();
   }
 
   function handleClone() {
-    const title = form.state.values.title || "";
+    const title = form.state.values.name || "";
     form.setFieldValue('id', uuidv4());
-    form.setFieldValue('title', "[Clone of] - " + title);
+    form.setFieldValue('name', "[Clone of] - " + title);
   }
 
-  const fields: itemFields[] = ['id', 'userId', 'title', 'description', 'note'];
+  const fields: itemFields[] = ['id', 'userId', 'name', "note"];
   const dialogSx = {
     display: 'block',
     maxWidth: "lg",
@@ -331,12 +452,14 @@ export function AppItemModal(
               formErrorMap.onBlur && (<ErrorAlert message={`${formErrorMap.onBlur}`} />)
             }
             {fields.map((fds: itemFields) => getSimpleField(fds))}
+
+            {getPropField()}
             {getTagField()}
           </Stack>
         </DialogContent>
         <DialogActions>
           <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting, state.values.title]}
+            selector={(state) => [state.canSubmit, state.isSubmitting, state.values.name]}
             children={() => (
               <Box sx={{ transform: 'translateZ(0px)', flexGrow: 1 }}>
                 <SpeedDial

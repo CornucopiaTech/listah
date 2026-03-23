@@ -5,15 +5,15 @@ import (
 	"cornucopia/listah/internal/app/bootstrap"
 	"cornucopia/listah/internal/pkg/model"
 	"errors"
-	// "fmt"
+
+	"time"
 
 	"connectrpc.com/connect"
 	"github.com/google/uuid"
 	"go.opentelemetry.io/otel/trace"
-		"time"
 
+	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagation"
-		"go.opentelemetry.io/otel"
 )
 
 const tokenHeader = "Acme-Token"
@@ -71,20 +71,15 @@ func RecordRequestInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFu
 			req connect.AnyRequest,
 		) (connect.AnyResponse, error) {
 			// Log request in db in middleware
-			// fmt.Println("\n\n\ncalling:", req.Spec().Procedure)
-			// fmt.Println("\n\nrequest:", req.Any())
-			// fmt.Println("\n\n\n\n\n")
-
 			reqModel := model.ApiLog{
-				Id:      uuid.Must(uuid.NewV7()).String(),
-				RequestSource:      "api",
-				TraceId: trace.SpanFromContext(ctx).SpanContext().TraceID().String(),
-				SpanId:  trace.SpanFromContext(ctx).SpanContext().SpanID().String(),
-				Request: req,
-				RequestTime: time.Now().UTC(),
-				Uri: req.Spec().Procedure,
+				Id:            uuid.Must(uuid.NewV7()).String(),
+				RequestSource: "api",
+				TraceId:       trace.SpanFromContext(ctx).SpanContext().TraceID().String(),
+				SpanId:        trace.SpanFromContext(ctx).SpanContext().SpanID().String(),
+				Request:       req,
+				RequestTime:   time.Now().UTC(),
 			}
-			err := infra.MongoRepo.ApiLog.Insert(ctx, &reqModel)
+			err := infra.BunRepo.ApiLog.Insert(ctx, &reqModel)
 			if err != nil {
 				infra.Logger.LogInfo(ctx, "middleware", "middleware", "Unable to record request")
 			}

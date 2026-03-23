@@ -83,14 +83,14 @@ export function ItemListLayout(): ReactNode {
     query: query.query,
     userId: query.userId,
     items: [
-      { id: "id 1", userId: query.userId, name: "item name 1", tags: ["Tag 1"], props: { "valiant": "render", "towards": "manger" } },
-      { id: "id 2", userId: query.userId, name: "item name 2", tags: ["Tag 1"], props: { "valiant": "render", "towards": "manger" } },
-      { id: "id 3", userId: query.userId, name: "item name 3", tags: ["Tag 1"], props: { "valiant": "render", "towards": "manger" } },
-      { id: "id 5", userId: query.userId, name: "item name 5", tags: ["Tag 1"], props: { "valiant": "render", "towards": "manger" } },
-      { id: "id 6", userId: query.userId, name: "item name 6", tags: ["Tag 1"], props: { "render": "render", "casual": "manger" } },
-      { id: "id 7", userId: query.userId, name: "item name 7", tags: ["Tag 1"], props: { "tidy": "render", "condition": "manger" } },
-      { id: "id 8", userId: query.userId, name: "item name 8", tags: ["Tag 1"], props: { "valiant": "render", "concern": "manger" } },
-    ],
+      { id: "id 1", userId: query.userId, name: "item name 1", tags: ["Tag name 1"], props: { "valiant": "render", "towards": "manger" }, note: "", softDelete: false, },
+      { id: "id 2", userId: query.userId, name: "item name 2", tags: ["Tag name 1"], props: { "valiant": "render", "towards": "manger" }, note: "", softDelete: false, },
+      { id: "id 3", userId: query.userId, name: "item name 3", tags: ["Tag name 1"], props: { "valiant": "render", "towards": "manger" }, note: "", softDelete: false, },
+      { id: "id 5", userId: query.userId, name: "item name 5", tags: ["Tag name 1"], props: { "valiant": "render", "towards": "manger" }, note: "", softDelete: false, },
+      { id: "id 6", userId: query.userId, name: "item name 6", tags: ["Tag name 1"], props: { "render": "render", "casual": "manger" }, note: "", softDelete: false, },
+      { id: "id 7", userId: query.userId, name: "item name 7", tags: ["Tag name 1"], props: { "tidy": "render", "condition": "manger" }, note: "", softDelete: false, },
+      { id: "id 8", userId: query.userId, name: "item name 8", tags: ["Tag name 1"], props: { "valiant": "render", "concern": "manger" }, note: "", softDelete: false, },
+    ]
   }
 
 

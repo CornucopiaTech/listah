@@ -20,6 +20,7 @@ type Item interface {
 	Insert(ctx context.Context, m []*v1model.Item) ([]string, error)
 	Update(ctx context.Context, m []*v1model.ItemUpdate) error
 	Replace(ctx context.Context, m []*v1model.ItemReplace) error
+	UpdateMany(ctx context.Context, m []*v1model.ItemUpdate) error
 }
 
 type itemAgent struct {
@@ -90,6 +91,38 @@ func (a *itemAgent) Update(ctx context.Context, m []*v1model.ItemUpdate) error {
 			a.logger.For(ctx).Error("Error occurred in repository while updating item", zap.String("cause", errors.Cause(err).Error()))
 			return err
 		}
+	}
+	return nil
+}
+
+func (a *itemAgent) UpdateMany(ctx context.Context, m []*v1model.ItemUpdate) error {
+	ctx, span := otel.Tracer("item-repository").Start(ctx, "update many")
+	defer span.End()
+	a.logger.For(ctx).Info("Updating many in item")
+	// https://www.mongodb.com/docs/drivers/go/current/crud/query/retrieve/#std-label-golang-retrieve
+
+	opts := options.BulkWrite().SetOrdered(false)
+	// opts := options.FindOneAndUpdate().SetUpsert(true).SetReturnDocument(options.After)
+	models := []mongo.WriteModel{}
+	for _, om := range m {
+		models = append(
+			models,
+			mongo.NewUpdateOneModel().SetFilter(om.Filter).SetUpdate(om.Update).SetUpsert(true),
+		)
+		// var replacedDocument bson.M
+		// err := a.collection.
+		// 	FindOneAndUpdate(ctx, om.Filter, om.Update, opts).
+		// 	Decode(&replacedDocument)
+		// if err != nil {
+		// 	a.logger.For(ctx).Error("Error occurred in repository while updating item", zap.String("cause", errors.Cause(err).Error()))
+		// 	return err
+		// }
+	}
+	_, err := a.collection.BulkWrite(ctx, models, opts)
+
+	if err != nil {
+		a.logger.For(ctx).Error("Error occurred in repository while updating item", zap.String("cause", errors.Cause(err).Error()))
+		return err
 	}
 	return nil
 }

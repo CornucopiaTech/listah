@@ -23,9 +23,10 @@ message Item {
   string id = 1;
   string userId = 2 [json_name = "userId"];
   string name = 3;
-  map<string,string> props = 4;
-  repeated string tags = 5;
-  optional bool softDelete = 6;
+  string note = 4;
+  map<string,string> props = 5;
+  repeated string tags = 6;
+  optional bool softDelete = 7;
   optional string updatedBy = 500;
   optional google.protobuf.Timestamp updatedAt = 501;
 }

@@ -136,9 +136,10 @@ type Item struct {
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	UserId        string                 `protobuf:"bytes,2,opt,name=userId,proto3" json:"userId,omitempty"`
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Props         map[string]string      `protobuf:"bytes,4,rep,name=props,proto3" json:"props,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	Tags          []string               `protobuf:"bytes,5,rep,name=tags,proto3" json:"tags,omitempty"`
-	SoftDelete    *bool                  `protobuf:"varint,6,opt,name=softDelete,proto3,oneof" json:"softDelete,omitempty"`
+	Note          string                 `protobuf:"bytes,4,opt,name=note,proto3" json:"note,omitempty"`
+	Props         map[string]string      `protobuf:"bytes,5,rep,name=props,proto3" json:"props,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Tags          []string               `protobuf:"bytes,6,rep,name=tags,proto3" json:"tags,omitempty"`
+	SoftDelete    *bool                  `protobuf:"varint,7,opt,name=softDelete,proto3,oneof" json:"softDelete,omitempty"`
 	UpdatedBy     *string                `protobuf:"bytes,500,opt,name=updatedBy,proto3,oneof" json:"updatedBy,omitempty"`
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,501,opt,name=updatedAt,proto3,oneof" json:"updatedAt,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -192,6 +193,13 @@ func (x *Item) GetUserId() string {
 func (x *Item) GetName() string {
 	if x != nil {
 		return x.Name
+	}
+	return ""
+}
+
+func (x *Item) GetNote() string {
+	if x != nil {
+		return x.Note
 	}
 	return ""
 }
@@ -446,15 +454,16 @@ const file_v1_commons_proto_rawDesc = "" +
 	"\n" +
 	"pageNumber\x18\x02 \x01(\x05R\n" +
 	"pageNumber\x12\x12\n" +
-	"\x04sort\x18\x03 \x01(\tR\x04sort\"\xf6\x02\n" +
+	"\x04sort\x18\x03 \x01(\tR\x04sort\"\x8a\x03\n" +
 	"\x04Item\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
-	"\x04name\x18\x03 \x01(\tR\x04name\x120\n" +
-	"\x05props\x18\x04 \x03(\v2\x1a.listah.v1.Item.PropsEntryR\x05props\x12\x12\n" +
-	"\x04tags\x18\x05 \x03(\tR\x04tags\x12#\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12\x12\n" +
+	"\x04note\x18\x04 \x01(\tR\x04note\x120\n" +
+	"\x05props\x18\x05 \x03(\v2\x1a.listah.v1.Item.PropsEntryR\x05props\x12\x12\n" +
+	"\x04tags\x18\x06 \x03(\tR\x04tags\x12#\n" +
 	"\n" +
-	"softDelete\x18\x06 \x01(\bH\x00R\n" +
+	"softDelete\x18\a \x01(\bH\x00R\n" +
 	"softDelete\x88\x01\x01\x12\"\n" +
 	"\tupdatedBy\x18\xf4\x03 \x01(\tH\x01R\tupdatedBy\x88\x01\x01\x12>\n" +
 	"\tupdatedAt\x18\xf5\x03 \x01(\v2\x1a.google.protobuf.TimestampH\x02R\tupdatedAt\x88\x01\x01\x1a8\n" +

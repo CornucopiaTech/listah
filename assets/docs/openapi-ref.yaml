@@ -640,6 +640,9 @@ components:
         name:
           type: string
           title: name
+        note:
+          type: string
+          title: note
         props:
           type: object
           title: props
@@ -715,11 +718,11 @@ components:
     listah.v1.ItemServiceReadFilterResponse:
       type: object
       properties:
-        tags:
+        filters:
           type: array
           items:
-            $ref: '#/components/schemas/listah.v1.Item'
-          title: tags
+            $ref: '#/components/schemas/listah.v1.Filter'
+          title: filters
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
@@ -776,7 +779,7 @@ components:
         tags:
           type: array
           items:
-            $ref: '#/components/schemas/listah.v1.Item'
+            $ref: '#/components/schemas/listah.v1.Tag'
           title: tags
         pagination:
           title: pagination
@@ -786,21 +789,21 @@ components:
     listah.v1.ItemServiceUpsertFilterRequest:
       type: object
       properties:
-        tags:
+        filters:
           type: array
           items:
-            $ref: '#/components/schemas/listah.v1.Item'
-          title: tags
+            $ref: '#/components/schemas/listah.v1.Filter'
+          title: filters
       title: ItemServiceUpsertFilterRequest
       additionalProperties: false
     listah.v1.ItemServiceUpsertFilterResponse:
       type: object
       properties:
-        tagIds:
+        filterIds:
           type: array
           items:
             type: string
-          title: tagIds
+          title: filterIds
       title: ItemServiceUpsertFilterResponse
       additionalProperties: false
     listah.v1.ItemServiceUpsertItemRequest:
@@ -829,7 +832,7 @@ components:
         tags:
           type: array
           items:
-            $ref: '#/components/schemas/listah.v1.Item'
+            $ref: '#/components/schemas/listah.v1.Tag'
           title: tags
       title: ItemServiceUpsertTagRequest
       additionalProperties: false

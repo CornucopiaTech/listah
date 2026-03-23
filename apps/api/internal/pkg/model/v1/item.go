@@ -1,178 +1,125 @@
 package v1
 
 import (
-	// "cornucopia/listah/internal/pkg/model"
+	"cornucopia/listah/internal/pkg/model"
 	pb "cornucopia/listah/internal/pkg/proto/v1"
-	"time"
+	"errors"
+	"fmt"
+	"strings"
 
-	// "strings"
-	// "fmt"
 	"github.com/google/uuid"
-	"github.com/pkg/errors"
-	"google.golang.org/protobuf/types/known/timestamppb"
-	// "go.mongodb.org/mongo-driver/v2/bson"
 )
 
-type Item struct {
-	UpdatedBy  string
-	Props      map[string]string
-	Id         string `bson:"_id"`
-	UserId     string
-	Name       string
-	UpdatedAt  time.Time
-	Tags       []string
-	SoftDelete bool
+var svcName string = "listah.v1.ItemService"
+var ItemConflictFields = []string{
+	"id", "user_id",
+}
+var defaultPagination = model.Pagination{
+	PageNumber: 1,
+	PageSize:   100,
+	Sort:       "name ASC",
 }
 
-type ItemUpsert struct {
-	Filter map[string]string
-	Update map[string]map[string]interface{}
-}
-
-type ItemUpdate struct {
-	Filter map[string]string
-	Update map[string]map[string]interface{}
-}
-
-type ItemReplace struct {
-	Filter  map[string]string
-	Replace map[string]interface{}
-}
-
-type ItemRead struct {
-	Filter map[string]interface{}
-}
-
-func InsertItemQueryFromRequest(msg *pb.ItemServiceUpsertItemRequest) ([]*Item, error) {
-	c := []*Item{}
-	for _, om := range msg.Items {
-		if om.GetUserId() == "" {
-			return nil, errors.New("no userId sent with request")
-		}
-		id := om.GetId()
-		if id == "" {
-			id = uuid.Must(uuid.NewV7()).String()
-		}
-		a := &Item{
-			Id:     id,
-			UserId: om.GetUserId(),
-			Name:   om.GetName(),
-			Tags:   om.GetTags(),
-			Props:  om.GetProps(),
-		}
-		c = append(c, a)
-	}
-	return c, nil
-}
-
-func UpdateItemQueryFromRequest(msg *pb.ItemServiceUpsertItemRequest) ([]*ItemUpdate, error) {
-	c := []*ItemUpdate{}
-	for _, om := range msg.Items {
-		if om.GetUserId() == "" {
-			return nil, errors.New("no userId sent with request")
-		}
-		id := om.GetId()
-		if id == "" {
-			id = uuid.Must(uuid.NewV7()).String()
-		}
-
-		a := &ItemUpdate{
-			Filter: map[string]string{"_id": id, "userId": om.GetUserId()},
-			Update: map[string]map[string]interface{}{
-				"$set": {
-					"_id":        id,
-					"userId":     om.GetUserId(),
-					"tags":       om.GetTags(),
-					"title":      om.GetName(),
-					"properties": om.GetProps(),
-					"softDelete": om.GetSoftDelete(),
-					"updatedAt":  time.Now().UTC(),
-					"updatedBy":  "api",
-				},
-			},
-		}
-		c = append(c, a)
-	}
-	return c, nil
-}
-
-func ReplaceItemQueryFromRequest(msg *pb.ItemServiceUpsertItemRequest) ([]*ItemReplace, error) {
-	c := []*ItemReplace{}
-	for _, om := range msg.Items {
-		if om.GetUserId() == "" {
-			return nil, errors.New("no userId sent with request")
-		}
-		id := om.GetId()
-		if id == "" {
-			id = uuid.Must(uuid.NewV7()).String()
-		}
-		a := &ItemReplace{
-			Filter: map[string]string{"_id": id, "userId": om.GetUserId()},
-			Replace: map[string]interface{}{
-				"_id":        id,
-				"userId":     om.GetUserId(),
-				"tags":       om.GetTags(),
-				"title":      om.GetName(),
-				"properties": om.GetProps(),
-				"softDelete": om.GetSoftDelete(),
-				"updatedAt":  time.Now().UTC(),
-				"updatedBy":  "api",
-			},
-		}
-		c = append(c, a)
-	}
-	return c, nil
-}
-
-func ReadItemQueryFromRequest(msg *pb.ItemServiceReadItemRequest) (*ItemRead, error) {
+func MsgToItemSearch(msg *pb.ItemServiceReadItemRequest) (*model.ItemSearch, error) {
 	if msg.GetUserId() == "" {
 		return nil, errors.New("no userId sent with request")
 	}
-	l := ItemRead{
-		Filter: map[string]interface{}{"userId": msg.GetUserId()},
+	pSize := msg.GetPagination().PageSize
+	pNum := msg.GetPagination().PageNumber
+	sortT := msg.GetPagination().Sort
+
+	if pSize <= 0 {
+		pSize = defaultPagination.PageSize
+	}
+	if pNum <= 0 {
+		pNum = defaultPagination.PageNumber
+	}
+	if sortT == "" {
+		sortT = defaultPagination.Sort
+	}
+	offset := pSize * (pNum - 1)
+
+	s := []string{}
+	for _, v := range msg.GetQuery().Filters {
+		s = append(s, fmt.Sprintf(`'%v'`, v))
 	}
 
-	q := msg.GetQuery()
-	if q != nil && q.Tags != nil {
-		// l["tags"] = map[string] []string{"tags": {"$in": msg.GetQuery().Tags}}
-		l.Filter["tags"] = map[string]interface{}{"$in": q.Tags}
+	t := []string{}
+	for _, v := range msg.GetQuery().Tags {
+		t = append(t, fmt.Sprintf(`'%v'`, v))
 	}
 
-	// if msg.GetItemIds() != nil {
-	// 	// l.Filter["_id"] = map[string] interface{}{"_id": {"$in": msg.GetItemIds()}}
-	// 	l.Filter["_id"] = map[string]interface{}{"$in": msg.GetItemIds()}
-	// }
-
-	// if msg.GetSearchQuery() == "" {
-	// 	// sQ = {"searchQuery": msg.GetItemIds()}
-	// 	// a.Filter["$and"] =  append(a.Filter["$and"], interface{}{"searchQuery": msg.GetItemIds()})
-	// 	// l =  append(l, map[string] map[string] string{"searchQuery": msg.GetSearchQuery()})
-	// 	l["searchQuery"] = map[string] []string{"_id": {"$in": msg.GetItemIds()}}
-	// }
-
-	return &l, nil
+	i := model.ItemSearch{
+		UserId:      msg.GetUserId(),
+		Tags:        strings.Join(t, ", "),
+		Filters:     strings.Join(s, ", "),
+		SearchQuery: msg.GetQuery().Text,
+		SortQuery:   sortT,
+		Limit:       pSize,
+		Offset:      offset,
+		PageNumber:  pNum,
+	}
+	return &i, nil
 }
 
-func (c *Item) ToReadResponse() (*pb.Item, error) {
-	return &pb.Item{
-		UpdatedBy: &c.UpdatedBy,
-		Props:     c.Props,
-		Id:        c.Id,
-		UserId:    c.UserId,
-		Name:      c.Name,
-		UpdatedAt: timestamppb.New(c.UpdatedAt),
-		Tags:      c.Tags,
-	}, nil
+func ItemModelToItemProto(m []*model.Item) ([]*pb.Item, error) {
+	items := []*pb.Item{}
+	for _, v := range m {
+		items = append(items, &pb.Item{
+			Id:         v.Id,
+			UserId:     v.UserId,
+			Name:       v.Name,
+			Note:       v.Note,
+			Tags:       v.Tags,
+			Props:      v.Props,
+			SoftDelete: &v.SoftDelete,
+		})
+	}
+	return items, nil
 }
 
-func ItemModelToReadResponse(m []*Item) ([]*pb.Item, error) {
-	c := []*pb.Item{}
-	for _, i := range m {
-		r, err := i.ToReadResponse()
-		if err != nil {
-			return nil, err
+func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*model.Item, []string, error) {
+	items := []*model.Item{}
+
+	check := map[string]bool{}
+	for _, v := range msg {
+		id := v.GetId()
+		if id == "" && genId {
+			id = uuid.Must(uuid.NewV7()).String()
 		}
-		c = append(c, r)
+		newItem := &model.Item{
+			Id:     id,
+			UserId: v.GetUserId(),
+		}
+
+		// Set values that have not been set to nil
+		if v.GetName() != "" {
+			newItem.Name = v.GetName()
+			check["name"] = true
+		}
+		if v.GetNote() != "" {
+			newItem.Note = v.GetNote()
+			check["note"] = true
+		}
+		if len(v.GetTags()) != 0 {
+			newItem.Tags = v.GetTags()
+			check["tag"] = true
+		}
+		if len(v.GetProps()) != 0 {
+			newItem.Props = v.GetProps()
+			check["props"] = true
+		}
+		if v.GetSoftDelete() {
+			newItem.SoftDelete = v.GetSoftDelete()
+			check["soft_delete"] = true
+		}
+		items = append(items, newItem)
 	}
-	return c, nil
+
+	res := []string{}
+	for k, _ := range check {
+		res = append(res, k)
+	}
+
+	return items, res, nil
 }

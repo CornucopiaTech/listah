@@ -35,9 +35,11 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@faker-js/faker": "^10.3.0",
     "@tanstack/devtools-vite": "^0.6.0",
     "@tanstack/router-plugin": "^1.166.13",
     "@vitejs/plugin-react": "^6.0.1",
+    "faker": "^5.5.3",
     "vite": "^8.0.0"
   }
 }

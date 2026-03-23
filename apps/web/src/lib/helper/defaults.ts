@@ -6,9 +6,6 @@ import type {
   IItem,
   IItemReadRequest
 } from '@/lib/model/item';
-// import type {
-//   THomeQueryParams
-// } from '@/lib/model/home';
 import type { ITagReadRequest } from '@/lib/model/tag';
 import type { IFilterReadRequest } from '@/lib/model/filter';
 
@@ -28,7 +25,7 @@ export const AppBarHeight = 64;
 const defaultPagination: IPagination = {
   pageSize: 100,
   pageNumber: 0,
-  sort: '',
+  sort: 'name',
 }
 
 export const DefaultUser: IUser = {
@@ -46,7 +43,8 @@ export const DefaultItem: IItem = {
   id: "",
   userId: "",
   name: "",
-  props: new Map<string, any>(),
+  note: "",
+  props: null,
   tags: [],
   softDelete: false,
 };
@@ -77,9 +75,4 @@ export const API_ENDPOINTS: IApiEndpointConfig = {
   readFilter: "listah.v1.ItemService/ReadFilter",
   updateItem: "listah.v1.ItemService/UpsertItem",
   updateFilter: "listah.v1.ItemService/UpsertFilter",
-}
-
-export const AppNavBarMap = {
-  "/filters": "Filters"
-
 }

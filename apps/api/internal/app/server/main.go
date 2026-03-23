@@ -34,7 +34,7 @@ func Run() (err error) {
 
 	//
 	// Get route handler
-	handler := handle(i, ctx)
+	handler := handle(i)
 
 	// Start HTTP server.
 	srv := &http.Server{

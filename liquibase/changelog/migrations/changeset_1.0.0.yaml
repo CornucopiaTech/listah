@@ -40,6 +40,9 @@ databaseChangeLog:
                     name:  title
                     type:  varchar
                 - column:
+                    name:  name
+                    type:  varchar
+                - column:
                     name:  description
                     type:  varchar
                 - column:
@@ -47,6 +50,12 @@ databaseChangeLog:
                     type:  varchar
                 - column:
                     name:  tag
+                    type:  json
+                - column:
+                    name:  tags
+                    type:  json
+                - column:
+                    name:  props
                     type:  json
                 - column:
                     name:  reactivate_at

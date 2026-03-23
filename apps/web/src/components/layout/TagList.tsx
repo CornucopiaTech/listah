@@ -81,13 +81,13 @@ export function TagListLayout(): ReactNode {
   const data: ITagReadResponse = {
     pagination: { pageSize: 8, pageNumber: 1, sort: "" },
     tags: [
-      { id: "id 1", userId: query.userId, name: "tag name 1", count: 53 },
-      { id: "id 2", userId: query.userId, name: "tag name 2", count: 153 },
-      { id: "id 3", userId: query.userId, name: "tag name 3", count: 523 },
-      { id: "id 5", userId: query.userId, name: "tag name 5", count: 33 },
-      { id: "id 6", userId: query.userId, name: "tag name 6", count: 3 },
-      { id: "id 7", userId: query.userId, name: "tag name 7", count: 43 },
-      { id: "id 8", userId: query.userId, name: "tag name 8", count: 0 },
+      { id: "id 1", userId: query.userId, name: "Tag name 1", count: 53 },
+      { id: "id 2", userId: query.userId, name: "Tag name 2", count: 153 },
+      { id: "id 3", userId: query.userId, name: "Tag name 3", count: 523 },
+      { id: "id 5", userId: query.userId, name: "Tag name 5", count: 33 },
+      { id: "id 6", userId: query.userId, name: "Tag name 6", count: 3 },
+      { id: "id 7", userId: query.userId, name: "Tag name 7", count: 43 },
+      { id: "id 8", userId: query.userId, name: "Tag name 8", count: 0 },
     ]
   }
   const error: Error = undefined;

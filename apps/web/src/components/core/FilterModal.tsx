@@ -51,21 +51,23 @@ import {
   useBoundStore,
   type TBoundStore
 } from '@/lib/store/boundStore';
-import { postSavedFilter } from "@/lib/helper/fetchers";
+import { postFilter } from "@/lib/helper/fetchers";
 import { ErrorAlert, WarnAlert, SuccessAlert } from "@/components/core/Alerts";
 import type { AppTheme } from '@/system/theme';
-import { DefaultHomeQueryParams } from '@/lib/helper/defaults';
 import type {
   THomeQueryParams
 } from '@/lib/model/home';
 import type {
-  ITagCategory,
+  ITag,
   ITagReadResponse,
 } from "@/lib/model/tag";
 import { tagGroupOptions } from '@/lib/helper/querying';
-import type { ISavedFilter, } from "@/lib/model/filter";
-import { ZSavedFilter } from "@/lib/model/filter";
-
+import type { IFilter, } from "@/lib/model/filter";
+import { ZFilter } from "@/lib/model/filter";
+import {
+  DefaultTagRead,
+  DefaultFilterRead,
+} from '@/lib/helper/defaults';
 
 
 export function AppFilterModal(): ReactNode {
@@ -74,29 +76,32 @@ export function AppFilterModal(): ReactNode {
   const { user } = useUser();
   const theme: AppTheme = useTheme();
 
-  const query: THomeQueryParams = {
-    savedFilter: {
-      ...DefaultHomeQueryParams.savedFilter, userId: user?.id || "", pageSize: -1,
-    },
-    tag: {
-      ...DefaultHomeQueryParams.tag, userId: user?.id || "", pageSize: -1,
-    }
+  const tagQuery = {
+    ...DefaultTagRead,
+    userId: user?.id || "",
+    pageSize: -1,
   }
+  const filterQuery = {
+    ...DefaultFilterRead,
+    userId: user?.id || "",
+    pageSize: -1,
+  }
+
 
   const {
     isPending, isError, data, error
-  }: UseQueryResult<ITagReadResponse> = useQuery(tagGroupOptions(query.tag));
+  }: UseQueryResult<ITagReadResponse> = useQuery(tagGroupOptions(tagQuery));
 
 
   // Define invalidating  mutation
   const mutation = useMutation({
-    mutationFn: (mutateItem: ISavedFilter) => {
-      const mi = ZSavedFilter.parse(mutateItem);
-      return postSavedFilter(mi);
+    mutationFn: (mutateItem: IFilter) => {
+      const mi = ZFilter.parse(mutateItem);
+      return postFilter(mi);
     },
     onSuccess: async () => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["savedFilter", query.savedFilter] }),
+        queryClient.invalidateQueries({ queryKey: ["filter", filterQuery] }),
       ])
     },
     onError: (error) => {
@@ -157,9 +162,9 @@ export function AppFilterModal(): ReactNode {
       savedFilters: [],
     }
     console.info("In formSubmission - submitvalue ", submitValue);
-    mutation.mutate(submitValue);
+    alert(submitValue);
+    // mutation.mutate(submitValue);
   }
-
 
   const gridComponents = {
     List: forwardRef(({ style, children, ...props }: { style: any, children: ReactNode, props: any }, ref: any) => (
@@ -180,7 +185,6 @@ export function AppFilterModal(): ReactNode {
       </div>
     ),
   }
-
 
   const dialogSx = {
     display: 'block',
@@ -204,7 +208,7 @@ export function AppFilterModal(): ReactNode {
       background: theme.palette.background.default,
     },
   }
-  const tagCategories: ITagCategory[] = data && data.categories ? data.categories : [];
+  const tagCategories: ITag[] = data && data.tags ? data.tags : [];
 
 
 
@@ -213,8 +217,8 @@ export function AppFilterModal(): ReactNode {
     "___filterName": "",
     "id": ""
   }
-  defaultFormData = tagCategories.reduce((acc: any, item: ITagCategory) => {
-    acc[item.category] = false;
+  defaultFormData = tagCategories.reduce((acc: any, item: ITag) => {
+    acc[item.name] = false;
     return acc;
   }, defaultFormData);
 

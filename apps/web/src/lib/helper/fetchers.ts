@@ -10,7 +10,7 @@ import type {
   ITagReadResponse
 } from '@/lib/model/tag';
 import type {
-  ISavedFilter,
+  IFilter,
   IFilterReadRequest,
   IFilterReadResponse
 } from '@/lib/model/filter';
@@ -32,8 +32,8 @@ export async function postItem(item: IItem) {
   return await res.json();
 }
 
-export async function postSavedFilter(f: ISavedFilter) {
-  const url = `${window.runtimeConfig.apiUrl}/${API_ENDPOINTS.updateSavedFilter}`;
+export async function postFilter(f: IFilter) {
+  const url = `${window.runtimeConfig.apiUrl}/${API_ENDPOINTS.updateFilter}`;
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify({ savedFilters: [f] }),
@@ -77,8 +77,8 @@ export async function getTag(opts: ITagReadRequest): Promise<ITagReadResponse> {
   return await res.json();
 }
 
-export async function getSavedFilter(opts: IFilterReadRequest): Promise<IFilterReadResponse> {
-  const url = `${window.runtimeConfig.apiUrl}/${API_ENDPOINTS.readSavedFilter}`;
+export async function getFilter(opts: IFilterReadRequest): Promise<IFilterReadResponse> {
+  const url = `${window.runtimeConfig.apiUrl}/${API_ENDPOINTS.readFilter}`;
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify(opts),

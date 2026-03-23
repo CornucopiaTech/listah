@@ -2,6 +2,7 @@
 import {
   createFileRoute,
   redirect,
+  Navigate,
 } from '@tanstack/react-router';
 import type {
   ReactNode,

@@ -22,35 +22,37 @@ export function getData(arraySize) {
   allUserIds = faker.helpers.uniqueArray(allUserIds, maxUniqueUsers);
 
   let combFaked = faker.helpers.multiple(
-      () => ({
-        id: faker.string.uuid(),
-        userId: faker.helpers.arrayElement(allUserIds),
-        title: faker.lorem.sentence(),
-        description: faker.lorem.paragraphs(),
-        note: faker.lorem.sentence(),
-        tags: faker.helpers.uniqueArray(faker.helpers.multiple(
-          () => (faker.helpers.arrayElement(allTags)),
-          { count: faker.helpers.arrayElement([...Array(maxTags).keys()]) }
-        ), maxTags),
-        reactivateAt: faker.helpers.arrayElement([faker.date.future(), null]),
-        properties: Object.fromEntries(
-          faker.helpers.multiple(
-            () => ([faker.word.sample(), faker.word.sample()]),
-            { count: faker.helpers.arrayElement([...Array(maxProps).keys()]) }
-          )
-        ),
-        audit: {
-          "created_by": faker.helpers.arrayElement(updaters),
-          "created_at": faker.date.past(),
-          "updated_by": faker.helpers.arrayElement(updaters),
-          "updated_at": faker.helpers.arrayElement([faker.date.past(), null]),
-          "deleted_by": faker.helpers.arrayElement(updaters),
-          "deleted_at": faker.helpers.arrayElement([faker.date.past(), null]),
-        }
-      }),
-      { count: arraySize }
+    () => ({
+      id: faker.string.uuid(),
+      userId: faker.helpers.arrayElement(allUserIds),
+      name: faker.lorem.sentence(),
+      description: faker.lorem.paragraphs(),
+      note: faker.lorem.sentence(),
+      tags: faker.helpers.uniqueArray(faker.helpers.multiple(
+        () => (faker.helpers.arrayElement(allTags)),
+        { count: faker.helpers.arrayElement([...Array(maxTags).keys()]) }
+      ), maxTags),
+      reactivateAt: faker.helpers.arrayElement([faker.date.future(), null]),
+      props: Object.fromEntries(
+        faker.helpers.multiple(
+          () => ([faker.word.sample(), faker.word.sample()]),
+          { count: faker.helpers.arrayElement([...Array(maxProps).keys()]) }
+        )
+      ),
+      "updated_by": faker.helpers.arrayElement(updaters),
+      "updated_at": faker.helpers.arrayElement([faker.date.past(), null]),
+      audit: {
+        "created_by": faker.helpers.arrayElement(updaters),
+        "created_at": faker.date.past(),
+        "updated_by": faker.helpers.arrayElement(updaters),
+        "updated_at": faker.helpers.arrayElement([faker.date.past(), null]),
+        "deleted_by": faker.helpers.arrayElement(updaters),
+        "deleted_at": faker.helpers.arrayElement([faker.date.past(), null]),
+      }
+    }),
+    { count: arraySize }
   );
-  let stringFaked = JSON.stringify({items: combFaked});
+  let stringFaked = JSON.stringify({ items: combFaked });
 
   // let filepath = path.join(import.meta.dirname, `fake_data_w_props_${Date.now()}.json`);
   // console.info("Writing to", filepath);
@@ -62,7 +64,7 @@ export function getData(arraySize) {
 
 async function loadData(maxLoaded, maxGen) {
   const url = "http://localhost:8080/listah.v1.ItemService/UpsertItem";
-  for (let i = 0; i < maxLoaded; i++){
+  for (let i = 0; i < maxLoaded; i++) {
     try {
       const data = getData(maxGen);
       const req = new Request(url, {
@@ -84,4 +86,5 @@ async function loadData(maxLoaded, maxGen) {
 }
 
 
-loadData(10, 5000)
+loadData(10, 5000);
+// loadData(1, 5);

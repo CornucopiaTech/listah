@@ -48,11 +48,11 @@ message ItemServiceReadTagRequest {
   Pagination pagination = 502;
 }
 message ItemServiceReadTagResponse {
-  repeated Item tags = 1;
+  repeated Tag tags = 1;
   Pagination pagination = 502;
 }
 message ItemServiceUpsertTagRequest {
-  repeated Item tags = 1;
+  repeated Tag tags = 1;
 }
 message ItemServiceUpsertTagResponse {
   repeated string tagIds = 1;
@@ -65,14 +65,14 @@ message ItemServiceReadFilterRequest {
   Pagination pagination = 502;
 }
 message ItemServiceReadFilterResponse {
-  repeated Item tags = 1;
+  repeated Filter filters = 1;
   Pagination pagination = 502;
 }
 message ItemServiceUpsertFilterRequest {
-  repeated Item tags = 1;
+  repeated Filter filters = 1;
 }
 message ItemServiceUpsertFilterResponse {
-  repeated string tagIds = 1;
+  repeated string filterIds = 1;
 }
 
 

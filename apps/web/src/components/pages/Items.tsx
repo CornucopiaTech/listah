@@ -3,7 +3,7 @@ import {
 } from '@tanstack/react-router';
 
 
-// import { AppItemModal } from "@/components/core/AppItemModal";
+import { AppItemModal } from "@/components/core/AppItemModal";
 // import {
 //   AppSearchBar,
 // } from "@/components/core/AppSearchBar";
@@ -31,7 +31,7 @@ export function Items() {
   return (
     <AppContainer mw="md">
       <AppPageStack>
-        {/* {store.itemModal && <AppItemModal route={"/items/$title"} />} */}
+        {store.itemModal && <AppItemModal route={"/items/{-$title}"} />}
         {/* <AppSearchBar route="/items/$title" /> */}
         <AppCategoryListPaper>
           <AppListHeaderBar key="header">
