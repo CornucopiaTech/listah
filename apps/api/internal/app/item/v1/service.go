@@ -3,21 +3,17 @@ package v1
 import (
 	"cornucopia/listah/internal/app/bootstrap"
 	"cornucopia/listah/internal/pkg/proto/v1/v1connect"
-	"net/http"
-	"time"
-
-	"github.com/pkg/errors"
 )
 
 type Server struct {
-	*bootstrap.Infra
 	v1connect.UnimplementedItemServiceHandler
+	*bootstrap.Infra
 }
 
 type ReadPagination struct {
+	SortCondition string
 	PageNumber    int32
 	PageSize      int32
-	SortCondition string
 }
 
 var svcName string = "listah.v1.ItemService"
@@ -31,29 +27,5 @@ var DefaultReadPagination = ReadPagination{
 func NewServer(i *bootstrap.Infra) *Server {
 	return &Server{
 		Infra: i,
-	}
-}
-
-// https://www.digitalocean.com/community/tutorials/how-to-make-http-requests-in-go
-// Production HTTP client with advanced configuration
-func createClient() *http.Client {
-	transport := &http.Transport{
-		MaxIdleConns:        100,              // Maximum idle connections
-		MaxIdleConnsPerHost: 10,               // Maximum idle connections per host
-		IdleConnTimeout:     90 * time.Second, // Idle connection timeout
-		DisableCompression:  false,            // Enable compression
-		DisableKeepAlives:   false,            // Enable keep-alives
-	}
-
-	return &http.Client{
-		Transport: transport,
-		Timeout:   30 * time.Second,
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			// Custom redirect handling
-			if len(via) >= 10 {
-				return errors.New("stopped after 10 redirects")
-			}
-			return nil
-		},
 	}
 }

@@ -723,6 +723,10 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Filter'
           title: filters
+        TotalRecordCount:
+          type: integer
+          title: TotalRecordCount
+          format: int32
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
@@ -750,6 +754,10 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
+        TotalRecordCount:
+          type: integer
+          title: TotalRecordCount
+          format: int32
         userId:
           type: string
           title: userId
@@ -781,6 +789,10 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Tag'
           title: tags
+        TotalRecordCount:
+          type: integer
+          title: TotalRecordCount
+          format: int32
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'

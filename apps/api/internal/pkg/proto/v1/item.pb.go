@@ -173,13 +173,14 @@ func (x *ItemServiceReadItemRequest) GetPagination() *Pagination {
 }
 
 type ItemServiceReadItemResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Items         []*Item                `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	UserId        string                 `protobuf:"bytes,500,opt,name=userId,proto3" json:"userId,omitempty"`
-	Query         *Search                `protobuf:"bytes,501,opt,name=query,proto3" json:"query,omitempty"`
-	Pagination    *Pagination            `protobuf:"bytes,502,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Items            []*Item                `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	TotalRecordCount int32                  `protobuf:"varint,2,opt,name=TotalRecordCount,proto3" json:"TotalRecordCount,omitempty"`
+	UserId           string                 `protobuf:"bytes,500,opt,name=userId,proto3" json:"userId,omitempty"`
+	Query            *Search                `protobuf:"bytes,501,opt,name=query,proto3" json:"query,omitempty"`
+	Pagination       *Pagination            `protobuf:"bytes,502,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *ItemServiceReadItemResponse) Reset() {
@@ -217,6 +218,13 @@ func (x *ItemServiceReadItemResponse) GetItems() []*Item {
 		return x.Items
 	}
 	return nil
+}
+
+func (x *ItemServiceReadItemResponse) GetTotalRecordCount() int32 {
+	if x != nil {
+		return x.TotalRecordCount
+	}
+	return 0
 }
 
 func (x *ItemServiceReadItemResponse) GetUserId() string {
@@ -382,11 +390,12 @@ func (x *ItemServiceReadTagRequest) GetPagination() *Pagination {
 }
 
 type ItemServiceReadTagResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Tags          []*Tag                 `protobuf:"bytes,1,rep,name=tags,proto3" json:"tags,omitempty"`
-	Pagination    *Pagination            `protobuf:"bytes,502,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Tags             []*Tag                 `protobuf:"bytes,1,rep,name=tags,proto3" json:"tags,omitempty"`
+	TotalRecordCount int32                  `protobuf:"varint,2,opt,name=TotalRecordCount,proto3" json:"TotalRecordCount,omitempty"`
+	Pagination       *Pagination            `protobuf:"bytes,502,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *ItemServiceReadTagResponse) Reset() {
@@ -424,6 +433,13 @@ func (x *ItemServiceReadTagResponse) GetTags() []*Tag {
 		return x.Tags
 	}
 	return nil
+}
+
+func (x *ItemServiceReadTagResponse) GetTotalRecordCount() int32 {
+	if x != nil {
+		return x.TotalRecordCount
+	}
+	return 0
 }
 
 func (x *ItemServiceReadTagResponse) GetPagination() *Pagination {
@@ -575,11 +591,12 @@ func (x *ItemServiceReadFilterRequest) GetPagination() *Pagination {
 }
 
 type ItemServiceReadFilterResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Filters       []*Filter              `protobuf:"bytes,1,rep,name=filters,proto3" json:"filters,omitempty"`
-	Pagination    *Pagination            `protobuf:"bytes,502,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Filters          []*Filter              `protobuf:"bytes,1,rep,name=filters,proto3" json:"filters,omitempty"`
+	TotalRecordCount int32                  `protobuf:"varint,2,opt,name=TotalRecordCount,proto3" json:"TotalRecordCount,omitempty"`
+	Pagination       *Pagination            `protobuf:"bytes,502,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *ItemServiceReadFilterResponse) Reset() {
@@ -617,6 +634,13 @@ func (x *ItemServiceReadFilterResponse) GetFilters() []*Filter {
 		return x.Filters
 	}
 	return nil
+}
+
+func (x *ItemServiceReadFilterResponse) GetTotalRecordCount() int32 {
+	if x != nil {
+		return x.TotalRecordCount
+	}
+	return 0
 }
 
 func (x *ItemServiceReadFilterResponse) GetPagination() *Pagination {
@@ -728,9 +752,10 @@ const file_v1_item_proto_rawDesc = "" +
 	"\x05query\x18\xf5\x03 \x01(\v2\x11.listah.v1.SearchR\x05query\x126\n" +
 	"\n" +
 	"pagination\x18\xf6\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
-	"pagination\"\xbf\x01\n" +
+	"pagination\"\xeb\x01\n" +
 	"\x1bItemServiceReadItemResponse\x12%\n" +
-	"\x05items\x18\x01 \x03(\v2\x0f.listah.v1.ItemR\x05items\x12\x17\n" +
+	"\x05items\x18\x01 \x03(\v2\x0f.listah.v1.ItemR\x05items\x12*\n" +
+	"\x10TotalRecordCount\x18\x02 \x01(\x05R\x10TotalRecordCount\x12\x17\n" +
 	"\x06userId\x18\xf4\x03 \x01(\tR\x06userId\x12(\n" +
 	"\x05query\x18\xf5\x03 \x01(\v2\x11.listah.v1.SearchR\x05query\x126\n" +
 	"\n" +
@@ -744,9 +769,10 @@ const file_v1_item_proto_rawDesc = "" +
 	"\x06userId\x18\xf4\x03 \x01(\tR\x06userId\x126\n" +
 	"\n" +
 	"pagination\x18\xf6\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
-	"pagination\"x\n" +
+	"pagination\"\xa4\x01\n" +
 	"\x1aItemServiceReadTagResponse\x12\"\n" +
-	"\x04tags\x18\x01 \x03(\v2\x0e.listah.v1.TagR\x04tags\x126\n" +
+	"\x04tags\x18\x01 \x03(\v2\x0e.listah.v1.TagR\x04tags\x12*\n" +
+	"\x10TotalRecordCount\x18\x02 \x01(\x05R\x10TotalRecordCount\x126\n" +
 	"\n" +
 	"pagination\x18\xf6\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
 	"pagination\"A\n" +
@@ -758,9 +784,10 @@ const file_v1_item_proto_rawDesc = "" +
 	"\x06userId\x18\xf4\x03 \x01(\tR\x06userId\x126\n" +
 	"\n" +
 	"pagination\x18\xf6\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
-	"pagination\"\x84\x01\n" +
+	"pagination\"\xb0\x01\n" +
 	"\x1dItemServiceReadFilterResponse\x12+\n" +
-	"\afilters\x18\x01 \x03(\v2\x11.listah.v1.FilterR\afilters\x126\n" +
+	"\afilters\x18\x01 \x03(\v2\x11.listah.v1.FilterR\afilters\x12*\n" +
+	"\x10TotalRecordCount\x18\x02 \x01(\x05R\x10TotalRecordCount\x126\n" +
 	"\n" +
 	"pagination\x18\xf6\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
 	"pagination\"M\n" +

@@ -3,8 +3,11 @@ package middleware
 import (
 	"context"
 	"cornucopia/listah/internal/app/bootstrap"
-	"cornucopia/listah/internal/pkg/model"
-	"errors"
+	model "cornucopia/listah/internal/pkg/model/v1"
+
+	"github.com/pkg/errors"
+
+	// "fmt"
 
 	"time"
 
@@ -53,6 +56,8 @@ func SetParentTraceInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorF
 			ctx = propagator.Extract(ctx, propagation.HeaderCarrier(req.Header()))
 
 			// Call the next middleware/handler in chain
+
+			infra.Logger.LogInfo(ctx, "middleware", "middleware", "Setting traceparent to request")
 			return next(ctx, req)
 		})
 		// Return newly created handler
@@ -71,6 +76,10 @@ func RecordRequestInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFu
 			req connect.AnyRequest,
 		) (connect.AnyResponse, error) {
 			// Log request in db in middleware
+			// fmt.Println("\n\n\ncalling:", req.Spec().Procedure)
+			// fmt.Println("\n\nrequest:", req.Any())
+			// fmt.Println("\n\n\n\n\n")
+
 			reqModel := model.ApiLog{
 				Id:            uuid.Must(uuid.NewV7()).String(),
 				RequestSource: "api",
@@ -78,10 +87,11 @@ func RecordRequestInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFu
 				SpanId:        trace.SpanFromContext(ctx).SpanContext().SpanID().String(),
 				Request:       req,
 				RequestTime:   time.Now().UTC(),
+				Uri:           req.Spec().Procedure,
 			}
-			err := infra.BunRepo.ApiLog.Insert(ctx, &reqModel)
+			err := infra.MongoRepo.ApiLog.Insert(ctx, &reqModel)
 			if err != nil {
-				infra.Logger.LogInfo(ctx, "middleware", "middleware", "Unable to record request")
+				infra.Logger.LogError(ctx, "Middleware", "Middleware", "Repository  upsert error", errors.Cause(err).Error())
 			}
 
 			// Call the next middleware/handler in chain

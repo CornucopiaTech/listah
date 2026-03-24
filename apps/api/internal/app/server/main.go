@@ -34,14 +34,14 @@ func Run() (err error) {
 
 	//
 	// Get route handler
-	handler := handle(i)
+	handler := handle(i, ctx)
 
 	// Start HTTP server.
 	srv := &http.Server{
 		Addr:         i.Config.Api.Address,
 		BaseContext:  func(_ net.Listener) context.Context { return ctx },
 		ReadTimeout:  time.Second,
-		WriteTimeout: 10 * time.Second,
+		WriteTimeout: 30 * time.Second,
 		Handler:      handler,
 	}
 	srvErr := make(chan error, 1)

@@ -9,7 +9,7 @@ console.log(import.meta.dirname);
 
 
 export function getData(arraySize) {
-  let maxTags = 10;
+  let maxTags = 20;
   let maxUsers = 5;
   let maxUniqueTags = 3;
   let maxUniqueUsers = 3;
@@ -80,11 +80,11 @@ async function loadData(maxLoaded, maxGen) {
       const result = await res.json();
       console.log(`Api result length: ${result.itemIds.length}`);
     } catch (error) {
-      console.log(`Api error: ${error.message}`);
+      console.log(`Api error: ${error.message} \t`, error);
     }
   }
 }
 
 
-loadData(10, 5000);
+loadData(100, 1000);
 // loadData(1, 5);
