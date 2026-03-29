@@ -16,8 +16,7 @@ import (
 type EmptyInterface []interface{}
 
 type Item interface {
-	ReadOnly(ctx context.Context, m *[]*model.Item, readFilter any) error
-	Read(ctx context.Context, m *[]bson.M, readFilter *model.ItemReadCountFilter) error
+	Read(ctx context.Context, m *[]bson.M, f *model.ItemReadCountFilter) error
 	Insert(ctx context.Context, m []*model.Item) ([]string, error)
 	Update(ctx context.Context, m []*model.ItemUpdate) error
 	Replace(ctx context.Context, m []*model.ItemReplace) error
@@ -30,108 +29,37 @@ type itemAgent struct {
 	collection *mongo.Collection
 }
 
-func (a *itemAgent) ReadOnly(ctx context.Context, m *[]*model.Item, readFilter any) error {
+func (a *itemAgent) Read(ctx context.Context, m *[]bson.M, f *model.ItemReadCountFilter) error {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "Read")
 	defer span.End()
 	a.logger.For(ctx).Info("Reading from item")
 
-	sort := bson.D{{Key: "name", Value: 1}}
-	opts := options.Find().SetSort(sort)
+	skip := (f.Pagination.PageNumber) * f.Pagination.PageSize
 
-	cursor, err := a.collection.Find(ctx, readFilter, opts)
-	if errors.Is(err, mongo.ErrNoDocuments) {
-		a.logger.For(ctx).Error("Document could not be found", zap.String("cause", errors.Cause(err).Error()))
-		return nil
-	} else if err != nil {
-		a.logger.For(ctx).Error("Error occurred in repository while reading from item", zap.String("cause", errors.Cause(err).Error()))
-		return err
+	af := bson.D{
+		{"userId", bson.D{{"$regex", f.UserId}, {"$options", "i"}}},
 	}
-
-	if err := cursor.All(ctx, m); err != nil {
-		a.logger.For(ctx).Error("Error occurred while marshalling find results into model", zap.String("cause", errors.Cause(err).Error()))
-		return err
+	if len(f.Tags) > 0 {
+		af = append(af, bson.E{"tags", bson.D{{"$in", f.Tags}}})
 	}
-
-	return nil
-}
-
-func (a *itemAgent) Read(ctx context.Context, m *[]bson.M, readFilter *model.ItemReadCountFilter) error {
-	ctx, span := otel.Tracer("item-repository").Start(ctx, "Read")
-	defer span.End()
-	a.logger.For(ctx).Info("Reading from item")
+	if f.Search != "" {
+		af = append(af, bson.E{"name", bson.D{{"$regex", f.Search}, {"$options", "i"}}})
+		af = append(af, bson.E{"tags", bson.D{{"$regex", f.Search}, {"$options", "i"}}})
+	}
 
 	pipeline := mongo.Pipeline{
-		{{"$match", bson.D{
-			{"userId", bson.D{{"$regex", readFilter.UserId}, {"$options", "i"}}},
-			{"tags", bson.D{{"$in", readFilter.Tags}}},
-		}}},
+		{{"$match", af}},
+		{{"$sort", bson.D{{"name", 1}}}},
 		{{"$facet", bson.D{
 			{"results", bson.A{
-				bson.D{{"$skip", 0}},
-				bson.D{{"$limit", 100}},
+				bson.D{{"$skip", skip}},
+				bson.D{{"$limit", f.Pagination.PageSize}},
 			}},
 			{"totalCount", bson.A{
 				bson.D{{"$count", "count"}},
 			}},
 		}}},
 	}
-
-	// pipeline_w_search := mongo.Pipeline{
-	// 	{{"$search", bson.D{
-	// 		{"index", "default"},
-	// 		{"compound", bson.D{
-	// 			{"must", bson.A{
-	// 				bson.D{{"text", bson.D{
-	// 					{"query", readFilter.UserId},
-	// 					{"path", "userId"},
-	// 				}}},
-	// 				bson.D{{"terms", bson.D{
-	// 					{"path", "tags"},
-	// 					{"query", readFilter.Tags},
-	// 				}}},
-	// 			}},
-	// 		}},
-	// 	}}},
-	// 	{{"$facet", bson.D{
-	// 		{"results", bson.A{
-	// 			bson.D{{"$skip", 0}},
-	// 			bson.D{{"$limit", 100}},
-	// 		}},
-	// 		{"totalCount", bson.A{
-	// 			bson.D{{"$count", "count"}},
-	// 		}},
-	// 	}}},
-	// }
-	// pipeline := mongo.Pipeline{
-	// 	"$search": map[string]interface{}{
-	// 		"index": "default",
-	// 		"compound": map[string]interface{}{
-	// 			"must": []interface{}{
-	// 				map[string]interface{}{
-	// 					"text": map[string]interface{}{
-	// 						"query": readFilter.UserId,
-	// 						"path":  "userId",
-	// 					},
-	// 				},
-	// 				map[string]interface{}{
-	// 					"teems": map[string]interface{}{
-	// 						"query": readFilter.Tags,
-	// 						"path":  "tags",
-	// 					},
-	// 				},
-	// 			},
-	// 		},
-	// 	},
-	// 	"$facet": map[string]interface{}{
-	// 		"results": []interface{}{
-	// 			map[string]interface{}{"$skip": 5},
-	// 			map[string]interface{}{"$limit": 100},
-	// 		},
-	// 		"totalCount": []interface{}{
-	// 			map[string]interface{}{"$count": "count"},
-	// 		},
-	// 	},
-	// }
 
 	cursor, err := a.collection.Aggregate(ctx, pipeline)
 	if errors.Is(err, mongo.ErrNoDocuments) {

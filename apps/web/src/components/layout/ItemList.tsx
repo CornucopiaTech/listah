@@ -3,7 +3,10 @@ import type {
   ChangeEvent,
   MouseEvent,
 } from 'react';
-import { Fragment } from "react";
+import {
+  Fragment,
+  useRef,
+} from "react";
 import {
   useQuery,
   type UseQueryResult,
@@ -70,29 +73,13 @@ export function ItemListLayout(): ReactNode {
   const { user, } = useUser();
   const title = useParams({ strict: false }).title;
   const store: TBoundStore = useBoundStore((state) => state);
+  let recCnt = useRef(1);
 
   const query: IItemReadRequest = { ...search, userId: user?.id || "" };
 
-  // const {
-  //   isPending, isError, data, error
-  // }: UseQueryResult<IItemReadResponse> = useQuery(itemGroupOptions(query));
-  const isPending: boolean = false;
-  const isError: boolean = false;
-  const data: IItemReadResponse = {
-    pagination: { pageSize: 8, pageNumber: 1, sort: "" },
-    query: query.query,
-    userId: query.userId,
-    items: [
-      { id: "id 1", userId: query.userId, name: "item name 1", tags: ["Tag name 1"], props: { "valiant": "render", "towards": "manger" }, note: "", softDelete: false, },
-      { id: "id 2", userId: query.userId, name: "item name 2", tags: ["Tag name 1"], props: { "valiant": "render", "towards": "manger" }, note: "", softDelete: false, },
-      { id: "id 3", userId: query.userId, name: "item name 3", tags: ["Tag name 1"], props: { "valiant": "render", "towards": "manger" }, note: "", softDelete: false, },
-      { id: "id 5", userId: query.userId, name: "item name 5", tags: ["Tag name 1"], props: { "valiant": "render", "towards": "manger" }, note: "", softDelete: false, },
-      { id: "id 6", userId: query.userId, name: "item name 6", tags: ["Tag name 1"], props: { "render": "render", "casual": "manger" }, note: "", softDelete: false, },
-      { id: "id 7", userId: query.userId, name: "item name 7", tags: ["Tag name 1"], props: { "tidy": "render", "condition": "manger" }, note: "", softDelete: false, },
-      { id: "id 8", userId: query.userId, name: "item name 8", tags: ["Tag name 1"], props: { "valiant": "render", "concern": "manger" }, note: "", softDelete: false, },
-    ]
-  }
-
+  const {
+    isPending, isError, data, error
+  }: UseQueryResult<IItemReadResponse> = useQuery(itemGroupOptions(query));
 
   let errMsg: string = isError && error && error instanceof Error ? error.message : "";
   try {
@@ -106,6 +93,15 @@ export function ItemListLayout(): ReactNode {
     }
   }
 
+  const items: IItem[] = data && data.items ? data.items : [];
+  const totalRecords: number = data && data.totalRecordCount ? data.totalRecordCount : recCnt.current;
+  const pageNumber: number = data && data.pagination && data.pagination.pageNumber ? data.pagination.pageNumber : query.pagination.pageNumber;
+  const pageSize: number = data && data.pagination && data.pagination.pageSize ? data.pagination.pageSize : query.pagination.pageSize;
+  if (data && data.totalRecordCount) {
+    recCnt.current = data.totalRecordCount;
+  }
+
+
 
 
 
@@ -114,7 +110,9 @@ export function ItemListLayout(): ReactNode {
     value: number
   ) {
     event && event.stopPropagation();
-    const q = { ...query, pageNumber: value };
+    const q = {
+      ...query, pagination: { ...query.pagination, pageNumber: value }
+    };
     const encoded = encodeState(q);
     navigate({
       to: "/items/{-$title}",
@@ -131,7 +129,10 @@ export function ItemListLayout(): ReactNode {
   }
 
   function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    const q = { ...query, pageSize: parseInt(e.target.value, 10), pageNumber: 0 };
+    const q = {
+      ...query,
+      pagination: { ...query.pagination, pageSize: parseInt(e.target.value, 10), pageNumber: 0 }
+    };
     const encoded = encodeState(q);
     navigate({
       to: "/items/{-$title}",
@@ -168,8 +169,6 @@ export function ItemListLayout(): ReactNode {
     );
   }
 
-  const items: IItem[] = data && data.items ? data.items : [];
-  const totalRecords: number = data && data.pagination && data.pagination.pageSize ? data.pagination.pageSize : 1;
 
 
   return (
@@ -194,9 +193,9 @@ export function ItemListLayout(): ReactNode {
       }
       <TablePagination
         component="div"
-        count={totalRecords} page={query.pagination.pageNumber}
+        count={totalRecords} page={pageNumber}
         onPageChange={handlePageChange}
-        rowsPerPage={query.pagination.pageSize}
+        rowsPerPage={pageSize}
         onRowsPerPageChange={handlePageSizeChange}
       />
     </Fragment>

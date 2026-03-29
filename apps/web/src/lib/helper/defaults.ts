@@ -69,7 +69,7 @@ export const PAGE_SIZE_OPTIONS: { label: number, value: number }[] = [
   { label: 50, value: 50 }, { label: 100, value: 100 }
 ]
 
-export const API_ENDPOINTS: IApiEndpointConfig = {
+export const ApiEndpoints: IApiEndpointConfig = {
   readItem: "listah.v1.ItemService/ReadItem",
   readTag: "listah.v1.ItemService/ReadTag",
   readFilter: "listah.v1.ItemService/ReadFilter",

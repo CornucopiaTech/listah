@@ -1,13 +1,14 @@
 package mongoDB
 
 import (
+	"context"
 	"cornucopia/listah/internal/pkg/config"
 	"cornucopia/listah/internal/pkg/logging"
-	"context"
 	"fmt"
-	"github.com/pkg/errors"
 	"log"
 	"strings"
+
+	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"go.mongodb.org/mongo-driver/v2/mongo/readpref"
@@ -15,17 +16,16 @@ import (
 
 type Repository struct {
 	Client *mongo.Client
-	Item Item
+	Item   Item
+	Tag    Tag
 	ApiLog ApiLog
 }
-
 
 // type repoAgent struct {
 // 	logger     *logging.Factory
 // 	client     *mongo.Client
 // 	collection *mongo.Collection
 // }
-
 
 func Init(cfg *config.Config, logger *logging.Factory) *Repository {
 	var disableTls bool
@@ -42,7 +42,6 @@ func Init(cfg *config.Config, logger *logging.Factory) *Repository {
 	clientOpts := options.Client()
 	clientOpts.ApplyURI(cfg.MongoDB.ConnectionString)
 	clientOpts.SetAuth(cfg.MongoDB.AuthCredentials)
-
 
 	client, err := mongo.Connect(clientOpts)
 	if err != nil {
@@ -63,11 +62,11 @@ func Init(cfg *config.Config, logger *logging.Factory) *Repository {
 			logger:     logger,
 			collection: client.Database(cfg.MongoDB.DatabaseName).Collection("Items"),
 		},
-		// Category: &categoryAgent{
-		// 	client:     client,
-		// 	logger:     logger,
-		// 	collection: client.Database(cfg.MongoDB.DatabaseName).Collection("Categories"),
-		// },
+		Tag: &tagAgent{
+			client:     client,
+			logger:     logger,
+			collection: client.Database(cfg.MongoDB.DatabaseName).Collection("Items"),
+		},
 		ApiLog: &apiLogAgent{
 			client:     client,
 			logger:     logger,

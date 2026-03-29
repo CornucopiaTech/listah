@@ -10,7 +10,6 @@ export const ZTag = z.object({
   id: z.string().catch(''),
   userId: z.string().catch(''),
   name: z.string().catch(''),
-  // props: z.array(z.string()).catch([]),
   count: z.number().catch(0),
 });
 export type ITag = z.infer<typeof ZTag>;
@@ -24,6 +23,7 @@ export type ITagReadRequest = z.infer<typeof ZTagReadRequest>;
 
 export const ZTagReadResponse = z.object({
   tags: z.array(ZTag).catch([]),
+  totalRecordCount: z.number().catch(0),
   pagination: ZPagination,
 });
 export type ITagReadResponse = z.infer<typeof ZTagReadResponse>;

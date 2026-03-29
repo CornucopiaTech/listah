@@ -16,17 +16,6 @@ type ApiLog struct {
 	Uri           string
 }
 
-type Item struct {
-	UpdatedBy  string
-	Props      map[string]string
-	Id         string `bson:"_id"`
-	UserId     string
-	Name       string
-	UpdatedAt  time.Time
-	Tags       []string
-	SoftDelete bool
-}
-
 type ItemReadResult struct {
 	Results    *[]Item
 	TotalCount int32
@@ -51,8 +40,10 @@ type ItemRead struct {
 	Filter map[string]interface{}
 }
 type ItemReadCountFilter struct {
-	UserId string
-	Tags   []string
+	UserId     string
+	Tags       []string
+	Search     string
+	Pagination Pagination
 }
 type Filter struct {
 	Id     string `bson:"_id"`
@@ -79,7 +70,7 @@ type Pagination struct {
 }
 
 var DefaultPagination = Pagination{
-	PageNumber: 1,
+	PageNumber: 0,
 	PageSize:   100,
 	Sort:       "name ASC",
 }

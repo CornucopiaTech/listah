@@ -139,9 +139,9 @@ type Item struct {
 	Note          string                 `protobuf:"bytes,4,opt,name=note,proto3" json:"note,omitempty"`
 	Props         map[string]string      `protobuf:"bytes,5,rep,name=props,proto3" json:"props,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	Tags          []string               `protobuf:"bytes,6,rep,name=tags,proto3" json:"tags,omitempty"`
-	SoftDelete    *bool                  `protobuf:"varint,7,opt,name=softDelete,proto3,oneof" json:"softDelete,omitempty"`
-	UpdatedBy     *string                `protobuf:"bytes,500,opt,name=updatedBy,proto3,oneof" json:"updatedBy,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,501,opt,name=updatedAt,proto3,oneof" json:"updatedAt,omitempty"`
+	SoftDelete    bool                   `protobuf:"varint,7,opt,name=softDelete,proto3" json:"softDelete,omitempty"`
+	UpdatedBy     string                 `protobuf:"bytes,500,opt,name=updatedBy,proto3" json:"updatedBy,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,501,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -219,15 +219,15 @@ func (x *Item) GetTags() []string {
 }
 
 func (x *Item) GetSoftDelete() bool {
-	if x != nil && x.SoftDelete != nil {
-		return *x.SoftDelete
+	if x != nil {
+		return x.SoftDelete
 	}
 	return false
 }
 
 func (x *Item) GetUpdatedBy() string {
-	if x != nil && x.UpdatedBy != nil {
-		return *x.UpdatedBy
+	if x != nil {
+		return x.UpdatedBy
 	}
 	return ""
 }
@@ -454,28 +454,23 @@ const file_v1_commons_proto_rawDesc = "" +
 	"\n" +
 	"pageNumber\x18\x02 \x01(\x05R\n" +
 	"pageNumber\x12\x12\n" +
-	"\x04sort\x18\x03 \x01(\tR\x04sort\"\x8a\x03\n" +
+	"\x04sort\x18\x03 \x01(\tR\x04sort\"\xd0\x02\n" +
 	"\x04Item\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x12\n" +
 	"\x04note\x18\x04 \x01(\tR\x04note\x120\n" +
 	"\x05props\x18\x05 \x03(\v2\x1a.listah.v1.Item.PropsEntryR\x05props\x12\x12\n" +
-	"\x04tags\x18\x06 \x03(\tR\x04tags\x12#\n" +
+	"\x04tags\x18\x06 \x03(\tR\x04tags\x12\x1e\n" +
 	"\n" +
-	"softDelete\x18\a \x01(\bH\x00R\n" +
-	"softDelete\x88\x01\x01\x12\"\n" +
-	"\tupdatedBy\x18\xf4\x03 \x01(\tH\x01R\tupdatedBy\x88\x01\x01\x12>\n" +
-	"\tupdatedAt\x18\xf5\x03 \x01(\v2\x1a.google.protobuf.TimestampH\x02R\tupdatedAt\x88\x01\x01\x1a8\n" +
+	"softDelete\x18\a \x01(\bR\n" +
+	"softDelete\x12\x1d\n" +
+	"\tupdatedBy\x18\xf4\x03 \x01(\tR\tupdatedBy\x129\n" +
+	"\tupdatedAt\x18\xf5\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x1a8\n" +
 	"\n" +
 	"PropsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\r\n" +
-	"\v_softDeleteB\f\n" +
-	"\n" +
-	"_updatedByB\f\n" +
-	"\n" +
-	"_updatedAt\"W\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"W\n" +
 	"\x03Tag\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
@@ -535,7 +530,6 @@ func file_v1_commons_proto_init() {
 	if File_v1_commons_proto != nil {
 		return
 	}
-	file_v1_commons_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

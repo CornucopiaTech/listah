@@ -49,7 +49,7 @@ export function AppH6Typography({ children, sx }: { children: ReactNode, sx?: an
 
 export function AppH5Typography({ children, sx }: { children: ReactNode, sx?: any }) {
   return (
-    <AppTypography variant="h5" sx={{ ...sx }}>{children}</AppTypography>
+    <AppTypography variant="h5" sx={{ ...sx, textTransform: "none" }}>{children}</AppTypography>
   )
 }
 

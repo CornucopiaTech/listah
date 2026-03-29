@@ -175,7 +175,7 @@ func (x *ItemServiceReadItemRequest) GetPagination() *Pagination {
 type ItemServiceReadItemResponse struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Items            []*Item                `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	TotalRecordCount int32                  `protobuf:"varint,2,opt,name=TotalRecordCount,proto3" json:"TotalRecordCount,omitempty"`
+	TotalRecordCount int32                  `protobuf:"varint,2,opt,name=totalRecordCount,proto3" json:"totalRecordCount,omitempty"`
 	UserId           string                 `protobuf:"bytes,500,opt,name=userId,proto3" json:"userId,omitempty"`
 	Query            *Search                `protobuf:"bytes,501,opt,name=query,proto3" json:"query,omitempty"`
 	Pagination       *Pagination            `protobuf:"bytes,502,opt,name=pagination,proto3" json:"pagination,omitempty"`
@@ -392,7 +392,7 @@ func (x *ItemServiceReadTagRequest) GetPagination() *Pagination {
 type ItemServiceReadTagResponse struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Tags             []*Tag                 `protobuf:"bytes,1,rep,name=tags,proto3" json:"tags,omitempty"`
-	TotalRecordCount int32                  `protobuf:"varint,2,opt,name=TotalRecordCount,proto3" json:"TotalRecordCount,omitempty"`
+	TotalRecordCount int32                  `protobuf:"varint,2,opt,name=totalRecordCount,proto3" json:"totalRecordCount,omitempty"`
 	Pagination       *Pagination            `protobuf:"bytes,502,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
@@ -593,7 +593,7 @@ func (x *ItemServiceReadFilterRequest) GetPagination() *Pagination {
 type ItemServiceReadFilterResponse struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Filters          []*Filter              `protobuf:"bytes,1,rep,name=filters,proto3" json:"filters,omitempty"`
-	TotalRecordCount int32                  `protobuf:"varint,2,opt,name=TotalRecordCount,proto3" json:"TotalRecordCount,omitempty"`
+	TotalRecordCount int32                  `protobuf:"varint,2,opt,name=totalRecordCount,proto3" json:"totalRecordCount,omitempty"`
 	Pagination       *Pagination            `protobuf:"bytes,502,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
@@ -755,7 +755,7 @@ const file_v1_item_proto_rawDesc = "" +
 	"pagination\"\xeb\x01\n" +
 	"\x1bItemServiceReadItemResponse\x12%\n" +
 	"\x05items\x18\x01 \x03(\v2\x0f.listah.v1.ItemR\x05items\x12*\n" +
-	"\x10TotalRecordCount\x18\x02 \x01(\x05R\x10TotalRecordCount\x12\x17\n" +
+	"\x10totalRecordCount\x18\x02 \x01(\x05R\x10totalRecordCount\x12\x17\n" +
 	"\x06userId\x18\xf4\x03 \x01(\tR\x06userId\x12(\n" +
 	"\x05query\x18\xf5\x03 \x01(\v2\x11.listah.v1.SearchR\x05query\x126\n" +
 	"\n" +
@@ -772,7 +772,7 @@ const file_v1_item_proto_rawDesc = "" +
 	"pagination\"\xa4\x01\n" +
 	"\x1aItemServiceReadTagResponse\x12\"\n" +
 	"\x04tags\x18\x01 \x03(\v2\x0e.listah.v1.TagR\x04tags\x12*\n" +
-	"\x10TotalRecordCount\x18\x02 \x01(\x05R\x10TotalRecordCount\x126\n" +
+	"\x10totalRecordCount\x18\x02 \x01(\x05R\x10totalRecordCount\x126\n" +
 	"\n" +
 	"pagination\x18\xf6\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
 	"pagination\"A\n" +
@@ -787,7 +787,7 @@ const file_v1_item_proto_rawDesc = "" +
 	"pagination\"\xb0\x01\n" +
 	"\x1dItemServiceReadFilterResponse\x12+\n" +
 	"\afilters\x18\x01 \x03(\v2\x11.listah.v1.FilterR\afilters\x12*\n" +
-	"\x10TotalRecordCount\x18\x02 \x01(\x05R\x10TotalRecordCount\x126\n" +
+	"\x10totalRecordCount\x18\x02 \x01(\x05R\x10totalRecordCount\x126\n" +
 	"\n" +
 	"pagination\x18\xf6\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
 	"pagination\"M\n" +

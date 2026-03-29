@@ -7,6 +7,7 @@ import type {
 } from 'react';
 import {
   Fragment,
+  useRef,
 } from "react";
 import { Virtuoso } from 'react-virtuoso';
 import {
@@ -69,28 +70,22 @@ export function TagListLayout(): ReactNode {
   let search = decodeState(routeSearch.s) as ITagReadRequest;
   const navigate = useNavigate();
   const { user, } = useUser();
+  let recCnt = useRef(1);
 
 
   const query: ITagReadRequest = { ...search, userId: user?.id || "" }
 
-  // const {
-  //   isPending, isError, data, error
-  // }: UseQueryResult<ITagReadResponse> = useQuery(tagGroupOptions(query));
-  const isPending: boolean = false;
-  const isError: boolean = false;
-  const data: ITagReadResponse = {
-    pagination: { pageSize: 8, pageNumber: 1, sort: "" },
-    tags: [
-      { id: "id 1", userId: query.userId, name: "Tag name 1", count: 53 },
-      { id: "id 2", userId: query.userId, name: "Tag name 2", count: 153 },
-      { id: "id 3", userId: query.userId, name: "Tag name 3", count: 523 },
-      { id: "id 5", userId: query.userId, name: "Tag name 5", count: 33 },
-      { id: "id 6", userId: query.userId, name: "Tag name 6", count: 3 },
-      { id: "id 7", userId: query.userId, name: "Tag name 7", count: 43 },
-      { id: "id 8", userId: query.userId, name: "Tag name 8", count: 0 },
-    ]
+  const {
+    isPending, isError, data, error
+  }: UseQueryResult<ITagReadResponse> = useQuery(tagGroupOptions(query));
+
+  const tags: ITag[] = data && data.tags ? data.tags : [];
+  const totalRecords: number = data && data.totalRecordCount ? data.totalRecordCount : recCnt.current;
+  const pageNumber: number = data && data.pagination && data.pagination.pageNumber ? data.pagination.pageNumber : query.pagination.pageNumber;
+  const pageSize: number = data && data.pagination && data.pagination.pageSize ? data.pagination.pageSize : query.pagination.pageSize;
+  if (data && data.totalRecordCount) {
+    recCnt.current = data.totalRecordCount;
   }
-  const error: Error = undefined;
 
 
   function handlePageChange(
@@ -108,20 +103,16 @@ export function TagListLayout(): ReactNode {
   };
 
   function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    console.log("In handlePageChange - e ", e);
     const q: ITagReadRequest = {
       ...query, pagination: {
         ...query.pagination, pageSize: parseInt(e.target.value, 10), pageNumber: 0,
       }
     };
     const encoded = encodeState(q);
-    console.info("In handlePageChange - q ", q);
-    console.info("In handlePageChange - Encoded ", encoded);
     navigate({ to: ".", search: { s: encoded } });
   };
 
   function handleItemClick(it: ITag) {
-    console.log("In handleItemclick");
     const ct = it && it.name ? it.name : "";
     const q: IItemReadRequest = {
       ...DefaultItemRead,
@@ -129,8 +120,6 @@ export function TagListLayout(): ReactNode {
       query: { ...DefaultItemRead.query, tags: [ct] },
     };
     const encoded = encodeState(q);
-    console.info("In handlePageChange - q ", q);
-    console.info("In handlePageChange - Encoded ", encoded);
     navigate({ to: "/items/{-$title}", search: { s: encoded }, params: { title: ct } });
   }
 
@@ -163,9 +152,6 @@ export function TagListLayout(): ReactNode {
     }
   }
 
-  const totalRecords: number = data && data.pagination && data.pagination.pageSize ? data.pagination.pageSize : 1;
-  const tags: ITag[] = data && data.tags ? data.tags : [];
-
 
 
   return (
@@ -191,9 +177,9 @@ export function TagListLayout(): ReactNode {
 
       <TablePagination
         component="div"
-        count={totalRecords} page={query.pagination.pageNumber}
+        count={totalRecords} page={pageNumber}
         onPageChange={handlePageChange}
-        rowsPerPage={query.pagination.pageSize}
+        rowsPerPage={pageSize}
         onRowsPerPageChange={handlePageSizeChange}
       />
     </Fragment>

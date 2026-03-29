@@ -655,20 +655,14 @@ components:
             type: string
           title: tags
         softDelete:
-          type:
-            - boolean
-            - "null"
+          type: boolean
           title: softDelete
         updatedBy:
-          type:
-            - string
-            - "null"
+          type: string
           title: updatedBy
         updatedAt:
-          oneOf:
-            - $ref: '#/components/schemas/google.protobuf.Timestamp'
-            - type: "null"
           title: updatedAt
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
       title: Item
       additionalProperties: false
     listah.v1.Item.PropsEntry:
@@ -723,9 +717,9 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Filter'
           title: filters
-        TotalRecordCount:
+        totalRecordCount:
           type: integer
-          title: TotalRecordCount
+          title: totalRecordCount
           format: int32
         pagination:
           title: pagination
@@ -754,9 +748,9 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
-        TotalRecordCount:
+        totalRecordCount:
           type: integer
-          title: TotalRecordCount
+          title: totalRecordCount
           format: int32
         userId:
           type: string
@@ -789,9 +783,9 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Tag'
           title: tags
-        TotalRecordCount:
+        totalRecordCount:
           type: integer
-          title: TotalRecordCount
+          title: totalRecordCount
           format: int32
         pagination:
           title: pagination

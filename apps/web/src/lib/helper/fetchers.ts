@@ -15,11 +15,11 @@ import type {
   IFilterReadResponse
 } from '@/lib/model/filter';
 
-import { API_ENDPOINTS } from '@/lib/helper/defaults';
+import { ApiEndpoints } from '@/lib/helper/defaults';
 
 
 export async function postItem(item: IItem) {
-  const url = `${window.runtimeConfig.apiUrl}/${API_ENDPOINTS.updateItem}`;
+  const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.updateItem}`;
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify({ items: [item] }),
@@ -33,7 +33,7 @@ export async function postItem(item: IItem) {
 }
 
 export async function postFilter(f: IFilter) {
-  const url = `${window.runtimeConfig.apiUrl}/${API_ENDPOINTS.updateFilter}`;
+  const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.updateFilter}`;
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify({ savedFilters: [f] }),
@@ -47,7 +47,9 @@ export async function postFilter(f: IFilter) {
 }
 
 export async function getItem(opts: IItemReadRequest): Promise<IItemReadResponse> {
-  const url = `${window.runtimeConfig.apiUrl}/${API_ENDPOINTS.readItem}`;
+  const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.readItem}`;
+  console.info("url", url);
+  console.info("opts", opts);
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify(opts),
@@ -64,7 +66,7 @@ export async function getItem(opts: IItemReadRequest): Promise<IItemReadResponse
 
 
 export async function getTag(opts: ITagReadRequest): Promise<ITagReadResponse> {
-  const url = `${window.runtimeConfig.apiUrl}/${API_ENDPOINTS.readTag}`;
+  const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.readTag}`;
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify(opts),
@@ -78,7 +80,7 @@ export async function getTag(opts: ITagReadRequest): Promise<ITagReadResponse> {
 }
 
 export async function getFilter(opts: IFilterReadRequest): Promise<IFilterReadResponse> {
-  const url = `${window.runtimeConfig.apiUrl}/${API_ENDPOINTS.readFilter}`;
+  const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.readFilter}`;
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify(opts),

@@ -23,7 +23,7 @@
     "packageManager": "npm@11.11.1",
     "dependencies": {
         "@bufbuild/buf": "^1.66.1",
-        "@redocly/cli": "^2.22.1",
+        "@redocly/cli": "^2.25.2",
         "nodemon": "^3.1.14"
     }
 }

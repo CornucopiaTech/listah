@@ -37,6 +37,7 @@ export type IItemReadRequest = z.infer<typeof ZItemReadRequest>;
 
 export const ZItemReadResponse = z.object({
   items: z.array(ZItem).catch([]),
+  totalRecordCount: z.number().catch(0),
   userId: z.string().catch(''),
   query: ZSearch,
   pagination: ZPagination,
