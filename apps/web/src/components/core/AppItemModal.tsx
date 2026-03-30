@@ -6,11 +6,11 @@ import {
 import type {
   ChangeEvent,
   ReactNode,
-  FormEvent,
 } from 'react';
 import {
   getRouteApi,
 } from '@tanstack/react-router';
+
 import {
   useForm,
   useStore,
@@ -18,6 +18,10 @@ import {
 import {
   useQueryClient,
   useMutation,
+  useQuery,
+} from '@tanstack/react-query';
+import type {
+  UseQueryResult,
 } from '@tanstack/react-query';
 import {
   v4 as uuidv4,
@@ -32,7 +36,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { Icon } from "@iconify/react";
 import { useUser } from '@clerk/react';
-import { useTheme } from "@mui/material";
+import { LinearProgress, useTheme } from "@mui/material";
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
@@ -54,30 +58,26 @@ import {
 import { postItem } from "@/lib/helper/fetchers";
 import type {
   IItem,
-  IItemReadRequest,
 } from "@/lib/model/item";
 import { ErrorAlert, SuccessAlert, WarnAlert } from "@/components/core/Alerts";
 import type { AppTheme } from '@/system/theme';
 import { decodeState } from "@/lib/helper/encoders";
 import {
   DefaultTagRead,
-  DefaultFilterRead,
 } from '@/lib/helper/defaults';
 import type {
   ITag,
   ITagReadRequest,
   ITagReadResponse,
 } from "@/lib/model/tag";
-
+import { tagGroupOptions } from '@/lib/helper/querying';
 
 
 type itemFields = "id" | "userId" | "name" | "note" | `props[${number}]` | "softDelete" | `tags[${number}]`
 
 export function AppItemModal(
-  { route }: { route: "/items/{-$title}" }
+  { tag }: { tag?: string }
 ): ReactNode {
-
-
   const store: TBoundStore = useBoundStore((state) => state);
   const { user } = useUser();
   const item: IItem = useBoundStore((state) => state.displayItem);
@@ -86,17 +86,16 @@ export function AppItemModal(
     value: string
   }
   let itemProps: IProps[] = [];
-  for (const [k, v] of Object.entries(item.props)) {
-    itemProps.push({ key: k, value: v });
-  };
 
-  const routeApi = getRouteApi(route);
-  const routeSearch: { s: string } = routeApi.useSearch()
-  let search: IItemReadRequest = decodeState(routeSearch.s) as IItemReadRequest;
-  const query: IItemReadRequest = { ...search, userId: user?.id || "" };
+  if (item.props) {
+    for (const [k, v] of Object.entries(item.props)) {
+      itemProps.push({ key: k, value: v });
+    };
+  }
+
   const queryClient = useQueryClient();
   const theme: AppTheme = useTheme();
-  const formData = { ...item, props: itemProps }
+  const formData = { ...item, props: itemProps, tags: tag ? [tag] : [] }
   const form = useForm({
     defaultValues: formData,
     onSubmit: formSubmission,
@@ -126,32 +125,6 @@ export function AppItemModal(
     userId: user?.id || "",
     pageSize: -1,
   }
-  const filterQuery = {
-    ...DefaultFilterRead,
-    userId: user?.id || "",
-    pageSize: -1,
-  }
-  // const {
-  //   isPending, isError, data, error
-  // }: UseQueryResult<ITagReadResponse> = useQuery(tagGroupOptions(query));
-  const isPending: boolean = false;
-  const isError: boolean = false;
-  const data: ITagReadResponse = {
-    pagination: { pageSize: 8, pageNumber: 1, sort: "" },
-    tags: [
-      { id: "id 1", userId: query.userId, name: "Tag name 1", count: 53 },
-      { id: "id 2", userId: query.userId, name: "Tag name 2", count: 153 },
-      { id: "id 3", userId: query.userId, name: "Tag name 3", count: 523 },
-      { id: "id 4", userId: query.userId, name: "Tag name 4", count: 23 },
-      { id: "id 5", userId: query.userId, name: "Tag name 5", count: 33 },
-      { id: "id 6", userId: query.userId, name: "Tag name 6", count: 3 },
-      { id: "id 7", userId: query.userId, name: "Tag name 7", count: 43 },
-      { id: "id 8", userId: query.userId, name: "Tag name 8", count: 0 },
-    ]
-  }
-  const error: Error = undefined;
-  const tags: ITag[] = data && data.tags ? data.tags : [];
-
 
   // Define invalidating  mutation
   const mutation = useMutation({
@@ -161,9 +134,9 @@ export function AppItemModal(
     },
     onSuccess: async () => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["item", query] }),
-        queryClient.invalidateQueries({ queryKey: ["tag", tagQuery] }),
-        queryClient.invalidateQueries({ queryKey: ["filter", filterQuery] }),
+        queryClient.invalidateQueries({ queryKey: ["item"] }),
+        queryClient.invalidateQueries({ queryKey: ["tag"] }),
+        queryClient.invalidateQueries({ queryKey: ["filter"] }),
       ])
     },
     onError: (error) => {
@@ -182,6 +155,11 @@ export function AppItemModal(
     return () => clearTimeout(timer); // cleanup
   }, [form.state.isSubmitted, mutation.isSuccess]);
 
+  const {
+    isPending, isError, data, error
+  }: UseQueryResult<ITagReadResponse> = useQuery(tagGroupOptions(tagQuery));
+  const tags: ITag[] = data && data.tags ? data.tags : [];
+
 
   function closeModal() {
     store.setItemModal(false);
@@ -189,7 +167,7 @@ export function AppItemModal(
     store.setDisplayItem(DefaultItem);
   }
 
-  function onFormSubmit(e: FormEvent<HTMLFormElement>) {
+  function onFormSubmit(e: ChangeEvent) {
     e.preventDefault()
     e.stopPropagation()
     //Note: form.handleSubmit is automatically called on form submit. it does not need to be called again. Calling it again results in the form getting sent multiple times.
@@ -213,7 +191,7 @@ export function AppItemModal(
       props: subProps,
     }
     console.log("In formSubmission - submitValue ", submitValue);
-    // mutation.mutate(submitValue);
+    mutation.mutate(submitValue);
 
   }
 
@@ -423,6 +401,40 @@ export function AppItemModal(
     { name: "Reset", icon: "material-symbols-light:restart-alt", onClick: form.reset },
   ]
   const formErrorMap = useStore(form.store, (state) => state.errorMap)
+
+
+
+  if (isPending) {
+    return (
+      <Dialog fullWidth open={store.itemModal} onClose={closeModal} >
+        <IconButton aria-label="delete"
+          sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}
+          onClick={closeModal}>
+          <Icon icon="material-symbols-light:close-rounded" width="40" height="40" />
+        </IconButton>
+        <DialogContent sx={dialogSx} >
+          <LinearProgress />
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+
+  if (isError) {
+    return (
+      <Dialog fullWidth open={store.itemModal} onClose={closeModal} >
+        <IconButton aria-label="delete"
+          sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}
+          onClick={closeModal}>
+          <Icon icon="material-symbols-light:close-rounded" width="40" height="40" />
+        </IconButton>
+        <DialogContent sx={dialogSx} >
+          <ErrorAlert message={error?.message || "An error occurred. Please try again"} />
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
 
   return (
     <Dialog fullWidth open={store.itemModal} onClose={closeModal} >

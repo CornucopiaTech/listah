@@ -46,12 +46,14 @@ message ItemServiceUpsertItemResponse {
 
 // Tag Messages
 message ItemServiceReadTagRequest {
-  string userId = 500;
+  string userId = 500 [json_name = "userId"];
+  Search query = 501;
   Pagination pagination = 502;
 }
 message ItemServiceReadTagResponse {
   repeated Tag tags = 1;
   int32 totalRecordCount = 2;
+  Search query = 501;
   Pagination pagination = 502;
 }
 message ItemServiceUpsertTagRequest {
@@ -64,12 +66,14 @@ message ItemServiceUpsertTagResponse {
 
 // Filter Messages
 message ItemServiceReadFilterRequest {
-  string userId = 500;
+  string userId = 500 [json_name = "userId"];
+  Search query = 501;
   Pagination pagination = 502;
 }
 message ItemServiceReadFilterResponse {
   repeated Filter filters = 1;
   int32 totalRecordCount = 2;
+  Search query = 501;
   Pagination pagination = 502;
 }
 message ItemServiceUpsertFilterRequest {

@@ -73,8 +73,8 @@ func (AuditUpdaterEnum) EnumDescriptor() ([]byte, []int) {
 
 type Pagination struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PageSize      int32                  `protobuf:"varint,1,opt,name=pageSize,proto3" json:"pageSize,omitempty"`
-	PageNumber    int32                  `protobuf:"varint,2,opt,name=pageNumber,proto3" json:"pageNumber,omitempty"`
+	PageSize      int64                  `protobuf:"varint,1,opt,name=pageSize,proto3" json:"pageSize,omitempty"`
+	PageNumber    int64                  `protobuf:"varint,2,opt,name=pageNumber,proto3" json:"pageNumber,omitempty"`
 	Sort          string                 `protobuf:"bytes,3,opt,name=sort,proto3" json:"sort,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -110,14 +110,14 @@ func (*Pagination) Descriptor() ([]byte, []int) {
 	return file_v1_commons_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Pagination) GetPageSize() int32 {
+func (x *Pagination) GetPageSize() int64 {
 	if x != nil {
 		return x.PageSize
 	}
 	return 0
 }
 
-func (x *Pagination) GetPageNumber() int32 {
+func (x *Pagination) GetPageNumber() int64 {
 	if x != nil {
 		return x.PageNumber
 	}
@@ -450,9 +450,9 @@ const file_v1_commons_proto_rawDesc = "" +
 	"\x10v1/commons.proto\x12\tlistah.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\\\n" +
 	"\n" +
 	"Pagination\x12\x1a\n" +
-	"\bpageSize\x18\x01 \x01(\x05R\bpageSize\x12\x1e\n" +
+	"\bpageSize\x18\x01 \x01(\x03R\bpageSize\x12\x1e\n" +
 	"\n" +
-	"pageNumber\x18\x02 \x01(\x05R\n" +
+	"pageNumber\x18\x02 \x01(\x03R\n" +
 	"pageNumber\x12\x12\n" +
 	"\x04sort\x18\x03 \x01(\tR\x04sort\"\xd0\x02\n" +
 	"\x04Item\x12\x0e\n" +

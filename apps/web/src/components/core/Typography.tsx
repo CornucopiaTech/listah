@@ -11,7 +11,7 @@ import type { AppTheme } from '@/system/theme';
 
 const AppTypography = styled(Typography)(({ theme }: { theme: AppTheme }) => ({
   color: theme.palette.primary.main,
-  textAlign: "center",
+  // textAlign: "center",
   whiteSpace: 'pre-line',
 }));
 

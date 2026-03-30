@@ -105,44 +105,15 @@ func ReplaceItemQueryFromRequest(msg *pb.ItemServiceUpsertItemRequest) ([]*ItemR
 	return c, nil
 }
 
-func ReadItemQueryFromRequest(msg *pb.ItemServiceReadItemRequest) (*ItemRead, *Pagination, error) {
+func ReadItemQueryFromRequest(msg *pb.ItemServiceReadItemRequest) (*RepoReadCountFilter, error) {
 	if msg.GetUserId() == "" {
-		return nil, nil, errors.New("no userId sent with request")
+		return nil, errors.New("no userId sent with request")
 	}
-	l := ItemRead{
-		Filter: map[string]interface{}{"userId": msg.GetUserId()},
-	}
-
-	q := msg.GetQuery()
-	if q != nil && q.Tags != nil {
-		l.Filter["tags"] = map[string]interface{}{"$in": q.Tags}
-	}
-
-	pg := DefaultPagination
-	if msg.GetPagination() != nil {
-		if msg.GetPagination().PageSize != 0 {
-			pg.PageSize = msg.GetPagination().PageSize
-		}
-		if msg.GetPagination().PageNumber != 0 {
-			pg.PageNumber = msg.GetPagination().PageNumber
-		}
-		if msg.GetPagination().Sort == "" {
-			pg.Sort = msg.GetPagination().Sort
-		}
-	}
-	return &l, &pg, nil
-}
-
-func ReadCountItemQueryFromRequest(msg *pb.ItemServiceReadItemRequest) (*ItemReadCountFilter, *Pagination, error) {
-	if msg.GetUserId() == "" {
-		return nil, nil, errors.New("no userId sent with request")
-	}
-	l := ItemReadCountFilter{
+	l := RepoReadCountFilter{
 		UserId: msg.GetUserId(),
 	}
 
 	q := msg.GetQuery()
-	fmt.Printf("\n\nq %+v \n\n", q)
 	if q != nil && q.Tags != nil {
 		l.Tags = q.Tags
 	} else {
@@ -157,11 +128,11 @@ func ReadCountItemQueryFromRequest(msg *pb.ItemServiceReadItemRequest) (*ItemRea
 
 	pg := DefaultPagination
 	if msg.GetPagination() != nil {
-		if msg.GetPagination().PageSize != 0 {
-			pg.PageSize = msg.GetPagination().PageSize
+		if msg.GetPagination().PageSize > 0 {
+			pg.PageSize = int64(msg.GetPagination().PageSize)
 		}
 		if msg.GetPagination().PageNumber != 0 {
-			pg.PageNumber = msg.GetPagination().PageNumber
+			pg.PageNumber = int64(msg.GetPagination().PageNumber)
 		}
 		if msg.GetPagination().Sort == "" {
 			pg.Sort = msg.GetPagination().Sort
@@ -170,33 +141,21 @@ func ReadCountItemQueryFromRequest(msg *pb.ItemServiceReadItemRequest) (*ItemRea
 	l.Pagination = pg
 	fmt.Printf("\n\nl %+v \n\n", l)
 
-	return &l, &pg, nil
+	return &l, nil
 }
 
-func PrepareItemReadResponse(m []bson.M, msg *pb.ItemServiceReadItemRequest, pg *Pagination) (*pb.ItemServiceReadItemResponse, error) {
-	rs := []*pb.Item{}
-	res := &pb.ItemServiceReadItemResponse{
-		Items:            rs,
-		TotalRecordCount: 0,
-		Query:            msg.GetQuery(),
-		Pagination: &pb.Pagination{
-			PageSize:   pg.PageSize,
-			PageNumber: pg.PageNumber,
-			Sort:       pg.Sort,
-		},
-	}
-
-	fmt.Printf("\n\nm %+v \n\n", m)
+func PrepareItemReadResponse(m []bson.M, res *pb.ItemServiceReadItemResponse) error {
+	// fmt.Printf("\n\nm %+v \n\n", m)
 	// Check if any result returned.
 	r := m[0]["results"].(bson.A)
 	if len(r) == 0 {
-		return res, nil
+		return nil
 	}
 
 	// Parse db result to response form
 	rs, err := BsonMapListToReadItemResponse(r)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	res.Items = rs
 
@@ -206,10 +165,10 @@ func PrepareItemReadResponse(m []bson.M, msg *pb.ItemServiceReadItemRequest, pg 
 	var tm bson.M
 	err = bson.Unmarshal(ds, &tm)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	res.TotalRecordCount = tm["count"].(int32)
-	return res, nil
+	return nil
 }
 
 func BsonMapToReadItemResponse(c bson.M) (*pb.Item, error) {

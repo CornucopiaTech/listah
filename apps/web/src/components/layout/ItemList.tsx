@@ -24,7 +24,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import TablePagination from '@mui/material/TablePagination';
-import Checkbox from '@mui/material/Checkbox';
 
 
 import type {
@@ -40,18 +39,26 @@ import {
   type TBoundStore
 } from '@/lib/store/boundStore';
 
-import { itemGroupOptions } from '@/lib/helper/querying';
+import {
+  itemGroupOptions,
+
+} from '@/lib/helper/querying';
 import { ErrorAlert } from "@/components/core/Alerts";
 import {
   decodeState,
   encodeState
 } from '@/lib/helper/encoders';
-
-import { AppH6Typography } from "@/components/core/Typography";
+import { DefaultItemRead } from '@/lib/helper/defaults';
+import {
+  AppH6Typography,
+  AppBody1Typography,
+} from "@/components/core/Typography";
 import LinearProgress from '@mui/material/LinearProgress';
 import {
   ListBoxSize,
 } from '@/lib/helper/defaults';
+
+
 
 
 function OuterBox({ children }: { children: ReactNode }): ReactNode {
@@ -64,21 +71,37 @@ function OuterBox({ children }: { children: ReactNode }): ReactNode {
   );
 }
 
-// export function ItemListLayout({ route }: { route: '/items/$title' | '/items/' }): ReactNode {
+
 export function ItemListLayout(): ReactNode {
-  const routeApi = getRouteApi('/items/{-$title}');
-  const routeSearch: { s: string } = routeApi.useSearch()
-  let search: IItemReadRequest = decodeState(routeSearch.s) as IItemReadRequest;
   const navigate = useNavigate();
   const { user, } = useUser();
   const title = useParams({ strict: false }).title;
   const store: TBoundStore = useBoundStore((state) => state);
-  let recCnt = useRef(1);
 
-  const query: IItemReadRequest = { ...search, userId: user?.id || "" };
+
+  const routeApi = getRouteApi('/items/{-$title}');
+  const routeSearch: { s: string } = routeApi.useSearch()
+  let search: IItemReadRequest = decodeState(routeSearch.s) as IItemReadRequest;
+
+  const query: IItemReadRequest = search ? {
+    ...search,
+    userId: user?.id || "",
+    pagination: {
+      ...search.pagination,
+      pageNumber: search.pagination.pageNumber ? search.pagination.pageNumber : DefaultItemRead.pagination.pageNumber
+    }
+  } : {
+    ...DefaultItemRead, userId: user?.id || ""
+  };
+  let pageInfo = useRef({
+    pageNumber: query.pagination.pageNumber,
+    pageSize: query.pagination.pageSize,
+    totalRecords: 0,
+  });
+
 
   const {
-    isPending, isError, data, error
+    isPending, isFetching, isError, data, error
   }: UseQueryResult<IItemReadResponse> = useQuery(itemGroupOptions(query));
 
   let errMsg: string = isError && error && error instanceof Error ? error.message : "";
@@ -94,14 +117,13 @@ export function ItemListLayout(): ReactNode {
   }
 
   const items: IItem[] = data && data.items ? data.items : [];
-  const totalRecords: number = data && data.totalRecordCount ? data.totalRecordCount : recCnt.current;
-  const pageNumber: number = data && data.pagination && data.pagination.pageNumber ? data.pagination.pageNumber : query.pagination.pageNumber;
-  const pageSize: number = data && data.pagination && data.pagination.pageSize ? data.pagination.pageSize : query.pagination.pageSize;
-  if (data && data.totalRecordCount) {
-    recCnt.current = data.totalRecordCount;
+  if (data) {
+    pageInfo.current = {
+      pageSize: parseInt(data.pagination.pageSize as unknown as string, 10),
+      totalRecords: parseInt(data.totalRecordCount as unknown as string, 10),
+      pageNumber: data.pagination.pageNumber ? parseInt(data.pagination.pageNumber as unknown as string, 10) : query.pagination.pageNumber
+    };
   }
-
-
 
 
 
@@ -115,7 +137,7 @@ export function ItemListLayout(): ReactNode {
     };
     const encoded = encodeState(q);
     navigate({
-      to: "/items/{-$title}",
+      to: ".",
       search: { s: encoded },
       params: { title: title || "" }
     });
@@ -131,11 +153,14 @@ export function ItemListLayout(): ReactNode {
   function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const q = {
       ...query,
-      pagination: { ...query.pagination, pageSize: parseInt(e.target.value, 10), pageNumber: 0 }
+      pagination: {
+        ...query.pagination,
+        pageSize: parseInt(e.target.value, 10), pageNumber: 0
+      }
     };
     const encoded = encodeState(q);
     navigate({
-      to: "/items/{-$title}",
+      to: ".",
       search: { s: encoded },
       params: { title: title || "" }
     });
@@ -145,26 +170,20 @@ export function ItemListLayout(): ReactNode {
     let dis: string = item.name ? item.name : "";
     return (
       <Fragment>
-        {
-          !store.selectMode &&
-          <ListItem key={itemKey + dis}
-            component="div" disablePadding
-            onClick={() => handleItemClick(item)}>
-            <ListItemButton>
-              <ListItemText primary={dis} />
-            </ListItemButton>
-          </ListItem>
-        }
-        {
-          store.selectMode && <ListItem key={itemKey + dis}
-            component="div" disablePadding >
-            <ListItemButton>
-              <ListItemText primary={dis} />
-              <Checkbox checked={true}
-                onChange={() => store.setSelectMode(!store.selectMode)} size="small" />
-            </ListItemButton>
-          </ListItem>
-        }
+        <ListItem key={itemKey + dis}
+          // component="div"
+          disablePadding
+          sx={{ p: 0, m: 0 }}
+          onClick={() => handleItemClick(item)}>
+          <ListItemButton >
+            <ListItemText
+              primary={
+                <AppBody1Typography sx={{ p: 0 }}>{dis}</AppBody1Typography>
+              }
+            />
+          </ListItemButton>
+        </ListItem>
+
       </Fragment>
     );
   }
@@ -174,12 +193,14 @@ export function ItemListLayout(): ReactNode {
   return (
     <Fragment>
       {
-        isPending &&
+        (isPending || isFetching) &&
         <OuterBox><LinearProgress /></OuterBox>
       }
       {
-        !isPending && (isError || errMsg !== "") &&
-        <OuterBox><ErrorAlert message={errMsg ? errMsg : error?.message || "An error occurred. Please try again"} /></OuterBox>
+        !isPending && !isFetching && (isError || errMsg !== "") && items.length == 0 &&
+        <OuterBox>
+          <ErrorAlert message={errMsg ? errMsg : error?.message || "An error occurred. Please try again"} />
+        </OuterBox>
       }
       {
         items.length > 0 && <Virtuoso key="data-content"
@@ -188,14 +209,16 @@ export function ItemListLayout(): ReactNode {
         />
       }
       {
-        !isError && !isPending && items.length == 0 &&
+        !isError && !isPending && !isFetching && items.length == 0 &&
         <OuterBox><AppH6Typography> No items found </AppH6Typography></OuterBox>
       }
+
       <TablePagination
         component="div"
-        count={totalRecords} page={pageNumber}
+        count={pageInfo.current.totalRecords}
+        page={pageInfo.current.pageNumber}
         onPageChange={handlePageChange}
-        rowsPerPage={pageSize}
+        rowsPerPage={pageInfo.current.pageSize}
         onRowsPerPageChange={handlePageSizeChange}
       />
     </Fragment>

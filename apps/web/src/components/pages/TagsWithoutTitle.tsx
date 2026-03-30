@@ -1,12 +1,8 @@
-import {
-  useParams
-} from '@tanstack/react-router';
 
-
-import {
-  TagSearchBar,
-} from "@/components/core/ItemSearchBar";
-
+// import {
+//   AppSearchBar,
+//   // AppHomeSearchBar
+// } from "@/components/core/AppSearchBar";
 import { TagListLayout } from "@/components/layout/TagList";
 import {
   AppPageStack,
@@ -17,7 +13,7 @@ import {
   useBoundStore,
   type TBoundStore
 } from '@/lib/store/boundStore';
-import { AppItemModal } from "@/components/core/AppItemModal";
+// import { AppItemModal } from "@/components/core/AppItemModal";
 import {
   AppCategoryListPaper,
 } from '@/components/core/AppPaper';
@@ -29,17 +25,16 @@ import { AppContainer } from '@/components/layout/AppContainer';
 
 export function Tags() {
   const store: TBoundStore = useBoundStore((state) => state);
-  const title = useParams({ strict: false }).title;
-  const header = title ? `Tags like '${title}'` : "All Tags"
   return (
-    <AppContainer mw="md">
+    <AppContainer mw="sm">
       <AppPageStack>
-        {store.itemModal && <AppItemModal />}
-        {/* {store.filterModal && <AppFilterModal />} */}
-        <TagSearchBar />
+        {/* {store.itemModal && <AppItemModal route="/" />}
+        {store.filterModal && <AppFilterModal />} */}
+        {/* <AppSearchBar route="/tags" /> */}
+        {/* <AppHomeSearchBar /> */}
         <AppCategoryListPaper>
           <AppListHeaderBar key="header">
-            <AppH5ButtonTypography> {header} </AppH5ButtonTypography>
+            <AppH5ButtonTypography> Tags </AppH5ButtonTypography>
           </AppListHeaderBar>
           <TagListLayout />
         </AppCategoryListPaper>

@@ -13,7 +13,7 @@ import (
 )
 
 type Tag interface {
-	Read(ctx context.Context, m *[]bson.M, f *model.ItemReadCountFilter) error
+	Read(ctx context.Context, m *[]bson.M, f *model.RepoReadCountFilter) error
 }
 
 type tagAgent struct {
@@ -22,17 +22,23 @@ type tagAgent struct {
 	collection *mongo.Collection
 }
 
-func (a *tagAgent) Read(ctx context.Context, m *[]bson.M, f *model.ItemReadCountFilter) error {
+func (a *tagAgent) Read(ctx context.Context, m *[]bson.M, f *model.RepoReadCountFilter) error {
 	ctx, span := otel.Tracer("tag-repository").Start(ctx, "Read")
 	defer span.End()
 	a.logger.For(ctx).Info("Reading from tag")
-	skip := (f.Pagination.PageNumber) * f.Pagination.PageSize
+	skip := f.Pagination.PageNumber * f.Pagination.PageSize
+
+	ablock := bson.A{
+		bson.M{"userId": bson.M{"$regex": f.UserId, "$options": "i"}},
+	}
+
+	if f.Search != "" {
+		ablock = append(ablock, bson.M{"tags": bson.M{"$regex": f.Search, "$options": "i"}})
+	}
 
 	pipeline := mongo.Pipeline{
-		{{"$match", bson.D{
-			{"userId", bson.D{{"$regex", f.UserId}, {"$options", "i"}}},
-		}}},
 		{{"$unwind", "$tags"}},
+		{{"$match", bson.D{{"$and", ablock}}}},
 		{{"$group", bson.D{
 			{"_id", "$tags"},
 			{"count", bson.D{{"$sum", 1}}},

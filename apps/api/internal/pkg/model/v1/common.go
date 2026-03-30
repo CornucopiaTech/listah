@@ -39,7 +39,7 @@ type ItemReplace struct {
 type ItemRead struct {
 	Filter map[string]interface{}
 }
-type ItemReadCountFilter struct {
+type RepoReadCountFilter struct {
 	UserId     string
 	Tags       []string
 	Search     string
@@ -64,13 +64,13 @@ type RowCount struct {
 }
 
 type Pagination struct {
-	PageNumber int32
-	PageSize   int32
+	PageNumber int64
+	PageSize   int64
 	Sort       string
 }
 
 var DefaultPagination = Pagination{
 	PageNumber: 0,
-	PageSize:   100,
+	PageSize:   9007199254740991,
 	Sort:       "name ASC",
 }

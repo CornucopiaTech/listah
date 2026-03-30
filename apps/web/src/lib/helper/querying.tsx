@@ -15,13 +15,19 @@ import {
 
 
 
+export function itemQueryOptions(opts: IItemReadRequest) {
+  return {
+    queryKey: ["item", opts],
+    queryFn: () => getItem(opts),
+    staleTime: 24 * 60 * 60 * 1000,
+  }
+}
 
 export function itemGroupOptions(opts: IItemReadRequest) {
   return queryOptions({
     queryKey: ["item", opts],
     queryFn: () => getItem(opts),
-    staleTime: 60,
-    // staleTime: 24 * 60 * 60 * 1000,
+    staleTime: 24 * 60 * 60 * 1000,
   })
 }
 
@@ -29,8 +35,7 @@ export function filterGroupOptions(opts: IFilterReadRequest) {
   return queryOptions({
     queryKey: ["filter", opts],
     queryFn: () => getFilter(opts),
-    staleTime: 60,
-    // staleTime: 24 * 60 * 60 * 1000,
+    staleTime: 24 * 60 * 60 * 1000,
   })
 }
 
@@ -38,7 +43,6 @@ export function tagGroupOptions(opts: ITagReadRequest) {
   return queryOptions({
     queryKey: ["tag", opts],
     queryFn: () => getTag(opts),
-    staleTime: 60,
-    // staleTime: 24 * 60 * 60 * 1000,
+    staleTime: 24 * 60 * 60 * 1000,
   })
 }

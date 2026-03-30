@@ -3,7 +3,8 @@
     "**/*.ts",
     "**/*.tsx",
     "src/routes/items/{-$title}.tsx",
-    "src/routes/items/index.tsx.bkup.2026-03-21-2117"
+    "src/routes/items/index.tsx.bkup.2026-03-21-2117",
+    "src/routes/items/prev_{-$title}.tsx.bkup."
   ],
   "compilerOptions": {
     "target": "ES2022",

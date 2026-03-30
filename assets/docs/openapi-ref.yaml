@@ -703,6 +703,9 @@ components:
         userId:
           type: string
           title: userId
+        query:
+          title: query
+          $ref: '#/components/schemas/listah.v1.Search'
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
@@ -721,6 +724,9 @@ components:
           type: integer
           title: totalRecordCount
           format: int32
+        query:
+          title: query
+          $ref: '#/components/schemas/listah.v1.Search'
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
@@ -769,6 +775,9 @@ components:
         userId:
           type: string
           title: userId
+        query:
+          title: query
+          $ref: '#/components/schemas/listah.v1.Search'
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
@@ -787,6 +796,9 @@ components:
           type: integer
           title: totalRecordCount
           format: int32
+        query:
+          title: query
+          $ref: '#/components/schemas/listah.v1.Search'
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
@@ -856,13 +868,17 @@ components:
       type: object
       properties:
         pageSize:
-          type: integer
+          type:
+            - integer
+            - string
           title: pageSize
-          format: int32
+          format: int64
         pageNumber:
-          type: integer
+          type:
+            - integer
+            - string
           title: pageNumber
-          format: int32
+          format: int64
         sort:
           type: string
           title: sort

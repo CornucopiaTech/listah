@@ -38,7 +38,7 @@ paths:
                   type: array
                   items:
                     type: object
-                    properties: &ref_8
+                    properties: &ref_9
                       id:
                         type: string
                         title: id
@@ -193,7 +193,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_2
+                properties: &ref_3
                   code:
                     type: string
                     examples:
@@ -276,22 +276,44 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_3
+                properties: &ref_4
                   userId:
                     type: string
                     title: userId
+                  query:
+                    title: query
+                    type: object
+                    properties: &ref_1
+                      text:
+                        type: string
+                        title: text
+                      tags:
+                        type: array
+                        items:
+                          type: string
+                        title: tags
+                      filters:
+                        type: array
+                        items:
+                          type: string
+                        title: filters
+                    additionalProperties: false
                   pagination:
                     title: pagination
                     type: object
-                    properties: &ref_1
+                    properties: &ref_2
                       pageSize:
-                        type: integer
+                        type:
+                          - integer
+                          - string
                         title: pageSize
-                        format: int32
+                        format: int64
                       pageNumber:
-                        type: integer
+                        type:
+                          - integer
+                          - string
                         title: pageNumber
-                        format: int32
+                        format: int64
                       sort:
                         type: string
                         title: sort
@@ -304,7 +326,7 @@ paths:
           required: true
           schema:
             title: encoding
-            enum: &ref_5
+            enum: &ref_6
               - proto
               - json
             description: Define which encoding or 'Message-Codec' to use
@@ -318,7 +340,7 @@ paths:
           in: query
           schema:
             title: compression
-            enum: &ref_6
+            enum: &ref_7
               - identity
               - gzip
               - br
@@ -327,7 +349,7 @@ paths:
           in: query
           schema:
             title: connect
-            enum: &ref_7
+            enum: &ref_8
               - v1
             description: Define the version of the Connect protocol
       responses:
@@ -337,7 +359,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_4
+                properties: &ref_5
                   filters:
                     type: array
                     items:
@@ -368,10 +390,15 @@ paths:
                     type: integer
                     title: totalRecordCount
                     format: int32
+                  query:
+                    title: query
+                    type: object
+                    properties: *ref_1
+                    additionalProperties: false
                   pagination:
                     title: pagination
                     type: object
-                    properties: *ref_1
+                    properties: *ref_2
                     additionalProperties: false
                 title: ItemServiceReadFilterResponse
                 additionalProperties: false
@@ -381,7 +408,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_2
+                properties: *ref_3
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -412,7 +439,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: *ref_3
+              properties: *ref_4
               title: ItemServiceReadFilterRequest
               additionalProperties: false
               description: Filter Messages
@@ -424,7 +451,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_4
+                properties: *ref_5
                 title: ItemServiceReadFilterResponse
                 additionalProperties: false
         default:
@@ -433,7 +460,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_2
+                properties: *ref_3
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -473,25 +500,12 @@ paths:
                   query:
                     title: query
                     type: object
-                    properties: &ref_9
-                      text:
-                        type: string
-                        title: text
-                      tags:
-                        type: array
-                        items:
-                          type: string
-                        title: tags
-                      filters:
-                        type: array
-                        items:
-                          type: string
-                        title: filters
+                    properties: *ref_1
                     additionalProperties: false
                   pagination:
                     title: pagination
                     type: object
-                    properties: *ref_1
+                    properties: *ref_2
                     additionalProperties: false
                 title: ItemServiceReadItemRequest
                 additionalProperties: false
@@ -500,7 +514,7 @@ paths:
           required: true
           schema:
             title: encoding
-            enum: *ref_5
+            enum: *ref_6
             description: Define which encoding or 'Message-Codec' to use
         - name: base64
           in: query
@@ -512,13 +526,13 @@ paths:
           in: query
           schema:
             title: compression
-            enum: *ref_6
+            enum: *ref_7
             description: Which compression algorithm to use for this request
         - name: connect
           in: query
           schema:
             title: connect
-            enum: *ref_7
+            enum: *ref_8
             description: Define the version of the Connect protocol
       responses:
         '200':
@@ -532,7 +546,7 @@ paths:
                     type: array
                     items:
                       type: object
-                      properties: *ref_8
+                      properties: *ref_9
                       title: Item
                       additionalProperties: false
                     title: items
@@ -546,12 +560,12 @@ paths:
                   query:
                     title: query
                     type: object
-                    properties: *ref_9
+                    properties: *ref_1
                     additionalProperties: false
                   pagination:
                     title: pagination
                     type: object
-                    properties: *ref_1
+                    properties: *ref_2
                     additionalProperties: false
                 title: ItemServiceReadItemResponse
                 additionalProperties: false
@@ -561,7 +575,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_2
+                properties: *ref_3
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -612,7 +626,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_2
+                properties: *ref_3
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -649,10 +663,15 @@ paths:
                   userId:
                     type: string
                     title: userId
+                  query:
+                    title: query
+                    type: object
+                    properties: *ref_1
+                    additionalProperties: false
                   pagination:
                     title: pagination
                     type: object
-                    properties: *ref_1
+                    properties: *ref_2
                     additionalProperties: false
                 title: ItemServiceReadTagRequest
                 additionalProperties: false
@@ -662,7 +681,7 @@ paths:
           required: true
           schema:
             title: encoding
-            enum: *ref_5
+            enum: *ref_6
             description: Define which encoding or 'Message-Codec' to use
         - name: base64
           in: query
@@ -674,13 +693,13 @@ paths:
           in: query
           schema:
             title: compression
-            enum: *ref_6
+            enum: *ref_7
             description: Which compression algorithm to use for this request
         - name: connect
           in: query
           schema:
             title: connect
-            enum: *ref_7
+            enum: *ref_8
             description: Define the version of the Connect protocol
       responses:
         '200':
@@ -715,10 +734,15 @@ paths:
                     type: integer
                     title: totalRecordCount
                     format: int32
+                  query:
+                    title: query
+                    type: object
+                    properties: *ref_1
+                    additionalProperties: false
                   pagination:
                     title: pagination
                     type: object
-                    properties: *ref_1
+                    properties: *ref_2
                     additionalProperties: false
                 title: ItemServiceReadTagResponse
                 additionalProperties: false
@@ -728,7 +752,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_2
+                properties: *ref_3
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -780,7 +804,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_2
+                properties: *ref_3
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -845,7 +869,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_2
+                properties: *ref_3
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -882,7 +906,7 @@ paths:
                   type: array
                   items:
                     type: object
-                    properties: *ref_8
+                    properties: *ref_9
                     title: Item
                     additionalProperties: false
                   title: items
@@ -910,7 +934,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_2
+                properties: *ref_3
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -975,7 +999,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_2
+                properties: *ref_3
                 title: Connect Error
                 additionalProperties: true
                 description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -987,11 +1011,11 @@ components:
       description: Specifies if the message query param is base64 encoded, which may be required for binary data
     compression:
       title: compression
-      enum: *ref_6
+      enum: *ref_7
       description: Which compression algorithm to use for this request
     connect:
       title: connect
-      enum: *ref_7
+      enum: *ref_8
       description: Define the version of the Connect protocol
     connect-protocol-version:
       type: number
@@ -1005,7 +1029,7 @@ components:
       description: Define the timeout, in ms
     connect.error:
       type: object
-      properties: *ref_2
+      properties: *ref_3
       title: Connect Error
       additionalProperties: true
       description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
@@ -1016,7 +1040,7 @@ components:
       description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message, with an additional debug field for ConnectRPC error details.
     encoding:
       title: encoding
-      enum: *ref_5
+      enum: *ref_6
       description: Define which encoding or 'Message-Codec' to use
     google.protobuf.Timestamp:
       type: string
@@ -1126,7 +1150,7 @@ components:
       additionalProperties: false
     listah.v1.Item:
       type: object
-      properties: *ref_8
+      properties: *ref_9
       title: Item
       additionalProperties: false
     listah.v1.Item.PropsEntry:
@@ -1153,13 +1177,13 @@ components:
       additionalProperties: false
     listah.v1.ItemServiceReadFilterRequest:
       type: object
-      properties: *ref_3
+      properties: *ref_4
       title: ItemServiceReadFilterRequest
       additionalProperties: false
       description: Filter Messages
     listah.v1.ItemServiceReadFilterResponse:
       type: object
-      properties: *ref_4
+      properties: *ref_5
       title: ItemServiceReadFilterResponse
       additionalProperties: false
     listah.v1.ItemServiceReadItemRequest:
@@ -1215,12 +1239,12 @@ components:
       additionalProperties: false
     listah.v1.Pagination:
       type: object
-      properties: *ref_1
+      properties: *ref_2
       title: Pagination
       additionalProperties: false
     listah.v1.Search:
       type: object
-      properties: *ref_9
+      properties: *ref_1
       title: Search
       additionalProperties: false
     listah.v1.Tag:

@@ -53,15 +53,18 @@ export const DefaultItemRead: IItemReadRequest = {
   userId: "",
   query: { filters: [], tags: [], text: '', },
   pagination: { ...defaultPagination }
-
 };
 
 export const DefaultTagRead: ITagReadRequest = {
-  userId: "", pagination: { ...defaultPagination }
+  userId: "",
+  query: { filters: [], tags: [], text: '', },
+  pagination: { ...defaultPagination }
 };
 
 export const DefaultFilterRead: IFilterReadRequest = {
-  userId: "", pagination: { ...defaultPagination }
+  userId: "",
+  // query: { filters: [], tags: [], text: '', },
+  pagination: { ...defaultPagination }
 };
 
 export const PAGE_SIZE_OPTIONS: { label: number, value: number }[] = [

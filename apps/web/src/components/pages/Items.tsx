@@ -4,9 +4,9 @@ import {
 
 
 import { AppItemModal } from "@/components/core/AppItemModal";
-// import {
-//   AppSearchBar,
-// } from "@/components/core/AppSearchBar";
+import {
+  ItemSearchBar,
+} from "@/components/core/ItemSearchBar";
 import { ItemListLayout } from "@/components/layout/ItemList";
 import {
   AppPageStack,
@@ -27,12 +27,12 @@ import {
 export function Items() {
   const title = useParams({ strict: false }).title;
   const store: TBoundStore = useBoundStore((state) => state);
-  const header = title ? `Items in #${title}` : "All Items"
+  const header = title ? title : "All Items"
   return (
     <AppContainer mw="md">
       <AppPageStack>
         {store.itemModal && <AppItemModal route={"/items/{-$title}"} />}
-        {/* <AppSearchBar route="/items/$title" /> */}
+        <ItemSearchBar />
         <AppCategoryListPaper>
           <AppListHeaderBar key="header">
             <AppH5ButtonTypography> {header} </AppH5ButtonTypography>

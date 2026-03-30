@@ -16,7 +16,7 @@ import (
 type EmptyInterface []interface{}
 
 type Item interface {
-	Read(ctx context.Context, m *[]bson.M, f *model.ItemReadCountFilter) error
+	Read(ctx context.Context, m *[]bson.M, f *model.RepoReadCountFilter) error
 	Insert(ctx context.Context, m []*model.Item) ([]string, error)
 	Update(ctx context.Context, m []*model.ItemUpdate) error
 	Replace(ctx context.Context, m []*model.ItemReplace) error
@@ -29,26 +29,30 @@ type itemAgent struct {
 	collection *mongo.Collection
 }
 
-func (a *itemAgent) Read(ctx context.Context, m *[]bson.M, f *model.ItemReadCountFilter) error {
+func (a *itemAgent) Read(ctx context.Context, m *[]bson.M, f *model.RepoReadCountFilter) error {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "Read")
 	defer span.End()
 	a.logger.For(ctx).Info("Reading from item")
 
 	skip := (f.Pagination.PageNumber) * f.Pagination.PageSize
 
-	af := bson.D{
-		{"userId", bson.D{{"$regex", f.UserId}, {"$options", "i"}}},
+	ablock := bson.A{
+		bson.M{"userId": bson.M{"$regex": f.UserId, "$options": "i"}},
 	}
+
 	if len(f.Tags) > 0 {
-		af = append(af, bson.E{"tags", bson.D{{"$in", f.Tags}}})
+		ablock = append(ablock, bson.M{"tags": bson.M{"$in": f.Tags}})
 	}
 	if f.Search != "" {
-		af = append(af, bson.E{"name", bson.D{{"$regex", f.Search}, {"$options", "i"}}})
-		af = append(af, bson.E{"tags", bson.D{{"$regex", f.Search}, {"$options", "i"}}})
+		sh := bson.M{"$or": bson.A{
+			bson.M{"name": bson.M{"$regex": f.Search, "$options": "i"}},
+			bson.M{"tags": bson.M{"$regex": f.Search, "$options": "i"}},
+		}}
+		ablock = append(ablock, sh)
 	}
 
 	pipeline := mongo.Pipeline{
-		{{"$match", af}},
+		{{"$match", bson.D{{"$and", ablock}}}},
 		{{"$sort", bson.D{{"name", 1}}}},
 		{{"$facet", bson.D{
 			{"results", bson.A{

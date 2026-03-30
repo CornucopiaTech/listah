@@ -7,14 +7,19 @@ import { Outlet } from '@tanstack/react-router';
 import type {
   ReactNode
 } from 'react';
+import {
+  useUser
+} from '@clerk/react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
+import LinearProgress from '@mui/material/LinearProgress';
 
 
 import {
   AppNavBar,
 } from '@/components/core/AppNavBar';
+import { Landing } from '@/components/pages/Landing';
 
 
 type widthType = "xs" | "sm" | "md" | "lg" | "xl";
@@ -22,6 +27,9 @@ type widthType = "xs" | "sm" | "md" | "lg" | "xl";
 
 
 export function AppContainerShell() {
+  const { isSignedIn, isLoaded, } = useUser();
+  if (!isLoaded) return <LinearProgress />
+  if (!isSignedIn) return <Landing />
   return (
     <Fragment>
       <CssBaseline />

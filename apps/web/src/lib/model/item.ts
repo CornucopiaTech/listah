@@ -2,6 +2,7 @@ import * as z from "zod";
 
 import {
   ZPagination,
+  ZSearch,
 } from "@/lib/model/common";
 
 
@@ -17,14 +18,6 @@ export const ZItem = z.object({
 });
 export type IItem = z.infer<typeof ZItem>;
 
-
-// Item Definitions
-export const ZSearch = z.object({
-  tags: z.array(z.string()).catch([]),
-  filters: z.array(z.string()).catch([]),
-  text: z.string().catch(''),
-});
-export type ISearch = z.infer<typeof ZSearch>;
 
 
 export const ZItemReadRequest = z.object({

@@ -32,10 +32,10 @@ export const ZPagination = z.object({
 });
 export type IPagination = z.infer<typeof ZPagination>;
 
-
-// export const ZCategory = z.object({
-//   id: z.string().catch(''),
-//   name: z.string().catch(''),
-//   count: z.number().catch(1),
-// });
-// export type ICategory = z.infer<typeof ZCategory>;
+// Item Definitions
+export const ZSearch = z.object({
+  tags: z.array(z.string()).catch([]),
+  filters: z.array(z.string()).catch([]),
+  text: z.string().catch(''),
+});
+export type ISearch = z.infer<typeof ZSearch>;

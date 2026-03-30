@@ -1,65 +1,44 @@
 package v1
 
 import (
+	"cornucopia/listah/internal/pkg/model"
 	pb "cornucopia/listah/internal/pkg/proto/v1"
 
 	// "strings"
 	"fmt"
 
-	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
-func ReadCountTagQueryFromRequest(msg *pb.ItemServiceReadTagRequest) (*ItemReadCountFilter, *Pagination, error) {
-	if msg.GetUserId() == "" {
-		return nil, nil, errors.New("no userId sent with request")
-	}
-	l := ItemReadCountFilter{
-		UserId: msg.GetUserId(),
+func ReadCountTagQueryFromRequest(msg *pb.ItemServiceReadTagRequest) (*RepoReadCountFilter, error) {
+	iR := &pb.ItemServiceReadItemRequest{}
+	err := model.MarshalCopyProto(msg, iR)
+	if err != nil {
+		return nil, err
 	}
 
-	pg := DefaultPagination
-	if msg.GetPagination() != nil {
-		if msg.GetPagination().PageSize != 0 {
-			pg.PageSize = msg.GetPagination().PageSize
-		}
-		if msg.GetPagination().PageNumber != 0 {
-			pg.PageNumber = msg.GetPagination().PageNumber
-		}
-		if msg.GetPagination().Sort == "" {
-			pg.Sort = msg.GetPagination().Sort
-		}
+	l, err := ReadItemQueryFromRequest(iR)
+	if err != nil {
+		return nil, err
 	}
-	l.Pagination = pg
 
-	return &l, &pg, nil
+	return l, nil
 }
 
-func PrepareTagReadResponse(m []bson.M, msg *pb.ItemServiceReadTagRequest, pg *Pagination) (*pb.ItemServiceReadTagResponse, error) {
-	rs := []*pb.Tag{}
-	res := &pb.ItemServiceReadTagResponse{
-		Tags:             rs,
-		TotalRecordCount: 0,
-		Pagination: &pb.Pagination{
-			PageSize:   pg.PageSize,
-			PageNumber: pg.PageNumber,
-			Sort:       pg.Sort,
-		},
-	}
-
+func PrepareTagReadResponse(m []bson.M, res *pb.ItemServiceReadTagResponse) error {
 	fmt.Printf("\n\nm %+v \n\n", m)
 	r := m[0]["tags"].(bson.A)
 	if len(r) == 0 {
-		return res, nil
+		return nil
 	}
 
 	rs, err := BsonMapListToReadTagResponse(r)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	res.Tags = rs
 	res.TotalRecordCount = m[0]["totalDistinctTags"].(int32)
-	return res, nil
+	return nil
 }
 
 func BsonMapToReadTagResponse(c bson.M) (*pb.Tag, error) {

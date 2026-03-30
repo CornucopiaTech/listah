@@ -16,32 +16,45 @@ import { useUser } from '@clerk/react';
 import type {
   IItemReadRequest,
 } from "@/lib/model/item";
+
+import type {
+  ITagReadRequest,
+} from "@/lib/model/tag";
+
+import type {
+  IFilterReadRequest,
+} from "@/lib/model/filter";
 import { encodeState } from '@/lib/helper/encoders';
 import { AppSearchPaper } from '@/components/core/AppPaper';
 import { useBoundStore, type TBoundStore } from '@/lib/store/boundStore';
 import { decodeState } from "@/lib/helper/encoders";
+import {
+  DefaultItemRead,
+  DefaultTagRead,
+  DefaultFilterRead,
+} from '@/lib/helper/defaults';
 
 
-
-export function AppSearchBar({ route }: { route: "/tags" | "/filters" | "/items/{-$title}" }): ReactNode {
+// export function ItemSearchBar({ route }: { route: "/tags" | "/filters" | "/items/{-$title}" }): ReactNode {
+export function ItemSearchBar(): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
   const { user } = useUser();
-  const routeApi = getRouteApi(route);
+  const routeApi = getRouteApi("/items/{-$title}");
   const routeSearch: { s: string } = routeApi.useSearch()
   let search: IItemReadRequest = decodeState(routeSearch.s) as IItemReadRequest;
   const query: IItemReadRequest = { ...search, userId: user?.id || "" };
   const navigate = useNavigate();
   const textValue = store.searchQuery ? store.searchQuery : "";
-  const placeholderText = "Filter by keyword in title, description, or note";
+  const placeholderText = "Filter by keyword in name, or tag";
 
   function handleSearchSubmit() {
-    console.log("In handleItemclick - e ");
     const q: IItemReadRequest = {
-      ...query, savedFilters: [], tags: [],
-      pageNumber: 0, searchQuery: store.searchQuery,
+      ...DefaultItemRead,
+      userId: query.userId,
+      query: { ...DefaultItemRead.query, text: textValue },
     };
     const encoded = encodeState(q);
-    navigate({ to: "/items/{-$title}", search: { s: encoded }, params: { title: store.searchQuery } });
+    navigate({ to: "/items/{-$title}", search: { s: encoded }, params: { title: `Items like '${textValue}'` } });
   }
 
   return (
@@ -70,25 +83,22 @@ export function AppSearchBar({ route }: { route: "/tags" | "/filters" | "/items/
   );
 }
 
-export function AppHomeSearchBar(): ReactNode {
+export function TagSearchBar(): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
   const { user } = useUser();
-  const routeApi = getRouteApi('/');
-  const routeSearch: { s: string } = routeApi.useSearch()
-  let search: IItemReadRequest = decodeState(routeSearch.s) as IItemReadRequest;
-  const query: IItemReadRequest = { ...search, userId: user?.id || "" };
   const navigate = useNavigate();
   const textValue = store.searchQuery ? store.searchQuery : "";
-  const placeholderText = "Filter by keyword in title, description, or note";
+  const placeholderText = "Filter by keyword in name, or tag";
 
   function handleSearchSubmit() {
-    console.log("In handleItemclick - e ");
-    const q: IItemReadRequest = {
-      ...query, savedFilters: [], tags: [],
-      pageNumber: 0, searchQuery: store.searchQuery,
+    const q: ITagReadRequest = {
+      ...DefaultTagRead,
+      userId: user?.id || "",
+      query: { ...DefaultTagRead.query, text: textValue },
     };
     const encoded = encodeState(q);
-    navigate({ to: "/items/{-$title}", search: { s: encoded }, params: { title: store.searchQuery } });
+    navigate({ to: ".", search: { s: encoded }, params: { title: textValue } });
+    // navigate({ to: ".", search: { s: encoded }, params: { title: `Tags like '${textValue}'` } });
   }
 
   return (
@@ -117,27 +127,22 @@ export function AppHomeSearchBar(): ReactNode {
   );
 }
 
-
-
-export function AppItemsSearchBar(): ReactNode {
+export function FilterSearchBar(): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
   const { user } = useUser();
-  const routeApi = getRouteApi('/items/$title');
-  const routeSearch: { s: string } = routeApi.useSearch()
-  let search: IItemReadRequest = decodeState(routeSearch.s) as IItemReadRequest;
-  const query: IItemReadRequest = { ...search, userId: user?.id || "" };
   const navigate = useNavigate();
   const textValue = store.searchQuery ? store.searchQuery : "";
-  const placeholderText = "Filter by keyword in title, description, or note";
+  const placeholderText = "Filter by keyword in name, or tag";
 
   function handleSearchSubmit() {
-    console.log("In handleItemclick - e ");
     const q: IItemReadRequest = {
-      ...query, savedFilters: [], tags: [],
-      pageNumber: 0, searchQuery: store.searchQuery,
+      ...DefaultItemRead,
+      userId: user?.id || "",
+      query: { ...DefaultItemRead.query, text: textValue },
     };
     const encoded = encodeState(q);
-    navigate({ to: "/items/{-$title}", search: { s: encoded }, params: { title: store.searchQuery } });
+    navigate({ to: ".", search: { s: encoded }, params: { title: textValue } });
+    //  navigate({ to: "/items/{-$title}", search: { s: encoded }, params: { title: `Items like '${textValue}'` } });
   }
 
   return (
