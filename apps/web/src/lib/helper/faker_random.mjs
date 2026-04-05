@@ -107,13 +107,14 @@ export async function getFilters(arraySize) {
     }
 
     const result = await res.json();
-    console.log(`Api result length: ${result.itemIds.length}`);
     const maxFilterTag = 5;
-    const allTags = results.tags.filter((item, index) => item.name);
+    const allTags = await result.tags.map((item) => item.name);
     const maxFilterTagElems = [...Array(allTags.length).keys()].filter(i => i > 0);
+    let updaters = ["AUDIT_UPDATER_ENUM_UNSPECIFIED", "AUDIT_UPDATER_ENUM_FRONTEND", "AUDIT_UPDATER_ENUM_SYSOPS"];
 
-
-    let combFaked = faker.helpers.multiple(
+    // console.log("result", result.tags[0]);
+    // console.log("allTags", allTags);
+    let combFaked = await faker.helpers.multiple(
       () => ({
         id: faker.string.uuid(),
         userId: userId,
@@ -130,8 +131,8 @@ export async function getFilters(arraySize) {
       }),
       { count: arraySize }
     );
-    let stringFaked = JSON.stringify({ filters: combFaked });
-    return stringFaked;
+    // console.log("combFaked", combFaked);
+    return await JSON.stringify({ filters: combFaked });
   } catch (error) {
     console.log(`Api error: ${error.message} \t`, error);
   }
@@ -142,7 +143,7 @@ export async function getFilters(arraySize) {
 async function loadFilters(maxLoaded) {
   const url = "http://localhost:8080/listah.v1.ItemService/UpsertFilter";
   try {
-    const data = getFilters(maxLoaded);
+    const data = await getFilters(maxLoaded);
     const req = new Request(url, {
       method: "POST",
       body: data,
@@ -163,4 +164,4 @@ async function loadFilters(maxLoaded) {
 
 // loadItems(10, 3000);
 // loadItems(1, 5);
-loadFilters(10);
+loadFilters(50);

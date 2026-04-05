@@ -18,7 +18,7 @@ const AppTypography = styled(Typography)(({ theme }: { theme: AppTheme }) => ({
 
 export function AppHeroTypography({ children, sx }: { children: ReactNode, sx?: any }) {
   return (
-    <AppTypography variant="h1" sx={{ ...sx }}>{children}</AppTypography>
+    <AppTypography variant="h1" sx={{ ...sx, textAlign: "center", }}>{children}</AppTypography>
   )
 }
 

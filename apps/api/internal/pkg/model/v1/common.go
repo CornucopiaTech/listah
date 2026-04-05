@@ -48,6 +48,14 @@ type Filter struct {
 	Count         int32
 }
 
+type FilterUpsert struct {
+	bun.BaseModel `bun:"table:apps.filters,alias:sf"`
+	Id            string `bun:",pk"`
+	UserId        string
+	Name          string
+	Tags          []string `bun:"type:jsonb"`
+}
+
 type Tag struct {
 	bun.BaseModel `bun:"table:apps.tags,alias:t"`
 	Id            string `bun:",pk"`

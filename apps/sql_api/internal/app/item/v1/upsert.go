@@ -2,8 +2,7 @@ package v1
 
 import (
 	"context"
-	"cornucopia/listah/internal/pkg/model"
-	v1model "cornucopia/listah/internal/pkg/model/v1"
+	model "cornucopia/listah/internal/pkg/model/v1"
 	pb "cornucopia/listah/internal/pkg/proto/v1"
 	"fmt"
 
@@ -21,18 +20,24 @@ func (s *Server) UpsertItem(ctx context.Context, req *connect.Request[pb.ItemSer
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
 	// Create model for repository from request message
-	ins, res, err := v1model.ItemProtoToItemModel(req.Msg.Items, true)
+	i, err := model.ItemProtoToItemModel(req.Msg.Items, true)
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Error getting item model for insertion", errors.Cause(err).Error())
 		return nil, err
 	}
 
 	w := model.UpsertInfo{
-		Conflict: v1model.ItemConflictFields,
-		Resolve:  res,
+		Conflict: model.ItemConflictFields,
+		Resolve:  i.Update,
 	}
 
-	_, err = s.BunRepo.Item.Upsert(ctx, &ins, &w)
+	_, err = s.BunRepo.Tag.Upsert(ctx, i.Tags)
+	if err != nil {
+		s.Logger.LogError(ctx, svcName, rpcName, "Repository  update error", errors.Cause(err).Error())
+		return nil, err
+	}
+
+	_, err = s.BunRepo.Item.Upsert(ctx, i.Items, &w)
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Repository  update error", errors.Cause(err).Error())
 		return nil, err
@@ -42,13 +47,13 @@ func (s *Server) UpsertItem(ctx context.Context, req *connect.Request[pb.ItemSer
 	// Get the ids of the inserted items
 
 	rs := []string{}
-	for _, v := range ins {
+	for _, v := range *i.Items {
 		rs = append(rs, v.Id)
 	}
 
 	resm := &pb.ItemServiceUpsertItemResponse{ItemIds: rs}
 
-	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item update. Updated %d items", len(ins)))
+	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item update. Updated %d items", len(*i.Items)))
 	return connect.NewResponse(resm), nil
 }
 
@@ -61,18 +66,18 @@ func (s *Server) UpsertFilter(ctx context.Context, req *connect.Request[pb.ItemS
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
 	// Create model for repository from request message
-	ins, res, err := v1model.FilterProtoToFilterModel(req.Msg.Filters, true)
+	ins, res, err := model.FilterProtoToFilterModel(req.Msg.Filters, true)
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Error getting saved filter model for insertion", errors.Cause(err).Error())
 		return nil, err
 	}
 
 	w := model.UpsertInfo{
-		Conflict: v1model.ItemConflictFields,
+		Conflict: []string{"user_id", "name"},
 		Resolve:  res,
 	}
 
-	_, err = s.BunRepo.Item.Upsert(ctx, &ins, &w)
+	_, err = s.BunRepo.Filter.Upsert(ctx, &ins, &w)
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Repository  update error", errors.Cause(err).Error())
 		return nil, err

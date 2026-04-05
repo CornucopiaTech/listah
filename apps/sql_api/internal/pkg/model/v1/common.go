@@ -1,4 +1,4 @@
-package model
+package v1
 
 import (
 	"time"
@@ -23,9 +23,9 @@ type ItemSearch struct {
 	Filters     string
 	SearchQuery string
 	SortQuery   string
-	Limit       int32
-	Offset      int32
-	PageNumber  int32
+	Limit       int64
+	Offset      int64
+	PageNumber  int64
 }
 
 type ItemSearchText struct {
@@ -40,7 +40,7 @@ type UpsertInfo struct {
 }
 
 type Filter struct {
-	bun.BaseModel `bun:"table:apps.saved_filters,alias:sf"`
+	bun.BaseModel `bun:"table:apps.filters,alias:sf"`
 	Id            string `bun:",pk"`
 	UserId        string
 	Name          string
@@ -48,30 +48,34 @@ type Filter struct {
 	Count         int32
 }
 
-type Tag struct {
-	// bun.BaseModel `bun:"table:apps.tags,alias:t"`
-	// Id            string `bun:",pk"`
-	UserId string
-	Name   string
-	Count  int32
-}
-
-type Item struct {
-	bun.BaseModel `bun:"table:apps.items,alias:it"`
+type FilterUpsert struct {
+	bun.BaseModel `bun:"table:apps.filters,alias:sf"`
 	Id            string `bun:",pk"`
 	UserId        string
 	Name          string
-	Note          string
 	Tags          []string `bun:"type:jsonb"`
+}
+
+type Tag struct {
+	bun.BaseModel `bun:"table:apps.tags,alias:t"`
+	Id            string `bun:",pk"`
+	UserId        string
+	Name          string
 	Props         map[string]string
-	SoftDelete    bool `bun:",nullzero,default:false"`
-	UpdatedBy     string
-	UpdatedAt     time.Time
+	Count         int32
+}
+
+type TagUpsert struct {
+	bun.BaseModel `bun:"table:apps.tags,alias:t"`
+	Id            string `bun:",pk"`
+	UserId        string
+	Name          string
+	Props         map[string]string
 }
 
 type Pagination struct {
-	PageNumber int32
-	PageSize   int32
+	PageNumber int64
+	PageSize   int64
 	Sort       string
 }
 
@@ -83,4 +87,15 @@ type Category struct {
 	Category string
 	RowCount int
 	Id       string
+}
+
+type ItemUpsert struct {
+	Items  *[]*Item
+	Update []string
+	Tags   *[]Tag
+}
+
+type TagCte struct {
+	Columns string
+	Values  string
 }

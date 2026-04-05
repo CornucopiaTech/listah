@@ -3,7 +3,7 @@ package middleware
 import (
 	"context"
 	"cornucopia/listah/internal/app/bootstrap"
-	"cornucopia/listah/internal/pkg/model"
+	model "cornucopia/listah/internal/pkg/model/v1"
 	"errors"
 
 	"time"

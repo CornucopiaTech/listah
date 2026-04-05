@@ -135,7 +135,8 @@ func (s *Server) ReadFilter(ctx context.Context, req *connect.Request[pb.ItemSer
 
 	readModel := []*model.Filter{}
 
-	recordCnt, err := s.BunRepo.Item.ReadFilter(ctx, &readModel, sq)
+	// recordCnt, err := s.BunRepo.Item.ReadFilter(ctx, &readModel, sq)
+	recordCnt, err := s.BunRepo.Filter.Read(ctx, &readModel, sq)
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
 		return nil, err

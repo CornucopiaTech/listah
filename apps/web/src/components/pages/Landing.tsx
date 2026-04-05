@@ -15,10 +15,10 @@ export function Landing() {
         <AppHeroPaper>
           {/* <img src="/logo.png" width={120} height={120} /> */}
           <AppHeroTypography>Simplify your life, one list at a time</AppHeroTypography>
-          <AppH6Typography> Effortlessly manage task, shopping, and project lists. <br />All in one place.</AppH6Typography>
+          <AppH6Typography sx={{ textAlign: "center", }}> Effortlessly manage task, shopping, and project lists. <br />All in one place.</AppH6Typography>
           <SignInButton mode="modal">
             <AppButtonContained variant='contained' href="">
-              <AppH6ButtonTypography >
+              <AppH6ButtonTypography sx={{ textAlign: "center", }}>
                 Get Started - Free
               </AppH6ButtonTypography>
             </AppButtonContained>
