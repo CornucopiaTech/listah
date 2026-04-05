@@ -36,7 +36,7 @@ export async function postFilter(f: IFilter) {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.updateFilter}`;
   const req = new Request(url, {
     method: "POST",
-    body: JSON.stringify({ savedFilters: [f] }),
+    body: JSON.stringify({ filters: [f] }),
     headers: { "Content-Type": "application/json", "Accept": "*/*", },
   });
   const res = await fetch(req);
@@ -48,8 +48,10 @@ export async function postFilter(f: IFilter) {
 
 export async function getItem(opts: IItemReadRequest): Promise<IItemReadResponse> {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.readItem}`;
-  console.info("url", url);
-  console.info("opts", opts);
+  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+    console.info("url", url);
+    console.info("opts", opts);
+  }
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify(opts),

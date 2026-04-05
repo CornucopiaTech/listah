@@ -4,63 +4,65 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
+	"github.com/uptrace/bun"
 )
 
 type ApiLog struct {
-	RequestTime   time.Time
-	Request       connect.AnyRequest
-	Id            string `bson:"_id"`
+	bun.BaseModel `bun:"table:instrumentation.logs,alias:lg"`
+	Id            string `bun:",pk"`
 	RequestSource string
 	TraceId       string
 	SpanId        string
-	Uri           string
+	Request       connect.AnyRequest
+	RequestTime   time.Time
 }
 
-type ItemReadResult struct {
-	Results    *[]Item
-	TotalCount int32
+type ItemSearch struct {
+	UserId      string
+	Tags        string
+	Filters     string
+	SearchQuery string
+	SortQuery   string
+	Limit       int64
+	Offset      int64
+	PageNumber  int64
 }
 
-type ItemUpsert struct {
-	Filter map[string]string
-	Update map[string]map[string]interface{}
+type ItemSearchText struct {
+	Tags    string
+	Filters string
+	Text    string
 }
 
-type ItemUpdate struct {
-	Filter map[string]string
-	Update map[string]map[string]interface{}
+type UpsertInfo struct {
+	Conflict []string
+	Resolve  []string
 }
 
-type ItemReplace struct {
-	Filter  map[string]string
-	Replace map[string]interface{}
-}
-
-type ItemRead struct {
-	Filter map[string]interface{}
-}
-type RepoReadCountFilter struct {
-	UserId     string
-	Tags       []string
-	Search     string
-	Pagination Pagination
-}
 type Filter struct {
-	Id     string `bson:"_id"`
-	UserId string
-	Name   string
-	Tags   []string
-	Count  int32
+	bun.BaseModel `bun:"table:apps.filters,alias:sf"`
+	Id            string `bun:",pk"`
+	UserId        string
+	Name          string
+	Tags          []string `bun:"type:jsonb"`
+	Count         int32
 }
 
 type Tag struct {
-	UserId string
-	Name   string
-	Count  int32
+	bun.BaseModel `bun:"table:apps.tags,alias:t"`
+	Id            string `bun:",pk"`
+	UserId        string
+	Name          string
+	Props         map[string]string
+	Count         int32
 }
 
-type RowCount struct {
-	RowCount int
+type TagUpsert struct {
+	bun.BaseModel `bun:"table:apps.tags,alias:t"`
+	Id            string `bun:",pk"`
+	UserId        string
+	Name          string
+	Props         map[string]string
 }
 
 type Pagination struct {
@@ -69,8 +71,23 @@ type Pagination struct {
 	Sort       string
 }
 
-var DefaultPagination = Pagination{
-	PageNumber: 0,
-	PageSize:   9007199254740991,
-	Sort:       "name ASC",
+type RowCount struct {
+	RowCount int
+}
+
+type Category struct {
+	Category string
+	RowCount int
+	Id       string
+}
+
+type ItemUpsert struct {
+	Items  *[]*Item
+	Update []string
+	Tags   *[]Tag
+}
+
+type TagCte struct {
+	Columns string
+	Values  string
 }

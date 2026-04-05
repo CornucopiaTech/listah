@@ -53,6 +53,7 @@ message ItemServiceReadTagRequest {
 message ItemServiceReadTagResponse {
   repeated Tag tags = 1;
   int32 totalRecordCount = 2;
+  string userId = 500 [json_name = "userId"];
   Search query = 501;
   Pagination pagination = 502;
 }
@@ -73,6 +74,7 @@ message ItemServiceReadFilterRequest {
 message ItemServiceReadFilterResponse {
   repeated Filter filters = 1;
   int32 totalRecordCount = 2;
+  string userId = 500 [json_name = "userId"];
   Search query = 501;
   Pagination pagination = 502;
 }

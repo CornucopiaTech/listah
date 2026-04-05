@@ -31,7 +31,7 @@ export function Items() {
   return (
     <AppContainer mw="md">
       <AppPageStack>
-        {store.itemModal && <AppItemModal route={"/items/{-$title}"} />}
+        {store.itemModal && <AppItemModal />}
         <ItemSearchBar />
         <AppCategoryListPaper>
           <AppListHeaderBar key="header">

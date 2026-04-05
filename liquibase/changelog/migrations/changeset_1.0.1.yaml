@@ -1,0 +1,56 @@
+databaseChangeLog:
+  - preConditions:
+      - runningAs:
+          username:  listah-db-admin
+  - changeSet:
+      id:  "1.0.1"
+      author:  "Kelechi Berquist"
+      labels: "root-migration"
+      context: "0.0.0"
+      comment: "Initial migration"
+      preconditions:
+        - onFail: MARK_RAN # Options: HALT, CONTINUE, MARK_RAN, WARN
+          not:
+            - uniqueConstraintExists:
+                constraintName: constraint_unique_tags_user_id_name
+                schemaName: apps
+                tableName: tags
+      changes:
+        - createTable:
+              schemaName: apps
+              tableName:  tags
+              ifNotExists: true
+              columns:
+                - column:
+                    name:  id
+                    type:  varchar
+                    constraints:
+                      primaryKey:  true
+                      nullable:  false
+                - column:
+                    name:  user_id
+                    type:  varchar
+                    constraints:
+                      nullable:  false
+                - column:
+                    name:  name
+                    type:  varchar
+                    constraints:
+                      nullable:  false
+                - column:
+                    name:  props
+                    type:  json
+                - column:
+                    name:  updated_by
+                    type:  varchar
+                - column:
+                    name:  updated_at
+                    type:  timestamp
+                    defaultValueComputed: CURRENT_TIMESTAMP
+
+        - addUniqueConstraint:
+            columnNames:  user_id, name
+            constraintName:  constraint_unique_tags_user_id_name
+            schemaName:  apps
+            tableName:  tags
+            validate:  true

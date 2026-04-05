@@ -724,6 +724,9 @@ components:
           type: integer
           title: totalRecordCount
           format: int32
+        userId:
+          type: string
+          title: userId
         query:
           title: query
           $ref: '#/components/schemas/listah.v1.Search'
@@ -796,6 +799,9 @@ components:
           type: integer
           title: totalRecordCount
           format: int32
+        userId:
+          type: string
+          title: userId
         query:
           title: query
           $ref: '#/components/schemas/listah.v1.Search'

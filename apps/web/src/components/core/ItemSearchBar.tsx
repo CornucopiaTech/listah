@@ -135,10 +135,10 @@ export function FilterSearchBar(): ReactNode {
   const placeholderText = "Filter by keyword in name, or tag";
 
   function handleSearchSubmit() {
-    const q: IItemReadRequest = {
-      ...DefaultItemRead,
+    const q: IFilterReadRequest = {
+      ...DefaultFilterRead,
       userId: user?.id || "",
-      query: { ...DefaultItemRead.query, text: textValue },
+      query: { ...DefaultFilterRead.query, text: textValue },
     };
     const encoded = encodeState(q);
     navigate({ to: ".", search: { s: encoded }, params: { title: textValue } });

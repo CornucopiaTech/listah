@@ -32,6 +32,7 @@ declare global {
     runtimeConfig: {
       authKey: string;
       apiUrl: string;
+      debug?: string;
     };
   }
 }
@@ -121,7 +122,10 @@ function App() {
   )
 }
 
-console.info("Node environment", process.env.NODE_ENV)
+
+if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+  console.info("Node environment", process.env.NODE_ENV)
+}
 loadConfig().then(
   () => {
     const aKey = window.runtimeConfig.authKey;

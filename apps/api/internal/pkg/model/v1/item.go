@@ -2,241 +2,174 @@ package v1
 
 import (
 	pb "cornucopia/listah/internal/pkg/proto/v1"
+	"errors"
 	"fmt"
+	"strings"
 	"time"
 
-	// "strings"
-	// "fmt"
 	"github.com/google/uuid"
-	"github.com/pkg/errors"
-	"go.mongodb.org/mongo-driver/v2/bson"
-	"google.golang.org/protobuf/types/known/timestamppb"
+	"github.com/uptrace/bun"
 )
 
+var svcName string = "listah.v1.ItemService"
+var ItemConflictFields = []string{
+	"id", "user_id",
+}
+var defaultPagination = Pagination{
+	PageNumber: 1,
+	PageSize:   100,
+	Sort:       "name ASC",
+}
+
 type Item struct {
-	UpdatedBy  string
-	Props      map[string]string
-	Id         string `bson:"_id"`
-	UserId     string
-	Name       string
-	UpdatedAt  time.Time
-	Tags       []string
-	SoftDelete bool
+	bun.BaseModel `bun:"table:apps.items,alias:it"`
+	Id            string `bun:",pk"`
+	UserId        string
+	Name          string
+	Note          string
+	Tags          []string `bun:"type:jsonb"`
+	Props         map[string]string
+	SoftDelete    bool `bun:",nullzero,default:false"`
+	UpdatedBy     string
+	UpdatedAt     time.Time
 }
 
-func InsertItemQueryFromRequest(msg *pb.ItemServiceUpsertItemRequest) ([]*Item, error) {
-	c := []*Item{}
-	for _, om := range msg.Items {
-		if om.GetUserId() == "" {
-			return nil, errors.New("no userId sent with request")
-		}
-		id := om.GetId()
-		if id == "" {
-			id = uuid.Must(uuid.NewV7()).String()
-		}
-		a := &Item{
-			Id:     id,
-			UserId: om.GetUserId(),
-			Name:   om.GetName(),
-			Tags:   om.GetTags(),
-			Props:  om.GetProps(),
-		}
-		c = append(c, a)
-	}
-	return c, nil
-}
-
-func UpdateItemQueryFromRequest(msg *pb.ItemServiceUpsertItemRequest) ([]*ItemUpdate, error) {
-	c := []*ItemUpdate{}
-	for _, om := range msg.Items {
-		if om.GetUserId() == "" {
-			return nil, errors.New("no userId sent with request")
-		}
-		id := om.GetId()
-		if id == "" {
-			id = uuid.Must(uuid.NewV7()).String()
-		}
-
-		a := &ItemUpdate{
-			Filter: map[string]string{"_id": id, "userId": om.GetUserId()},
-			Update: map[string]map[string]interface{}{
-				"$set": {
-					"_id":        id,
-					"userId":     om.GetUserId(),
-					"tags":       om.GetTags(),
-					"name":       om.GetName(),
-					"props":      om.GetProps(),
-					"softDelete": om.GetSoftDelete(),
-					"updatedAt":  time.Now().UTC(),
-					"updatedBy":  "api",
-				},
-			},
-		}
-		c = append(c, a)
-	}
-	return c, nil
-}
-
-func ReplaceItemQueryFromRequest(msg *pb.ItemServiceUpsertItemRequest) ([]*ItemReplace, error) {
-	c := []*ItemReplace{}
-	for _, om := range msg.Items {
-		if om.GetUserId() == "" {
-			return nil, errors.New("no userId sent with request")
-		}
-		id := om.GetId()
-		if id == "" {
-			id = uuid.Must(uuid.NewV7()).String()
-		}
-		a := &ItemReplace{
-			Filter: map[string]string{"_id": id, "userId": om.GetUserId()},
-			Replace: map[string]interface{}{
-				"_id":        id,
-				"userId":     om.GetUserId(),
-				"tags":       om.GetTags(),
-				"name":       om.GetName(),
-				"props":      om.GetProps(),
-				"softDelete": om.GetSoftDelete(),
-				"updatedAt":  time.Now().UTC(),
-				"updatedBy":  "api",
-			},
-		}
-		c = append(c, a)
-	}
-	return c, nil
-}
-
-func ReadItemQueryFromRequest(msg *pb.ItemServiceReadItemRequest) (*RepoReadCountFilter, error) {
+func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemSearch, error) {
 	if msg.GetUserId() == "" {
 		return nil, errors.New("no userId sent with request")
 	}
-	l := RepoReadCountFilter{
-		UserId: msg.GetUserId(),
+
+	pSize := defaultPagination.PageSize
+	pNum := defaultPagination.PageNumber
+	sortT := defaultPagination.Sort
+
+	pg := msg.GetPagination()
+	if pg != nil {
+		if pSize > 0 {
+			pSize = pg.PageSize
+		}
+		if pNum > 0 {
+			pNum = pg.PageNumber
+		}
+		if sortT != "" {
+			sortT = pg.Sort
+		}
 	}
 
+	offset := pSize * (pNum - 1)
+
+	s := []string{}
+	t := []string{}
+	st := ""
 	q := msg.GetQuery()
-	if q != nil && q.Tags != nil {
-		l.Tags = q.Tags
-	} else {
-		l.Tags = []string{}
-	}
-
-	if q != nil && q.Text != "" {
-		l.Search = q.Text
-	} else {
-		l.Search = ""
-	}
-
-	pg := DefaultPagination
-	if msg.GetPagination() != nil {
-		if msg.GetPagination().PageSize > 0 {
-			pg.PageSize = int64(msg.GetPagination().PageSize)
+	if q != nil {
+		if q.Filters != nil {
+			for _, v := range msg.GetQuery().Filters {
+				s = append(s, fmt.Sprintf(`'%v'`, v))
+			}
 		}
-		if msg.GetPagination().PageNumber != 0 {
-			pg.PageNumber = int64(msg.GetPagination().PageNumber)
+
+		if q.Tags != nil {
+			for _, v := range msg.GetQuery().Tags {
+				t = append(t, fmt.Sprintf(`'%v'`, v))
+			}
 		}
-		if msg.GetPagination().Sort == "" {
-			pg.Sort = msg.GetPagination().Sort
+
+		if q.Text != "" {
+			st = q.Text
 		}
 	}
-	l.Pagination = pg
-	fmt.Printf("\n\nl %+v \n\n", l)
 
-	return &l, nil
+	i := ItemSearch{
+		UserId:      msg.GetUserId(),
+		Tags:        strings.Join(t, ", "),
+		Filters:     strings.Join(s, ", "),
+		SearchQuery: st,
+		SortQuery:   sortT,
+		Limit:       pSize,
+		Offset:      offset,
+		PageNumber:  pNum,
+	}
+	return &i, nil
 }
 
-func PrepareItemReadResponse(m []bson.M, res *pb.ItemServiceReadItemResponse) error {
-	// fmt.Printf("\n\nm %+v \n\n", m)
-	// Check if any result returned.
-	r := m[0]["results"].(bson.A)
-	if len(r) == 0 {
-		return nil
+func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
+	items := []*pb.Item{}
+	for _, v := range m {
+		items = append(items, &pb.Item{
+			Id:         v.Id,
+			UserId:     v.UserId,
+			Name:       v.Name,
+			Note:       v.Note,
+			Tags:       v.Tags,
+			Props:      v.Props,
+			SoftDelete: v.SoftDelete,
+		})
 	}
-
-	// Parse db result to response form
-	rs, err := BsonMapListToReadItemResponse(r)
-	if err != nil {
-		return err
-	}
-	res.Items = rs
-
-	// Read total number of results
-	tc := m[0]["totalCount"].(bson.A)[0].(bson.D)
-	ds, err := bson.Marshal(tc)
-	var tm bson.M
-	err = bson.Unmarshal(ds, &tm)
-	if err != nil {
-		return err
-	}
-	res.TotalRecordCount = tm["count"].(int32)
-	return nil
+	return items, nil
 }
 
-func BsonMapToReadItemResponse(c bson.M) (*pb.Item, error) {
-	ut := time.Now().UTC()
-	if c["updatedAt"] != nil {
-		ct, ok := c["updatedAt"].(bson.DateTime)
-		if !ok {
-			return nil, errors.New("Unable to read updateAt from document")
+func ItemProtoToItemModel(msg []*pb.Item, genId bool) (ItemUpsert, error) {
+	items := []*Item{}
+	upTag := []Tag{}
+	check := map[string]bool{}
+	checkTags := map[string]bool{}
+
+	for _, v := range msg {
+		id := v.GetId()
+		if id == "" && genId {
+			id = uuid.Must(uuid.NewV7()).String()
 		}
-		ut = ct.Time()
+		newItem := &Item{
+			Id:     id,
+			UserId: v.GetUserId(),
+		}
+
+		// Set values that have not been set to nil
+		if v.GetName() != "" {
+			newItem.Name = v.GetName()
+			check["name"] = true
+		}
+		if v.GetNote() != "" {
+			newItem.Note = v.GetNote()
+			check["note"] = true
+		}
+		if len(v.GetTags()) != 0 {
+			newItem.Tags = v.GetTags()
+			check["tags"] = true
+			for _, tt := range v.GetTags() {
+				if _, ok := checkTags[tt]; !ok {
+					checkTags[tt+"_"+v.GetUserId()] = true
+					upTag = append(upTag, Tag{
+						Id:     uuid.Must(uuid.NewV7()).String(),
+						UserId: v.GetUserId(),
+						Name:   tt,
+					})
+				}
+			}
+		}
+		if len(v.GetProps()) != 0 {
+			newItem.Props = v.GetProps()
+			check["props"] = true
+		}
+		if v.GetSoftDelete() {
+			newItem.SoftDelete = v.GetSoftDelete()
+			check["soft_delete"] = true
+		}
+		items = append(items, newItem)
 	}
 
-	ts := []string{}
-	if c["tags"] != nil {
-		t, ok := c["tags"].(bson.A)
-		if !ok {
-			return nil, errors.New("Unable to read tags from document")
-		}
-
-		for _, i := range t {
-			ts = append(ts, i.(string))
-		}
+	// Get the fields that need to be updated for conflict resolution
+	res := []string{}
+	for k, _ := range check {
+		res = append(res, k)
 	}
 
-	var tm map[string]string
-	if c["props"] != nil {
-		pd := c["props"].(bson.D)
-		pm, err := bson.Marshal(pd)
-		if err != nil {
-			return nil, err
-		}
-
-		err = bson.Unmarshal(pm, &tm)
-		if err != nil {
-			return nil, err
-		}
+	i := ItemUpsert{
+		Items:  &items,
+		Update: res,
+		Tags:   &upTag,
 	}
 
-	return &pb.Item{
-		UpdatedBy: (c["updatedBy"].(string)),
-		Props:     tm,
-		Id:        c["_id"].(string),
-		UserId:    c["userId"].(string),
-		Name:      c["name"].(string),
-		UpdatedAt: timestamppb.New(ut),
-		Tags:      ts,
-	}, nil
-}
-
-func BsonMapListToReadItemResponse(m bson.A) ([]*pb.Item, error) {
-	c := []*pb.Item{}
-	for _, i := range m {
-		tc := i.(bson.D)
-		ds, err := bson.Marshal(tc)
-		if err != nil {
-			return nil, err
-		}
-		var tm bson.M
-		err = bson.Unmarshal(ds, &tm)
-		if err != nil {
-			return nil, err
-		}
-
-		r, err := BsonMapToReadItemResponse(tm)
-		if err != nil {
-			return nil, err
-		}
-		c = append(c, r)
-	}
-	return c, nil
+	return i, nil
 }

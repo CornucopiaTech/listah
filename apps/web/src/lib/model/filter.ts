@@ -2,6 +2,7 @@ import * as z from "zod";
 
 import {
   ZPagination,
+  ZSearch,
 } from "@/lib/model/common";
 
 export const ZFilter = z.object({
@@ -17,12 +18,16 @@ export type IFilter = z.infer<typeof ZFilter>;
 
 export const ZFilterReadRequest = z.object({
   userId: z.string().catch(''),
+  query: ZSearch,
   pagination: ZPagination,
 });
 export type IFilterReadRequest = z.infer<typeof ZFilterReadRequest>;
 
 export const ZFilterReadResponse = z.object({
   filters: z.array(ZFilter).catch([]),
+  totalRecordCount: z.number().catch(0),
+  userId: z.string().catch(''),
+  query: ZSearch,
   pagination: ZPagination,
 });
 export type IFilterReadResponse = z.infer<typeof ZFilterReadResponse>;

@@ -63,7 +63,7 @@ export const DefaultTagRead: ITagReadRequest = {
 
 export const DefaultFilterRead: IFilterReadRequest = {
   userId: "",
-  // query: { filters: [], tags: [], text: '', },
+  query: { filters: [], tags: [], text: '', },
   pagination: { ...defaultPagination }
 };
 

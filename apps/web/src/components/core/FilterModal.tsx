@@ -7,7 +7,6 @@ import {
 import type {
   ChangeEvent,
   ReactNode,
-  FormEvent,
 } from 'react';
 import {
   useForm,
@@ -55,9 +54,6 @@ import { postFilter } from "@/lib/helper/fetchers";
 import { ErrorAlert, WarnAlert, SuccessAlert } from "@/components/core/Alerts";
 import type { AppTheme } from '@/system/theme';
 import type {
-  THomeQueryParams
-} from '@/lib/model/home';
-import type {
   ITag,
   ITagReadResponse,
 } from "@/lib/model/tag";
@@ -66,7 +62,6 @@ import type { IFilter, } from "@/lib/model/filter";
 import { ZFilter } from "@/lib/model/filter";
 import {
   DefaultTagRead,
-  DefaultFilterRead,
 } from '@/lib/helper/defaults';
 
 
@@ -81,12 +76,6 @@ export function AppFilterModal(): ReactNode {
     userId: user?.id || "",
     pageSize: -1,
   }
-  const filterQuery = {
-    ...DefaultFilterRead,
-    userId: user?.id || "",
-    pageSize: -1,
-  }
-
 
   const {
     isPending, isError, data, error
@@ -101,11 +90,13 @@ export function AppFilterModal(): ReactNode {
     },
     onSuccess: async () => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["filter", filterQuery] }),
+        queryClient.invalidateQueries({ queryKey: ["filter"] }),
       ])
     },
     onError: (error) => {
-      console.log(error);
+      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+        console.log(error);
+      }
       store.setMessage(error.message);
     },
   });
@@ -120,7 +111,9 @@ export function AppFilterModal(): ReactNode {
 
     const timer = setTimeout(
       () => {
-        console.log("Timer fired after 2 seconds");
+        if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+          console.log("Timer fired after 2 seconds");
+        }
         closeModal();
       }, 2000);
     return () => clearTimeout(timer); // cleanup
@@ -132,7 +125,7 @@ export function AppFilterModal(): ReactNode {
 
 
 
-  function onFormSubmit(e: FormEvent<HTMLFormElement>) {
+  function onFormSubmit(e: ChangeEvent<HTMLFormElement>) {
     e.preventDefault()
     e.stopPropagation()
     //Note: form.handleSubmit is automatically called on form submit. it does not need to be called again. Calling it again results in the form getting sent multiple times.
@@ -145,7 +138,9 @@ export function AppFilterModal(): ReactNode {
   };
 
   function formSubmission({ value }: { value: FormObjectType }): void {
-    console.info("In formSubmission - value ", value);
+    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+      console.log("In formSubmission - value ", value);
+    }
     let checkedCategories: string[] = [];
 
     Object.keys(value).forEach(key => {
@@ -159,11 +154,13 @@ export function AppFilterModal(): ReactNode {
       userId: user?.id || "",
       name: value["___filterName"] as string,
       tags: checkedCategories,
-      savedFilters: [],
+      filters: [],
+      count: 0,
+    };
+    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+      console.info("In formSubmission - submitvalue ", submitValue);
     }
-    console.info("In formSubmission - submitvalue ", submitValue);
-    alert(submitValue);
-    // mutation.mutate(submitValue);
+    mutation.mutate(submitValue);
   }
 
   const gridComponents = {
@@ -227,7 +224,7 @@ export function AppFilterModal(): ReactNode {
 
 
   function eachItem(idx: number): ReactNode {
-    const chipLabel = formData[idx] && formData[idx].category ? formData[idx].category : "";
+    const chipLabel = formData[idx] && formData[idx].name ? formData[idx].name : "";
     return (
       <form.Field key={`item-${chipLabel}`} name={chipLabel} children={
         (field) =>
@@ -238,7 +235,9 @@ export function AppFilterModal(): ReactNode {
             sx={{ color: theme.palette.background.default, cursor: "pointer" }}
             label={<AppBody1ButtonTypography>#{chipLabel}</AppBody1ButtonTypography>}
             onClick={() => {
-              console.log(`${chipLabel} onClick: ${field.state.value}=>${!field.state.value}`);
+              if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+                console.log(`${chipLabel} onClick: ${field.state.value}=>${!field.state.value}`);
+              }
               field.handleChange(!field.state.value)
             }}
           />

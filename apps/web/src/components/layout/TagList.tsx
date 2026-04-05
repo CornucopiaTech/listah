@@ -166,9 +166,13 @@ export function TagListLayout(): ReactNode {
   } catch (error: any) {
     errMsg = "An error occurred. Please try again";
     if (error instanceof z.ZodError) {
-      console.info("Zod issue - ", error.issues);
+      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+        console.info("Zod issue - ", error.issues);
+      }
     } else {
-      console.info("Other issue - ", error);
+      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+        console.info("Other issue - ", error);
+      }
     }
   }
 

@@ -2,13 +2,14 @@ package config
 
 import (
 	"fmt"
-	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"log"
 	"net"
 	"os"
 	"path/filepath"
 	"strconv"
 	"time"
+
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type appNetworkConfig struct {
@@ -24,7 +25,6 @@ type pgsqlDBConfig struct {
 	Password     string
 	Address      string
 }
-
 type mongoDBConfig struct {
 	AuthCredentials  options.Credential
 	Host             string
@@ -41,19 +41,19 @@ type mongoDBConfig struct {
 
 type instrumentationConfig struct {
 	OtelExporterEndpoint string
-	OltpExporterType     string
 	TraceFreqSec         int
 	MetricFreqSec        int
+	OltpExporterType     string
 }
 
 type Config struct {
+	AppName         string
+	Env             string
+	ProjectRoot     string
 	Api             *appNetworkConfig
 	PgsqlDB         *pgsqlDBConfig
 	MongoDB         *mongoDBConfig
 	Instrumentation *instrumentationConfig
-	AppName         string
-	Env             string
-	ProjectRoot     string
 }
 
 func Init() (*Config, error) {

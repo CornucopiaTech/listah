@@ -12,7 +12,7 @@ import {
   AppPageStack,
 } from "@/components/core/AppStack";
 import { HomeFab } from "@/components/core/HomeFab";
-// import { AppFilterModal } from "@/components/core/FilterModal";
+import { AppFilterModal } from "@/components/core/FilterModal";
 import {
   useBoundStore,
   type TBoundStore
@@ -35,7 +35,7 @@ export function Tags() {
     <AppContainer mw="md">
       <AppPageStack>
         {store.itemModal && <AppItemModal />}
-        {/* {store.filterModal && <AppFilterModal />} */}
+        {store.filterModal && <AppFilterModal />}
         <TagSearchBar />
         <AppCategoryListPaper>
           <AppListHeaderBar key="header">

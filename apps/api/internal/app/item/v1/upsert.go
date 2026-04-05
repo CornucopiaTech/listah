@@ -12,35 +12,87 @@ import (
 )
 
 func (s *Server) UpsertItem(ctx context.Context, req *connect.Request[pb.ItemServiceUpsertItemRequest]) (*connect.Response[pb.ItemServiceUpsertItemResponse], error) {
-	rpcName := "Upsert"
+	rpcName := "Update"
 	rpcLogName := fmt.Sprintf("POST /%v/%v", svcName, rpcName)
 
-	ctx, span := otel.Tracer("item-service").Start(ctx, "upsert")
+	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
 	defer span.End()
-	s.Logger.LogInfo(ctx, svcName, rpcName, "Begin "+rpcLogName)
-	defer s.Logger.LogInfo(ctx, svcName, rpcName, "End "+rpcLogName)
+	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
-	// Upsert model for repository
-	imod, err := model.UpdateItemQueryFromRequest(req.Msg)
+	// Create model for repository from request message
+	i, err := model.ItemProtoToItemModel(req.Msg.Items, true)
 	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Error getting item model for upsert", errors.Cause(err).Error())
-		// fmt.Printf("\n\n %+v\n\n", errors.Cause(err).Error())
+		s.Logger.LogError(ctx, svcName, rpcName, "Error getting item model for insertion", errors.Cause(err).Error())
 		return nil, err
 	}
-	// Insert model in repository
-	// err = s.MongoRepo.Item.Update(ctx, imod)
-	err = s.MongoRepo.Item.UpdateMany(ctx, imod)
+
+	w := model.UpsertInfo{
+		Conflict: model.ItemConflictFields,
+		Resolve:  i.Update,
+	}
+
+	_, err = s.BunRepo.Tag.Upsert(ctx, i.Tags)
 	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Repository  upsert error", errors.Cause(err).Error())
+		s.Logger.LogError(ctx, svcName, rpcName, "Repository  update error", errors.Cause(err).Error())
 		return nil, err
 	}
-	s.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository upsert. Writing response")
-	iIds := []string{}
-	for _, om := range imod {
-		iIds = append(iIds, om.Filter["_id"])
+
+	_, err = s.BunRepo.Item.Upsert(ctx, i.Items, &w)
+	if err != nil {
+		s.Logger.LogError(ctx, svcName, rpcName, "Repository  update error", errors.Cause(err).Error())
+		return nil, err
 	}
-	res := &pb.ItemServiceUpsertItemResponse{
-		ItemIds: iIds,
+	s.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository update")
+
+	// Get the ids of the inserted items
+
+	rs := []string{}
+	for _, v := range *i.Items {
+		rs = append(rs, v.Id)
 	}
-	return connect.NewResponse(res), nil
+
+	resm := &pb.ItemServiceUpsertItemResponse{ItemIds: rs}
+
+	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item update. Updated %d items", len(*i.Items)))
+	return connect.NewResponse(resm), nil
 }
+
+// func (s *Server) UpsertFilter(ctx context.Context, req *connect.Request[pb.ItemServiceUpsertFilterRequest]) (*connect.Response[pb.ItemServiceUpsertFilterResponse], error) {
+// 	rpcName := "UpsertFilter"
+// 	rpcLogName := fmt.Sprintf("POST /%v/%v", svcName, rpcName)
+
+// 	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
+// 	defer span.End()
+// 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
+
+// 	// Create model for repository from request message
+// 	ins, res, err := model.FilterProtoToFilterModel(req.Msg.Filters, true)
+// 	if err != nil {
+// 		s.Logger.LogError(ctx, svcName, rpcName, "Error getting saved filter model for insertion", errors.Cause(err).Error())
+// 		return nil, err
+// 	}
+
+// 	w := model.UpsertInfo{
+// 		Conflict: model.ItemConflictFields,
+// 		Resolve:  res,
+// 	}
+
+// 	_, err = s.BunRepo.Item.Upsert(ctx, &ins, &w)
+// 	if err != nil {
+// 		s.Logger.LogError(ctx, svcName, rpcName, "Repository  update error", errors.Cause(err).Error())
+// 		return nil, err
+// 	}
+// 	s.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository update")
+
+// 	// Get the ids of the inserted items
+
+// 	rs := []string{}
+// 	for _, v := range ins {
+// 		rs = append(rs, v.Id)
+// 	}
+
+// 	resm := &pb.ItemServiceUpsertFilterResponse{FilterIds: rs}
+
+// 	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item update. Updated %d items", len(ins)))
+// 	return connect.NewResponse(resm), nil
+// }

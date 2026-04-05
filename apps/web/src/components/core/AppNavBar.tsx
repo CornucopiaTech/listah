@@ -24,13 +24,13 @@ export function AppNavBar() {
     select: (location) => location.pathname,
   });
 
-  const filterActive = pathname.includes("/filters") ? "underline" : "none"
-  const tagActive = pathname.includes("/tags") ? "underline" : "none"
-  const itemActive = pathname.includes("/items") ? "underline" : "none"
+  type ActiveState = "always" | "none" | "hover" | undefined;
+  const filterActive: ActiveState = pathname.includes("/filters") ? "always" : "none";
+  const tagActive: ActiveState = pathname.includes("/tags") ? "always" : "none";
+  const itemActive: ActiveState = pathname.includes("/items") ? "always" : "none";
   return (
     <AppBar position="static"
       sx={{
-        // bgcolor: theme.palette.primary.light,
         width: '100%',
         height: AppBarHeight,
       }}

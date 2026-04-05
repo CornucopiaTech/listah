@@ -6,10 +6,8 @@ import {
 import type {
   ChangeEvent,
   ReactNode,
+  SyntheticEvent,
 } from 'react';
-import {
-  getRouteApi,
-} from '@tanstack/react-router';
 
 import {
   useForm,
@@ -41,7 +39,8 @@ import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import Box from '@mui/material/Box';
-import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import Autocomplete from '@mui/material/Autocomplete';
+
 
 
 
@@ -61,13 +60,11 @@ import type {
 } from "@/lib/model/item";
 import { ErrorAlert, SuccessAlert, WarnAlert } from "@/components/core/Alerts";
 import type { AppTheme } from '@/system/theme';
-import { decodeState } from "@/lib/helper/encoders";
 import {
   DefaultTagRead,
 } from '@/lib/helper/defaults';
 import type {
   ITag,
-  ITagReadRequest,
   ITagReadResponse,
 } from "@/lib/model/tag";
 import { tagGroupOptions } from '@/lib/helper/querying';
@@ -89,7 +86,7 @@ export function AppItemModal(
 
   if (item.props) {
     for (const [k, v] of Object.entries(item.props)) {
-      itemProps.push({ key: k, value: v });
+      itemProps.push({ key: k, value: v as string });
     };
   }
 
@@ -140,7 +137,10 @@ export function AppItemModal(
       ])
     },
     onError: (error) => {
-      console.log(error);
+      // ToDo: Add error message
+      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+        console.log(error);
+      }
     },
   });
   useEffect(() => {
@@ -149,7 +149,9 @@ export function AppItemModal(
 
     const timer = setTimeout(
       () => {
-        console.log("Timer fired after 2 seconds");
+        if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+          console.log("Timer fired after 2 seconds");
+        }
         closeModal();
       }, 2000);
     return () => clearTimeout(timer); // cleanup
@@ -176,7 +178,9 @@ export function AppItemModal(
   }
 
   function formSubmission({ value }: { value: IItem }) {
-    console.log("In formSubmission - value ", value);
+    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+      console.log("In formSubmission - value ", value);
+    }
     const itemId = value.id && value.id != "" ? value.id : uuidv4();
     const userId = user && user.id ? user.id : value.userId;
     const subProps = value.props.reduce((acc: any, i: IProps) => {
@@ -190,7 +194,9 @@ export function AppItemModal(
       tags: value.tags?.filter((t) => t != ""),
       props: subProps,
     }
-    console.log("In formSubmission - submitValue ", submitValue);
+    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+      console.log("In formSubmission - submitValue ", submitValue);
+    }
     mutation.mutate(submitValue);
 
   }
@@ -252,20 +258,26 @@ export function AppItemModal(
                               value={subField.state.value}
                               inputValue={subField.state.value}
                               onChange={
-                                (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, newValue: string) => {
+                                (e: SyntheticEvent<Element, Event>, newValue: string | null) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
                                   // Handles ONLY changes from the provided options.
-                                  const tval = e && e.target && e.target.value ? e.target.value : "";
-                                  const sval = newValue ? newValue : tval;
-                                  // console.log("OnChange", tval, newValue, sval)
+                                  const sval = newValue ? newValue : "";
+                                  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+                                    console.log("OnChange", newValue, sval);
+                                  }
                                   subField.handleChange(sval);
                                 }
                               }
                               onInputChange={
-                                (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, newValue) => {
+                                (e: SyntheticEvent<Element, Event>, newValue: string) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
                                   // Handles both handwritten and provided option value changes.
-                                  const tval = e && e.target && e.target.value ? e.target.value : "";
-                                  const sval = newValue ? newValue : tval;
-                                  // console.log("OnInputChange", tval, newValue, sval)
+                                  const sval = newValue ? newValue : "";
+                                  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+                                    console.log("OnInputChange", newValue, sval);
+                                  }
                                   subField.handleChange(sval);
                                 }
                               }
@@ -307,7 +319,7 @@ export function AppItemModal(
                     return <form.Field key={i} name={`props[${i}]`}>{
                       (subField) => {
                         return (
-                          <Stack direction="row" spacing={3} size={12}>
+                          <Stack component="div" direction="row" spacing={3} >
                             <TextField
                               multiline
                               id={"item-prop-key-" + i}
@@ -315,7 +327,7 @@ export function AppItemModal(
                               label={"property key " + (i + 1)}
                               onChange={
                                 (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
-                                  // subField.handleChange(e.target.value)
+
                                   subField.handleChange({ ...subField.state.value, key: e.target.value })
                               }
                               size="small"

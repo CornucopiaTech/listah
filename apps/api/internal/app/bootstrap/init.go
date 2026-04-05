@@ -3,7 +3,7 @@ package bootstrap
 import (
 	"cornucopia/listah/internal/pkg/config"
 	"cornucopia/listah/internal/pkg/logging"
-	"cornucopia/listah/internal/pkg/repository/mongoDB"
+	"cornucopia/listah/internal/pkg/repository/bunpgsql"
 	"log"
 
 	"github.com/sirupsen/logrus"
@@ -17,7 +17,7 @@ type Infra struct {
 	Logrus     *logrus.Logger
 	OtelLogger *otelzap.Logger
 	Config     *config.Config
-	MongoRepo     *mongoDB.Repository
+	BunRepo    *bunpgsql.Repository
 	Tracer     trace.Tracer
 }
 
@@ -36,7 +36,8 @@ func InitInfra() *Infra {
 		log.Fatalf("cannot create otel logger")
 	}
 
-	mrepo := mongoDB.Init(cfgs, logger)
+	bunrepo := bunpgsql.Init(cfgs, logger)
+
 	lgrus := logging.InitLogrus()
 
 	// ToDo: Define metrics
@@ -48,7 +49,7 @@ func InitInfra() *Infra {
 		Config:     cfgs,
 		Logger:     logger,
 		OtelLogger: otelLogger,
-		MongoRepo:     mrepo,
+		BunRepo:    bunrepo,
 		Logrus:     lgrus,
 		Tracer:     otel.Tracer(cfgs.AppName),
 	}

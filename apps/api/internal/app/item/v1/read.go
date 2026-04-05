@@ -2,98 +2,161 @@ package v1
 
 import (
 	"context"
+	modelutils "cornucopia/listah/internal/pkg/model"
+	model "cornucopia/listah/internal/pkg/model/v1"
+	pb "cornucopia/listah/internal/pkg/proto/v1"
 	"fmt"
 
 	"connectrpc.com/connect"
 	"github.com/pkg/errors"
-	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.opentelemetry.io/otel"
-
-	model "cornucopia/listah/internal/pkg/model/v1"
-	pb "cornucopia/listah/internal/pkg/proto/v1"
 )
 
 func (s *Server) ReadItem(ctx context.Context, req *connect.Request[pb.ItemServiceReadItemRequest]) (*connect.Response[pb.ItemServiceReadItemResponse], error) {
-	rpcName := "Read"
+	rpcName := "Read Item"
 	rpcLogName := fmt.Sprintf("POST /%v/%v", svcName, rpcName)
 
-	ctx, span := otel.Tracer("item-service").Start(ctx, "read")
+	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
-	// Read model for repository
-	rf, err := model.ReadItemQueryFromRequest(req.Msg)
+	fmt.Printf("\n\n\nUserId -  %s\n\n\n", req.Msg.GetUserId())
+	fmt.Printf("\n\n\nFilter -  %s\n\n\n", req.Msg.GetQuery().Filters)
+	fmt.Printf("\n\n\nTag -  %s\n\n\n", req.Msg.GetQuery().Tags)
+
+	sq, err := model.ReadItemRequestToRepoItemSearch(req.Msg)
 	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Error getting item model for read", errors.Cause(err).Error())
+		s.Logger.LogError(ctx, svcName, rpcName, "Error getting search query from request", errors.Cause(err).Error())
 		return nil, err
 	}
 
-	var m []bson.M
-	// Insert model in repository
-	err = s.MongoRepo.Item.Read(ctx, &m, rf)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Repository  read error", errors.Cause(err).Error())
-		return nil, err
-	}
-	res := &pb.ItemServiceReadItemResponse{
-		Items:            []*pb.Item{},
-		TotalRecordCount: 0,
-		Query:            req.Msg.GetQuery(),
-		Pagination: &pb.Pagination{
-			PageSize:   rf.Pagination.PageSize,
-			PageNumber: rf.Pagination.PageNumber,
-			Sort:       rf.Pagination.Sort,
-		},
-	}
+	readModel := []*model.Item{}
 
-	err = model.PrepareItemReadResponse(m, res)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Response parse error", errors.Cause(err).Error())
-		return nil, err
-	}
-	return connect.NewResponse(res), nil
-}
-
-func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServiceReadTagRequest]) (*connect.Response[pb.ItemServiceReadTagResponse], error) {
-	rpcName := "Read"
-	rpcLogName := fmt.Sprintf("POST /%v/%v", svcName, rpcName)
-
-	ctx, span := otel.Tracer("item-service").Start(ctx, "read")
-	defer span.End()
-	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
-
-	// Read model for repository
-	rf, err := model.ReadCountTagQueryFromRequest(req.Msg)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Error parsing message for tag read", errors.Cause(err).Error())
-		return nil, err
-	}
-
-	var m []bson.M
-	// Read model in repository
-	err = s.MongoRepo.Tag.Read(ctx, &m, rf)
+	recordCnt, err := s.BunRepo.Item.ReadItem(ctx, &readModel, sq)
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
 		return nil, err
 	}
+	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d items from repository", recordCnt))
 
-	res := &pb.ItemServiceReadTagResponse{
-		Tags:             []*pb.Tag{},
-		TotalRecordCount: 0,
-		Query:            req.Msg.GetQuery(),
-		Pagination: &pb.Pagination{
-			PageSize:   rf.Pagination.PageSize,
-			PageNumber: rf.Pagination.PageNumber,
-			Sort:       rf.Pagination.Sort,
-		},
-	}
-
-	err = model.PrepareTagReadResponse(m, res)
+	// Convert readModel to response proto
+	// using the model conversion function
+	rs, err := model.ItemModelToItemProto(readModel)
 	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Response parse error", errors.Cause(err).Error())
+		s.Logger.LogError(ctx, svcName, rpcName, "Error getting item proto from item model", errors.Cause(err).Error())
 		return nil, err
 	}
 
-	s.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository read and result prep. Writing response")
-	return connect.NewResponse(res), nil
+	resm := &pb.ItemServiceReadItemResponse{
+		Items:            rs,
+		TotalRecordCount: int32(recordCnt),
+		UserId:           req.Msg.GetUserId(),
+		Query:            req.Msg.GetQuery(),
+		Pagination:       req.Msg.GetPagination(),
+	}
+	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item read. Read %d items", len(readModel)))
+	return connect.NewResponse(resm), nil
+}
+
+func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServiceReadTagRequest]) (*connect.Response[pb.ItemServiceReadTagResponse], error) {
+	rpcName := "Read Tag"
+	rpcLogName := fmt.Sprintf("POST /%v/%v", svcName, rpcName)
+
+	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
+	defer span.End()
+	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
+
+	fmt.Printf("\n\n\nUserId -  %s\n\n\n", req.Msg.GetUserId())
+
+	var riq = &pb.ItemServiceReadItemRequest{}
+	err := modelutils.MarshalCopyProto(req.Msg, riq)
+	if err != nil {
+		s.Logger.LogError(ctx, svcName, rpcName, "Error marshalling proto message types", errors.Cause(err).Error())
+		return nil, err
+	}
+
+	sq, err := model.ReadItemRequestToRepoItemSearch(riq)
+	if err != nil {
+		s.Logger.LogError(ctx, svcName, rpcName, "Error getting search query from request", errors.Cause(err).Error())
+		return nil, err
+	}
+
+	readModel := []*model.Tag{}
+
+	// recordCnt, err := s.BunRepo.Item.ReadTag(ctx, &readModel, sq)
+	recordCnt, err := s.BunRepo.Tag.Read(ctx, &readModel, sq)
+	if err != nil {
+		s.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
+		return nil, err
+	}
+	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d items from repository", recordCnt))
+
+	// Convert readModel to response proto
+	// using the model conversion function
+	rs, err := model.TagModelToTagProto(readModel)
+	if err != nil {
+		s.Logger.LogError(ctx, svcName, rpcName, "Error getting category proto from category model", errors.Cause(err).Error())
+		return nil, err
+	}
+
+	resm := &pb.ItemServiceReadTagResponse{
+		Tags:             rs,
+		TotalRecordCount: int32(recordCnt),
+		UserId:           req.Msg.GetUserId(),
+		Query:            req.Msg.GetQuery(),
+		Pagination:       req.Msg.GetPagination(),
+	}
+	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item read. Read %d items", len(readModel)))
+	return connect.NewResponse(resm), nil
+}
+
+func (s *Server) ReadFilter(ctx context.Context, req *connect.Request[pb.ItemServiceReadFilterRequest]) (*connect.Response[pb.ItemServiceReadFilterResponse], error) {
+	rpcName := "Read Saved Filter"
+	rpcLogName := fmt.Sprintf("POST /%v/%v", svcName, rpcName)
+
+	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
+	defer span.End()
+	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
+
+	fmt.Printf("\n\n\nUserId -  %s\n\n\n", req.Msg.GetUserId())
+
+	var riq = &pb.ItemServiceReadItemRequest{}
+	err := modelutils.MarshalCopyProto(req.Msg, riq)
+	if err != nil {
+		s.Logger.LogError(ctx, svcName, rpcName, "Error marshalling proto message types", errors.Cause(err).Error())
+		return nil, err
+	}
+
+	sq, err := model.ReadItemRequestToRepoItemSearch(riq)
+	if err != nil {
+		s.Logger.LogError(ctx, svcName, rpcName, "Error getting search query from request", errors.Cause(err).Error())
+		return nil, err
+	}
+
+	readModel := []*model.Filter{}
+
+	recordCnt, err := s.BunRepo.Item.ReadFilter(ctx, &readModel, sq)
+	if err != nil {
+		s.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
+		return nil, err
+	}
+	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d items from repository", recordCnt))
+
+	// Convert readModel to response proto
+	// using the model conversion function
+	rs, err := model.FilterModelToFilterProto(readModel)
+	if err != nil {
+		s.Logger.LogError(ctx, svcName, rpcName, "Error getting category proto from category model", errors.Cause(err).Error())
+		return nil, err
+	}
+
+	resm := &pb.ItemServiceReadFilterResponse{
+		Filters:          rs,
+		TotalRecordCount: int32(recordCnt),
+		UserId:           req.Msg.GetUserId(),
+		Query:            req.Msg.GetQuery(),
+		Pagination:       req.Msg.GetPagination(),
+	}
+	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item read. Read %d items", len(readModel)))
+	return connect.NewResponse(resm), nil
 }

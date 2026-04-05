@@ -1,7 +1,6 @@
 package server
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"path"
@@ -10,7 +9,6 @@ import (
 	chi "github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
-	"github.com/pkg/errors"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 
@@ -20,7 +18,7 @@ import (
 	"cornucopia/listah/internal/pkg/proto/v1/v1connect"
 )
 
-func handle(i *bootstrap.Infra, ctx context.Context) http.Handler {
+func handle(i *bootstrap.Infra) http.Handler {
 	allowedOrigins := strings.Split(strings.TrimSpace(i.Config.Api.AllowedOrigins), ",")
 	mux := chi.NewRouter()
 	mux.Use(cors.Handler(cors.Options{
@@ -44,7 +42,6 @@ func handle(i *bootstrap.Infra, ctx context.Context) http.Handler {
 	// Handle Item connect-go generated paths
 	ip, ih := v1connect.NewItemServiceHandler(itemV1.NewServer(i), icp)
 	mux.Mount(ip, ih)
-	// mux.Mount(ip, otelhttp.WithRouteTag(ip, ih))
 
 	handleDoc := func(w http.ResponseWriter, r *http.Request) {
 		p := path.Join(i.Config.ProjectRoot, "public", "index.html")
@@ -52,13 +49,9 @@ func handle(i *bootstrap.Infra, ctx context.Context) http.Handler {
 		http.ServeFile(w, r, p)
 	}
 	mux.Mount("/", http.HandlerFunc(handleDoc))
-	// mux.Mount("/", otelhttp.WithRouteTag("/", http.HandlerFunc(handleDoc)))
 
 	handleHealth := func(w http.ResponseWriter, r *http.Request) {
-		_, err := fmt.Fprintf(w, "Ready")
-		if err != nil {
-			i.Logger.LogError(ctx, "Handler", "GET /health", "Error writing health", errors.Cause(err).Error())
-		}
+		fmt.Fprintf(w, "Ready")
 	}
 	mux.Mount("/health", http.HandlerFunc(handleHealth))
 

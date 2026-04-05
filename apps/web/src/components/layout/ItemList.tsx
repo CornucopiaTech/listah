@@ -110,9 +110,13 @@ export function ItemListLayout(): ReactNode {
   } catch (error) {
     errMsg = "An error occurred. Please try again";
     if (error instanceof z.ZodError) {
-      console.info("Zod issue - ", error.issues);
+      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+        console.info("Zod issue - ", error.issues);
+      }
     } else {
-      console.info("Other issue - ", error);
+      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+        console.info("Other issue - ", error);
+      }
     }
   }
 
@@ -144,7 +148,7 @@ export function ItemListLayout(): ReactNode {
   };
 
   function handleItemClick(anitem: IItem) {
-    const itId: string = anitem && anitem.id ? anitem.id : ""
+    const itId: string = anitem && anitem.id ? anitem.id : "";
     store.setDisplayId(itId);
     store.setDisplayItem(anitem);
     store.setItemModal(true);

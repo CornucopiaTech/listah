@@ -1,19 +1,18 @@
 
-// import {
-//   AppSearchBar,
-//   // AppHomeSearchBar
-// } from "@/components/core/AppSearchBar";
+import {
+  FilterSearchBar,
+} from "@/components/core/ItemSearchBar";
 import { FilterListLayout } from "@/components/layout/FilterList";
 import {
   AppPageStack,
 } from "@/components/core/AppStack";
 import { HomeFab } from "@/components/core/HomeFab";
-// import { AppFilterModal } from "@/components/core/FilterModal";
+import { AppFilterModal } from "@/components/core/FilterModal";
 import {
   useBoundStore,
   type TBoundStore
 } from '@/lib/store/boundStore';
-// import { AppItemModal } from "@/components/core/AppItemModal";
+import { AppItemModal } from "@/components/core/AppItemModal";
 import {
   AppCategoryListPaper,
 } from '@/components/core/AppPaper';
@@ -28,10 +27,9 @@ export function Filters() {
   return (
     <AppContainer mw="md">
       <AppPageStack>
-        {/* {store.itemModal && <AppItemModal route="/" />}
-        {store.filterModal && <AppFilterModal />} */}
-        {/* <AppSearchBar route="/tags" /> */}
-        {/* <AppHomeSearchBar /> */}
+        {store.itemModal && <AppItemModal />}
+        {store.filterModal && <AppFilterModal />}
+        <FilterSearchBar />
         <AppCategoryListPaper>
           <AppListHeaderBar key="header">
             <AppH5ButtonTypography> Filters </AppH5ButtonTypography>

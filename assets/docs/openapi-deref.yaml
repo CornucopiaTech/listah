@@ -390,6 +390,9 @@ paths:
                     type: integer
                     title: totalRecordCount
                     format: int32
+                  userId:
+                    type: string
+                    title: userId
                   query:
                     title: query
                     type: object
@@ -734,6 +737,9 @@ paths:
                     type: integer
                     title: totalRecordCount
                     format: int32
+                  userId:
+                    type: string
+                    title: userId
                   query:
                     title: query
                     type: object
