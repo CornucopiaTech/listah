@@ -14,12 +14,16 @@ import {
 } from '@/lib/helper/fetchers';
 
 
+const staleTime = process.env.NODE_ENV === "production" ? 24 * 60 * 60 * 1000 : 10;
+if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+  console.info("Node environment", process.env.NODE_ENV)
+}
 
 export function itemQueryOptions(opts: IItemReadRequest) {
   return {
     queryKey: ["item", opts],
     queryFn: () => getItem(opts),
-    staleTime: 24 * 60 * 60 * 1000,
+    staleTime: staleTime,
   }
 }
 
@@ -27,7 +31,7 @@ export function itemGroupOptions(opts: IItemReadRequest) {
   return queryOptions({
     queryKey: ["item", opts],
     queryFn: () => getItem(opts),
-    staleTime: 24 * 60 * 60 * 1000,
+    staleTime: staleTime,
   })
 }
 
@@ -35,7 +39,7 @@ export function filterGroupOptions(opts: IFilterReadRequest) {
   return queryOptions({
     queryKey: ["filter", opts],
     queryFn: () => getFilter(opts),
-    staleTime: 24 * 60 * 60 * 1000,
+    staleTime: staleTime,
   })
 }
 
@@ -43,6 +47,6 @@ export function tagGroupOptions(opts: ITagReadRequest) {
   return queryOptions({
     queryKey: ["tag", opts],
     queryFn: () => getTag(opts),
-    staleTime: 24 * 60 * 60 * 1000,
+    staleTime: staleTime,
   })
 }
