@@ -19,9 +19,13 @@ export function getItems(arraySize) {
   let allUserIds = faker.helpers.multiple(() => faker.string.uuid(), { count: maxUsers });
   let updaters = ["AUDIT_UPDATER_ENUM_UNSPECIFIED", "AUDIT_UPDATER_ENUM_FRONTEND", "AUDIT_UPDATER_ENUM_SYSOPS"];
 
+
   allTags = faker.helpers.uniqueArray(allTags, maxTags);
   allUserIds = faker.helpers.uniqueArray(allUserIds, maxUsers);
   allUserIds = ["user_2w6Aa0oNT0bhplyZZarP03PD4MJ", ...allUserIds];
+
+  // allTags = ["veto", "pile", "giggle", "trick", "ad", "knuckle",]
+  // allUserIds = ["9323c0fd-adee-4d04-b81d-e61082b8d9bf"]
 
   let combFaked = faker.helpers.multiple(
     () => ({
@@ -65,9 +69,8 @@ export function getItems(arraySize) {
 
   return stringFaked;
 }
-
-async function loadItems(maxLoaded, maxGen) {
-  const url = "http://localhost:8080/listah.v1.ItemService/UpsertItem";
+async function loadItems(maxLoaded, maxGen, apiUrl) {
+  const url = `${apiUrl}/UpsertItem`;
   for (let i = 0; i < maxLoaded; i++) {
     try {
       const data = getItems(maxGen);
@@ -90,9 +93,8 @@ async function loadItems(maxLoaded, maxGen) {
 }
 
 
-export async function getFilters(arraySize) {
-
-  const url = "http://localhost:8080/listah.v1.ItemService/ReadTag";
+export async function getFilters(arraySize, apiUrl) {
+  const url = `${apiUrl}/ReadTag`;
   try {
     const userId = "user_2w6Aa0oNT0bhplyZZarP03PD4MJ";
     const uId = JSON.stringify({ userId: userId });
@@ -139,11 +141,10 @@ export async function getFilters(arraySize) {
 
 
 }
-
-async function loadFilters(maxLoaded) {
-  const url = "http://localhost:8080/listah.v1.ItemService/UpsertFilter";
+async function loadFilters(maxLoaded, apiUrl) {
+  const url = `${apiUrl}/UpsertFilter`;
   try {
-    const data = await getFilters(maxLoaded);
+    const data = await getFilters(maxLoaded, apiUrl);
     const req = new Request(url, {
       method: "POST",
       body: data,
@@ -161,7 +162,7 @@ async function loadFilters(maxLoaded) {
   }
 }
 
-
-// loadItems(10, 3000);
-// loadItems(1, 5);
-loadFilters(50);
+const url = "http://localhost:8081/listah.v1.ItemService";
+loadItems(10, 3000, url);
+// loadItems(1, 50, url);
+loadFilters(100, url);

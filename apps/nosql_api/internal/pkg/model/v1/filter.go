@@ -67,8 +67,8 @@ func UpdateFilterQueryFromRequest(msg *pb.ItemServiceUpsertFilterRequest) ([]*Re
 	return c, nil
 }
 
-func ReplaceFilterQueryFromRequest(msg *pb.ItemServiceUpsertFilterRequest) ([]*RepoReplace, error) {
-	c := []*RepoReplace{}
+func FilterModelFromUpsertFilterRequest(msg *pb.ItemServiceUpsertFilterRequest) ([]*Filter, error) {
+	c := []*Filter{}
 	for _, om := range msg.Filters {
 		if om.GetUserId() == "" {
 			return nil, errors.New("no userId sent with request")
@@ -77,17 +77,14 @@ func ReplaceFilterQueryFromRequest(msg *pb.ItemServiceUpsertFilterRequest) ([]*R
 		if id == "" {
 			id = uuid.Must(uuid.NewV7()).String()
 		}
-		a := &RepoReplace{
-			Filter: map[string]string{"_id": id, "userId": om.GetUserId()},
-			Replace: map[string]interface{}{
-				"_id":    id,
-				"userId": om.GetUserId(),
-				"tags":   om.GetTags(),
-				"name":   om.GetName(),
-			},
-		}
-		c = append(c, a)
+		c = append(c, &Filter{
+			Id:     id,
+			UserId: om.GetUserId(),
+			Tags:   om.GetTags(),
+			Name:   om.GetName(),
+		})
 	}
+	// fmt.Printf("\n\nc %+v \n\n", c)
 	return c, nil
 }
 
@@ -131,7 +128,7 @@ func ReadFilterQueryFromRequest(msg *pb.ItemServiceReadFilterRequest) (*RepoRead
 }
 
 func PrepareFilterReadResponse(m []bson.M, res *pb.ItemServiceReadFilterResponse) error {
-	// fmt.Printf("\n\nm %+v \n\n", m)
+	fmt.Printf("\n\nm %+v \n\n", m)
 	// Check if any result returned.
 	r := m[0]["results"].(bson.A)
 	if len(r) == 0 {
@@ -159,7 +156,7 @@ func PrepareFilterReadResponse(m []bson.M, res *pb.ItemServiceReadFilterResponse
 
 func BsonMapToReadFilterResponse(c bson.M) (*pb.Filter, error) {
 	ts := []string{}
-	if c["tags"] != nil {
+	if c["results"] != nil {
 		t, ok := c["tags"].(bson.A)
 		if !ok {
 			return nil, errors.New("Unable to read tags from document")
@@ -185,10 +182,11 @@ func BsonMapToReadFilterResponse(c bson.M) (*pb.Filter, error) {
 	}
 
 	return &pb.Filter{
-		Id:    c["_id"].(string),
-		Name:  c["name"].(string),
-		Tags:  ts,
-		Count: c["count"].(int32),
+		Id:     c["_id"].(bson.ObjectID).Hex(),
+		Name:   c["name"].(string),
+		UserId: c["userId"].(string),
+		Tags:   ts,
+		Count:  c["count"].(int32),
 	}, nil
 }
 

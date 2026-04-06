@@ -4,6 +4,7 @@ import (
 	"context"
 	"cornucopia/listah/internal/pkg/logging"
 	model "cornucopia/listah/internal/pkg/model/v1"
+	"time"
 
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -14,101 +15,89 @@ import (
 )
 
 type Filter interface {
-	Read(ctx context.Context, m *[]bson.M, f *model.RepoReadCountFilter) error
-	Insert(ctx context.Context, m []*model.Filter) ([]string, error)
-	Update(ctx context.Context, m []*model.RepoUpdate) error
-	Replace(ctx context.Context, m []*model.RepoReplace) error
-	UpdateMany(ctx context.Context, m []*model.RepoUpdate) error
+	ReadFilter(ctx context.Context, m *[]bson.M, f *model.RepoReadCountFilter) error
+	UpdateFilter(ctx context.Context, m []*model.Filter) error
 }
 
 type filterAgent struct {
 	logger     *logging.Factory
+	db         *mongo.Database
 	client     *mongo.Client
 	collection *mongo.Collection
 }
 
-func (a *filterAgent) Read(ctx context.Context, m *[]bson.M, f *model.RepoReadCountFilter) error {
+func (a *filterAgent) ReadFilter(ctx context.Context, m *[]bson.M, f *model.RepoReadCountFilter) error {
 	ctx, span := otel.Tracer("filter-repository").Start(ctx, "Read")
 	defer span.End()
 	a.logger.For(ctx).Info("Reading from filter")
 
 	skip := f.Pagination.PageNumber * f.Pagination.PageSize
-
-	ablock := bson.A{
+	preFilter := bson.A{
 		bson.M{"userId": bson.M{"$regex": f.UserId, "$options": "i"}},
 	}
+	postFilter := bson.A{}
 
 	if len(f.Tags) > 0 {
-		ablock = append(ablock, bson.M{"tags": bson.M{"$in": f.Tags}})
+		postFilter = append(postFilter, bson.M{"tags": bson.M{"$in": f.Tags}})
 	}
 	if f.Search != "" {
 		sh := bson.M{"$or": bson.A{
 			bson.M{"name": bson.M{"$regex": f.Search, "$options": "i"}},
 			bson.M{"tags": bson.M{"$regex": f.Search, "$options": "i"}},
 		}}
-		ablock = append(ablock, sh)
+		postFilter = append(postFilter, sh)
 	}
 
 	pipeline := mongo.Pipeline{
 		{
-			// Apply filters on userId, name, and tags
-			{"$match", bson.D{{"$and", ablock}}},
+			{"$match", bson.D{
+				{"$and", preFilter},
+			}},
 		},
 		{
-			// Start from collection A (already implied by Aggregate call)
 			{"$lookup", bson.D{
 				{"from", "items"},
-				{"let", bson.D{
-					{"uid", "$userId"},    // string field
-					{"itemTags", "$tags"}, // array field
-				}},
-				{"pipeline", bson.A{
-					bson.D{{"$match", bson.D{
-						{"$expr", bson.D{
-							{"$and", bson.A{
-								// Condition 1: string-to-string match
-								bson.D{{"$eq", bson.A{"$userId", "$$uid"}}},
-
-								// Condition 2: array intersection is non-empty
-								bson.D{{"$gt", bson.A{
-									bson.D{{"$size",
-										bson.D{{"$setIntersection", bson.A{"$tags", "$$itemTags"}}},
-									}},
-									0,
-								}}},
-							}},
-						}},
-					}}},
-				}},
+				{"localField", "userId"},
+				{"foreignField", "userId"},
 				{"as", "joined"},
 			}},
 		},
 		{
-			// Define results shape and add count of matching items
-			{"$project", bson.M{
-				"_id":   1,
-				"name":  1,
-				"tags":  1,
-				"count": bson.M{"$size": "$joined"},
+			{"$addFields", bson.D{
+				{"joined", bson.D{
+					{"$filter", bson.D{
+						{"input", "$joined"},
+						{"as", "it"},
+						{"cond", bson.D{
+							{"$gt", bson.A{
+								bson.D{{"$size",
+									bson.D{{"$setIntersection", bson.A{"$$it.tags", "$tags"}}},
+								}},
+								0,
+							}},
+						}},
+					}},
+				}},
 			}},
 		},
 		{
-			// Sort by name
+			{"$addFields", bson.D{
+				{"count", bson.D{{"$size", "$joined"}}},
+			}},
+		},
+		{
 			{"$sort", bson.D{{"name", 1}}},
 		},
 		{
-			// Return total count of documents and paginated results
-			{
-				"$facet", bson.D{
-					{"results", bson.A{
-						bson.D{{"$skip", skip}},
-						bson.D{{"$limit", f.Pagination.PageSize}},
-					}},
-					{"totalCount", bson.A{
-						bson.D{{"$count", "count"}},
-					}},
-				},
-			},
+			{"$facet", bson.D{
+				{"results", bson.A{
+					bson.D{{"$skip", skip}},
+					bson.D{{"$limit", f.Pagination.PageSize}},
+				}},
+				{"totalCount", bson.A{
+					bson.D{{"$count", "count"}},
+				}},
+			}},
 		},
 	}
 
@@ -129,184 +118,74 @@ func (a *filterAgent) Read(ctx context.Context, m *[]bson.M, f *model.RepoReadCo
 	return nil
 }
 
-func (a *filterAgent) ReadTest(ctx context.Context, m *[]bson.M, f *model.RepoReadCountFilter) error {
-	ctx, span := otel.Tracer("filter-repository").Start(ctx, "Read")
-	defer span.End()
-	a.logger.For(ctx).Info("Reading from filter")
-
-	skip := (f.Pagination.PageNumber) * f.Pagination.PageSize
-
-	ablock := bson.A{
-		bson.M{"userId": bson.M{"$regex": f.UserId, "$options": "i"}},
-	}
-
-	if len(f.Tags) > 0 {
-		ablock = append(ablock, bson.M{"tags": bson.M{"$in": f.Tags}})
-	}
-	if f.Search != "" {
-		sh := bson.M{"$or": bson.A{
-			bson.M{"name": bson.M{"$regex": f.Search, "$options": "i"}},
-			bson.M{"tags": bson.M{"$regex": f.Search, "$options": "i"}},
-		}}
-		ablock = append(ablock, sh)
-	}
-
-	pipeline := mongo.Pipeline{
-		{{"$match", bson.D{{"$and", ablock}}}},
-		{{
-			"$lookup", bson.D{
-				{"from", "items"},
-				{"let", bson.M{"itemUserId": "$userId"}},
-				{"pipeline", bson.A{
-					bson.M{"$match": bson.M{
-						"$expr": bson.M{"$eq": bson.A{"$userId", "$$itemUserId"}},
-					}},
-					bson.D{{"$unwind", "$tags"}},
-					bson.M{"$sort": bson.M{"name": 1}},
-					bson.D{{"$group", bson.D{
-						{"_id", "$tags"},
-						{"count", bson.D{{"$sum", 1}}},
-					}}},
-					bson.M{
-						"$facet": bson.M{
-							"results": bson.A{
-								bson.D{{"$skip", skip}},
-								bson.D{{"$limit", f.Pagination.PageSize}},
-							},
-							"totalCount": bson.A{
-								bson.D{{"$count", "count"}},
-							},
-						}},
-					// bson.M{"$project": bson.M{
-					// 	"_id":  0,
-					// 	"name": 1,
-					// 	"city": 1,
-					// }},
-				}},
-				{"as", "results"},
-			}}},
-	}
-
-	// pipeline = mongo.Pipeline{
-	// 	{{"$match", bson.D{{"$and", ablock}}}},
-	// 	{{"$sort", bson.D{{"name", 1}}}},
-	// 	{{"$facet", bson.D{
-	// 		{"results", bson.A{
-	// 			bson.D{{"$skip", skip}},
-	// 			bson.D{{"$limit", f.Pagination.PageSize}},
-	// 		}},
-	// 		{"totalCount", bson.A{
-	// 			bson.D{{"$count", "count"}},
-	// 		}},
-	// 	}}},
-	// }
-
-	cursor, err := a.collection.Aggregate(ctx, pipeline)
-	if errors.Is(err, mongo.ErrNoDocuments) {
-		a.logger.For(ctx).Error("Document could not be found", zap.String("cause", errors.Cause(err).Error()))
-		return nil
-	} else if err != nil {
-		a.logger.For(ctx).Error("Error occurred in repository while reading from filter", zap.String("cause", errors.Cause(err).Error()))
-		return err
-	}
-
-	if err := cursor.All(ctx, m); err != nil {
-		a.logger.For(ctx).Error("Error occurred while marshalling find results into model", zap.String("cause", errors.Cause(err).Error()))
-		return err
-	}
-
-	return nil
-}
-
-func (a *filterAgent) Insert(ctx context.Context, m []*model.Filter) ([]string, error) {
-	ctx, span := otel.Tracer("filter-repository").Start(ctx, "insert")
-	defer span.End()
-	a.logger.For(ctx).Info("Inserting into filter")
-
-	queryOpts := options.InsertMany().SetOrdered(false)
-	res, err := a.collection.InsertMany(ctx, m, queryOpts)
-
-	if err != nil {
-		a.logger.For(ctx).Error("Error occurred in repository while inserting into filter", zap.String("cause", errors.Cause(err).Error()))
-		return nil, err
-	}
-
-	var insertions = []string{}
-	for _, iValue := range res.InsertedIDs {
-		insertions = append(insertions, iValue.(string))
-	}
-
-	return insertions, nil
-}
-
-func (a *filterAgent) Update(ctx context.Context, m []*model.RepoUpdate) error {
-	ctx, span := otel.Tracer("filter-repository").Start(ctx, "update")
-	defer span.End()
-	a.logger.For(ctx).Info("Updating into filter")
-	// https://www.mongodb.com/docs/drivers/go/current/crud/query/retrieve/#std-label-golang-retrieve
-
-	opts := options.FindOneAndUpdate().SetUpsert(true).SetReturnDocument(options.After)
-	for _, om := range m {
-		var replacedDocument bson.M
-		err := a.collection.
-			FindOneAndUpdate(ctx, om.Filter, om.Update, opts).
-			Decode(&replacedDocument)
-		if err != nil {
-			a.logger.For(ctx).Error("Error occurred in repository while updating filter", zap.String("cause", errors.Cause(err).Error()))
-			return err
-		}
-	}
-	return nil
-}
-
-func (a *filterAgent) UpdateMany(ctx context.Context, m []*model.RepoUpdate) error {
+func (a *filterAgent) UpdateFilter(ctx context.Context, m []*model.Filter) error {
 	ctx, span := otel.Tracer("filter-repository").Start(ctx, "update many")
 	defer span.End()
 	a.logger.For(ctx).Info("Updating many in filter")
 	// https://www.mongodb.com/docs/drivers/go/current/crud/query/retrieve/#std-label-golang-retrieve
 
+	ta := &tagAgent{
+		client:     a.client,
+		db:         a.db,
+		logger:     a.logger,
+		collection: a.db.Collection("tags"),
+	}
+	cursor, err := ta.collection.Find(ctx, bson.M{})
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		a.logger.For(ctx).Error("Document could not be found", zap.String("cause", errors.Cause(err).Error()))
+		return nil
+	} else if err != nil {
+		a.logger.For(ctx).Error("Error occurred in repository while reading from item", zap.String("cause", errors.Cause(err).Error()))
+		return err
+	}
+
+	tags := []bson.M{}
+	if err := cursor.All(ctx, &tags); err != nil {
+		a.logger.For(ctx).Error("Error occurred while marshalling find results into model", zap.String("cause", errors.Cause(err).Error()))
+		return err
+	}
+
+	// fmt.Printf("\n\ntags[0] %+v \n\n", tags[0])
+	tagMap := make(map[string]map[string]interface{}) // userId: {name: id}}
+	for _, t := range tags {
+		if _, ok := tagMap[t["userId"].(string)]; !ok {
+			tagMap[t["userId"].(string)] = make(map[string]interface{})
+		}
+		k1 := t["userId"].(string)
+		k2 := t["name"].(string)
+		v := t["_id"].(bson.ObjectID) //.Hex()
+		tagMap[k1][k2] = v
+	}
+
 	opts := options.BulkWrite().SetOrdered(false)
-	// opts := options.FindOneAndUpdate().SetUpsert(true).SetReturnDocument(options.After)
 	models := []mongo.WriteModel{}
 	for _, om := range m {
+		tis := make([]interface{}, 0, len(om.Tags))
+		for _, name := range om.Tags {
+			if id, ok := tagMap[om.UserId][name]; ok {
+				tis = append(tis, id)
+			}
+		}
+
 		models = append(
 			models,
-			mongo.NewUpdateOneModel().SetFilter(om.Filter).SetUpdate(om.Update).SetUpsert(true),
+			mongo.NewUpdateOneModel().
+				SetFilter(bson.M{"name": om.Name, "userId": om.UserId}).
+				SetUpdate(bson.M{
+					"$set": bson.M{
+						"tags":      tis,
+						"updatedAt": time.Now().UTC(),
+						"updatedBy": "api",
+					},
+				}).SetUpsert(true),
 		)
-		// var replacedDocument bson.M
-		// err := a.collection.
-		// 	FindOneAndUpdate(ctx, om.Filter, om.Update, opts).
-		// 	Decode(&replacedDocument)
-		// if err != nil {
-		// 	a.logger.For(ctx).Error("Error occurred in repository while updating filter", zap.String("cause", errors.Cause(err).Error()))
-		// 	return err
-		// }
 	}
-	_, err := a.collection.BulkWrite(ctx, models, opts)
+	_, err = a.collection.BulkWrite(ctx, models, opts)
 
 	if err != nil {
 		a.logger.For(ctx).Error("Error occurred in repository while updating filter", zap.String("cause", errors.Cause(err).Error()))
 		return err
 	}
-	return nil
-}
-
-func (a *filterAgent) Replace(ctx context.Context, m []*model.RepoReplace) error {
-	ctx, span := otel.Tracer("filter-repository").Start(ctx, "replace")
-	defer span.End()
-	a.logger.For(ctx).Info("Replacing filter")
-	// https://www.mongodb.com/docs/drivers/go/current/crud/query/retrieve/#std-label-golang-retrieve
-
-	opts := options.FindOneAndReplace().SetUpsert(true) //.SetReturnDocument(options.After)
-	for _, om := range m {
-		var replacedDocument bson.M
-		err := a.collection.
-			FindOneAndReplace(ctx, om.Filter, om.Replace, opts).
-			Decode(&replacedDocument)
-		if err != nil {
-			a.logger.For(ctx).Error("Error occurred in repository while replacing filter", zap.String("cause", errors.Cause(err).Error()))
-			return err
-		}
-	}
+	a.logger.For(ctx).Info("Successfully updated filter")
 	return nil
 }

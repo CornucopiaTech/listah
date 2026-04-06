@@ -60,21 +60,25 @@ func Init(cfg *config.Config, logger *logging.Factory) *Repository {
 		Client: client,
 		Item: &itemAgent{
 			client:     client,
+			db:         client.Database(cfg.MongoDB.DatabaseName),
 			logger:     logger,
 			collection: client.Database(cfg.MongoDB.DatabaseName).Collection("items"),
 		},
 		Tag: &tagAgent{
 			client:     client,
+			db:         client.Database(cfg.MongoDB.DatabaseName),
 			logger:     logger,
-			collection: client.Database(cfg.MongoDB.DatabaseName).Collection("items"),
+			collection: client.Database(cfg.MongoDB.DatabaseName).Collection("tags"),
 		},
 		ApiLog: &apiLogAgent{
 			client:     client,
+			db:         client.Database(cfg.MongoDB.DatabaseName),
 			logger:     logger,
 			collection: client.Database(cfg.MongoDB.DatabaseName).Collection("apiLogs"),
 		},
 		Filter: &filterAgent{
 			client:     client,
+			db:         client.Database(cfg.MongoDB.DatabaseName),
 			logger:     logger,
 			collection: client.Database(cfg.MongoDB.DatabaseName).Collection("filters"),
 		},

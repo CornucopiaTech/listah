@@ -19,6 +19,7 @@ type ApiLog interface {
 
 type apiLogAgent struct {
 	logger     *logging.Factory
+	db         *mongo.Database
 	client     *mongo.Client
 	collection *mongo.Collection
 }

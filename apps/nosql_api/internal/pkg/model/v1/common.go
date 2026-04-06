@@ -16,29 +16,11 @@ type ApiLog struct {
 	Uri           string
 }
 
-type RepoReadResult struct {
-	Results    *[]Item
-	TotalCount int32
-}
-
-type RepoUpsert struct {
-	Filter map[string]string
-	Update map[string]map[string]interface{}
-}
-
 type RepoUpdate struct {
 	Filter map[string]string
 	Update map[string]map[string]interface{}
 }
 
-type RepoReplace struct {
-	Filter  map[string]string
-	Replace map[string]interface{}
-}
-
-type RepoRead struct {
-	Filter map[string]interface{}
-}
 type RepoReadCountFilter struct {
 	UserId     string
 	Tags       []string
@@ -46,15 +28,8 @@ type RepoReadCountFilter struct {
 	Pagination Pagination
 }
 
-// type Filter struct {
-// 	Id     string `bson:"_id"`
-// 	UserId string
-// 	Name   string
-// 	Tags   []string
-// 	Count  int32
-// }
-
 type Tag struct {
+	Id     string `bson:"_id"`
 	UserId string
 	Name   string
 	Count  int32

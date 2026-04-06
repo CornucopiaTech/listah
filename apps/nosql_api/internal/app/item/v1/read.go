@@ -30,7 +30,7 @@ func (s *Server) ReadItem(ctx context.Context, req *connect.Request[pb.ItemServi
 
 	var m []bson.M
 	// Insert model in repository
-	err = s.MongoRepo.Item.Read(ctx, &m, rf)
+	err = s.MongoRepo.Item.ReadItem(ctx, &m, rf)
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Repository  read error", errors.Cause(err).Error())
 		return nil, err
@@ -38,6 +38,7 @@ func (s *Server) ReadItem(ctx context.Context, req *connect.Request[pb.ItemServi
 	res := &pb.ItemServiceReadItemResponse{
 		Items:            []*pb.Item{},
 		TotalRecordCount: 0,
+		UserId:           req.Msg.GetUserId(),
 		Query:            req.Msg.GetQuery(),
 		Pagination: &pb.Pagination{
 			PageSize:   rf.Pagination.PageSize,
@@ -71,7 +72,7 @@ func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServic
 
 	var m []bson.M
 	// Read model in repository
-	err = s.MongoRepo.Tag.Read(ctx, &m, rf)
+	err = s.MongoRepo.Tag.ReadTag(ctx, &m, rf)
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
 		return nil, err
@@ -80,6 +81,7 @@ func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServic
 	res := &pb.ItemServiceReadTagResponse{
 		Tags:             []*pb.Tag{},
 		TotalRecordCount: 0,
+		UserId:           req.Msg.GetUserId(),
 		Query:            req.Msg.GetQuery(),
 		Pagination: &pb.Pagination{
 			PageSize:   rf.Pagination.PageSize,
@@ -115,7 +117,7 @@ func (s *Server) ReadFilter(ctx context.Context, req *connect.Request[pb.ItemSer
 
 	var m []bson.M
 	// Read model in repository
-	err = s.MongoRepo.Filter.Read(ctx, &m, rf)
+	err = s.MongoRepo.Filter.ReadFilter(ctx, &m, rf)
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
 		return nil, err
@@ -124,6 +126,7 @@ func (s *Server) ReadFilter(ctx context.Context, req *connect.Request[pb.ItemSer
 	res := &pb.ItemServiceReadFilterResponse{
 		Filters:          []*pb.Filter{},
 		TotalRecordCount: 0,
+		UserId:           req.Msg.GetUserId(),
 		Query:            req.Msg.GetQuery(),
 		Pagination: &pb.Pagination{
 			PageSize:   rf.Pagination.PageSize,

@@ -24,28 +24,6 @@ type Item struct {
 	SoftDelete bool
 }
 
-func InsertItemQueryFromRequest(msg *pb.ItemServiceUpsertItemRequest) ([]*Item, error) {
-	c := []*Item{}
-	for _, om := range msg.Items {
-		if om.GetUserId() == "" {
-			return nil, errors.New("no userId sent with request")
-		}
-		id := om.GetId()
-		if id == "" {
-			id = uuid.Must(uuid.NewV7()).String()
-		}
-		a := &Item{
-			Id:     id,
-			UserId: om.GetUserId(),
-			Name:   om.GetName(),
-			Tags:   om.GetTags(),
-			Props:  om.GetProps(),
-		}
-		c = append(c, a)
-	}
-	return c, nil
-}
-
 func UpdateItemQueryFromRequest(msg *pb.ItemServiceUpsertItemRequest) ([]*RepoUpdate, error) {
 	c := []*RepoUpdate{}
 	for _, om := range msg.Items {
@@ -77,8 +55,8 @@ func UpdateItemQueryFromRequest(msg *pb.ItemServiceUpsertItemRequest) ([]*RepoUp
 	return c, nil
 }
 
-func ReplaceItemQueryFromRequest(msg *pb.ItemServiceUpsertItemRequest) ([]*RepoReplace, error) {
-	c := []*RepoReplace{}
+func ItemModelFromItemUpdateRequest(msg *pb.ItemServiceUpsertItemRequest) ([]*Item, error) {
+	c := []*Item{}
 	for _, om := range msg.Items {
 		if om.GetUserId() == "" {
 			return nil, errors.New("no userId sent with request")
@@ -87,21 +65,53 @@ func ReplaceItemQueryFromRequest(msg *pb.ItemServiceUpsertItemRequest) ([]*RepoR
 		if id == "" {
 			id = uuid.Must(uuid.NewV7()).String()
 		}
-		a := &RepoReplace{
-			Filter: map[string]string{"_id": id, "userId": om.GetUserId()},
-			Replace: map[string]interface{}{
-				"_id":        id,
-				"userId":     om.GetUserId(),
-				"tags":       om.GetTags(),
-				"name":       om.GetName(),
-				"props":      om.GetProps(),
-				"softDelete": om.GetSoftDelete(),
-				"updatedAt":  time.Now().UTC(),
-				"updatedBy":  "api",
-			},
-		}
-		c = append(c, a)
+
+		c = append(c, &Item{
+			Id:         id,
+			UserId:     om.GetUserId(),
+			Tags:       om.GetTags(),
+			Name:       om.GetName(),
+			Props:      om.GetProps(),
+			SoftDelete: om.GetSoftDelete(),
+			UpdatedAt:  time.Now().UTC(),
+			UpdatedBy:  "api",
+		})
 	}
+	return c, nil
+}
+
+func UpdateTagQueryFromItemUpdateRequest(msg *pb.ItemServiceUpsertItemRequest) ([]*RepoUpdate, error) {
+	c := []*RepoUpdate{}
+	checkTags := map[string]bool{}
+	for _, om := range msg.Items {
+		if om.GetUserId() == "" {
+			return nil, errors.New("no userId sent with request")
+		}
+
+		for _, tt := range om.GetTags() {
+			if tt == "" {
+				return nil, errors.New("no tag name sent with request")
+			}
+			if _, ok := checkTags[tt]; !ok {
+				checkTags[tt+"_"+om.GetUserId()] = true
+				c = append(c, &RepoUpdate{
+					Filter: map[string]string{
+						"name":   tt,
+						"userId": om.GetUserId(),
+					},
+					Update: map[string]map[string]interface{}{
+						"$set": {
+							"userId":    om.GetUserId(),
+							"name":      tt,
+							"updatedAt": time.Now().UTC(),
+							"updatedBy": "api",
+						},
+					},
+				})
+			}
+		}
+	}
+	// fmt.Printf("\n\nc %+v \n\n", c[0])
 	return c, nil
 }
 
@@ -139,13 +149,13 @@ func ReadItemQueryFromRequest(msg *pb.ItemServiceReadItemRequest) (*RepoReadCoun
 		}
 	}
 	l.Pagination = pg
-	fmt.Printf("\n\nl %+v \n\n", l)
+	// fmt.Printf("\n\nl %+v \n\n", l)
 
 	return &l, nil
 }
 
 func PrepareRepoReadResponse(m []bson.M, res *pb.ItemServiceReadItemResponse) error {
-	// fmt.Printf("\n\nm %+v \n\n", m)
+	fmt.Printf("\n\nm %+v \n\n", m)
 	// Check if any result returned.
 	r := m[0]["results"].(bson.A)
 	if len(r) == 0 {

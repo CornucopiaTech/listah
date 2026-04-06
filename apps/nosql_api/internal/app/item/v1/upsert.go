@@ -21,15 +21,28 @@ func (s *Server) UpsertItem(ctx context.Context, req *connect.Request[pb.ItemSer
 	defer s.Logger.LogInfo(ctx, svcName, rpcName, "End "+rpcLogName)
 
 	// Upsert model for repository
-	imod, err := model.UpdateItemQueryFromRequest(req.Msg)
+	tmod, err := model.UpdateTagQueryFromItemUpdateRequest(req.Msg)
 	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Error getting item model for upsert", errors.Cause(err).Error())
-		// fmt.Printf("\n\n %+v\n\n", errors.Cause(err).Error())
+		s.Logger.LogError(ctx, svcName, rpcName, "Error getting tag model for upsert", errors.Cause(err).Error())
 		return nil, err
 	}
+	err = s.MongoRepo.Tag.UpdateTag(ctx, tmod)
+	if err != nil {
+		s.Logger.LogError(ctx, svcName, rpcName, "Repository  upsert error", errors.Cause(err).Error())
+		return nil, err
+	}
+
+	// Upsert model for repository
+	// imod, err := model.UpdateItemQueryFromRequest(req.Msg)
+	imod, err := model.ItemModelFromItemUpdateRequest(req.Msg)
+	if err != nil {
+		s.Logger.LogError(ctx, svcName, rpcName, "Error getting item model for upsert", errors.Cause(err).Error())
+		return nil, err
+	}
+
 	// Insert model in repository
 	// err = s.MongoRepo.Item.Update(ctx, imod)
-	err = s.MongoRepo.Item.UpdateMany(ctx, imod)
+	err = s.MongoRepo.Item.UpdateItem(ctx, imod)
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Repository  upsert error", errors.Cause(err).Error())
 		return nil, err
@@ -37,7 +50,7 @@ func (s *Server) UpsertItem(ctx context.Context, req *connect.Request[pb.ItemSer
 	s.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository upsert. Writing response")
 	iIds := []string{}
 	for _, om := range imod {
-		iIds = append(iIds, om.Filter["_id"])
+		iIds = append(iIds, om.Id)
 	}
 	res := &pb.ItemServiceUpsertItemResponse{
 		ItemIds: iIds,
@@ -55,14 +68,14 @@ func (s *Server) UpsertFilter(ctx context.Context, req *connect.Request[pb.ItemS
 	defer s.Logger.LogInfo(ctx, svcName, rpcName, "End "+rpcLogName)
 
 	// Upsert model for repository
-	imod, err := model.UpdateFilterQueryFromRequest(req.Msg)
+	// imod, err := model.UpdateFilterQueryFromRequest(req.Msg)
+	imod, err := model.FilterModelFromUpsertFilterRequest(req.Msg)
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Error getting item model for upsert", errors.Cause(err).Error())
-		// fmt.Printf("\n\n %+v\n\n", errors.Cause(err).Error())
 		return nil, err
 	}
 	// Insert model in repository
-	err = s.MongoRepo.Filter.UpdateMany(ctx, imod)
+	err = s.MongoRepo.Filter.UpdateFilter(ctx, imod)
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Repository  upsert error", errors.Cause(err).Error())
 		return nil, err
@@ -70,7 +83,7 @@ func (s *Server) UpsertFilter(ctx context.Context, req *connect.Request[pb.ItemS
 	s.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository upsert. Writing response")
 	iIds := []string{}
 	for _, om := range imod {
-		iIds = append(iIds, om.Filter["_id"])
+		iIds = append(iIds, om.Id)
 	}
 	res := &pb.ItemServiceUpsertFilterResponse{
 		FilterIds: iIds,

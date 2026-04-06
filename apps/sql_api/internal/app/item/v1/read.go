@@ -20,9 +20,9 @@ func (s *Server) ReadItem(ctx context.Context, req *connect.Request[pb.ItemServi
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
-	fmt.Printf("\n\n\nUserId -  %s\n\n\n", req.Msg.GetUserId())
-	fmt.Printf("\n\n\nFilter -  %s\n\n\n", req.Msg.GetQuery().Filters)
-	fmt.Printf("\n\n\nTag -  %s\n\n\n", req.Msg.GetQuery().Tags)
+	// fmt.Printf("\n\n\nUserId -  %s\n\n\n", req.Msg.GetUserId())
+	// fmt.Printf("\n\n\nFilter -  %s\n\n\n", req.Msg.GetQuery().Filters)
+	// fmt.Printf("\n\n\nTag -  %s\n\n\n", req.Msg.GetQuery().Tags)
 
 	sq, err := model.ReadItemRequestToRepoItemSearch(req.Msg)
 	if err != nil {
@@ -66,7 +66,7 @@ func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServic
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
-	fmt.Printf("\n\n\nUserId -  %s\n\n\n", req.Msg.GetUserId())
+	// fmt.Printf("\n\n\nUserId -  %s\n\n\n", req.Msg.GetUserId())
 
 	var riq = &pb.ItemServiceReadItemRequest{}
 	err := modelutils.MarshalCopyProto(req.Msg, riq)
@@ -118,7 +118,7 @@ func (s *Server) ReadFilter(ctx context.Context, req *connect.Request[pb.ItemSer
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
-	fmt.Printf("\n\n\nUserId -  %s\n\n\n", req.Msg.GetUserId())
+	// fmt.Printf("\n\n\nUserId -  %s\n\n\n", req.Msg.GetUserId())
 
 	var riq = &pb.ItemServiceReadItemRequest{}
 	err := modelutils.MarshalCopyProto(req.Msg, riq)
