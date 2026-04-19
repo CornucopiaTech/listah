@@ -3,6 +3,12 @@
 - Make sure the user with the bearer token is the same as the user sent in the data being updated.
 - Create a mechanism to view and update filters.
 - Create a mechanism to clone filters.
+- For existing items that are being updated, make sure that the the updated item contains at least one tag before submission.
+- Define a Settings page to create new tags with properties, update existing tags, and create and update existing filters..
+- Filters can be created from tags page or settings page
+- Items can be created from the specific tags page or the specific filter page not the all tags page and the all filter page.
+
+
 
 
 ## Done
