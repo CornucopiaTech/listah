@@ -40,12 +40,17 @@ import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import Box from '@mui/material/Box';
 import Autocomplete from '@mui/material/Autocomplete';
-
+import Divider from '@mui/material/Divider';
 
 
 
 // Internal imports
-import { AppBody1Typography } from "@/components/core/Typography";
+import {
+  AppBody1Typography,
+  AppBody2Typography,
+  AppSubtitle1Typography,
+
+} from "@/components/core/Typography";
 import {
   useBoundStore,
   type TBoundStore
@@ -84,7 +89,7 @@ export function AppItemModal(
   }
   let itemProps: IProps[] = [];
 
-  if (item.props) {
+  if (item.props && Object.keys(item.props).length !== 0) {
     for (const [k, v] of Object.entries(item.props)) {
       itemProps.push({ key: k, value: v as string });
     };
@@ -92,7 +97,11 @@ export function AppItemModal(
 
   const queryClient = useQueryClient();
   const theme: AppTheme = useTheme();
-  const formData = { ...item, props: itemProps, tags: tag ? [tag] : [] }
+  const formData = {
+    ...item,
+    props: itemProps,
+    tags: item.tags && item.tags.length !== 0 ? item.tags : tag ? [tag] : []
+  }
   const form = useForm({
     defaultValues: formData,
     onSubmit: formSubmission,
@@ -212,22 +221,192 @@ export function AppItemModal(
             <Grid container sx={{ width: '100%' }} spacing={1}>
               <Grid size={12}>
                 <TextField
+                  sx={sx}
+                  slotProps={{
+                    input: { style: { fontSize: "15px" } },
+                    inputLabel: { style: { fontSize: "15px" } },
+                  }}
                   fullWidth
                   multiline
                   id={`item-${key}`}
                   key={`item-${key}`}
                   value={field.state.value}
-                  label={key}
+                  label={key.charAt(0).toUpperCase() + key.slice(1)}
                   onChange={
                     (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-                  sx={sx}
                   size="small"
                   variant="standard"
+                  // variant="outlined"
+                  margin="dense"
                 />
               </Grid>
             </Grid>
         }
       />
+    );
+  }
+
+  function getPropField() {
+    return (
+      <form.Field name="props" mode="array">
+        {
+          (field) => (
+            <Box
+              component="fieldset"
+              sx={{
+                '& legend': { fontSize: '12px', color: 'rgba(0, 0, 0, 0.6)' },
+                border: `0.5px solid`,
+                borderColor: "rgba(0, 0, 0, 0.23)",
+                margin: 0, borderRadius: 1,
+                fontSize: '15px',
+                padding: '16.5px 14px', // Matches standard TextField padding
+                transition: 'border-color 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  // Standard MUI hover border color
+                  borderColor: 'rgba(0, 0, 0, 0.87)',
+                },
+                '&:focus-within': {
+                  // Matches the "active" blue focus state
+                  border: '2px solid',
+                  borderColor: 'primary.main',
+                  // Adjust padding to prevent "jumping" when border thickness changes
+                  padding: '15.5px 13px',
+                },
+              }}>
+              <legend style={{ padding: '0 0.3rem' }}>Properties</legend>
+              <Button disableElevation
+                sx={{}}
+                onClick={() => field.pushValue({ key: "", value: "" })}
+                type="button">
+                <AppSubtitle1Typography sx={{ textTransform: "none", justifyContent: "center", alignContent: "center", fontSize: '15px', }}>
+                  Add new property
+                </AppSubtitle1Typography>
+              </Button>
+              {
+                field.state.value &&
+                <Grid container spacing={2} sx={{ width: '100%' }}>{
+                  field.state.value.map((_, i) => {
+                    return <form.Field key={i} name={`props[${i}]`}>{
+                      (subField) => {
+                        return (
+                          <Grid size={{ xs: 12, sm: 6, md: 6 }}>
+                            <Box
+                              component="fieldset"
+                              sx={{
+                                '& legend': { fontSize: '12px', color: 'rgba(0, 0, 0, 0.6)' },
+                                border: `0.5px solid`,
+                                borderColor: "rgba(0, 0, 0, 0.23)",
+                                margin: 0, borderRadius: 1,
+                                fontSize: '15px',
+                                padding: '10px', // Matches standard TextField padding
+                              }}>
+                              <legend style={{ padding: '0 0.3rem' }}>{"Property " + (i + 1)}</legend>
+                              <Stack component="div" direction="row" spacing={0} >
+                                <TextField
+                                  slotProps={{
+                                    input: { style: { fontSize: "15px" } },
+                                    inputLabel: { style: { fontSize: "15px" } },
+                                  }}
+                                  multiline
+                                  id={"item-prop-key-" + i}
+                                  value={subField.state.value.key}
+                                  label={"field"}
+                                  onChange={
+                                    (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
+                                      subField.handleChange({ ...subField.state.value, key: e.target.value })
+                                  }
+                                  size="small"
+                                  variant="outlined"
+                                  // variant="standard"
+                                  margin="dense"
+                                />
+                                <TextField
+                                  slotProps={{
+                                    input: { style: { fontSize: "15px" } },
+                                    inputLabel: { style: { fontSize: "15px" } },
+                                  }}
+                                  multiline
+                                  id={"item-prop-key-" + i}
+                                  value={subField.state.value.value}
+                                  label={"value"}
+                                  onChange={
+                                    (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
+                                      subField.handleChange({ ...subField.state.value, value: e.target.value })
+                                  }
+                                  size="small"
+                                  variant="outlined"
+                                  margin="dense"
+                                />
+                              </Stack>
+                            </Box>
+
+                            {/* <Divider orientation="vertical" flexItem /> */}
+                          </Grid>
+                        )
+                      }
+                    }</form.Field>
+                  })
+                }</Grid>
+                // <Stack spacing={1} sx={{ width: '100%' }}>{
+                //   field.state.value.map((_, i) => {
+                //     return <form.Field key={i} name={`props[${i}]`}>{
+                //       (subField) => {
+                //         return (
+                // <Stack component="div" direction="row" spacing={1} >
+                //   <TextField
+                //     slotProps={{
+                //       input: { style: { fontSize: "15px" } },
+                //       inputLabel: { style: { fontSize: "15px" } },
+                //     }}
+                //     // sx={{
+                //     //   '& .MuiInputBase-input': { fontSize: '15px' }, // Changes the typed text size
+                //     //   '& .MuiInputLabel-root': { fontSize: '15px' }, // Changes the label size
+                //     // }}
+                //     multiline
+                //     id={"item-prop-key-" + i}
+                //     value={subField.state.value.key}
+                //     label={"key " + (i + 1)}
+                //     onChange={
+                //       (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
+                //         subField.handleChange({ ...subField.state.value, key: e.target.value })
+                //     }
+                //     size="small"
+                //     variant="outlined"
+                //     margin="dense"
+                //   />
+                //   <TextField
+                //     slotProps={{
+                //       input: { style: { fontSize: "15px" } },
+                //       inputLabel: { style: { fontSize: "15px" } },
+                //     }}
+                //     // sx={{
+                //     //   '& .MuiInputBase-input': { fontSize: '15px' }, // Changes the typed text size
+                //     //   '& .MuiInputLabel-root': { fontSize: '15px' }, // Changes the label size
+                //     // }}
+                //     multiline
+                //     id={"item-prop-key-" + i}
+                //     value={subField.state.value.value}
+                //     label={"value " + (i + 1)}
+                //     onChange={
+                //       (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
+                //         // subField.handleChange(e.target.value)
+                //         subField.handleChange({ ...subField.state.value, value: e.target.value })
+                //     }
+                //     size="small"
+                //     variant="outlined"
+                //     margin="dense"
+                //   />
+                // </Stack>
+                //         )
+                //       }
+                //     }</form.Field>
+                //   })
+                // }</Stack>
+              }
+            </Box>
+          )
+        }
+      </form.Field>
     );
   }
 
@@ -237,11 +416,36 @@ export function AppItemModal(
       <form.Field name="tags" mode="array">
         {
           (field) => (
-            <Fragment>
-              <Button
+            // <Fragment>
+            <Box
+              component="fieldset"
+              sx={{
+                '& legend': { fontSize: '12px', color: 'rgba(0, 0, 0, 0.6)' },
+                border: `0.5px solid`,
+                borderColor: "rgba(0, 0, 0, 0.23)",
+                margin: 0, borderRadius: 1,
+                fontSize: '15px',
+                padding: '16.5px 14px', // Matches standard TextField padding
+                transition: 'border-color 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  // Standard MUI hover border color
+                  borderColor: 'rgba(0, 0, 0, 0.87)',
+                },
+                '&:focus-within': {
+                  // Matches the "active" blue focus state
+                  border: '2px solid',
+                  borderColor: 'primary.main',
+                  // Adjust padding to prevent "jumping" when border thickness changes
+                  padding: '15.5px 13px',
+                },
+              }}>
+              <legend style={{ padding: '0 0.5rem' }}>Tags</legend>
+              <Button disableElevation sx={{ display: 'flex', justifyContent: "flex-start", alignContent: "center", }}
                 onClick={() => field.pushValue('')}
                 type="button">
-                <AppBody1Typography>Add new tag</AppBody1Typography>
+                <AppSubtitle1Typography sx={{ textTransform: "none", justifyContent: "center", alignContent: "center", fontSize: '15px', }}>
+                  Add new tag
+                </AppSubtitle1Typography>
               </Button>
               {
                 field.state.value &&
@@ -250,7 +454,7 @@ export function AppItemModal(
                     return <form.Field key={i} name={`tags[${i}]`}>{
                       (subField) => {
                         return (
-                          <Grid size={{ xs: 12, sm: 6, md: 6 }}>
+                          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                             <Autocomplete
                               id={"item-tag-" + i}
                               freeSolo
@@ -282,9 +486,16 @@ export function AppItemModal(
                                 }
                               }
                               renderInput={
-                                (params) => <TextField
-                                  {...params} label={"tag " + (i + 1)}
-                                />
+                                (params) =>
+                                  <TextField
+                                    slotProps={{
+                                      input: { style: { fontSize: "15px" } },
+                                      inputLabel: { style: { fontSize: "15px" } },
+                                    }}
+                                    margin="dense"
+                                    {...params}
+                                    label={"tag " + (i + 1)}
+                                  />
                               }
                             />
                           </Grid>
@@ -294,71 +505,14 @@ export function AppItemModal(
                   })
                 }</Grid>
               }
-            </Fragment>
+            </Box>
+            //{/* </Fragment> */}
           )
         }
       </form.Field>
     );
   }
 
-  function getPropField() {
-    return (
-      <form.Field name="props" mode="array">
-        {
-          (field) => (
-            <Fragment>
-              <Button
-                onClick={() => field.pushValue({ key: "", value: "" })}
-                type="button">
-                <AppBody1Typography>Add new property</AppBody1Typography>
-              </Button>
-              {
-                field.state.value &&
-                <Stack spacing={3} sx={{ width: '100%' }}>{
-                  field.state.value.map((_, i) => {
-                    return <form.Field key={i} name={`props[${i}]`}>{
-                      (subField) => {
-                        return (
-                          <Stack component="div" direction="row" spacing={3} >
-                            <TextField
-                              multiline
-                              id={"item-prop-key-" + i}
-                              value={subField.state.value.key}
-                              label={"property key " + (i + 1)}
-                              onChange={
-                                (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
-
-                                  subField.handleChange({ ...subField.state.value, key: e.target.value })
-                              }
-                              size="small"
-                              variant="standard"
-                            />
-                            <TextField
-                              multiline
-                              id={"item-prop-key-" + i}
-                              value={subField.state.value.value}
-                              label={"property value " + (i + 1)}
-                              onChange={
-                                (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
-                                  // subField.handleChange(e.target.value)
-                                  subField.handleChange({ ...subField.state.value, value: e.target.value })
-                              }
-                              size="small"
-                              variant="standard"
-                            />
-                          </Stack>
-                        )
-                      }
-                    }</form.Field>
-                  })
-                }</Stack>
-              }
-            </Fragment>
-          )
-        }
-      </form.Field>
-    );
-  }
 
   function handleDelete() {
     form.setFieldValue('softDelete', true);
@@ -374,9 +528,10 @@ export function AppItemModal(
   const fields: itemFields[] = ['id', 'userId', 'name', "note"];
   const dialogSx = {
     display: 'block',
+    width: "lg",
     maxWidth: "lg",
     height: '70vh',
-    maxHeight: 720,
+    // maxHeight: 720,
     overflow: 'auto',
     '&::-webkit-scrollbar': {
       width: '15px', // width of the entire scrollbar
@@ -415,101 +570,116 @@ export function AppItemModal(
   const formErrorMap = useStore(form.store, (state) => state.errorMap)
 
 
-
-  if (isPending) {
+  function Dlg(content: ReactNode, actions?: ReactNode): ReactNode {
     return (
-      <Dialog fullWidth open={store.itemModal} onClose={closeModal} >
+      <Dialog fullWidth maxWidth="xl" open={store.itemModal} onClose={closeModal} >
         <IconButton aria-label="delete"
           sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}
           onClick={closeModal}>
           <Icon icon="material-symbols-light:close-rounded" width="40" height="40" />
         </IconButton>
-        <DialogContent sx={dialogSx} >
-          <LinearProgress />
-        </DialogContent>
+        <form onSubmit={onFormSubmit}>
+          <DialogContent sx={dialogSx} >
+            {content}
+          </DialogContent>
+          {actions &&
+            <DialogActions>
+              {actions}
+            </DialogActions>}
+        </form>
       </Dialog>
-    );
+    )
+  }
+
+
+  if (isPending) {
+    const con = <LinearProgress />;
+    return Dlg(con);
   }
 
 
   if (isError) {
-    return (
-      <Dialog fullWidth open={store.itemModal} onClose={closeModal} >
-        <IconButton aria-label="delete"
-          sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}
-          onClick={closeModal}>
-          <Icon icon="material-symbols-light:close-rounded" width="40" height="40" />
-        </IconButton>
-        <DialogContent sx={dialogSx} >
-          <ErrorAlert message={error?.message || "An error occurred. Please try again"} />
-        </DialogContent>
-      </Dialog>
-    );
+    const con = <ErrorAlert message={error?.message || "An error occurred. Please try again"} />;
+    return Dlg(con);
   }
 
+  const con = (
+    // <Box
+    //   component="fieldset"
+    //   sx={{
+    //     '& legend': { fontSize: '12px', color: 'rgba(0, 0, 0, 0.6)' },
+    //     border: `0.5px solid`,
+    //     borderColor: "rgba(0, 0, 0, 0.23)",
+    //     margin: 0, borderRadius: 1,
+    //     fontSize: '15px',
+    //     padding: '30px', // Matches standard TextField padding
+    //     transition: 'border-color 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+    //     // '&:hover': {
+    //     //   // Standard MUI hover border color
+    //     //   borderColor: 'rgba(0, 0, 0, 0.87)',
+    //     // },
+    //     // '&:focus-within': {
+    //     //   // Matches the "active" blue focus state
+    //     //   border: '2px solid',
+    //     //   borderColor: 'primary.main',
+    //     //   // Adjust padding to prevent "jumping" when border thickness changes
+    //     //   padding: '15.5px 13px',
+    //     // },
+    //   }}>
+    <Stack spacing={1} sx={{ width: '100%' }} >
+      {mutation.error && (
+        <Fragment>
+          <ErrorAlert message={mutation.error.message} />
+          <h5 onClick={() => mutation.reset()}>{mutation.error.message}</h5>
+        </Fragment>
+      )}
+      {mutation.isSuccess && (
+        <Fragment>
+          <SuccessAlert message="Item updated!" />
+        </Fragment>
+      )}
+      {
+        formErrorMap.onChange && (<WarnAlert message={`${formErrorMap.onChange}`} />)
+      }
+      {
+        formErrorMap.onBlur && (<ErrorAlert message={`${formErrorMap.onBlur}`} />)
+      }
+      {fields.map((fds: itemFields) => getSimpleField(fds))}
 
-  return (
-    <Dialog fullWidth open={store.itemModal} onClose={closeModal} >
-      <IconButton aria-label="delete"
-        sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}
-        onClick={closeModal}>
-        <Icon icon="material-symbols-light:close-rounded" width="40" height="40" />
-      </IconButton>
-      <form onSubmit={onFormSubmit}>
-        <DialogContent sx={dialogSx} >
-          <Stack spacing={3} sx={{ width: '100%' }} >
-            {mutation.error && (
-              <Fragment>
-                <ErrorAlert message={mutation.error.message} />
-                <h5 onClick={() => mutation.reset()}>{mutation.error.message}</h5>
-              </Fragment>
-            )}
-            {mutation.isSuccess && (
-              <Fragment>
-                <SuccessAlert message="Item updated!" />
-              </Fragment>
-            )}
-            {
-              formErrorMap.onChange && (<WarnAlert message={`${formErrorMap.onChange}`} />)
-            }
-            {
-              formErrorMap.onBlur && (<ErrorAlert message={`${formErrorMap.onBlur}`} />)
-            }
-            {fields.map((fds: itemFields) => getSimpleField(fds))}
+      {/* ToDo: fix display for tags and fields. */}
+      {getPropField()}
+      {getTagField()}
+    </Stack>
+    //{/* </Box> */ }
+  )
 
-            {getPropField()}
-            {getTagField()}
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting, state.values.name]}
-            children={() => (
-              <Box sx={{ transform: 'translateZ(0px)', flexGrow: 1 }}>
-                <SpeedDial
-                  ariaLabel="SpeedDial basic example"
-                  sx={{ position: 'absolute', bottom: 16, right: 16 }}
-                  icon={<SpeedDialIcon />}
-                >
-                  {formActions.map((action) => (
-                    <SpeedDialAction
-                      key={action.name}
-                      icon={<Icon icon={action.icon} width="36" height="36" />}
-                      // @ts-ignore
-                      onClick={action.onClick}
-                      slotProps={{
-                        tooltip: {
-                          title: action.name,
-                        },
-                      }}
-                    />
-                  ))}
-                </SpeedDial>
-              </Box>
-            )}
-          />
-        </DialogActions>
-      </form>
-    </Dialog>
-  );
+  const act = (
+    <form.Subscribe
+      selector={(state) => [state.canSubmit, state.isSubmitting, state.values.name]}
+      children={() => (
+        <Box sx={{ transform: 'translateZ(0px)', flexGrow: 1 }}>
+          <SpeedDial
+            ariaLabel="SpeedDial basic example"
+            sx={{ position: 'absolute', bottom: 16, right: 16 }}
+            icon={<SpeedDialIcon />}
+          >
+            {formActions.map((action) => (
+              <SpeedDialAction
+                key={action.name}
+                icon={<Icon icon={action.icon} width="36" height="36" />}
+                // @ts-ignore
+                onClick={action.onClick}
+                slotProps={{
+                  tooltip: {
+                    title: action.name,
+                  },
+                }}
+              />
+            ))}
+          </SpeedDial>
+        </Box>
+      )}
+    />
+  )
+  return Dlg(con, act);
 }

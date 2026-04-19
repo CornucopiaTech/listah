@@ -32,7 +32,7 @@ func (s *Server) ReadItem(ctx context.Context, req *connect.Request[pb.ItemServi
 
 	readModel := []*model.Item{}
 
-	recordCnt, err := s.BunRepo.Item.ReadItem(ctx, &readModel, sq)
+	recordCnt, err := s.BunRepo.Item.Read(ctx, &readModel, sq)
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
 		return nil, err

@@ -12,6 +12,7 @@ import type { AppTheme } from '@/system/theme';
 const AppTypography = styled(Typography)(({ theme }: { theme: AppTheme }) => ({
   color: theme.palette.primary.main,
   // textAlign: "center",
+  // textAlign: "left",
   whiteSpace: 'pre-line',
 }));
 
@@ -30,11 +31,17 @@ export function AppTitleTypography({ children, sx }: { children: ReactNode, sx?:
 
 export function AppBody1Typography({ children, sx }: { children: ReactNode, sx?: any }) {
   return (
-    <AppTypography variant="body1" sx={{ ...sx }}>{children}</AppTypography>
+    <AppTypography align="left" variant="body1" sx={{ ...sx }}>{children}</AppTypography>
   )
 }
 
 export function AppBody2Typography({ children, sx }: { children: ReactNode, sx?: any }) {
+  return (
+    <AppTypography variant="body2" sx={{ ...sx }}>{children}</AppTypography>
+  )
+}
+
+export function AppSubtitle1Typography({ children, sx }: { children: ReactNode, sx?: any }) {
   return (
     <AppTypography variant="subtitle1" sx={{ ...sx }}>{children}</AppTypography>
   )

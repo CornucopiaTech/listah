@@ -40,7 +40,9 @@ func (a *itemAgent) ReadItem(ctx context.Context, m *[]bson.M, f *model.RepoRead
 	preFilter := bson.A{
 		bson.M{"userId": bson.M{"$regex": f.UserId, "$options": "i"}},
 	}
-	postFilter := bson.A{}
+	postFilter := bson.A{
+		bson.M{"userId": bson.M{"$regex": f.UserId, "$options": "i"}},
+	}
 
 	if len(f.Tags) > 0 {
 		postFilter = append(postFilter, bson.M{"tags": bson.M{"$in": f.Tags}})

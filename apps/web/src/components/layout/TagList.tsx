@@ -132,10 +132,11 @@ export function TagListLayout(): ReactNode {
 
   function handleItemClick(it: ITag) {
     const ct = it && it.name ? it.name : "";
+    const cti = it && it.id ? it.id : "";
     const q: IItemReadRequest = {
       ...DefaultItemRead,
       userId: query.userId,
-      query: { ...DefaultItemRead.query, tags: [ct] },
+      query: { ...DefaultItemRead.query, tags: [cti] },
     };
     const encoded = encodeState(q);
     navigate({ to: "/items/{-$title}", search: { s: encoded }, params: { title: `Items in #${ct}` } });

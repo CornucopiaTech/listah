@@ -61,7 +61,7 @@ type Tag struct {
 	Id            string `bun:",pk"`
 	UserId        string
 	Name          string
-	Props         map[string]string
+	Props         []string
 	Count         int32
 }
 
@@ -70,7 +70,7 @@ type TagUpsert struct {
 	Id            string `bun:",pk"`
 	UserId        string
 	Name          string
-	Props         map[string]string
+	Props         []string
 }
 
 type Pagination struct {

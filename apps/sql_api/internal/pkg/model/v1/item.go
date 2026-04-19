@@ -111,9 +111,8 @@ func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
 
 func ItemProtoToItemModel(msg []*pb.Item, genId bool) (ItemUpsert, error) {
 	items := []*Item{}
-	upTag := []Tag{}
 	check := map[string]bool{}
-	checkTags := map[string]bool{}
+	checkTags := map[string]*Tag{}
 
 	for _, v := range msg {
 		id := v.GetId()
@@ -138,13 +137,39 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) (ItemUpsert, error) {
 			newItem.Tags = v.GetTags()
 			check["tags"] = true
 			for _, tt := range v.GetTags() {
-				if _, ok := checkTags[tt]; !ok {
-					checkTags[tt+"_"+v.GetUserId()] = true
-					upTag = append(upTag, Tag{
+				// Get list of properties to attach to the tag
+				prpl := []string{}
+				for kp, _ := range v.GetProps() {
+					prpl = append(prpl, kp)
+				}
+				if _, ok := checkTags[tt+"_"+v.GetUserId()]; !ok {
+					checkTags[tt+"_"+v.GetUserId()] = & Tag{
 						Id:     uuid.Must(uuid.NewV7()).String(),
 						UserId: v.GetUserId(),
 						Name:   tt,
-					})
+						Props: prpl,
+					}
+				} else {
+					// Check if the properties of this tag needs to be extended
+					// exTgs := append(checkTags[tt+"_"+v.GetUserId()].Props, prpl...)
+
+					// Dedup extended tags
+					nexTgs := map[string]bool{}
+					for _, atg := range checkTags[tt+"_"+v.GetUserId()].Props {
+						nexTgs[atg] = true
+					}
+					for _, atg := range prpl{
+						nexTgs[atg] = true
+					}
+
+					// Create new deduped props list
+					tagProps := []string{}
+					for k, _ := range nexTgs {
+						tagProps = append(tagProps, k)
+					}
+
+					// Update the props of the tag.
+					checkTags[tt+"_"+v.GetUserId()].Props = tagProps
 				}
 			}
 		}
@@ -163,6 +188,12 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) (ItemUpsert, error) {
 	res := []string{}
 	for k, _ := range check {
 		res = append(res, k)
+	}
+
+	// Get the fields that need to be updated for conflict resolution
+	upTag := []Tag{}
+	for _, v := range checkTags {
+		upTag = append(upTag, *v)
 	}
 
 	i := ItemUpsert{

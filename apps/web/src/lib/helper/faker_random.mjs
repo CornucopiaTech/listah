@@ -162,7 +162,16 @@ async function loadFilters(maxLoaded, apiUrl) {
   }
 }
 
-const url = "http://localhost:8081/listah.v1.ItemService";
-loadItems(10, 3000, url);
+// const url = "http://localhost:8081/listah.v1.ItemService";
+// const url = "http://localhost:8080/listah.v1.ItemService";
+// loadItems(10, 3000, url);
 // loadItems(1, 50, url);
-loadFilters(100, url);
+// loadFilters(100, url);
+
+const urls = [
+  "http://localhost:8080/listah.v1.ItemService",
+  "http://localhost:8081/listah.v1.ItemService",
+]
+urls.forEach(url => loadItems(1, 50, url));
+// urls.forEach(url => loadItems(10, 3000, url));
+// urls.forEach(url => loadFilters(100, url));

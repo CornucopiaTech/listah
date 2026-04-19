@@ -1,6 +1,20 @@
 // import { color } from "@/system/tokens/colors";
 
 export const components = {
+  MuiInputLabel: {
+    styleOverrides: {
+      root: {
+        fontSize: '14px',
+      },
+    },
+  },
+ MuiInputBase: {
+    styleOverrides: {
+      root: {
+        fontSize: '14px',
+      },
+    },
+  },
   // MuiButton: {
   //   // defaultProps: {
   //   //   variant: "contained",

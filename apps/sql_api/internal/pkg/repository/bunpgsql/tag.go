@@ -33,12 +33,12 @@ func (a *tag) Upsert(ctx context.Context, m *[]model.Tag) (interface{}, error) {
 		return nil, nil
 	}
 
-	values := a.db.NewValues(m).Column("id", "user_id", "name")
+	values := a.db.NewValues(m).Column("id", "user_id", "name", "props")
 	query := `
-		WITH tagliterals (id, user_id, name) AS (
+		WITH tagliterals (id, user_id, name, props) AS (
 			?
 		)
-		SELECT tl."id", tl."user_id", tl."name", NULL "props"
+		SELECT tl."id", tl."user_id", tl."name", tl."props"
 		FROM apps.tags t
 			FULL OUTER JOIN tagliterals tl
 				ON tl.name = t.name AND tl.user_id = t.user_id
@@ -51,8 +51,15 @@ func (a *tag) Upsert(ctx context.Context, m *[]model.Tag) (interface{}, error) {
 		return nil, err
 	}
 
+	if len(tR) == 0 {
+		a.logger.LogInfo(ctx, svcName, activity, "No new tags to insert ")
+		a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
+		return nil, nil
+	}
+
 	// Add the nonexistent tags
-	tq := a.db.NewInsert().Model(&tR).Ignore().On("CONFLICT(name, user_id) DO NOTHING")
+	tq := a.db.NewInsert().Model(&tR).Ignore().On("CONFLICT(name, user_id) DO UPDATE").
+		Set("props = Excluded.props")
 	_, err = tq.Exec(ctx)
 	if err != nil {
 		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
