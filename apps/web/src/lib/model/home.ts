@@ -1,8 +1,8 @@
-import type { ITagCategoryReadRequest } from '@/lib/model/tag';
-import type { ISavedFilterCategoryReadRequest } from '@/lib/model/savedFilter';
+import type { ITagReadRequest } from '@/lib/model/tag';
+import type { IFilterReadRequest } from '@/lib/model/filter';
 
 
 export type THomeQueryParams = {
-  tag: ITagCategoryReadRequest;
-  savedFilter: ISavedFilterCategoryReadRequest;
+  tag: ITagReadRequest;
+  savedFilter: IFilterReadRequest;
 }

@@ -7,9 +7,11 @@
     "type": "module",
     "scripts": {
         "api:dev": "cd ./apps/api && nodemon -e go --watch '*.go' --watch './internal/**/**/*.go' --signal SIGTERM --exec 'go' run .",
-        "api:lint": "clear && WK_DIR=\"$(pwd)\" && echo $WK_DIR && cd \"$WK_DIR/apps/api/\" && golangci-lint run  && cd \"$WK_DIR/apps/api/internal\" && golangci-lint run",
+        "api:lint": "clear && WK_DIR=\"$(pwd)\" && echo $WK_DIR && cd \"$WK_DIR/apps/api/\" && golangci-lint run  --fix ",
         "api:tidy": "WK_DIR=\"$(pwd)\" && echo $WK_DIR && cd \"$WK_DIR/apps/api/\" && go mod tidy  && cd \"$WK_DIR/apps/api/internal\" && go mod tidy",
-        "buf:gen": "clear && rm -rf ./apps/api/internal/pkg/proto && buf generate",
+        "buf:gen": "clear && rm -rf ./apps/api/internal/pkg/proto && npx buf generate",
+        "nosql_buf:gen": "clear && rm -rf ./apps/nosql_api/internal/pkg/proto && cd ./apps/nosql_api/ && npx buf generate",
+        "nosql_docs:gen": "clear && rm ./apps/nosql_api/public/index.html && npx redocly bundle --dereferenced --output ./apps/nosql_api/assets/docs/openapi-deref.yaml ./apps/nosql_api/assets/docs/openapi-ref.yaml   &&   npx @redocly/cli build-docs  ./apps/nosql_api/assets/docs/openapi-deref.yaml --title Listah --output ./apps/nosql_api/public/index.html  ",
         "buf:lint": "buf lint",
         "buf:prune": "buf dep prune",
         "buf:update": "buf dep update",
@@ -20,10 +22,10 @@
         "web:dev": "clear && cd ./apps/web && npm run dev ",
         "web:lint": "clear && cd ./apps/web && npx eslint . --fix"
     },
-    "packageManager": "npm@10.9.0",
-    "devDependencies": {
-        "@bufbuild/buf": "^1.53.0",
-        "@redocly/cli": "^2.20.0",
-        "nodemon": "^1.0.2"
+    "packageManager": "npm@11.11.1",
+    "dependencies": {
+        "@bufbuild/buf": "^1.66.1",
+        "@redocly/cli": "^2.25.2",
+        "nodemon": "^3.1.14"
     }
 }

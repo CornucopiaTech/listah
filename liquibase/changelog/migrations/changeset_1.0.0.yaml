@@ -15,7 +15,10 @@ databaseChangeLog:
                 constraintName: constraint_unique_items_id_user_id
                 schemaName: apps
                 tableName: items
-
+            - uniqueConstraintExists:
+                constraintName: constraint_unique_filters_name_user_id
+                schemaName: apps
+                tableName: filters
       changes:
         - createTable:
               schemaName: apps
@@ -34,16 +37,16 @@ databaseChangeLog:
                     constraints:
                       nullable:  false
                 - column:
-                    name:  title
-                    type:  varchar
-                - column:
-                    name:  description
+                    name:  name
                     type:  varchar
                 - column:
                     name:  note
                     type:  varchar
                 - column:
-                    name:  tag
+                    name:  tags
+                    type:  json
+                - column:
+                    name:  props
                     type:  json
                 - column:
                     name:  reactivate_at
@@ -58,14 +61,14 @@ databaseChangeLog:
                     name:  updated_at
                     type:  timestamp
 
-        -  addUniqueConstraint:
+        - addUniqueConstraint:
             columnNames:  id, user_id
             constraintName:  constraint_unique_items_id_user_id
             schemaName:  apps
             tableName:  items
             validate:  true
 
-        -  addDefaultValue:
+        - addDefaultValue:
             columnName: soft_delete
             columnDataType: boolean
             schemaName:  apps
@@ -100,3 +103,41 @@ databaseChangeLog:
                 - column:
                     name:  request_time
                     type:  timestamp
+
+        - createTable:
+              schemaName: apps
+              tableName: filters
+              ifNotExists: true
+              columns:
+                - column:
+                    name:  id
+                    type:  varchar
+                    constraints:
+                      primaryKey:  true
+                      nullable:  false
+                - column:
+                    name:  user_id
+                    type:  varchar
+                    constraints:
+                      nullable:  false
+                - column:
+                    name:  name
+                    type:  varchar
+                    constraints:
+                      nullable:  false
+                - column:
+                    name:  tags
+                    type:  json
+                - column:
+                    name:  updated_by
+                    type:  varchar
+                - column:
+                    name:  updated_at
+                    type:  timestamp
+                    defaultValueComputed: CURRENT_TIMESTAMP
+        - addUniqueConstraint:
+            columnNames:  name, user_id
+            constraintName:  constraint_unique_filters_name_user_id
+            schemaName:  apps
+            tableName:  filters
+            validate:  true

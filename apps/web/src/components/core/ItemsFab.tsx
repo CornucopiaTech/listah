@@ -7,7 +7,7 @@ import { Icon } from "@iconify/react";
 
 
 
-import { DEFAULT_ITEM } from "@/lib/helper/defaults";
+import { DefaultItem } from "@/lib/helper/defaults";
 import {
   useBoundStore,
   type TBoundStore
@@ -21,7 +21,7 @@ export function ItemsFab() {
 
   function handleItemClick() {
     store.setDisplayId("");
-    store.setDisplayItem(DEFAULT_ITEM);
+    store.setDisplayItem(DefaultItem);
     store.setItemModal(true);
   }
   const formActions = [

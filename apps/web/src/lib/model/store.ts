@@ -5,11 +5,12 @@ import type {
 
 
 // Tag Store
-export type  IListingState = {
+export type IListingState = {
   message: string
   drawer: boolean
   itemModal: boolean
   filterModal: boolean
+  settingModal: boolean
   selectMode: boolean
   displayId: string
   displayItem: IItem
@@ -24,6 +25,7 @@ export type IListingActions = {
   setDrawer: (drawer: boolean) => void
   setItemModal: (itemModal: boolean) => void
   setFilterModal: (filterModal: boolean) => void
+  setSettingModal: (settingModal: boolean) => void
   setSelectMode: (selectMode: boolean) => void
   setDisplayId: (displayId: string) => void
   setDisplayItem: (displayItem: IItem) => void
@@ -39,7 +41,7 @@ export type IListingSlice = IListingState & IListingActions;
 
 
 // Items Store
-export type  IDetailState = {
+export type IDetailState = {
   message: string
   drawer: boolean
   modal: boolean

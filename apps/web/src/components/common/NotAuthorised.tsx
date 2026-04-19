@@ -1,23 +1,23 @@
-import type {ReactNode} from "react";
+import type { ReactNode } from "react";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
-import { SignInButton, SignUpButton, } from '@clerk/clerk-react';
+import { SignInButton, SignUpButton, } from '@clerk/react';
 import type { AppTheme } from '@/lib/styles/theme';
 
 export default function NotAuthorised(): ReactNode {
   const theme: AppTheme = useTheme();
   return (
     <Box sx={{
-          minHeight: "100vh",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "#f8fafc",
-          color: theme.palette.primary.main,  //"#1a202c"
-        }}>
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "#f8fafc",
+      color: theme.palette.primary.main,  //"#1a202c"
+    }}>
       <Typography variant="h1"
         sx={{
           display: "flex",
@@ -35,28 +35,28 @@ export default function NotAuthorised(): ReactNode {
         Unauthorised
       </Typography>
       <Typography variant="h5"
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}>
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
         You are not authorised to view this content.
       </Typography>
       <Typography variant="h5"
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}>
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
         Please sign in or sign up.
       </Typography>
       <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: 2,
-          }}
-        >
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: 2,
+        }}
+      >
         <SignInButton mode="modal">
           <Button
             variant="text"
@@ -76,11 +76,11 @@ export default function NotAuthorised(): ReactNode {
           </Button>
         </SignInButton>
         <SignUpButton mode="modal">
-            <Button
-              variant="text"
-              sx={{ my: 2, }}
-            >
-          <Typography
+          <Button
+            variant="text"
+            sx={{ my: 2, }}
+          >
+            <Typography
               variant="h3" noWrap
               component="div"
               sx={{
@@ -88,9 +88,9 @@ export default function NotAuthorised(): ReactNode {
                 color: theme.palette.primary.main,
                 textTransform: 'none',
               }}
-              >
-            Sign Up
-          </Typography>
+            >
+              Sign Up
+            </Typography>
           </Button>
         </SignUpButton>
       </Box>

@@ -1,11 +1,10 @@
-import { Outlet, createRootRoute } from '@tanstack/react-router';
-import { Fragment, type ReactNode } from 'react';
-
+import { createRootRoute } from '@tanstack/react-router';
+import LinearProgress from '@mui/material/LinearProgress';
 
 
 
 import NotFound from '@/components/common/NotFound';
-import { AppContainer } from '@/components/layout/AppContainer';
+import { AppContainerShell } from '@/components/layout/AppContainer';
 
 
 
@@ -24,17 +23,7 @@ export const Route = createRootRoute({
       },
     ],
   }),
-  component: Root,
+  component: AppContainerShell,
   notFoundComponent: NotFound,
+  pendingComponent: LinearProgress,
 })
-
-
-function Root(): ReactNode {
-  return (
-    <Fragment>
-      <AppContainer>
-        <Outlet />
-      </AppContainer>
-    </Fragment>
-  );
-}

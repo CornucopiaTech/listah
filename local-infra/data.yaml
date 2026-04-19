@@ -12,7 +12,7 @@ services:
       timeout: 10s
     env_file: .env
     volumes:
-      - ./db_data:/var/lib/postgresql/
+      - ./db_data/postgres:/var/lib/postgresql/
     ports:
       - "5434:5432"
 
@@ -25,7 +25,7 @@ services:
         restart: true
     volumes:
       - ../liquibase/changelog/:/liquibase/changelog/
-      - ./postgresql-42.7.9.jar:/liquibase/lib/postgresql-42.7.9.jar
+      - ./postgresql-42.7.10.jar:/liquibase/lib/postgresql-42.7.10.jar
     env_file: .env
     environment:
       LIQUIBASE_COMMAND_URL: ${LIQUIBASE_CONNECTION_URL} # //Automatically Read from .env file
@@ -34,7 +34,7 @@ services:
       LIQUIBASE_COMMAND_CHANGELOG_FILE: changelog.yaml
       LIQUIBASE_LOG_LEVEL: INFO
       LIQUIBASE_COMMAND_DRIVER: org.postgresql.Driver
-      LIQUIBASE_CLASSPATH: /liquibase/lib/postgresql-42.7.9.jar
+      LIQUIBASE_CLASSPATH: /liquibase/lib/postgresql-42.7.10.jar
     command: "update "
 
 networks:

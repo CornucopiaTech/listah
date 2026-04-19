@@ -7,7 +7,6 @@ import {
 import type {
   ChangeEvent,
   ReactNode,
-  FormEvent,
 } from 'react';
 import {
   useForm,
@@ -30,7 +29,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import IconButton from '@mui/material/IconButton';
 import { Icon } from "@iconify/react";
-import { useUser } from '@clerk/clerk-react';
+import { useUser } from '@clerk/react';
 import { useTheme } from "@mui/material";
 import { VirtuosoGrid } from 'react-virtuoso'
 import Chip from '@mui/material/Chip';
@@ -51,21 +50,19 @@ import {
   useBoundStore,
   type TBoundStore
 } from '@/lib/store/boundStore';
-import { postSavedFilter } from "@/lib/helper/fetchers";
+import { postFilter } from "@/lib/helper/fetchers";
 import { ErrorAlert, WarnAlert, SuccessAlert } from "@/components/core/Alerts";
 import type { AppTheme } from '@/system/theme';
-import { DefaultHomeQueryParams } from '@/lib/helper/defaults';
 import type {
-  THomeQueryParams
-} from '@/lib/model/home';
-import type {
-  ITagCategory,
-  ITagCategoryReadResponse,
+  ITag,
+  ITagReadResponse,
 } from "@/lib/model/tag";
-import {  tagGroupOptions } from '@/lib/helper/querying';
-import type { ISavedFilter, } from "@/lib/model/savedFilter";
-import  { ZSavedFilter } from "@/lib/model/savedFilter";
-
+import { tagGroupOptions } from '@/lib/helper/querying';
+import type { IFilter, } from "@/lib/model/filter";
+import { ZFilter } from "@/lib/model/filter";
+import {
+  DefaultTagRead,
+} from '@/lib/helper/defaults';
 
 
 export function AppFilterModal(): ReactNode {
@@ -74,33 +71,32 @@ export function AppFilterModal(): ReactNode {
   const { user } = useUser();
   const theme: AppTheme = useTheme();
 
-  const query: THomeQueryParams = {
-    savedFilter: {
-      ...DefaultHomeQueryParams.savedFilter, userId: user?.id || "", pageSize: -1,
-    },
-    tag: {
-      ...DefaultHomeQueryParams.tag, userId: user?.id || "", pageSize: -1,
-    }
+  const tagQuery = {
+    ...DefaultTagRead,
+    userId: user?.id || "",
+    pageSize: -1,
   }
 
   const {
     isPending, isError, data, error
-  }: UseQueryResult<ITagCategoryReadResponse> = useQuery(tagGroupOptions(query.tag));
+  }: UseQueryResult<ITagReadResponse> = useQuery(tagGroupOptions(tagQuery));
 
 
   // Define invalidating  mutation
   const mutation = useMutation({
-    mutationFn: (mutateItem: ISavedFilter) => {
-      const mi = ZSavedFilter.parse(mutateItem);
-      return postSavedFilter(mi);
+    mutationFn: (mutateItem: IFilter) => {
+      const mi = ZFilter.parse(mutateItem);
+      return postFilter(mi);
     },
     onSuccess: async () => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["savedFilter", query.savedFilter] }),
+        queryClient.invalidateQueries({ queryKey: ["filter"] }),
       ])
     },
     onError: (error) => {
-      console.log(error);
+      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+        console.log(error);
+      }
       store.setMessage(error.message);
     },
   });
@@ -110,16 +106,18 @@ export function AppFilterModal(): ReactNode {
   }
 
   useEffect(() => {
-      // if (!form.state.isSubmitted) return;
-      if (!mutation.isSuccess) return;
+    // if (!form.state.isSubmitted) return;
+    if (!mutation.isSuccess) return;
 
-      const timer = setTimeout(
-        () => {
+    const timer = setTimeout(
+      () => {
+        if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
           console.log("Timer fired after 2 seconds");
-          closeModal();
-        }, 2000);
-      return () => clearTimeout(timer); // cleanup
-    }, [mutation.isSuccess]
+        }
+        closeModal();
+      }, 2000);
+    return () => clearTimeout(timer); // cleanup
+  }, [mutation.isSuccess]
   );
   // }, [form.state.isSubmitted, mutation.isSuccess]);
 
@@ -127,7 +125,7 @@ export function AppFilterModal(): ReactNode {
 
 
 
-  function onFormSubmit(e: FormEvent<HTMLFormElement>) {
+  function onFormSubmit(e: ChangeEvent<HTMLFormElement>) {
     e.preventDefault()
     e.stopPropagation()
     //Note: form.handleSubmit is automatically called on form submit. it does not need to be called again. Calling it again results in the form getting sent multiple times.
@@ -139,8 +137,10 @@ export function AppFilterModal(): ReactNode {
     [key: string]: string | boolean;
   };
 
-  function formSubmission({ value }: {value: FormObjectType}): void {
-    console.info("In formSubmission - value ", value);
+  function formSubmission({ value }: { value: FormObjectType }): void {
+    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+      console.log("In formSubmission - value ", value);
+    }
     let checkedCategories: string[] = [];
 
     Object.keys(value).forEach(key => {
@@ -154,21 +154,23 @@ export function AppFilterModal(): ReactNode {
       userId: user?.id || "",
       name: value["___filterName"] as string,
       tags: checkedCategories,
-      savedFilters: [],
+      filters: [],
+      count: 0,
+    };
+    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+      console.info("In formSubmission - submitvalue ", submitValue);
     }
-    console.info("In formSubmission - submitvalue ", submitValue);
     mutation.mutate(submitValue);
   }
 
-
   const gridComponents = {
-    List: forwardRef(({ style, children, ...props }: { style: any, children: ReactNode, props: any}, ref: any) => (
+    List: forwardRef(({ style, children, ...props }: { style: any, children: ReactNode, props: any }, ref: any) => (
       <div ref={ref} {...props}
-          style={{display: 'flex', flexWrap: 'wrap', ...style,}}>
+        style={{ display: 'flex', flexWrap: 'wrap', ...style, }}>
         {children}
       </div>
     )),
-    Item: ({ children, ...props }: { children: ReactNode; [key: string]: unknown }) => (
+    Item: ({ children, ...props }: { children: ReactNode;[key: string]: unknown }) => (
       <div
         {...props}
         style={{
@@ -180,7 +182,6 @@ export function AppFilterModal(): ReactNode {
       </div>
     ),
   }
-
 
   const dialogSx = {
     display: 'block',
@@ -204,7 +205,7 @@ export function AppFilterModal(): ReactNode {
       background: theme.palette.background.default,
     },
   }
-  const tagCategories: ITagCategory[] = data && data.categories ? data.categories : [];
+  const tagCategories: ITag[] = data && data.tags ? data.tags : [];
 
 
 
@@ -213,8 +214,8 @@ export function AppFilterModal(): ReactNode {
     "___filterName": "",
     "id": ""
   }
-  defaultFormData = tagCategories.reduce((acc: any, item: ITagCategory) => {
-    acc[item.category] = false;
+  defaultFormData = tagCategories.reduce((acc: any, item: ITag) => {
+    acc[item.name] = false;
     return acc;
   }, defaultFormData);
 
@@ -223,7 +224,7 @@ export function AppFilterModal(): ReactNode {
 
 
   function eachItem(idx: number): ReactNode {
-    const chipLabel = formData[idx] && formData[idx].category ? formData[idx].category : "";
+    const chipLabel = formData[idx] && formData[idx].name ? formData[idx].name : "";
     return (
       <form.Field key={`item-${chipLabel}`} name={chipLabel} children={
         (field) =>
@@ -234,7 +235,9 @@ export function AppFilterModal(): ReactNode {
             sx={{ color: theme.palette.background.default, cursor: "pointer" }}
             label={<AppBody1ButtonTypography>#{chipLabel}</AppBody1ButtonTypography>}
             onClick={() => {
-              console.log(`${chipLabel} onClick: ${field.state.value}=>${!field.state.value}`);
+              if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+                console.log(`${chipLabel} onClick: ${field.state.value}=>${!field.state.value}`);
+              }
               field.handleChange(!field.state.value)
             }}
           />
@@ -289,7 +292,7 @@ export function AppFilterModal(): ReactNode {
     },
   });
 
-  function handleClone(){
+  function handleClone() {
     const fname = form.state.values.___filterName || "";
     form.setFieldValue('id', uuidv4());
     form.setFieldValue('___filterName', "[Clone of] - " + fname);
@@ -320,7 +323,7 @@ export function AppFilterModal(): ReactNode {
 
       <form onSubmit={onFormSubmit}>
         <DialogContent sx={dialogSx} >
-          {isPending &&<LinearProgress />}
+          {isPending && <LinearProgress />}
           {
             !isPending && isError &&
             <ErrorAlert message={error?.message || "An error occurred. Please try again"} />
@@ -354,29 +357,29 @@ export function AppFilterModal(): ReactNode {
                 key={`Filter Name`}
                 name={`___filterName`}
                 validators={{
-                  onBlur: ({ value }: {value: any}) =>
+                  onBlur: ({ value }: { value: any }) =>
                     value.length < 1 ? 'You must enter a filter name' : undefined,
                 }}
 
                 children={
                   (field) =>
-                  <Fragment>
-                    <TextField
-                      fullWidth
-                      multiline
-                      id={`Filter Name`}
-                      key={`___filterName`}
-                      value={field.state.value}
-                      label={`Filter Name`}
-                      onChange={
-                        (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-                      size="small"
-                      variant="standard"
-                    />
-                    {!field.state.meta.isValid && (
+                    <Fragment>
+                      <TextField
+                        fullWidth
+                        multiline
+                        id={`Filter Name`}
+                        key={`___filterName`}
+                        value={field.state.value}
+                        label={`Filter Name`}
+                        onChange={
+                          (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
+                        size="small"
+                        variant="standard"
+                      />
+                      {!field.state.meta.isValid && (
                         <ErrorAlert message={field.state.meta.errors.join(', ')} />
-                    )}
-                  </Fragment>
+                      )}
+                    </Fragment>
 
                 }
               />

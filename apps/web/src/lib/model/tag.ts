@@ -1,31 +1,32 @@
 import * as z from "zod";
 
+import {
+  ZPagination,
+  ZSearch,
+} from "@/lib/model/common";
 
 
-// Tag Definitions
-export const ZTagCategory = z.object({
-  category: z.string().catch(''),
-  rowCount: z.number().catch(1),
-});
-export type ITagCategory = z.infer<typeof ZTagCategory>;
 
-
-export const ZTagCategoryReadRequest = z.object({
+export const ZTag = z.object({
+  id: z.string().catch(''),
   userId: z.string().catch(''),
-  pageSize: z.number().catch(100),
-  pageNumber: z.number().catch(1),
-  sortQuery: z.string().catch('category ASC'),
-
+  name: z.string().catch(''),
+  count: z.number().catch(0),
 });
-export type ITagCategoryReadRequest = z.infer<typeof ZTagCategoryReadRequest>;
+export type ITag = z.infer<typeof ZTag>;
 
-export const ZTagCategoryReadResponse = z.object({
-  categories: z.array(ZTagCategory).catch([]),
+
+export const ZTagReadRequest = z.object({
   userId: z.string().catch(''),
-  pageSize: z.number().catch(100),
-  pageNumber: z.number().catch(1),
-  sortQuery: z.string().catch('category ASC'),
+  query: ZSearch,
+  pagination: ZPagination,
 });
-export type ITagCategoryReadResponse = z.infer<typeof ZTagCategoryReadResponse>;
+export type ITagReadRequest = z.infer<typeof ZTagReadRequest>;
 
-
+export const ZTagReadResponse = z.object({
+  tags: z.array(ZTag).catch([]),
+  totalRecordCount: z.number().catch(0),
+  query: ZSearch,
+  pagination: ZPagination,
+});
+export type ITagReadResponse = z.infer<typeof ZTagReadResponse>;

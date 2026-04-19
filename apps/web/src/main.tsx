@@ -1,6 +1,6 @@
 import { StrictMode, useEffect, useMemo } from 'react';
 import type { ReactNode } from "react";
-import ReactDOM from 'react-dom/client'
+import ReactDOM from 'react-dom/client';
 import {
   RouterProvider,
   createRouter,
@@ -9,22 +9,22 @@ import {
   QueryClient,
   QueryClientProvider
 } from '@tanstack/react-query';
-import { ClerkProvider } from '@clerk/clerk-react'
+import { ClerkProvider } from '@clerk/react'
 import { enableMapSet } from 'immer';
 import { ThemeProvider, } from '@mui/material/styles';
-import { useUser } from '@clerk/clerk-react';
+import { useUser } from '@clerk/react';
 import LinearProgress from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
-
 
 
 // Internal imports
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
-import reportWebVitals from './reportWebVitals.ts'
+// import reportWebVitals from './reportWebVitals.ts'
 import NotFound from '@/components/common/NotFound';
-import { ErrorAlert} from "@/components/core/Alerts";
+import { ErrorAlert } from "@/components/core/Alerts";
 import theme from '@/system/theme';
+// import * from
 
 
 declare global {
@@ -32,6 +32,7 @@ declare global {
     runtimeConfig: {
       authKey: string;
       apiUrl: string;
+      debug?: string;
     };
   }
 }
@@ -66,11 +67,11 @@ declare module '@tanstack/react-router' {
 
 
 
-function Wrapper( { children }: { children: ReactNode } ) {
+function Wrapper({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider theme={theme}>
       <QueryClientProvider client={queryClient}>
-          {children}
+        {children}
       </QueryClientProvider>
     </ThemeProvider>
   )
@@ -82,7 +83,7 @@ async function loadConfig() {
   window.runtimeConfig = config;
 }
 
-function StrictModeWrapper({ children }: { children: ReactNode}) {
+function StrictModeWrapper({ children }: { children: ReactNode }) {
   if (process.env.NODE_ENV === "development") {
     return <StrictMode>{children}</StrictMode>
   }
@@ -91,14 +92,11 @@ function StrictModeWrapper({ children }: { children: ReactNode}) {
 
 function App() {
   const { user, } = useUser();
-
-  console.info("In App component - user ", user);
-
   // Use a useMemo for the context value to ensure stable object reference
   const routerContext = useMemo(() => {
     return {
       user,
-      queryClient
+      queryClient,
     }
   }, [user])
 
@@ -124,7 +122,10 @@ function App() {
   )
 }
 
-console.info("Node environment", process.env.NODE_ENV)
+
+if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+  console.info("Node environment", process.env.NODE_ENV)
+}
 loadConfig().then(
   () => {
     const aKey = window.runtimeConfig.authKey;
@@ -132,20 +133,21 @@ loadConfig().then(
     if (rootElement && !rootElement.innerHTML) {
       const root = ReactDOM.createRoot(rootElement);
       root.render(
-      <ClerkProvider publishableKey={aKey}>
-          {/* <App /> */}
+        <ClerkProvider publishableKey={aKey} appearance={{
+          theme: 'simple',
+        }}>
           <Box sx={{ overflowX: "hidden" }}>
             <App />
           </Box>
-      </ClerkProvider>
+        </ClerkProvider>
 
       )
     }
-});
+  });
 
 
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals(console.log)
+// reportWebVitals(console.log)

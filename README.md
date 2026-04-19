@@ -30,13 +30,12 @@
     go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
     go install connectrpc.com/connect/cmd/protoc-gen-connect-go@latest
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-    go install github.com/sudorandom/protoc-gen-connect-openapi@main
+    go install github.com/sudorandom/protoc-gen-connect-openapi@latest
+
+    protoc-gen-connect-openapi --version
 
 
     cd "$WORK_DIR/apps/api"
-    go mod download
-
-    cd "$WORK_DIR/internal"
     go mod download
 
 ```
