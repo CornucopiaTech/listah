@@ -657,6 +657,11 @@ components:
         softDelete:
           type: boolean
           title: softDelete
+        propList:
+          type: array
+          items:
+            type: string
+          title: propList
         updatedBy:
           type: string
           title: updatedBy
@@ -920,6 +925,11 @@ components:
         name:
           type: string
           title: name
+        props:
+          type: array
+          items:
+            type: string
+          title: props
         count:
           type: integer
           title: count

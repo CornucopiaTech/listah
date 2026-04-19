@@ -28,6 +28,7 @@ type Item struct {
 	Name          string
 	Note          string
 	Tags          []string `bun:"type:jsonb"`
+	PropList          *[]string `bun:",scanonly"`
 	Props         map[string]string
 	SoftDelete    bool `bun:",nullzero,default:false"`
 	UpdatedBy     string
@@ -103,6 +104,7 @@ func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
 			Note:       v.Note,
 			Tags:       v.Tags,
 			Props:      v.Props,
+			PropList:   *v.PropList,
 			SoftDelete: v.SoftDelete,
 		})
 	}

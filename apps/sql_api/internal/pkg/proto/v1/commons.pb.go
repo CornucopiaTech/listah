@@ -140,6 +140,7 @@ type Item struct {
 	Props         map[string]string      `protobuf:"bytes,5,rep,name=props,proto3" json:"props,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	Tags          []string               `protobuf:"bytes,6,rep,name=tags,proto3" json:"tags,omitempty"`
 	SoftDelete    bool                   `protobuf:"varint,7,opt,name=softDelete,proto3" json:"softDelete,omitempty"`
+	PropList      []string               `protobuf:"bytes,8,rep,name=propList,proto3" json:"propList,omitempty"`
 	UpdatedBy     string                 `protobuf:"bytes,500,opt,name=updatedBy,proto3" json:"updatedBy,omitempty"`
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,501,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -225,6 +226,13 @@ func (x *Item) GetSoftDelete() bool {
 	return false
 }
 
+func (x *Item) GetPropList() []string {
+	if x != nil {
+		return x.PropList
+	}
+	return nil
+}
+
 func (x *Item) GetUpdatedBy() string {
 	if x != nil {
 		return x.UpdatedBy
@@ -244,7 +252,8 @@ type Tag struct {
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	UserId        string                 `protobuf:"bytes,2,opt,name=userId,proto3" json:"userId,omitempty"`
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Count         int32                  `protobuf:"varint,4,opt,name=count,proto3" json:"count,omitempty"`
+	Props         []string               `protobuf:"bytes,4,rep,name=props,proto3" json:"props,omitempty"`
+	Count         int32                  `protobuf:"varint,5,opt,name=count,proto3" json:"count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -298,6 +307,13 @@ func (x *Tag) GetName() string {
 		return x.Name
 	}
 	return ""
+}
+
+func (x *Tag) GetProps() []string {
+	if x != nil {
+		return x.Props
+	}
+	return nil
 }
 
 func (x *Tag) GetCount() int32 {
@@ -454,7 +470,7 @@ const file_v1_commons_proto_rawDesc = "" +
 	"\n" +
 	"pageNumber\x18\x02 \x01(\x03R\n" +
 	"pageNumber\x12\x12\n" +
-	"\x04sort\x18\x03 \x01(\tR\x04sort\"\xd0\x02\n" +
+	"\x04sort\x18\x03 \x01(\tR\x04sort\"\xec\x02\n" +
 	"\x04Item\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
@@ -464,18 +480,20 @@ const file_v1_commons_proto_rawDesc = "" +
 	"\x04tags\x18\x06 \x03(\tR\x04tags\x12\x1e\n" +
 	"\n" +
 	"softDelete\x18\a \x01(\bR\n" +
-	"softDelete\x12\x1d\n" +
+	"softDelete\x12\x1a\n" +
+	"\bpropList\x18\b \x03(\tR\bpropList\x12\x1d\n" +
 	"\tupdatedBy\x18\xf4\x03 \x01(\tR\tupdatedBy\x129\n" +
 	"\tupdatedAt\x18\xf5\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x1a8\n" +
 	"\n" +
 	"PropsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"W\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"m\n" +
 	"\x03Tag\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x14\n" +
-	"\x05count\x18\x04 \x01(\x05R\x05count\"n\n" +
+	"\x05props\x18\x04 \x03(\tR\x05props\x12\x14\n" +
+	"\x05count\x18\x05 \x01(\x05R\x05count\"n\n" +
 	"\x06Filter\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\x12\n" +

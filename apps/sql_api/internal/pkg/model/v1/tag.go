@@ -11,6 +11,7 @@ func TagModelToTagProto(m []*Tag) ([]*pb.Tag, error) {
 			Id: v.Id,
 			UserId: v.UserId,
 			Name:   v.Name,
+			Props:   v.Props,
 			Count:  int32(v.Count),
 		})
 	}

@@ -79,7 +79,7 @@ func (a *tag) Read(ctx context.Context, m *[]*model.Tag, s *model.ItemSearch) (i
 	cte := `
 		WITH items AS (
 			SELECT
-				t."id", t."user_id", t."name", COALESCE(COUNT(*), 0) count
+				t."id", t."user_id", t."name", t.props, COALESCE(COUNT(*), 0) count
 			FROM apps.items it
 				LEFT JOIN LATERAL jsonb_array_elements_text(it.tags::JSONB) AS elem(tag_id)
 					ON TRUE

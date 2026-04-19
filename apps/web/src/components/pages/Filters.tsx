@@ -25,7 +25,7 @@ import { AppContainer } from '@/components/layout/AppContainer';
 export function Filters() {
   const store: TBoundStore = useBoundStore((state) => state);
   return (
-    <AppContainer mw="md">
+    <AppContainer mw="sm">
       <AppPageStack>
         {store.itemModal && <AppItemModal />}
         {store.filterModal && <AppFilterModal />}

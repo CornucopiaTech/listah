@@ -27,6 +27,7 @@ message Item {
   map<string,string> props = 5;
   repeated string tags = 6;
   bool softDelete = 7;
+  repeated string propList = 8;
   string updatedBy = 500;
   google.protobuf.Timestamp updatedAt = 501;
 }
@@ -34,7 +35,8 @@ message Tag {
   string id = 1;
   string userId = 2;
   string name = 3;
-  int32 count = 4;
+  repeated string props = 4;
+  int32 count = 5;
 }
 
 message Filter {

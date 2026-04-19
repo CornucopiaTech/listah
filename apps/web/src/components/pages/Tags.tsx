@@ -32,7 +32,7 @@ export function Tags() {
   const title = useParams({ strict: false }).title;
   const header = title ? `Tags like '${title}'` : "All Tags"
   return (
-    <AppContainer mw="md">
+    <AppContainer mw="sm">
       <AppPageStack>
         {store.itemModal && <AppItemModal />}
         {store.filterModal && <AppFilterModal />}

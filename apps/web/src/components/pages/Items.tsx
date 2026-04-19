@@ -29,7 +29,7 @@ export function Items() {
   const store: TBoundStore = useBoundStore((state) => state);
   const header = title ? title : "All Items"
   return (
-    <AppContainer mw="md">
+    <AppContainer mw="sm">
       <AppPageStack>
         {store.itemModal && <AppItemModal />}
         <ItemSearchBar />
