@@ -6,7 +6,6 @@ import {
 import type {
   ChangeEvent,
   ReactNode,
-  SyntheticEvent,
 } from 'react';
 
 import {
@@ -16,10 +15,6 @@ import {
 import {
   useQueryClient,
   useMutation,
-  useQuery,
-} from '@tanstack/react-query';
-import type {
-  UseQueryResult,
 } from '@tanstack/react-query';
 import {
   v4 as uuidv4,
@@ -34,12 +29,11 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { Icon } from "@iconify/react";
 import { useUser } from '@clerk/react';
-import { LinearProgress, useTheme } from "@mui/material";
+import { useTheme } from "@mui/material";
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import Box from '@mui/material/Box';
-import Autocomplete from '@mui/material/Autocomplete';
 
 
 
@@ -52,130 +46,60 @@ import {
   useBoundStore,
   type TBoundStore
 } from '@/lib/store/boundStore';
-import { DefaultItem } from '@/lib/helper/defaults';
-import {
-  ZItem
-} from "@/lib/model/item";
-import { postItem } from "@/lib/helper/fetchers";
-import type {
-  IItem,
-} from "@/lib/model/item";
+import { DefaultTag } from '@/lib/helper/defaults';
+// import { postTag } from "@/lib/helper/fetchers"; //ToDo: Create this postTag Function.
 import { ErrorAlert, SuccessAlert, WarnAlert } from "@/components/core/Alerts";
 import type { AppTheme } from '@/system/theme';
-import {
-  DefaultTagRead,
-} from '@/lib/helper/defaults';
 import type {
   ITag,
-  ITagReadResponse,
 } from "@/lib/model/tag";
-import { tagGroupOptions } from '@/lib/helper/querying';
 
 
-type itemFields = "id" | "userId" | "name" | "note" | `props[${number}]` | "softDelete" | `tags[${number}]`
+type itemFields = "id" | "userId" | "name" | `props[${number}]`
 
-export function AppItemModal(): ReactNode {
+export function AppTagModal(): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
   const { user } = useUser();
+  const tag: ITag = useBoundStore((state) => state.displayTag);
+
+
   const queryClient = useQueryClient();
   const theme: AppTheme = useTheme();
-  const tagQuery = {
-    ...DefaultTagRead,
-    userId: user?.id || "",
-    pageSize: -1,
-  }
-  const {
-    isPending, isError, data, error
-  }: UseQueryResult<ITagReadResponse> = useQuery(tagGroupOptions(tagQuery));
-  // This call should be done async when the app loads.
-  const tags: ITag[] = data && data.tags ? data.tags : [];
-  const item: IItem = useBoundStore((state) => state.displayItem);
-
-  // Get names of tags from the tagNames field for existing items or from tags for new items being created from / route via tag or filter category list
-
-  let tagNameSet: Set<string> = new Set();
-  if (item.tagNames && item.tagNames.length !== 0) {
-    tagNameSet = tagNameSet.union(new Set([...item.tagNames]))
-  }
-  if (item.tags && item.tags.length !== 0) {
-    const passedTags: string[] = item.tags;
-    passedTags.forEach(t => {
-      const mtch = tags.filter(ts => ts.id == t)
-      if (mtch.length > 0) {
-        tagNameSet.add(mtch[0].name)
-      }
-    });
-  }
-  const tagNames: string[] = [...tagNameSet].sort();
-
-
-  // Determine list of item props from list of item Tags.
-  // Use the combination of the passed Props list and the passed tags.
-  let propSet: Set<string> = new Set();
-
-  // Get a set of all the items passed to the  item.propList
-  if (item.propList && Object.keys(item.propList).length !== 0) {
-    propSet = propSet.union(new Set([...item.propList]))
-  }
-  // Get the props from all the items passed as tags and add to set of Props
-  tagNames.forEach(t => {
-    const mtch = tags.filter(ts => ts.name == t)
-    if (mtch.length > 0) {
-      propSet = propSet.union(new Set([...mtch[0].props]))
-    }
-  });
-  // Convert set to list and sort ascending
-  const propList: string[] = [...propSet].sort();
-
-  // Create the key value pair used for the props.
-  type IProps = {
-    key: string,
-    value: string
-  }
-  let itemProps: IProps[] = [];
-  propList.forEach(p => itemProps.push({
-    key: p, value: item.props && item.props[p] ? item.props[p] : ""
-  }));
-
-
   const formData = {
-    ...item,
-    props: itemProps,
-    tags: tagNames
+    ...tag
   }
   const form = useForm({
     defaultValues: formData,
     onSubmit: formSubmission,
     validators: {
-      onChange({ value }: { value: IItem }) {
+      onChange({ value }: { value: ITag }) {
         if (value.name.length < 1) {
-          return "Item title is required";
+          return "Tag name is required";
         }
-        if (value.tags.length < 1) {
-          return "A least one tag is required";
+        if (value.props.length < 1) {
+          return "A least one property is required";
         }
         return undefined
       },
-      onBlur({ value }: { value: IItem }) {
+      onBlur({ value }: { value: ITag }) {
         if (value.name.length < 1) {
-          return "Item title is required";
+          return "Tag name is required";
         }
-        if (value.tags.length < 1) {
-          return "A least one tag is required";
+        if (value.props.length < 1) {
+          return "A least one property is required";
         }
         return undefined
       },
     },
   });
 
-
-
   // Define invalidating  mutation
   const mutation = useMutation({
-    mutationFn: (mutateItem: IItem) => {
-      const mi = ZItem.parse(mutateItem);
-      return postItem(mi);
-    },
+    // mutationFn: (mutateTag: ITag) => {
+    //   // return () => mutateTag
+    //   // const mi = ZTag.parse(mutateTag);
+    //   // return postTag(mi); //ToDo: Change mutation exec function
+    // },
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["item"] }),
@@ -205,12 +129,9 @@ export function AppItemModal(): ReactNode {
   }, [form.state.isSubmitted, mutation.isSuccess]);
 
 
-
-
   function closeModal() {
-    store.setItemModal(false);
-    store.setDisplayId("");
-    store.setDisplayItem(DefaultItem);
+    store.setTagModal(false);
+    store.setDisplayTag(DefaultTag);
   }
 
   function onFormSubmit(e: ChangeEvent) {
@@ -221,27 +142,22 @@ export function AppItemModal(): ReactNode {
     //Note:  Modal should not be closed after form submission so success or error feedback can be sent to the user.
   }
 
-  function formSubmission({ value }: { value: IItem }) {
+  function formSubmission({ value }: { value: ITag }) {
     if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
       console.log("In formSubmission - value ", value);
     }
     const itemId = value.id && value.id != "" ? value.id : uuidv4();
     const userId = user && user.id ? user.id : value.userId;
-    const subProps = value.props.reduce((acc: any, i: IProps) => {
-      acc[i.key] = i.value;
-      return acc
-    }, {})
     const submitValue = {
       ...value,
       userId,
       id: itemId,
-      tags: value.tags?.filter((t) => t != ""),
-      props: subProps,
+      props: value.props?.filter((t) => t != ""),
     }
     if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
       console.log("In formSubmission - submitValue ", submitValue);
     }
-    mutation.mutate(submitValue);
+    // mutation.mutate(submitValue);
 
   }
 
@@ -282,51 +198,9 @@ export function AppItemModal(): ReactNode {
   }
 
   function getPropField() {
-    return (
-      <form.Field name="props" mode="array">
-        {
-          (field) => (
-            <Fragment >
-              {
-                field.state.value &&
-                field.state.value.map((_, i) => {
-                  return <form.Field key={i} name={`props[${i}]`}>{
-                    (subField) => {
-                      return (
-                        <TextField
-                          slotProps={{
-                            input: { style: { fontSize: "15px" } },
-                            inputLabel: { style: { fontSize: "15px" } },
-                          }}
-                          multiline
-                          id={"item-prop-key-" + i}
-                          value={subField.state.value.value}
-                          label={subField.state.value.key.charAt(0).toUpperCase() + subField.state.value.key.slice(1)}
-                          onChange={
-                            (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
-                              subField.handleChange({ ...subField.state.value, value: e.target.value })
-                          }
-                          size="small"
-                          variant="standard"
-                          // variant="outlined"
-                          margin="dense"
-                        />
-                      )
-                    }
-                  }</form.Field>
-                })
-              }
-            </Fragment>
-          )
-        }
-      </form.Field>
-    );
-  }
-
-  function getTagField() {
     // ToDo: Use Virtualised list for this.
     return (
-      <form.Field name="tags" mode="array">
+      <form.Field name="props" mode="array">
         {
           (field) => (
             <Fragment>
@@ -364,57 +238,25 @@ export function AppItemModal(): ReactNode {
                   field.state.value &&
                   <Grid container spacing={3} sx={{ width: '100%' }}>{
                     field.state.value.map((_, i) => {
-                      return <form.Field key={i} name={`tags[${i}]`}>{
+                      return <form.Field key={i} name={`props[${i}]`}>{
                         (subField) => {
                           return (
                             <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-                              <Autocomplete
-                                slotProps={{ listbox: { sx: { fontSize: '14px' } } }}
-                                size="small"
+                              <TextField
+                                slotProps={{
+                                  input: { style: { fontSize: "15px" } },
+                                  inputLabel: { style: { fontSize: "15px" } },
+                                }}
                                 id={"item-tag-" + i}
-                                freeSolo
-                                options={tags.map((opt) => opt.name)}
+                                key={"item-tag-" + i}
                                 value={subField.state.value}
-                                inputValue={subField.state.value}
+                                label=""
                                 onChange={
-                                  (e: SyntheticEvent<Element, Event>, newValue: string | null) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    // Handles ONLY changes from the provided options.
-                                    const sval = newValue ? newValue : "";
-                                    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-                                      console.log("OnChange", newValue, sval);
-                                    }
-                                    subField.handleChange(sval);
-                                  }
-                                }
-                                onInputChange={
-                                  (e: SyntheticEvent<Element, Event>, newValue: string) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    // Handles both handwritten and provided option value changes.
-                                    const sval = newValue ? newValue : "";
-                                    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-                                      console.log("OnInputChange", newValue, sval);
-                                    }
-                                    subField.handleChange(sval);
-                                  }
-                                }
-                                renderInput={
-                                  (params) =>
-                                    <TextField
-                                      // slotProps causes autocorrect to stop working
-                                      sx={{
-                                        '& .MuiInputBase-input': { fontSize: '14px' }, // Changes the typed text size
-                                        '& .MuiInputLabel-root': { fontSize: '14px' }, // Changes the label size
-                                      }}
-                                      margin="dense"
-                                      {...params}
-                                      label=""
-                                      // label={"tag " + (i + 1)}
-                                      variant="standard"
-                                    />
-                                }
+                                  (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => subField.handleChange(e.target.value)}
+                                size="small"
+                                variant="standard"
+                                // variant="outlined"
+                                margin="dense"
                               />
                             </Grid>
                           )
@@ -433,7 +275,7 @@ export function AppItemModal(): ReactNode {
 
 
   function handleDelete() {
-    form.setFieldValue('softDelete', true);
+    // form.setFieldValue('softDelete', true); //ToDo Add soft delete as a feature of tags and filters.
     form.handleSubmit();
   }
 
@@ -443,7 +285,7 @@ export function AppItemModal(): ReactNode {
     form.setFieldValue('name', "[Clone of] - " + title);
   }
 
-  const fields: itemFields[] = ['id', 'userId', 'name', "note"];
+  const fields: itemFields[] = ['id', 'userId', 'name'];
   const dialogSx = {
     display: 'block',
     width: "lg",
@@ -490,7 +332,7 @@ export function AppItemModal(): ReactNode {
 
   function Dlg(content: ReactNode, actions?: ReactNode): ReactNode {
     return (
-      <Dialog fullWidth maxWidth="lg" open={store.itemModal} onClose={closeModal} >
+      <Dialog fullWidth maxWidth="lg" open={store.tagModal} onClose={closeModal} >
         <IconButton aria-label="delete"
           sx={{
             display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
@@ -511,18 +353,6 @@ export function AppItemModal(): ReactNode {
     )
   }
 
-
-  if (isPending) {
-    const con = <LinearProgress />;
-    return Dlg(con);
-  }
-
-
-  if (isError) {
-    const con = <ErrorAlert message={error?.message || "An error occurred. Please try again"} />;
-    return Dlg(con);
-  }
-
   const con = (
     <Box
       component="section"
@@ -541,7 +371,7 @@ export function AppItemModal(): ReactNode {
         )}
         {mutation.isSuccess && (
           <Fragment>
-            <SuccessAlert message="Item updated!" />
+            <SuccessAlert message="Tag updated!" />
           </Fragment>
         )}
         {
@@ -554,7 +384,6 @@ export function AppItemModal(): ReactNode {
 
         {/* ToDo: fix display for tags and fields. */}
         {getPropField()}
-        {getTagField()}
       </Stack>
     </Box>
   )

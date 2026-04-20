@@ -64,11 +64,19 @@ export function AppSectionStack({ children }: { children: ReactNode }): ReactNod
   );
 }
 
-
 export function AppPageStack({ children }: { children: ReactNode }): ReactNode {
   return (
     <Stack direction="column" spacing={2}
-      sx={{ width: "100%", maxWidth: "100%", }} justifyContent="center" alignItems="center">
+      sx={{ width: "90%", maxWidth: "90%", }} justifyContent="center" alignItems="center">
+      {children}
+    </Stack>
+  );
+}
+
+export function AppCategoryStack({ children }: { children: ReactNode }): ReactNode {
+  return (
+    <Stack direction={{ xs: "column", sm: "row" }} spacing={{ xs: 6, sm: 2 }}
+      sx={{ width: "100%", maxWidth: "100%" }} justifyContent="center" alignItems="center">
       {children}
     </Stack>
   );

@@ -5,8 +5,8 @@ import {
 
 import { AppItemModal } from "@/components/core/AppItemModal";
 import {
-  ItemSearchBar,
-} from "@/components/core/ItemSearchBar";
+  AppSearchBar,
+} from "@/components/core/AppSearchBar";
 import { ItemListLayout } from "@/components/layout/ItemList";
 import {
   AppPageStack,
@@ -22,17 +22,19 @@ import { AppContainer } from '@/components/layout/AppContainer';
 import {
   AppCategoryListPaper,
 } from '@/components/core/AppPaper';
-
+import { AppTagModal } from "@/components/core/AppTagModal";
 
 export function Items() {
   const title = useParams({ strict: false }).title;
   const store: TBoundStore = useBoundStore((state) => state);
   const header = title ? title : "All Items"
+  // Set src as a param for /items/{title} so it can be used for the modals from /items/{title}
   return (
     <AppContainer mw="sm">
       <AppPageStack>
         {store.itemModal && <AppItemModal />}
-        <ItemSearchBar />
+        {store.tagModal && <AppTagModal />}
+        <AppSearchBar />
         <AppCategoryListPaper>
           <AppListHeaderBar key="header">
             <AppH5ButtonTypography> {header} </AppH5ButtonTypography>

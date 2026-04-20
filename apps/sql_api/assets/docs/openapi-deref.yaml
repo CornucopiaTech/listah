@@ -70,6 +70,16 @@ paths:
                         items:
                           type: string
                         title: propList
+                      tagIds:
+                        type: array
+                        items:
+                          type: string
+                        title: tagIds
+                      tagNames:
+                        type: array
+                        items:
+                          type: string
+                        title: tagNames
                       updatedBy:
                         type: string
                         title: updatedBy

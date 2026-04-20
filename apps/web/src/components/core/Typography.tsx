@@ -47,6 +47,12 @@ export function AppSubtitle1Typography({ children, sx }: { children: ReactNode, 
   )
 }
 
+export function AppSubtitle2Typography({ children, sx }: { children: ReactNode, sx?: any }) {
+  return (
+    <AppTypography variant="subtitle2" sx={{ ...sx }}>{children}</AppTypography>
+  )
+}
+
 
 export function AppH6Typography({ children, sx }: { children: ReactNode, sx?: any }) {
   return (

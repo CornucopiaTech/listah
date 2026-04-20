@@ -65,7 +65,7 @@ function OuterBox({ children }: { children: ReactNode }): ReactNode {
 export function FilterListLayout(): ReactNode {
   const navigate = useNavigate();
   const { user, } = useUser();
-  const routeApi = getRouteApi('/filters/{-$title}');
+  const routeApi = getRouteApi('/');
   const routeSearch: { s: string } = routeApi.useSearch()
   let search: IFilterReadRequest = decodeState(routeSearch.s) as IFilterReadRequest;
 
@@ -123,8 +123,13 @@ export function FilterListLayout(): ReactNode {
       // query: { ...DefaultItemRead.query, filters: [ct] },
     };
     const encoded = encodeState(q);
+    const encodedSrc = encodeState(it);
     const itemTitle = ct == "" ? "" : "Items in ##" + ct;
-    navigate({ to: "/items/{-$title}", search: { s: encoded }, params: { title: itemTitle } });
+    navigate({
+      to: "/items/{-$title}",
+      search: { s: encoded, src: encodedSrc },
+      params: { title: itemTitle }
+    });
   }
   function eachItem(itemKey: number, item: IFilter): ReactNode {
     const tc = item && item.name ? item.name : "";
@@ -181,7 +186,11 @@ export function FilterListLayout(): ReactNode {
       }
       {
         !isError && !isPending && filters.length == 0 &&
-        <OuterBox><AppH6Typography> No items found </AppH6Typography></OuterBox>
+        <OuterBox>
+          <AppH6Typography sx={{ display: 'flex', textTransform: "none", justifyContent: "center", alignContent: "center", }}>
+            No filters found
+          </AppH6Typography>
+        </OuterBox>
       }
       {
         filters.length > 0 && <Virtuoso key="data-content"

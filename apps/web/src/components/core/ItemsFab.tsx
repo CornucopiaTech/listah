@@ -1,4 +1,7 @@
 
+import {
+  getRouteApi,
+} from '@tanstack/react-router';
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
@@ -7,26 +10,68 @@ import { Icon } from "@iconify/react";
 
 
 
-import { DefaultItem } from "@/lib/helper/defaults";
+import {
+  DefaultItem,
+} from "@/lib/helper/defaults";
 import {
   useBoundStore,
   type TBoundStore
 } from '@/lib/store/boundStore';
-
+import type {
+  IItemReadRequest,
+} from "@/lib/model/item";
+import {
+  decodeState,
+} from '@/lib/helper/encoders';
+import type {
+  ITag,
+} from "@/lib/model/tag";
+import type {
+  IFilter,
+} from "@/lib/model/filter";
 
 
 export function ItemsFab() {
   const store: TBoundStore = useBoundStore((state) => state);
+  const routeApi = getRouteApi('/items/{-$title}');
+  const routeSearch: { s: string, src: string } = routeApi.useSearch()
+  let search: IItemReadRequest = decodeState(routeSearch.s) as IItemReadRequest;
+  let rtSrc: ITag | IFilter = decodeState(routeSearch.src) as ITag | IFilter;
+
+  console.info("In Items Fab: search", search);
+  console.info("In Items Fab: src", rtSrc);
+
+  const isTag = rtSrc && (rtSrc as ITag).props !== undefined && (rtSrc as ITag).props !== null;
 
 
   function handleItemClick() {
-    store.setDisplayId("");
-    store.setDisplayItem(DefaultItem);
+    store.setDisplayItem({
+      ...DefaultItem,
+      tags: search && search.query && search.query.tags ? search.query.tags : []
+    });
     store.setItemModal(true);
   }
+
+
+  function handleCategoryClick() {
+    if (isTag) {
+      store.setDisplayTag(rtSrc as ITag);
+      store.setTagModal(true);
+    } else {
+      store.setDisplayFilter(rtSrc as IFilter);
+      store.setFilterModal(true);
+      // ToDo: Update Filter Modal to be able to create new filters and update existing filters.
+    }
+  }
+
   const formActions = [
     {
       name: "Create new item", icon: "carbon:new-tab", onClick: handleItemClick
+    },
+    {
+      name: isTag ? "Update tag" : "Update filter",
+      icon: "material-symbols:edit-outline",
+      onClick: handleCategoryClick
     },
   ]
 

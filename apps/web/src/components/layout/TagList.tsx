@@ -27,6 +27,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Chip from '@mui/material/Chip';
 import TablePagination from '@mui/material/TablePagination';
+import Stack from '@mui/material/Stack';
 
 
 
@@ -54,7 +55,15 @@ import {
 import {
   AppH6Typography,
   AppBody1Typography,
+  AppBody2Typography,
+  AppSubtitle1Typography,
+  AppSubtitle2Typography,
 } from "@/components/core/Typography";
+import {
+  AppButton,
+  AppPrimaryButton,
+
+} from '@/components/core/AppButton';
 
 
 
@@ -69,7 +78,7 @@ function OuterBox({ children }: { children: ReactNode }): ReactNode {
 }
 
 export function TagListLayout(): ReactNode {
-  const routeApi = getRouteApi('/tags/{-$title}');
+  const routeApi = getRouteApi('/');
   const routeSearch: { s: string } = routeApi.useSearch()
   let search = decodeState(routeSearch.s) as ITagReadRequest;
   const navigate = useNavigate();
@@ -139,7 +148,12 @@ export function TagListLayout(): ReactNode {
       query: { ...DefaultItemRead.query, tags: [cti] },
     };
     const encoded = encodeState(q);
-    navigate({ to: "/items/{-$title}", search: { s: encoded }, params: { title: `Items in #${ct}` } });
+    const encodedSrc = encodeState(it);
+    navigate({
+      to: "/items/{-$title}",
+      search: { s: encoded, src: encodedSrc },
+      params: { title: `Items in #${ct}` }
+    });
   }
 
   function eachItem(itemKey: number, item: ITag): ReactNode {
@@ -152,14 +166,13 @@ export function TagListLayout(): ReactNode {
       >
         <ListItemButton>
           <ListItemText primary={
-            <AppBody1Typography sx={{ p: 0 }}>{tc}</AppBody1Typography>
+            <AppSubtitle1Typography sx={{ p: 0 }}>{tc}</AppSubtitle1Typography>
           } />
           <Chip sx={{ background: "primary" }} label={item.count ? item.count.toString() : "0"} />
         </ListItemButton>
       </ListItem>
     );
   }
-
 
   let errMsg: string = isError && error && error instanceof Error ? error.message : "";
   try {
@@ -191,7 +204,11 @@ export function TagListLayout(): ReactNode {
       }
       {
         !isError && !isPending && tags.length == 0 &&
-        <OuterBox><AppH6Typography> No items found </AppH6Typography></OuterBox>
+        <OuterBox>
+          <AppH6Typography sx={{ display: 'flex', textTransform: "none", justifyContent: "center", alignContent: "center", }}>
+            No tags found
+          </AppH6Typography>
+        </OuterBox>
       }
       {
         tags.length > 0 && <Virtuoso key="data-content"

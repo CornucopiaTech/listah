@@ -1,5 +1,4 @@
 
-import { useLocation } from '@tanstack/react-router';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import { useTheme } from '@mui/material/styles';
@@ -8,7 +7,6 @@ import {
 } from '@clerk/react';
 import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
-
 
 
 import {
@@ -20,14 +18,6 @@ import type { AppTheme } from '@/lib/styles/theme';
 
 export function AppNavBar() {
   const theme: AppTheme = useTheme();
-  const pathname = useLocation({
-    select: (location) => location.pathname,
-  });
-
-  type ActiveState = "always" | "none" | "hover" | undefined;
-  const filterActive: ActiveState = pathname.includes("/filters") ? "always" : "none";
-  const tagActive: ActiveState = pathname.includes("/tags") ? "always" : "none";
-  const itemActive: ActiveState = pathname.includes("/items") ? "always" : "none";
   return (
     <AppBar position="static"
       sx={{
@@ -44,19 +34,6 @@ export function AppNavBar() {
         <Link underline="hover" key="home" href="/" >
           <AppH5Typography> Listah </AppH5Typography>
         </Link>
-
-        <Link underline={tagActive} key="tags" href="/tags" >
-          <AppH5Typography> Tags </AppH5Typography>
-        </Link>
-
-        <Link underline={filterActive} key="filters" href="/filters" >
-          <AppH5Typography > Filters </AppH5Typography>
-        </Link>
-
-        <Link underline={itemActive} key="items" href="/items" >
-          <AppH5Typography > Items </AppH5Typography>
-        </Link>
-
         <Show when="signed-out" key="signout">
           <SignInButton>
             <Button> <AppH5Typography > Sign In </AppH5Typography></Button>

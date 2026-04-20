@@ -11,6 +11,7 @@ export const ZTag = z.object({
   id: z.string().catch(''),
   userId: z.string().catch(''),
   name: z.string().catch(''),
+  props: z.array(z.string()).catch([]),
   count: z.number().catch(0),
 });
 export type ITag = z.infer<typeof ZTag>;

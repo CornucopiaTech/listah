@@ -19,6 +19,11 @@ declare module '@mui/material/Button' {
   }
 }
 
+export const AppPrimaryButton = styled(Button)(() => ({
+  borderRadius: 3,
+  textTransform: 'none',
+}));
+
 export const AppResetButton = styled(Button)(({ theme }: { theme: AppTheme }) => ({
   padding: theme.spacing(1),
   margin: theme.spacing(1),

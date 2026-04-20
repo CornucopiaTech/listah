@@ -12,6 +12,14 @@ import type { IFilterReadRequest } from '@/lib/model/filter';
 
 import type { IApiEndpointConfig } from '@/lib/model/common';
 import type { IUser } from '@/lib/model/auth';
+import type {
+  ITag,
+} from "@/lib/model/tag";
+import type {
+  IFilter,
+} from "@/lib/model/filter";
+
+
 
 
 export const ListBoxSize: {
@@ -46,8 +54,29 @@ export const DefaultItem: IItem = {
   note: "",
   props: null,
   tags: [],
+  tagIds: [],
+  tagNames: [],
+  propList: [],
   softDelete: false,
 };
+
+export const DefaultTag: ITag = {
+  id: "",
+  userId: "",
+  name: "",
+  props: [],
+  count: 0,
+};
+
+export const DefaultFilter: IFilter = {
+  id: "",
+  userId: "",
+  name: "",
+  tags: [],
+  count: 0,
+};
+
+
 
 export const DefaultItemRead: IItemReadRequest = {
   userId: "",

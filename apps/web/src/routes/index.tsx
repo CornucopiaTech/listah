@@ -1,13 +1,11 @@
 import {
   createFileRoute,
-  redirect,
 } from '@tanstack/react-router';
+import { LinearProgress } from '@mui/material';
 
+import { Home } from "@/components/pages/Home"
 
 export const Route = createFileRoute('/')({
-  beforeLoad: () => {
-    throw redirect({
-      to: '/tags/{-$title}',
-    })
-  }
+  component: Home,
+  pendingComponent: LinearProgress,
 })

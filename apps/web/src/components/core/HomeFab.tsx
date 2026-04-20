@@ -4,15 +4,12 @@ import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import Box from '@mui/material/Box';
 import { Icon } from "@iconify/react";
-// import { useTheme } from "@mui/material";
 
 
 import {
   useBoundStore,
   type TBoundStore
 } from '@/lib/store/boundStore';
-import { DefaultItem } from "@/lib/helper/defaults";
-// import type { AppTheme } from '@/system/theme';
 
 
 export function HomeFab() {
@@ -22,14 +19,13 @@ export function HomeFab() {
     store.setFilterModal(true);
   }
 
-  function handleNewItemClick() {
-    store.setDisplayId("");
-    store.setDisplayItem(DefaultItem);
-    store.setItemModal(true);
+  function handleTagClick() {
+    store.setTagModal(true);
   }
+
   const formActions = [
     {
-      name: "Create new item", icon: "carbon:new-tab", onClick: handleNewItemClick
+      name: "Create new tag", icon: "carbon:new-tab", onClick: handleTagClick
     },
     {
       name: "Create new filter", icon: "material-symbols:filter-alt", onClick: handleFilterClick
@@ -44,7 +40,6 @@ export function HomeFab() {
     }}>
       <SpeedDial
         ariaLabel="SpeedDial basic example"
-        // FabProps={{ style: { backgroundColor: theme.palette.secondary.main }}}
         icon={<SpeedDialIcon />}
       >
         {formActions.map((action) => (

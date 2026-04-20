@@ -14,6 +14,8 @@ export const ZItem = z.object({
   note: z.string().catch(""),
   props: z.any(),
   tags: z.array(z.string()).catch([]),
+  tagIds: z.array(z.string()).catch([]),
+  tagNames: z.array(z.string()).catch([]),
   propList: z.array(z.string()).catch([]),
   softDelete: z.boolean().catch(false),
 });

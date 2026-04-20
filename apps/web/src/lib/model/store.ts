@@ -2,7 +2,12 @@
 import type {
   IItem,
 } from "@/lib/model/item";
-
+import type {
+  ITag,
+} from "@/lib/model/tag";
+import type {
+  IFilter,
+} from "@/lib/model/filter";
 
 // Tag Store
 export type IListingState = {
@@ -10,10 +15,12 @@ export type IListingState = {
   drawer: boolean
   itemModal: boolean
   filterModal: boolean
+  tagModal: boolean
   settingModal: boolean
   selectMode: boolean
-  displayId: string
   displayItem: IItem
+  displayTag: ITag
+  displayFilter: IFilter
   searchQuery: string
   checkedTag: Set<string>
   checkedCategory: Set<string>
@@ -25,10 +32,12 @@ export type IListingActions = {
   setDrawer: (drawer: boolean) => void
   setItemModal: (itemModal: boolean) => void
   setFilterModal: (filterModal: boolean) => void
+  setTagModal: (tagModal: boolean) => void
   setSettingModal: (settingModal: boolean) => void
   setSelectMode: (selectMode: boolean) => void
-  setDisplayId: (displayId: string) => void
   setDisplayItem: (displayItem: IItem) => void
+  setDisplayTag: (displayTag: ITag) => void
+  setDisplayFilter: (displayFilter: IFilter) => void
   setSearchQuery: (searchQuery: string) => void
   setCheckedTag: (checkedTag: Set<string>) => void
   setCheckedCategory: (checkedCategory: Set<string>) => void

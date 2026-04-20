@@ -28,6 +28,8 @@ message Item {
   repeated string tags = 6;
   bool softDelete = 7;
   repeated string propList = 8;
+  repeated string tagIds = 9;
+  repeated string tagNames = 10;
   string updatedBy = 500;
   google.protobuf.Timestamp updatedAt = 501;
 }
