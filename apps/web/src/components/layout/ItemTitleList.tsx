@@ -72,11 +72,14 @@ function OuterBox({ children }: { children: ReactNode }): ReactNode {
 }
 
 
-export function ItemListLayout(): ReactNode {
+export function ItemTitleListLayout(): ReactNode {
   const navigate = useNavigate();
   const { user, } = useUser();
+  const title = useParams({ strict: false }).title;
   const store: TBoundStore = useBoundStore((state) => state);
-  const routeApi = getRouteApi('/items/');
+
+
+  const routeApi = getRouteApi('/items/{-$title}');
   const routeSearch: { s: string } = routeApi.useSearch()
   let search: IItemReadRequest = decodeState(routeSearch.s) as IItemReadRequest;
 
@@ -144,6 +147,7 @@ export function ItemListLayout(): ReactNode {
     navigate({
       to: ".",
       search: { s: encoded },
+      params: { title: title || "" }
     });
   };
 
@@ -166,6 +170,7 @@ export function ItemListLayout(): ReactNode {
     navigate({
       to: ".",
       search: { s: encoded },
+      params: { title: title || "" }
     });
   };
 

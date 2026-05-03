@@ -31,7 +31,10 @@ import Chip from '@mui/material/Chip';
 import TablePagination from '@mui/material/TablePagination';
 
 
-
+import {
+  useBoundStore,
+  type TBoundStore
+} from '@/lib/store/boundStore';
 import type { IItemReadRequest } from '@/lib/model/item';
 import type {
   IFilter,
@@ -63,6 +66,7 @@ function OuterBox({ children }: { children: ReactNode }): ReactNode {
   );
 }
 export function FilterListLayout(): ReactNode {
+  const store: TBoundStore = useBoundStore((state) => state);
   const navigate = useNavigate();
   const { user, } = useUser();
   const routeApi = getRouteApi('/');
@@ -130,6 +134,9 @@ export function FilterListLayout(): ReactNode {
       search: { s: encoded, src: encodedSrc },
       params: { title: itemTitle }
     });
+    store.setItemTitle(itemTitle);
+    store.setItemReference(it);
+    store.setDisplayFilter(it);
   }
   function eachItem(itemKey: number, item: IFilter): ReactNode {
     const tc = item && item.name ? item.name : "";

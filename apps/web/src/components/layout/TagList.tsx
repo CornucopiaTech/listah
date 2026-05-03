@@ -27,11 +27,13 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Chip from '@mui/material/Chip';
 import TablePagination from '@mui/material/TablePagination';
-import Stack from '@mui/material/Stack';
 
 
 
-
+import {
+  useBoundStore,
+  type TBoundStore
+} from '@/lib/store/boundStore';
 import type { IItemReadRequest } from '@/lib/model/item';
 import type {
   ITag,
@@ -54,16 +56,8 @@ import {
 } from '@/lib/helper/defaults';
 import {
   AppH6Typography,
-  AppBody1Typography,
-  AppBody2Typography,
   AppSubtitle1Typography,
-  AppSubtitle2Typography,
 } from "@/components/core/Typography";
-import {
-  AppButton,
-  AppPrimaryButton,
-
-} from '@/components/core/AppButton';
 
 
 
@@ -78,11 +72,12 @@ function OuterBox({ children }: { children: ReactNode }): ReactNode {
 }
 
 export function TagListLayout(): ReactNode {
-  const routeApi = getRouteApi('/');
+  const routeApi = getRouteApi('/tags/');
   const routeSearch: { s: string } = routeApi.useSearch()
   let search = decodeState(routeSearch.s) as ITagReadRequest;
   const navigate = useNavigate();
   const { user, } = useUser();
+  const store: TBoundStore = useBoundStore((state) => state);
 
 
   const query: ITagReadRequest = search ? {
@@ -154,6 +149,9 @@ export function TagListLayout(): ReactNode {
       search: { s: encoded, src: encodedSrc },
       params: { title: `Items in #${ct}` }
     });
+    store.setItemTitle(`Items in #${ct}`);
+    store.setItemReference(it);
+    store.setDisplayTag(it);
   }
 
   function eachItem(itemKey: number, item: ITag): ReactNode {

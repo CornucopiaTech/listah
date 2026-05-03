@@ -226,12 +226,12 @@ export function AppTagModal(): ReactNode {
                     padding: '15.5px 13px',
                   },
                 }}>
-                <legend style={{ padding: '0 0.5rem' }}>Tags</legend>
+                <legend style={{ padding: '0 0.5rem' }}>Properties</legend>
                 <Button disableElevation sx={{ display: 'flex', justifyContent: "flex-start", alignContent: "center", }}
                   onClick={() => field.pushValue('')}
                   type="button">
                   <AppSubtitle1Typography sx={{ textTransform: "none", justifyContent: "center", alignContent: "center", fontSize: '15px', }}>
-                    Add new tag
+                    Click to add new property
                   </AppSubtitle1Typography>
                 </Button>
                 {

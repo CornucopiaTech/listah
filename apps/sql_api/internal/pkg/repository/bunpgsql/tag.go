@@ -33,6 +33,7 @@ func (a *tag) Upsert(ctx context.Context, m *[]model.Tag) (interface{}, error) {
 		return nil, nil
 	}
 
+	// ToDo: Tags should be predefined in the UI so adding new tags via add items would not be possible
 	values := a.db.NewValues(m).Column("id", "user_id", "name", "props")
 	query := `
 		WITH tagliterals (id, user_id, name, props) AS (
@@ -58,7 +59,8 @@ func (a *tag) Upsert(ctx context.Context, m *[]model.Tag) (interface{}, error) {
 	}
 
 	// Add the nonexistent tags
-	tq := a.db.NewInsert().Model(&tR).Ignore().On("CONFLICT(name, user_id) DO UPDATE").
+	tq := a.db.NewInsert().Model(&tR).Ignore().
+		On("CONFLICT(name, user_id) DO UPDATE").
 		Set("props = Excluded.props")
 	_, err = tq.Exec(ctx)
 	if err != nil {

@@ -10,11 +10,23 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TagsIndexRouteImport } from './routes/tags/index'
+import { Route as ItemsIndexRouteImport } from './routes/items/index'
 import { Route as ItemsChar123TitleChar125RouteImport } from './routes/items/{-$title}'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TagsIndexRoute = TagsIndexRouteImport.update({
+  id: '/tags/',
+  path: '/tags/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ItemsIndexRoute = ItemsIndexRouteImport.update({
+  id: '/items/',
+  path: '/items/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ItemsChar123TitleChar125Route =
@@ -27,27 +39,35 @@ const ItemsChar123TitleChar125Route =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/items/{-$title}': typeof ItemsChar123TitleChar125Route
+  '/items/': typeof ItemsIndexRoute
+  '/tags/': typeof TagsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/items/{-$title}': typeof ItemsChar123TitleChar125Route
+  '/items': typeof ItemsIndexRoute
+  '/tags': typeof TagsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/items/{-$title}': typeof ItemsChar123TitleChar125Route
+  '/items/': typeof ItemsIndexRoute
+  '/tags/': typeof TagsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/items/{-$title}'
+  fullPaths: '/' | '/items/{-$title}' | '/items/' | '/tags/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/items/{-$title}'
-  id: '__root__' | '/' | '/items/{-$title}'
+  to: '/' | '/items/{-$title}' | '/items' | '/tags'
+  id: '__root__' | '/' | '/items/{-$title}' | '/items/' | '/tags/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ItemsChar123TitleChar125Route: typeof ItemsChar123TitleChar125Route
+  ItemsIndexRoute: typeof ItemsIndexRoute
+  TagsIndexRoute: typeof TagsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -57,6 +77,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tags/': {
+      id: '/tags/'
+      path: '/tags'
+      fullPath: '/tags/'
+      preLoaderRoute: typeof TagsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/items/': {
+      id: '/items/'
+      path: '/items'
+      fullPath: '/items/'
+      preLoaderRoute: typeof ItemsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/items/{-$title}': {
@@ -72,6 +106,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ItemsChar123TitleChar125Route: ItemsChar123TitleChar125Route,
+  ItemsIndexRoute: ItemsIndexRoute,
+  TagsIndexRoute: TagsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

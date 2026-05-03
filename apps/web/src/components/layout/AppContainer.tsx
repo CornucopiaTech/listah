@@ -45,7 +45,8 @@ export function AppContainerShell() {
 export function AppContainer({ children, mw }: { children: ReactNode, mw?: widthType }) {
   return (
     <Fragment>
-      <Container maxWidth={mw ? mw : "xl"} sx={{ marginTop: "3%" }}>
+      <Container maxWidth={mw ? mw : "xl"}
+        sx={{ marginTop: "2%" }} >
         {children}
       </Container>
     </Fragment>

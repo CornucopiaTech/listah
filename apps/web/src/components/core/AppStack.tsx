@@ -81,3 +81,12 @@ export function AppCategoryStack({ children }: { children: ReactNode }): ReactNo
     </Stack>
   );
 }
+
+export function AppToolbarStack({ children }: { children: ReactNode }): ReactNode {
+  return (
+    <Stack direction="row" spacing={{ xs: 6, sm: 2 }}
+      sx={{ width: "100%", maxWidth: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", }} >
+      {children}
+    </Stack>
+  );
+}

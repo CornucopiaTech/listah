@@ -73,7 +73,7 @@ func (s *Server) UpsertFilter(ctx context.Context, req *connect.Request[pb.ItemS
 	}
 
 	w := model.UpsertInfo{
-		Conflict: []string{"user_id", "name"},
+		Conflict: []string{"user_id", "id"},
 		Resolve:  res,
 	}
 

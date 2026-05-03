@@ -10,6 +10,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@base-ui/react": "^1.4.1",
     "@clerk/react": "^6.1.1",
     "@clerk/ui": "^1.2.2",
     "@emotion/react": "^11.14.0",

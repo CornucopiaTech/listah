@@ -6,8 +6,10 @@ import {
 import { AppItemModal } from "@/components/core/AppItemModal";
 import {
   AppSearchBar,
+  AppItemSearchBar,
 } from "@/components/core/AppSearchBar";
 import { ItemListLayout } from "@/components/layout/ItemList";
+import { ItemTitleListLayout } from "@/components/layout/ItemTitleList";
 import {
   AppPageStack,
 } from "@/components/core/AppStack";
@@ -23,8 +25,33 @@ import {
   AppCategoryListPaper,
 } from '@/components/core/AppPaper';
 import { AppTagModal } from "@/components/core/AppTagModal";
+import { AppFilterModal } from "@/components/core/AppFilterModal";
+
 
 export function Items() {
+  const store: TBoundStore = useBoundStore((state) => state);
+  const header = store.itemTitle ? store.itemTitle : "All Items"
+  return (
+    <AppContainer mw="sm">
+      <AppPageStack>
+        {store.itemModal && <AppItemModal />}
+        {store.tagModal && <AppTagModal />}
+        {store.filterModal && <AppFilterModal />}
+        <AppItemSearchBar />
+        <AppCategoryListPaper>
+          <AppListHeaderBar key="header">
+            <AppH5ButtonTypography> {header} </AppH5ButtonTypography>
+          </AppListHeaderBar>
+          <ItemListLayout />
+        </AppCategoryListPaper>
+        <ItemsFab />
+      </AppPageStack>
+    </AppContainer>
+  );
+}
+
+
+export function ItemsTitle() {
   const title = useParams({ strict: false }).title;
   const store: TBoundStore = useBoundStore((state) => state);
   const header = title ? title : "All Items"
@@ -34,12 +61,13 @@ export function Items() {
       <AppPageStack>
         {store.itemModal && <AppItemModal />}
         {store.tagModal && <AppTagModal />}
+        {store.filterModal && <AppFilterModal />}
         <AppSearchBar />
         <AppCategoryListPaper>
           <AppListHeaderBar key="header">
             <AppH5ButtonTypography> {header} </AppH5ButtonTypography>
           </AppListHeaderBar>
-          <ItemListLayout />
+          <ItemTitleListLayout />
         </AppCategoryListPaper>
         <ItemsFab />
       </AppPageStack>

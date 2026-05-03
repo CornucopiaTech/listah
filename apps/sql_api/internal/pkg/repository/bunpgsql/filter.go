@@ -94,7 +94,7 @@ func (a *filter) Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo)
 			strings.Join(c.Conflict, ", "))
 	}
 
-	itemCols := append([]string{"id", "name", "user_id"}, c.Resolve...)
+	itemCols := append([]string{"id", "user_id"}, c.Resolve...)
 	values := a.db.NewValues(m).Column(itemCols...)
 	aliasCols := []string{}
 	for _, v := range itemCols {

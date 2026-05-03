@@ -10,7 +10,7 @@ import (
 func FilterProtoToFilterModel(msg []*pb.Filter, genId bool) ([]*FilterUpsert, []string, error) {
 	savedFilters := []*FilterUpsert{}
 
-	check := map[string]bool{}
+	check := map[string]bool{"name": true}
 	for _, v := range msg {
 		if v.GetUserId() == "" {
 			return nil, nil, errors.New("no userId sent with request")

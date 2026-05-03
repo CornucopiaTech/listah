@@ -25,10 +25,11 @@ import type {
 export const ListBoxSize: {
   height: string, width: string
 } = {
-  height: `calc(100vh - 300px)`, width: '100%',
+  height: `calc(100vh - 200px)`, width: '100%',
 }
 
 export const AppBarHeight = 64;
+export const AppDrawerWidth = 128;
 
 const defaultPagination: IPagination = {
   pageSize: 100,

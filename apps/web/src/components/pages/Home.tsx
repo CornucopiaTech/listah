@@ -13,7 +13,7 @@ import {
   AppCategoryStack,
 } from "@/components/core/AppStack";
 import { HomeFab } from "@/components/core/HomeFab";
-import { AppFilterModal } from "@/components/core/FilterModal";
+import { AppFilterModal } from "@/components/core/AppFilterModal";
 import { AppTagModal } from "@/components/core/AppTagModal";
 import {
   AppCategoryListPaper,
