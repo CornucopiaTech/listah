@@ -25,7 +25,7 @@ import type {
 export const ListBoxSize: {
   height: string, width: string
 } = {
-  height: `calc(100vh - 200px)`, width: '100%',
+  height: `calc(100vh - 150px)`, width: '100%',
 }
 
 export const AppBarHeight = 64;
