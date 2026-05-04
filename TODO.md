@@ -1,17 +1,20 @@
 # To Do
 - Add url to the message saved for each request in the database.
 - Make sure the user with the bearer token is the same as the user sent in the data being updated.
-- Create a mechanism to view and update filters.
+
 - Create a mechanism to clone filters.
 - For existing items that are being updated, make sure that the the updated item contains at least one tag before submission.
 - Define a Settings page to create new tags with properties, update existing tags, and create and update existing filters..
 - Filters can be created from tags page or settings page
-- Items can be created from the specific tags page or the specific filter page not the all tags page and the all filter page.
-
+- Check if adding a new tag to an item being updated/created will add the new tags' properties to the form.
+- Ensure that changes to the server is propagated to all clients.
+- Fetch all tags and filters when the app is loaded.
 
 
 
 ## Done
+- Items can be created from the specific tags page or the specific filter page not the all tags page and the all filter page.
+- Create a mechanism to view and update filters.
 - Add form validation to ensure a form for new/updating items always has a tag
 - Add form validation to ensure a form for new/updating filters always has a name and at least one tag.
 - Add service for saved filters

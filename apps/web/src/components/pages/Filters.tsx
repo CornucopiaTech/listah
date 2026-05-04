@@ -5,7 +5,7 @@ import {
   useBoundStore,
   type TBoundStore
 } from '@/lib/store/boundStore';
-import { TagListLayout } from "@/components/layout/TagList";
+import { FilterListLayout } from "@/components/layout/FilterList";
 import { AppTagModal } from "@/components/core/AppTagModal";
 import { AppFilterModal } from "@/components/core/AppFilterModal";
 import {
@@ -19,14 +19,16 @@ import {
   AppListItemTypography,
 } from "@/components/core/Typography";
 
-export function Tags() {
-  const store: TBoundStore = useBoundStore((state) => state);
-  function handleFilterClick() {
-    store.setFilterModal(true);
-  }
 
+
+export function Filters() {
+  const store: TBoundStore = useBoundStore((state) => state);
   function handleTagClick() {
     store.setTagModal(true);
+  }
+
+  function handleFilterClick() {
+    store.setFilterModal(true);
   }
 
   const mItems = <Fragment>
@@ -37,13 +39,14 @@ export function Tags() {
 
       <AppListItemTypography>Add new filter </AppListItemTypography>
     </MenuItem>
-  </Fragment >
+  </Fragment >;
+
   return (
     <AppContainer mw="md" menuItems={mItems}>
       {store.tagModal && <AppTagModal />}
       {store.filterModal && <AppFilterModal />}
       <AppPagePaper key="tags">
-        <TagListLayout />
+        <FilterListLayout />
       </AppPagePaper>
     </AppContainer >
   );

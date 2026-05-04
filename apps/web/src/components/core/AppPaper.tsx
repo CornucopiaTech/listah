@@ -13,14 +13,13 @@ import {
 
 export const AppStyledPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
   width: "100%",
+  height: "100%",
   backgroundColor: theme.palette.background.paper,
   borderRadius: 4,
   margin: 0,
   padding: 0,
 })
 );
-
-
 
 
 export const AppPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
@@ -33,7 +32,6 @@ export const AppPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
 );
 
 export const AppHeroPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
-  // width: "80vw",
   height: "60vh",
   display: "flex",
   flexWrap: 'wrap',
@@ -46,61 +44,18 @@ export const AppHeroPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
   padding: "8%"
 }));
 
-// export const HeroPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
-//   // width: "80vw",
-//   // height: "70vh",
-//   // display: "flex",
-//   // flexWrap: 'wrap',
-//   // justifyContent: "center",
-//   // alignContent: "center",
-//   // marginTop: "20vh",
-//   // marginBottom: "20vh",
-//   backgroundColor: theme.palette.background.paper,
-//   borderRadius: 8,
-//   padding: "8%"
-// }));
-
-// export function AppHeroPaper({ children, sx }: { children: ReactNode, sx?: any }): ReactNode {
-//   const theme: AppTheme = useTheme();
-//   return (
-//     <HeroPaper elevation={8} sx={{
-//       ...sx,
-//       width: "fit-content",
-//       height: "60vh",
-//       display: "flex",
-//       flexWrap: 'wrap',
-//       justifyContent: "center",
-//       alignContent: "center",
-//       marginTop: "10vh",
-//       marginBottom: "10vh",
-//       backgroundColor: theme.palette.background.paper,
-//       borderRadius: 8,
-//       padding: "8%"
-//     }}>
-//       {children}
-//     </HeroPaper>
-//   );
-// }
-
 
 export const AppHomePaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
-  // width: "80%",
   height: "fit-content",
   display: "flex",
-  // flexWrap: 'wrap',
-  // justifyContent: "center",
-  // alignContent: "center",
-  // marginTop: "20%",
-  // marginBottom: "20%",
   backgroundColor: theme.palette.background.paper,
   borderRadius: 8,
-  // padding: "8%"
 }));
 
 
 export function AppSearchPaper({ children }: { children: ReactNode }) {
   return (
-    <AppStyledPaper sx={{ width: "50vw", height: AppBarHeight }}>
+    <AppStyledPaper sx={{ width: "30vw", height: AppBarHeight }}>
       {/* <AppStyledPaper elevation={8} sx={{ width: "100%", }}> */}
       {children}
     </AppStyledPaper>
@@ -147,9 +102,7 @@ export function AppItemListPaper({ children }: { children: ReactNode }) {
 
 
 export const AppListPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
-  // width: "50vw",
   maxWidth: "50%",
-  // height: "70vh",
   display: "flex",
   flexWrap: 'wrap',
   justifyContent: "center",
@@ -159,7 +112,5 @@ export const AppListPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
   marginTop: "2vh",
   marginBottom: "2vh",
   backgroundColor: theme.palette.background.paper,
-  // boxShadow: 24,
   borderRadius: 4,
-  // padding: "8%"
 }));

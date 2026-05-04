@@ -34,7 +34,7 @@ export function AppContainerShell() {
     <Fragment>
       <CssBaseline />
       <Box sx={{ width: "100vw", maxWidth: "100vw", height: `fit-content`, }}>
-        <AppNavBar />
+
         <Outlet />
       </Box>
     </Fragment>
@@ -42,11 +42,12 @@ export function AppContainerShell() {
 }
 
 
-export function AppContainer({ children, mw }: { children: ReactNode, mw?: widthType }) {
+export function AppContainer({ children, mw, menuItems, title }: { children: ReactNode, menuItems?: ReactNode, mw?: widthType, title?: string }) {
   return (
     <Fragment>
+      <AppNavBar menuItems={menuItems} title={title} />
       <Container maxWidth={mw ? mw : "xl"}
-        sx={{ marginTop: "3vh" }} >
+        sx={{ marginTop: "60px" }} >
         {children}
       </Container>
     </Fragment>

@@ -4,6 +4,9 @@ import {
   ZPagination,
   ZSearch,
 } from "@/lib/model/common";
+import { ZFilter } from "@/lib/model/filter";
+import { ZTag } from "@/lib/model/tag";
+
 
 
 // Item Definitions
@@ -22,7 +25,6 @@ export const ZItem = z.object({
 export type IItem = z.infer<typeof ZItem>;
 
 
-
 export const ZItemReadRequest = z.object({
   userId: z.string().catch(''),
   query: ZSearch,
@@ -30,6 +32,17 @@ export const ZItemReadRequest = z.object({
 
 });
 export type IItemReadRequest = z.infer<typeof ZItemReadRequest>;
+
+
+
+export const ZItemRouteSearch = z.object({
+  query: ZItemReadRequest,
+  title: z.string().catch('All Items'),
+  reference: z.union([z.undefined(), ZFilter, ZTag]),
+});
+export type IItemRouteSearch = z.infer<typeof ZItemRouteSearch>;
+
+
 
 export const ZItemReadResponse = z.object({
   items: z.array(ZItem).catch([]),

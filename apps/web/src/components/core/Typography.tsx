@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import Typography from '@mui/material/Typography';
-import { styled, } from '@mui/material/styles';
+import { styled, useTheme, } from '@mui/material/styles';
 
 
 
@@ -10,7 +10,7 @@ import type { AppTheme } from '@/system/theme';
 
 
 const AppTypography = styled(Typography)(({ theme }: { theme: AppTheme }) => ({
-  color: theme.palette.primary.main,
+  color: theme.palette.text.primary,
   // textAlign: "center",
   // textAlign: "left",
   whiteSpace: 'pre-line',
@@ -22,6 +22,22 @@ export function AppHeroTypography({ children, sx }: { children: ReactNode, sx?: 
     <AppTypography variant="h1" sx={{ ...sx, textAlign: "center", }}>{children}</AppTypography>
   )
 }
+
+export function AppToolbarTypography({ children, sx }: { children: ReactNode, sx?: any }) {
+  const theme: AppTheme = useTheme();
+  return (
+    <Typography variant="h6" sx={{ ...sx, textAlign: "left", color: theme.palette.primary.contrastText, }}>{children}</Typography>
+  )
+}
+
+export function AppListItemTypography({ children, sx }: { children: ReactNode, sx?: any }) {
+  const theme: AppTheme = useTheme();
+  return (
+    <Typography variant="subtitle1" sx={{ ...sx, textAlign: "left", color: theme.palette.primary.dark, }}>{children}</Typography>
+  )
+}
+
+
 
 export function AppTitleTypography({ children, sx }: { children: ReactNode, sx?: any }) {
   return (

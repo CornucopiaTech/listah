@@ -7,10 +7,10 @@ import type { ExtractState } from 'zustand';
 
 
 
-import { createHomeSlice } from '@/lib/store/homeSlice';
+import { createTagSlice } from '@/lib/store/tagSlice';
+import { createFilterSlice } from '@/lib/store/filterSlice';
 import { createItemSlice } from '@/lib/store/itemSlice';
-import { createListingSlice } from '@/lib/store/listingSlice';
-import { createDetailSlice } from '@/lib/store/detailSlice';
+import { createLayoutSlice } from '@/lib/store/layoutSlice';
 import type { IStore } from '@/lib/model/store';
 
 
@@ -19,10 +19,11 @@ export const useBoundStore = create<IStore>()(
   // persist(
   devtools(
     (...a) => ({
-      ...createHomeSlice(...a),
+      ...createTagSlice(...a),
+      ...createFilterSlice(...a),
       ...createItemSlice(...a),
-      ...createListingSlice(...a),
-      ...createDetailSlice(...a),
+      ...createLayoutSlice(...a),
+      // ...createDetailSlice(...a),
     }),
   ),
   //   { name: 'listing-store' },

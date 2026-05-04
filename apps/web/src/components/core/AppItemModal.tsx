@@ -74,6 +74,8 @@ import { tagGroupOptions } from '@/lib/helper/querying';
 
 type itemFields = "id" | "userId" | "name" | "note" | `props[${number}]` | "softDelete" | `tags[${number}]`
 
+// ToDo: Add the additional properties when a new tag is added to the form.
+
 export function AppItemModal(): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
   const { user } = useUser();
@@ -205,11 +207,12 @@ export function AppItemModal(): ReactNode {
   }, [form.state.isSubmitted, mutation.isSuccess]);
 
 
-
+  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+    console.log("formData", formData);
+  }
 
   function closeModal() {
     store.setItemModal(false);
-    store.setDisplayId("");
     store.setDisplayItem(DefaultItem);
   }
 
@@ -246,9 +249,6 @@ export function AppItemModal(): ReactNode {
     if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
       console.log("In formSubmission - submitValue ", submitValue);
     }
-    // if (submitValue.tags.length == 0) {
-    //   throw Error("At least one tag is required")
-    // }
     mutation.mutate(submitValue);
 
   }
@@ -279,7 +279,6 @@ export function AppItemModal(): ReactNode {
                     (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
                   size="small"
                   variant="standard"
-                  // variant="outlined"
                   margin="dense"
                 />
               </Grid>
@@ -377,15 +376,12 @@ export function AppItemModal(): ReactNode {
                           return (
                             <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                               <Autocomplete
-                                multiple
                                 slotProps={{ listbox: { sx: { fontSize: '14px' } } }}
                                 size="small"
                                 id={"item-tag-" + i}
                                 // freeSolo
                                 autoHighlight
                                 options={tags.map((opt) => opt.name)}
-                                // options={tags}
-                                // getOptionKey={(opt) => opt.name}
                                 value={subField.state.value}
                                 inputValue={subField.state.value}
                                 onChange={
@@ -598,7 +594,8 @@ export function AppItemModal(): ReactNode {
     display: 'block',
     width: "lg",
     maxWidth: "lg",
-    height: '70vh',
+    height: '65vh',
+    // padding: "1",
     // maxHeight: 720,
     overflow: 'auto',
     '&::-webkit-scrollbar': {
@@ -625,8 +622,8 @@ export function AppItemModal(): ReactNode {
 
   const saveIcon = form.state.isSubmitting ? "material-symbols:hourglass-top" : form.state.canSubmit ? "material-symbols:save-sharp" : "lucide:save-off";
   const saveTooltip = !form.state.canSubmit ? "Unable to save" : "Save";
-  const cloneIcon = form.state.values.id == "" ? "tabler:copy-off" : "material-symbols:content-copy-sharp";
-  const cloneTooltip = form.state.values.id == "" ? "Unable to clone" : "Clone";
+  // const cloneIcon = form.state.values.id == "" ? "tabler:copy-off" : "material-symbols:content-copy-sharp";
+  // const cloneTooltip = form.state.values.id == "" ? "Unable to clone" : "Clone";
 
 
   const formActions = [
@@ -640,13 +637,13 @@ export function AppItemModal(): ReactNode {
 
   function Dlg(content: ReactNode, actions?: ReactNode): ReactNode {
     return (
-      <Dialog fullWidth maxWidth="lg" open={store.itemModal} onClose={closeModal} >
+      <Dialog fullWidth open={store.itemModal} onClose={closeModal} >
         <IconButton aria-label="delete"
           sx={{
             display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
           }}
           onClick={closeModal}>
-          <Icon icon="material-symbols-light:close-rounded" width="40" height="40" />
+          <Icon icon="material-symbols-light:close-rounded" width="30" height="30" />
         </IconButton>
         <form onSubmit={onFormSubmit}>
           <DialogContent sx={dialogSx} >
@@ -677,12 +674,14 @@ export function AppItemModal(): ReactNode {
     <Box
       component="section"
       sx={{
-        marginTop: { xs: '0rem', sm: '1rem', md: '1rem' },
-        marginRight: "4rem",
+        // marginTop: { xs: '0rem', sm: '1rem', md: '1rem' },
+        marginTop: 0,
+        marginRight: "5rem",
         fontSize: '15px',
-        padding: { xs: '0rem', sm: '1rem', md: '1rem' },
+        // padding: { xs: '0rem', sm: '1rem', md: '1rem' },
+        padding: 0,
       }}>
-      <Stack spacing={1} sx={{ width: '100%' }} >
+      <Stack spacing={0} sx={{ width: '100%' }} >
         {mutation.error && (
           <Fragment>
             <ErrorAlert message={mutation.error.message} />

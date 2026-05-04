@@ -26,4 +26,5 @@ export const Route = createRootRoute({
   component: AppContainerShell,
   notFoundComponent: NotFound,
   pendingComponent: LinearProgress,
+  // ToDo: Add loader for all tags to be prefetched.
 })

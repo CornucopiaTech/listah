@@ -28,7 +28,7 @@ export const ListBoxSize: {
   height: `calc(100vh - 150px)`, width: '100%',
 }
 
-export const AppBarHeight = 64;
+export const AppBarHeight = 32;
 export const AppDrawerWidth = 128;
 
 const defaultPagination: IPagination = {

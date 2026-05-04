@@ -1,7 +1,10 @@
-import { createTheme } from "@mui/material/styles";
-import { lightPalette }from "@/system/theme/palette";
-import {typography} from "@/system/tokens/typography";
-import {components} from "@/system/theme//components";
+import {
+  createTheme,
+  responsiveFontSizes,
+} from "@mui/material/styles";
+import { lightPalette } from "@/system/theme/palette";
+import { typography } from "@/system/tokens/typography";
+import { components } from "@/system/theme//components";
 
 
 // declare module '@mui/material/styles' {
@@ -15,7 +18,7 @@ import {components} from "@/system/theme//components";
 // }
 
 
-const theme = createTheme({
+const theme = responsiveFontSizes(createTheme({
   palette: lightPalette,
   typography,
   components,
@@ -23,7 +26,8 @@ const theme = createTheme({
     borderRadius: 1
   },
   spacing: 8,
-});
+}));
+// theme = responsiveFontSizes(theme);
 
 export default theme;
 export type AppTheme = typeof theme;

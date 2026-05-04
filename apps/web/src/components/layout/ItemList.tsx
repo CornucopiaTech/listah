@@ -14,8 +14,6 @@ import {
 import * as z from "zod";
 import {
   useNavigate,
-  getRouteApi,
-  useParams
 } from '@tanstack/react-router';
 import Box from '@mui/material/Box';
 import { useUser } from '@clerk/react';
@@ -30,6 +28,7 @@ import type {
   IItem,
   IItemReadRequest,
   IItemReadResponse,
+  IItemRouteSearch,
 } from "@/lib/model/item";
 import {
   ZItemReadResponse,
@@ -45,13 +44,12 @@ import {
 } from '@/lib/helper/querying';
 import { ErrorAlert } from "@/components/core/Alerts";
 import {
-  decodeState,
   encodeState
 } from '@/lib/helper/encoders';
 import { DefaultItemRead } from '@/lib/helper/defaults';
 import {
   AppH6Typography,
-  AppBody1Typography,
+  AppListItemTypography,
 } from "@/components/core/Typography";
 import LinearProgress from '@mui/material/LinearProgress';
 import {
@@ -72,20 +70,18 @@ function OuterBox({ children }: { children: ReactNode }): ReactNode {
 }
 
 
-export function ItemListLayout(): ReactNode {
+export function ItemListLayout({ search, title }: { search?: IItemRouteSearch, title: string }): ReactNode {
   const navigate = useNavigate();
   const { user, } = useUser();
   const store: TBoundStore = useBoundStore((state) => state);
-  const routeApi = getRouteApi('/items/');
-  const routeSearch: { s: string } = routeApi.useSearch()
-  let search: IItemReadRequest = decodeState(routeSearch.s) as IItemReadRequest;
 
-  const query: IItemReadRequest = search ? {
-    ...search,
+
+  const query: IItemReadRequest = search && search.query ? {
+    ...search.query,
     userId: user?.id || "",
     pagination: {
-      ...search.pagination,
-      pageNumber: search.pagination.pageNumber ? search.pagination.pageNumber : DefaultItemRead.pagination.pageNumber
+      ...search.query.pagination,
+      pageNumber: search.query.pagination.pageNumber ? search.query.pagination.pageNumber : DefaultItemRead.pagination.pageNumber
     }
   } : {
     ...DefaultItemRead, userId: user?.id || ""
@@ -95,6 +91,8 @@ export function ItemListLayout(): ReactNode {
     pageSize: query.pagination.pageSize,
     totalRecords: 0,
   });
+
+
 
 
   const {
@@ -131,6 +129,13 @@ export function ItemListLayout(): ReactNode {
     console.info("store reference - ", store.itemReference);
   }
 
+  function getRouteSearch(query: IItemReadRequest) {
+    // const encoded = encodeState(q);
+    const s = {
+      query, title, reference: search && search.reference || undefined,
+    }
+    return encodeState(s);
+  }
 
   function handlePageChange(
     event: MouseEvent<HTMLButtonElement> | null,
@@ -140,16 +145,12 @@ export function ItemListLayout(): ReactNode {
     const q = {
       ...query, pagination: { ...query.pagination, pageNumber: value }
     };
-    const encoded = encodeState(q);
-    navigate({
-      to: ".",
-      search: { s: encoded },
-    });
+    ;
+    // navigate({ to: ".", search: getRouteSearch(q), });
+    navigate({ to: ".", search: { s: getRouteSearch(q) }, });
   };
 
   function handleItemClick(anitem: IItem) {
-    const itId: string = anitem && anitem.id ? anitem.id : "";
-    store.setDisplayId(itId);
     store.setDisplayItem(anitem);
     store.setItemModal(true);
   }
@@ -162,11 +163,8 @@ export function ItemListLayout(): ReactNode {
         pageSize: parseInt(e.target.value, 10), pageNumber: 0
       }
     };
-    const encoded = encodeState(q);
-    navigate({
-      to: ".",
-      search: { s: encoded },
-    });
+    // navigate({ to: ".", search: getRouteSearch(q), });
+    navigate({ to: ".", search: { s: getRouteSearch(q) }, });
   };
 
   function eachItem(itemKey: number, item: IItem): ReactNode {
@@ -176,12 +174,13 @@ export function ItemListLayout(): ReactNode {
         <ListItem key={itemKey + dis}
           // component="div"
           disablePadding
+          disableGutters
           sx={{ p: 0, m: 0 }}
           onClick={() => handleItemClick(item)}>
           <ListItemButton >
             <ListItemText
               primary={
-                <AppBody1Typography sx={{ p: 0 }}>{dis}</AppBody1Typography>
+                <AppListItemTypography sx={{ p: 0, m: 0 }}>{dis}</AppListItemTypography>
               }
             />
           </ListItemButton>

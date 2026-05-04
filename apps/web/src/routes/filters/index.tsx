@@ -5,10 +5,10 @@ import {
 import { LinearProgress } from '@mui/material';
 
 
-import { ItemsTitle } from "@/components/pages/Items";
+import { Filters } from "@/components/pages/Filters";
 
 
-export const Route = createFileRoute('/items/{-$title}')({
-  component: ItemsTitle,
+export const Route = createFileRoute('/filters/')({
+  component: Filters,
   pendingComponent: LinearProgress,
 })

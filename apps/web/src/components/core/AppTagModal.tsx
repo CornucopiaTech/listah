@@ -53,6 +53,7 @@ import type { AppTheme } from '@/system/theme';
 import type {
   ITag,
 } from "@/lib/model/tag";
+import { AppH6Typography } from "@/components/core/Typography";
 
 
 type itemFields = "id" | "userId" | "name" | `props[${number}]`
@@ -60,13 +61,14 @@ type itemFields = "id" | "userId" | "name" | `props[${number}]`
 export function AppTagModal(): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
   const { user } = useUser();
-  const tag: ITag = useBoundStore((state) => state.displayTag);
+  const storeTag: undefined | ITag = useBoundStore((state) => state.displayTag);
+  const formTag: ITag = storeTag ? storeTag : DefaultTag;
 
 
   const queryClient = useQueryClient();
   const theme: AppTheme = useTheme();
   const formData = {
-    ...tag
+    ...formTag
   }
   const form = useForm({
     defaultValues: formData,
@@ -131,7 +133,7 @@ export function AppTagModal(): ReactNode {
 
   function closeModal() {
     store.setTagModal(false);
-    store.setDisplayTag(DefaultTag);
+    store.setDisplayTag(undefined);
   }
 
   function onFormSubmit(e: ChangeEvent) {
@@ -279,11 +281,11 @@ export function AppTagModal(): ReactNode {
     form.handleSubmit();
   }
 
-  function handleClone() {
-    const title = form.state.values.name || "";
-    form.setFieldValue('id', uuidv4());
-    form.setFieldValue('name', "[Clone of] - " + title);
-  }
+  // function handleClone() {
+  //   const title = form.state.values.name || "";
+  //   form.setFieldValue('id', uuidv4());
+  //   form.setFieldValue('name', "[Clone of] - " + title);
+  // }
 
   const fields: itemFields[] = ['id', 'userId', 'name'];
   const dialogSx = {
@@ -317,12 +319,12 @@ export function AppTagModal(): ReactNode {
 
   const saveIcon = form.state.isSubmitting ? "material-symbols:hourglass-top" : form.state.canSubmit ? "material-symbols:save-sharp" : "lucide:save-off";
   const saveTooltip = !form.state.canSubmit ? "Unable to save" : "Save";
-  const cloneIcon = form.state.values.id == "" ? "tabler:copy-off" : "material-symbols:content-copy-sharp";
-  const cloneTooltip = form.state.values.id == "" ? "Unable to clone" : "Clone";
+  // const cloneIcon = form.state.values.id == "" ? "tabler:copy-off" : "material-symbols:content-copy-sharp";
+  // const cloneTooltip = form.state.values.id == "" ? "Unable to clone" : "Clone";
 
 
   const formActions = [
-    { name: cloneTooltip, icon: cloneIcon, onClick: handleClone },
+    // { name: cloneTooltip, icon: cloneIcon, onClick: handleClone },
     { name: deleteTooltip, icon: deleteIcon, onClick: handleDelete },
     { name: saveTooltip, icon: saveIcon, onClick: form.handleSubmit },
     { name: "Reset", icon: "material-symbols-light:restart-alt", onClick: form.reset },
@@ -353,6 +355,8 @@ export function AppTagModal(): ReactNode {
     )
   }
 
+
+  const formTitle = storeTag ? "Update tag" : "Add new tag";
   const con = (
     <Box
       component="section"
@@ -380,6 +384,7 @@ export function AppTagModal(): ReactNode {
         {
           formErrorMap.onBlur && (<ErrorAlert message={`${formErrorMap.onBlur}`} />)
         }
+        <AppH6Typography> {formTitle} </AppH6Typography>
         {fields.map((fds: itemFields) => getSimpleField(fds))}
 
         {/* ToDo: fix display for tags and fields. */}

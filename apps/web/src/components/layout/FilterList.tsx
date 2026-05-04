@@ -52,7 +52,10 @@ import {
   DefaultFilterRead,
   ListBoxSize,
 } from '@/lib/helper/defaults';
-import { AppH6Typography } from "@/components/core/Typography";
+import {
+  AppH6Typography,
+  AppListItemTypography,
+} from "@/components/core/Typography";
 
 
 
@@ -69,7 +72,7 @@ export function FilterListLayout(): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
   const navigate = useNavigate();
   const { user, } = useUser();
-  const routeApi = getRouteApi('/');
+  const routeApi = getRouteApi('/filters/');
   const routeSearch: { s: string } = routeApi.useSearch()
   let search: IFilterReadRequest = decodeState(routeSearch.s) as IFilterReadRequest;
 
@@ -119,25 +122,21 @@ export function FilterListLayout(): ReactNode {
   };
 
   function handleItemClick(it: IFilter) {
-    const ct = it && it.name ? it.name : "";
+    const pageTitle = it && it.name ? `##${it.name}` : "Filters";
     const q: IItemReadRequest = {
       ...DefaultItemRead,
       userId: query.userId,
       query: { ...DefaultItemRead.query, tags: it.tags ? it.tags : [] },
-      // query: { ...DefaultItemRead.query, filters: [ct] },
     };
-    const encoded = encodeState(q);
-    const encodedSrc = encodeState(it);
-    const itemTitle = ct == "" ? "" : "Items in ##" + ct;
-    navigate({
-      to: "/items/{-$title}",
-      search: { s: encoded, src: encodedSrc },
-      params: { title: itemTitle }
-    });
-    store.setItemTitle(itemTitle);
+    const s = { query: q, title: pageTitle, reference: it, }
+    const encoded = encodeState(s);
+
+    navigate({ to: "/items", search: { s: encoded }, });
+    store.setItemTitle(pageTitle);
     store.setItemReference(it);
     store.setDisplayFilter(it);
   }
+
   function eachItem(itemKey: number, item: IFilter): ReactNode {
     const tc = item && item.name ? item.name : "";
     return (
@@ -147,7 +146,10 @@ export function FilterListLayout(): ReactNode {
         onClick={() => handleItemClick(item)}
       >
         <ListItemButton>
-          <ListItemText primary={tc} />
+          <ListItemText primary={
+            <AppListItemTypography sx={{ p: 0, m: 0 }}>{tc}</AppListItemTypography>
+          }
+          />
           <Chip sx={{ background: "primary" }} label={item.count ? item.count.toString() : "0"} />
         </ListItemButton>
       </ListItem>

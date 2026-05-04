@@ -56,7 +56,7 @@ import {
 } from '@/lib/helper/defaults';
 import {
   AppH6Typography,
-  AppSubtitle1Typography,
+  AppListItemTypography,
 } from "@/components/core/Typography";
 
 
@@ -135,21 +135,18 @@ export function TagListLayout(): ReactNode {
   };
 
   function handleItemClick(it: ITag) {
-    const ct = it && it.name ? it.name : "";
-    const cti = it && it.id ? it.id : "";
+    const pageTitle = it && it.name ? `#${it.name}` : "Tags";
+    const pageTags = it && it.id ? [it.id] : [];
     const q: IItemReadRequest = {
       ...DefaultItemRead,
       userId: query.userId,
-      query: { ...DefaultItemRead.query, tags: [cti] },
+      query: { ...DefaultItemRead.query, tags: pageTags },
     };
-    const encoded = encodeState(q);
-    const encodedSrc = encodeState(it);
-    navigate({
-      to: "/items/{-$title}",
-      search: { s: encoded, src: encodedSrc },
-      params: { title: `Items in #${ct}` }
-    });
-    store.setItemTitle(`Items in #${ct}`);
+    const s = { query: q, title: pageTitle, reference: it, }
+    const encoded = encodeState(s);
+
+    navigate({ to: "/items", search: { s: encoded }, });
+    store.setItemTitle(pageTitle);
     store.setItemReference(it);
     store.setDisplayTag(it);
   }
@@ -164,7 +161,7 @@ export function TagListLayout(): ReactNode {
       >
         <ListItemButton>
           <ListItemText primary={
-            <AppSubtitle1Typography sx={{ p: 0 }}>{tc}</AppSubtitle1Typography>
+            <AppListItemTypography sx={{ p: 0, m: 0, }}>{tc}</AppListItemTypography>
           } />
           <Chip sx={{ background: "primary" }} label={item.count ? item.count.toString() : "0"} />
         </ListItemButton>

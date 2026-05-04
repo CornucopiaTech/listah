@@ -1,11 +1,16 @@
 import {
   createFileRoute,
+  redirect,
 } from '@tanstack/react-router';
 import { LinearProgress } from '@mui/material';
 
-import { Home } from "@/components/pages/Home"
 
 export const Route = createFileRoute('/')({
-  component: Home,
   pendingComponent: LinearProgress,
+  beforeLoad: () => {
+    throw redirect({
+      to: '/tags',
+      replace: true, // This option makes it a "permanent" history change
+    })
+  },
 })

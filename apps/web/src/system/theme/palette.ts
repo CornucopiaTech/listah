@@ -2,16 +2,16 @@ import { color } from "@/system/tokens/colors";
 
 export const lightPalette = {
   primary: {
-    light: color.dustyolive["600"],
-    main: color.dustyolive["700"],
-    dark: color.dustyolive["900"],
-    contrastText: color.dustyolive["0"],
+    light: color.tropicalteal["500"],
+    main: color.tropicalteal["700"],
+    dark: color.tropicalteal["900"],
+    contrastText: color.tropicalteal["50"],
   },
   secondary: {
-    light: color.coralglow["300"],
-    main: color.coralglow["500"],
-    dark: color.coralglow["700"],
-    contrastText: color.coralglow["0"],
+    light: color.lobsterpink["100"],
+    main: color.lobsterpink["500"],
+    dark: color.lobsterpink["900"],
+    contrastText: color.lobsterpink["50"],
   },
 
   // mode: "light",
@@ -58,15 +58,18 @@ export const lightPalette = {
   // info: {
 
   // },
-  // text: {
-  //   primary: colourTokens.text.primary,
-  //   secondary: colourTokens.text.secondary,
-  //   disabled: ""
+  text: {
+    primary: color.tropicalteal["900"],
+    secondary: color.lobsterpink["900"],
+    // disabled: ""
+  },
+  // background: {
+  //   default: color.dustyolive["50"],
+  //   paper: color.dustyolive["0"],
   // },
   background: {
-    default: color.dustyolive["50"],
-    paper: color.dustyolive["0"],
-
+    default: color.softlinen["500"],
+    paper: color.softlinen["100"],
   }
   // divider: "",
   // action: {
