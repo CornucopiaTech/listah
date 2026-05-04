@@ -5,6 +5,7 @@ import (
 	"cornucopia/listah/internal/pkg/logging"
 	model "cornucopia/listah/internal/pkg/model/v1"
 	"fmt"
+	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/uptrace/bun"
@@ -12,7 +13,7 @@ import (
 )
 
 type Tag interface {
-	Upsert(ctx context.Context, m *[]model.Tag) (interface{}, error)
+	Upsert(ctx context.Context, m *[]*model.Tag, c *model.UpsertInfo) (interface{}, error)
 	Read(ctx context.Context, m *[]*model.Tag, s *model.ItemSearch) (int, error)
 }
 
@@ -21,7 +22,37 @@ type tag struct {
 	logger *logging.Factory
 }
 
-func (a *tag) Upsert(ctx context.Context, m *[]model.Tag) (interface{}, error) {
+func (a *tag) Upsert(ctx context.Context, m *[]*model.Tag, c *model.UpsertInfo) (interface{}, error) {
+	ctx, span := otel.Tracer("tag-repository").Start(ctx, "TagRepository Upsert")
+	defer span.End()
+
+	var activity = "TagUpsert"
+	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
+
+	var conflict string
+	if len(c.Resolve) == 0 {
+		conflict = fmt.Sprintf("CONFLICT(%v) DO NOTHING", strings.Join(c.Conflict, ", "))
+	} else {
+		conflict = fmt.Sprintf("CONFLICT(%v) DO UPDATE", strings.Join(c.Conflict, ", "))
+	}
+
+	q := a.db.NewInsert().Model(m).Ignore().On(conflict)
+	for _, v := range c.Resolve {
+		r := fmt.Sprintf("%v = Excluded.%v", v, v)
+		q = q.Set(r)
+	}
+
+	_, err := q.Exec(ctx)
+	if err != nil {
+		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
+		return nil, err
+	}
+
+	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
+	return nil, nil
+}
+
+func (a *tag) FromItemsUpsert(ctx context.Context, m *[]model.Tag) (interface{}, error) {
 	ctx, span := otel.Tracer("tag-repository").Start(ctx, "TagRepository Upsert")
 	defer span.End()
 
@@ -45,7 +76,7 @@ func (a *tag) Upsert(ctx context.Context, m *[]model.Tag) (interface{}, error) {
 				ON tl.name = t.name AND tl.user_id = t.user_id
 		WHERE t.name IS NULL
 	`
-	tR := []model.TagUpsert{}
+	tR := []model.Tag{}
 	err := a.db.NewRaw(query, values).Scan(ctx, &tR)
 	if err != nil {
 		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())

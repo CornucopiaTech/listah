@@ -22,7 +22,6 @@ type filter struct {
 	logger *logging.Factory
 }
 
-
 func (a *filter) Read(ctx context.Context, m *[]*model.Filter, s *model.ItemSearch) (int, error) {
 	ctx, span := otel.Tracer("filter-repository").Start(ctx, "FilterRepository Read")
 	defer span.End()
@@ -102,6 +101,7 @@ func (a *filter) Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo)
 			aliasCols = append(aliasCols, fmt.Sprintf(`i."%v"`, v))
 		}
 	}
+	// ToDo: Should filter upsert send a list of tag names or list of tag ids.
 	query := `
 		WITH literals (` + strings.Join(itemCols, ", ") + `) AS (
 			?
@@ -116,7 +116,7 @@ func (a *filter) Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo)
 					AND t.name = elem.tag_name
 		GROUP BY ` + strings.Join(aliasCols, ", ") + `;
 	`
-	tR := []model.FilterUpsert{}
+	tR := []model.Filter{}
 	err := a.db.NewRaw(query, values).Scan(ctx, &tR)
 	if err != nil {
 		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())

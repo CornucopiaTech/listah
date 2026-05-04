@@ -24,7 +24,6 @@ type item struct {
 	logger *logging.Factory
 }
 
-
 func (a *item) Read(ctx context.Context, m *[]*model.Item, s *model.ItemSearch) (int, error) {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Read")
 	defer span.End()
@@ -145,6 +144,7 @@ func (a *item) Upsert(ctx context.Context, m *[]*model.Item, c *model.UpsertInfo
 		}
 
 	}
+	// ToDo: Should item upsert send a list of tag names or list of tag ids.
 	query := `
 		WITH itemLiterals (` + strings.Join(itemCols, ", ") + `) AS (
 			?

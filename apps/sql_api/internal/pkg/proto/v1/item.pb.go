@@ -24,94 +24,6 @@ const (
 )
 
 // Item Messages
-type ItemServiceCreateItemRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Items         []*Item                `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ItemServiceCreateItemRequest) Reset() {
-	*x = ItemServiceCreateItemRequest{}
-	mi := &file_v1_item_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ItemServiceCreateItemRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ItemServiceCreateItemRequest) ProtoMessage() {}
-
-func (x *ItemServiceCreateItemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_item_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ItemServiceCreateItemRequest.ProtoReflect.Descriptor instead.
-func (*ItemServiceCreateItemRequest) Descriptor() ([]byte, []int) {
-	return file_v1_item_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *ItemServiceCreateItemRequest) GetItems() []*Item {
-	if x != nil {
-		return x.Items
-	}
-	return nil
-}
-
-type ItemServiceCreateItemResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ItemIds       []string               `protobuf:"bytes,1,rep,name=itemIds,proto3" json:"itemIds,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ItemServiceCreateItemResponse) Reset() {
-	*x = ItemServiceCreateItemResponse{}
-	mi := &file_v1_item_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ItemServiceCreateItemResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ItemServiceCreateItemResponse) ProtoMessage() {}
-
-func (x *ItemServiceCreateItemResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_item_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ItemServiceCreateItemResponse.ProtoReflect.Descriptor instead.
-func (*ItemServiceCreateItemResponse) Descriptor() ([]byte, []int) {
-	return file_v1_item_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *ItemServiceCreateItemResponse) GetItemIds() []string {
-	if x != nil {
-		return x.ItemIds
-	}
-	return nil
-}
-
 type ItemServiceReadItemRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        string                 `protobuf:"bytes,500,opt,name=userId,proto3" json:"userId,omitempty"`
@@ -123,7 +35,7 @@ type ItemServiceReadItemRequest struct {
 
 func (x *ItemServiceReadItemRequest) Reset() {
 	*x = ItemServiceReadItemRequest{}
-	mi := &file_v1_item_proto_msgTypes[2]
+	mi := &file_v1_item_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -135,7 +47,7 @@ func (x *ItemServiceReadItemRequest) String() string {
 func (*ItemServiceReadItemRequest) ProtoMessage() {}
 
 func (x *ItemServiceReadItemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_item_proto_msgTypes[2]
+	mi := &file_v1_item_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -148,7 +60,7 @@ func (x *ItemServiceReadItemRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ItemServiceReadItemRequest.ProtoReflect.Descriptor instead.
 func (*ItemServiceReadItemRequest) Descriptor() ([]byte, []int) {
-	return file_v1_item_proto_rawDescGZIP(), []int{2}
+	return file_v1_item_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ItemServiceReadItemRequest) GetUserId() string {
@@ -185,7 +97,7 @@ type ItemServiceReadItemResponse struct {
 
 func (x *ItemServiceReadItemResponse) Reset() {
 	*x = ItemServiceReadItemResponse{}
-	mi := &file_v1_item_proto_msgTypes[3]
+	mi := &file_v1_item_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -197,7 +109,7 @@ func (x *ItemServiceReadItemResponse) String() string {
 func (*ItemServiceReadItemResponse) ProtoMessage() {}
 
 func (x *ItemServiceReadItemResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_item_proto_msgTypes[3]
+	mi := &file_v1_item_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -210,7 +122,7 @@ func (x *ItemServiceReadItemResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ItemServiceReadItemResponse.ProtoReflect.Descriptor instead.
 func (*ItemServiceReadItemResponse) Descriptor() ([]byte, []int) {
-	return file_v1_item_proto_rawDescGZIP(), []int{3}
+	return file_v1_item_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ItemServiceReadItemResponse) GetItems() []*Item {
@@ -257,7 +169,7 @@ type ItemServiceUpsertItemRequest struct {
 
 func (x *ItemServiceUpsertItemRequest) Reset() {
 	*x = ItemServiceUpsertItemRequest{}
-	mi := &file_v1_item_proto_msgTypes[4]
+	mi := &file_v1_item_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -269,7 +181,7 @@ func (x *ItemServiceUpsertItemRequest) String() string {
 func (*ItemServiceUpsertItemRequest) ProtoMessage() {}
 
 func (x *ItemServiceUpsertItemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_item_proto_msgTypes[4]
+	mi := &file_v1_item_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -282,7 +194,7 @@ func (x *ItemServiceUpsertItemRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ItemServiceUpsertItemRequest.ProtoReflect.Descriptor instead.
 func (*ItemServiceUpsertItemRequest) Descriptor() ([]byte, []int) {
-	return file_v1_item_proto_rawDescGZIP(), []int{4}
+	return file_v1_item_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ItemServiceUpsertItemRequest) GetItems() []*Item {
@@ -301,7 +213,7 @@ type ItemServiceUpsertItemResponse struct {
 
 func (x *ItemServiceUpsertItemResponse) Reset() {
 	*x = ItemServiceUpsertItemResponse{}
-	mi := &file_v1_item_proto_msgTypes[5]
+	mi := &file_v1_item_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -313,7 +225,7 @@ func (x *ItemServiceUpsertItemResponse) String() string {
 func (*ItemServiceUpsertItemResponse) ProtoMessage() {}
 
 func (x *ItemServiceUpsertItemResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_item_proto_msgTypes[5]
+	mi := &file_v1_item_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -326,7 +238,7 @@ func (x *ItemServiceUpsertItemResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ItemServiceUpsertItemResponse.ProtoReflect.Descriptor instead.
 func (*ItemServiceUpsertItemResponse) Descriptor() ([]byte, []int) {
-	return file_v1_item_proto_rawDescGZIP(), []int{5}
+	return file_v1_item_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ItemServiceUpsertItemResponse) GetItemIds() []string {
@@ -348,7 +260,7 @@ type ItemServiceReadTagRequest struct {
 
 func (x *ItemServiceReadTagRequest) Reset() {
 	*x = ItemServiceReadTagRequest{}
-	mi := &file_v1_item_proto_msgTypes[6]
+	mi := &file_v1_item_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -360,7 +272,7 @@ func (x *ItemServiceReadTagRequest) String() string {
 func (*ItemServiceReadTagRequest) ProtoMessage() {}
 
 func (x *ItemServiceReadTagRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_item_proto_msgTypes[6]
+	mi := &file_v1_item_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -373,7 +285,7 @@ func (x *ItemServiceReadTagRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ItemServiceReadTagRequest.ProtoReflect.Descriptor instead.
 func (*ItemServiceReadTagRequest) Descriptor() ([]byte, []int) {
-	return file_v1_item_proto_rawDescGZIP(), []int{6}
+	return file_v1_item_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ItemServiceReadTagRequest) GetUserId() string {
@@ -410,7 +322,7 @@ type ItemServiceReadTagResponse struct {
 
 func (x *ItemServiceReadTagResponse) Reset() {
 	*x = ItemServiceReadTagResponse{}
-	mi := &file_v1_item_proto_msgTypes[7]
+	mi := &file_v1_item_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -422,7 +334,7 @@ func (x *ItemServiceReadTagResponse) String() string {
 func (*ItemServiceReadTagResponse) ProtoMessage() {}
 
 func (x *ItemServiceReadTagResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_item_proto_msgTypes[7]
+	mi := &file_v1_item_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -435,7 +347,7 @@ func (x *ItemServiceReadTagResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ItemServiceReadTagResponse.ProtoReflect.Descriptor instead.
 func (*ItemServiceReadTagResponse) Descriptor() ([]byte, []int) {
-	return file_v1_item_proto_rawDescGZIP(), []int{7}
+	return file_v1_item_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ItemServiceReadTagResponse) GetTags() []*Tag {
@@ -482,7 +394,7 @@ type ItemServiceUpsertTagRequest struct {
 
 func (x *ItemServiceUpsertTagRequest) Reset() {
 	*x = ItemServiceUpsertTagRequest{}
-	mi := &file_v1_item_proto_msgTypes[8]
+	mi := &file_v1_item_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -494,7 +406,7 @@ func (x *ItemServiceUpsertTagRequest) String() string {
 func (*ItemServiceUpsertTagRequest) ProtoMessage() {}
 
 func (x *ItemServiceUpsertTagRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_item_proto_msgTypes[8]
+	mi := &file_v1_item_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -507,7 +419,7 @@ func (x *ItemServiceUpsertTagRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ItemServiceUpsertTagRequest.ProtoReflect.Descriptor instead.
 func (*ItemServiceUpsertTagRequest) Descriptor() ([]byte, []int) {
-	return file_v1_item_proto_rawDescGZIP(), []int{8}
+	return file_v1_item_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ItemServiceUpsertTagRequest) GetTags() []*Tag {
@@ -526,7 +438,7 @@ type ItemServiceUpsertTagResponse struct {
 
 func (x *ItemServiceUpsertTagResponse) Reset() {
 	*x = ItemServiceUpsertTagResponse{}
-	mi := &file_v1_item_proto_msgTypes[9]
+	mi := &file_v1_item_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -538,7 +450,7 @@ func (x *ItemServiceUpsertTagResponse) String() string {
 func (*ItemServiceUpsertTagResponse) ProtoMessage() {}
 
 func (x *ItemServiceUpsertTagResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_item_proto_msgTypes[9]
+	mi := &file_v1_item_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -551,7 +463,7 @@ func (x *ItemServiceUpsertTagResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ItemServiceUpsertTagResponse.ProtoReflect.Descriptor instead.
 func (*ItemServiceUpsertTagResponse) Descriptor() ([]byte, []int) {
-	return file_v1_item_proto_rawDescGZIP(), []int{9}
+	return file_v1_item_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ItemServiceUpsertTagResponse) GetTagIds() []string {
@@ -573,7 +485,7 @@ type ItemServiceReadFilterRequest struct {
 
 func (x *ItemServiceReadFilterRequest) Reset() {
 	*x = ItemServiceReadFilterRequest{}
-	mi := &file_v1_item_proto_msgTypes[10]
+	mi := &file_v1_item_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -585,7 +497,7 @@ func (x *ItemServiceReadFilterRequest) String() string {
 func (*ItemServiceReadFilterRequest) ProtoMessage() {}
 
 func (x *ItemServiceReadFilterRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_item_proto_msgTypes[10]
+	mi := &file_v1_item_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -598,7 +510,7 @@ func (x *ItemServiceReadFilterRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ItemServiceReadFilterRequest.ProtoReflect.Descriptor instead.
 func (*ItemServiceReadFilterRequest) Descriptor() ([]byte, []int) {
-	return file_v1_item_proto_rawDescGZIP(), []int{10}
+	return file_v1_item_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ItemServiceReadFilterRequest) GetUserId() string {
@@ -635,7 +547,7 @@ type ItemServiceReadFilterResponse struct {
 
 func (x *ItemServiceReadFilterResponse) Reset() {
 	*x = ItemServiceReadFilterResponse{}
-	mi := &file_v1_item_proto_msgTypes[11]
+	mi := &file_v1_item_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -647,7 +559,7 @@ func (x *ItemServiceReadFilterResponse) String() string {
 func (*ItemServiceReadFilterResponse) ProtoMessage() {}
 
 func (x *ItemServiceReadFilterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_item_proto_msgTypes[11]
+	mi := &file_v1_item_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -660,7 +572,7 @@ func (x *ItemServiceReadFilterResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ItemServiceReadFilterResponse.ProtoReflect.Descriptor instead.
 func (*ItemServiceReadFilterResponse) Descriptor() ([]byte, []int) {
-	return file_v1_item_proto_rawDescGZIP(), []int{11}
+	return file_v1_item_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ItemServiceReadFilterResponse) GetFilters() []*Filter {
@@ -707,7 +619,7 @@ type ItemServiceUpsertFilterRequest struct {
 
 func (x *ItemServiceUpsertFilterRequest) Reset() {
 	*x = ItemServiceUpsertFilterRequest{}
-	mi := &file_v1_item_proto_msgTypes[12]
+	mi := &file_v1_item_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -719,7 +631,7 @@ func (x *ItemServiceUpsertFilterRequest) String() string {
 func (*ItemServiceUpsertFilterRequest) ProtoMessage() {}
 
 func (x *ItemServiceUpsertFilterRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_item_proto_msgTypes[12]
+	mi := &file_v1_item_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -732,7 +644,7 @@ func (x *ItemServiceUpsertFilterRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ItemServiceUpsertFilterRequest.ProtoReflect.Descriptor instead.
 func (*ItemServiceUpsertFilterRequest) Descriptor() ([]byte, []int) {
-	return file_v1_item_proto_rawDescGZIP(), []int{12}
+	return file_v1_item_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ItemServiceUpsertFilterRequest) GetFilters() []*Filter {
@@ -751,7 +663,7 @@ type ItemServiceUpsertFilterResponse struct {
 
 func (x *ItemServiceUpsertFilterResponse) Reset() {
 	*x = ItemServiceUpsertFilterResponse{}
-	mi := &file_v1_item_proto_msgTypes[13]
+	mi := &file_v1_item_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -763,7 +675,7 @@ func (x *ItemServiceUpsertFilterResponse) String() string {
 func (*ItemServiceUpsertFilterResponse) ProtoMessage() {}
 
 func (x *ItemServiceUpsertFilterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_item_proto_msgTypes[13]
+	mi := &file_v1_item_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -776,7 +688,7 @@ func (x *ItemServiceUpsertFilterResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ItemServiceUpsertFilterResponse.ProtoReflect.Descriptor instead.
 func (*ItemServiceUpsertFilterResponse) Descriptor() ([]byte, []int) {
-	return file_v1_item_proto_rawDescGZIP(), []int{13}
+	return file_v1_item_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ItemServiceUpsertFilterResponse) GetFilterIds() []string {
@@ -790,11 +702,7 @@ var File_v1_item_proto protoreflect.FileDescriptor
 
 const file_v1_item_proto_rawDesc = "" +
 	"\n" +
-	"\rv1/item.proto\x12\tlistah.v1\x1a\x10v1/commons.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a$gnostic/openapi/v3/annotations.proto\"E\n" +
-	"\x1cItemServiceCreateItemRequest\x12%\n" +
-	"\x05items\x18\x01 \x03(\v2\x0f.listah.v1.ItemR\x05items\"9\n" +
-	"\x1dItemServiceCreateItemResponse\x12\x18\n" +
-	"\aitemIds\x18\x01 \x03(\tR\aitemIds\"\x97\x01\n" +
+	"\rv1/item.proto\x12\tlistah.v1\x1a\x10v1/commons.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a$gnostic/openapi/v3/annotations.proto\"\x97\x01\n" +
 	"\x1aItemServiceReadItemRequest\x12\x17\n" +
 	"\x06userId\x18\xf4\x03 \x01(\tR\x06userId\x12(\n" +
 	"\x05query\x18\xf5\x03 \x01(\v2\x11.listah.v1.SearchR\x05query\x126\n" +
@@ -848,10 +756,8 @@ const file_v1_item_proto_rawDesc = "" +
 	"\x1eItemServiceUpsertFilterRequest\x12+\n" +
 	"\afilters\x18\x01 \x03(\v2\x11.listah.v1.FilterR\afilters\"?\n" +
 	"\x1fItemServiceUpsertFilterResponse\x12\x1c\n" +
-	"\tfilterIds\x18\x01 \x03(\tR\tfilterIds2\xab\x06\n" +
-	"\vItemService\x12q\n" +
-	"\n" +
-	"CreateItem\x12'.listah.v1.ItemServiceCreateItemRequest\x1a(.listah.v1.ItemServiceCreateItemResponse\"\x10\xbaG\r\x1a\vCreate Item\x12l\n" +
+	"\tfilterIds\x18\x01 \x03(\tR\tfilterIds2\xb8\x05\n" +
+	"\vItemService\x12l\n" +
 	"\bReadItem\x12%.listah.v1.ItemServiceReadItemRequest\x1a&.listah.v1.ItemServiceReadItemResponse\"\x11\xbaG\v\x1a\tRead Item\x90\x02\x01\x12q\n" +
 	"\n" +
 	"UpsertItem\x12'.listah.v1.ItemServiceUpsertItemRequest\x1a(.listah.v1.ItemServiceUpsertItemResponse\"\x10\xbaG\r\x1a\vUpsert Item\x12h\n" +
@@ -875,67 +781,62 @@ func file_v1_item_proto_rawDescGZIP() []byte {
 	return file_v1_item_proto_rawDescData
 }
 
-var file_v1_item_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_v1_item_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_v1_item_proto_goTypes = []any{
-	(*ItemServiceCreateItemRequest)(nil),    // 0: listah.v1.ItemServiceCreateItemRequest
-	(*ItemServiceCreateItemResponse)(nil),   // 1: listah.v1.ItemServiceCreateItemResponse
-	(*ItemServiceReadItemRequest)(nil),      // 2: listah.v1.ItemServiceReadItemRequest
-	(*ItemServiceReadItemResponse)(nil),     // 3: listah.v1.ItemServiceReadItemResponse
-	(*ItemServiceUpsertItemRequest)(nil),    // 4: listah.v1.ItemServiceUpsertItemRequest
-	(*ItemServiceUpsertItemResponse)(nil),   // 5: listah.v1.ItemServiceUpsertItemResponse
-	(*ItemServiceReadTagRequest)(nil),       // 6: listah.v1.ItemServiceReadTagRequest
-	(*ItemServiceReadTagResponse)(nil),      // 7: listah.v1.ItemServiceReadTagResponse
-	(*ItemServiceUpsertTagRequest)(nil),     // 8: listah.v1.ItemServiceUpsertTagRequest
-	(*ItemServiceUpsertTagResponse)(nil),    // 9: listah.v1.ItemServiceUpsertTagResponse
-	(*ItemServiceReadFilterRequest)(nil),    // 10: listah.v1.ItemServiceReadFilterRequest
-	(*ItemServiceReadFilterResponse)(nil),   // 11: listah.v1.ItemServiceReadFilterResponse
-	(*ItemServiceUpsertFilterRequest)(nil),  // 12: listah.v1.ItemServiceUpsertFilterRequest
-	(*ItemServiceUpsertFilterResponse)(nil), // 13: listah.v1.ItemServiceUpsertFilterResponse
+	(*ItemServiceReadItemRequest)(nil),      // 0: listah.v1.ItemServiceReadItemRequest
+	(*ItemServiceReadItemResponse)(nil),     // 1: listah.v1.ItemServiceReadItemResponse
+	(*ItemServiceUpsertItemRequest)(nil),    // 2: listah.v1.ItemServiceUpsertItemRequest
+	(*ItemServiceUpsertItemResponse)(nil),   // 3: listah.v1.ItemServiceUpsertItemResponse
+	(*ItemServiceReadTagRequest)(nil),       // 4: listah.v1.ItemServiceReadTagRequest
+	(*ItemServiceReadTagResponse)(nil),      // 5: listah.v1.ItemServiceReadTagResponse
+	(*ItemServiceUpsertTagRequest)(nil),     // 6: listah.v1.ItemServiceUpsertTagRequest
+	(*ItemServiceUpsertTagResponse)(nil),    // 7: listah.v1.ItemServiceUpsertTagResponse
+	(*ItemServiceReadFilterRequest)(nil),    // 8: listah.v1.ItemServiceReadFilterRequest
+	(*ItemServiceReadFilterResponse)(nil),   // 9: listah.v1.ItemServiceReadFilterResponse
+	(*ItemServiceUpsertFilterRequest)(nil),  // 10: listah.v1.ItemServiceUpsertFilterRequest
+	(*ItemServiceUpsertFilterResponse)(nil), // 11: listah.v1.ItemServiceUpsertFilterResponse
+	(*Search)(nil),                          // 12: listah.v1.Search
+	(*Pagination)(nil),                      // 13: listah.v1.Pagination
 	(*Item)(nil),                            // 14: listah.v1.Item
-	(*Search)(nil),                          // 15: listah.v1.Search
-	(*Pagination)(nil),                      // 16: listah.v1.Pagination
-	(*Tag)(nil),                             // 17: listah.v1.Tag
-	(*Filter)(nil),                          // 18: listah.v1.Filter
+	(*Tag)(nil),                             // 15: listah.v1.Tag
+	(*Filter)(nil),                          // 16: listah.v1.Filter
 }
 var file_v1_item_proto_depIdxs = []int32{
-	14, // 0: listah.v1.ItemServiceCreateItemRequest.items:type_name -> listah.v1.Item
-	15, // 1: listah.v1.ItemServiceReadItemRequest.query:type_name -> listah.v1.Search
-	16, // 2: listah.v1.ItemServiceReadItemRequest.pagination:type_name -> listah.v1.Pagination
-	14, // 3: listah.v1.ItemServiceReadItemResponse.items:type_name -> listah.v1.Item
-	15, // 4: listah.v1.ItemServiceReadItemResponse.query:type_name -> listah.v1.Search
-	16, // 5: listah.v1.ItemServiceReadItemResponse.pagination:type_name -> listah.v1.Pagination
-	14, // 6: listah.v1.ItemServiceUpsertItemRequest.items:type_name -> listah.v1.Item
-	15, // 7: listah.v1.ItemServiceReadTagRequest.query:type_name -> listah.v1.Search
-	16, // 8: listah.v1.ItemServiceReadTagRequest.pagination:type_name -> listah.v1.Pagination
-	17, // 9: listah.v1.ItemServiceReadTagResponse.tags:type_name -> listah.v1.Tag
-	15, // 10: listah.v1.ItemServiceReadTagResponse.query:type_name -> listah.v1.Search
-	16, // 11: listah.v1.ItemServiceReadTagResponse.pagination:type_name -> listah.v1.Pagination
-	17, // 12: listah.v1.ItemServiceUpsertTagRequest.tags:type_name -> listah.v1.Tag
-	15, // 13: listah.v1.ItemServiceReadFilterRequest.query:type_name -> listah.v1.Search
-	16, // 14: listah.v1.ItemServiceReadFilterRequest.pagination:type_name -> listah.v1.Pagination
-	18, // 15: listah.v1.ItemServiceReadFilterResponse.filters:type_name -> listah.v1.Filter
-	15, // 16: listah.v1.ItemServiceReadFilterResponse.query:type_name -> listah.v1.Search
-	16, // 17: listah.v1.ItemServiceReadFilterResponse.pagination:type_name -> listah.v1.Pagination
-	18, // 18: listah.v1.ItemServiceUpsertFilterRequest.filters:type_name -> listah.v1.Filter
-	0,  // 19: listah.v1.ItemService.CreateItem:input_type -> listah.v1.ItemServiceCreateItemRequest
-	2,  // 20: listah.v1.ItemService.ReadItem:input_type -> listah.v1.ItemServiceReadItemRequest
-	4,  // 21: listah.v1.ItemService.UpsertItem:input_type -> listah.v1.ItemServiceUpsertItemRequest
-	6,  // 22: listah.v1.ItemService.ReadTag:input_type -> listah.v1.ItemServiceReadTagRequest
-	8,  // 23: listah.v1.ItemService.UpsertTag:input_type -> listah.v1.ItemServiceUpsertTagRequest
-	10, // 24: listah.v1.ItemService.ReadFilter:input_type -> listah.v1.ItemServiceReadFilterRequest
-	12, // 25: listah.v1.ItemService.UpsertFilter:input_type -> listah.v1.ItemServiceUpsertFilterRequest
-	1,  // 26: listah.v1.ItemService.CreateItem:output_type -> listah.v1.ItemServiceCreateItemResponse
-	3,  // 27: listah.v1.ItemService.ReadItem:output_type -> listah.v1.ItemServiceReadItemResponse
-	5,  // 28: listah.v1.ItemService.UpsertItem:output_type -> listah.v1.ItemServiceUpsertItemResponse
-	7,  // 29: listah.v1.ItemService.ReadTag:output_type -> listah.v1.ItemServiceReadTagResponse
-	9,  // 30: listah.v1.ItemService.UpsertTag:output_type -> listah.v1.ItemServiceUpsertTagResponse
-	11, // 31: listah.v1.ItemService.ReadFilter:output_type -> listah.v1.ItemServiceReadFilterResponse
-	13, // 32: listah.v1.ItemService.UpsertFilter:output_type -> listah.v1.ItemServiceUpsertFilterResponse
-	26, // [26:33] is the sub-list for method output_type
-	19, // [19:26] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	12, // 0: listah.v1.ItemServiceReadItemRequest.query:type_name -> listah.v1.Search
+	13, // 1: listah.v1.ItemServiceReadItemRequest.pagination:type_name -> listah.v1.Pagination
+	14, // 2: listah.v1.ItemServiceReadItemResponse.items:type_name -> listah.v1.Item
+	12, // 3: listah.v1.ItemServiceReadItemResponse.query:type_name -> listah.v1.Search
+	13, // 4: listah.v1.ItemServiceReadItemResponse.pagination:type_name -> listah.v1.Pagination
+	14, // 5: listah.v1.ItemServiceUpsertItemRequest.items:type_name -> listah.v1.Item
+	12, // 6: listah.v1.ItemServiceReadTagRequest.query:type_name -> listah.v1.Search
+	13, // 7: listah.v1.ItemServiceReadTagRequest.pagination:type_name -> listah.v1.Pagination
+	15, // 8: listah.v1.ItemServiceReadTagResponse.tags:type_name -> listah.v1.Tag
+	12, // 9: listah.v1.ItemServiceReadTagResponse.query:type_name -> listah.v1.Search
+	13, // 10: listah.v1.ItemServiceReadTagResponse.pagination:type_name -> listah.v1.Pagination
+	15, // 11: listah.v1.ItemServiceUpsertTagRequest.tags:type_name -> listah.v1.Tag
+	12, // 12: listah.v1.ItemServiceReadFilterRequest.query:type_name -> listah.v1.Search
+	13, // 13: listah.v1.ItemServiceReadFilterRequest.pagination:type_name -> listah.v1.Pagination
+	16, // 14: listah.v1.ItemServiceReadFilterResponse.filters:type_name -> listah.v1.Filter
+	12, // 15: listah.v1.ItemServiceReadFilterResponse.query:type_name -> listah.v1.Search
+	13, // 16: listah.v1.ItemServiceReadFilterResponse.pagination:type_name -> listah.v1.Pagination
+	16, // 17: listah.v1.ItemServiceUpsertFilterRequest.filters:type_name -> listah.v1.Filter
+	0,  // 18: listah.v1.ItemService.ReadItem:input_type -> listah.v1.ItemServiceReadItemRequest
+	2,  // 19: listah.v1.ItemService.UpsertItem:input_type -> listah.v1.ItemServiceUpsertItemRequest
+	4,  // 20: listah.v1.ItemService.ReadTag:input_type -> listah.v1.ItemServiceReadTagRequest
+	6,  // 21: listah.v1.ItemService.UpsertTag:input_type -> listah.v1.ItemServiceUpsertTagRequest
+	8,  // 22: listah.v1.ItemService.ReadFilter:input_type -> listah.v1.ItemServiceReadFilterRequest
+	10, // 23: listah.v1.ItemService.UpsertFilter:input_type -> listah.v1.ItemServiceUpsertFilterRequest
+	1,  // 24: listah.v1.ItemService.ReadItem:output_type -> listah.v1.ItemServiceReadItemResponse
+	3,  // 25: listah.v1.ItemService.UpsertItem:output_type -> listah.v1.ItemServiceUpsertItemResponse
+	5,  // 26: listah.v1.ItemService.ReadTag:output_type -> listah.v1.ItemServiceReadTagResponse
+	7,  // 27: listah.v1.ItemService.UpsertTag:output_type -> listah.v1.ItemServiceUpsertTagResponse
+	9,  // 28: listah.v1.ItemService.ReadFilter:output_type -> listah.v1.ItemServiceReadFilterResponse
+	11, // 29: listah.v1.ItemService.UpsertFilter:output_type -> listah.v1.ItemServiceUpsertFilterResponse
+	24, // [24:30] is the sub-list for method output_type
+	18, // [18:24] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_v1_item_proto_init() }
@@ -950,7 +851,7 @@ func file_v1_item_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_item_proto_rawDesc), len(file_v1_item_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

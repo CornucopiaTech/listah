@@ -17,26 +17,20 @@ type ApiLog struct {
 	RequestTime   time.Time
 }
 
-type ItemSearch struct {
-	UserId      string
-	Tags        string
-	Filters     string
-	SearchQuery string
-	SortQuery   string
-	Limit       int64
-	Offset      int64
-	PageNumber  int64
-}
-
-type ItemSearchText struct {
-	Tags    string
-	Filters string
-	Text    string
-}
-
-type UpsertInfo struct {
-	Conflict []string
-	Resolve  []string
+type Item struct {
+	bun.BaseModel `bun:"table:apps.items,alias:it"`
+	Id            string `bun:",pk"`
+	UserId        string
+	Name          string
+	Note          string
+	Tags          []string          `bun:"type:jsonb"`
+	PropList      *[]string         `bun:",scanonly"`
+	TagIds        []string          `bun:",scanonly"`
+	TagNames      []string          `bun:",scanonly"`
+	Props         map[string]string `bun:"type:jsonb"`
+	SoftDelete    bool              `bun:",nullzero,default:false"`
+	UpdatedBy     string
+	UpdatedAt     time.Time
 }
 
 type Filter struct {
@@ -45,15 +39,10 @@ type Filter struct {
 	UserId        string
 	Name          string
 	Tags          []string `bun:"type:jsonb"`
-	Count         int32
-}
-
-type FilterUpsert struct {
-	bun.BaseModel `bun:"table:apps.filters,alias:sf"`
-	Id            string `bun:",pk"`
-	UserId        string
-	Name          string
-	Tags          []string `bun:"type:jsonb"`
+	Count         int32    `bun:",scanonly"`
+	SoftDelete    bool
+	UpdatedBy     string
+	UpdatedAt     time.Time
 }
 
 type Tag struct {
@@ -62,15 +51,10 @@ type Tag struct {
 	UserId        string
 	Name          string
 	Props         []string
-	Count         int32
-}
-
-type TagUpsert struct {
-	bun.BaseModel `bun:"table:apps.tags,alias:t"`
-	Id            string `bun:",pk"`
-	UserId        string
-	Name          string
-	Props         []string
+	Count         int32 `bun:",scanonly"`
+	SoftDelete    bool
+	UpdatedBy     string
+	UpdatedAt     time.Time
 }
 
 type Pagination struct {
@@ -83,19 +67,24 @@ type RowCount struct {
 	RowCount int
 }
 
-type Category struct {
-	Category string
-	RowCount int
-	Id       string
+type ItemSearch struct {
+	UserId      string
+	Tags        string
+	Filters     string
+	SearchQuery string
+	SortQuery   string
+	Limit       int64
+	Offset      int64
+	PageNumber  int64
+}
+
+type UpsertInfo struct {
+	Conflict []string
+	Resolve  []string
 }
 
 type ItemUpsert struct {
 	Items  *[]*Item
 	Update []string
 	Tags   *[]Tag
-}
-
-type TagCte struct {
-	Columns string
-	Values  string
 }

@@ -141,7 +141,6 @@ type Item struct {
 	Tags          []string               `protobuf:"bytes,6,rep,name=tags,proto3" json:"tags,omitempty"`
 	SoftDelete    bool                   `protobuf:"varint,7,opt,name=softDelete,proto3" json:"softDelete,omitempty"`
 	PropList      []string               `protobuf:"bytes,8,rep,name=propList,proto3" json:"propList,omitempty"`
-	TagIds        []string               `protobuf:"bytes,9,rep,name=tagIds,proto3" json:"tagIds,omitempty"`
 	TagNames      []string               `protobuf:"bytes,10,rep,name=tagNames,proto3" json:"tagNames,omitempty"`
 	UpdatedBy     string                 `protobuf:"bytes,500,opt,name=updatedBy,proto3" json:"updatedBy,omitempty"`
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,501,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
@@ -235,13 +234,6 @@ func (x *Item) GetPropList() []string {
 	return nil
 }
 
-func (x *Item) GetTagIds() []string {
-	if x != nil {
-		return x.TagIds
-	}
-	return nil
-}
-
 func (x *Item) GetTagNames() []string {
 	if x != nil {
 		return x.TagNames
@@ -270,6 +262,9 @@ type Tag struct {
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Props         []string               `protobuf:"bytes,4,rep,name=props,proto3" json:"props,omitempty"`
 	Count         int32                  `protobuf:"varint,5,opt,name=count,proto3" json:"count,omitempty"`
+	SoftDelete    bool                   `protobuf:"varint,7,opt,name=softDelete,proto3" json:"softDelete,omitempty"`
+	UpdatedBy     string                 `protobuf:"bytes,500,opt,name=updatedBy,proto3" json:"updatedBy,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,501,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -339,6 +334,27 @@ func (x *Tag) GetCount() int32 {
 	return 0
 }
 
+func (x *Tag) GetSoftDelete() bool {
+	if x != nil {
+		return x.SoftDelete
+	}
+	return false
+}
+
+func (x *Tag) GetUpdatedBy() string {
+	if x != nil {
+		return x.UpdatedBy
+	}
+	return ""
+}
+
+func (x *Tag) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
 type Filter struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -346,6 +362,9 @@ type Filter struct {
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Tags          []string               `protobuf:"bytes,4,rep,name=tags,proto3" json:"tags,omitempty"`
 	Count         int32                  `protobuf:"varint,5,opt,name=count,proto3" json:"count,omitempty"`
+	SoftDelete    bool                   `protobuf:"varint,7,opt,name=softDelete,proto3" json:"softDelete,omitempty"`
+	UpdatedBy     string                 `protobuf:"bytes,500,opt,name=updatedBy,proto3" json:"updatedBy,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,501,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -413,6 +432,27 @@ func (x *Filter) GetCount() int32 {
 		return x.Count
 	}
 	return 0
+}
+
+func (x *Filter) GetSoftDelete() bool {
+	if x != nil {
+		return x.SoftDelete
+	}
+	return false
+}
+
+func (x *Filter) GetUpdatedBy() string {
+	if x != nil {
+		return x.UpdatedBy
+	}
+	return ""
+}
+
+func (x *Filter) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
 }
 
 type Search struct {
@@ -486,7 +526,7 @@ const file_v1_commons_proto_rawDesc = "" +
 	"\n" +
 	"pageNumber\x18\x02 \x01(\x03R\n" +
 	"pageNumber\x12\x12\n" +
-	"\x04sort\x18\x03 \x01(\tR\x04sort\"\xa0\x03\n" +
+	"\x04sort\x18\x03 \x01(\tR\x04sort\"\x88\x03\n" +
 	"\x04Item\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
@@ -497,8 +537,7 @@ const file_v1_commons_proto_rawDesc = "" +
 	"\n" +
 	"softDelete\x18\a \x01(\bR\n" +
 	"softDelete\x12\x1a\n" +
-	"\bpropList\x18\b \x03(\tR\bpropList\x12\x16\n" +
-	"\x06tagIds\x18\t \x03(\tR\x06tagIds\x12\x1a\n" +
+	"\bpropList\x18\b \x03(\tR\bpropList\x12\x1a\n" +
 	"\btagNames\x18\n" +
 	" \x03(\tR\btagNames\x12\x1d\n" +
 	"\tupdatedBy\x18\xf4\x03 \x01(\tR\tupdatedBy\x129\n" +
@@ -506,19 +545,29 @@ const file_v1_commons_proto_rawDesc = "" +
 	"\n" +
 	"PropsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"m\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xe7\x01\n" +
 	"\x03Tag\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x14\n" +
 	"\x05props\x18\x04 \x03(\tR\x05props\x12\x14\n" +
-	"\x05count\x18\x05 \x01(\x05R\x05count\"n\n" +
+	"\x05count\x18\x05 \x01(\x05R\x05count\x12\x1e\n" +
+	"\n" +
+	"softDelete\x18\a \x01(\bR\n" +
+	"softDelete\x12\x1d\n" +
+	"\tupdatedBy\x18\xf4\x03 \x01(\tR\tupdatedBy\x129\n" +
+	"\tupdatedAt\x18\xf5\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xe8\x01\n" +
 	"\x06Filter\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x12\n" +
 	"\x04tags\x18\x04 \x03(\tR\x04tags\x12\x14\n" +
-	"\x05count\x18\x05 \x01(\x05R\x05count\"J\n" +
+	"\x05count\x18\x05 \x01(\x05R\x05count\x12\x1e\n" +
+	"\n" +
+	"softDelete\x18\a \x01(\bR\n" +
+	"softDelete\x12\x1d\n" +
+	"\tupdatedBy\x18\xf4\x03 \x01(\tR\tupdatedBy\x129\n" +
+	"\tupdatedAt\x18\xf5\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"J\n" +
 	"\x06Search\x12\x12\n" +
 	"\x04text\x18\x01 \x01(\tR\x04text\x12\x12\n" +
 	"\x04tags\x18\x02 \x03(\tR\x04tags\x12\x18\n" +
@@ -555,11 +604,13 @@ var file_v1_commons_proto_goTypes = []any{
 var file_v1_commons_proto_depIdxs = []int32{
 	6, // 0: listah.v1.Item.props:type_name -> listah.v1.Item.PropsEntry
 	7, // 1: listah.v1.Item.updatedAt:type_name -> google.protobuf.Timestamp
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	7, // 2: listah.v1.Tag.updatedAt:type_name -> google.protobuf.Timestamp
+	7, // 3: listah.v1.Filter.updatedAt:type_name -> google.protobuf.Timestamp
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_v1_commons_proto_init() }

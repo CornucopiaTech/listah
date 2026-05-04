@@ -20,24 +20,15 @@ func (s *Server) UpsertItem(ctx context.Context, req *connect.Request[pb.ItemSer
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
 	// Create model for repository from request message
-	i, err := model.ItemProtoToItemModel(req.Msg.Items, true)
+	i, c, err := model.ItemProtoToItemModel(req.Msg.Items, true)
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Error getting item model for insertion", errors.Cause(err).Error())
 		return nil, err
 	}
 
-	w := model.UpsertInfo{
-		Conflict: model.ItemConflictFields,
-		Resolve:  i.Update,
-	}
+	w := model.UpsertInfo{Conflict: model.ItemConflictFields, Resolve: c}
 
-	_, err = s.BunRepo.Tag.Upsert(ctx, i.Tags)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Repository  update error", errors.Cause(err).Error())
-		return nil, err
-	}
-
-	_, err = s.BunRepo.Item.Upsert(ctx, i.Items, &w)
+	_, err = s.BunRepo.Item.Upsert(ctx, &i, &w)
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Repository  update error", errors.Cause(err).Error())
 		return nil, err
@@ -47,13 +38,13 @@ func (s *Server) UpsertItem(ctx context.Context, req *connect.Request[pb.ItemSer
 	// Get the ids of the inserted items
 
 	rs := []string{}
-	for _, v := range *i.Items {
+	for _, v := range i {
 		rs = append(rs, v.Id)
 	}
 
 	resm := &pb.ItemServiceUpsertItemResponse{ItemIds: rs}
 
-	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item update. Updated %d items", len(*i.Items)))
+	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item update. Updated %d items", len(i)))
 	return connect.NewResponse(resm), nil
 }
 
@@ -92,6 +83,43 @@ func (s *Server) UpsertFilter(ctx context.Context, req *connect.Request[pb.ItemS
 	}
 
 	resm := &pb.ItemServiceUpsertFilterResponse{FilterIds: rs}
+
+	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item update. Updated %d items", len(ins)))
+	return connect.NewResponse(resm), nil
+}
+
+func (s *Server) UpsertTag(ctx context.Context, req *connect.Request[pb.ItemServiceUpsertTagRequest]) (*connect.Response[pb.ItemServiceUpsertTagResponse], error) {
+	rpcName := "UpsertTag"
+	rpcLogName := fmt.Sprintf("POST /%v/%v", svcName, rpcName)
+
+	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
+	defer span.End()
+	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
+
+	// Create model for repository from request message
+	ins, res, err := model.TagProtoToTagModel(req.Msg.Tags, true)
+	if err != nil {
+		s.Logger.LogError(ctx, svcName, rpcName, "Error getting saved tag model for insertion", errors.Cause(err).Error())
+		return nil, err
+	}
+
+	w := model.UpsertInfo{Conflict: []string{"user_id", "id"}, Resolve: res}
+
+	_, err = s.BunRepo.Tag.Upsert(ctx, &ins, &w)
+	if err != nil {
+		s.Logger.LogError(ctx, svcName, rpcName, "Repository  update error", errors.Cause(err).Error())
+		return nil, err
+	}
+	s.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository update")
+
+	// Get the ids of the inserted items
+
+	rs := []string{}
+	for _, v := range ins {
+		rs = append(rs, v.Id)
+	}
+
+	resm := &pb.ItemServiceUpsertTagResponse{TagIds: rs}
 
 	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item update. Updated %d items", len(ins)))
 	return connect.NewResponse(resm), nil

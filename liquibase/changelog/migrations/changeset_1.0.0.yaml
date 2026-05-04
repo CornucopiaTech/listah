@@ -54,12 +54,15 @@ databaseChangeLog:
                 - column:
                     name:  soft_delete
                     type:  boolean
+                    defaultValueBoolean: false
                 - column:
                     name:  updated_by
                     type:  varchar
+                    defaultValue: api
                 - column:
                     name:  updated_at
                     type:  timestamp
+                    defaultValueComputed: CURRENT_TIMESTAMP
 
         - addUniqueConstraint:
             columnNames:  id, user_id
@@ -68,12 +71,55 @@ databaseChangeLog:
             tableName:  items
             validate:  true
 
-        - addDefaultValue:
-            columnName: soft_delete
-            columnDataType: boolean
+        # - addDefaultValue:
+        #     columnName: soft_delete
+        #     columnDataType: boolean
+        #     schemaName:  apps
+        #     tableName:  items
+        #     defaultValueBoolean: false
+
+        - createTable:
+              schemaName: apps
+              tableName: filters
+              ifNotExists: true
+              columns:
+                - column:
+                    name:  id
+                    type:  varchar
+                    constraints:
+                      primaryKey:  true
+                      nullable:  false
+                - column:
+                    name:  user_id
+                    type:  varchar
+                    constraints:
+                      nullable:  false
+                - column:
+                    name:  name
+                    type:  varchar
+                    constraints:
+                      nullable:  false
+                - column:
+                    name:  tags
+                    type:  json
+                - column:
+                    name:  soft_delete
+                    type:  boolean
+                    defaultValueBoolean: false
+                - column:
+                    name:  updated_by
+                    type:  varchar
+                    defaultValue: api
+                - column:
+                    name:  updated_at
+                    type:  timestamp
+                    defaultValueComputed: CURRENT_TIMESTAMP
+        - addUniqueConstraint:
+            columnNames:  id, user_id
+            constraintName:  constraint_unique_filters_id_user_id
             schemaName:  apps
-            tableName:  items
-            defaultValueBoolean: false
+            tableName:  filters
+            validate:  true
 
         - createTable:
               schemaName: instrumentation
@@ -103,41 +149,3 @@ databaseChangeLog:
                 - column:
                     name:  request_time
                     type:  timestamp
-
-        - createTable:
-              schemaName: apps
-              tableName: filters
-              ifNotExists: true
-              columns:
-                - column:
-                    name:  id
-                    type:  varchar
-                    constraints:
-                      primaryKey:  true
-                      nullable:  false
-                - column:
-                    name:  user_id
-                    type:  varchar
-                    constraints:
-                      nullable:  false
-                - column:
-                    name:  name
-                    type:  varchar
-                    constraints:
-                      nullable:  false
-                - column:
-                    name:  tags
-                    type:  json
-                - column:
-                    name:  updated_by
-                    type:  varchar
-                - column:
-                    name:  updated_at
-                    type:  timestamp
-                    defaultValueComputed: CURRENT_TIMESTAMP
-        - addUniqueConstraint:
-            columnNames:  name, user_id
-            constraintName:  constraint_unique_filters_name_user_id
-            schemaName:  apps
-            tableName:  filters
-            validate:  true

@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/uptrace/bun"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 var svcName string = "listah.v1.ItemService"
@@ -19,22 +19,6 @@ var defaultPagination = Pagination{
 	PageNumber: 1,
 	PageSize:   100,
 	Sort:       "name ASC",
-}
-
-type Item struct {
-	bun.BaseModel `bun:"table:apps.items,alias:it"`
-	Id            string `bun:",pk"`
-	UserId        string
-	Name          string
-	Note          string
-	Tags          []string `bun:"type:jsonb"`
-	PropList          *[]string `bun:",scanonly"`
-	TagIds          []string `bun:",scanonly"`
-	TagNames          []string `bun:",scanonly"`
-	Props         map[string]string `bun:"type:jsonb"`
-	SoftDelete    bool `bun:",nullzero,default:false"`
-	UpdatedBy     string
-	UpdatedAt     time.Time
 }
 
 func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemSearch, error) {
@@ -105,22 +89,82 @@ func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
 			Name:       v.Name,
 			Note:       v.Note,
 			Tags:       v.Tags,
-			// TagIds:       v.TagIds,
-			TagNames:       v.TagNames,
+			TagNames:   v.TagNames,
 			Props:      v.Props,
 			PropList:   *v.PropList,
 			SoftDelete: v.SoftDelete,
+			UpdatedAt:  timestamppb.New(v.UpdatedAt),
+			UpdatedBy:  v.UpdatedBy,
 		})
 	}
 	return items, nil
 }
 
-func ItemProtoToItemModel(msg []*pb.Item, genId bool) (ItemUpsert, error) {
+func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, []string, error) {
+	items := []*Item{}
+	check := map[string]bool{"name": true}
+
+	for _, v := range msg {
+		if v.GetUserId() == "" {
+			return nil, nil, errors.New("no userId sent with request")
+		}
+		if v.GetName() == "" {
+			return nil, nil, errors.New("no item name sent with request")
+		}
+
+		id := v.GetId()
+		if id == "" && genId {
+			id = uuid.Must(uuid.NewV7()).String()
+		}
+		newItem := &Item{
+			Id:        id,
+			UserId:    v.GetUserId(),
+			Name:      v.GetName(),
+			UpdatedBy: "api",
+			UpdatedAt: time.Now(),
+		}
+
+		// Set values that have not been set to nil
+		if v.GetNote() != "" {
+			newItem.Note = v.GetNote()
+			check["note"] = true
+		}
+		if len(v.GetTags()) != 0 {
+			newItem.Tags = v.GetTags()
+			check["tags"] = true
+		}
+		if len(v.GetProps()) != 0 {
+			newItem.Props = v.GetProps()
+			check["props"] = true
+		}
+		if v.GetSoftDelete() {
+			newItem.SoftDelete = v.GetSoftDelete()
+			check["soft_delete"] = true
+		}
+		items = append(items, newItem)
+	}
+
+	// Get the fields that need to be updated for conflict resolution
+	res := []string{}
+	for k, _ := range check {
+		res = append(res, k)
+	}
+	return items, res, nil
+}
+
+func ItemProtoToItemModelPlus(msg []*pb.Item, genId bool) (*ItemUpsert, error) {
 	items := []*Item{}
 	check := map[string]bool{}
 	checkTags := map[string]*Tag{}
 
 	for _, v := range msg {
+		if v.GetUserId() == "" {
+			return nil, errors.New("no userId sent with request")
+		}
+		if v.GetName() == "" {
+			return nil, errors.New("no filter name sent with request")
+		}
+
 		id := v.GetId()
 		if id == "" && genId {
 			id = uuid.Must(uuid.NewV7()).String()
@@ -149,11 +193,11 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) (ItemUpsert, error) {
 					prpl = append(prpl, kp)
 				}
 				if _, ok := checkTags[tt+"_"+v.GetUserId()]; !ok {
-					checkTags[tt+"_"+v.GetUserId()] = & Tag{
+					checkTags[tt+"_"+v.GetUserId()] = &Tag{
 						Id:     uuid.Must(uuid.NewV7()).String(),
 						UserId: v.GetUserId(),
 						Name:   tt,
-						Props: prpl,
+						Props:  prpl,
 					}
 				} else {
 					// Check if the properties of this tag needs to be extended
@@ -164,7 +208,7 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) (ItemUpsert, error) {
 					for _, atg := range checkTags[tt+"_"+v.GetUserId()].Props {
 						nexTgs[atg] = true
 					}
-					for _, atg := range prpl{
+					for _, atg := range prpl {
 						nexTgs[atg] = true
 					}
 
@@ -208,5 +252,5 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) (ItemUpsert, error) {
 		Tags:   &upTag,
 	}
 
-	return i, nil
+	return &i, nil
 }

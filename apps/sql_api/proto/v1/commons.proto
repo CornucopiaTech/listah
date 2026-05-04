@@ -28,7 +28,6 @@ message Item {
   repeated string tags = 6;
   bool softDelete = 7;
   repeated string propList = 8;
-  repeated string tagIds = 9;
   repeated string tagNames = 10;
   string updatedBy = 500;
   google.protobuf.Timestamp updatedAt = 501;
@@ -39,6 +38,9 @@ message Tag {
   string name = 3;
   repeated string props = 4;
   int32 count = 5;
+  bool softDelete = 7;
+  string updatedBy = 500;
+  google.protobuf.Timestamp updatedAt = 501;
 }
 
 message Filter {
@@ -47,6 +49,9 @@ message Filter {
   string name = 3;
   repeated string tags = 4;
   int32 count = 5;
+  bool softDelete = 7;
+  string updatedBy = 500;
+  google.protobuf.Timestamp updatedAt = 501;
 }
 
 message Search {

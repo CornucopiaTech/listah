@@ -1,42 +1,6 @@
 openapi: 3.1.0
 info: {}
 paths:
-  /listah.v1.ItemService/CreateItem:
-    post:
-      tags:
-        - listah.v1.ItemService
-      summary: CreateItem
-      description: Create Item
-      operationId: listah.v1.ItemService.CreateItem
-      parameters:
-        - name: Connect-Protocol-Version
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/connect-protocol-version'
-        - name: Connect-Timeout-Ms
-          in: header
-          schema:
-            $ref: '#/components/schemas/connect-timeout-header'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/listah.v1.ItemServiceCreateItemRequest'
-        required: true
-      responses:
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/connect.error'
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/listah.v1.ItemServiceCreateItemResponse'
   /listah.v1.ItemService/ReadFilter:
     get:
       tags:
@@ -626,6 +590,15 @@ components:
           type: integer
           title: count
           format: int32
+        softDelete:
+          type: boolean
+          title: softDelete
+        updatedBy:
+          type: string
+          title: updatedBy
+        updatedAt:
+          title: updatedAt
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
       title: Filter
       additionalProperties: false
     listah.v1.Item:
@@ -662,11 +635,6 @@ components:
           items:
             type: string
           title: propList
-        tagIds:
-          type: array
-          items:
-            type: string
-          title: tagIds
         tagNames:
           type: array
           items:
@@ -690,27 +658,6 @@ components:
           type: string
           title: value
       title: PropsEntry
-      additionalProperties: false
-    listah.v1.ItemServiceCreateItemRequest:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.Item'
-          title: items
-      title: ItemServiceCreateItemRequest
-      additionalProperties: false
-      description: Item Messages
-    listah.v1.ItemServiceCreateItemResponse:
-      type: object
-      properties:
-        itemIds:
-          type: array
-          items:
-            type: string
-          title: itemIds
-      title: ItemServiceCreateItemResponse
       additionalProperties: false
     listah.v1.ItemServiceReadFilterRequest:
       type: object
@@ -764,6 +711,7 @@ components:
           $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceReadItemRequest
       additionalProperties: false
+      description: Item Messages
     listah.v1.ItemServiceReadItemResponse:
       type: object
       properties:
@@ -944,6 +892,15 @@ components:
           type: integer
           title: count
           format: int32
+        softDelete:
+          type: boolean
+          title: softDelete
+        updatedBy:
+          type: string
+          title: updatedBy
+        updatedAt:
+          title: updatedAt
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
       title: Tag
       additionalProperties: false
 security: []
