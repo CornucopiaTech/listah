@@ -96,16 +96,28 @@ export function AppItemModal(): ReactNode {
   const item: IItem = useBoundStore((state) => state.displayItem);
 
   if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+    console.log("tags", tags);
+  }
+  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
     console.log("displayitem", item);
   }
 
   // Get object of tags and the properties associated with those tags.
-  const tagObj: ITag[] = item.tags?.filter(t => t != "").map((i) => tags.filter(ts => ts.id == i)[0]) || []
+  let tagObj: string[] = item.tags?.filter(
+    t => t != ""
+  ) || [];
   if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
     console.log("tagObj", tagObj);
   }
+  let tObj: ITag[] = tagObj.map(
+    (i) => tags.filter(ts => ts.id == i)[0]
+  );
+  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+    console.log("tObj", tObj);
+  }
 
-  const tagProps: string[] = tagObj.reduce((acc: string[], prp) => {
+
+  const tagProps: string[] = tObj.reduce((acc: string[], prp) => {
     return [...acc, ...prp.props]
   }, [])
   if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {

@@ -171,7 +171,7 @@ export function ItemListLayout({ search, title }: { search?: IItemRouteSearch, t
     let dis: string = item.name ? item.name : "";
     return (
       <Fragment>
-        <ListItem key={itemKey + dis}
+        <ListItem key={itemKey + item.id}
           // component="div"
           disablePadding
           disableGutters

@@ -97,6 +97,7 @@ func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
 			UpdatedBy:  v.UpdatedBy,
 		})
 	}
+	fmt.Printf("\n\n\n\n\nitems -  %+v\n\n\n\n\n", items[0])
 	return items, nil
 }
 

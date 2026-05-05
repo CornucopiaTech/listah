@@ -122,7 +122,7 @@ func (a *item) Read(ctx context.Context, m *[]*model.Item, s *model.ItemSearch) 
 		SELECT
 			it."id", it."user_id", it."name", it."note",
 			it."props", it."soft_delete", it.tag_names,
-			it.tag_names tags, it.prop_list
+			it.tag_ids tags, it.prop_list
 		FROM items it
 		WHERE it.user_id::VARCHAR = '` + s.UserId + `'
 			AND (it.soft_delete = false OR it.soft_delete IS NULL)

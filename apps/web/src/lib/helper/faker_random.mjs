@@ -44,7 +44,7 @@ export function fakeTags(arraySize) {
     () => ({
       id: faker.string.uuid(),
       userId: faker.helpers.arrayElement(allUserIds),
-      name: faker.lorem.sentence(),
+      name: faker.word.sample(),
       props: faker.helpers.uniqueArray(faker.helpers.multiple(
         () => (faker.helpers.arrayElement(allProps)),
         {

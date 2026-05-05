@@ -20,7 +20,7 @@ func (s *Server) ReadItem(ctx context.Context, req *connect.Request[pb.ItemServi
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
-	// fmt.Printf("\n\n\nUserId -  %s\n\n\n", req.Msg.GetUserId())
+	fmt.Printf("\n\n\nUserId -  %s\n\n\n", req.Msg.GetUserId())
 	// fmt.Printf("\n\n\nFilter -  %s\n\n\n", req.Msg.GetQuery().Filters)
 	// fmt.Printf("\n\n\nTag -  %s\n\n\n", req.Msg.GetQuery().Tags)
 
@@ -42,6 +42,7 @@ func (s *Server) ReadItem(ctx context.Context, req *connect.Request[pb.ItemServi
 	// Convert readModel to response proto
 	// using the model conversion function
 	rs, err := model.ItemModelToItemProto(readModel)
+	fmt.Printf("\n\n\n\n\nitems -  %+v\n\n\n\n\n", rs[0])
 	if err != nil {
 		s.Logger.LogError(ctx, svcName, rpcName, "Error getting item proto from item model", errors.Cause(err).Error())
 		return nil, err
