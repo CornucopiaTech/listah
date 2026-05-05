@@ -17,18 +17,17 @@ const allUserIds = [
 
 
 
-function apiCall(url, payload) {
-  const py = JSON.stringify(payload);
+async function apiCall(url, payload) {
   const req = new Request(url, {
     method: "POST",
-    body: py,
+    body: JSON.stringify(payload),
     headers: { "Content-Type": "application/json", "Accept": "*/*" },
   });
-  const res = fetch(req);
+  const res = await fetch(req);
   if (!res.ok) {
     throw new Error(`Network response was not ok: ${res.statusText}`);
   }
-  return res.json();
+  return await res.json();
 }
 
 export function fakeTags(arraySize) {
@@ -81,14 +80,15 @@ async function loadTags(maxLoaded, maxGen, apiUrl) {
   }
 }
 
-async function fakeFilters(arraySize, tagList) {
+async function fakeFilters(arraySize, tagList, user) {
+  // console.log('fakeFilters - ', tagList)
   const maxFilterTag = 5;
-  const allTags = tagList.map(i => i.name);
-  const possibleTagIndex = [...Array(allTags.length).keys()].filter(i => i > 0);
-  let combFaked = faker.helpers.multiple(
+  const allTags = await tagList.map(i => i.id);
+  const possibleTagIndex = await [...Array(allTags.length).keys()].filter(i => i > 0);
+  let combFaked = await faker.helpers.multiple(
     () => ({
       id: faker.string.uuid(),
-      userId: faker.helpers.arrayElement(allUserIds),
+      userId: user,
       name: faker.lorem.sentence(),
       tags: faker.helpers.uniqueArray(faker.helpers.multiple(
         () => (faker.helpers.arrayElement(allTags)),
@@ -102,37 +102,39 @@ async function fakeFilters(arraySize, tagList) {
     }),
     { count: arraySize }
   );
-  return JSON.stringify({ filters: combFaked });
+  return await JSON.stringify({ filters: combFaked });
 }
 
-async function loadFilters(maxLoaded, apiUrl, tags) {
+async function loadFilters(maxLoaded, maxGen, apiUrl, tags, user) {
   const url = `${apiUrl}/UpsertFilter`;
-  const data = await fakeFilters(maxLoaded, tags);
-  const req = new Request(url, {
-    method: "POST",
-    body: data,
-    headers: { "Content-Type": "application/json", "Accept": "*/*" },
-  });
-  const res = await fetch(req);
-  if (!res.ok) {
-    throw new Error(`Filter Upsert - Network response was not ok: ${res.statusText}`);
-  }
+  for (let i = 0; i < maxLoaded; i++) {
+    const data = await fakeFilters(maxGen, tags, user);
+    const req = new Request(url, {
+      method: "POST",
+      body: data,
+      headers: { "Content-Type": "application/json", "Accept": "*/*" },
+    });
+    const res = await fetch(req);
+    if (!res.ok) {
+      throw new Error(`Filter Upsert - Network response was not ok: ${res.statusText}`);
+    }
 
-  const result = await res.json();
-  console.log(`Filter Upsert - Api result length: ${result.filterIds.length}`);
+    const result = await res.json();
+    console.log(`Filter Upsert - Api result length: ${result.filterIds.length}`);
+  }
 }
 
 
-async function fakeItems(arraySize, tagList) {
+async function fakeItems(arraySize, tagList, user) {
   const maxItemTags = 5;
   const maxItemProps = 5;
   const possibleTagIndex = [...Array(maxItemTags).keys()].filter(i => i > 0);
-  const allTags = await tagList.map(i => i.name);
+  const allTags = await tagList.map(i => i.id);
 
   let combFaked = await faker.helpers.multiple(
     () => ({
       id: faker.string.uuid(),
-      userId: faker.helpers.arrayElement(allUserIds),
+      userId: user,
       name: faker.lorem.sentence(),
       note: faker.lorem.sentence(),
       tags: faker.helpers.uniqueArray(faker.helpers.multiple(
@@ -141,25 +143,36 @@ async function fakeItems(arraySize, tagList) {
           count: { min: 1, max: faker.helpers.arrayElement(possibleTagIndex) }
         }
       ), maxItemTags),
-      props: Object.fromEntries(
-        faker.helpers.multiple(
-          () => ([faker.word.sample(), faker.word.sample()]),
-          { count: faker.helpers.arrayElement([...Array(maxItemProps).keys()]) }
-        )
-      ),
       "updated_by": faker.helpers.arrayElement(updaters),
       "updated_at": faker.helpers.arrayElement([faker.date.past(), null]),
     }),
     { count: arraySize }
   );
+  combFaked = combFaked.map((i) => {
+    let p = i.tags.reduce((acc, t) => {
+      return [...acc, ...tagList.filter(tl => tl.id == t)[0].props];
+    }, [])
+    p = new Set(p)
+    p = [...p]
+    const possiblePropIndex = [...Array(maxItemProps).keys()].filter(i => i > 0);
+    const prps = Object.fromEntries(
+      faker.helpers.multiple(
+        () => ([faker.helpers.arrayElement(p), faker.word.sample()]),
+        { count: { min: 1, max: faker.helpers.arrayElement(possiblePropIndex) } }
+      )
+    )
+    return { ...i, props: prps }
+  })
+  console.log(combFaked)
+
   return await JSON.stringify({ items: combFaked });
 }
 
-async function loadItems(maxLoaded, maxGen, apiUrl, tags) {
+async function loadItems(maxLoaded, maxGen, apiUrl, tags, user) {
   const url = `${apiUrl}/UpsertItem`;
   for (let i = 0; i < maxLoaded; i++) {
-    const data = fakeItems(maxGen, tags);
-    const req = new Request(url, {
+    const data = await fakeItems(maxGen, tags, user);
+    const req = await new Request(url, {
       method: "POST",
       body: data,
       headers: { "Content-Type": "application/json", "Accept": "*/*" },
@@ -176,16 +189,18 @@ async function loadItems(maxLoaded, maxGen, apiUrl, tags) {
 
 
 function load_db(aUrl) {
-  loadTags(1, 20, aUrl).then(
+  loadTags(1, 100, aUrl).then(
     () => {
       allUserIds.forEach(
         uId => {
           const pl = { "userId": uId, "pagination": { "pageSize": -1, } }
           apiCall(`${aUrl}/ReadTag`, pl).then(
-            (tags) => {
-              console.log('Retrieved Tags - ', tags)
-              loadItems(1, 200, aUrl, tags);
-              loadFilters(1, 200, aUrl, tags);
+            (data) => {
+              // console.log('Retrieved data - ', data)
+              // console.log('Retrieved Tags - ', tags);
+              const tags = data.tags;
+              loadItems(1, 20, aUrl, tags, uId);
+              loadFilters(1, 20, aUrl, tags, uId);
             }
           ).catch((error) => console.log('Load Filters and Items - ', error.message))
         }
@@ -194,20 +209,8 @@ function load_db(aUrl) {
   ).catch((error) => console.log('Load Tags - ', error.message))
 }
 
-// const url = "http://localhost:8081/listah.v1.ItemService";
-// const url = "http://localhost:8080/listah.v1.ItemService";
-// loadItems(10, 3000, url);
-// loadItems(1, 50, url);
-// loadFilters(100, url);
-
 const urls = [
   "http://localhost:8080/listah.v1.ItemService",
   // "http://localhost:8081/listah.v1.ItemService",
 ]
 urls.forEach(url => load_db(url));
-
-
-
-// urls.forEach(url => loadItems(1, 200, url));
-// urls.forEach(url => loadItems(10, 3000, url));
-// urls.forEach(url => loadFilters(100, url));

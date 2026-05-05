@@ -29,7 +29,8 @@ func FilterModelToFilterProto(m []*Filter) ([]*pb.Filter, error) {
 func FilterProtoToFilterModel(msg []*pb.Filter, genId bool) ([]*Filter, []string, error) {
 	savedFilters := []*Filter{}
 
-	check := map[string]bool{"name": true}
+	// check := map[string]bool{"name": true}
+	check := map[string]bool{"name": true, "updated_by": true, "updated_at": true}
 	for _, v := range msg {
 		if v.GetUserId() == "" {
 			return nil, nil, errors.New("no userId sent with request")

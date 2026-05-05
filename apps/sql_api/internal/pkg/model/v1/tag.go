@@ -28,7 +28,8 @@ func TagModelToTagProto(m []*Tag) ([]*pb.Tag, error) {
 
 func TagProtoToTagModel(msg []*pb.Tag, genId bool) ([]*Tag, []string, error) {
 	items := []*Tag{}
-	check := map[string]bool{"name": true}
+	// check := map[string]bool{"name": true}
+	check := map[string]bool{"name": true, "updated_by": true, "updated_at": true}
 
 	for _, v := range msg {
 		if v.GetUserId() == "" {

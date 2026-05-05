@@ -1,6 +1,10 @@
 # To Do
 - Add url to the message saved for each request in the database.
 - Make sure the user with the bearer token is the same as the user sent in the data being updated.
+- Change the type of tags from list of string, to list of tag object. and upon submission, retain on the id from the tag object to send to api.
+- Change the type of tags from list of string, to list of tag object. and upon submission, retain on the id from the tag object to send to api.
+
+
 
 - Create a mechanism to clone filters.
 - For existing items that are being updated, make sure that the the updated item contains at least one tag before submission.

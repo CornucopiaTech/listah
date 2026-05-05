@@ -102,7 +102,7 @@ func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
 
 func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, []string, error) {
 	items := []*Item{}
-	check := map[string]bool{"name": true}
+	check := map[string]bool{"name": true, "updated_by": true, "updated_at": true}
 
 	for _, v := range msg {
 		if v.GetUserId() == "" {
@@ -122,6 +122,7 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, []string, error)
 			Name:      v.GetName(),
 			UpdatedBy: "api",
 			UpdatedAt: time.Now(),
+
 		}
 
 		// Set values that have not been set to nil
@@ -132,6 +133,10 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, []string, error)
 		if len(v.GetTags()) != 0 {
 			newItem.Tags = v.GetTags()
 			check["tags"] = true
+		}
+		if len(v.GetTagNames()) != 0 {
+			newItem.TagNames = v.GetTagNames()
+			check["tags_names"] = true
 		}
 		if len(v.GetProps()) != 0 {
 			newItem.Props = v.GetProps()

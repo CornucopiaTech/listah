@@ -139,9 +139,9 @@ type Item struct {
 	Note          string                 `protobuf:"bytes,4,opt,name=note,proto3" json:"note,omitempty"`
 	Props         map[string]string      `protobuf:"bytes,5,rep,name=props,proto3" json:"props,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	Tags          []string               `protobuf:"bytes,6,rep,name=tags,proto3" json:"tags,omitempty"`
-	SoftDelete    bool                   `protobuf:"varint,7,opt,name=softDelete,proto3" json:"softDelete,omitempty"`
-	PropList      []string               `protobuf:"bytes,8,rep,name=propList,proto3" json:"propList,omitempty"`
-	TagNames      []string               `protobuf:"bytes,10,rep,name=tagNames,proto3" json:"tagNames,omitempty"`
+	TagNames      []string               `protobuf:"bytes,7,rep,name=tagNames,proto3" json:"tagNames,omitempty"`
+	SoftDelete    bool                   `protobuf:"varint,8,opt,name=softDelete,proto3" json:"softDelete,omitempty"`
+	PropList      []string               `protobuf:"bytes,9,rep,name=propList,proto3" json:"propList,omitempty"`
 	UpdatedBy     string                 `protobuf:"bytes,500,opt,name=updatedBy,proto3" json:"updatedBy,omitempty"`
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,501,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -220,6 +220,13 @@ func (x *Item) GetTags() []string {
 	return nil
 }
 
+func (x *Item) GetTagNames() []string {
+	if x != nil {
+		return x.TagNames
+	}
+	return nil
+}
+
 func (x *Item) GetSoftDelete() bool {
 	if x != nil {
 		return x.SoftDelete
@@ -230,13 +237,6 @@ func (x *Item) GetSoftDelete() bool {
 func (x *Item) GetPropList() []string {
 	if x != nil {
 		return x.PropList
-	}
-	return nil
-}
-
-func (x *Item) GetTagNames() []string {
-	if x != nil {
-		return x.TagNames
 	}
 	return nil
 }
@@ -533,13 +533,12 @@ const file_v1_commons_proto_rawDesc = "" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x12\n" +
 	"\x04note\x18\x04 \x01(\tR\x04note\x120\n" +
 	"\x05props\x18\x05 \x03(\v2\x1a.listah.v1.Item.PropsEntryR\x05props\x12\x12\n" +
-	"\x04tags\x18\x06 \x03(\tR\x04tags\x12\x1e\n" +
+	"\x04tags\x18\x06 \x03(\tR\x04tags\x12\x1a\n" +
+	"\btagNames\x18\a \x03(\tR\btagNames\x12\x1e\n" +
 	"\n" +
-	"softDelete\x18\a \x01(\bR\n" +
+	"softDelete\x18\b \x01(\bR\n" +
 	"softDelete\x12\x1a\n" +
-	"\bpropList\x18\b \x03(\tR\bpropList\x12\x1a\n" +
-	"\btagNames\x18\n" +
-	" \x03(\tR\btagNames\x12\x1d\n" +
+	"\bpropList\x18\t \x03(\tR\bpropList\x12\x1d\n" +
 	"\tupdatedBy\x18\xf4\x03 \x01(\tR\tupdatedBy\x129\n" +
 	"\tupdatedAt\x18\xf5\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x1a8\n" +
 	"\n" +

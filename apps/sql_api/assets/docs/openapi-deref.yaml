@@ -485,6 +485,11 @@ paths:
                           items:
                             type: string
                           title: tags
+                        tagNames:
+                          type: array
+                          items:
+                            type: string
+                          title: tagNames
                         softDelete:
                           type: boolean
                           title: softDelete
@@ -493,11 +498,6 @@ paths:
                           items:
                             type: string
                           title: propList
-                        tagNames:
-                          type: array
-                          items:
-                            type: string
-                          title: tagNames
                         updatedBy:
                           type: string
                           title: updatedBy

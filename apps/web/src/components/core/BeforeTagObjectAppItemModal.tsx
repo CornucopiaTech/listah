@@ -64,7 +64,6 @@ import { ErrorAlert, SuccessAlert, WarnAlert } from "@/components/core/Alerts";
 import type { AppTheme } from '@/system/theme';
 import {
   DefaultTagRead,
-  DefaultTag,
 } from '@/lib/helper/defaults';
 import type {
   ITag,
@@ -95,38 +94,58 @@ export function AppItemModal(): ReactNode {
   const tags: ITag[] = data && data.tags ? data.tags : [];
   const item: IItem = useBoundStore((state) => state.displayItem);
 
-  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-    console.log("displayitem", item);
-  }
+  // Get names of tags from the tagNames field for existing items or from tags for new items being created from / route via tag or filter category list
 
-  // Get object of tags and the properties associated with those tags.
-  const tagObj: ITag[] = item.tags?.filter(t => t != "").map((i) => tags.filter(ts => ts.id == i)[0]) || []
-  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-    console.log("tagObj", tagObj);
+  let tagNameSet: Set<string> = new Set();
+  if (item.tagNames && item.tagNames.length !== 0) {
+    tagNameSet = tagNameSet.union(new Set([...item.tagNames]))
   }
-
-  const tagProps: string[] = tagObj.reduce((acc: string[], prp) => {
-    return [...acc, ...prp.props]
-  }, [])
-  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-    console.log("tagProps", tagProps);
+  if (item.tags && item.tags.length !== 0) {
+    const passedTags: string[] = item.tags;
+    passedTags.forEach(t => {
+      const mtch = tags.filter(ts => ts.id == t)
+      if (mtch.length > 0) {
+        tagNameSet.add(mtch[0].name)
+      }
+    });
   }
+  const tagNames: string[] = [...tagNameSet].sort();
 
-  const propList: string[] = [...new Set(tagProps)].sort();
-  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-    console.log("propList", propList);
+
+  // Determine list of item props from list of item Tags.
+  // Use the combination of the passed Props list and the passed tags.
+  let propSet: Set<string> = new Set();
+
+  // Get a set of all the items passed to the  item.propList
+  if (item.propList && Object.keys(item.propList).length !== 0) {
+    propSet = propSet.union(new Set([...item.propList]))
   }
-
+  // Get the props from all the items passed as tags and add to set of Props
+  tagNames.forEach(t => {
+    const mtch = tags.filter(ts => ts.name == t)
+    if (mtch.length > 0) {
+      propSet = propSet.union(new Set([...mtch[0].props]))
+    }
+  });
+  // Convert set to list and sort ascending
+  const propList: string[] = [...propSet].sort();
 
   // Create the key value pair used for the props.
-  type IProps = { key: string, value: string }
+  type IProps = {
+    key: string,
+    value: string
+  }
   let itemProps: IProps[] = [];
   propList.forEach(p => itemProps.push({
     key: p, value: item.props && item.props[p] ? item.props[p] : ""
   }));
 
 
-  const formData = { ...item, props: itemProps, tags: tagObj }
+  const formData = {
+    ...item,
+    props: itemProps,
+    tags: tagNames.filter((t) => t != "")
+  }
   const form = useForm({
     defaultValues: formData,
     onSubmit: formSubmission,
@@ -135,7 +154,7 @@ export function AppItemModal(): ReactNode {
         if (value.name.length < 1) {
           return "Item title is required";
         }
-        if (value.tags?.filter((t) => t.name != "").length < 1) {
+        if (value.tags?.filter((t) => t != "").length < 1) {
           return "A least one tag is required";
         }
         return undefined
@@ -144,7 +163,7 @@ export function AppItemModal(): ReactNode {
         if (value.name.length < 1) {
           return "Item title is required";
         }
-        if (value.tags?.filter((t) => t.name != "").length < 1) {
+        if (value.tags?.filter((t) => t != "").length < 1) {
           return "A least one tag is required";
         }
         return undefined
@@ -216,19 +235,14 @@ export function AppItemModal(): ReactNode {
       acc[i.key] = i.value;
       return acc
     }, {})
-    let tgs = value.tags?.filter(t => t.name != "");
-    tgs = tgs.map(t => t.id);
-
-
     const submitValue = {
       id: itemId,
       userId,
       name: value.name,
       note: value.note,
-      // tags: value.tags?.filter((t) => t != ""),
-      tags: tgs,
+      tags: undefined,
       props: subProps,
-      tagNames: undefined,
+      tagNames: value.tags?.filter((t) => t != ""),
       propList: undefined,
       softDelete: value.softDelete,
     }
@@ -347,7 +361,7 @@ export function AppItemModal(): ReactNode {
                 }}>
                 <legend style={{ padding: '0 0.5rem' }}>Tags</legend>
                 <Button disableElevation sx={{ display: 'flex', justifyContent: "flex-start", alignContent: "center", }}
-                  onClick={() => field.pushValue(DefaultTag)}
+                  onClick={() => field.pushValue('')}
                   type="button">
                   <AppSubtitle1Typography sx={{ textTransform: "none", justifyContent: "center", alignContent: "center", fontSize: '15px', }}>
                     Click to add new tag
@@ -368,8 +382,8 @@ export function AppItemModal(): ReactNode {
                                 // freeSolo
                                 autoHighlight
                                 options={tags.map((opt) => opt.name)}
-                                value={subField.state.value.name}
-                                inputValue={subField.state.value.name}
+                                value={subField.state.value}
+                                inputValue={subField.state.value}
                                 onChange={
                                   (e: SyntheticEvent<Element, Event>, newValue: string | null) => {
                                     e.preventDefault();
@@ -382,7 +396,7 @@ export function AppItemModal(): ReactNode {
                                     if (field.state.value.length > 1 && sval == "") {
                                       field.removeValue(i);
                                     } else {
-                                      subField.handleChange({ ...subField.state.value, name: sval });
+                                      subField.handleChange(sval);
                                     }
                                     // subField.handleChange(sval);
                                   }
@@ -400,7 +414,131 @@ export function AppItemModal(): ReactNode {
                                     if (field.state.value.length > 1 && sval == "") {
                                       field.removeValue(i);
                                     } else {
-                                      subField.handleChange({ ...subField.state.value, name: sval });
+                                      subField.handleChange(sval);
+                                    }
+                                    // subField.handleChange(sval);
+                                  }
+                                }
+                                renderInput={
+                                  (params) =>
+                                    <TextField
+                                      // slotProps causes autocorrect to stop working
+                                      sx={{
+                                        '& .MuiInputBase-input': { fontSize: '14px' }, // Changes the typed text size
+                                        '& .MuiInputLabel-root': { fontSize: '14px' }, // Changes the label size
+                                      }}
+                                      margin="dense"
+                                      {...params}
+                                      label=""
+                                      // label={"tag " + (i + 1)}
+                                      variant="standard"
+                                    />
+                                }
+                              />
+                            </Grid>
+                          )
+                        }
+                      }</form.Field>
+                    })
+                  }</Grid>
+                }
+              </Box>
+              {/* {!field.state.meta.isValid && (
+                <ErrorAlert message={field.state.meta.errors.join(', ')} />
+              )} */}
+            </Fragment>
+          )
+        }
+      </form.Field>
+    );
+  }
+
+  function getTagFieldFreeSolo() {
+    // ToDo: Use Virtualised list for this.
+    return (
+      <form.Field name="tags" mode="array">
+        {
+          (field) => (
+            <Fragment>
+              <Box
+                component="fieldset"
+                sx={{
+                  '& legend': { fontSize: '12px', color: 'rgba(0, 0, 0, 0.6)' },
+                  border: `0.5px solid`,
+                  borderColor: "rgba(0, 0, 0, 0.23)",
+                  margin: 0, borderRadius: 1,
+                  fontSize: '15px',
+                  padding: '16.5px 14px', // Matches standard TextField padding
+                  transition: 'border-color 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+                  '&:hover': {
+                    // Standard MUI hover border color
+                    borderColor: 'rgba(0, 0, 0, 0.87)',
+                  },
+                  '&:focus-within': {
+                    // Matches the "active" blue focus state
+                    border: '2px solid',
+                    borderColor: 'primary.main',
+                    // Adjust padding to prevent "jumping" when border thickness changes
+                    padding: '15.5px 13px',
+                  },
+                }}>
+                <legend style={{ padding: '0 0.5rem' }}>Tags</legend>
+                <Button disableElevation sx={{ display: 'flex', justifyContent: "flex-start", alignContent: "center", }}
+                  onClick={() => field.pushValue('')}
+                  type="button">
+                  <AppSubtitle1Typography sx={{ textTransform: "none", justifyContent: "center", alignContent: "center", fontSize: '15px', }}>
+                    Click to add new tag
+                  </AppSubtitle1Typography>
+                </Button>
+                {
+                  field.state.value &&
+                  <Grid container spacing={3} sx={{ width: '100%' }}>{
+                    field.state.value.map((_, i) => {
+                      return <form.Field key={i} name={`tags[${i}]`}>{
+                        (subField) => {
+                          return (
+                            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                              <Autocomplete
+                                slotProps={{ listbox: { sx: { fontSize: '14px' } } }}
+                                size="small"
+                                id={"item-tag-" + i}
+                                freeSolo
+                                options={tags.map((opt) => opt.name)}
+                                // options={tags}
+                                // getOptionKey={(opt) => opt.name}
+                                value={subField.state.value}
+                                inputValue={subField.state.value}
+                                onChange={
+                                  (e: SyntheticEvent<Element, Event>, newValue: string | null) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    // Handles ONLY changes from the provided options.
+                                    const sval = newValue ? newValue : "";
+                                    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+                                      console.log("OnChange", newValue, sval);
+                                    }
+                                    if (field.state.value.length > 1 && sval == "") {
+                                      field.removeValue(i);
+                                    } else {
+                                      subField.handleChange(sval);
+                                    }
+                                    // subField.handleChange(sval);
+                                  }
+                                }
+                                onInputChange={
+                                  (e: SyntheticEvent<Element, Event>, newValue: string) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    // Handles both handwritten and provided option value changes.
+                                    const sval = newValue ? newValue : "";
+                                    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+                                      console.log("OnInputChange", newValue, sval);
+                                      console.log("OnInputChange: field.state.value.length", field.state.value.length);
+                                    }
+                                    if (field.state.value.length > 1 && sval == "") {
+                                      field.removeValue(i);
+                                    } else {
+                                      subField.handleChange(sval);
                                     }
                                     // subField.handleChange(sval);
                                   }
@@ -445,12 +583,20 @@ export function AppItemModal(): ReactNode {
     form.handleSubmit();
   }
 
+  // function handleClone() {
+  //   const title = form.state.values.name || "";
+  //   form.setFieldValue('id', uuidv4());
+  //   form.setFieldValue('name', "[Clone of] - " + title);
+  // }
+
   const fields: itemFields[] = ['id', 'userId', 'name', "note"];
   const dialogSx = {
     display: 'block',
     width: "lg",
     maxWidth: "lg",
     height: '65vh',
+    // padding: "1",
+    // maxHeight: 720,
     overflow: 'auto',
     '&::-webkit-scrollbar': {
       width: '15px', // width of the entire scrollbar
@@ -528,9 +674,11 @@ export function AppItemModal(): ReactNode {
     <Box
       component="section"
       sx={{
+        // marginTop: { xs: '0rem', sm: '1rem', md: '1rem' },
         marginTop: 0,
         marginRight: "5rem",
         fontSize: '15px',
+        // padding: { xs: '0rem', sm: '1rem', md: '1rem' },
         padding: 0,
       }}>
       <Stack spacing={0} sx={{ width: '100%' }} >

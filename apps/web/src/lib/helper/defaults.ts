@@ -55,7 +55,6 @@ export const DefaultItem: IItem = {
   note: "",
   props: null,
   tags: [],
-  tagIds: [],
   tagNames: [],
   propList: [],
   softDelete: false,

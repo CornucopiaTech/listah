@@ -26,9 +26,9 @@ message Item {
   string note = 4;
   map<string,string> props = 5;
   repeated string tags = 6;
-  bool softDelete = 7;
-  repeated string propList = 8;
-  repeated string tagNames = 10;
+  repeated string tagNames = 7;
+  bool softDelete = 8;
+  repeated string propList = 9;
   string updatedBy = 500;
   google.protobuf.Timestamp updatedAt = 501;
 }
