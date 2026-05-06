@@ -15,7 +15,7 @@ import { ThemeProvider, } from '@mui/material/styles';
 import { useUser } from '@clerk/react';
 import LinearProgress from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
-
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 // Internal imports
 // Import the generated route tree
@@ -24,7 +24,6 @@ import { routeTree } from './routeTree.gen'
 import NotFound from '@/components/common/NotFound';
 import { ErrorAlert } from "@/components/core/Alerts";
 import theme from '@/system/theme';
-// import * from
 
 
 declare global {
@@ -72,6 +71,7 @@ function Wrapper({ children }: { children: ReactNode }) {
     <ThemeProvider theme={theme}>
       <QueryClientProvider client={queryClient}>
         {children}
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </ThemeProvider>
   )

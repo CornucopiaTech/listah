@@ -24,6 +24,7 @@ export function itemQueryOptions(opts: IItemReadRequest) {
     queryKey: ["item", opts],
     queryFn: () => getItem(opts),
     staleTime: staleTime,
+    enabled: !!opts?.userId,
   }
 }
 
@@ -32,6 +33,7 @@ export function itemGroupOptions(opts: IItemReadRequest) {
     queryKey: ["item", opts],
     queryFn: () => getItem(opts),
     staleTime: staleTime,
+    enabled: !!opts?.userId,
   })
 }
 
@@ -40,6 +42,7 @@ export function filterGroupOptions(opts: IFilterReadRequest) {
     queryKey: ["filter", opts],
     queryFn: () => getFilter(opts),
     staleTime: staleTime,
+    enabled: !!opts?.userId,
   })
 }
 
@@ -48,5 +51,6 @@ export function tagGroupOptions(opts: ITagReadRequest) {
     queryKey: ["tag", opts],
     queryFn: () => getTag(opts),
     staleTime: staleTime,
+    enabled: !!opts?.userId,
   })
 }

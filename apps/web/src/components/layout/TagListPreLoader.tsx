@@ -11,13 +11,15 @@ import {
 } from "react";
 import { Virtuoso } from 'react-virtuoso';
 import {
-  useSuspenseQuery,
+  useQuery,
+  type UseQueryResult,
 } from '@tanstack/react-query';
 import * as z from "zod";
 import {
   useNavigate,
   getRouteApi,
 } from '@tanstack/react-router';
+import { useUser } from '@clerk/react';
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
 import ListItem from '@mui/material/ListItem';
@@ -36,6 +38,7 @@ import type { IItemReadRequest } from '@/lib/model/item';
 import type {
   ITag,
   ITagReadRequest,
+  ITagReadResponse,
 } from "@/lib/model/tag";
 import {
   ZTagReadResponse,
@@ -43,10 +46,12 @@ import {
 import { tagGroupOptions } from '@/lib/helper/querying';
 import { ErrorAlert } from "@/components/core/Alerts";
 import {
+  decodeState,
   encodeState
 } from '@/lib/helper/encoders';
 import {
   DefaultItemRead,
+  DefaultTagRead,
   ListBoxSize,
 } from '@/lib/helper/defaults';
 import {
@@ -56,30 +61,44 @@ import {
 
 
 
-
+function OuterBox({ children }: { children: ReactNode }): ReactNode {
+  return (
+    <Fragment>
+      <Box key="data-content" sx={ListBoxSize}>
+        {children}
+      </Box>
+    </Fragment>
+  );
+}
 
 export function TagListLayout(): ReactNode {
   const routeApi = getRouteApi('/tags/');
-  // routeApi.useSearch() only contains data from validate search and does not contain the information that was injected into the route loader from the context. So the search information retrieved from routeApi.useSearch() will not contain the user information.
-  // const routeSearch: ITagReadRequest = routeApi.useSearch()
-
-  // console.log('location at /tags/ beforeLoad:', location.pathname)
+  const routeSearch: { s: string } = routeApi.useSearch()
+  let search = decodeState(routeSearch.s) as ITagReadRequest;
   const navigate = useNavigate();
+  const { user, } = useUser();
   const store: TBoundStore = useBoundStore((state) => state);
 
-  const { search: query } = routeApi.useRouteContext();
-  console.info('In TagList - query', query)
 
+  const query: ITagReadRequest = search ? {
+    ...search,
+    userId: user?.id || "",
+    pagination: {
+      ...search.pagination,
+      pageNumber: search.pagination.pageNumber ? search.pagination.pageNumber : DefaultTagRead.pagination.pageNumber
+    }
+  } : {
+    ...DefaultTagRead, userId: user?.id || ""
+  };
   let pageInfo = useRef({
     pageNumber: query.pagination.pageNumber,
     pageSize: query.pagination.pageSize,
     totalRecords: 0,
   });
 
-
   const {
     isPending, isError, data, error
-  } = useSuspenseQuery(tagGroupOptions(query))
+  }: UseQueryResult<ITagReadResponse> = useQuery(tagGroupOptions(query));
 
   const tags: ITag[] = data && data.tags ? data.tags : [];
   if (data) {
@@ -103,7 +122,6 @@ export function TagListLayout(): ReactNode {
     };
     const encoded = encodeState(q);
     navigate({ to: ".", search: { s: encoded } });
-    // navigate({ search: () => ({ s: encoded }) });
   };
 
   function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -114,8 +132,6 @@ export function TagListLayout(): ReactNode {
     };
     const encoded = encodeState(q);
     navigate({ to: ".", search: { s: encoded } });
-    // navigate({ search: () => ({ s: encoded }) });
-
   };
 
   function handleItemClick(it: ITag) {
@@ -169,52 +185,41 @@ export function TagListLayout(): ReactNode {
     }
   }
 
-  function OuterBox({ children }: { children: ReactNode }): ReactNode {
-    return (
-      <Fragment>
-        <Box key="data-content" sx={ListBoxSize}>
-          {children}
-        </Box>
-      </Fragment>
-    );
-  }
 
-  function ListBox({ children }: { children: ReactNode }): ReactNode {
-    return (
-      <Fragment>
-        {children}
-        <TablePagination
-          component="div"
-          count={pageInfo.current.totalRecords}
-          page={pageInfo.current.pageNumber}
-          onPageChange={handlePageChange}
-          rowsPerPage={pageInfo.current.pageSize}
-          onRowsPerPageChange={handlePageSizeChange}
+
+  return (
+    <Fragment>
+      {
+        isPending &&
+        <OuterBox><LinearProgress /></OuterBox>
+      }
+      {
+        !isPending && (isError || errMsg !== "") && tags.length == 0 &&
+        <OuterBox><ErrorAlert message={errMsg ? errMsg : error?.message || "An error occurred. Please try again"} /></OuterBox>
+      }
+      {
+        !isError && !isPending && tags.length == 0 &&
+        <OuterBox>
+          <AppH6Typography sx={{ display: 'flex', textTransform: "none", justifyContent: "center", alignContent: "center", }}>
+            No tags found
+          </AppH6Typography>
+        </OuterBox>
+      }
+      {
+        tags.length > 0 && <Virtuoso key="data-content"
+          style={ListBoxSize} data={tags}
+          itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
         />
-      </Fragment>
-    );
-  }
+      }
 
-  if (isPending) {
-    return <ListBox> <OuterBox><LinearProgress /></OuterBox></ListBox>
-  }
-
-  if (isError || errMsg !== "") {
-    return <ListBox><OuterBox><ErrorAlert message={errMsg ? errMsg : error?.message || "An error occurred. Please try again"} /></OuterBox></ListBox>
-  }
-
-  if (tags.length == 0) {
-    return <ListBox><OuterBox>
-      <AppH6Typography sx={{ display: 'flex', textTransform: "none", justifyContent: "center", alignContent: "center", }}>
-        No tags found
-      </AppH6Typography>
-    </OuterBox></ListBox>
-  }
-
-  if (tags.length > 0) {
-    return <ListBox><Virtuoso key="data-content"
-      style={ListBoxSize} data={tags}
-      itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
-    /></ListBox>
-  }
+      <TablePagination
+        component="div"
+        count={pageInfo.current.totalRecords}
+        page={pageInfo.current.pageNumber}
+        onPageChange={handlePageChange}
+        rowsPerPage={pageInfo.current.pageSize}
+        onRowsPerPageChange={handlePageSizeChange}
+      />
+    </Fragment>
+  );
 }
