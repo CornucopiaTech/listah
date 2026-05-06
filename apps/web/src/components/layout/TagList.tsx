@@ -12,6 +12,7 @@ import {
 import { Virtuoso } from 'react-virtuoso';
 import {
   useSuspenseQuery,
+  type UseSuspenseQueryResult,
 } from '@tanstack/react-query';
 import * as z from "zod";
 import {
@@ -36,6 +37,7 @@ import type { IItemReadRequest } from '@/lib/model/item';
 import type {
   ITag,
   ITagReadRequest,
+  ITagReadResponse,
 } from "@/lib/model/tag";
 import {
   ZTagReadResponse,
@@ -59,16 +61,12 @@ import {
 
 
 export function TagListLayout(): ReactNode {
-  const routeApi = getRouteApi('/tags/');
-  // routeApi.useSearch() only contains data from validate search and does not contain the information that was injected into the route loader from the context. So the search information retrieved from routeApi.useSearch() will not contain the user information.
-  // const routeSearch: ITagReadRequest = routeApi.useSearch()
-
-  // console.log('location at /tags/ beforeLoad:', location.pathname)
   const navigate = useNavigate();
   const store: TBoundStore = useBoundStore((state) => state);
-
+  // routeApi.useSearch() only contains data from validate search and does not contain the information that was injected into the route loader from the context. So the search information retrieved from routeApi.useSearch() will not contain the user information.
+  // const routeSearch: ITagReadRequest = routeApi.useSearch() ### Do not use this.
+  const routeApi = getRouteApi('/tags/');
   const { search: query } = routeApi.useRouteContext();
-  console.info('In TagList - query', query)
 
   let pageInfo = useRef({
     pageNumber: query.pagination.pageNumber,
@@ -76,10 +74,25 @@ export function TagListLayout(): ReactNode {
     totalRecords: 0,
   });
 
-
   const {
     isPending, isError, data, error
-  } = useSuspenseQuery(tagGroupOptions(query))
+  }: UseSuspenseQueryResult<ITagReadResponse> = useSuspenseQuery(tagGroupOptions(query))
+
+  let errMsg: string = isError && error && error instanceof Error ? error.message : "";
+  try {
+    ZTagReadResponse.parse(data);
+  } catch (error: any) {
+    errMsg = "An error occurred. Please try again";
+    if (error instanceof z.ZodError) {
+      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+        console.info("Zod issue - ", error.issues);
+      }
+    } else {
+      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+        console.info("Other issue - ", error);
+      }
+    }
+  }
 
   const tags: ITag[] = data && data.tags ? data.tags : [];
   if (data) {
@@ -103,7 +116,6 @@ export function TagListLayout(): ReactNode {
     };
     const encoded = encodeState(q);
     navigate({ to: ".", search: { s: encoded } });
-    // navigate({ search: () => ({ s: encoded }) });
   };
 
   function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -114,8 +126,6 @@ export function TagListLayout(): ReactNode {
     };
     const encoded = encodeState(q);
     navigate({ to: ".", search: { s: encoded } });
-    // navigate({ search: () => ({ s: encoded }) });
-
   };
 
   function handleItemClick(it: ITag) {
@@ -151,22 +161,6 @@ export function TagListLayout(): ReactNode {
         </ListItemButton>
       </ListItem>
     );
-  }
-
-  let errMsg: string = isError && error && error instanceof Error ? error.message : "";
-  try {
-    ZTagReadResponse.parse(data);
-  } catch (error: any) {
-    errMsg = "An error occurred. Please try again";
-    if (error instanceof z.ZodError) {
-      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-        console.info("Zod issue - ", error.issues);
-      }
-    } else {
-      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-        console.info("Other issue - ", error);
-      }
-    }
   }
 
   function OuterBox({ children }: { children: ReactNode }): ReactNode {
@@ -217,4 +211,5 @@ export function TagListLayout(): ReactNode {
       itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
     /></ListBox>
   }
+  return <ListBox><OuterBox><ErrorAlert message="An error occurred. Please try again" /></OuterBox></ListBox>
 }

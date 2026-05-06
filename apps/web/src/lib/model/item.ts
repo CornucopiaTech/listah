@@ -40,7 +40,7 @@ export type IItemReadRequest = z.infer<typeof ZItemReadRequest>;
 
 export const ZItemRouteSearch = z.object({
   query: ZItemReadRequest,
-  title: z.string().catch('All Items'),
+  title: z.nullish(z.string()).catch('All Items'),
   reference: z.union([z.undefined(), ZFilter, ZTag]),
 });
 export type IItemRouteSearch = z.infer<typeof ZItemRouteSearch>;

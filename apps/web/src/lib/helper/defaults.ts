@@ -4,7 +4,8 @@ import type {
 } from "@/lib/model/common";
 import type {
   IItem,
-  IItemReadRequest
+  IItemReadRequest,
+  IItemRouteSearch,
 } from '@/lib/model/item';
 import type { ITagReadRequest } from '@/lib/model/tag';
 import type { IFilterReadRequest } from '@/lib/model/filter';
@@ -90,6 +91,12 @@ export const DefaultItemRead: IItemReadRequest = {
   userId: "",
   query: { filters: [], tags: [], text: '', },
   pagination: { ...defaultPagination }
+};
+
+export const DefaultIItemRouteSearch: IItemRouteSearch = {
+  query: { ...DefaultItemRead },
+  title: undefined,
+  reference: undefined
 };
 
 export const DefaultTagRead: ITagReadRequest = {

@@ -8,15 +8,15 @@ import {
   useRef,
 } from "react";
 import {
-  useQuery,
-  type UseQueryResult,
+  useSuspenseQuery,
+  type UseSuspenseQueryResult,
 } from '@tanstack/react-query';
 import * as z from "zod";
 import {
   useNavigate,
+  getRouteApi,
 } from '@tanstack/react-router';
 import Box from '@mui/material/Box';
-import { useUser } from '@clerk/react';
 import { Virtuoso } from 'react-virtuoso';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -46,7 +46,6 @@ import { ErrorAlert } from "@/components/core/Alerts";
 import {
   encodeState
 } from '@/lib/helper/encoders';
-import { DefaultItemRead } from '@/lib/helper/defaults';
 import {
   AppH6Typography,
   AppListItemTypography,
@@ -59,33 +58,16 @@ import {
 
 
 
-function OuterBox({ children }: { children: ReactNode }): ReactNode {
-  return (
-    <Fragment>
-      <Box key="data-content" sx={ListBoxSize}>
-        {children}
-      </Box>
-    </Fragment>
-  );
-}
 
 
 export function ItemListLayout({ search, title }: { search?: IItemRouteSearch, title: string }): ReactNode {
   const navigate = useNavigate();
-  const { user, } = useUser();
   const store: TBoundStore = useBoundStore((state) => state);
 
+  // routeApi.useSearch() only contains data from validate search and does not contain the information that was injected into the route loader from the context. So the search information retrieved from routeApi.useSearch() will not contain the user information.
+  const routeApi = getRouteApi('/items/');
+  const { search: query } = routeApi.useRouteContext();
 
-  const query: IItemReadRequest = search && search.query ? {
-    ...search.query,
-    userId: user?.id || "",
-    pagination: {
-      ...search.query.pagination,
-      pageNumber: search.query.pagination.pageNumber ? search.query.pagination.pageNumber : DefaultItemRead.pagination.pageNumber
-    }
-  } : {
-    ...DefaultItemRead, userId: user?.id || ""
-  };
   let pageInfo = useRef({
     pageNumber: query.pagination.pageNumber,
     pageSize: query.pagination.pageSize,
@@ -93,11 +75,9 @@ export function ItemListLayout({ search, title }: { search?: IItemRouteSearch, t
   });
 
 
-
-
   const {
     isPending, isFetching, isError, data, error
-  }: UseQueryResult<IItemReadResponse> = useQuery(itemGroupOptions(query));
+  }: UseSuspenseQueryResult<IItemReadResponse> = useSuspenseQuery(itemGroupOptions(query.query));
 
   let errMsg: string = isError && error && error instanceof Error ? error.message : "";
   try {
@@ -129,10 +109,9 @@ export function ItemListLayout({ search, title }: { search?: IItemRouteSearch, t
     console.info("store reference - ", store.itemReference);
   }
 
-  function getRouteSearch(query: IItemReadRequest) {
-    // const encoded = encodeState(q);
+  function getRouteSearch(qs: IItemReadRequest) {
     const s = {
-      query, title, reference: search && search.reference || undefined,
+      query: qs, title, reference: search && search.reference || undefined,
     }
     return encodeState(s);
   }
@@ -146,7 +125,6 @@ export function ItemListLayout({ search, title }: { search?: IItemRouteSearch, t
       ...query, pagination: { ...query.pagination, pageNumber: value }
     };
     ;
-    // navigate({ to: ".", search: getRouteSearch(q), });
     navigate({ to: ".", search: { s: getRouteSearch(q) }, });
   };
 
@@ -163,7 +141,6 @@ export function ItemListLayout({ search, title }: { search?: IItemRouteSearch, t
         pageSize: parseInt(e.target.value, 10), pageNumber: 0
       }
     };
-    // navigate({ to: ".", search: getRouteSearch(q), });
     navigate({ to: ".", search: { s: getRouteSearch(q) }, });
   };
 
@@ -190,39 +167,55 @@ export function ItemListLayout({ search, title }: { search?: IItemRouteSearch, t
     );
   }
 
+  function OuterBox({ children }: { children: ReactNode }): ReactNode {
+    return (
+      <Fragment>
+        <Box key="data-content" sx={ListBoxSize}>
+          {children}
+        </Box>
+      </Fragment>
+    );
+  }
 
-  // ToDo: Tags should be predefined in the UI so adding new tags via add items would not be possible
-  return (
-    <Fragment>
-      {
-        (isPending || isFetching) &&
-        <OuterBox><LinearProgress /></OuterBox>
-      }
-      {
-        !isPending && !isFetching && (isError || errMsg !== "") && items.length == 0 &&
-        <OuterBox>
-          <ErrorAlert message={errMsg ? errMsg : error?.message || "An error occurred. Please try again"} />
-        </OuterBox>
-      }
-      {
-        items.length > 0 && <Virtuoso key="data-content"
-          style={ListBoxSize} data={items}
-          itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
+  function ListBox({ children }: { children: ReactNode }): ReactNode {
+    return (
+      <Fragment>
+        {children}
+        <TablePagination
+          component="div"
+          count={pageInfo.current.totalRecords}
+          page={pageInfo.current.pageNumber}
+          onPageChange={handlePageChange}
+          rowsPerPage={pageInfo.current.pageSize}
+          onRowsPerPageChange={handlePageSizeChange}
         />
-      }
-      {
-        !isError && !isPending && !isFetching && items.length == 0 &&
-        <OuterBox><AppH6Typography> No items found </AppH6Typography></OuterBox>
-      }
+      </Fragment>
+    );
+  }
+  // ToDo: Tags should be predefined in the UI so adding new tags via add items would not be possible
 
-      <TablePagination
-        component="div"
-        count={pageInfo.current.totalRecords}
-        page={pageInfo.current.pageNumber}
-        onPageChange={handlePageChange}
-        rowsPerPage={pageInfo.current.pageSize}
-        onRowsPerPageChange={handlePageSizeChange}
-      />
-    </Fragment>
-  );
+
+  if (isPending || isFetching) {
+    return <ListBox> <OuterBox><LinearProgress /></OuterBox></ListBox>
+  }
+
+  if (isError || errMsg !== "") {
+    return <ListBox><OuterBox><ErrorAlert message={errMsg ? errMsg : error?.message || "An error occurred. Please try again"} /></OuterBox></ListBox>
+  }
+
+  if (items.length == 0) {
+    return <ListBox><OuterBox>
+      <AppH6Typography sx={{ display: 'flex', textTransform: "none", justifyContent: "center", alignContent: "center", }}>
+        No tags found
+      </AppH6Typography>
+    </OuterBox></ListBox>
+  }
+
+  if (items.length > 0) {
+    return <ListBox><Virtuoso key="data-content"
+      style={ListBoxSize} data={items}
+      itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
+    /></ListBox>
+  }
+  return <ListBox><OuterBox><ErrorAlert message="An error occurred. Please try again" /></OuterBox></ListBox>
 }
