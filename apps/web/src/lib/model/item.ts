@@ -6,7 +6,11 @@ import {
 } from "@/lib/model/common";
 import { ZFilter } from "@/lib/model/filter";
 import { ZTag } from "@/lib/model/tag";
+import {
+  DefaultTagFilterQuery,
+  DefaultPagination,
 
+} from '@/lib/helper/defaults';
 
 
 // Item Definitions
@@ -26,8 +30,8 @@ export type IItem = z.infer<typeof ZItem>;
 
 export const ZItemReadRequest = z.object({
   userId: z.string().catch(''),
-  query: ZSearch,
-  pagination: ZPagination,
+  query: ZSearch.catch(DefaultTagFilterQuery),
+  pagination: ZPagination.catch(DefaultPagination),
 
 });
 export type IItemReadRequest = z.infer<typeof ZItemReadRequest>;

@@ -10,7 +10,7 @@ import type { ITagReadRequest } from '@/lib/model/tag';
 import type { IFilterReadRequest } from '@/lib/model/filter';
 
 
-import type { IApiEndpointConfig } from '@/lib/model/common';
+import type { IApiEndpointConfig, ISearch } from '@/lib/model/common';
 import type { IUser } from '@/lib/model/auth';
 import type {
   ITag,
@@ -18,7 +18,6 @@ import type {
 import type {
   IFilter,
 } from "@/lib/model/filter";
-
 
 
 
@@ -31,11 +30,20 @@ export const ListBoxSize: {
 export const AppBarHeight = 32;
 export const AppDrawerWidth = 128;
 
+
 const defaultPagination: IPagination = {
   pageSize: 100,
   pageNumber: 0,
   sort: 'name',
 }
+
+export const DefaultPagination: IPagination = {
+  pageSize: 100,
+  pageNumber: 0,
+  sort: 'name',
+}
+
+export const DefaultTagFilterQuery: ISearch = { filters: [], tags: [], text: '', }
 
 export const DefaultUser: IUser = {
   id: null,
@@ -88,7 +96,7 @@ export const DefaultTagRead: ITagReadRequest = {
   userId: "",
   query: { filters: [], tags: [], text: '', },
   pagination: { ...defaultPagination }
-};
+} as const;
 
 export const DefaultFilterRead: IFilterReadRequest = {
   userId: "",

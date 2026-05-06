@@ -39,6 +39,9 @@ import {
 import type {
   ITagReadRequest,
 } from "@/lib/model/tag";
+import {
+  ZTagReadRequest,
+} from "@/lib/model/tag";
 
 import { tagGroupOptions } from '@/lib/helper/querying';
 
@@ -86,18 +89,19 @@ import { tagGroupOptions } from '@/lib/helper/querying';
 
 export const Route = createFileRoute('/tags/')({
   // Ensure correct search parameters are passed down. Adds default value if no seach parameter is passed down.
-  validateSearch: (search: Record<string, unknown>): { s: string } => {
-    const s = search && search.s ? decodeState(search.s as string) as ITagReadRequest : DefaultTagRead;
-    const q = {
-      ...s,
-      pagination: {
-        ...s.pagination,
-        pageNumber: s.pagination.pageNumber ? s.pagination.pageNumber : DefaultTagRead.pagination.pageNumber
-      }
-    }
-    return { s: encodeState(q) };
-  },
-  // Include the user context into to the search parameters. This neww search parameter gets added to the context object that is available to the loader.
+  validateSearch: (search) => ZTagReadRequest.parse(search),
+  // validateSearch: (search: Record<string, unknown>): { s: string } => {
+  //   const s = search && search.s ? decodeState(search.s as string) as ITagReadRequest : DefaultTagRead;
+  //   const q = {
+  //     ...s,
+  //     pagination: {
+  //       ...s.pagination,
+  //       pageNumber: s.pagination.pageNumber ? s.pagination.pageNumber : DefaultTagRead.pagination.pageNumber
+  //     }
+  //   }
+  //   return { s: encodeState(q) };
+  // },
+  // Include the user context into to the search parameters.This neww search parameter gets added to the context object that is available to the loader.
   beforeLoad: ({ context, search }: { context: any, search: any }) => {
     const ds = decodeState(search.s as string) as ITagReadRequest;
     const s = { ...ds, userId: context.user?.id || undefined }
@@ -105,7 +109,8 @@ export const Route = createFileRoute('/tags/')({
   },
   // Pass dependencies to the loader function. This does not inherit any changes made by beforeLoad. This is added just to keep track of the route dependency on the search parameters. loaderDeps drives when the loader re-runs.
   loaderDeps: ({ search }: { search: { s: string } }) => {
-    return { search };
+    // return { search };
+    return JSON.stringify(search.s);
   },
   // Execute loader.
   loader: ({ context }: { context: any }) => {
