@@ -338,20 +338,19 @@ export function AppItemModal(): ReactNode {
       return [...acc, ...epL]
     }, []);
     const prpList = [...new Set(pL)].sort()
-    let newPropList: string[] = []
     let newProps: IProps[] = [...oldProps];
     prpList.filter(i => i !== "").forEach((npl: string) => {
       const anpl = oldProps.filter((i: IProps) => i.key == npl)
-      if (anpl.length == 0)
-        newPropList = [...newPropList, anpl];
-      newProps = [...newProps, { key: anpl, value: "" }]
+      if (anpl.length == 0) {
+        newProps = [...newProps, { key: npl, value: "" }]
+      }
     })
     newProps = newProps.sort((a: IProps, b: IProps) => b.value.localeCompare(a.value))
     console.log(`resetting propList - tag changed to:`, value, newProps);
     form.setFieldValue('props', newProps)
   }
 
-  function getTagField() {
+  function getTagFieldObject() {
     // ToDo: Use Virtualised list for this.
     return (
       <form.Field name="tags" mode="array"
@@ -450,6 +449,136 @@ export function AppItemModal(): ReactNode {
                                     //   }
                                     // }
                                     // subField.handleChange(sval);
+                                  }
+                                }
+                                renderInput={
+                                  (params) =>
+                                    <TextField
+                                      // slotProps causes autocorrect to stop working
+                                      sx={{
+                                        '& .MuiInputBase-input': { fontSize: '14px' }, // Changes the typed text size
+                                        '& .MuiInputLabel-root': { fontSize: '14px' }, // Changes the label size
+                                      }}
+                                      margin="dense"
+                                      {...params}
+                                      label=""
+                                      // label={"tag " + (i + 1)}
+                                      variant="standard"
+                                    />
+                                }
+                              />
+                            </Grid>
+                          )
+                        }
+                      }</form.Field>
+                    })
+                  }</Grid>
+                }
+              </Box>
+              {/* {!field.state.meta.isValid && (
+                <ErrorAlert message={field.state.meta.errors.join(', ')} />
+              )} */}
+            </Fragment>
+          )
+        }
+      </form.Field>
+    );
+  }
+
+  function getTagField() {
+    // ToDo: Use Virtualised list for this.
+    return (
+      <form.Field name="tags" mode="array"
+        listeners={{
+          onChange: addNewTagProps,
+        }}
+      >
+        {
+          (field) => (
+            <Fragment>
+              <Box
+                component="fieldset"
+                sx={{
+                  '& legend': { fontSize: '12px', color: 'rgba(0, 0, 0, 0.6)' },
+                  border: `0.5px solid`,
+                  borderColor: "rgba(0, 0, 0, 0.23)",
+                  margin: 0, borderRadius: 1,
+                  fontSize: '15px',
+                  padding: '16.5px 14px', // Matches standard TextField padding
+                  transition: 'border-color 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+                  '&:hover': {
+                    // Standard MUI hover border color
+                    borderColor: 'rgba(0, 0, 0, 0.87)',
+                  },
+                  '&:focus-within': {
+                    // Matches the "active" blue focus state
+                    border: '2px solid',
+                    borderColor: 'primary.main',
+                    // Adjust padding to prevent "jumping" when border thickness changes
+                    padding: '15.5px 13px',
+                  },
+                }}>
+                <legend style={{ padding: '0 0.5rem' }}>Tags</legend>
+                <Button disableElevation sx={{ display: 'flex', justifyContent: "flex-start", alignContent: "center", }}
+                  onClick={() => field.pushValue(DefaultTag)}
+                  type="button">
+                  <AppSubtitle1Typography sx={{ textTransform: "none", justifyContent: "center", alignContent: "center", fontSize: '15px', }}>
+                    Click to add new tag
+                  </AppSubtitle1Typography>
+                </Button>
+                {
+                  field.state.value &&
+                  <Grid container spacing={3} sx={{ width: '100%' }}>{
+                    field.state.value.map((_, i) => {
+                      return <form.Field key={i} name={`tags[${i}]`}>{
+                        (subField) => {
+                          if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+                            console.log("subField.state.value", i, subField.state.value);
+                          }
+                          return (
+                            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                              <Autocomplete
+                                slotProps={{ listbox: { sx: { fontSize: '14px' } } }}
+                                size="small"
+                                id={"item-tag-" + i}
+                                autoHighlight
+                                options={tags.map((opt) => opt.name)}
+                                value={subField.state.value.name}
+                                inputValue={subField.state.value.name}
+                                onChange={
+                                  (e: SyntheticEvent<Element, Event>, newValue: string | null) => {
+                                    e && e.preventDefault();
+                                    e && e.stopPropagation();
+                                    // Handles ONLY changes from the provided options.
+                                    const sval = newValue ? newValue : "";
+                                    const it = tags.filter(itt => itt.name == sval)
+                                    if (it.length > 0) {
+                                      subField.handleChange(it[0]);
+                                    }
+                                    // else if (field.state.value.length > 1) {
+                                    //   field.removeValue(i);
+                                    // }
+                                    else {
+                                      subField.handleChange(DefaultTag);
+                                    }
+                                  }
+                                }
+                                onInputChange={
+                                  (e: SyntheticEvent<Element, Event>, newValue: string) => {
+                                    e && e.preventDefault();
+                                    e && e.stopPropagation();
+                                    // Handles both handwritten and provided option value changes.
+                                    const sval = newValue ? newValue : "";
+                                    const it = tags.filter(itt => itt.name == sval)
+                                    if (it.length > 1) {
+                                      subField.handleChange(it[0]);
+                                    }
+                                    // else if (field.state.value.length > 1) {
+                                    //   field.removeValue(i);
+                                    // }
+                                    else {
+                                      subField.handleChange(DefaultTag);
+                                    }
                                   }
                                 }
                                 renderInput={
