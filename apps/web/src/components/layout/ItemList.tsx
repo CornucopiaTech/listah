@@ -60,13 +60,14 @@ import {
 
 
 
-export function ItemListLayout({ search, title }: { search?: IItemRouteSearch, title: string }): ReactNode {
+export function ItemListLayout(): ReactNode {
   const navigate = useNavigate();
   const store: TBoundStore = useBoundStore((state) => state);
 
   // routeApi.useSearch() only contains data from validate search and does not contain the information that was injected into the route loader from the context. So the search information retrieved from routeApi.useSearch() will not contain the user information.
   const routeApi = getRouteApi('/items/');
-  const { search: query } = routeApi.useRouteContext();
+  const { search } = routeApi.useRouteContext();
+  const { query, title, reference } = search;
 
   let pageInfo = useRef({
     pageNumber: query.pagination.pageNumber,
@@ -77,7 +78,7 @@ export function ItemListLayout({ search, title }: { search?: IItemRouteSearch, t
 
   const {
     isPending, isFetching, isError, data, error
-  }: UseSuspenseQueryResult<IItemReadResponse> = useSuspenseQuery(itemGroupOptions(query.query));
+  }: UseSuspenseQueryResult<IItemReadResponse> = useSuspenseQuery(itemGroupOptions(query));
 
   let errMsg: string = isError && error && error instanceof Error ? error.message : "";
   try {
@@ -111,7 +112,7 @@ export function ItemListLayout({ search, title }: { search?: IItemRouteSearch, t
 
   function getRouteSearch(qs: IItemReadRequest) {
     const s = {
-      query: qs, title, reference: search && search.reference || undefined,
+      query: qs, title, reference: reference || undefined,
     }
     return encodeState(s);
   }

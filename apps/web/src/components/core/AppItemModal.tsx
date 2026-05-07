@@ -8,7 +8,9 @@ import type {
   ReactNode,
   SyntheticEvent,
 } from 'react';
-
+import {
+  getRouteApi,
+} from '@tanstack/react-router';
 import {
   useForm,
   useStore,
@@ -20,6 +22,10 @@ import {
 } from '@tanstack/react-query';
 import type {
   UseQueryResult,
+} from '@tanstack/react-query';
+import {
+  useSuspenseQuery,
+  type UseSuspenseQueryResult,
 } from '@tanstack/react-query';
 import {
   v4 as uuidv4,
@@ -83,51 +89,49 @@ export function AppItemModal(): ReactNode {
   const { user } = useUser();
   const queryClient = useQueryClient();
   const theme: AppTheme = useTheme();
+  const routeApi = getRouteApi('/items/');
+  const { search } = routeApi.useRouteContext();
+  const { query, title, reference } = search;
+
   const tagQuery = {
     ...DefaultTagRead,
-    userId: user?.id || "",
-    pageSize: -1,
+    userId: query.userId,
+    pagination: { ...DefaultTagRead.pagination, pageSize: -1 }
   }
   const {
     isPending, isError, data, error
-  }: UseQueryResult<ITagReadResponse> = useQuery(tagGroupOptions(tagQuery));
+  }: UseSuspenseQueryResult<ITagReadResponse> = useSuspenseQuery(tagGroupOptions(tagQuery));
   // This call should be done async when the app loads.
   const tags: ITag[] = data && data.tags ? data.tags : [];
   const item: IItem = useBoundStore((state) => state.displayItem);
 
-  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-    console.log("tags", tags);
-  }
-  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-    console.log("displayitem", item);
-  }
+  // if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+  //   console.log("tags", tags);
+  // }
+  // if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+  //   console.log("displayitem", item);
+  // }
 
   // Get object of tags and the properties associated with those tags.
   let tagObj: string[] = item.tags?.filter(
     t => t != ""
   ) || [];
-  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-    console.log("tagObj", tagObj);
-  }
-  let tObj: ITag[] = tagObj.map(
-    (i) => tags.filter(ts => ts.id == i)[0]
-  );
-  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-    console.log("tObj", tObj);
-  }
+  let tObj: ITag[] = [];
+  tagObj.forEach(t0 => {
+    const it = tags.filter(ts => ts.id == t0);
+    if (it.length >= 1) {
+      tObj = [...tObj, it[0]]
+    }
+  });
+  // if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+  //   console.log("tObj 2", tObj);
+  // }
 
 
   const tagProps: string[] = tObj.reduce((acc: string[], prp) => {
     return [...acc, ...prp.props]
   }, [])
-  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-    console.log("tagProps", tagProps);
-  }
-
   const propList: string[] = [...new Set(tagProps)].sort();
-  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-    console.log("propList", propList);
-  }
 
 
   // Create the key value pair used for the props.
@@ -138,7 +142,7 @@ export function AppItemModal(): ReactNode {
   }));
 
 
-  const formData = { ...item, props: itemProps, tags: tagObj }
+  const formData = { ...item, props: itemProps, tags: tObj }
   const form = useForm({
     defaultValues: formData,
     onSubmit: formSubmission,
@@ -163,7 +167,9 @@ export function AppItemModal(): ReactNode {
       },
     },
   });
-
+  // if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+  //   console.log("formData", formData);
+  // }
 
 
   // Define invalidating  mutation
@@ -200,10 +206,6 @@ export function AppItemModal(): ReactNode {
     return () => clearTimeout(timer); // cleanup
   }, [form.state.isSubmitted, mutation.isSuccess]);
 
-
-  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-    console.log("formData", formData);
-  }
 
   function closeModal() {
     store.setItemModal(false);
@@ -306,7 +308,7 @@ export function AppItemModal(): ReactNode {
                           multiline
                           id={"item-prop-key-" + i}
                           value={subField.state.value.value}
-                          label={subField.state.value.key.charAt(0).toUpperCase() + subField.state.value.key.slice(1)}
+                          label={subField.state.value.key}
                           onChange={
                             (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
                               subField.handleChange({ ...subField.state.value, value: e.target.value })
@@ -328,10 +330,34 @@ export function AppItemModal(): ReactNode {
     );
   }
 
+  function addNewTagProps({ value }: { value: ITag[] }) {
+    // ToDo: Form does not render with new PropFields until another change is made. Find out why.
+    const oldProps = form.getFieldValue('props');
+    const pL = value.reduce((acc: string[], ev: ITag) => {
+      const epL = ev.props || []
+      return [...acc, ...epL]
+    }, []);
+    const prpList = [...new Set(pL)].sort()
+    let newPropList: string[] = []
+    let newProps: IProps[] = [...oldProps];
+    prpList.filter(i => i !== "").forEach((npl: string) => {
+      const anpl = oldProps.filter((i: IProps) => i.key == npl)
+      if (anpl.length == 0)
+        newPropList = [...newPropList, anpl];
+      newProps = [...newProps, { key: anpl, value: "" }]
+    })
+    newProps = newProps.sort((a: IProps, b: IProps) => b.value.localeCompare(a.value))
+    console.log(`resetting propList - tag changed to:`, value, newProps);
+    form.setFieldValue('props', newProps)
+  }
+
   function getTagField() {
     // ToDo: Use Virtualised list for this.
     return (
-      <form.Field name="tags" mode="array">
+      <form.Field name="tags" mode="array"
+        listeners={{
+          onChange: addNewTagProps,
+        }}>
         {
           (field) => (
             <Fragment>
@@ -371,49 +397,58 @@ export function AppItemModal(): ReactNode {
                     field.state.value.map((_, i) => {
                       return <form.Field key={i} name={`tags[${i}]`}>{
                         (subField) => {
+                          if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+                            console.log("subField.state.value", i, subField.state.value);
+                          }
                           return (
                             <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                               <Autocomplete
                                 slotProps={{ listbox: { sx: { fontSize: '14px' } } }}
                                 size="small"
                                 id={"item-tag-" + i}
-                                // freeSolo
                                 autoHighlight
                                 options={tags.map((opt) => opt.name)}
                                 value={subField.state.value.name}
                                 inputValue={subField.state.value.name}
                                 onChange={
                                   (e: SyntheticEvent<Element, Event>, newValue: string | null) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
+                                    e && e.preventDefault();
+                                    e && e.stopPropagation();
                                     // Handles ONLY changes from the provided options.
                                     const sval = newValue ? newValue : "";
-                                    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-                                      console.log("OnChange", newValue, sval);
+                                    const it = tags.filter(itt => itt.name == sval)
+                                    if (it.length > 0) {
+                                      subField.handleChange(it[0]);
                                     }
-                                    if (field.state.value.length > 1 && sval == "") {
-                                      field.removeValue(i);
-                                    } else {
-                                      subField.handleChange({ ...subField.state.value, name: sval });
-                                    }
+                                    // if (field.state.value.length > 1 && sval == "") {
+                                    //   field.removeValue(i);
+                                    // } else {
+                                    //   const it = tags.filter(itt => itt.name == sval)
+                                    //   if (it.length > 0) {
+                                    //     subField.handleChange(it);
+                                    //   }
+                                    // }
                                     // subField.handleChange(sval);
                                   }
                                 }
                                 onInputChange={
                                   (e: SyntheticEvent<Element, Event>, newValue: string) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
+                                    e && e.preventDefault();
+                                    e && e.stopPropagation();
                                     // Handles both handwritten and provided option value changes.
                                     const sval = newValue ? newValue : "";
-                                    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-                                      console.log("OnInputChange", newValue, sval);
-                                      console.log("OnInputChange: field.state.value.length", field.state.value.length);
+                                    const it = tags.filter(itt => itt.name == sval)
+                                    if (it.length > 0) {
+                                      subField.handleChange(it[0]);
                                     }
-                                    if (field.state.value.length > 1 && sval == "") {
-                                      field.removeValue(i);
-                                    } else {
-                                      subField.handleChange({ ...subField.state.value, name: sval });
-                                    }
+                                    // if (field.state.value.length > 1 && sval == "") {
+                                    //   field.removeValue(i);
+                                    // } else {
+                                    //   const it = tags.filter(itt => itt.name == sval)
+                                    //   if (it.length > 0) {
+                                    //     subField.handleChange(it);
+                                    //   }
+                                    // }
                                     // subField.handleChange(sval);
                                   }
                                 }

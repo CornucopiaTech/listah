@@ -24,12 +24,6 @@ import {
 import {
   DefaultItem,
 } from "@/lib/helper/defaults";
-import type {
-  IItemRouteSearch,
-} from "@/lib/model/item";
-import {
-  decodeState,
-} from '@/lib/helper/encoders';
 import {
   AppListItemTypography,
 } from "@/components/core/Typography";
@@ -41,8 +35,7 @@ export function Items() {
   const isTag = store.displayTag !== undefined;
   const isFilter = store.displayFilter !== undefined;
   const routeApi = getRouteApi('/items/');
-  const routeSearch: { s: string } = routeApi.useSearch();
-  let search: IItemRouteSearch = decodeState(routeSearch.s) as IItemRouteSearch;
+  const { search } = routeApi.useRouteContext();
   const pageHeader = store.itemTitle ? store.itemTitle : search && search.title ? search.title : "All Items";
 
 
@@ -91,7 +84,7 @@ export function Items() {
       {store.tagModal && <AppTagModal />}
       {store.filterModal && <AppFilterModal />}
       <AppPagePaper>
-        <ItemListLayout search={search} title={pageHeader} />
+        <ItemListLayout />
       </AppPagePaper>
     </AppContainer>
   );

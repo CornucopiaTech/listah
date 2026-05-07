@@ -31,6 +31,7 @@ func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemS
 	sortT := defaultPagination.Sort
 
 	pg := msg.GetPagination()
+
 	if pg != nil {
 		if pSize > 0 {
 			pSize = pg.PageSize
@@ -43,7 +44,11 @@ func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemS
 		}
 	}
 
-	offset := pSize * (pNum - 1)
+	offset := int64(0)
+	if pSize > 0 {
+		offset = pSize * (pNum - 1)
+	}
+
 
 	s := []string{}
 	t := []string{}
