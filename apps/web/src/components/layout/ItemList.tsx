@@ -105,10 +105,10 @@ export function ItemListLayout(): ReactNode {
     };
   }
 
-  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-    console.info("store title - ", store.itemTitle);
-    console.info("store reference - ", store.itemReference);
-  }
+  // if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+  //   console.info("store title - ", store.itemTitle);
+  //   console.info("store reference - ", store.itemReference);
+  // }
 
   function getRouteSearch(qs: IItemReadRequest) {
     const s = {

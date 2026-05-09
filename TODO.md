@@ -17,6 +17,8 @@
 
 
 ## Done
+- Add the additional properties when a new tag is added to the form.
+- Change the type of tags from list of string, to list of tag object. and upon submission, retain on the id from the tag object to send to api.
 - Items can be created from the specific tags page or the specific filter page not the all tags page and the all filter page.
 - Create a mechanism to view and update filters.
 - Add form validation to ensure a form for new/updating items always has a tag
@@ -25,6 +27,9 @@
 - Add ability to get all saved filters and the number of items that match the filter.
 - Add ability to get all distinct tags ad the number of items that match the filter.
 - Send error message when server side mutation fails.
+
+
+
 
 
 

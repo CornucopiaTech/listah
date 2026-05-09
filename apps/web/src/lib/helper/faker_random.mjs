@@ -31,14 +31,15 @@ async function apiCall(url, payload) {
 }
 
 export function fakeTags(arraySize) {
-  let maxProps = 10;
+  let maxProps = 1000;
   const maxTagProps = 5;
   const possiblePropIndex = [...Array(maxTagProps).keys()].filter(i => i > 0);
 
   let allProps = faker.helpers.multiple(() => faker.word.noun(), { count: 2 * maxProps });
   let updaters = ["AUDIT_UPDATER_ENUM_UNSPECIFIED", "AUDIT_UPDATER_ENUM_FRONTEND", "AUDIT_UPDATER_ENUM_SYSOPS"];
 
-  allProps = faker.helpers.uniqueArray(allProps, maxProps);
+  // allProps = faker.helpers.uniqueArray(allProps, maxProps);
+  allProps = [...new Set(allProps)];
 
   let combFaked = faker.helpers.multiple(
     () => ({

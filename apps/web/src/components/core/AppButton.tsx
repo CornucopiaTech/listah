@@ -4,7 +4,9 @@ import { styled } from '@mui/material/styles';
 
 
 import type { AppTheme } from '@/system/theme';
-
+import {
+  AppDialogButtonTypography,
+} from "@/components/core/Typography";
 
 
 
@@ -31,6 +33,22 @@ export const AppResetButton = styled(Button)(({ theme }: { theme: AppTheme }) =>
   width: "100%",
   textTransform: 'none',
 }));
+
+export const AppDialogActionButtonBase = styled(AppPrimaryButton)(({ theme }: { theme: AppTheme }) => ({
+  padding: theme.spacing(1),
+  margin: theme.spacing(1),
+  borderRadius: 30,//"1%",
+  textTransform: 'none',
+}));
+
+export function AppDialogActionButton({ label, handleClick }: { label: string; handleClick?: () => void }) {
+
+  return <AppDialogActionButtonBase variant='contained' disableElevation onClick={handleClick}>
+    <AppDialogButtonTypography>
+      {label}
+    </AppDialogButtonTypography>
+  </AppDialogActionButtonBase>
+}
 
 // export const AppResetButton = styled(Button)(({ theme }: { theme: AppTheme }) => ({
 //   padding: theme.spacing(2),

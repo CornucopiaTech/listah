@@ -37,6 +37,20 @@ export function AppListItemTypography({ children, sx }: { children: ReactNode, s
   )
 }
 
+export function AppAlertTypography({ children, sx }: { children: ReactNode, sx?: any }) {
+  return (
+    <Typography variant="subtitle1" sx={{ ...sx, textAlign: "left" }}>{children}</Typography>
+  )
+}
+
+
+export function AppDialogButtonTypography({ children, sx }: { children: ReactNode, sx?: any }) {
+  const theme: AppTheme = useTheme();
+  return (
+    <Typography variant="subtitle2" sx={{ ...sx, textAlign: "center", color: theme.palette.primary.contrastText, }}>{children}</Typography>
+  )
+}
+
 
 
 export function AppTitleTypography({ children, sx }: { children: ReactNode, sx?: any }) {

@@ -3,8 +3,6 @@ import {
   Fragment,
   useEffect,
   useRef,
-  useMemo,
-  memo,
 } from "react";
 import type {
   ChangeEvent,
@@ -17,6 +15,8 @@ import {
 import {
   useForm,
   useStore,
+  type FieldListenerFn,
+  type FieldApi,
 } from "@tanstack/react-form";
 import {
   useQueryClient,
@@ -31,7 +31,6 @@ import {
 } from 'uuid';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Stack from '@mui/material/Stack';
@@ -40,7 +39,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { Icon } from "@iconify/react";
 import { useUser } from '@clerk/react';
-import { Divider, LinearProgress, useTheme } from "@mui/material";
+import { LinearProgress, useTheme } from "@mui/material";
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
@@ -52,6 +51,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 // Internal imports
 import {
   AppSubtitle1Typography,
+
 } from "@/components/core/Typography";
 import {
   useBoundStore,
@@ -75,20 +75,13 @@ import type {
   ITag,
   ITagReadResponse,
 } from "@/lib/model/tag";
-import {
-  tagGroupOptions
-} from '@/lib/helper/querying';
-import {
-  SpaceBetweenBox,
-} from "@/components/core/AppBox";
-import {
-  AppDialogActionButton
-} from "@/components/core/AppButton";
+import { tagGroupOptions } from '@/lib/helper/querying';
 
 
 type itemFields = "id" | "userId" | "name" | "note" | `props[${number}]` | "softDelete" | `tags[${number}]`
 
-
+// ToDo: Add the additional properties when a new tag is added to the form.
+// ToDo: Change the type of tags from list of string, to list of tag object. and upon submission, retain on the id from the tag object to send to api.
 
 export function AppItemModal(): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
@@ -107,14 +100,10 @@ export function AppItemModal(): ReactNode {
   const {
     isPending, isError, data, error
   }: UseSuspenseQueryResult<ITagReadResponse> = useSuspenseQuery(tagGroupOptions(tagQuery));
+  // This call should be done async when the app loads.
   const tags: ITag[] = data && data.tags ? data.tags : [];
   const item: IItem = useBoundStore((state) => state.displayItem);
-  const knownTagNames = useRef<Set<string>>(new Set(tags.map(p => p.name)));
-  const focusTags = useRef<Set<string>>(new Set<string>([]));
-  const allTagProps = useRef<Map<string, Set<string>>>(new Map<string, Set<string>>());
-  const blurTimeout = useRef<ReturnType<typeof setTimeout>>();
-
-
+  const knownTagNames = useRef<Set<string>>(new Set(tags.map(p => p.name)))
 
   // Get object of tags and the properties associated with those tags.
   let tagObj: string[] = item.tags?.filter(
@@ -135,34 +124,17 @@ export function AppItemModal(): ReactNode {
   }, [])
   const propList: string[] = [...new Set(tagProps)].sort();
 
-  // const propTags = new Map<string, Set<string>>();
-  if (Object.keys(allTagProps.current).length == 0) {
-    // ToDo: Read this from the API
-    propList.forEach((it: string) => {
-      const tL = tObj.filter(
-        (iit: ITag) => iit.props.indexOf(it) != -1
-      ).map(
-        (ibt: ITag) => ibt.name
-      );
-      allTagProps.current.set(it, new Set(tL))
-    });
-    console.info('allTagProps', allTagProps)
-  }
-
-
 
   // Create the key value pair used for the props.
-  type IProps = { key: string, value: string, }
+  type IProps = { key: string, value: string }
   let itemProps: IProps[] = [];
   propList.forEach(p => itemProps.push({
-    key: p, value: item.props && item.props[p] ? item.props[p] : "",
+    key: p, value: item.props && item.props[p] ? item.props[p] : ""
   }));
 
 
-  type formType = Omit<IItem, 'tags' | 'props'> & { props: IProps[], tags: ITag[] }
-  const formData = { ...item, props: itemProps, tags: tObj } as formType;
-  // @ts-ignore
-  const form = useForm<formType>({
+  const formData = { ...item, props: itemProps, tags: tObj }
+  const form = useForm({
     defaultValues: formData,
     onSubmit: formSubmission,
     validators: {
@@ -170,26 +142,22 @@ export function AppItemModal(): ReactNode {
         if (value.name.length < 1) {
           return "Item title is required";
         }
-        const invalidTag = tagsValidation(value.tags as unknown as ITag[]);
-        if (invalidTag) {
-          const msg = formErrorMap.onChange ? "\n" + invalidTag : invalidTag;
-          return msg;
-        }
+        tagValidation(value.tags as unknown as ITag[]);
         return undefined
       },
       onBlur({ value }: { value: IItem }) {
         if (value.name.length < 1) {
           return "Item title is required";
         }
-        const invalidTag = tagsValidation(value.tags as unknown as ITag[]);
-        if (invalidTag) {
-          const msg = formErrorMap.onBlur ? "\n" + invalidTag : invalidTag;
-          return msg;
-        }
+        tagValidation(value.tags as unknown as ITag[]);
         return undefined
       },
     },
   });
+  // if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+  //   console.log("formData", formData);
+  // }
+
 
   // Define invalidating  mutation
   const mutation = useMutation({
@@ -226,8 +194,6 @@ export function AppItemModal(): ReactNode {
   }, [form.state.isSubmitted, mutation.isSuccess]);
 
 
-  console.info('formData', formData)
-
   function closeModal() {
     store.setItemModal(false);
     store.setDisplayItem(DefaultItem);
@@ -251,9 +217,7 @@ export function AppItemModal(): ReactNode {
       acc[i.key] = i.value;
       return acc
     }, {})
-    // @ts-ignore
     let tgs = value.tags?.filter(t => t.name != "");
-    // @ts-ignore
     tgs = tgs.map(t => t.id);
 
 
@@ -262,6 +226,7 @@ export function AppItemModal(): ReactNode {
       userId,
       name: value.name,
       note: value.note,
+      // tags: value.tags?.filter((t) => t != ""),
       tags: tgs,
       props: subProps,
       tagNames: undefined,
@@ -312,53 +277,46 @@ export function AppItemModal(): ReactNode {
 
   function getPropField() {
     return (
-      <form.Field name="props" mode="array">
-        {
-          (field) => (
-            <Fragment >
-              {
-                field.state.value &&
-                field.state.value.map((_, i) => {
-                  return <form.Field key={i} name={`props[${i}]`}>{
-                    (subField) => {
-                      return (
-                        <TextField
-                          onFocus={
-                            () => {
-                              clearTimeout(blurTimeout.current);
-                              focusTags.current = allTagProps.current.get(subField.state.value.key) ?? new Set();
+      <form.Subscribe selector={(state) => state.values.tags}>{
+        (tagsValue) => <form.Field name="props" mode="array">
+          {
+            (field) => (
+              <Fragment >
+                {
+                  field.state.value &&
+                  field.state.value.map((_, i) => {
+                    return <form.Field key={i} name={`props[${i}]`}>{
+                      (subField) => {
+                        return (
+                          <TextField
+                            slotProps={{
+                              input: { style: { fontSize: "15px" } },
+                              inputLabel: { style: { fontSize: "15px" } },
+                            }}
+                            multiline
+                            id={"item-prop-key-" + i}
+                            value={subField.state.value.value}
+                            label={subField.state.value.key}
+                            onChange={
+                              (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
+                                subField.handleChange({ ...subField.state.value, value: e.target.value })
                             }
-                          }
-                          onBlur={() => {
-                            // focusTags.current = new Set();
-                            blurTimeout.current = setTimeout(() => focusTags.current = new Set(), 0)
+                            size="small"
+                            variant="standard"
+                            // variant="outlined"
+                            margin="dense"
+                          />
+                        )
+                      }
+                    }</form.Field>
+                  })
+                }
+              </Fragment>
+            )
+          }
+        </form.Field>
+      }</form.Subscribe>
 
-                          }}
-                          slotProps={{
-                            input: { style: { fontSize: "15px" } },
-                            inputLabel: { style: { fontSize: "15px" } },
-                          }}
-                          multiline
-                          id={"item-prop-key-" + i}
-                          value={subField.state.value.value}
-                          label={subField.state.value.key}
-                          onChange={
-                            (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
-                              subField.handleChange({ ...subField.state.value, value: e.target.value })
-                          }
-                          size="small"
-                          variant="standard"
-                          margin="dense"
-                        />
-                      )
-                    }
-                  }</form.Field>
-                })
-              }
-            </Fragment>
-          )
-        }
-      </form.Field>
     );
   }
 
@@ -379,20 +337,24 @@ export function AppItemModal(): ReactNode {
       }
     })
     newProps = newProps.sort((a: IProps, b: IProps) => b.value.localeCompare(a.value))
+    // console.log(`resetting propList - tag changed to:`, value, newProps);
     form.setFieldValue('props', newProps)
   }
 
   function handleTagsChange(parentF: any, childF: any, newValue: string | null) {
+    console.log(`Tag changed to - parent, child, newValue, index`, parentF.state.value, childF.state.value, newValue, i);
     const sval = newValue ? newValue : "";
     const fField = parentF?.state?.value as unknown as ITag[] ?? [];
     if (sval == "") {
       // If the value was deleted, replace the tag object with the default tag object.
       const newTagList = fField.filter(fsv => fsv.id != childF.state.value.id);
       addNewTagProps({ value: newTagList });
-      if (newTagList.filter(itt => itt.name !== "").length >= 1) {
+      if (fField.length > 1) {
         const removeIdx = parentF.state.value.map((iF: ITag) => iF.id).indexOf(childF.state.value.id);
+        console.log(`Pre removing index pre - parent, newValue, index`, parentF.state.value, childF.state.value, newValue, removeIdx);
         if (removeIdx > -1) {
           parentF.removeValue(removeIdx);
+          console.log(`Post removing index pre - parent, newValue, index`, parentF.state.value, childF.state.value, newValue, removeIdx);
         }
 
       } else {
@@ -414,8 +376,6 @@ export function AppItemModal(): ReactNode {
 
   function getTagField() {
     // ToDo: Use Virtualised list for this.
-    // Maybe ToDo: Use an alert to confirm the props that would be deleted when a tag is removed before a tag is removed.
-    // ToDo: Change the font color of the tag that corresponds to a property that is in focus.
     const tboxSx = {
       '& legend': { fontSize: '12px', color: 'rgba(0, 0, 0, 0.6)' },
       border: `0.5px solid`,
@@ -436,10 +396,13 @@ export function AppItemModal(): ReactNode {
         padding: '15.5px 13px',
       },
     }
+    // const addTagSx =
     return (
       <form.Field name="tags" mode="array">
         {
           (field) => {
+            const fField = field?.state?.value as unknown as ITag[] ?? [];
+            console.log(`At render - parent, length`, fField, fField.length,);
             return <Fragment>
               <Box component="fieldset" sx={tboxSx}>
                 <legend style={{ padding: '0 0.5rem' }}>Tags</legend>
@@ -460,20 +423,7 @@ export function AppItemModal(): ReactNode {
                           onBlur: ({ value }) => tagValidation(value as unknown as ITag),
                         }}>{
                             (subField: any) => {
-                              // const propsList = useStore(form.store, (state) => state.values.props);
-                              // console.info('propsList', propsList);
-
-                              const textSx = {
-                                '& .MuiInputBase-input': {
-                                  fontSize: '14px',
-                                  color: focusTags.current && focusTags.current.has(subField.state.value.name) ? '#a126ca' : '#0eb40b',
-                                }, // Changes the typed text size
-                                '& .MuiInputLabel-root': { fontSize: '14px' }, // Changes the label size
-                                '& .MuiInputBase-root.Mui-focused .MuiInputBase-input': {
-                                  color: focusTags.current && focusTags.current.has(subField.state.value.name) ? '#a126ca' : '#0eb40b',
-                                },
-
-                              }
+                              console.info('subField.state.meta.errors', subField.state.meta.errors)
                               return (
                                 <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                                   <Autocomplete
@@ -503,10 +453,13 @@ export function AppItemModal(): ReactNode {
                                     renderInput={
                                       (params) =>
                                         <TextField
-                                          error={subField.state.meta.errors.length > 0}
+                                          error={subField.state.meta.errors !== null && subField.state.meta.errors !== undefined}
                                           helperText={subField.state.meta.errors.join(', ')}
                                           // slotProps causes autocorrect to stop working
-                                          sx={textSx}
+                                          sx={{
+                                            '& .MuiInputBase-input': { fontSize: '14px' }, // Changes the typed text size
+                                            '& .MuiInputLabel-root': { fontSize: '14px' }, // Changes the label size
+                                          }}
                                           margin="dense"
                                           {...params}
                                           label=""
@@ -515,6 +468,7 @@ export function AppItemModal(): ReactNode {
                                         />
                                     }
                                   />
+                                  {/* <FieldError field={subField} /> */}
                                 </Grid>
                               )
                             }
@@ -524,6 +478,9 @@ export function AppItemModal(): ReactNode {
                   }</Grid>
                 }
               </Box>
+              {/* {!field.state.meta.isValid && (
+                <ErrorAlert message={field.state.meta.errors.join(', ')} />
+              )} */}
             </Fragment>
           }
         }
@@ -531,18 +488,23 @@ export function AppItemModal(): ReactNode {
     );
   }
 
+  function FieldError({ field }: { field: any }) {
+    return field.state.meta.errors.length > 0 ? (
+      <span style={{ color: 'red' }}>
+        {field.state.meta.errors.join(', ')}
+      </span>
+    ) : null
+  }
+
   function tagsValidation(fTagList: ITag[]) {
-    let errs = "";
-    let newMsg = "";
+    let errs = ""
     if (fTagList.filter((t) => t.name != "").length < 1) {
       errs += "A least one tag is required";
     }
-    // const unrecognisedTags = fTagList.filter((t) => !knownTagNames.current.has(t.name));
-    const unrecognisedTags = fTagList.filter((t) => t.name != "").filter((t) => !knownTagNames.current.has(t.name));
+    const unrecognisedTags = fTagList.filter((t) => !knownTagNames.current.has(t.name));
     if (unrecognisedTags.length > 0) {
       const unregognisedNames = unrecognisedTags.map(it => it.name).join(',')
-      newMsg = `Unrecognised tag(s): (${unregognisedNames}) will not be saved.`;
-      errs += errs == "" ? newMsg : "\n" + newMsg;
+      errs += `Unrecognised tag(s): (${unregognisedNames} will not be saved.`;
     }
     if (errs !== "") {
       return errs
@@ -550,16 +512,22 @@ export function AppItemModal(): ReactNode {
   }
 
   function tagValidation(fTag: ITag) {
+    let errs = ""
     let errList: string[] = [];
     if (fTag.name === "") {
-      errList = [...errList, "Tag name is required"]
+      errs += "A least one tag is required";
+      errList = [...errList, "A least one tag is required"]
     }
-    if (!knownTagNames.current.has(fTag.name) && fTag.name != "") {
-      errList = [...errList, `Unrecognised tag (${fTag.name}) will not be saved. Please add new tag to app.`]
+    if (!knownTagNames.current.has(fTag.name)) {
+      errs += `Unrecognised tag(s): (${fTag.name} will not be saved.`;
+      errList = [...errList, `Unrecognised tag(s): (${fTag.name} will not be saved.`]
     }
     if (errList.length > 0) {
       return errList.join("\n")
     }
+    // if (errs !== "") {
+    //   return errs
+    // }
   }
 
 
@@ -573,10 +541,8 @@ export function AppItemModal(): ReactNode {
     display: 'block',
     width: "lg",
     maxWidth: "lg",
-    height: 'fit-content',
-    maxHeight: '70vh',
+    height: '65vh',
     overflow: 'auto',
-    margin: "0",
     '&::-webkit-scrollbar': {
       width: '15px', // width of the entire scrollbar
     },
@@ -594,51 +560,40 @@ export function AppItemModal(): ReactNode {
 
 
 
+
+
   const deleteIcon = form.state.isSubmitting ? "ic:baseline-auto-delete" : (!form.state.canSubmit || form.state.values.id == "") ? "mdi:delete-off" : "ic:sharp-delete";
   const deleteTooltip = (!form.state.canSubmit || form.state.values.id == "") ? "Unable to delete" : "Delete";
 
   const saveIcon = form.state.isSubmitting ? "material-symbols:hourglass-top" : form.state.canSubmit ? "material-symbols:save-sharp" : "lucide:save-off";
   const saveTooltip = !form.state.canSubmit ? "Unable to save" : "Save";
+  // const cloneIcon = form.state.values.id == "" ? "tabler:copy-off" : "material-symbols:content-copy-sharp";
+  // const cloneTooltip = form.state.values.id == "" ? "Unable to clone" : "Clone";
 
 
   const formActions = [
+    // { name: cloneTooltip, icon: cloneIcon, onClick: handleClone },
     { name: deleteTooltip, icon: deleteIcon, onClick: handleDelete },
     { name: saveTooltip, icon: saveIcon, onClick: form.handleSubmit },
     { name: "Reset", icon: "material-symbols-light:restart-alt", onClick: form.reset },
   ]
-  const formErrorMap = useStore(form.store, (state) => state.errorMap);
+  const formErrorMap = useStore(form.store, (state) => state.errorMap)
 
 
   function Dlg(content: ReactNode, actions?: ReactNode): ReactNode {
     return (
-      <Dialog fullWidth maxWidth="xl" open={store.itemModal} onClose={closeModal} >
-        <SpaceBetweenBox >
-          <DialogTitle
-            id="save-dialog-title"
-            sx={{
-              display: "flex",
-              alignItems: "flex-start",
-              justifyContent: "space-between",
-              pb: 0,
-              pt: 2,
-              px: 3,
-            }}
-          >{item.id == "" ? "Add new item" : "Update Item"}</DialogTitle>
-          <IconButton aria-label="close dialog"
-            sx={{
-              display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
-            }}
-            size="small"
-            onClick={closeModal}>
-            <Icon icon="material-symbols-light:close-rounded" width="30" height="30" />
-          </IconButton>
-        </SpaceBetweenBox>
-
+      <Dialog fullWidth open={store.itemModal} onClose={closeModal} >
+        <IconButton aria-label="delete"
+          sx={{
+            display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
+          }}
+          onClick={closeModal}>
+          <Icon icon="material-symbols-light:close-rounded" width="30" height="30" />
+        </IconButton>
         <form onSubmit={onFormSubmit}>
           <DialogContent sx={dialogSx} >
             {content}
           </DialogContent>
-          <Divider />
           {actions &&
             <DialogActions>
               {actions}
@@ -660,16 +615,12 @@ export function AppItemModal(): ReactNode {
     return Dlg(con);
   }
 
-
-  const GetProps = memo(() => getPropField());
-  const GetTags = memo(() => getTagField());
-
-
   const con = (
     <Box
       component="section"
       sx={{
-        margin: 0,
+        marginTop: 0,
+        marginRight: "5rem",
         fontSize: '15px',
         padding: 0,
       }}>
@@ -694,10 +645,8 @@ export function AppItemModal(): ReactNode {
         {fields.map((fds: itemFields) => getSimpleField(fds))}
 
         {/* ToDo: fix display for tags and fields. */}
-        {/* {getPropField()}
-        {getTagField()} */}
-        <GetProps />
-        <GetTags />
+        {getPropField()}
+        {getTagField()}
       </Stack>
     </Box>
   )
@@ -707,29 +656,15 @@ export function AppItemModal(): ReactNode {
       selector={(state) => [state.canSubmit, state.isSubmitting, state.values.name]}
       children={() => (
         <Box sx={{ transform: 'translateZ(0px)', flexGrow: 1 }}>
-          <Stack direction="row" spacing={4}>
-            <AppDialogActionButton label="Save" handleClick={form.handleSubmit} />
-            {/* @ts-ignore */}
-            <AppDialogActionButton label="Reset" handleClick={form.reset} />
-            <AppDialogActionButton label="Delete" handleClick={handleDelete} />
-          </Stack>
-
           <SpeedDial
             ariaLabel="SpeedDial basic example"
-            sx={{
-              position: 'absolute', bottom: 0, right: 0,
-              '& .MuiFab-primary': {
-                width: 36,
-                height: 36,
-                minHeight: 36,
-              }
-            }}
+            sx={{ position: 'absolute', bottom: 16, right: 16 }}
             icon={<SpeedDialIcon />}
           >
             {formActions.map((action) => (
               <SpeedDialAction
                 key={action.name}
-                icon={<Icon icon={action.icon} width="24" height="24" />}
+                icon={<Icon icon={action.icon} width="36" height="36" />}
                 // @ts-ignore
                 onClick={action.onClick}
                 slotProps={{
@@ -741,10 +676,8 @@ export function AppItemModal(): ReactNode {
             ))}
           </SpeedDial>
         </Box>
-      )
-      }
+      )}
     />
   )
-
   return Dlg(con, act);
 }
