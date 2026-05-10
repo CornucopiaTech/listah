@@ -6,6 +6,7 @@ import type {
   IItemReadResponse,
 } from '@/lib/model/item';
 import type {
+  ITag,
   ITagReadRequest,
   ITagReadResponse
 } from '@/lib/model/tag';
@@ -17,6 +18,20 @@ import type {
 
 import { ApiEndpoints } from '@/lib/helper/defaults';
 
+
+export async function postTag(t: ITag) {
+  const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.updateTag}`;
+  const req = new Request(url, {
+    method: "POST",
+    body: JSON.stringify({ tags: [t] }),
+    headers: { "Content-Type": "application/json", "Accept": "*/*", },
+  });
+  const res = await fetch(req);
+  if (!res.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return await res.json();
+}
 
 export async function postItem(item: IItem) {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.updateItem}`;
@@ -69,6 +84,21 @@ export async function getItem(opts: IItemReadRequest): Promise<IItemReadResponse
 
 export async function getTag(opts: ITagReadRequest): Promise<ITagReadResponse> {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.readTag}`;
+  const req = new Request(url, {
+    method: "POST",
+    body: JSON.stringify(opts),
+    headers: { "Content-Type": "application/json", "Accept": "*/*" },
+  });
+  const res = await fetch(req);
+  if (!res.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return await res.json();
+}
+
+
+export async function getTagProperty(opts: ITagReadRequest): Promise<ITagReadResponse> {
+  const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.readTagProperty}`;
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify(opts),

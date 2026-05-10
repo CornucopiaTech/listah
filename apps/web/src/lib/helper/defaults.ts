@@ -64,8 +64,8 @@ export const DefaultItem: IItem = {
   note: "",
   props: null,
   tags: [],
-  tagNames: [],
-  propList: [],
+  tagObjs: [],
+  propObjs: [],
   softDelete: false,
 };
 
@@ -119,7 +119,9 @@ export const PAGE_SIZE_OPTIONS: { label: number, value: number }[] = [
 export const ApiEndpoints: IApiEndpointConfig = {
   readItem: "listah.v1.ItemService/ReadItem",
   readTag: "listah.v1.ItemService/ReadTag",
+  readTagProperty: "listah.v1.ItemService/ReadTagProperty",
   readFilter: "listah.v1.ItemService/ReadFilter",
+  updateTag: "listah.v1.ItemService/UpsertTag",
   updateItem: "listah.v1.ItemService/UpsertItem",
   updateFilter: "listah.v1.ItemService/UpsertFilter",
 }

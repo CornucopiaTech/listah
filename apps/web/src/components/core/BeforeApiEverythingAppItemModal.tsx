@@ -64,8 +64,6 @@ import {
 import { postItem } from "@/lib/helper/fetchers";
 import type {
   IItem,
-  IFormItem,
-  IFormProps,
 } from "@/lib/model/item";
 import { ErrorAlert, SuccessAlert, WarnAlert } from "@/components/core/Alerts";
 import type { AppTheme } from '@/system/theme';
@@ -75,13 +73,10 @@ import {
 } from '@/lib/helper/defaults';
 import type {
   ITag,
-  ITagProperty,
   ITagReadResponse,
-  ITagPropertyReadResponse,
 } from "@/lib/model/tag";
 import {
-  tagGroupOptions,
-  tagPropertyGroupOptions
+  tagGroupOptions
 } from '@/lib/helper/querying';
 import {
   SpaceBetweenBox,
@@ -110,45 +105,68 @@ export function AppItemModal(): ReactNode {
     pagination: { ...DefaultTagRead.pagination, pageSize: -1 }
   }
   const {
-    isPending: isTagPending, isError: isTagError, data: tagData, error: tagError
+    isPending, isError, data, error
   }: UseSuspenseQueryResult<ITagReadResponse> = useSuspenseQuery(tagGroupOptions(tagQuery));
-  const tags: ITag[] = tagData && tagData.tags ? tagData.tags : [];
-  const {
-    isPending: isTagPropertyPending,
-    isError: isTagPropertyError,
-    data: tagPropertyData,
-    error: tagPropertyError,
-  }: UseSuspenseQueryResult<ITagPropertyReadResponse> = useSuspenseQuery(tagPropertyGroupOptions(tagQuery));
-  const props: ITagProperty = tagPropertyData && tagPropertyData.props ? tagPropertyData.props : {};
-
-  let pMap: any = {}
-  for (const [key, value] of Object.entries(props)) {
-    pMap[key] = value['value'] as unknown as string[]
-  }
-  const propsMap = new Map(Object.entries(pMap));
-
-
-  console.info('props', props);
-  console.info('propsMap', propsMap);
-
-  const isPending = isTagPending || isTagPropertyPending;
-  const isError = isTagError || isTagPropertyError;
-
-
+  const tags: ITag[] = data && data.tags ? data.tags : [];
   const item: IItem = useBoundStore((state) => state.displayItem);
   const knownTagNames = useRef<Set<string>>(new Set(tags.map(p => p.name)));
   const focusTags = useRef<Set<string>>(new Set<string>([]));
-  // const allTagProps = useRef<Map<string, Set<string>>>(new Map<string, Set<string>>());
-  const blurTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const allTagProps = useRef<Map<string, Set<string>>>(new Map<string, Set<string>>());
+  const blurTimeout = useRef<ReturnType<typeof setTimeout>>();
 
 
-  const formData = { id: item.id, userId: item.userId, name: item.name, note: item.note, props: item.propObjs, tags: item.tagObjs, softDelete: item.softDelete };
+
+  // Get object of tags and the properties associated with those tags.
+  let tagObj: string[] = item.tags?.filter(
+    t => t != ""
+  ) || [];
+  let tObj: ITag[] = [];
+  tagObj.forEach(t0 => {
+    const it = tags.filter(ts => ts.id == t0);
+    if (it.length >= 1) {
+      tObj = [...tObj, it[0]]
+    }
+  });
+
+
+
+  const tagProps: string[] = tObj.reduce((acc: string[], prp) => {
+    return [...acc, ...prp.props]
+  }, [])
+  const propList: string[] = [...new Set(tagProps)].sort();
+
+  // const propTags = new Map<string, Set<string>>();
+  if (Object.keys(allTagProps.current).length == 0) {
+    // ToDo: Read this from the API
+    propList.forEach((it: string) => {
+      const tL = tObj.filter(
+        (iit: ITag) => iit.props.indexOf(it) != -1
+      ).map(
+        (ibt: ITag) => ibt.name
+      );
+      allTagProps.current.set(it, new Set(tL))
+    });
+    console.info('allTagProps', allTagProps)
+  }
+
+
+
+  // Create the key value pair used for the props.
+  type IProps = { key: string, value: string, }
+  let itemProps: IProps[] = [];
+  propList.forEach(p => itemProps.push({
+    key: p, value: item.props && item.props[p] ? item.props[p] : "",
+  }));
+
+
+  type formType = Omit<IItem, 'tags' | 'props'> & { props: IProps[], tags: ITag[] }
+  const formData = { ...item, props: itemProps, tags: tObj } as formType;
   // @ts-ignore
-  const form = useForm<IFormItem>({
+  const form = useForm<formType>({
     defaultValues: formData,
     onSubmit: formSubmission,
     validators: {
-      onChange({ value }: { value: IFormItem }) {
+      onChange({ value }: { value: IItem }) {
         if (value.name.length < 1) {
           return "Item title is required";
         }
@@ -159,7 +177,7 @@ export function AppItemModal(): ReactNode {
         }
         return undefined
       },
-      onBlur({ value }: { value: IFormItem }) {
+      onBlur({ value }: { value: IItem }) {
         if (value.name.length < 1) {
           return "Item title is required";
         }
@@ -223,18 +241,20 @@ export function AppItemModal(): ReactNode {
     //Note:  Modal should not be closed after form submission so success or error feedback can be sent to the user.
   }
 
-  function formSubmission({ value }: { value: IFormItem }) {
+  function formSubmission({ value }: { value: IItem }) {
     if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
       console.log("In formSubmission - value ", value);
     }
     const itemId = value.id && value.id != "" ? value.id : uuidv4();
     const userId = user && user.id ? user.id : value.userId;
-    const subProps = value.props.reduce((acc: any, i: IFormProps) => {
+    const subProps = value.props.reduce((acc: any, i: IProps) => {
       acc[i.key] = i.value;
       return acc
     }, {})
     // @ts-ignore
-    const tgs = value.tags?.filter(t => t.name != "").map(t => t.id);
+    let tgs = value.tags?.filter(t => t.name != "");
+    // @ts-ignore
+    tgs = tgs.map(t => t.id);
 
 
     const submitValue = {
@@ -244,8 +264,8 @@ export function AppItemModal(): ReactNode {
       note: value.note,
       tags: tgs,
       props: subProps,
-      tagObjs: undefined,
-      propObjList: undefined,
+      tagNames: undefined,
+      propList: undefined,
       softDelete: value.softDelete,
     }
     if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
@@ -305,28 +325,17 @@ export function AppItemModal(): ReactNode {
                         <TextField
                           onFocus={
                             () => {
-                              // clearTimeout(blurTimeout.current);
-                              focusTags.current = new Set(propsMap.get(subField.state.value.key) as string[])
+                              clearTimeout(blurTimeout.current);
+                              focusTags.current = allTagProps.current.get(subField.state.value.key) ?? new Set();
                             }
                           }
                           onBlur={() => {
-                            focusTags.current = new Set();
-                            // blurTimeout.current = setTimeout(() => focusTags.current = new Set(), 0)
-                          }}
+                            // focusTags.current = new Set();
+                            blurTimeout.current = setTimeout(() => focusTags.current = new Set(), 0)
 
+                          }}
                           slotProps={{
-                            input: {
-                              style: { fontSize: "15px" },
-                              // onFocus:
-                              //   () => {
-                              //     // clearTimeout(blurTimeout.current);
-                              //     focusTags.current = new Set(propsMap.get(subField.state.value.key) as string[])
-                              //   },
-                              // onBlur: () => {
-                              //   focusTags.current = new Set();
-                              //   // blurTimeout.current = setTimeout(() => focusTags.current = new Set(), 0)
-                              // },
-                            },
+                            input: { style: { fontSize: "15px" } },
                             inputLabel: { style: { fontSize: "15px" } },
                           }}
                           multiline
@@ -360,16 +369,16 @@ export function AppItemModal(): ReactNode {
       return [...acc, ...epL]
     }, []);
     const prpList = [...new Set(pL)].sort()
-    let newProps: IFormProps[] = [];
+    let newProps: IProps[] = [];
     prpList.filter(i => i !== "").forEach((npl: string) => {
-      const anpl = oldProps.filter((i: IFormProps) => i.key == npl)
+      const anpl = oldProps.filter((i: IProps) => i.key == npl)
       if (anpl.length == 0) {
         newProps = [...newProps, { key: npl, value: "" }]
       } else {
         newProps = [...newProps, { key: npl, value: anpl[0].value }]
       }
     })
-    newProps = newProps.sort((a: IFormProps, b: IFormProps) => b.value.localeCompare(a.value))
+    newProps = newProps.sort((a: IProps, b: IProps) => b.value.localeCompare(a.value))
     form.setFieldValue('props', newProps)
   }
 
@@ -426,7 +435,6 @@ export function AppItemModal(): ReactNode {
         // Adjust padding to prevent "jumping" when border thickness changes
         padding: '15.5px 13px',
       },
-
     }
     return (
       <form.Field name="tags" mode="array">
@@ -455,32 +463,21 @@ export function AppItemModal(): ReactNode {
                               // const propsList = useStore(form.store, (state) => state.values.props);
                               // console.info('propsList', propsList);
 
-                              const colorSx = {
-                                '--field-color-active': focusTags.current && focusTags.current.has(subField.state.value.id) ? '#a126ca' : '#0eb40b',
-                              }
-
                               const textSx = {
                                 '& .MuiInputBase-input': {
                                   fontSize: '14px',
-                                  color: 'var(--field-color-active)'
+                                  color: focusTags.current && focusTags.current.has(subField.state.value.name) ? '#a126ca' : '#0eb40b',
                                 }, // Changes the typed text size
                                 '& .MuiInputLabel-root': { fontSize: '14px' }, // Changes the label size
                                 '& .MuiInputBase-root.Mui-focused .MuiInputBase-input': {
-                                  color: 'var(--field-color-active)'
+                                  color: focusTags.current && focusTags.current.has(subField.state.value.name) ? '#a126ca' : '#0eb40b',
                                 },
-                                '& input': { color: 'var(--field-color-active)' },
 
                               }
                               return (
-                                <Grid size={{ xs: 12, sm: 6, md: 4 }} sx={colorSx}>
+                                <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                                   <Autocomplete
-                                    slotProps={{
-                                      listbox: {
-                                        sx: {
-                                          fontSize: '14px', color: 'var(--field-color-active)'
-                                        }
-                                      },
-                                    }}
+                                    slotProps={{ listbox: { sx: { fontSize: '14px' } } }}
                                     size="small"
                                     id={"item-tag-" + i}
                                     autoHighlight
@@ -510,7 +507,6 @@ export function AppItemModal(): ReactNode {
                                           helperText={subField.state.meta.errors.join(', ')}
                                           // slotProps causes autocorrect to stop working
                                           sx={textSx}
-
                                           margin="dense"
                                           {...params}
                                           label=""
@@ -698,10 +694,10 @@ export function AppItemModal(): ReactNode {
         {fields.map((fds: itemFields) => getSimpleField(fds))}
 
         {/* ToDo: fix display for tags and fields. */}
-        {getPropField()}
-        {getTagField()}
-        {/* <GetProps />
-        <GetTags /> */}
+        {/* {getPropField()}
+        {getTagField()} */}
+        <GetProps />
+        <GetTags />
       </Stack>
     </Box>
   )

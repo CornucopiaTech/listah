@@ -7,6 +7,11 @@ import (
 	"github.com/uptrace/bun"
 )
 
+type MapObj struct {
+  Key string
+  Value string
+}
+
 type ApiLog struct {
 	bun.BaseModel `bun:"table:instrumentation.logs,alias:lg"`
 	Id            string `bun:",pk"`
@@ -17,6 +22,18 @@ type ApiLog struct {
 	RequestTime   time.Time
 }
 
+type Tag struct {
+	bun.BaseModel `bun:"table:apps.tags,alias:t"`
+	Id            string `bun:",pk"`
+	UserId        string
+	Name          string
+	Props         []string
+	Count         int32 `bun:",scanonly"`
+	SoftDelete    bool
+	UpdatedBy     string
+	UpdatedAt     time.Time
+}
+
 type Item struct {
 	bun.BaseModel `bun:"table:apps.items,alias:it"`
 	Id            string `bun:",pk"`
@@ -24,14 +41,32 @@ type Item struct {
 	Name          string
 	Note          string
 	Tags          []string          `bun:"type:jsonb"`
-	PropList      *[]string         `bun:",scanonly"`
-	TagIds        []string          `bun:",scanonly"`
-	TagNames      []string          `bun:",scanonly"`
 	Props         map[string]string `bun:"type:jsonb"`
 	SoftDelete    bool              `bun:",nullzero,default:false"`
+	TagObjs        []Tag          `bun:"type:jsonb,scanonly"`
+	PropObjs      []MapObj          `bun:"type:jsonb,scanonly"`
 	UpdatedBy     string
 	UpdatedAt     time.Time
 }
+
+type TagProperty struct {
+	UserId        string
+	Name          string
+	TagObjs          []Tag          `bun:"type:jsonb,scanonly"`
+}
+
+type StringList struct {
+	Value        []string
+}
+
+type TagPropertyMap struct {
+	Value        map[string]StringList
+}
+
+type TagPropertyMapModel struct {
+	Props        map[string][]string
+}
+
 
 type Filter struct {
 	bun.BaseModel `bun:"table:apps.filters,alias:sf"`
@@ -40,18 +75,6 @@ type Filter struct {
 	Name          string
 	Tags          []string `bun:"type:jsonb"`
 	Count         int32    `bun:",scanonly"`
-	SoftDelete    bool
-	UpdatedBy     string
-	UpdatedAt     time.Time
-}
-
-type Tag struct {
-	bun.BaseModel `bun:"table:apps.tags,alias:t"`
-	Id            string `bun:",pk"`
-	UserId        string
-	Name          string
-	Props         []string
-	Count         int32 `bun:",scanonly"`
 	SoftDelete    bool
 	UpdatedBy     string
 	UpdatedAt     time.Time

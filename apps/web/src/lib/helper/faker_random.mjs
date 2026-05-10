@@ -31,8 +31,8 @@ async function apiCall(url, payload) {
 }
 
 export function fakeTags(arraySize) {
-  let maxProps = 1000;
-  const maxTagProps = 5;
+  let maxProps = 10 * arraySize;
+  const maxTagProps = 10;
   const possiblePropIndex = [...Array(maxTagProps).keys()].filter(i => i > 0);
 
   let allProps = faker.helpers.multiple(() => faker.word.noun(), { count: 2 * maxProps });
@@ -127,8 +127,8 @@ async function loadFilters(maxLoaded, maxGen, apiUrl, tags, user) {
 
 
 async function fakeItems(arraySize, tagList, user) {
-  const maxItemTags = 5;
-  const maxItemProps = 5;
+  const maxItemTags = 7;
+  const maxItemProps = 12;
   const possibleTagIndex = [...Array(maxItemTags).keys()].filter(i => i > 0);
   const allTags = await tagList.map(i => i.id);
 
@@ -190,7 +190,7 @@ async function loadItems(maxLoaded, maxGen, apiUrl, tags, user) {
 
 
 function load_db(aUrl) {
-  loadTags(1, 100, aUrl).then(
+  loadTags(1, 1000, aUrl).then(
     () => {
       allUserIds.forEach(
         uId => {
@@ -200,8 +200,8 @@ function load_db(aUrl) {
               // console.log('Retrieved data - ', data)
               // console.log('Retrieved Tags - ', tags);
               const tags = data.tags;
-              loadItems(1, 20, aUrl, tags, uId);
-              loadFilters(1, 20, aUrl, tags, uId);
+              loadItems(1, 200, aUrl, tags, uId);
+              loadFilters(1, 200, aUrl, tags, uId);
             }
           ).catch((error) => console.log('Load Filters and Items - ', error.message))
         }

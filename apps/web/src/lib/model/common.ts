@@ -6,9 +6,11 @@ export interface IEnvConfig {
 }
 
 export interface IApiEndpointConfig {
-  readItem: string;
   readTag: string;
+  readTagProperty: string;
+  readItem: string;
   readFilter: string;
+  updateTag: string;
   updateItem: string;
   updateFilter: string;
 }

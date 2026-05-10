@@ -58,6 +58,22 @@ message ItemServiceUpsertTagResponse {
 }
 
 
+// Tag Property Messages
+message ItemServiceReadTagPropertyRequest {
+  string userId = 500 [json_name = "userId"];
+  Search query = 501;
+  Pagination pagination = 502;
+}
+message ItemServiceReadTagPropertyResponse {
+  map<string,StringList> props = 1;
+  int32 totalRecordCount = 2;
+
+  string userId = 500 [json_name = "userId"];
+  Search query = 501;
+  Pagination pagination = 502;
+}
+
+
 // Filter Messages
 message ItemServiceReadFilterRequest {
   string userId = 500 [json_name = "userId"];
@@ -90,6 +106,10 @@ service ItemService {
   }
   rpc UpsertItem(ItemServiceUpsertItemRequest) returns (ItemServiceUpsertItemResponse){
     option (gnostic.openapi.v3.operation).description = "Upsert Item";
+  }
+  rpc ReadTagProperty(ItemServiceReadTagPropertyRequest) returns (ItemServiceReadTagPropertyResponse){
+    option idempotency_level = NO_SIDE_EFFECTS;
+    option (gnostic.openapi.v3.operation).description = "Read Tag Property";
   }
   rpc ReadTag(ItemServiceReadTagRequest) returns (ItemServiceReadTagResponse){
     option idempotency_level = NO_SIDE_EFFECTS;

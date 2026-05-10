@@ -88,16 +88,32 @@ func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemS
 func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
 	items := []*pb.Item{}
 	for _, v := range m {
+		to := []*pb.Tag{}
+		for _, iv := range v.TagObjs {
+			to = append(to, &pb.Tag{
+				Id:         iv.Id,
+				UserId:     iv.UserId,
+				Name:       iv.Name,
+				Props:      iv.Props,
+			})
+		}
+		mo := []*pb.MapObj{}
+		for _, iv := range v.PropObjs {
+			mo = append(mo, &pb.MapObj{
+				Key:     iv.Key,
+				Value:       iv.Value,
+			})
+		}
 		items = append(items, &pb.Item{
 			Id:         v.Id,
 			UserId:     v.UserId,
 			Name:       v.Name,
 			Note:       v.Note,
 			Tags:       v.Tags,
-			TagNames:   v.TagNames,
 			Props:      v.Props,
-			PropList:   *v.PropList,
 			SoftDelete: v.SoftDelete,
+			TagObjs:   to,
+			PropObjs: mo,
 			UpdatedAt:  timestamppb.New(v.UpdatedAt),
 			UpdatedBy:  v.UpdatedBy,
 		})
@@ -140,10 +156,6 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, []string, error)
 			newItem.Tags = v.GetTags()
 			check["tags"] = true
 		}
-		if len(v.GetTagNames()) != 0 {
-			newItem.TagNames = v.GetTagNames()
-			check["tags_names"] = true
-		}
 		if len(v.GetProps()) != 0 {
 			newItem.Props = v.GetProps()
 			check["props"] = true
@@ -161,107 +173,4 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, []string, error)
 		res = append(res, k)
 	}
 	return items, res, nil
-}
-
-func ItemProtoToItemModelPlus(msg []*pb.Item, genId bool) (*ItemUpsert, error) {
-	items := []*Item{}
-	check := map[string]bool{}
-	checkTags := map[string]*Tag{}
-
-	for _, v := range msg {
-		if v.GetUserId() == "" {
-			return nil, errors.New("no userId sent with request")
-		}
-		if v.GetName() == "" {
-			return nil, errors.New("no filter name sent with request")
-		}
-
-		id := v.GetId()
-		if id == "" && genId {
-			id = uuid.Must(uuid.NewV7()).String()
-		}
-		newItem := &Item{
-			Id:     id,
-			UserId: v.GetUserId(),
-		}
-
-		// Set values that have not been set to nil
-		if v.GetName() != "" {
-			newItem.Name = v.GetName()
-			check["name"] = true
-		}
-		if v.GetNote() != "" {
-			newItem.Note = v.GetNote()
-			check["note"] = true
-		}
-		if len(v.GetTags()) != 0 {
-			newItem.Tags = v.GetTags()
-			check["tags"] = true
-			for _, tt := range v.GetTags() {
-				// Get list of properties to attach to the tag
-				prpl := []string{}
-				for kp, _ := range v.GetProps() {
-					prpl = append(prpl, kp)
-				}
-				if _, ok := checkTags[tt+"_"+v.GetUserId()]; !ok {
-					checkTags[tt+"_"+v.GetUserId()] = &Tag{
-						Id:     uuid.Must(uuid.NewV7()).String(),
-						UserId: v.GetUserId(),
-						Name:   tt,
-						Props:  prpl,
-					}
-				} else {
-					// Check if the properties of this tag needs to be extended
-					// exTgs := append(checkTags[tt+"_"+v.GetUserId()].Props, prpl...)
-
-					// Dedup extended tags
-					nexTgs := map[string]bool{}
-					for _, atg := range checkTags[tt+"_"+v.GetUserId()].Props {
-						nexTgs[atg] = true
-					}
-					for _, atg := range prpl {
-						nexTgs[atg] = true
-					}
-
-					// Create new deduped props list
-					tagProps := []string{}
-					for k, _ := range nexTgs {
-						tagProps = append(tagProps, k)
-					}
-
-					// Update the props of the tag.
-					checkTags[tt+"_"+v.GetUserId()].Props = tagProps
-				}
-			}
-		}
-		if len(v.GetProps()) != 0 {
-			newItem.Props = v.GetProps()
-			check["props"] = true
-		}
-		if v.GetSoftDelete() {
-			newItem.SoftDelete = v.GetSoftDelete()
-			check["soft_delete"] = true
-		}
-		items = append(items, newItem)
-	}
-
-	// Get the fields that need to be updated for conflict resolution
-	res := []string{}
-	for k, _ := range check {
-		res = append(res, k)
-	}
-
-	// Get the fields that need to be updated for conflict resolution
-	upTag := []Tag{}
-	for _, v := range checkTags {
-		upTag = append(upTag, *v)
-	}
-
-	i := ItemUpsert{
-		Items:  &items,
-		Update: res,
-		Tags:   &upTag,
-	}
-
-	return &i, nil
 }
