@@ -37,7 +37,7 @@ import {
 } from '@/lib/store/boundStore';
 import {
   AppItemSearchBar,
-} from "@/components/core/AppSearchBar";
+} from "@/components/layout/AppSearchBar";
 import {
   AppToolbarStack,
 } from "@/components/core/AppStack";

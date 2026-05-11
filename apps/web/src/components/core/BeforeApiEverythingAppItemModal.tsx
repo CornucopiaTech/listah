@@ -82,7 +82,7 @@ import {
   SpaceBetweenBox,
 } from "@/components/core/AppBox";
 import {
-  AppDialogActionButton
+  AppDefaultButton
 } from "@/components/core/AppButton";
 
 
@@ -708,10 +708,10 @@ export function AppItemModal(): ReactNode {
       children={() => (
         <Box sx={{ transform: 'translateZ(0px)', flexGrow: 1 }}>
           <Stack direction="row" spacing={4}>
-            <AppDialogActionButton label="Save" handleClick={form.handleSubmit} />
+            <AppDefaultButton label="Save" handleClick={form.handleSubmit} />
             {/* @ts-ignore */}
-            <AppDialogActionButton label="Reset" handleClick={form.reset} />
-            <AppDialogActionButton label="Delete" handleClick={handleDelete} />
+            <AppDefaultButton label="Reset" handleClick={form.reset} />
+            <AppDefaultButton label="Delete" handleClick={handleDelete} />
           </Stack>
 
           <SpeedDial

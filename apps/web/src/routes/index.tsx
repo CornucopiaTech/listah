@@ -12,8 +12,8 @@ import {
   type TBoundStore
 } from '@/lib/store/boundStore';
 import { TagListLayout } from "@/components/layout/TagList";
-import { AppTagModal } from "@/components/core/AppTagModal";
-import { AppFilterModal } from "@/components/core/AppFilterModal";
+import { AppTagModal } from "@/components/layout/AppTagModal";
+import { AppFilterModal } from "@/components/layout/AppFilterModal";
 import {
   AppPagePaper,
 } from '@/components/core/AppPaper';

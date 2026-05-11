@@ -3,8 +3,7 @@ import {
   Fragment,
   useEffect,
   useRef,
-  useMemo,
-  memo,
+  useState,
 } from "react";
 import type {
   ChangeEvent,
@@ -46,12 +45,18 @@ import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import Box from '@mui/material/Box';
 import Autocomplete from '@mui/material/Autocomplete';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+
 
 
 
 // Internal imports
 import {
   AppSubtitle1Typography,
+  AppDialogListItemSecondaryTypography,
 } from "@/components/core/Typography";
 import {
   useBoundStore,
@@ -67,7 +72,11 @@ import type {
   IFormItem,
   IFormProps,
 } from "@/lib/model/item";
-import { ErrorAlert, SuccessAlert, WarnAlert } from "@/components/core/Alerts";
+import {
+  ErrorAlert,
+  SuccessAlert,
+  WarnAlert
+} from "@/components/core/Alerts";
 import type { AppTheme } from '@/system/theme';
 import {
   DefaultTagRead,
@@ -75,19 +84,23 @@ import {
 } from '@/lib/helper/defaults';
 import type {
   ITag,
-  ITagProperty,
   ITagReadResponse,
-  ITagPropertyReadResponse,
 } from "@/lib/model/tag";
 import {
   tagGroupOptions,
-  tagPropertyGroupOptions
 } from '@/lib/helper/querying';
 import {
   SpaceBetweenBox,
 } from "@/components/core/AppBox";
 import {
-  AppDialogActionButton
+  AppDefaultButton,
+  AppDangerButton,
+  AppWarnButton,
+  AppMutedButton,
+  AppDefaultTextButton,
+  AppDangerTextButton,
+  AppWarnTextButton,
+  AppMutedTextButton,
 } from "@/components/core/AppButton";
 
 
@@ -100,57 +113,35 @@ export function AppItemModal(): ReactNode {
   const { user } = useUser();
   const queryClient = useQueryClient();
   const theme: AppTheme = useTheme();
+  const [tagToDelete, setTagToDelete] = useState<ITag | null>(null);
   const routeApi = getRouteApi('/items/');
   const { search } = routeApi.useRouteContext();
   const { query } = search;
-
   const tagQuery = {
     ...DefaultTagRead,
     userId: query.userId,
     pagination: { ...DefaultTagRead.pagination, pageSize: -1 }
   }
   const {
-    isPending: isTagPending, isError: isTagError, data: tagData, error: tagError
+    isPending, isError, data, error
   }: UseSuspenseQueryResult<ITagReadResponse> = useSuspenseQuery(tagGroupOptions(tagQuery));
-  const tags: ITag[] = tagData && tagData.tags ? tagData.tags : [];
-  const {
-    isPending: isTagPropertyPending,
-    isError: isTagPropertyError,
-    data: tagPropertyData,
-    error: tagPropertyError,
-  }: UseSuspenseQueryResult<ITagPropertyReadResponse> = useSuspenseQuery(tagPropertyGroupOptions(tagQuery));
-  const props: ITagProperty = tagPropertyData && tagPropertyData.props ? tagPropertyData.props : {};
-
-  let pMap: any = {}
-  for (const [key, value] of Object.entries(props)) {
-    pMap[key] = value['value'] as unknown as string[]
-  }
-  const propsMap = new Map(Object.entries(pMap));
-
-
-  console.info('props', props);
-  console.info('propsMap', propsMap);
-
-  const isPending = isTagPending || isTagPropertyPending;
-  const isError = isTagError || isTagPropertyError;
-
-
+  const tags: ITag[] = data && data.tags ? data.tags : [];
   const item: IItem = useBoundStore((state) => state.displayItem);
   const knownTagNames = useRef<Set<string>>(new Set(tags.map(p => p.name)));
-  const focusTags = useRef<Set<string>>(new Set<string>([]));
-  // const allTagProps = useRef<Map<string, Set<string>>>(new Map<string, Set<string>>());
-  const blurTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-
-
-  const formData = { id: item.id, userId: item.userId, name: item.name, note: item.note, props: item.propObjs, tags: item.tagObjs, softDelete: item.softDelete };
+  const formData = {
+    id: item.id, userId: item.userId, name: item.name,
+    note: item.note, props: item.propObjs,
+    tags: item.tagObjs, softDelete: item.softDelete
+  };
   // @ts-ignore
   const form = useForm<IFormItem>({
     defaultValues: formData,
     onSubmit: formSubmission,
     validators: {
       onChange({ value }: { value: IFormItem }) {
-        if (value.name.length < 1) {
-          return "Item title is required";
+        const invalidName = nameValidation(value.name);
+        if (invalidName) {
+          return invalidName;
         }
         const invalidTag = tagsValidation(value.tags as unknown as ITag[]);
         if (invalidTag) {
@@ -160,8 +151,9 @@ export function AppItemModal(): ReactNode {
         return undefined
       },
       onBlur({ value }: { value: IFormItem }) {
-        if (value.name.length < 1) {
-          return "Item title is required";
+        const invalidName = nameValidation(value.name);
+        if (invalidName) {
+          return invalidName;
         }
         const invalidTag = tagsValidation(value.tags as unknown as ITag[]);
         if (invalidTag) {
@@ -172,6 +164,7 @@ export function AppItemModal(): ReactNode {
       },
     },
   });
+  const formErrorMap = useStore(form.store, (state) => state.errorMap);
 
   // Define invalidating  mutation
   const mutation = useMutation({
@@ -203,12 +196,10 @@ export function AppItemModal(): ReactNode {
           console.log("Timer fired after 2 seconds");
         }
         closeModal();
-      }, 2000);
+      }, 5000);
     return () => clearTimeout(timer); // cleanup
   }, [form.state.isSubmitted, mutation.isSuccess]);
 
-
-  console.info('formData', formData)
 
   function closeModal() {
     store.setItemModal(false);
@@ -261,146 +252,48 @@ export function AppItemModal(): ReactNode {
       <form.Field
         key={`item-${key}`}
         name={key}
+        validators={{
+          onChange: ({ value }) => {
+            if (key == "name") {
+              return nameValidation(value as unknown as string)
+            }
+          },
+          onBlur: ({ value }) => {
+            if (key == "name") {
+              return nameValidation(value as unknown as string)
+            }
+          },
+        }}
         children={
-          (field) =>
-            <Grid container sx={{ width: '100%' }} spacing={0}>
+          (field) => {
+            return <Grid container sx={{ width: '100%' }} spacing={0}>
               <Grid size={12}>
                 <TextField
                   sx={sx}
                   slotProps={{
-                    input: { style: { fontSize: "15px" } },
-                    inputLabel: { style: { fontSize: "15px" } },
+                    input: { style: { fontSize: "1rem" } },
+                    inputLabel: { style: { fontSize: "1rem" } },
                   }}
                   fullWidth
                   multiline
                   id={`item-${key}`}
                   key={`item-${key}`}
                   value={field.state.value}
-                  label={key.charAt(0).toUpperCase() + key.slice(1)}
+                  label={key}
                   onChange={
                     (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
                   size="small"
                   variant="standard"
                   margin="dense"
+                  error={key == "name" && field.state.meta.errors.length > 0}
+                  helperText={field.state.meta.errors.join(', ')}
                 />
               </Grid>
             </Grid>
+          }
         }
       />
     );
-  }
-
-  function getPropField() {
-    return (
-      <form.Field name="props" mode="array">
-        {
-          (field) => (
-            <Fragment >
-              {
-                field.state.value &&
-                field.state.value.map((_, i) => {
-                  return <form.Field key={i} name={`props[${i}]`}>{
-                    (subField) => {
-                      return (
-                        <TextField
-                          onFocus={
-                            () => {
-                              // clearTimeout(blurTimeout.current);
-                              focusTags.current = new Set(propsMap.get(subField.state.value.key) as string[])
-                            }
-                          }
-                          onBlur={() => {
-                            focusTags.current = new Set();
-                            // blurTimeout.current = setTimeout(() => focusTags.current = new Set(), 0)
-                          }}
-
-                          slotProps={{
-                            input: {
-                              style: { fontSize: "15px" },
-                              // onFocus:
-                              //   () => {
-                              //     // clearTimeout(blurTimeout.current);
-                              //     focusTags.current = new Set(propsMap.get(subField.state.value.key) as string[])
-                              //   },
-                              // onBlur: () => {
-                              //   focusTags.current = new Set();
-                              //   // blurTimeout.current = setTimeout(() => focusTags.current = new Set(), 0)
-                              // },
-                            },
-                            inputLabel: { style: { fontSize: "15px" } },
-                          }}
-                          multiline
-                          id={"item-prop-key-" + i}
-                          value={subField.state.value.value}
-                          label={subField.state.value.key}
-                          onChange={
-                            (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
-                              subField.handleChange({ ...subField.state.value, value: e.target.value })
-                          }
-                          size="small"
-                          variant="standard"
-                          margin="dense"
-                        />
-                      )
-                    }
-                  }</form.Field>
-                })
-              }
-            </Fragment>
-          )
-        }
-      </form.Field>
-    );
-  }
-
-  function addNewTagProps({ value }: any) {
-    const oldProps = form.getFieldValue('props');
-    const pL = (value as ITag[]).reduce((acc: string[], ev: ITag) => {
-      const epL = ev.props || []
-      return [...acc, ...epL]
-    }, []);
-    const prpList = [...new Set(pL)].sort()
-    let newProps: IFormProps[] = [];
-    prpList.filter(i => i !== "").forEach((npl: string) => {
-      const anpl = oldProps.filter((i: IFormProps) => i.key == npl)
-      if (anpl.length == 0) {
-        newProps = [...newProps, { key: npl, value: "" }]
-      } else {
-        newProps = [...newProps, { key: npl, value: anpl[0].value }]
-      }
-    })
-    newProps = newProps.sort((a: IFormProps, b: IFormProps) => b.value.localeCompare(a.value))
-    form.setFieldValue('props', newProps)
-  }
-
-  function handleTagsChange(parentF: any, childF: any, newValue: string | null) {
-    const sval = newValue ? newValue : "";
-    const fField = parentF?.state?.value as unknown as ITag[] ?? [];
-    if (sval == "") {
-      // If the value was deleted, replace the tag object with the default tag object.
-      const newTagList = fField.filter(fsv => fsv.id != childF.state.value.id);
-      addNewTagProps({ value: newTagList });
-      if (newTagList.filter(itt => itt.name !== "").length >= 1) {
-        const removeIdx = parentF.state.value.map((iF: ITag) => iF.id).indexOf(childF.state.value.id);
-        if (removeIdx > -1) {
-          parentF.removeValue(removeIdx);
-        }
-
-      } else {
-        childF.handleChange(DefaultTag);
-      }
-    } else {
-      // If a nonzero value is added, then use the information to update the tag object.
-      const it = tags.filter(itt => itt.name == sval);
-      if (it.length > 0) {
-        // If the passed value is a known name of a tag..
-        childF.handleChange(it[0]);
-        addNewTagProps({ value: [...fField, it[0]] })
-      }
-      else {
-        childF.handleChange({ ...DefaultTag, name: sval });
-      }
-    }
   }
 
   function getTagField() {
@@ -408,11 +301,11 @@ export function AppItemModal(): ReactNode {
     // Maybe ToDo: Use an alert to confirm the props that would be deleted when a tag is removed before a tag is removed.
     // ToDo: Change the font color of the tag that corresponds to a property that is in focus.
     const tboxSx = {
-      '& legend': { fontSize: '12px', color: 'rgba(0, 0, 0, 0.6)' },
+      '& legend': { fontSize: '1rem', color: 'rgba(0, 0, 0, 0.6)' },
       border: `0.5px solid`,
       borderColor: "rgba(0, 0, 0, 0.23)",
       margin: 0, borderRadius: 1,
-      fontSize: '15px',
+      fontSize: '1rem',
       padding: '16.5px 14px', // Matches standard TextField padding
       transition: 'border-color 200ms cubic-bezier(0.4, 0, 0.2, 1)',
       '&:hover': {
@@ -429,16 +322,16 @@ export function AppItemModal(): ReactNode {
 
     }
     return (
-      <form.Field name="tags" mode="array">
+      <form.Field name="tags" mode="array" key="tag-parent">
         {
           (field) => {
             return <Fragment>
-              <Box component="fieldset" sx={tboxSx}>
-                <legend style={{ padding: '0 0.5rem' }}>Tags</legend>
+              <Box key="tags" component="fieldset" sx={tboxSx}>
+                <legend style={{ padding: '0 0.5rem' }}>tags</legend>
                 <Button disableElevation sx={{ display: 'flex', justifyContent: "flex-start", alignContent: "center", }}
                   onClick={() => field.pushValue(DefaultTag)}
                   type="button">
-                  <AppSubtitle1Typography sx={{ textTransform: "none", justifyContent: "center", alignContent: "center", fontSize: '15px', }}>
+                  <AppSubtitle1Typography sx={{ textTransform: "none", justifyContent: "center", alignContent: "center", fontSize: '1rem', }}>
                     Click to add new tag
                   </AppSubtitle1Typography>
                 </Button>
@@ -447,38 +340,29 @@ export function AppItemModal(): ReactNode {
                   <Grid container spacing={3} sx={{ width: '100%' }}>{
                     field.state.value && field.state.value.map((_, i) => {
                       return (
-                        <form.Field key={i} name={`tags[${i}]`} validators={{
-                          onChange: ({ value }) => tagValidation(value as unknown as ITag),
-                          onBlur: ({ value }) => tagValidation(value as unknown as ITag),
-                        }}>{
+                        <form.Field
+                          key={i} name={`tags[${i}]`}
+                          validators={{
+                            onChange: ({ value }) => tagValidation(value as unknown as ITag),
+                            onBlur: ({ value }) => tagValidation(value as unknown as ITag),
+                          }}
+                        >{
                             (subField: any) => {
-                              // const propsList = useStore(form.store, (state) => state.values.props);
-                              // console.info('propsList', propsList);
-
-                              const colorSx = {
-                                '--field-color-active': focusTags.current && focusTags.current.has(subField.state.value.id) ? '#a126ca' : '#0eb40b',
-                              }
-
                               const textSx = {
                                 '& .MuiInputBase-input': {
-                                  fontSize: '14px',
-                                  color: 'var(--field-color-active)'
+                                  fontSize: '1rem',
                                 }, // Changes the typed text size
-                                '& .MuiInputLabel-root': { fontSize: '14px' }, // Changes the label size
-                                '& .MuiInputBase-root.Mui-focused .MuiInputBase-input': {
-                                  color: 'var(--field-color-active)'
-                                },
-                                '& input': { color: 'var(--field-color-active)' },
-
+                                '& .MuiInputLabel-root': { fontSize: '1rem' }, // Changes the label size
                               }
+
                               return (
-                                <Grid size={{ xs: 12, sm: 6, md: 4 }} sx={colorSx}>
+                                <Grid
+                                  key={i} //Using the tag id as the key causes the form to lose focus when adding new tags to the form, especially when the form length is longer than the maximum allowed length of the dialog.
+                                  size={{ xs: 12, sm: 6, md: 4 }}>
                                   <Autocomplete
                                     slotProps={{
                                       listbox: {
-                                        sx: {
-                                          fontSize: '14px', color: 'var(--field-color-active)'
-                                        }
+                                        sx: { fontSize: '14px', }
                                       },
                                     }}
                                     size="small"
@@ -535,11 +419,121 @@ export function AppItemModal(): ReactNode {
     );
   }
 
+  function getPropField() {
+    return (
+      <form.Field name="props" mode="array">
+        {
+          (field) => (
+            <Fragment >
+              {
+                field.state.value &&
+                field.state.value.map((_, i) => {
+                  return <form.Field key={"item-prop-key-" + i} name={`props[${i}]`}>{
+                    (subField) => {
+                      return (
+                        <TextField
+                          slotProps={{
+                            input: { style: { fontSize: "1rem" }, },
+                            inputLabel: { style: { fontSize: "1rem" } },
+                          }}
+                          multiline
+                          id={"item-prop-key-" + i}
+                          value={subField.state.value.value}
+                          label={subField.state.value.key}
+                          onChange={
+                            (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
+                              subField.handleChange({ ...subField.state.value, value: e.target.value })
+                          }
+                          size="small"
+                          variant="standard"
+                          margin="dense"
+                        />
+                      )
+                    }
+                  }</form.Field>
+                })
+              }
+            </Fragment>
+          )
+        }
+      </form.Field>
+    );
+  }
+
+  function addNewTagProps({ value }: any) {
+    const oldProps = form.getFieldValue('props');
+    const pL = (value as ITag[]).reduce((acc: string[], ev: ITag) => {
+      const epL = ev.props || []
+      return [...acc, ...epL]
+    }, []);
+    const prpList = [...new Set(pL)].sort()
+    let newProps: IFormProps[] = [];
+    prpList.filter(i => i !== "").forEach((npl: string) => {
+      const anpl = oldProps.filter((i: IFormProps) => i.key == npl)
+      if (anpl.length == 0) {
+        newProps = [...newProps, { key: npl, value: "" }]
+      } else {
+        newProps = [...newProps, { key: npl, value: anpl[0].value }]
+      }
+    })
+    newProps = newProps.sort((a: IFormProps, b: IFormProps) => b.value.localeCompare(a.value))
+    form.setFieldValue('props', newProps)
+  }
+
+  function handleTagsChange(parentF: any, childF: any, newValue: string | null) {
+    const sval = newValue ? newValue : "";
+    if (sval == "") {
+      // If the value was deleted, replace the tag object with the default tag object.
+      setTagToDelete({ c: childF, p: parentF });
+    } else {
+      // If a nonzero value is added, then use the information to update the tag object.
+      handleTagAdd(parentF, childF, newValue)
+    }
+  }
+
+  function handleTagAdd(parentF: any, childF: any, newValue: string | null) {
+    const sval = newValue ? newValue : "";
+    const fField = parentF?.state?.value as unknown as ITag[] ?? [];
+
+    // If a nonzero value is added, then use the information to update the tag object.
+    const it = tags.filter(itt => itt.name == sval);
+    if (it.length > 0) {
+      // If the passed value is a known name of a tag..
+      childF.handleChange(it[0]);
+      addNewTagProps({ value: [...fField, it[0]] })
+    }
+    else {
+      childF.handleChange({ ...DefaultTag, name: sval });
+    }
+  }
+
+  function handleTagDeletePostConfirm(uInput: boolean) {
+    // if (yesDelete) {
+    if (uInput) {
+      const par = tagToDelete?.p;
+      const chd = tagToDelete?.c;
+      const fField = par?.state?.value as unknown as ITag[] ?? [];
+      const newTagList = fField.filter(fsv => fsv.id != chd.state.value.id);
+      addNewTagProps({ value: newTagList });
+      if (newTagList.filter(itt => itt.name !== "").length >= 1) {
+        const removeIdx = par.state.value.map(
+          (iF: ITag) => iF.id
+        ).indexOf(chd.state.value.id);
+        if (removeIdx > -1) {
+          par.removeValue(removeIdx);
+        }
+      } else {
+        chd.handleChange(DefaultTag);
+      }
+    }
+    setTagToDelete(null);
+  }
+
   function tagsValidation(fTagList: ITag[]) {
     let errs = "";
     let newMsg = "";
     if (fTagList.filter((t) => t.name != "").length < 1) {
-      errs += "A least one tag is required";
+      errs += "Item must contain one tag at least ";
     }
     // const unrecognisedTags = fTagList.filter((t) => !knownTagNames.current.has(t.name));
     const unrecognisedTags = fTagList.filter((t) => t.name != "").filter((t) => !knownTagNames.current.has(t.name));
@@ -548,6 +542,7 @@ export function AppItemModal(): ReactNode {
       newMsg = `Unrecognised tag(s): (${unregognisedNames}) will not be saved.`;
       errs += errs == "" ? newMsg : "\n" + newMsg;
     }
+    // console.info('In tags validation - errs', errs)
     if (errs !== "") {
       return errs
     }
@@ -566,8 +561,13 @@ export function AppItemModal(): ReactNode {
     }
   }
 
+  function nameValidation(fieldName: string) {
+    if (!fieldName || fieldName.length < 1) {
+      return "Item name is required";
+    }
+  }
 
-  function handleDelete() {
+  function handleItemDelete() {
     form.setFieldValue('softDelete', true);
     form.handleSubmit();
   }
@@ -575,8 +575,8 @@ export function AppItemModal(): ReactNode {
   const fields: itemFields[] = ['id', 'userId', 'name', "note"];
   const dialogSx = {
     display: 'block',
-    width: "lg",
-    maxWidth: "lg",
+    width: "md",
+    maxWidth: "md",
     height: 'fit-content',
     maxHeight: '70vh',
     overflow: 'auto',
@@ -600,43 +600,90 @@ export function AppItemModal(): ReactNode {
 
   const deleteIcon = form.state.isSubmitting ? "ic:baseline-auto-delete" : (!form.state.canSubmit || form.state.values.id == "") ? "mdi:delete-off" : "ic:sharp-delete";
   const deleteTooltip = (!form.state.canSubmit || form.state.values.id == "") ? "Unable to delete" : "Delete";
-
   const saveIcon = form.state.isSubmitting ? "material-symbols:hourglass-top" : form.state.canSubmit ? "material-symbols:save-sharp" : "lucide:save-off";
   const saveTooltip = !form.state.canSubmit ? "Unable to save" : "Save";
 
 
   const formActions = [
-    { name: deleteTooltip, icon: deleteIcon, onClick: handleDelete },
+    { name: deleteTooltip, icon: deleteIcon, onClick: handleItemDelete },
     { name: saveTooltip, icon: saveIcon, onClick: form.handleSubmit },
     { name: "Reset", icon: "material-symbols-light:restart-alt", onClick: form.reset },
   ]
-  const formErrorMap = useStore(form.store, (state) => state.errorMap);
+
+  function TagDeleteDialog() {
+    return (
+      < Dialog open={tagToDelete !== null} disableScrollLock >
+        <DialogTitle
+          id="save-dialog-title"
+          sx={{
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            p: 3, paddingBottom: 0,
+          }}
+        >{tagToDelete?.c?.state.value.name ?? ""}
+        </DialogTitle>
+        <Divider />
+        <DialogContent>
+          <AppSubtitle1Typography>
+            Deleting this will remove the following item properties:
+          </AppSubtitle1Typography>
+
+          <List sx={{ p: -1, m: -1 }}>
+            {tagToDelete?.c?.state.value.props.map((tp) =>
+              <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemText
+                    primary={
+                      <AppDialogListItemSecondaryTypography
+                        sx={{ py: -1, my: -1 }}>{tp}</AppDialogListItemSecondaryTypography>
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            )}
+          </List>
+
+        </DialogContent>
+        <Divider />
+        <DialogActions>
+          <Stack direction="row" spacing={4}>
+            <AppDefaultButton label="Cancel" handleClick={() => handleTagDeletePostConfirm(false)} />
+            <AppDangerButton label="Delete" handleClick={() => handleTagDeletePostConfirm(true)} />
+          </Stack>
+
+        </DialogActions>
+      </Dialog >
+    );
+  }
 
 
   function Dlg(content: ReactNode, actions?: ReactNode): ReactNode {
     return (
-      <Dialog fullWidth maxWidth="xl" open={store.itemModal} onClose={closeModal} >
+      <Dialog fullWidth maxWidth="md" open={store.itemModal} onClose={closeModal} >
         <SpaceBetweenBox >
           <DialogTitle
             id="save-dialog-title"
             sx={{
-              display: "flex",
-              alignItems: "flex-start",
+              display: "flex", alignItems: "flex-start",
               justifyContent: "space-between",
-              pb: 0,
-              pt: 2,
-              px: 3,
+              pb: 0, pt: 2, px: 3,
             }}
-          >{item.id == "" ? "Add new item" : "Update Item"}</DialogTitle>
+          >{item.id == "" ? "Add new item" : "Update Item"}
+          </DialogTitle>
+
           <IconButton aria-label="close dialog"
-            sx={{
-              display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
-            }}
+            sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', }}
             size="small"
             onClick={closeModal}>
             <Icon icon="material-symbols-light:close-rounded" width="30" height="30" />
           </IconButton>
         </SpaceBetweenBox>
+        <Divider />
+        {mutation.isSuccess && <SuccessAlert message="Item updated!" />}
+        {formErrorMap.onChange && <WarnAlert message={`${formErrorMap.onChange}`} />}
+        <Divider />
+        <TagDeleteDialog />
 
         <form onSubmit={onFormSubmit}>
           <DialogContent sx={dialogSx} >
@@ -649,34 +696,14 @@ export function AppItemModal(): ReactNode {
             </DialogActions>}
         </form>
       </Dialog>
-    )
+    );
   }
 
-
-  if (isPending) {
-    const con = <LinearProgress />;
-    return Dlg(con);
-  }
-
-
-  if (isError) {
-    const con = <ErrorAlert message={error?.message || "An error occurred. Please try again"} />;
-    return Dlg(con);
-  }
-
-
-  const GetProps = memo(() => getPropField());
-  const GetTags = memo(() => getTagField());
-
+  if (isPending) { return Dlg(<LinearProgress />); }
+  if (isError) { return Dlg(<ErrorAlert message={error?.message || "An error occurred. Please try again"} />); }
 
   const con = (
-    <Box
-      component="section"
-      sx={{
-        margin: 0,
-        fontSize: '15px',
-        padding: 0,
-      }}>
+    <Box component="section" >
       <Stack spacing={0} sx={{ width: '100%' }} >
         {mutation.error && (
           <Fragment>
@@ -684,27 +711,12 @@ export function AppItemModal(): ReactNode {
             <h5 onClick={() => mutation.reset()}>{mutation.error.message}</h5>
           </Fragment>
         )}
-        {mutation.isSuccess && (
-          <Fragment>
-            <SuccessAlert message="Item updated!" />
-          </Fragment>
-        )}
-        {
-          formErrorMap.onChange && (<WarnAlert message={`${formErrorMap.onChange}`} />)
-        }
-        {
-          formErrorMap.onBlur && (<ErrorAlert message={`${formErrorMap.onBlur}`} />)
-        }
         {fields.map((fds: itemFields) => getSimpleField(fds))}
-
-        {/* ToDo: fix display for tags and fields. */}
         {getPropField()}
         {getTagField()}
-        {/* <GetProps />
-        <GetTags /> */}
       </Stack>
     </Box>
-  )
+  );
 
   const act = (
     <form.Subscribe
@@ -712,10 +724,46 @@ export function AppItemModal(): ReactNode {
       children={() => (
         <Box sx={{ transform: 'translateZ(0px)', flexGrow: 1 }}>
           <Stack direction="row" spacing={4}>
-            <AppDialogActionButton label="Save" handleClick={form.handleSubmit} />
+            {
+              // For can save only when it has no errors and it is not in the process of getting submitted.
+              form.state.canSubmit && !form.state.isSubmitting ?
+                <AppDefaultButton label="Save" handleClick={form.handleSubmit} /> :
+                <AppMutedButton label="Save" />
+            }
             {/* @ts-ignore */}
-            <AppDialogActionButton label="Reset" handleClick={form.reset} />
-            <AppDialogActionButton label="Delete" handleClick={handleDelete} />
+            {
+              // Forms can reset only when they are dirty (i.e have been touched.)
+              form.state.isDirty ?
+                <AppWarnButton label="Reset" handleClick={form.reset} /> :
+                <AppMutedButton label="Reset" />
+            }
+
+            {
+              // Form deletion should only be enabled if the form is persisted in the server (i.e. has an id) and the form is not already being submitted.
+              (!form.state.canSubmit || form.state.values.id == "") ?
+                <AppMutedButton label="Delete" /> :
+                <AppDangerButton label="Delete" handleClick={handleItemDelete} />
+            }
+            {
+              // For can save only when it has no errors and it is not in the process of getting submitted.
+              form.state.canSubmit && !form.state.isSubmitting ?
+                <AppDefaultTextButton label="Save" handleClick={form.handleSubmit} /> :
+                <AppMutedTextButton label="Save" />
+            }
+            {/* @ts-ignore */}
+            {
+              // Forms can reset only when they are dirty (i.e have been touched.)
+              form.state.isDirty ?
+                <AppWarnTextButton label="Reset" handleClick={form.reset} /> :
+                <AppMutedTextButton label="Reset" />
+            }
+
+            {
+              // Form deletion should only be enabled if the form is persisted in the server (i.e. has an id) and the form is not already being submitted.
+              (!form.state.canSubmit || form.state.values.id == "") ?
+                <AppMutedTextButton label="Delete" /> :
+                <AppDangerTextButton label="Delete" handleClick={handleItemDelete} />
+            }
           </Stack>
 
           <SpeedDial
@@ -723,9 +771,9 @@ export function AppItemModal(): ReactNode {
             sx={{
               position: 'absolute', bottom: 0, right: 0,
               '& .MuiFab-primary': {
-                width: 36,
-                height: 36,
-                minHeight: 36,
+                width: 50,
+                height: 50,
+                minHeight: 50,
               }
             }}
             icon={<SpeedDialIcon />}
@@ -733,7 +781,7 @@ export function AppItemModal(): ReactNode {
             {formActions.map((action) => (
               <SpeedDialAction
                 key={action.name}
-                icon={<Icon icon={action.icon} width="24" height="24" />}
+                icon={<Icon icon={action.icon} width="30" height="30" />}
                 // @ts-ignore
                 onClick={action.onClick}
                 slotProps={{
@@ -748,7 +796,7 @@ export function AppItemModal(): ReactNode {
       )
       }
     />
-  )
+  );
 
   return Dlg(con, act);
 }

@@ -18,7 +18,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 
 import {
   AppNavBar,
-} from '@/components/core/AppNavBar';
+} from '@/components/layout/AppNavBar';
 import { Landing } from '@/components/pages/Landing';
 
 

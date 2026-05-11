@@ -37,6 +37,21 @@ export function AppListItemTypography({ children, sx }: { children: ReactNode, s
   )
 }
 
+export function AppDialogListItemSecondaryTypography({ children, sx }: { children: ReactNode, sx?: any }) {
+  const theme: AppTheme = useTheme();
+  return (
+    <Typography variant="subtitle1" sx={{ ...sx, textAlign: "left", color: theme.palette.secondary.main, }}>{children}</Typography>
+  )
+}
+
+// export const AppListItemSecondaryTypography = styled(Typography)(({ theme }: { theme: AppTheme }) => ({
+//   color: theme.palette.text.secondary,
+//   whiteSpace: 'pre-line',
+//   variant: "subtitle2",
+//   textAlign: "left",
+// }));
+
+
 export function AppAlertTypography({ children, sx }: { children: ReactNode, sx?: any }) {
   return (
     <Typography variant="subtitle1" sx={{ ...sx, textAlign: "left" }}>{children}</Typography>
@@ -44,10 +59,71 @@ export function AppAlertTypography({ children, sx }: { children: ReactNode, sx?:
 }
 
 
+// export function AppDefaultButtonTypography({ children, sx }: { children: ReactNode, sx?: any }) {
+//   const theme: AppTheme = useTheme();
+//   return (
+//     <Typography variant="subtitle1" sx={{ ...sx, textAlign: "center", color: theme.palette.primary.contrastText, }}>{children}</Typography>
+//   )
+// }
+
+// export function AppTextButtonTypography({ children, sx }: { children: ReactNode, sx?: any }) {
+//   const theme: AppTheme = useTheme();
+//   return (
+//     <Typography variant="subtitle1" sx={{ ...sx, textAlign: "center", color: theme.palette.primary.contrastText, }}>{children}</Typography>
+//   )
+// }
+
+export const AppTextButtonTypography = styled(Typography)(({ theme }: { theme: AppTheme }) => ({
+  color: theme.palette.primary.main,
+  // textAlign: "center",
+  // textAlign: "left",
+  whiteSpace: 'pre-line',
+  '&:hover': { color: theme.palette.primary.dark },
+  fontWeight: 'bold'
+}));
+
+export const AppTextDangerButtonTypography = styled(Typography)(({ theme }: { theme: AppTheme }) => ({
+  color: theme.palette.error.main,
+  // textAlign: "center",
+  // textAlign: "left",
+  whiteSpace: 'pre-line',
+  '&:hover': { color: theme.palette.error.dark },
+  fontWeight: 'bold'
+}));
+
+export const AppTextWarningButtonTypography = styled(Typography)(({ theme }: { theme: AppTheme }) => ({
+  color: theme.palette.warning.main,
+  // textAlign: "center",
+  // textAlign: "left",
+  whiteSpace: 'pre-line',
+  '&:hover': { color: theme.palette.warning.dark },
+  fontWeight: 'bold'
+}));
+
+export const AppTextMutedButtonTypography = styled(Typography)(({ theme }: { theme: AppTheme }) => ({
+  color: theme.palette.muted.main,
+  // textAlign: "center",
+  // textAlign: "left",
+  whiteSpace: 'pre-line',
+  '&:hover': { color: theme.palette.muted.main },
+  fontWeight: 'bold'
+}));
+
+
+export const AppDefaultButtonTypography = styled(Typography)(({ theme }: { theme: AppTheme }) => ({
+  color: theme.palette.primary.contrastText,
+  // textAlign: "center",
+  // textAlign: "left",
+  whiteSpace: 'pre-line',
+  fontWeight: 'bold'
+}));
+
+
+
 export function AppDialogButtonTypography({ children, sx }: { children: ReactNode, sx?: any }) {
   const theme: AppTheme = useTheme();
   return (
-    <Typography variant="subtitle2" sx={{ ...sx, textAlign: "center", color: theme.palette.primary.contrastText, }}>{children}</Typography>
+    <Typography variant="subtitle1" sx={{ ...sx, textAlign: "center", color: theme.palette.primary.contrastText, }}>{children}</Typography>
   )
 }
 

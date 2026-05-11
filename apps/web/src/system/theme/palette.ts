@@ -2,16 +2,16 @@ import { color } from "@/system/tokens/colors";
 
 export const lightPalette = {
   primary: {
-    light: color.tropicalteal["500"],
+    light: color.tropicalteal["100"],
     main: color.tropicalteal["700"],
     dark: color.tropicalteal["900"],
-    contrastText: color.tropicalteal["50"],
+    contrastText: color.tropicalteal["0"],
   },
   secondary: {
-    light: color.lobsterpink["100"],
-    main: color.lobsterpink["500"],
-    dark: color.lobsterpink["900"],
-    contrastText: color.lobsterpink["50"],
+    light: color.sunlitclay["300"],
+    main: color.sunlitclay["700"],
+    dark: color.sunlitclay["900"],
+    contrastText: color.sunlitclay["0"],
   },
 
   // mode: "light",
@@ -46,12 +46,24 @@ export const lightPalette = {
   //   dark: color.neonice["900"],
   //   contrastText: color.neonice["0"],
   // },
-  // error: {
-
-  // },
-  // warning: {
-
-  // },
+  error: {
+    light: color.tomatojam["400"],
+    main: color.tomatojam["600"],
+    dark: color.tomatojam["800"],
+    contrastText: color.tomatojam["0"],
+  },
+  warning: {
+    light: color.carrotorange["400"],
+    main: color.carrotorange["600"],
+    dark: color.carrotorange["800"],
+    contrastText: color.carrotorange["0"],
+  },
+  muted: {
+    light: color.vintagegrape["400"],
+    main: color.vintagegrape["600"],
+    dark: color.vintagegrape["800"],
+    contrastText: color.vintagegrape["0"],
+  },
   // success: {
 
   // },
