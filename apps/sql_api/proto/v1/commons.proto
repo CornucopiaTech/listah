@@ -19,24 +19,53 @@ message Pagination {
 }
 
 
-message Item {
-  string id = 1;
-  string userId = 2 [json_name = "userId"];
-  string name = 3;
-  string note = 4;
-  map<string,string> props = 5;
-  repeated string tags = 6;
-  bool softDelete = 7;
-  repeated string propList = 8;
-  string updatedBy = 500;
-  google.protobuf.Timestamp updatedAt = 501;
-}
+
 message Tag {
   string id = 1;
   string userId = 2;
   string name = 3;
   repeated string props = 4;
   int32 count = 5;
+  bool softDelete = 7;
+  string updatedBy = 500;
+  google.protobuf.Timestamp updatedAt = 501;
+}
+
+message TagProperty1 {
+  string userId = 1;
+  string name = 2;
+  repeated Tag tagObjs = 3;
+}
+
+
+message InnerPropTagMap {
+  map<string,Tag> value = 1;
+}
+
+message MapObj {
+  string key = 1;
+  string value = 2;
+}
+
+message StringList {
+  repeated string value = 1;
+}
+
+message TagPropertyMap {
+  map<string,StringList> value = 1;
+}
+message Item {
+  string id = 1;
+  string userId = 2 [json_name = "userId"];
+  string name = 3;
+  string note = 4;
+  repeated string tags = 5;
+  map<string,string> props = 6;
+  bool softDelete = 7;
+  repeated Tag tagObjs = 8;
+  repeated MapObj propObjs = 9;
+  string updatedBy = 500;
+  google.protobuf.Timestamp updatedAt = 501;
 }
 
 message Filter {
@@ -45,6 +74,9 @@ message Filter {
   string name = 3;
   repeated string tags = 4;
   int32 count = 5;
+  bool softDelete = 7;
+  string updatedBy = 500;
+  google.protobuf.Timestamp updatedAt = 501;
 }
 
 message Search {

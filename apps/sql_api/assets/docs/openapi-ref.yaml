@@ -1,42 +1,6 @@
 openapi: 3.1.0
 info: {}
 paths:
-  /listah.v1.ItemService/CreateItem:
-    post:
-      tags:
-        - listah.v1.ItemService
-      summary: CreateItem
-      description: Create Item
-      operationId: listah.v1.ItemService.CreateItem
-      parameters:
-        - name: Connect-Protocol-Version
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/connect-protocol-version'
-        - name: Connect-Timeout-Ms
-          in: header
-          schema:
-            $ref: '#/components/schemas/connect-timeout-header'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/listah.v1.ItemServiceCreateItemRequest'
-        required: true
-      responses:
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/connect.error'
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/listah.v1.ItemServiceCreateItemResponse'
   /listah.v1.ItemService/ReadFilter:
     get:
       tags:
@@ -301,6 +265,94 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/listah.v1.ItemServiceReadTagResponse'
+  /listah.v1.ItemService/ReadTagProperty:
+    get:
+      tags:
+        - listah.v1.ItemService
+      summary: ReadTagProperty
+      description: Read Tag Property
+      operationId: listah.v1.ItemService.ReadTagProperty.get
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+        - name: message
+          in: query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadTagPropertyRequest'
+        - name: encoding
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/encoding'
+        - name: base64
+          in: query
+          schema:
+            $ref: '#/components/schemas/base64'
+        - name: compression
+          in: query
+          schema:
+            $ref: '#/components/schemas/compression'
+        - name: connect
+          in: query
+          schema:
+            $ref: '#/components/schemas/connect'
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadTagPropertyResponse'
+    post:
+      tags:
+        - listah.v1.ItemService
+      summary: ReadTagProperty
+      description: Read Tag Property
+      operationId: listah.v1.ItemService.ReadTagProperty
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listah.v1.ItemServiceReadTagPropertyRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listah.v1.ItemServiceReadTagPropertyResponse'
   /listah.v1.ItemService/UpsertFilter:
     post:
       tags:
@@ -626,7 +678,38 @@ components:
           type: integer
           title: count
           format: int32
+        softDelete:
+          type: boolean
+          title: softDelete
+        updatedBy:
+          type: string
+          title: updatedBy
+        updatedAt:
+          title: updatedAt
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
       title: Filter
+      additionalProperties: false
+    listah.v1.InnerPropTagMap:
+      type: object
+      properties:
+        value:
+          type: object
+          title: value
+          additionalProperties:
+            title: value
+            $ref: '#/components/schemas/listah.v1.Tag'
+      title: InnerPropTagMap
+      additionalProperties: false
+    listah.v1.InnerPropTagMap.ValueEntry:
+      type: object
+      properties:
+        key:
+          type: string
+          title: key
+        value:
+          title: value
+          $ref: '#/components/schemas/listah.v1.Tag'
+      title: ValueEntry
       additionalProperties: false
     listah.v1.Item:
       type: object
@@ -643,25 +726,30 @@ components:
         note:
           type: string
           title: note
+        tags:
+          type: array
+          items:
+            type: string
+          title: tags
         props:
           type: object
           title: props
           additionalProperties:
             type: string
             title: value
-        tags:
-          type: array
-          items:
-            type: string
-          title: tags
         softDelete:
           type: boolean
           title: softDelete
-        propList:
+        tagObjs:
           type: array
           items:
-            type: string
-          title: propList
+            $ref: '#/components/schemas/listah.v1.Tag'
+          title: tagObjs
+        propObjs:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.MapObj'
+          title: propObjs
         updatedBy:
           type: string
           title: updatedBy
@@ -680,27 +768,6 @@ components:
           type: string
           title: value
       title: PropsEntry
-      additionalProperties: false
-    listah.v1.ItemServiceCreateItemRequest:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.Item'
-          title: items
-      title: ItemServiceCreateItemRequest
-      additionalProperties: false
-      description: Item Messages
-    listah.v1.ItemServiceCreateItemResponse:
-      type: object
-      properties:
-        itemIds:
-          type: array
-          items:
-            type: string
-          title: itemIds
-      title: ItemServiceCreateItemResponse
       additionalProperties: false
     listah.v1.ItemServiceReadFilterRequest:
       type: object
@@ -754,6 +821,7 @@ components:
           $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceReadItemRequest
       additionalProperties: false
+      description: Item Messages
     listah.v1.ItemServiceReadItemResponse:
       type: object
       properties:
@@ -776,6 +844,56 @@ components:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceReadItemResponse
+      additionalProperties: false
+    listah.v1.ItemServiceReadTagPropertyRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+          title: userId
+        query:
+          title: query
+          $ref: '#/components/schemas/listah.v1.Search'
+        pagination:
+          title: pagination
+          $ref: '#/components/schemas/listah.v1.Pagination'
+      title: ItemServiceReadTagPropertyRequest
+      additionalProperties: false
+      description: Tag Property Messages
+    listah.v1.ItemServiceReadTagPropertyResponse:
+      type: object
+      properties:
+        props:
+          type: object
+          title: props
+          additionalProperties:
+            title: value
+            $ref: '#/components/schemas/listah.v1.StringList'
+        totalRecordCount:
+          type: integer
+          title: totalRecordCount
+          format: int32
+        userId:
+          type: string
+          title: userId
+        query:
+          title: query
+          $ref: '#/components/schemas/listah.v1.Search'
+        pagination:
+          title: pagination
+          $ref: '#/components/schemas/listah.v1.Pagination'
+      title: ItemServiceReadTagPropertyResponse
+      additionalProperties: false
+    listah.v1.ItemServiceReadTagPropertyResponse.PropsEntry:
+      type: object
+      properties:
+        key:
+          type: string
+          title: key
+        value:
+          title: value
+          $ref: '#/components/schemas/listah.v1.StringList'
+      title: PropsEntry
       additionalProperties: false
     listah.v1.ItemServiceReadTagRequest:
       type: object
@@ -875,6 +993,17 @@ components:
           title: tagIds
       title: ItemServiceUpsertTagResponse
       additionalProperties: false
+    listah.v1.MapObj:
+      type: object
+      properties:
+        key:
+          type: string
+          title: key
+        value:
+          type: string
+          title: value
+      title: MapObj
+      additionalProperties: false
     listah.v1.Pagination:
       type: object
       properties:
@@ -913,6 +1042,16 @@ components:
           title: filters
       title: Search
       additionalProperties: false
+    listah.v1.StringList:
+      type: object
+      properties:
+        value:
+          type: array
+          items:
+            type: string
+          title: value
+      title: StringList
+      additionalProperties: false
     listah.v1.Tag:
       type: object
       properties:
@@ -934,7 +1073,54 @@ components:
           type: integer
           title: count
           format: int32
+        softDelete:
+          type: boolean
+          title: softDelete
+        updatedBy:
+          type: string
+          title: updatedBy
+        updatedAt:
+          title: updatedAt
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
       title: Tag
+      additionalProperties: false
+    listah.v1.TagProperty1:
+      type: object
+      properties:
+        userId:
+          type: string
+          title: userId
+        name:
+          type: string
+          title: name
+        tagObjs:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.Tag'
+          title: tagObjs
+      title: TagProperty1
+      additionalProperties: false
+    listah.v1.TagPropertyMap:
+      type: object
+      properties:
+        value:
+          type: object
+          title: value
+          additionalProperties:
+            title: value
+            $ref: '#/components/schemas/listah.v1.StringList'
+      title: TagPropertyMap
+      additionalProperties: false
+    listah.v1.TagPropertyMap.ValueEntry:
+      type: object
+      properties:
+        key:
+          type: string
+          title: key
+        value:
+          title: value
+          $ref: '#/components/schemas/listah.v1.StringList'
+      title: ValueEntry
       additionalProperties: false
 security: []
 tags:

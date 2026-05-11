@@ -52,3 +52,23 @@ FROM (
 )
 GROUP BY 1
 ;
+
+
+
+-- SELECT
+--   c.id,
+--   c.name,
+--   COALESCE((
+--     SELECT json_agg(
+--       jsonb_build_object(
+--         'id',       o.id,
+--         'total',    o.total,
+--         'items',    (
+--           SELECT json_agg(jsonb_build_object('name', i.name, 'qty', i.qty))
+--           FROM order_items i WHERE i.order_id = o.id
+--         )
+--       )
+--     )
+--     FROM orders o WHERE o.customer_id = c.id
+--   ), '[]') AS orders
+-- FROM customers c;

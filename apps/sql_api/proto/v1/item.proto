@@ -14,13 +14,6 @@ import "gnostic/openapi/v3/annotations.proto";
 
 
 // Item Messages
-message ItemServiceCreateItemRequest {
-  repeated Item items = 1;
-}
-message ItemServiceCreateItemResponse {
-  repeated string itemIds = 1;
-}
-
 message ItemServiceReadItemRequest {
   string userId = 500 [json_name = "userId"];
   Search query = 501;
@@ -35,7 +28,6 @@ message ItemServiceReadItemResponse {
   Pagination pagination = 502;
 
 }
-
 message ItemServiceUpsertItemRequest {
   repeated Item items = 1;
 }
@@ -53,6 +45,7 @@ message ItemServiceReadTagRequest {
 message ItemServiceReadTagResponse {
   repeated Tag tags = 1;
   int32 totalRecordCount = 2;
+
   string userId = 500 [json_name = "userId"];
   Search query = 501;
   Pagination pagination = 502;
@@ -65,6 +58,22 @@ message ItemServiceUpsertTagResponse {
 }
 
 
+// Tag Property Messages
+message ItemServiceReadTagPropertyRequest {
+  string userId = 500 [json_name = "userId"];
+  Search query = 501;
+  Pagination pagination = 502;
+}
+message ItemServiceReadTagPropertyResponse {
+  map<string,StringList> props = 1;
+  int32 totalRecordCount = 2;
+
+  string userId = 500 [json_name = "userId"];
+  Search query = 501;
+  Pagination pagination = 502;
+}
+
+
 // Filter Messages
 message ItemServiceReadFilterRequest {
   string userId = 500 [json_name = "userId"];
@@ -74,6 +83,7 @@ message ItemServiceReadFilterRequest {
 message ItemServiceReadFilterResponse {
   repeated Filter filters = 1;
   int32 totalRecordCount = 2;
+
   string userId = 500 [json_name = "userId"];
   Search query = 501;
   Pagination pagination = 502;
@@ -90,15 +100,16 @@ message ItemServiceUpsertFilterResponse {
 
 
 service ItemService {
-  rpc CreateItem(ItemServiceCreateItemRequest) returns (ItemServiceCreateItemResponse){
-    option (gnostic.openapi.v3.operation).description = "Create Item";
-  }
   rpc ReadItem(ItemServiceReadItemRequest) returns (ItemServiceReadItemResponse){
     option idempotency_level = NO_SIDE_EFFECTS;
     option (gnostic.openapi.v3.operation).description = "Read Item";
   }
   rpc UpsertItem(ItemServiceUpsertItemRequest) returns (ItemServiceUpsertItemResponse){
     option (gnostic.openapi.v3.operation).description = "Upsert Item";
+  }
+  rpc ReadTagProperty(ItemServiceReadTagPropertyRequest) returns (ItemServiceReadTagPropertyResponse){
+    option idempotency_level = NO_SIDE_EFFECTS;
+    option (gnostic.openapi.v3.operation).description = "Read Tag Property";
   }
   rpc ReadTag(ItemServiceReadTagRequest) returns (ItemServiceReadTagResponse){
     option idempotency_level = NO_SIDE_EFFECTS;

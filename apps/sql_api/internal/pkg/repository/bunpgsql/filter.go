@@ -14,7 +14,7 @@ import (
 
 type Filter interface {
 	Read(ctx context.Context, m *[]*model.Filter, s *model.ItemSearch) (int, error)
-	Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (interface{}, error)
+	Upsert(ctx context.Context, m *[]*model.Filter, c *model.UpsertInfo) (interface{}, error)
 }
 
 type filter struct {
@@ -22,6 +22,68 @@ type filter struct {
 	logger *logging.Factory
 }
 
+func (a *filter) UpsertWithName(ctx context.Context, m interface{}, c *model.UpsertInfo) (interface{}, error) {
+	ctx, span := otel.Tracer("filter-repository").Start(ctx, "FilterRepository Upsert")
+	defer span.End()
+
+	var activity = "FilterUpsert"
+	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
+
+	var conflict string
+	if len(c.Resolve) == 0 {
+		conflict = fmt.Sprintf("CONFLICT(%v) DO NOTHING",
+			strings.Join(c.Conflict, ", "))
+	} else {
+		conflict = fmt.Sprintf("CONFLICT(%v) DO UPDATE",
+			strings.Join(c.Conflict, ", "))
+	}
+
+	itemCols := append([]string{"id", "user_id"}, c.Resolve...)
+	values := a.db.NewValues(m).Column(itemCols...)
+	aliasCols := []string{}
+	for _, v := range itemCols {
+		if v != "tags" {
+			aliasCols = append(aliasCols, fmt.Sprintf(`i."%v"`, v))
+		}
+	}
+	// ToDo: Should filter upsert send a list of tag names or list of tag ids.
+	query := `
+		WITH literals (` + strings.Join(itemCols, ", ") + `) AS (
+			?
+		)
+		SELECT ` + strings.Join(aliasCols, ", ") + `
+    	,jsonb_agg(t.id ORDER BY t.id) AS tags
+		FROM literals i
+			LEFT JOIN LATERAL jsonb_array_elements_text(i.tags) AS elem(tag_name)
+				ON TRUE
+			LEFT JOIN apps.tags t
+					ON t.user_id = i.user_id
+					AND t.name = elem.tag_name
+		GROUP BY ` + strings.Join(aliasCols, ", ") + `;
+	`
+	tR := []model.Filter{}
+	err := a.db.NewRaw(query, values).Scan(ctx, &tR)
+	if err != nil {
+		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
+		return nil, err
+	}
+
+	q := a.db.NewInsert().Model(&tR).Ignore().On(conflict)
+
+	for _, v := range c.Resolve {
+		r := fmt.Sprintf("%v = Excluded.%v", v, v)
+		q = q.Set(r)
+	}
+
+	_, err = q.Exec(ctx)
+	if err != nil {
+		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
+		return nil, err
+	}
+
+	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
+	return nil, nil
+}
 
 func (a *filter) Read(ctx context.Context, m *[]*model.Filter, s *model.ItemSearch) (int, error) {
 	ctx, span := otel.Tracer("filter-repository").Start(ctx, "FilterRepository Read")
@@ -78,7 +140,7 @@ func (a *filter) Read(ctx context.Context, m *[]*model.Filter, s *model.ItemSear
 	return recCnt[0].RowCount, nil
 }
 
-func (a *filter) Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo) (interface{}, error) {
+func (a *filter) Upsert(ctx context.Context, m *[]*model.Filter, c *model.UpsertInfo) (interface{}, error) {
 	ctx, span := otel.Tracer("filter-repository").Start(ctx, "FilterRepository Upsert")
 	defer span.End()
 
@@ -94,43 +156,14 @@ func (a *filter) Upsert(ctx context.Context, m interface{}, c *model.UpsertInfo)
 			strings.Join(c.Conflict, ", "))
 	}
 
-	itemCols := append([]string{"id", "name", "user_id"}, c.Resolve...)
-	values := a.db.NewValues(m).Column(itemCols...)
-	aliasCols := []string{}
-	for _, v := range itemCols {
-		if v != "tags" {
-			aliasCols = append(aliasCols, fmt.Sprintf(`i."%v"`, v))
-		}
-	}
-	query := `
-		WITH literals (` + strings.Join(itemCols, ", ") + `) AS (
-			?
-		)
-		SELECT ` + strings.Join(aliasCols, ", ") + `
-    	,jsonb_agg(t.id ORDER BY t.id) AS tags
-		FROM literals i
-			LEFT JOIN LATERAL jsonb_array_elements_text(i.tags) AS elem(tag_name)
-				ON TRUE
-			LEFT JOIN apps.tags t
-					ON t.user_id = i.user_id
-					AND t.name = elem.tag_name
-		GROUP BY ` + strings.Join(aliasCols, ", ") + `;
-	`
-	tR := []model.FilterUpsert{}
-	err := a.db.NewRaw(query, values).Scan(ctx, &tR)
-	if err != nil {
-		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
-		return nil, err
-	}
-
-	q := a.db.NewInsert().Model(&tR).Ignore().On(conflict)
+	q := a.db.NewInsert().Model(m).Ignore().On(conflict)
 
 	for _, v := range c.Resolve {
 		r := fmt.Sprintf("%v = Excluded.%v", v, v)
 		q = q.Set(r)
 	}
 
-	_, err = q.Exec(ctx)
+	_, err := q.Exec(ctx)
 	if err != nil {
 		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
 		return nil, err

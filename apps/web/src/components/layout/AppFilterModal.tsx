@@ -35,16 +35,19 @@ import { VirtuosoGrid } from 'react-virtuoso'
 import Chip from '@mui/material/Chip';
 import DoneIcon from '@mui/icons-material/Done';
 import LinearProgress from '@mui/material/LinearProgress';
-
-
-
-
-// Internal imports
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import Box from '@mui/material/Box';
-import { AppBody1ButtonTypography } from "@/components/core/ButtonTypography";
+import Stack from '@mui/material/Stack';
+
+
+
+// Internal imports
+import {
+  AppBody1ButtonTypography,
+
+} from "@/components/core/ButtonTypography";
 import { AppH6Typography } from "@/components/core/Typography";
 import {
   useBoundStore,
@@ -70,6 +73,7 @@ export function AppFilterModal(): ReactNode {
   const queryClient = useQueryClient();
   const { user } = useUser();
   const theme: AppTheme = useTheme();
+  const storeFilter: undefined | IFilter = useBoundStore((state) => state.displayFilter);
 
   const tagQuery = {
     ...DefaultTagRead,
@@ -103,6 +107,7 @@ export function AppFilterModal(): ReactNode {
 
   function closeModal() {
     store.setFilterModal(false);
+    store.setDisplayFilter(undefined);
   }
 
   useEffect(() => {
@@ -144,13 +149,15 @@ export function AppFilterModal(): ReactNode {
     let checkedCategories: string[] = [];
 
     Object.keys(value).forEach(key => {
-      if (key !== "___filterName" && value[key]) {
+      if (key !== "___filterName" && key !== "id" && value[key]) {
         checkedCategories.push(key);
       }
     });
 
+    const prevId = value["id"] as string;
+
     const submitValue = {
-      id: uuidv4(),
+      id: prevId !== "" ? prevId : uuidv4(),
       userId: user?.id || "",
       name: value["___filterName"] as string,
       tags: checkedCategories,
@@ -187,8 +194,8 @@ export function AppFilterModal(): ReactNode {
     display: 'block',
     maxWidth: "lg",
     width: "lg",
-    height: 'fit-content',
-    // height: '70vh',
+    // height: 'fit-content',
+    height: '70vh',
     // maxHeight: 720,
     overflow: 'auto',
     '&::-webkit-scrollbar': {
@@ -208,14 +215,23 @@ export function AppFilterModal(): ReactNode {
   const tagCategories: ITag[] = data && data.tags ? data.tags : [];
 
 
+  // ToDo: Changing Filtername creates a new filter and does not update the existing filter.
+  // ToDo: Change the type of tags from list of string, to list of tag object. and upon submission, retain on the id from the tag object to send to api.
+
 
   // Define object for form default values based on tagCategories. Each category is a boolean field in the form that indicates whether the category is selected or not. The field name is the category name. For example, if there are tagCategories "Work" and "Personal", the form will have fields "Work" and "Personal" that are boolean values indicating whether each category is selected or not. Additionally, there is a field for the filter name called "___filterName". This field is used to capture the name of the filter being created or edited. It is separate from the category fields and is used to identify the filter.
-  let defaultFormData: any = {
-    "___filterName": "",
-    "id": ""
-  }
+
+  const formFilterName = storeFilter ? storeFilter.name : "";
+  const formFilterId = storeFilter ? storeFilter.id : "";
+  const existingTags = storeFilter ? new Set([...storeFilter.tags]) : new Set([]);
+
+  let defaultFormData: any = { "___filterName": formFilterName, "id": formFilterId, }
   defaultFormData = tagCategories.reduce((acc: any, item: ITag) => {
-    acc[item.name] = false;
+    if (existingTags.has(item.id)) {
+      acc[item.name] = true;
+    } else {
+      acc[item.name] = false;
+    }
     return acc;
   }, defaultFormData);
 
@@ -226,8 +242,9 @@ export function AppFilterModal(): ReactNode {
   function eachItem(idx: number): ReactNode {
     const chipLabel = formData[idx] && formData[idx].name ? formData[idx].name : "";
     return (
-      <form.Field key={`item-${chipLabel}`} name={chipLabel} children={
-        (field) =>
+      <form.Field
+        key={`item-${chipLabel}`} name={chipLabel}
+        children={(field) =>
           <Chip
             color="primary"
             // @ts-ignore
@@ -241,7 +258,7 @@ export function AppFilterModal(): ReactNode {
               field.handleChange(!field.state.value)
             }}
           />
-      }
+        }
       />
     )
   }
@@ -308,7 +325,8 @@ export function AppFilterModal(): ReactNode {
     { name: saveTooltip, icon: saveIcon, onClick: form.handleSubmit },
     { name: "Reset", icon: "material-symbols-light:restart-alt", onClick: form.reset },
   ]
-  const formErrorMap = useStore(form.store, (state) => state.errorMap)
+  const formErrorMap = useStore(form.store, (state) => state.errorMap);
+  const formTitle = storeFilter ? "Update filter" : "Add new filter";
 
   return (
     <Dialog fullWidth open={store.filterModal} onClose={closeModal} >
@@ -317,83 +335,88 @@ export function AppFilterModal(): ReactNode {
           display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
         }}
         onClick={closeModal}>
-        <Icon icon="material-symbols-light:close-rounded" width="40" height="40" />
+        <Icon icon="material-symbols-light:close-rounded" width="30" height="30" />
       </IconButton>
 
 
       <form onSubmit={onFormSubmit}>
+
         <DialogContent sx={dialogSx} >
-          {isPending && <LinearProgress />}
-          {
-            !isPending && isError &&
-            <ErrorAlert message={error?.message || "An error occurred. Please try again"} />
-          }
-          {
-            !isError && !isPending && tagCategories.length == 0 &&
-            <AppH6Typography> No items found </AppH6Typography>
-          }
-          {mutation.error && (
-            <Fragment>
-              <ErrorAlert message={mutation.error.message} />
-              <h5 onClick={() => mutation.reset()}>{mutation.error.message}</h5>
-            </Fragment>
-          )}
-          {mutation.isSuccess && (
-            <Fragment>
-              <SuccessAlert message="Item updated!" />
-            </Fragment>
-          )}
-          {
-            formErrorMap.onChange && (<WarnAlert message={`${formErrorMap.onChange}`} />)
-          }
-          {
-            formErrorMap.onBlur && (<ErrorAlert message={`${formErrorMap.onBlur}`} />)
-          }
-          <AppH6Typography> Add a new filter </AppH6Typography>
-          {
-            tagCategories && tagCategories.length > 0 &&
-            <Fragment>
-              <form.Field
-                key={`Filter Name`}
-                name={`___filterName`}
-                validators={{
-                  onBlur: ({ value }: { value: any }) =>
-                    value.length < 1 ? 'You must enter a filter name' : undefined,
-                }}
-
-                children={
-                  (field) =>
-                    <Fragment>
-                      <TextField
-                        fullWidth
-                        multiline
-                        id={`Filter Name`}
-                        key={`___filterName`}
-                        value={field.state.value}
-                        label={`Filter Name`}
-                        onChange={
-                          (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-                        size="small"
-                        variant="standard"
-                      />
-                      {!field.state.meta.isValid && (
-                        <ErrorAlert message={field.state.meta.errors.join(', ')} />
-                      )}
-                    </Fragment>
-
-                }
-              />
-              <VirtuosoGrid
-                style={{ height: "60vh", width: '100%' }}
-                totalCount={tagCategories.length}
-                // @ts-ignore
-                components={gridComponents}
-                itemContent={
-                  (index) => eachItem(index)
-                }
-              />
-            </Fragment>
-          }
+          <Box
+            component="section"
+            sx={{
+              marginTop: 0,
+              marginRight: "5rem",
+              // fontSize: '15px',
+              padding: 0,
+            }}>
+            <Stack spacing={0} sx={{ width: '100%' }} >
+              {isPending && <LinearProgress />}
+              {
+                !isPending && isError &&
+                <ErrorAlert message={error?.message || "An error occurred. Please try again"} />
+              }
+              {
+                !isError && !isPending && tagCategories.length == 0 &&
+                <AppH6Typography> No items found </AppH6Typography>
+              }
+              {mutation.error && (
+                <Fragment>
+                  <ErrorAlert message={mutation.error.message} />
+                  <h5 onClick={() => mutation.reset()}>{mutation.error.message}</h5>
+                </Fragment>
+              )}
+              {mutation.isSuccess && (
+                <Fragment>
+                  <SuccessAlert message="Filter updated!" />
+                </Fragment>
+              )}
+              {
+                formErrorMap.onChange && (<WarnAlert message={`${formErrorMap.onChange}`} />)
+              }
+              {
+                formErrorMap.onBlur && (<ErrorAlert message={`${formErrorMap.onBlur}`} />)
+              }
+              <AppH6Typography> {formTitle} </AppH6Typography>
+              {
+                tagCategories && tagCategories.length > 0 &&
+                <Fragment>
+                  <form.Field
+                    key={`Filter Name`}
+                    name={`___filterName`}
+                    children={(field) =>
+                      <Fragment>
+                        <TextField
+                          fullWidth
+                          multiline
+                          id={`Filter Name`}
+                          key={`___filterName`}
+                          value={field.state.value}
+                          label={`Filter Name`}
+                          onChange={
+                            (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
+                          size="small"
+                          variant="standard"
+                        />
+                        {!field.state.meta.isValid && (
+                          <ErrorAlert message={field.state.meta.errors.join(', ')} />
+                        )}
+                      </Fragment>
+                    }
+                  />
+                  <VirtuosoGrid
+                    style={{ height: "60vh", width: '100%' }}
+                    totalCount={tagCategories.length}
+                    // @ts-ignore
+                    components={gridComponents}
+                    itemContent={
+                      (index) => eachItem(index)
+                    }
+                  />
+                </Fragment>
+              }
+            </Stack>
+          </Box>
         </DialogContent>
         <DialogActions>
           <form.Subscribe

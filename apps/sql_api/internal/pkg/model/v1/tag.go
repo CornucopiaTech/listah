@@ -2,18 +2,126 @@ package v1
 
 import (
 	pb "cornucopia/listah/internal/pkg/proto/v1"
+	"errors"
+	"time"
+
+	"github.com/google/uuid"
+	"google.golang.org/protobuf/types/known/timestamppb"
+	// "fmt"
 )
 
 func TagModelToTagProto(m []*Tag) ([]*pb.Tag, error) {
 	c := []*pb.Tag{}
 	for _, v := range m {
 		c = append(c, &pb.Tag{
-			Id: v.Id,
-			UserId: v.UserId,
-			Name:   v.Name,
-			Props:   v.Props,
-			Count:  int32(v.Count),
+			Id:         v.Id,
+			UserId:     v.UserId,
+			Name:       v.Name,
+			Props:      v.Props,
+			Count:      int32(v.Count),
+			SoftDelete: v.SoftDelete,
+			UpdatedAt:  timestamppb.New(v.UpdatedAt),
+			UpdatedBy:  v.UpdatedBy,
 		})
 	}
 	return c, nil
+}
+
+func TagProtoToTagModel(msg []*pb.Tag, genId bool) ([]*Tag, []string, error) {
+	items := []*Tag{}
+	check := map[string]bool{"name": true, "updated_by": true, "updated_at": true}
+
+	for _, v := range msg {
+		if v.GetUserId() == "" {
+			return nil, nil, errors.New("no userId sent with request")
+		}
+		if v.GetName() == "" {
+			return nil, nil, errors.New("no tag name sent with request")
+		}
+
+		id := v.GetId()
+		if id == "" && genId {
+			id = uuid.Must(uuid.NewV7()).String()
+		}
+		newItem := &Tag{
+			Id:        id,
+			UserId:    v.GetUserId(),
+			Name:      v.GetName(),
+			UpdatedBy: "api",
+			UpdatedAt: time.Now(),
+		}
+
+		// Set values that have not been set to nil
+		if len(v.GetProps()) != 0 {
+			newItem.Props = v.GetProps()
+			check["props"] = true
+		}
+		if v.GetSoftDelete() {
+			newItem.SoftDelete = v.GetSoftDelete()
+			check["soft_delete"] = true
+		}
+		items = append(items, newItem)
+	}
+
+	// Get the fields that need to be updated for conflict resolution
+	res := []string{}
+	for k, _ := range check {
+		res = append(res, k)
+	}
+	return items, res, nil
+}
+
+// func TagPropertyModelToTagPropertyProto(m []*TagProperty) ([]*pb.TagProperty, error) {
+// 	c := []*pb.TagProperty{}
+// 	for _, v := range m {
+// 		to := []*pb.Tag{}
+// 		for _, iv := range v.TagObjs {
+// 			to = append(to, &pb.Tag{
+// 				Id:         iv.Id,
+// 				UserId:     iv.UserId,
+// 				Name:       iv.Name,
+// 				Props:      iv.Props,
+// 			})
+// 		}
+// 		c = append(c, &pb.TagProperty{
+// 			UserId:     v.UserId,
+// 			Name:       v.Name,
+// 			TagObjs:      to,
+// 		})
+// 	}
+// 	return c, nil
+// }
+
+// func TagPropertyModelToTagPropertyMapObjectProto(m []*TagProperty) (map[string]*pb.InnerPropTagMap, error) {
+// 	r := map[string]*pb.InnerPropTagMap{}
+// 	for _, v0 := range m {
+// 		if _, ok0 := r[v0.Name]; !ok0 {
+// 			r[v0.Name] = &pb.InnerPropTagMap{
+// 				Value: map[string] *pb.Tag{},
+// 			}
+// 		}
+// 		for _, v1 := range v0.TagObjs {
+// 			if _, ok1 := r[v0.Name].Value[v1.Id]; !ok1 {
+// 				r[v0.Name].Value[v1.Id] = &pb.Tag{
+// 					Id:         v1.Id,
+// 					UserId:     v1.UserId,
+// 					Name:       v1.Name,
+// 					Props:      v1.Props,
+// 				}
+// 			}
+// 		}
+// 	}
+// 	return r, nil
+// }
+
+func TagPropertyModelToTagPropertyMapProto(m []TagPropertyMapModel) (map[string]*pb.StringList, error) {
+	r := map[string]*pb.StringList{}
+	for _, v0 := range m {
+		// fmt.Printf("\n\n\ni -  %s\n\n\n", i)
+		// fmt.Printf("\n\n\nv0 -  %s\n\n\n", v0)
+		for k, v1 := range v0.Props {
+			r[k] = &pb.StringList{	Value: v1 }
+		}
+	}
+	return r, nil
 }

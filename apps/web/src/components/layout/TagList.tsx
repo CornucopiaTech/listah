@@ -11,15 +11,14 @@ import {
 } from "react";
 import { Virtuoso } from 'react-virtuoso';
 import {
-  useQuery,
-  type UseQueryResult,
+  useSuspenseQuery,
+  type UseSuspenseQueryResult,
 } from '@tanstack/react-query';
 import * as z from "zod";
 import {
   useNavigate,
   getRouteApi,
 } from '@tanstack/react-router';
-import { useUser } from '@clerk/react';
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
 import ListItem from '@mui/material/ListItem';
@@ -30,7 +29,10 @@ import TablePagination from '@mui/material/TablePagination';
 
 
 
-
+import {
+  useBoundStore,
+  type TBoundStore
+} from '@/lib/store/boundStore';
 import type { IItemReadRequest } from '@/lib/model/item';
 import type {
   ITag,
@@ -43,49 +45,29 @@ import {
 import { tagGroupOptions } from '@/lib/helper/querying';
 import { ErrorAlert } from "@/components/core/Alerts";
 import {
-  decodeState,
   encodeState
 } from '@/lib/helper/encoders';
 import {
   DefaultItemRead,
-  DefaultTagRead,
   ListBoxSize,
 } from '@/lib/helper/defaults';
 import {
   AppH6Typography,
-  AppBody1Typography,
+  AppListItemTypography,
 } from "@/components/core/Typography";
 
 
 
-function OuterBox({ children }: { children: ReactNode }): ReactNode {
-  return (
-    <Fragment>
-      <Box key="data-content" sx={ListBoxSize}>
-        {children}
-      </Box>
-    </Fragment>
-  );
-}
+
 
 export function TagListLayout(): ReactNode {
-  const routeApi = getRouteApi('/tags/{-$title}');
-  const routeSearch: { s: string } = routeApi.useSearch()
-  let search = decodeState(routeSearch.s) as ITagReadRequest;
   const navigate = useNavigate();
-  const { user, } = useUser();
+  const store: TBoundStore = useBoundStore((state) => state);
+  // routeApi.useSearch() only contains data from validate search and does not contain the information that was injected into the route loader from the context. So the search information retrieved from routeApi.useSearch() will not contain the user information.
+  // const routeSearch: ITagReadRequest = routeApi.useSearch() ### Do not use this.
+  const routeApi = getRouteApi('/tags/');
+  const { search: query } = routeApi.useRouteContext();
 
-
-  const query: ITagReadRequest = search ? {
-    ...search,
-    userId: user?.id || "",
-    pagination: {
-      ...search.pagination,
-      pageNumber: search.pagination.pageNumber ? search.pagination.pageNumber : DefaultTagRead.pagination.pageNumber
-    }
-  } : {
-    ...DefaultTagRead, userId: user?.id || ""
-  };
   let pageInfo = useRef({
     pageNumber: query.pagination.pageNumber,
     pageSize: query.pagination.pageSize,
@@ -94,7 +76,23 @@ export function TagListLayout(): ReactNode {
 
   const {
     isPending, isError, data, error
-  }: UseQueryResult<ITagReadResponse> = useQuery(tagGroupOptions(query));
+  }: UseSuspenseQueryResult<ITagReadResponse> = useSuspenseQuery(tagGroupOptions(query))
+
+  let errMsg: string = isError && error && error instanceof Error ? error.message : "";
+  try {
+    ZTagReadResponse.parse(data);
+  } catch (error: any) {
+    errMsg = "An error occurred. Please try again";
+    if (error instanceof z.ZodError) {
+      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+        console.info("Zod issue - ", error.issues);
+      }
+    } else {
+      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+        console.info("Other issue - ", error);
+      }
+    }
+  }
 
   const tags: ITag[] = data && data.tags ? data.tags : [];
   if (data) {
@@ -131,15 +129,20 @@ export function TagListLayout(): ReactNode {
   };
 
   function handleItemClick(it: ITag) {
-    const ct = it && it.name ? it.name : "";
-    const cti = it && it.id ? it.id : "";
+    const pageTitle = it && it.name ? `#${it.name}` : "Tags";
+    const pageTags = it && it.id ? [it.id] : [];
     const q: IItemReadRequest = {
       ...DefaultItemRead,
       userId: query.userId,
-      query: { ...DefaultItemRead.query, tags: [cti] },
+      query: { ...DefaultItemRead.query, tags: pageTags },
     };
-    const encoded = encodeState(q);
-    navigate({ to: "/items/{-$title}", search: { s: encoded }, params: { title: `Items in #${ct}` } });
+    const s = { query: q, title: pageTitle, reference: it, }
+    const encoded = encodeState(s);
+
+    navigate({ to: "/items", search: { s: encoded }, });
+    store.setItemTitle(pageTitle);
+    store.setItemReference(it);
+    store.setDisplayTag(it);
   }
 
   function eachItem(itemKey: number, item: ITag): ReactNode {
@@ -152,7 +155,7 @@ export function TagListLayout(): ReactNode {
       >
         <ListItemButton>
           <ListItemText primary={
-            <AppBody1Typography sx={{ p: 0 }}>{tc}</AppBody1Typography>
+            <AppListItemTypography sx={{ p: 0, m: 0, }}>{tc}</AppListItemTypography>
           } />
           <Chip sx={{ background: "primary" }} label={item.count ? item.count.toString() : "0"} />
         </ListItemButton>
@@ -160,54 +163,53 @@ export function TagListLayout(): ReactNode {
     );
   }
 
-
-  let errMsg: string = isError && error && error instanceof Error ? error.message : "";
-  try {
-    ZTagReadResponse.parse(data);
-  } catch (error: any) {
-    errMsg = "An error occurred. Please try again";
-    if (error instanceof z.ZodError) {
-      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-        console.info("Zod issue - ", error.issues);
-      }
-    } else {
-      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-        console.info("Other issue - ", error);
-      }
-    }
+  function OuterBox({ children }: { children: ReactNode }): ReactNode {
+    return (
+      <Fragment>
+        <Box key="data-content" sx={ListBoxSize}>
+          {children}
+        </Box>
+      </Fragment>
+    );
   }
 
-
-
-  return (
-    <Fragment>
-      {
-        isPending &&
-        <OuterBox><LinearProgress /></OuterBox>
-      }
-      {
-        !isPending && (isError || errMsg !== "") && tags.length == 0 &&
-        <OuterBox><ErrorAlert message={errMsg ? errMsg : error?.message || "An error occurred. Please try again"} /></OuterBox>
-      }
-      {
-        !isError && !isPending && tags.length == 0 &&
-        <OuterBox><AppH6Typography> No items found </AppH6Typography></OuterBox>
-      }
-      {
-        tags.length > 0 && <Virtuoso key="data-content"
-          style={ListBoxSize} data={tags}
-          itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
+  function ListBox({ children }: { children: ReactNode }): ReactNode {
+    return (
+      <Fragment>
+        {children}
+        <TablePagination
+          component="div"
+          count={pageInfo.current.totalRecords}
+          page={pageInfo.current.pageNumber}
+          onPageChange={handlePageChange}
+          rowsPerPage={pageInfo.current.pageSize}
+          onRowsPerPageChange={handlePageSizeChange}
         />
-      }
+      </Fragment>
+    );
+  }
 
-      <TablePagination
-        component="div"
-        count={pageInfo.current.totalRecords}
-        page={pageInfo.current.pageNumber}
-        onPageChange={handlePageChange}
-        rowsPerPage={pageInfo.current.pageSize}
-        onRowsPerPageChange={handlePageSizeChange}
-      />
-    </Fragment>
-  );
+  if (isPending) {
+    return <ListBox> <OuterBox><LinearProgress /></OuterBox></ListBox>
+  }
+
+  if (isError || errMsg !== "") {
+    return <ListBox><OuterBox><ErrorAlert message={errMsg ? errMsg : error?.message || "An error occurred. Please try again"} /></OuterBox></ListBox>
+  }
+
+  if (tags.length == 0) {
+    return <ListBox><OuterBox>
+      <AppH6Typography sx={{ display: 'flex', textTransform: "none", justifyContent: "center", alignContent: "center", }}>
+        No tags found
+      </AppH6Typography>
+    </OuterBox></ListBox>
+  }
+
+  if (tags.length > 0) {
+    return <ListBox><Virtuoso key="data-content"
+      style={ListBoxSize} data={tags}
+      itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
+    /></ListBox>
+  }
+  return <ListBox><OuterBox><ErrorAlert message="An error occurred. Please try again" /></OuterBox></ListBox>
 }

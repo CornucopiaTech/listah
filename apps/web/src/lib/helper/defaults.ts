@@ -4,29 +4,47 @@ import type {
 } from "@/lib/model/common";
 import type {
   IItem,
-  IItemReadRequest
+  IItemReadRequest,
+  IItemRouteSearch,
 } from '@/lib/model/item';
 import type { ITagReadRequest } from '@/lib/model/tag';
 import type { IFilterReadRequest } from '@/lib/model/filter';
 
 
-import type { IApiEndpointConfig } from '@/lib/model/common';
+import type { IApiEndpointConfig, ISearch } from '@/lib/model/common';
 import type { IUser } from '@/lib/model/auth';
+import type {
+  ITag,
+} from "@/lib/model/tag";
+import type {
+  IFilter,
+} from "@/lib/model/filter";
+
 
 
 export const ListBoxSize: {
   height: string, width: string
 } = {
-  height: `calc(100vh - 300px)`, width: '100%',
+  height: `calc(100vh - 150px)`, width: '100%',
 }
 
-export const AppBarHeight = 64;
+export const AppBarHeight = 32;
+export const AppDrawerWidth = 128;
+
 
 const defaultPagination: IPagination = {
   pageSize: 100,
   pageNumber: 0,
   sort: 'name',
 }
+
+export const DefaultPagination: IPagination = {
+  pageSize: 100,
+  pageNumber: 0,
+  sort: 'name',
+}
+
+export const DefaultTagFilterQuery: ISearch = { filters: [], tags: [], text: '', }
 
 export const DefaultUser: IUser = {
   id: null,
@@ -46,8 +64,28 @@ export const DefaultItem: IItem = {
   note: "",
   props: null,
   tags: [],
+  tagObjs: [],
+  propObjs: [],
   softDelete: false,
 };
+
+export const DefaultTag: ITag = {
+  id: "",
+  userId: "",
+  name: "",
+  props: [],
+  count: 0,
+};
+
+export const DefaultFilter: IFilter = {
+  id: "",
+  userId: "",
+  name: "",
+  tags: [],
+  count: 0,
+};
+
+
 
 export const DefaultItemRead: IItemReadRequest = {
   userId: "",
@@ -55,11 +93,17 @@ export const DefaultItemRead: IItemReadRequest = {
   pagination: { ...defaultPagination }
 };
 
+export const DefaultIItemRouteSearch: IItemRouteSearch = {
+  query: { ...DefaultItemRead },
+  title: undefined,
+  reference: undefined
+};
+
 export const DefaultTagRead: ITagReadRequest = {
   userId: "",
   query: { filters: [], tags: [], text: '', },
   pagination: { ...defaultPagination }
-};
+} as const;
 
 export const DefaultFilterRead: IFilterReadRequest = {
   userId: "",
@@ -75,7 +119,9 @@ export const PAGE_SIZE_OPTIONS: { label: number, value: number }[] = [
 export const ApiEndpoints: IApiEndpointConfig = {
   readItem: "listah.v1.ItemService/ReadItem",
   readTag: "listah.v1.ItemService/ReadTag",
+  readTagProperty: "listah.v1.ItemService/ReadTagProperty",
   readFilter: "listah.v1.ItemService/ReadFilter",
+  updateTag: "listah.v1.ItemService/UpsertTag",
   updateItem: "listah.v1.ItemService/UpsertItem",
   updateFilter: "listah.v1.ItemService/UpsertFilter",
 }

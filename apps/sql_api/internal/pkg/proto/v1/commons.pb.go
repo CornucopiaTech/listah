@@ -131,122 +131,6 @@ func (x *Pagination) GetSort() string {
 	return ""
 }
 
-type Item struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId        string                 `protobuf:"bytes,2,opt,name=userId,proto3" json:"userId,omitempty"`
-	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Note          string                 `protobuf:"bytes,4,opt,name=note,proto3" json:"note,omitempty"`
-	Props         map[string]string      `protobuf:"bytes,5,rep,name=props,proto3" json:"props,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	Tags          []string               `protobuf:"bytes,6,rep,name=tags,proto3" json:"tags,omitempty"`
-	SoftDelete    bool                   `protobuf:"varint,7,opt,name=softDelete,proto3" json:"softDelete,omitempty"`
-	PropList      []string               `protobuf:"bytes,8,rep,name=propList,proto3" json:"propList,omitempty"`
-	UpdatedBy     string                 `protobuf:"bytes,500,opt,name=updatedBy,proto3" json:"updatedBy,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,501,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Item) Reset() {
-	*x = Item{}
-	mi := &file_v1_commons_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Item) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Item) ProtoMessage() {}
-
-func (x *Item) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_commons_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Item.ProtoReflect.Descriptor instead.
-func (*Item) Descriptor() ([]byte, []int) {
-	return file_v1_commons_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *Item) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *Item) GetUserId() string {
-	if x != nil {
-		return x.UserId
-	}
-	return ""
-}
-
-func (x *Item) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *Item) GetNote() string {
-	if x != nil {
-		return x.Note
-	}
-	return ""
-}
-
-func (x *Item) GetProps() map[string]string {
-	if x != nil {
-		return x.Props
-	}
-	return nil
-}
-
-func (x *Item) GetTags() []string {
-	if x != nil {
-		return x.Tags
-	}
-	return nil
-}
-
-func (x *Item) GetSoftDelete() bool {
-	if x != nil {
-		return x.SoftDelete
-	}
-	return false
-}
-
-func (x *Item) GetPropList() []string {
-	if x != nil {
-		return x.PropList
-	}
-	return nil
-}
-
-func (x *Item) GetUpdatedBy() string {
-	if x != nil {
-		return x.UpdatedBy
-	}
-	return ""
-}
-
-func (x *Item) GetUpdatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.UpdatedAt
-	}
-	return nil
-}
-
 type Tag struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -254,13 +138,16 @@ type Tag struct {
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Props         []string               `protobuf:"bytes,4,rep,name=props,proto3" json:"props,omitempty"`
 	Count         int32                  `protobuf:"varint,5,opt,name=count,proto3" json:"count,omitempty"`
+	SoftDelete    bool                   `protobuf:"varint,7,opt,name=softDelete,proto3" json:"softDelete,omitempty"`
+	UpdatedBy     string                 `protobuf:"bytes,500,opt,name=updatedBy,proto3" json:"updatedBy,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,501,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Tag) Reset() {
 	*x = Tag{}
-	mi := &file_v1_commons_proto_msgTypes[2]
+	mi := &file_v1_commons_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -272,7 +159,7 @@ func (x *Tag) String() string {
 func (*Tag) ProtoMessage() {}
 
 func (x *Tag) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_commons_proto_msgTypes[2]
+	mi := &file_v1_commons_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -285,7 +172,7 @@ func (x *Tag) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Tag.ProtoReflect.Descriptor instead.
 func (*Tag) Descriptor() ([]byte, []int) {
-	return file_v1_commons_proto_rawDescGZIP(), []int{2}
+	return file_v1_commons_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Tag) GetId() string {
@@ -323,6 +210,395 @@ func (x *Tag) GetCount() int32 {
 	return 0
 }
 
+func (x *Tag) GetSoftDelete() bool {
+	if x != nil {
+		return x.SoftDelete
+	}
+	return false
+}
+
+func (x *Tag) GetUpdatedBy() string {
+	if x != nil {
+		return x.UpdatedBy
+	}
+	return ""
+}
+
+func (x *Tag) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+type TagProperty1 struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=userId,proto3" json:"userId,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	TagObjs       []*Tag                 `protobuf:"bytes,3,rep,name=tagObjs,proto3" json:"tagObjs,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TagProperty1) Reset() {
+	*x = TagProperty1{}
+	mi := &file_v1_commons_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TagProperty1) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TagProperty1) ProtoMessage() {}
+
+func (x *TagProperty1) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_commons_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TagProperty1.ProtoReflect.Descriptor instead.
+func (*TagProperty1) Descriptor() ([]byte, []int) {
+	return file_v1_commons_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *TagProperty1) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *TagProperty1) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *TagProperty1) GetTagObjs() []*Tag {
+	if x != nil {
+		return x.TagObjs
+	}
+	return nil
+}
+
+type InnerPropTagMap struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Value         map[string]*Tag        `protobuf:"bytes,1,rep,name=value,proto3" json:"value,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InnerPropTagMap) Reset() {
+	*x = InnerPropTagMap{}
+	mi := &file_v1_commons_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InnerPropTagMap) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InnerPropTagMap) ProtoMessage() {}
+
+func (x *InnerPropTagMap) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_commons_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InnerPropTagMap.ProtoReflect.Descriptor instead.
+func (*InnerPropTagMap) Descriptor() ([]byte, []int) {
+	return file_v1_commons_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *InnerPropTagMap) GetValue() map[string]*Tag {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
+type MapObj struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Value         string                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MapObj) Reset() {
+	*x = MapObj{}
+	mi := &file_v1_commons_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MapObj) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MapObj) ProtoMessage() {}
+
+func (x *MapObj) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_commons_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MapObj.ProtoReflect.Descriptor instead.
+func (*MapObj) Descriptor() ([]byte, []int) {
+	return file_v1_commons_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *MapObj) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
+}
+
+func (x *MapObj) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+type StringList struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Value         []string               `protobuf:"bytes,1,rep,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StringList) Reset() {
+	*x = StringList{}
+	mi := &file_v1_commons_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StringList) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StringList) ProtoMessage() {}
+
+func (x *StringList) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_commons_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StringList.ProtoReflect.Descriptor instead.
+func (*StringList) Descriptor() ([]byte, []int) {
+	return file_v1_commons_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *StringList) GetValue() []string {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
+type TagPropertyMap struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Value         map[string]*StringList `protobuf:"bytes,1,rep,name=value,proto3" json:"value,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TagPropertyMap) Reset() {
+	*x = TagPropertyMap{}
+	mi := &file_v1_commons_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TagPropertyMap) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TagPropertyMap) ProtoMessage() {}
+
+func (x *TagPropertyMap) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_commons_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TagPropertyMap.ProtoReflect.Descriptor instead.
+func (*TagPropertyMap) Descriptor() ([]byte, []int) {
+	return file_v1_commons_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *TagPropertyMap) GetValue() map[string]*StringList {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
+type Item struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId        string                 `protobuf:"bytes,2,opt,name=userId,proto3" json:"userId,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Note          string                 `protobuf:"bytes,4,opt,name=note,proto3" json:"note,omitempty"`
+	Tags          []string               `protobuf:"bytes,5,rep,name=tags,proto3" json:"tags,omitempty"`
+	Props         map[string]string      `protobuf:"bytes,6,rep,name=props,proto3" json:"props,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	SoftDelete    bool                   `protobuf:"varint,7,opt,name=softDelete,proto3" json:"softDelete,omitempty"`
+	TagObjs       []*Tag                 `protobuf:"bytes,8,rep,name=tagObjs,proto3" json:"tagObjs,omitempty"`
+	PropObjs      []*MapObj              `protobuf:"bytes,9,rep,name=propObjs,proto3" json:"propObjs,omitempty"`
+	UpdatedBy     string                 `protobuf:"bytes,500,opt,name=updatedBy,proto3" json:"updatedBy,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,501,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Item) Reset() {
+	*x = Item{}
+	mi := &file_v1_commons_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Item) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Item) ProtoMessage() {}
+
+func (x *Item) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_commons_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Item.ProtoReflect.Descriptor instead.
+func (*Item) Descriptor() ([]byte, []int) {
+	return file_v1_commons_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *Item) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Item) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *Item) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Item) GetNote() string {
+	if x != nil {
+		return x.Note
+	}
+	return ""
+}
+
+func (x *Item) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
+func (x *Item) GetProps() map[string]string {
+	if x != nil {
+		return x.Props
+	}
+	return nil
+}
+
+func (x *Item) GetSoftDelete() bool {
+	if x != nil {
+		return x.SoftDelete
+	}
+	return false
+}
+
+func (x *Item) GetTagObjs() []*Tag {
+	if x != nil {
+		return x.TagObjs
+	}
+	return nil
+}
+
+func (x *Item) GetPropObjs() []*MapObj {
+	if x != nil {
+		return x.PropObjs
+	}
+	return nil
+}
+
+func (x *Item) GetUpdatedBy() string {
+	if x != nil {
+		return x.UpdatedBy
+	}
+	return ""
+}
+
+func (x *Item) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
 type Filter struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -330,13 +606,16 @@ type Filter struct {
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Tags          []string               `protobuf:"bytes,4,rep,name=tags,proto3" json:"tags,omitempty"`
 	Count         int32                  `protobuf:"varint,5,opt,name=count,proto3" json:"count,omitempty"`
+	SoftDelete    bool                   `protobuf:"varint,7,opt,name=softDelete,proto3" json:"softDelete,omitempty"`
+	UpdatedBy     string                 `protobuf:"bytes,500,opt,name=updatedBy,proto3" json:"updatedBy,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,501,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Filter) Reset() {
 	*x = Filter{}
-	mi := &file_v1_commons_proto_msgTypes[3]
+	mi := &file_v1_commons_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -348,7 +627,7 @@ func (x *Filter) String() string {
 func (*Filter) ProtoMessage() {}
 
 func (x *Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_commons_proto_msgTypes[3]
+	mi := &file_v1_commons_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -361,7 +640,7 @@ func (x *Filter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Filter.ProtoReflect.Descriptor instead.
 func (*Filter) Descriptor() ([]byte, []int) {
-	return file_v1_commons_proto_rawDescGZIP(), []int{3}
+	return file_v1_commons_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *Filter) GetId() string {
@@ -399,6 +678,27 @@ func (x *Filter) GetCount() int32 {
 	return 0
 }
 
+func (x *Filter) GetSoftDelete() bool {
+	if x != nil {
+		return x.SoftDelete
+	}
+	return false
+}
+
+func (x *Filter) GetUpdatedBy() string {
+	if x != nil {
+		return x.UpdatedBy
+	}
+	return ""
+}
+
+func (x *Filter) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
 type Search struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Text          string                 `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
@@ -410,7 +710,7 @@ type Search struct {
 
 func (x *Search) Reset() {
 	*x = Search{}
-	mi := &file_v1_commons_proto_msgTypes[4]
+	mi := &file_v1_commons_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -422,7 +722,7 @@ func (x *Search) String() string {
 func (*Search) ProtoMessage() {}
 
 func (x *Search) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_commons_proto_msgTypes[4]
+	mi := &file_v1_commons_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -435,7 +735,7 @@ func (x *Search) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Search.ProtoReflect.Descriptor instead.
 func (*Search) Descriptor() ([]byte, []int) {
-	return file_v1_commons_proto_rawDescGZIP(), []int{4}
+	return file_v1_commons_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *Search) GetText() string {
@@ -470,36 +770,69 @@ const file_v1_commons_proto_rawDesc = "" +
 	"\n" +
 	"pageNumber\x18\x02 \x01(\x03R\n" +
 	"pageNumber\x12\x12\n" +
-	"\x04sort\x18\x03 \x01(\tR\x04sort\"\xec\x02\n" +
-	"\x04Item\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
-	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
-	"\x04name\x18\x03 \x01(\tR\x04name\x12\x12\n" +
-	"\x04note\x18\x04 \x01(\tR\x04note\x120\n" +
-	"\x05props\x18\x05 \x03(\v2\x1a.listah.v1.Item.PropsEntryR\x05props\x12\x12\n" +
-	"\x04tags\x18\x06 \x03(\tR\x04tags\x12\x1e\n" +
-	"\n" +
-	"softDelete\x18\a \x01(\bR\n" +
-	"softDelete\x12\x1a\n" +
-	"\bpropList\x18\b \x03(\tR\bpropList\x12\x1d\n" +
-	"\tupdatedBy\x18\xf4\x03 \x01(\tR\tupdatedBy\x129\n" +
-	"\tupdatedAt\x18\xf5\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x1a8\n" +
-	"\n" +
-	"PropsEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"m\n" +
+	"\x04sort\x18\x03 \x01(\tR\x04sort\"\xe7\x01\n" +
 	"\x03Tag\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x14\n" +
 	"\x05props\x18\x04 \x03(\tR\x05props\x12\x14\n" +
-	"\x05count\x18\x05 \x01(\x05R\x05count\"n\n" +
+	"\x05count\x18\x05 \x01(\x05R\x05count\x12\x1e\n" +
+	"\n" +
+	"softDelete\x18\a \x01(\bR\n" +
+	"softDelete\x12\x1d\n" +
+	"\tupdatedBy\x18\xf4\x03 \x01(\tR\tupdatedBy\x129\n" +
+	"\tupdatedAt\x18\xf5\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"d\n" +
+	"\fTagProperty1\x12\x16\n" +
+	"\x06userId\x18\x01 \x01(\tR\x06userId\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12(\n" +
+	"\atagObjs\x18\x03 \x03(\v2\x0e.listah.v1.TagR\atagObjs\"\x98\x01\n" +
+	"\x0fInnerPropTagMap\x12;\n" +
+	"\x05value\x18\x01 \x03(\v2%.listah.v1.InnerPropTagMap.ValueEntryR\x05value\x1aH\n" +
+	"\n" +
+	"ValueEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12$\n" +
+	"\x05value\x18\x02 \x01(\v2\x0e.listah.v1.TagR\x05value:\x028\x01\"0\n" +
+	"\x06MapObj\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value\"\"\n" +
+	"\n" +
+	"StringList\x12\x14\n" +
+	"\x05value\x18\x01 \x03(\tR\x05value\"\x9d\x01\n" +
+	"\x0eTagPropertyMap\x12:\n" +
+	"\x05value\x18\x01 \x03(\v2$.listah.v1.TagPropertyMap.ValueEntryR\x05value\x1aO\n" +
+	"\n" +
+	"ValueEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12+\n" +
+	"\x05value\x18\x02 \x01(\v2\x15.listah.v1.StringListR\x05value:\x028\x01\"\xa9\x03\n" +
+	"\x04Item\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
+	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12\x12\n" +
+	"\x04note\x18\x04 \x01(\tR\x04note\x12\x12\n" +
+	"\x04tags\x18\x05 \x03(\tR\x04tags\x120\n" +
+	"\x05props\x18\x06 \x03(\v2\x1a.listah.v1.Item.PropsEntryR\x05props\x12\x1e\n" +
+	"\n" +
+	"softDelete\x18\a \x01(\bR\n" +
+	"softDelete\x12(\n" +
+	"\atagObjs\x18\b \x03(\v2\x0e.listah.v1.TagR\atagObjs\x12-\n" +
+	"\bpropObjs\x18\t \x03(\v2\x11.listah.v1.MapObjR\bpropObjs\x12\x1d\n" +
+	"\tupdatedBy\x18\xf4\x03 \x01(\tR\tupdatedBy\x129\n" +
+	"\tupdatedAt\x18\xf5\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x1a8\n" +
+	"\n" +
+	"PropsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xe8\x01\n" +
 	"\x06Filter\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x12\n" +
 	"\x04tags\x18\x04 \x03(\tR\x04tags\x12\x14\n" +
-	"\x05count\x18\x05 \x01(\x05R\x05count\"J\n" +
+	"\x05count\x18\x05 \x01(\x05R\x05count\x12\x1e\n" +
+	"\n" +
+	"softDelete\x18\a \x01(\bR\n" +
+	"softDelete\x12\x1d\n" +
+	"\tupdatedBy\x18\xf4\x03 \x01(\tR\tupdatedBy\x129\n" +
+	"\tupdatedAt\x18\xf5\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"J\n" +
 	"\x06Search\x12\x12\n" +
 	"\x04text\x18\x01 \x01(\tR\x04text\x12\x12\n" +
 	"\x04tags\x18\x02 \x03(\tR\x04tags\x12\x18\n" +
@@ -522,25 +855,41 @@ func file_v1_commons_proto_rawDescGZIP() []byte {
 }
 
 var file_v1_commons_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_v1_commons_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_v1_commons_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_v1_commons_proto_goTypes = []any{
 	(AuditUpdaterEnum)(0),         // 0: listah.v1.AuditUpdaterEnum
 	(*Pagination)(nil),            // 1: listah.v1.Pagination
-	(*Item)(nil),                  // 2: listah.v1.Item
-	(*Tag)(nil),                   // 3: listah.v1.Tag
-	(*Filter)(nil),                // 4: listah.v1.Filter
-	(*Search)(nil),                // 5: listah.v1.Search
-	nil,                           // 6: listah.v1.Item.PropsEntry
-	(*timestamppb.Timestamp)(nil), // 7: google.protobuf.Timestamp
+	(*Tag)(nil),                   // 2: listah.v1.Tag
+	(*TagProperty1)(nil),          // 3: listah.v1.TagProperty1
+	(*InnerPropTagMap)(nil),       // 4: listah.v1.InnerPropTagMap
+	(*MapObj)(nil),                // 5: listah.v1.MapObj
+	(*StringList)(nil),            // 6: listah.v1.StringList
+	(*TagPropertyMap)(nil),        // 7: listah.v1.TagPropertyMap
+	(*Item)(nil),                  // 8: listah.v1.Item
+	(*Filter)(nil),                // 9: listah.v1.Filter
+	(*Search)(nil),                // 10: listah.v1.Search
+	nil,                           // 11: listah.v1.InnerPropTagMap.ValueEntry
+	nil,                           // 12: listah.v1.TagPropertyMap.ValueEntry
+	nil,                           // 13: listah.v1.Item.PropsEntry
+	(*timestamppb.Timestamp)(nil), // 14: google.protobuf.Timestamp
 }
 var file_v1_commons_proto_depIdxs = []int32{
-	6, // 0: listah.v1.Item.props:type_name -> listah.v1.Item.PropsEntry
-	7, // 1: listah.v1.Item.updatedAt:type_name -> google.protobuf.Timestamp
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	14, // 0: listah.v1.Tag.updatedAt:type_name -> google.protobuf.Timestamp
+	2,  // 1: listah.v1.TagProperty1.tagObjs:type_name -> listah.v1.Tag
+	11, // 2: listah.v1.InnerPropTagMap.value:type_name -> listah.v1.InnerPropTagMap.ValueEntry
+	12, // 3: listah.v1.TagPropertyMap.value:type_name -> listah.v1.TagPropertyMap.ValueEntry
+	13, // 4: listah.v1.Item.props:type_name -> listah.v1.Item.PropsEntry
+	2,  // 5: listah.v1.Item.tagObjs:type_name -> listah.v1.Tag
+	5,  // 6: listah.v1.Item.propObjs:type_name -> listah.v1.MapObj
+	14, // 7: listah.v1.Item.updatedAt:type_name -> google.protobuf.Timestamp
+	14, // 8: listah.v1.Filter.updatedAt:type_name -> google.protobuf.Timestamp
+	2,  // 9: listah.v1.InnerPropTagMap.ValueEntry.value:type_name -> listah.v1.Tag
+	6,  // 10: listah.v1.TagPropertyMap.ValueEntry.value:type_name -> listah.v1.StringList
+	11, // [11:11] is the sub-list for method output_type
+	11, // [11:11] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_v1_commons_proto_init() }
@@ -554,7 +903,7 @@ func file_v1_commons_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_commons_proto_rawDesc), len(file_v1_commons_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   6,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

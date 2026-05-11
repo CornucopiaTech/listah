@@ -12,7 +12,7 @@ databaseChangeLog:
         - onFail: MARK_RAN # Options: HALT, CONTINUE, MARK_RAN, WARN
           not:
             - uniqueConstraintExists:
-                constraintName: constraint_unique_tags_user_id_name
+                constraintName: constraint_unique_tags_user_id_id
                 schemaName: apps
                 tableName: tags
       changes:
@@ -41,16 +41,21 @@ databaseChangeLog:
                     name:  props
                     type:  json
                 - column:
+                    name:  soft_delete
+                    type:  boolean
+                    defaultValueBoolean: false
+                - column:
                     name:  updated_by
                     type:  varchar
+                    defaultValue: api
                 - column:
                     name:  updated_at
                     type:  timestamp
                     defaultValueComputed: CURRENT_TIMESTAMP
 
         - addUniqueConstraint:
-            columnNames:  user_id, name
-            constraintName:  constraint_unique_tags_user_id_name
+            columnNames:  user_id, id
+            constraintName:  constraint_unique_tags_user_id_id
             schemaName:  apps
             tableName:  tags
             validate:  true

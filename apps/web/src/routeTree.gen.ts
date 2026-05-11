@@ -10,70 +10,63 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as TagsChar123TitleChar125RouteImport } from './routes/tags/{-$title}'
-import { Route as ItemsChar123TitleChar125RouteImport } from './routes/items/{-$title}'
-import { Route as FiltersChar123TitleChar125RouteImport } from './routes/filters/{-$title}'
+import { Route as TagsIndexRouteImport } from './routes/tags/index'
+import { Route as ItemsIndexRouteImport } from './routes/items/index'
+import { Route as FiltersIndexRouteImport } from './routes/filters/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TagsChar123TitleChar125Route = TagsChar123TitleChar125RouteImport.update({
-  id: '/tags/{-$title}',
-  path: '/tags/{-$title}',
+const TagsIndexRoute = TagsIndexRouteImport.update({
+  id: '/tags/',
+  path: '/tags/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ItemsChar123TitleChar125Route =
-  ItemsChar123TitleChar125RouteImport.update({
-    id: '/items/{-$title}',
-    path: '/items/{-$title}',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const FiltersChar123TitleChar125Route =
-  FiltersChar123TitleChar125RouteImport.update({
-    id: '/filters/{-$title}',
-    path: '/filters/{-$title}',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+const ItemsIndexRoute = ItemsIndexRouteImport.update({
+  id: '/items/',
+  path: '/items/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FiltersIndexRoute = FiltersIndexRouteImport.update({
+  id: '/filters/',
+  path: '/filters/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/filters/{-$title}': typeof FiltersChar123TitleChar125Route
-  '/items/{-$title}': typeof ItemsChar123TitleChar125Route
-  '/tags/{-$title}': typeof TagsChar123TitleChar125Route
+  '/filters/': typeof FiltersIndexRoute
+  '/items/': typeof ItemsIndexRoute
+  '/tags/': typeof TagsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/filters/{-$title}': typeof FiltersChar123TitleChar125Route
-  '/items/{-$title}': typeof ItemsChar123TitleChar125Route
-  '/tags/{-$title}': typeof TagsChar123TitleChar125Route
+  '/filters': typeof FiltersIndexRoute
+  '/items': typeof ItemsIndexRoute
+  '/tags': typeof TagsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/filters/{-$title}': typeof FiltersChar123TitleChar125Route
-  '/items/{-$title}': typeof ItemsChar123TitleChar125Route
-  '/tags/{-$title}': typeof TagsChar123TitleChar125Route
+  '/filters/': typeof FiltersIndexRoute
+  '/items/': typeof ItemsIndexRoute
+  '/tags/': typeof TagsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/filters/{-$title}' | '/items/{-$title}' | '/tags/{-$title}'
+  fullPaths: '/' | '/filters/' | '/items/' | '/tags/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/filters/{-$title}' | '/items/{-$title}' | '/tags/{-$title}'
-  id:
-    | '__root__'
-    | '/'
-    | '/filters/{-$title}'
-    | '/items/{-$title}'
-    | '/tags/{-$title}'
+  to: '/' | '/filters' | '/items' | '/tags'
+  id: '__root__' | '/' | '/filters/' | '/items/' | '/tags/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  FiltersChar123TitleChar125Route: typeof FiltersChar123TitleChar125Route
-  ItemsChar123TitleChar125Route: typeof ItemsChar123TitleChar125Route
-  TagsChar123TitleChar125Route: typeof TagsChar123TitleChar125Route
+  FiltersIndexRoute: typeof FiltersIndexRoute
+  ItemsIndexRoute: typeof ItemsIndexRoute
+  TagsIndexRoute: typeof TagsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -85,25 +78,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/tags/{-$title}': {
-      id: '/tags/{-$title}'
-      path: '/tags/{-$title}'
-      fullPath: '/tags/{-$title}'
-      preLoaderRoute: typeof TagsChar123TitleChar125RouteImport
+    '/tags/': {
+      id: '/tags/'
+      path: '/tags'
+      fullPath: '/tags/'
+      preLoaderRoute: typeof TagsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/items/{-$title}': {
-      id: '/items/{-$title}'
-      path: '/items/{-$title}'
-      fullPath: '/items/{-$title}'
-      preLoaderRoute: typeof ItemsChar123TitleChar125RouteImport
+    '/items/': {
+      id: '/items/'
+      path: '/items'
+      fullPath: '/items/'
+      preLoaderRoute: typeof ItemsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/filters/{-$title}': {
-      id: '/filters/{-$title}'
-      path: '/filters/{-$title}'
-      fullPath: '/filters/{-$title}'
-      preLoaderRoute: typeof FiltersChar123TitleChar125RouteImport
+    '/filters/': {
+      id: '/filters/'
+      path: '/filters'
+      fullPath: '/filters/'
+      preLoaderRoute: typeof FiltersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -111,9 +104,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  FiltersChar123TitleChar125Route: FiltersChar123TitleChar125Route,
-  ItemsChar123TitleChar125Route: ItemsChar123TitleChar125Route,
-  TagsChar123TitleChar125Route: TagsChar123TitleChar125Route,
+  FiltersIndexRoute: FiltersIndexRoute,
+  ItemsIndexRoute: ItemsIndexRoute,
+  TagsIndexRoute: TagsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,0 +1,221 @@
+import type {
+  ReactNode
+} from 'react';
+import { Fragment } from "react";
+import { styled, useTheme } from '@mui/material/styles';
+import Drawer from '@mui/material/Drawer';
+import MuiAppBar from '@mui/material/AppBar';
+import type { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import List from '@mui/material/List';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import { Icon } from "@iconify/react";
+import { useLocation } from '@tanstack/react-router';
+import {
+  Show, SignInButton, UserButton,
+} from '@clerk/react';
+import Link from '@mui/material/Link';
+
+
+
+import {
+  AppToolbarTypography,
+  AppListItemTypography,
+} from "@/components/core/Typography";
+import {
+  AppBarHeight,
+  AppDrawerWidth
+} from '@/lib/helper/defaults';
+import type { AppTheme } from '@/lib/styles/theme';
+import {
+  useBoundStore,
+  type TBoundStore
+} from '@/lib/store/boundStore';
+import {
+  AppItemSearchBar,
+} from "@/components/layout/AppSearchBar";
+import {
+  AppToolbarStack,
+} from "@/components/core/AppStack";
+import {
+  Menubar,
+  MenuRoot,
+  MenuTrigger,
+  MenuPortal,
+  MenuPositioner,
+  MenuPopup,
+} from '@/components/base/Menubar';
+
+
+
+interface AppBarProps extends MuiAppBarProps {
+  open?: boolean;
+}
+
+const AppBar = styled(MuiAppBar, {
+  shouldForwardProp: (prop) => prop !== 'open',
+})<AppBarProps>(({ theme }) => ({
+  transition: theme.transitions.create(['margin', 'width'], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  variants: [
+    {
+      props: ({ open }) => open,
+      style: {
+        width: `calc(100% - ${AppBarHeight}px)`,
+        marginLeft: `${AppBarHeight}px`,
+        transition: theme.transitions.create(['margin', 'width'], {
+          easing: theme.transitions.easing.easeOut,
+          duration: theme.transitions.duration.enteringScreen,
+        }),
+      },
+    },
+  ],
+}));
+
+const DrawerHeader = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
+  justifyContent: 'flex-end',
+}));
+
+
+
+
+export function AppNavBar({ menuItems, title }: { menuItems?: ReactNode, title?: string }) {
+  const theme: AppTheme = useTheme();
+  const store: TBoundStore = useBoundStore((state) => state);
+  const pathname = useLocation({
+    select: (location) => location.pathname,
+  });
+  const header = title ? title : pathname.includes("/filters") ? "Filters" : pathname.includes("/tags") ? "Tags" : pathname.includes("/items") ? "Items" : "";
+  const pageTitle = header.length < 34 ? header : `${header.substring(0, 24)}...`
+
+  function checkActive(val: string) {
+    return pathname.includes(val) ? "always" : "none"
+  }
+
+  return (
+    <Fragment>
+      <AppBar
+        position="static"
+        sx={{ width: '100%', height: AppBarHeight, }}
+        elevation={1} >
+        <Toolbar sx={{ bgcolor: theme.palette.primary.main, }}>
+          <AppToolbarStack>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={() => store.toggleDrawer(!store.drawerOpen)}
+              edge="start"
+              sx={[{ mr: 2, }, store.drawerOpen && { display: 'none' },]} >
+              <Icon
+                icon="ic:baseline-menu" width="24" height="24"
+                style={{ color: theme.palette.primary.contrastText }}
+              />
+            </IconButton>
+            <AppToolbarTypography> {pageTitle} </AppToolbarTypography>
+            <AppItemSearchBar />
+            {
+              menuItems &&
+              <Menubar style={{ backgroundColor: theme.palette.primary.main, }}>
+                <MenuRoot>
+                  <MenuTrigger>
+                    <Icon
+                      icon="charm:menu-kebab" width="24" height="24"
+                      style={{ color: theme.palette.primary.contrastText }}
+                    />
+                  </MenuTrigger>
+                  <MenuPortal>
+                    <MenuPositioner sideOffset={4} alignOffset={-2}>
+                      <MenuPopup>
+                        {menuItems}
+                      </MenuPopup>
+                    </MenuPositioner>
+                  </MenuPortal>
+                </MenuRoot>
+              </Menubar>
+            }
+          </AppToolbarStack>
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        sx={{
+          width: AppDrawerWidth, flexShrink: 0,
+          '& .MuiDrawer-paper': { width: AppDrawerWidth, boxSizing: 'border-box', },
+        }}
+        variant="persistent"
+        anchor="left"
+        open={store.drawerOpen} >
+        <DrawerHeader>
+          <IconButton onClick={() => store.toggleDrawer(false)}>
+            {theme.direction === 'ltr' ? <Icon icon="ic:baseline-chevron-left" width="24" height="24" style={{ color: theme.palette.primary.main }} /> : <Icon icon="ic:baseline-chevron-right" width="24" height="24" style={{ color: theme.palette.primary.main }} />}
+          </IconButton>
+        </DrawerHeader>
+        {/* <Divider /> */}
+        <List>
+          <Link underline={checkActive("/tags")} key="tags" href="/tags" >
+            <ListItem disablePadding>
+              <ListItemButton>
+                <ListItemText
+                  primary={
+                    <AppListItemTypography sx={{ p: 0, m: 0 }}>Tags</AppListItemTypography>
+                  } />
+              </ListItemButton>
+            </ListItem>
+          </Link>
+          <Link underline={checkActive("/filters")} key="filters" href="/filters" >
+            <ListItem disablePadding>
+              <ListItemButton>
+                <ListItemText
+                  primary={
+                    <AppListItemTypography sx={{ p: 0, m: 0 }}>Filters</AppListItemTypography>
+                  } />
+              </ListItemButton>
+            </ListItem>
+          </Link>
+          <Link underline={checkActive("/settings")} key="settings" href="/settings" >
+            <ListItem disablePadding>
+              <ListItemButton>
+                <ListItemText
+                  primary={
+                    <AppListItemTypography sx={{ p: 0, m: 0 }}>Settings</AppListItemTypography>
+                  } />
+              </ListItemButton>
+            </ListItem>
+          </Link>
+        </List>
+        <Divider />
+        <List>
+          <ListItem key="signin" disablePadding>
+            <ListItemButton>
+              <Show when="signed-out" key="signout">
+                <ListItemText
+                  primary={
+                    <AppListItemTypography sx={{ p: 0, m: 0 }}>Sign In</AppListItemTypography>
+                  } />
+                <SignInButton />
+              </Show>
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem key="signed-in" disablePadding>
+            <ListItemButton>
+              <Show when="signed-in" key="signin">
+                <UserButton />
+              </Show>
+            </ListItemButton>
+          </ListItem>
+        </List>
+      </Drawer>
+    </Fragment>
+  );
+}

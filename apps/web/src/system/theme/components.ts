@@ -1,20 +1,60 @@
-// import { color } from "@/system/tokens/colors";
+import { color } from "@/system/tokens/colors";
 
 export const components = {
   MuiInputLabel: {
     styleOverrides: {
       root: {
-        fontSize: '14px',
+        fontSize: '1rem',
+        color: color.tropicalteal["700"],
+        '&.Mui-focused': { color: color.lobsterpink["500"] },
+        '&.Mui-error': { color: '#d32f2f' },
       },
     },
   },
- MuiInputBase: {
+  MuiInputBase: {
     styleOverrides: {
       root: {
-        fontSize: '14px',
+        fontSize: '1rem',
       },
     },
   },
+  MuiSnackbar: {
+    styleOverrides: {
+      root: {
+        '&.MuiSnackbar-root': {
+          position: 'absolute', //relative to parent stack
+          top: '0',        // exact pixel position
+          left: '0',
+          right: 'auto',
+          bottom: 'auto',
+        }
+      }
+    }
+  },
+  MuiSnackbarContent: {
+    styleOverrides: {
+      root: {
+        '& .MuiSnackbarContent-root': {
+          minWidth: '400px',   // override MUI's default minWidth
+          maxWidth: '600px',
+          width: '100%',
+          padding: '16px 24px',  // increases vertical/horizontal size
+        }
+      }
+    },
+    message: {
+      '& .MuiSnackbarContent-message': {
+        fontSize: '1.1rem',
+        fontWeight: 500,
+      }
+    },
+    action: {
+      '& .MuiSnackbarContent-action': {
+        fontSize: '0.875rem',
+      }
+    },
+  }
+
   // MuiButton: {
   //   // defaultProps: {
   //   //   variant: "contained",

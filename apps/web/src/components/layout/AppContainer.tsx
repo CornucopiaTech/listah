@@ -18,7 +18,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 
 import {
   AppNavBar,
-} from '@/components/core/AppNavBar';
+} from '@/components/layout/AppNavBar';
 import { Landing } from '@/components/pages/Landing';
 
 
@@ -34,7 +34,7 @@ export function AppContainerShell() {
     <Fragment>
       <CssBaseline />
       <Box sx={{ width: "100vw", maxWidth: "100vw", height: `fit-content`, }}>
-        <AppNavBar />
+
         <Outlet />
       </Box>
     </Fragment>
@@ -42,10 +42,12 @@ export function AppContainerShell() {
 }
 
 
-export function AppContainer({ children, mw }: { children: ReactNode, mw?: widthType }) {
+export function AppContainer({ children, mw, menuItems, title }: { children: ReactNode, menuItems?: ReactNode, mw?: widthType, title?: string }) {
   return (
     <Fragment>
-      <Container maxWidth={mw ? mw : "xl"} sx={{ marginTop: "3%" }}>
+      <AppNavBar menuItems={menuItems} title={title} />
+      <Container maxWidth={mw ? mw : "xl"}
+        sx={{ marginTop: "60px" }} >
         {children}
       </Container>
     </Fragment>

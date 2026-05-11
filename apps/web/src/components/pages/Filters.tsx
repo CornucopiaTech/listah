@@ -1,43 +1,53 @@
+import { Fragment } from "react";
 
-import {
-  FilterSearchBar,
-} from "@/components/core/ItemSearchBar";
-import { FilterListLayout } from "@/components/layout/FilterList";
-import {
-  AppPageStack,
-} from "@/components/core/AppStack";
-import { HomeFab } from "@/components/core/HomeFab";
-import { AppFilterModal } from "@/components/core/FilterModal";
+
 import {
   useBoundStore,
   type TBoundStore
 } from '@/lib/store/boundStore';
-import { AppItemModal } from "@/components/core/AppItemModal";
+import { FilterListLayout } from "@/components/layout/FilterList";
+import { AppTagModal } from "@/components/layout/AppTagModal";
+import { AppFilterModal } from "@/components/layout/AppFilterModal";
 import {
-  AppCategoryListPaper,
+  AppPagePaper,
 } from '@/components/core/AppPaper';
-import { AppListHeaderBar } from '@/components/core/AppListHeaderBar';
-import { AppH5ButtonTypography } from '@/components/core/ButtonTypography';
 import { AppContainer } from '@/components/layout/AppContainer';
+import {
+  MenuItem,
+} from '@/components/base/Menubar';
+import {
+  AppListItemTypography,
+} from "@/components/core/Typography";
 
 
 
 export function Filters() {
   const store: TBoundStore = useBoundStore((state) => state);
+  function handleTagClick() {
+    store.setTagModal(true);
+  }
+
+  function handleFilterClick() {
+    store.setFilterModal(true);
+  }
+
+  const mItems = <Fragment>
+    <MenuItem key="tag" onClick={handleTagClick}>
+      <AppListItemTypography>Add new tag </AppListItemTypography>
+    </MenuItem>
+    <MenuItem key="filter" onClick={handleFilterClick}>
+
+      <AppListItemTypography>Add new filter </AppListItemTypography>
+    </MenuItem>
+  </Fragment >;
+
   return (
-    <AppContainer mw="sm">
-      <AppPageStack>
-        {store.itemModal && <AppItemModal />}
-        {store.filterModal && <AppFilterModal />}
-        <FilterSearchBar />
-        <AppCategoryListPaper>
-          <AppListHeaderBar key="header">
-            <AppH5ButtonTypography> Filters </AppH5ButtonTypography>
-          </AppListHeaderBar>
-          <FilterListLayout />
-        </AppCategoryListPaper>
-        <HomeFab />
-      </AppPageStack>
+    <AppContainer mw="md" menuItems={mItems}>
+      {store.tagModal && <AppTagModal />}
+      {store.filterModal && <AppFilterModal />}
+      <AppPagePaper key="tags">
+        <FilterListLayout />
+      </AppPagePaper>
     </AppContainer >
   );
 }

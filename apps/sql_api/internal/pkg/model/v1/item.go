@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/uptrace/bun"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 var svcName string = "listah.v1.ItemService"
@@ -21,20 +21,6 @@ var defaultPagination = Pagination{
 	Sort:       "name ASC",
 }
 
-type Item struct {
-	bun.BaseModel `bun:"table:apps.items,alias:it"`
-	Id            string `bun:",pk"`
-	UserId        string
-	Name          string
-	Note          string
-	Tags          []string `bun:"type:jsonb"`
-	PropList          *[]string `bun:",scanonly"`
-	Props         map[string]string
-	SoftDelete    bool `bun:",nullzero,default:false"`
-	UpdatedBy     string
-	UpdatedAt     time.Time
-}
-
 func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemSearch, error) {
 	if msg.GetUserId() == "" {
 		return nil, errors.New("no userId sent with request")
@@ -45,6 +31,7 @@ func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemS
 	sortT := defaultPagination.Sort
 
 	pg := msg.GetPagination()
+
 	if pg != nil {
 		if pSize > 0 {
 			pSize = pg.PageSize
@@ -57,7 +44,11 @@ func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemS
 		}
 	}
 
-	offset := pSize * (pNum - 1)
+	offset := int64(0)
+	if pSize > 0 {
+		offset = pSize * (pNum - 1)
+	}
+
 
 	s := []string{}
 	t := []string{}
@@ -97,6 +88,22 @@ func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemS
 func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
 	items := []*pb.Item{}
 	for _, v := range m {
+		to := []*pb.Tag{}
+		for _, iv := range v.TagObjs {
+			to = append(to, &pb.Tag{
+				Id:         iv.Id,
+				UserId:     iv.UserId,
+				Name:       iv.Name,
+				Props:      iv.Props,
+			})
+		}
+		mo := []*pb.MapObj{}
+		for _, iv := range v.PropObjs {
+			mo = append(mo, &pb.MapObj{
+				Key:     iv.Key,
+				Value:       iv.Value,
+			})
+		}
 		items = append(items, &pb.Item{
 			Id:         v.Id,
 			UserId:     v.UserId,
@@ -104,33 +111,43 @@ func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
 			Note:       v.Note,
 			Tags:       v.Tags,
 			Props:      v.Props,
-			PropList:   *v.PropList,
 			SoftDelete: v.SoftDelete,
+			TagObjs:   to,
+			PropObjs: mo,
+			UpdatedAt:  timestamppb.New(v.UpdatedAt),
+			UpdatedBy:  v.UpdatedBy,
 		})
 	}
+	fmt.Printf("\n\n\n\n\nitems -  %+v\n\n\n\n\n", items[0])
 	return items, nil
 }
 
-func ItemProtoToItemModel(msg []*pb.Item, genId bool) (ItemUpsert, error) {
+func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, []string, error) {
 	items := []*Item{}
-	check := map[string]bool{}
-	checkTags := map[string]*Tag{}
+	check := map[string]bool{"name": true, "updated_by": true, "updated_at": true}
 
 	for _, v := range msg {
+		if v.GetUserId() == "" {
+			return nil, nil, errors.New("no userId sent with request")
+		}
+		if v.GetName() == "" {
+			return nil, nil, errors.New("no item name sent with request")
+		}
+
 		id := v.GetId()
 		if id == "" && genId {
 			id = uuid.Must(uuid.NewV7()).String()
 		}
 		newItem := &Item{
-			Id:     id,
-			UserId: v.GetUserId(),
+			Id:        id,
+			UserId:    v.GetUserId(),
+			Name:      v.GetName(),
+			UpdatedBy: "api",
+			UpdatedAt: time.Now(),
+
 		}
 
 		// Set values that have not been set to nil
-		if v.GetName() != "" {
-			newItem.Name = v.GetName()
-			check["name"] = true
-		}
 		if v.GetNote() != "" {
 			newItem.Note = v.GetNote()
 			check["note"] = true
@@ -138,42 +155,6 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) (ItemUpsert, error) {
 		if len(v.GetTags()) != 0 {
 			newItem.Tags = v.GetTags()
 			check["tags"] = true
-			for _, tt := range v.GetTags() {
-				// Get list of properties to attach to the tag
-				prpl := []string{}
-				for kp, _ := range v.GetProps() {
-					prpl = append(prpl, kp)
-				}
-				if _, ok := checkTags[tt+"_"+v.GetUserId()]; !ok {
-					checkTags[tt+"_"+v.GetUserId()] = & Tag{
-						Id:     uuid.Must(uuid.NewV7()).String(),
-						UserId: v.GetUserId(),
-						Name:   tt,
-						Props: prpl,
-					}
-				} else {
-					// Check if the properties of this tag needs to be extended
-					// exTgs := append(checkTags[tt+"_"+v.GetUserId()].Props, prpl...)
-
-					// Dedup extended tags
-					nexTgs := map[string]bool{}
-					for _, atg := range checkTags[tt+"_"+v.GetUserId()].Props {
-						nexTgs[atg] = true
-					}
-					for _, atg := range prpl{
-						nexTgs[atg] = true
-					}
-
-					// Create new deduped props list
-					tagProps := []string{}
-					for k, _ := range nexTgs {
-						tagProps = append(tagProps, k)
-					}
-
-					// Update the props of the tag.
-					checkTags[tt+"_"+v.GetUserId()].Props = tagProps
-				}
-			}
 		}
 		if len(v.GetProps()) != 0 {
 			newItem.Props = v.GetProps()
@@ -191,18 +172,5 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) (ItemUpsert, error) {
 	for k, _ := range check {
 		res = append(res, k)
 	}
-
-	// Get the fields that need to be updated for conflict resolution
-	upTag := []Tag{}
-	for _, v := range checkTags {
-		upTag = append(upTag, *v)
-	}
-
-	i := ItemUpsert{
-		Items:  &items,
-		Update: res,
-		Tags:   &upTag,
-	}
-
-	return i, nil
+	return items, res, nil
 }
