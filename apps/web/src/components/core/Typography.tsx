@@ -79,7 +79,7 @@ export const AppTextButtonTypography = styled(Typography)(({ theme }: { theme: A
   // textAlign: "left",
   whiteSpace: 'pre-line',
   '&:hover': { color: theme.palette.primary.dark },
-  fontWeight: 'bold'
+  fontWeight: 'medium',
 }));
 
 export const AppTextDangerButtonTypography = styled(Typography)(({ theme }: { theme: AppTheme }) => ({
@@ -88,7 +88,7 @@ export const AppTextDangerButtonTypography = styled(Typography)(({ theme }: { th
   // textAlign: "left",
   whiteSpace: 'pre-line',
   '&:hover': { color: theme.palette.error.dark },
-  fontWeight: 'bold'
+  fontWeight: 'medium'
 }));
 
 export const AppTextWarningButtonTypography = styled(Typography)(({ theme }: { theme: AppTheme }) => ({
@@ -97,7 +97,7 @@ export const AppTextWarningButtonTypography = styled(Typography)(({ theme }: { t
   // textAlign: "left",
   whiteSpace: 'pre-line',
   '&:hover': { color: theme.palette.warning.dark },
-  fontWeight: 'bold'
+  fontWeight: 'medium',
 }));
 
 export const AppTextMutedButtonTypography = styled(Typography)(({ theme }: { theme: AppTheme }) => ({
@@ -106,7 +106,7 @@ export const AppTextMutedButtonTypography = styled(Typography)(({ theme }: { the
   // textAlign: "left",
   whiteSpace: 'pre-line',
   '&:hover': { color: theme.palette.muted.main },
-  fontWeight: 'bold'
+  fontWeight: 'medium',
 }));
 
 
@@ -115,7 +115,7 @@ export const AppDefaultButtonTypography = styled(Typography)(({ theme }: { theme
   // textAlign: "center",
   // textAlign: "left",
   whiteSpace: 'pre-line',
-  fontWeight: 'bold'
+  fontWeight: 'medium',
 }));
 
 

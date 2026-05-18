@@ -60,7 +60,8 @@ export type IItemReadRequest = z.infer<typeof ZItemReadRequest>;
 export const ZItemRouteSearch = z.object({
   query: ZItemReadRequest,
   title: z.nullish(z.string()).catch('All Items'),
-  reference: z.union([z.undefined(), ZFilter, ZTag]),
+  refTag: z.union([z.undefined(), ZTag]),
+  refFilter: z.union([z.undefined(), ZFilter]),
 });
 export type IItemRouteSearch = z.infer<typeof ZItemRouteSearch>;
 

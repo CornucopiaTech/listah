@@ -96,7 +96,8 @@ export const DefaultItemRead: IItemReadRequest = {
 export const DefaultIItemRouteSearch: IItemRouteSearch = {
   query: { ...DefaultItemRead },
   title: undefined,
-  reference: undefined
+  refTag: undefined,
+  refFilter: undefined,
 };
 
 export const DefaultTagRead: ITagReadRequest = {

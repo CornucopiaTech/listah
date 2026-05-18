@@ -198,7 +198,7 @@ export const color = {
     950: "#230e0f",
   },
   vintagegrape: {
-    0: "#",
+    0: "#ffffff",
     50: "#e3e0e7",
     100: "#c6c1cf",
     200: "#aaa1b7",

@@ -136,7 +136,7 @@ export function TagListLayout(): ReactNode {
       userId: query.userId,
       query: { ...DefaultItemRead.query, tags: pageTags },
     };
-    const s = { query: q, title: pageTitle, reference: it, }
+    const s = { query: q, title: pageTitle, refTag: it, }
     const encoded = encodeState(s);
 
     navigate({ to: "/items", search: { s: encoded }, });

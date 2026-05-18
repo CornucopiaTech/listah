@@ -6,7 +6,7 @@ export const components = {
       root: {
         fontSize: '1rem',
         color: color.tropicalteal["700"],
-        '&.Mui-focused': { color: color.lobsterpink["500"] },
+        '&.Mui-focused': { color: color.tropicalteal["500"] },
         '&.Mui-error': { color: '#d32f2f' },
       },
     },

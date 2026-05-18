@@ -31,12 +31,11 @@ export function Tags() {
 
   const mItems = <Fragment>
     <MenuItem key="tag" onClick={handleTagClick}>
-      <AppListItemTypography>Add new tag </AppListItemTypography>
+      <AppListItemTypography>Create new tag </AppListItemTypography>
     </MenuItem>
-    <MenuItem key="filter" onClick={handleFilterClick}>
-
+    {/* <MenuItem key="filter" onClick={handleFilterClick}>
       <AppListItemTypography>Add new filter </AppListItemTypography>
-    </MenuItem>
+    </MenuItem> */}
   </Fragment >
   return (
     <AppContainer mw="md" menuItems={mItems}>

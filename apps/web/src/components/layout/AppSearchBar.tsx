@@ -18,7 +18,11 @@ import type {
 import { encodeState } from '@/lib/helper/encoders';
 import { AppSearchPaper } from '@/components/core/AppPaper';
 import { useBoundStore, type TBoundStore } from '@/lib/store/boundStore';
-import { DefaultItemRead } from '@/lib/helper/defaults';
+import {
+  DefaultItemRead,
+  DefaultIItemRouteSearch,
+
+} from '@/lib/helper/defaults';
 
 
 
@@ -35,7 +39,7 @@ export function AppItemSearchBar(): ReactNode {
       userId: user?.id || "",
       query: { ...DefaultItemRead.query, text: textValue },
     };
-    const s = { query: q, title: `Items like '${textValue}'`, reference: undefined, }
+    const s = { ...DefaultIItemRouteSearch, query: q, title: `Items like '${textValue}'` }
     const encoded = encodeState(s);
 
     navigate({ to: "/items", from: "/", search: { s: encoded }, });

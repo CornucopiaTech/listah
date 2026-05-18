@@ -3,6 +3,7 @@ import {
   forwardRef,
   Fragment,
   useEffect,
+  useRef,
 } from "react";
 import type {
   ChangeEvent,
@@ -39,14 +40,25 @@ import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
+import DialogTitle from '@mui/material/DialogTitle';
+import Divider from "@mui/material/Divider";
+import { Virtuoso } from 'react-virtuoso';
+import RestartIcon from '@iconify-react/mdi/restart';
+import RestartOffIcon from '@iconify-react/mdi/restart-off';
+import SaveIcon from '@iconify-react/material-symbols/save';
+import SaveOffIcon from '@iconify-react/lucide/save-off';
+import DeleteIcon from '@iconify-react/mdi/delete';
+import DeleteOffIcon from '@iconify-react/mdi/delete-off';
+import HourglassOutlineIcon from '@iconify-react/material-symbols/hourglass-outline';
+import { useVirtualizer } from '@tanstack/react-virtual';
+
 
 
 
 // Internal imports
 import {
   AppBody1ButtonTypography,
-
 } from "@/components/core/ButtonTypography";
 import { AppH6Typography } from "@/components/core/Typography";
 import {
@@ -66,21 +78,21 @@ import { ZFilter } from "@/lib/model/filter";
 import {
   DefaultTagRead,
 } from '@/lib/helper/defaults';
+import {
+  SpaceBetweenBox,
+} from "@/components/core/AppBox";
 
 
-export function AppFilterModal(): ReactNode {
+
+export function WrongAppFilterModal({ compPropFilter }: { compPropFilter?: IFilter }): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
   const queryClient = useQueryClient();
   const { user } = useUser();
   const theme: AppTheme = useTheme();
-  const storeFilter: undefined | IFilter = useBoundStore((state) => state.displayFilter);
+  // The scrollable element for your list
+  const parentRef = useRef(null)
 
-  const tagQuery = {
-    ...DefaultTagRead,
-    userId: user?.id || "",
-    pageSize: -1,
-  }
-
+  const tagQuery = { ...DefaultTagRead, userId: user?.id || "", pageSize: -1, }
   const {
     isPending, isError, data, error
   }: UseQueryResult<ITagReadResponse> = useQuery(tagGroupOptions(tagQuery));
@@ -127,9 +139,6 @@ export function AppFilterModal(): ReactNode {
   // }, [form.state.isSubmitted, mutation.isSuccess]);
 
 
-
-
-
   function onFormSubmit(e: ChangeEvent<HTMLFormElement>) {
     e.preventDefault()
     e.stopPropagation()
@@ -138,28 +147,19 @@ export function AppFilterModal(): ReactNode {
     //Note:  Modal should not be closed after form submission so success or error feedback can be sent to the user.
   }
 
-  type FormObjectType = {
-    [key: string]: string | boolean;
-  };
-
   function formSubmission({ value }: { value: FormObjectType }): void {
     if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
       console.log("In formSubmission - value ", value);
     }
-    let checkedCategories: string[] = [];
+    let checkedCategories: string[] = value.tags.filter((i) => i.checked).map(i => i.id);
 
-    Object.keys(value).forEach(key => {
-      if (key !== "___filterName" && key !== "id" && value[key]) {
-        checkedCategories.push(key);
-      }
-    });
 
     const prevId = value["id"] as string;
 
     const submitValue = {
       id: prevId !== "" ? prevId : uuidv4(),
       userId: user?.id || "",
-      name: value["___filterName"] as string,
+      name: value.name as string,
       tags: checkedCategories,
       filters: [],
       count: 0,
@@ -170,30 +170,99 @@ export function AppFilterModal(): ReactNode {
     mutation.mutate(submitValue);
   }
 
-  const gridComponents = {
-    List: forwardRef(({ style, children, ...props }: { style: any, children: ReactNode, props: any }, ref: any) => (
-      <div ref={ref} {...props}
-        style={{ display: 'flex', flexWrap: 'wrap', ...style, }}>
-        {children}
-      </div>
-    )),
-    Item: ({ children, ...props }: { children: ReactNode;[key: string]: unknown }) => (
-      <div
-        {...props}
-        style={{
-          padding: '2%', width: 'fit-content', display: 'flex',
-          flex: 'wrap', boxSizing: 'border-box',
-        }}
-      >
-        {children}
-      </div>
-    ),
+  const tagCategories: ITag[] = data && data.tags ? data.tags : [];
+
+
+  // ToDo: Changing Filtername creates a new filter and does not update the existing filter.
+  // ToDo: Change the type of tags from list of string, to list of tag object. and upon submission, retain on the id from the tag object to send to api.
+
+
+  // Define object for form default values based on tagCategories. Each category is a boolean field in the form that indicates whether the category is selected or not. The field name is the category name. For example, if there are tagCategories "Work" and "Personal", the form will have fields "Work" and "Personal" that are boolean values indicating whether each category is selected or not. Additionally, there is a field for the filter name called "___filterName". This field is used to capture the name of the filter being created or edited. It is separate from the category fields and is used to identify the filter.
+
+  const existingTags = compPropFilter ? new Set([...compPropFilter.tags]) : new Set([]);
+
+  type CheckedTagType = {
+    name: string,
+    id: string,
+    checked: boolean,
+  };
+
+  type FormObjectType = {
+    // [key: string]: string | boolean;
+    name: string,
+    id: string,
+    tags: Array<CheckedTagType>,
+    softDelete: boolean,
+  };
+  let newFormData: FormObjectType = {
+    name: compPropFilter?.name ?? "",
+    id: compPropFilter?.id ?? "",
+    tags: [],
+    softDelete: false,
+  };
+
+  tagCategories.forEach((item: ITag) => {
+    if (existingTags.has(item.id)) {
+      newFormData.tags = [...newFormData.tags, { id: item.id, name: item.name, checked: true }];
+    } else {
+      newFormData.tags = [...newFormData.tags, { id: item.id, name: item.name, checked: false }];
+    }
+  });
+
+
+  function validateName(fname: string) {
+    if (fname.length < 1) {
+      return "Filter name is required";
+    }
   }
+
+  function validateTag(value: Array<CheckedTagType>) {
+    let checked: Array<CheckedTagType> = value.filter((i) => i.checked);
+    console.info('In validateTag', checked);
+    if (checked.length < 1) {
+      return "At least one tag is required";
+    }
+  }
+
+  function formValidator({ value }: { value: FormObjectType }) {
+    const invalidName = validateName(value.name as string);
+    if (invalidName) {
+      return invalidName;
+    }
+
+    const invalidTag = validateTag(value.tags);
+    if (invalidTag) {
+      return invalidTag
+    }
+    return undefined;
+  }
+
+  const form = useForm({
+    defaultValues: newFormData,
+    onSubmit: formSubmission,
+    validators: {
+      onChange({ value }: { value: FormObjectType }) {
+        return formValidator({ value });
+      },
+      onBlur({ value }: { value: FormObjectType }) {
+        return formValidator({ value });
+      },
+    },
+  });
+
+
+  function handleFilterDelete() {
+    form.setFieldValue('softDelete', true);
+    form.handleSubmit();
+  }
+
+  const formErrorMap = useStore(form.store, (state) => state.errorMap);
+  const formTitle = compPropFilter ? "Update filter" : "Add new filter";
 
   const dialogSx = {
     display: 'block',
-    maxWidth: "lg",
-    width: "lg",
+    // maxWidth: "lg",
+    width: "100%",
     // height: 'fit-content',
     height: '70vh',
     // maxHeight: 720,
@@ -212,241 +281,1116 @@ export function AppFilterModal(): ReactNode {
       background: theme.palette.background.default,
     },
   }
+
+  function Dlg(content: ReactNode, actions?: ReactNode) {
+    return (
+      <Dialog fullWidth maxWidth="md" open={store.filterModal} onClose={closeModal} >
+        <SpaceBetweenBox >
+          <DialogTitle
+            id="save-dialog-title"
+            sx={{
+              display: "flex", alignItems: "flex-start",
+              justifyContent: "space-between",
+              pb: 0, pt: 2, px: 3,
+            }}
+          >{formTitle}
+          </DialogTitle>
+          <IconButton aria-label="delete"
+            sx={{
+              display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
+            }}
+            onClick={closeModal}>
+            <Icon icon="material-symbols-light:close-rounded" width="30" height="30" />
+          </IconButton>
+        </SpaceBetweenBox>
+        <Divider />
+        {mutation.error && (
+          <Fragment>
+            <ErrorAlert message={mutation.error.message} />
+          </Fragment>
+        )}
+        {mutation.isSuccess && <SuccessAlert message="Filter updated!" />}
+        {formErrorMap.onChange && <WarnAlert message={`${formErrorMap.onChange}`} />}
+        {(formErrorMap.onChange || mutation.isSuccess) && <Divider />}
+
+        <form onSubmit={onFormSubmit}>
+          <DialogContent sx={dialogSx} >
+            <Box
+              component="section"
+              sx={{ marginTop: 0, padding: 0, marginRight: "2.5rem", }}>
+              {content}
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <form.Subscribe
+              selector={(state) => [state.canSubmit, state.isSubmitting]}
+              children={() => (
+                <Box sx={{ transform: 'translateZ(0px)', flexGrow: 1 }}>
+                  {actions}
+                </Box>
+              )}
+            />
+          </DialogActions>
+        </form>
+      </Dialog>
+    );
+  }
+
+  if (isPending) { return Dlg(<LinearProgress />); }
+  if (isError) { return Dlg(<ErrorAlert message={error?.message || "An error occurred. Please try again"} />); }
+  if (tagCategories.length == 0) { return Dlg(<AppH6Typography> No tags found </AppH6Typography>) }
+
+
+  // The virtualizer
+  // const rowVirtualizer = useVirtualizer({
+  //   count: tagCategories.length,
+  //   getScrollElement: () => parentRef.current,
+  //   estimateSize: () => 35,
+  //   overscan: 5,
+  // });
+  const rowVirtualizer = useVirtualizer({
+    count: 10000,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 35,
+    overscan: 5,
+  });
+
+  const columnVirtualizer = useVirtualizer({
+    horizontal: true,
+    count: 10000,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 100,
+    overscan: 5,
+  });
+
+  const cont = (
+    <Fragment>
+      <form.Field
+        key={`name`}
+        name={`name`}
+        validators={{
+          onChange: ({ value }) => validateName(value as unknown as string),
+          onBlur: ({ value }) => validateName(value as unknown as string),
+        }}
+        children={(field) =>
+          <Fragment>
+            <TextField
+              fullWidth
+              slotProps={{
+                input: { style: { fontSize: "1rem" } },
+                inputLabel: { style: { fontSize: "1rem" } },
+              }}
+              multiline
+              id={`name`}
+              key={`___filterName`}
+              value={field.state.value}
+              label={`name`}
+              onChange={
+                (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
+              size="small"
+              variant="standard"
+              error={field.state.meta.errors.length > 0}
+              helperText={field.state.meta.errors.join(', ')}
+            />
+          </Fragment>
+        }
+      />
+      <>
+        <div
+          ref={parentRef}
+          className="List"
+          style={{
+            height: `50vh`,
+            width: `100%`,
+            overflow: 'auto',
+          }}
+        >
+          <div
+            style={{
+              height: `${rowVirtualizer.getTotalSize()}px`,
+              width: `${columnVirtualizer.getTotalSize()}px`,
+              position: 'relative',
+            }}
+          >
+            {rowVirtualizer.getVirtualItems().map((virtualRow) => (
+              <Fragment key={virtualRow.key}>
+                {columnVirtualizer.getVirtualItems().map((virtualColumn) => (
+                  <div
+                    key={virtualColumn.key}
+                    className={
+                      virtualColumn.index % 2
+                        ? virtualRow.index % 2 === 0
+                          ? 'ListItemOdd'
+                          : 'ListItemEven'
+                        : virtualRow.index % 2
+                          ? 'ListItemOdd'
+                          : 'ListItemEven'
+                    }
+                    style={{
+                      // position: 'absolute',
+                      // top: 0,
+                      // left: 0,
+                      width: `${virtualColumn.size}px`,
+                      height: `${virtualRow.size}px`,
+                      transform: `translateX(${virtualColumn.start}px) translateY(${virtualRow.start}px)`,
+                    }}
+                  >
+                    Cell {virtualRow.index}, {virtualColumn.index}
+                  </div>
+                ))}
+              </Fragment>
+            ))}
+          </div>
+        </div>
+      </>
+    </Fragment >
+  );
+
+  // const saveIcon = form.state.isSubmitting ? "material-symbols:hourglass-top" : form.state.canSubmit ? "material-symbols:save-sharp" : "lucide:save-off";
+  // const saveTooltip = !form.state.canSubmit ? "Unable to save" : "Save";
+  // const cloneIcon = form.state.values.id == "" ? "tabler:copy-off" : "material-symbols:content-copy-sharp";
+  // const cloneTooltip = form.state.values.id == "" ? "Unable to clone" : "Clone";
+
+  // const formActions = [
+  //   { name: cloneTooltip, icon: cloneIcon, onClick: handleClone },
+  //   { name: saveTooltip, icon: saveIcon, onClick: form.handleSubmit },
+  //   { name: "Reset", icon: "material-symbols-light:restart-alt", onClick: form.reset },
+  // ]
+
+
+  const deleteTooltip = (
+    form.state.values.id == "" ? "new filter can't be deleted" :
+      form.state.isSubmitting ? "filter is being saved" : "delete filter"
+  );
+  const saveTooltip = (
+    form.state.isPristine ? "no changes to save" :
+      form.state.isSubmitting ? "filter is being saved" :
+        !form.state.canSubmit ? "changes contain errors" : "save changes"
+  );
+  const resetTooltip = form.state.isDirty ? "reset" : "no changes to reset";
+  const deleteIcon = (
+    form.state.isSubmitting || form.state.values.id == "" ? <DeleteOffIcon height="1.5rem" /> :
+      <DeleteIcon height="1.5rem" />
+  );
+  const saveIcon = form.state.isSubmitting ? <HourglassOutlineIcon height="1.5rem" /> :
+    (!form.state.isPristine && form.state.canSubmit) ? <SaveIcon height="1.5rem" /> :
+      <SaveOffIcon height="1.5rem" />;
+  const resetIcon = form.state.isDirty ? <RestartIcon height="1.5rem" /> : <RestartOffIcon height="1.5rem" />;
+
+
+  const formActions = [
+    { name: deleteTooltip, icon: deleteIcon, onClick: handleFilterDelete },
+    { name: saveTooltip, icon: saveIcon, onClick: form.handleSubmit },
+    { name: resetTooltip, icon: resetIcon, onClick: form.reset },
+  ]
+
+
+  const acts = (
+    <SpeedDial
+      ariaLabel="SpeedDial basic example"
+      sx={{ position: 'absolute', bottom: 0, right: 0 }}
+      icon={<SpeedDialIcon />}
+    >
+      {formActions.map((action) => (
+        <SpeedDialAction
+          key={action.name}
+          icon={action.icon}
+          // @ts-ignore
+          onClick={action.onClick}
+          slotProps={{
+            tooltip: {
+              title: action.name,
+            },
+          }}
+        />
+      ))}
+    </SpeedDial>
+  );
+
+  return Dlg(cont, acts);
+}
+
+
+export function FaultyAppFilterModal({ compPropFilter }: { compPropFilter?: IFilter }): ReactNode {
+  const store: TBoundStore = useBoundStore((state) => state);
+  const queryClient = useQueryClient();
+  const { user } = useUser();
+  const theme: AppTheme = useTheme();
+  // The scrollable element for your list
+  const parentRef = useRef(null)
+
+  const tagQuery = { ...DefaultTagRead, userId: user?.id || "", pageSize: -1, }
+  const {
+    isPending, isError, data, error
+  }: UseQueryResult<ITagReadResponse> = useQuery(tagGroupOptions(tagQuery));
+
+
+  const rowVirtualizer = useVirtualizer({
+    count: 10000,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 35,
+    overscan: 5,
+  });
+
+  const columnVirtualizer = useVirtualizer({
+    horizontal: true,
+    count: 4,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 100,
+    overscan: 5,
+  });
+
+  // Define invalidating  mutation
+  const mutation = useMutation({
+    mutationFn: (mutateItem: IFilter) => {
+      const mi = ZFilter.parse(mutateItem);
+      return postFilter(mi);
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["filter"] }),
+      ])
+    },
+    onError: (error) => {
+      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+        console.log(error);
+      }
+      store.setMessage(error.message);
+    },
+  });
+
+  function closeModal() {
+    store.setFilterModal(false);
+    store.setDisplayFilter(undefined);
+  }
+
+  useEffect(() => {
+    // if (!form.state.isSubmitted) return;
+    if (!mutation.isSuccess) return;
+
+    const timer = setTimeout(
+      () => {
+        if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+          console.log("Timer fired after 2 seconds");
+        }
+        closeModal();
+      }, 2000);
+    return () => clearTimeout(timer); // cleanup
+  }, [mutation.isSuccess]
+  );
+  // }, [form.state.isSubmitted, mutation.isSuccess]);
+
+
+
+  function onFormSubmit(e: ChangeEvent<HTMLFormElement>) {
+    e.preventDefault()
+    e.stopPropagation()
+    //Note: form.handleSubmit is automatically called on form submit. it does not need to be called again. Calling it again results in the form getting sent multiple times.
+
+    //Note:  Modal should not be closed after form submission so success or error feedback can be sent to the user.
+  }
+
+  function formSubmission({ value }: { value: FormObjectType }): void {
+    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+      console.log("In formSubmission - value ", value);
+    }
+    let checkedCategories: string[] = value.tags.filter((i) => i.checked).map(i => i.id);
+
+
+    const prevId = value["id"] as string;
+
+    const submitValue = {
+      id: prevId !== "" ? prevId : uuidv4(),
+      userId: user?.id || "",
+      name: value.name as string,
+      tags: checkedCategories,
+      filters: [],
+      count: 0,
+    };
+    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+      console.info("In formSubmission - submitvalue ", submitValue);
+    }
+    mutation.mutate(submitValue);
+  }
+
   const tagCategories: ITag[] = data && data.tags ? data.tags : [];
 
 
-  // ToDo: Changing Filtername creates a new filter and does not update the existing filter.
-  // ToDo: Change the type of tags from list of string, to list of tag object. and upon submission, retain on the id from the tag object to send to api.
+  const existingTags = compPropFilter ? new Set([...compPropFilter.tags]) : new Set([]);
 
+  type CheckedTagType = {
+    name: string,
+    id: string,
+    checked: boolean,
+  };
 
-  // Define object for form default values based on tagCategories. Each category is a boolean field in the form that indicates whether the category is selected or not. The field name is the category name. For example, if there are tagCategories "Work" and "Personal", the form will have fields "Work" and "Personal" that are boolean values indicating whether each category is selected or not. Additionally, there is a field for the filter name called "___filterName". This field is used to capture the name of the filter being created or edited. It is separate from the category fields and is used to identify the filter.
+  type FormObjectType = {
+    // [key: string]: string | boolean;
+    name: string,
+    id: string,
+    tags: Array<CheckedTagType>,
+    softDelete: boolean,
+  };
+  let newFormData: FormObjectType = {
+    name: compPropFilter?.name ?? "",
+    id: compPropFilter?.id ?? "",
+    tags: [],
+    softDelete: false,
+  };
 
-  const formFilterName = storeFilter ? storeFilter.name : "";
-  const formFilterId = storeFilter ? storeFilter.id : "";
-  const existingTags = storeFilter ? new Set([...storeFilter.tags]) : new Set([]);
-
-  let defaultFormData: any = { "___filterName": formFilterName, "id": formFilterId, }
-  defaultFormData = tagCategories.reduce((acc: any, item: ITag) => {
+  tagCategories.forEach((item: ITag) => {
     if (existingTags.has(item.id)) {
-      acc[item.name] = true;
+      newFormData.tags = [...newFormData.tags, { id: item.id, name: item.name, checked: true }];
     } else {
-      acc[item.name] = false;
+      newFormData.tags = [...newFormData.tags, { id: item.id, name: item.name, checked: false }];
     }
-    return acc;
-  }, defaultFormData);
+  });
 
 
-  const formData: any[] = [...tagCategories];
-
-
-  function eachItem(idx: number): ReactNode {
-    const chipLabel = formData[idx] && formData[idx].name ? formData[idx].name : "";
-    return (
-      <form.Field
-        key={`item-${chipLabel}`} name={chipLabel}
-        children={(field) =>
-          <Chip
-            color="primary"
-            // @ts-ignore
-            icon={field.state.value && <DoneIcon />}
-            sx={{ color: theme.palette.background.default, cursor: "pointer" }}
-            label={<AppBody1ButtonTypography>#{chipLabel}</AppBody1ButtonTypography>}
-            onClick={() => {
-              if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-                console.log(`${chipLabel} onClick: ${field.state.value}=>${!field.state.value}`);
-              }
-              field.handleChange(!field.state.value)
-            }}
-          />
-        }
-      />
-    )
+  function validateName(fname: string) {
+    if (fname.length < 1) {
+      return "Filter name is required";
+    }
   }
 
+  function validateTag(value: Array<CheckedTagType>) {
+    let checked: Array<CheckedTagType> = value.filter((i) => i.checked);
+    console.info('In validateTag', checked);
+    if (checked.length < 1) {
+      return "At least one tag is required";
+    }
+  }
+
+  function formValidator({ value }: { value: FormObjectType }) {
+    const invalidName = validateName(value.name as string);
+    if (invalidName) {
+      return invalidName;
+    }
+
+    const invalidTag = validateTag(value.tags);
+    if (invalidTag) {
+      return invalidTag
+    }
+    return undefined;
+  }
+
+  function handleFilterDelete() {
+    form.setFieldValue('softDelete', true);
+    form.handleSubmit();
+  }
 
   const form = useForm({
-    defaultValues: defaultFormData,
+    defaultValues: newFormData,
     onSubmit: formSubmission,
     validators: {
       onChange({ value }: { value: FormObjectType }) {
-        const fname = value["___filterName"] as string;
-        if (fname.length < 1) {
-          return "Filter name is required";
-        }
-
-        let checked: string[] = [];
-        Object.keys(value).forEach(key => {
-          const val = value[key];
-          if (val && key !== "___filterName") {
-            checked.push(key);
-          }
-        });
-
-        if (checked.length < 1) {
-          return "At least one tag is required";
-        }
-        return undefined
+        return formValidator({ value });
       },
       onBlur({ value }: { value: FormObjectType }) {
-        const fname = value["___filterName"] as string;
-        if (fname.length < 1) {
-          return "Filter name is required";
-        }
-
-        let checked: string[] = [];
-        Object.keys(value).forEach(key => {
-          const val = value[key];
-          if (val && key !== "___filterName") {
-            checked.push(key);
-          }
-        });
-
-        if (checked.length < 1) {
-          return "At least one tag is required";
-        }
-        return undefined
+        return formValidator({ value });
       },
     },
   });
 
-  function handleClone() {
-    const fname = form.state.values.___filterName || "";
-    form.setFieldValue('id', uuidv4());
-    form.setFieldValue('___filterName', "[Clone of] - " + fname);
+
+  const formErrorMap = useStore(form.store, (state) => state.errorMap);
+  const formTitle = compPropFilter ? "Update filter" : "Add new filter";
+
+  const dialogSx = {
+    display: 'block',
+    maxWidth: "100%",
+    width: "100%",
+    height: '70vh',
+    overflow: 'auto',
+    '&::-webkit-scrollbar': {
+      width: '15px', // width of the entire scrollbar
+    },
+    '&::-webkit-scrollbar-track': {
+      background: theme.palette.background.paper, // color of the tracking area
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.background.default, // color of the scroll thumb
+      borderRadius: '10px', // roundness of the scroll thumb
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: theme.palette.background.default,
+    },
   }
 
-  const saveIcon = form.state.isSubmitting ? "material-symbols:hourglass-top" : form.state.canSubmit ? "material-symbols:save-sharp" : "lucide:save-off";
-  const saveTooltip = !form.state.canSubmit ? "Unable to save" : "Save";
-  const cloneIcon = form.state.values.id == "" ? "tabler:copy-off" : "material-symbols:content-copy-sharp";
-  const cloneTooltip = form.state.values.id == "" ? "Unable to clone" : "Clone";
+  function Dlg(content: ReactNode, actions?: ReactNode) {
+    return (
+      <Dialog fullWidth ref={parentRef} maxWidth="md" open={store.filterModal} onClose={closeModal} className="List">
+        <SpaceBetweenBox >
+          <DialogTitle
+            id="save-dialog-title"
+            sx={{
+              display: "flex", alignItems: "flex-start",
+              justifyContent: "space-between",
+              pb: 0, pt: 2, px: 3,
+            }}
+          >{formTitle}
+          </DialogTitle>
+          <IconButton aria-label="delete"
+            sx={{
+              display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
+            }}
+            onClick={closeModal}>
+            <Icon icon="material-symbols-light:close-rounded" width="30" height="30" />
+          </IconButton>
+        </SpaceBetweenBox>
+        <Divider />
+        {mutation.error && (
+          <Fragment>
+            <ErrorAlert message={mutation.error.message} />
+          </Fragment>
+        )}
+        {mutation.isSuccess && <SuccessAlert message="Filter updated!" />}
+        {formErrorMap.onChange && <WarnAlert message={`${formErrorMap.onChange}`} />}
+        {(formErrorMap.onChange || mutation.isSuccess) && <Divider />}
+
+        <form onSubmit={onFormSubmit}>
+          <DialogContent sx={dialogSx} >
+            <Box
+              component="section"
+              sx={{ padding: 0, marginTop: 0, marginRight: "2.5rem", }}>
+              {content}
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <form.Subscribe
+              selector={(state) => [state.canSubmit, state.isSubmitting]}
+              children={() => (
+                <Box sx={{ transform: 'translateZ(0px)', flexGrow: 1 }}>
+                  {actions}
+                </Box>
+              )}
+            />
+          </DialogActions>
+        </form>
+      </Dialog>
+    );
+  }
+
+  if (isPending) { return Dlg(<LinearProgress />); }
+  if (isError) { return Dlg(<ErrorAlert message={error?.message || "An error occurred. Please try again"} />); }
+  if (tagCategories.length == 0) { return Dlg(<AppH6Typography> No tags found </AppH6Typography>) }
+
+
+  const cont = (
+    <Fragment>
+      <form.Field
+        key={`name`}
+        name={`name`}
+        validators={{
+          onChange: ({ value }) => validateName(value as unknown as string),
+          onBlur: ({ value }) => validateName(value as unknown as string),
+        }}
+        children={(field) =>
+          <Fragment>
+            <TextField
+              fullWidth
+              slotProps={{
+                input: { style: { fontSize: "1rem" } },
+                inputLabel: { style: { fontSize: "1rem" } },
+              }}
+              multiline
+              id={`name`}
+              key={`___filterName`}
+              value={field.state.value}
+              label={`name`}
+              onChange={
+                (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
+              size="small"
+              variant="standard"
+              error={field.state.meta.errors.length > 0}
+              helperText={field.state.meta.errors.join(', ')}
+            />
+          </Fragment>
+        }
+      />
+      <>
+        <div
+          style={{
+            height: `${rowVirtualizer.getTotalSize()}px`,
+            width: `fit-content`,
+            position: 'relative',
+          }}
+        >
+          {rowVirtualizer.getVirtualItems().map((virtualRow) => (
+            <Fragment key={virtualRow.key}>
+              {columnVirtualizer.getVirtualItems().map((virtualColumn) => (
+                <div
+                  key={virtualColumn.key}
+                  className={
+                    virtualColumn.index % 2
+                      ? virtualRow.index % 2 === 0
+                        ? 'ListItemOdd'
+                        : 'ListItemEven'
+                      : virtualRow.index % 2
+                        ? 'ListItemOdd'
+                        : 'ListItemEven'
+                  }
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: `${virtualColumn.size}px`,
+                    // width: `${virtualColumn.size}px`,
+                    height: `${virtualRow.size}px`,
+                    transform: `translateX(${virtualColumn.start}px) translateY(${virtualRow.start}px)`,
+                  }}
+                >
+                  {/* Cell {virtualRow.index}, {virtualColumn.index} */}
+                  <form.Field
+                    key={virtualItem.index} name={`tags[${virtualItem.index}]`} >
+                    {
+                      (subField: any) => {
+                        return (
+                          subField &&
+                          <Grid size="auto" sx={{
+                            // position: 'absolute',
+                            // top: 0,
+                            // left: 0,
+                            // width: '100%',
+                            // height: `${virtualItem.size}px`,
+                            // transform: `translateY(${virtualItem.start}px)`,
+                          }}>
+                            <Chip
+                              color="primary"
+                              // @ts-ignore
+                              icon={subField.state.value.checked && <DoneIcon />}
+                              sx={{ color: theme.palette.background.default, cursor: "pointer" }}
+                              label={<AppBody1ButtonTypography>#{subField.state.value.name}</AppBody1ButtonTypography>}
+                              onClick={() => {
+                                if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+                                  console.log(`${subField.state.value.name} onClick: ${subField.state.value.checked}=>${!subField.state.value.checked}`);
+                                }
+                                subField.handleChange({ ...subField.state.value, checked: !subField.state.value.checked });
+                              }}
+                            />
+                          </Grid>
+                        );
+                      }
+                    }
+                  </form.Field>
+                  <Chip
+                    color="primary"
+                    // @ts-ignore
+                    icon={subField.state.value.checked && <DoneIcon />}
+                    sx={{ color: theme.palette.background.default, cursor: "pointer" }}
+                    label={<AppBody1ButtonTypography>#{subField.state.value.name}</AppBody1ButtonTypography>}
+                    onClick={() => {
+                      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+                        console.log(`${subField.state.value.name} onClick: ${subField.state.value.checked}=>${!subField.state.value.checked}`);
+                      }
+                      subField.handleChange({ ...subField.state.value, checked: !subField.state.value.checked });
+                    }}
+                  />
+                </div>
+              ))}
+            </Fragment>
+          ))}
+        </div>
+      </>
+    </Fragment >
+  );
+
+  const deleteTooltip = (
+    form.state.values.id == "" ? "new filter can't be deleted" :
+      form.state.isSubmitting ? "filter is being saved" : "delete filter"
+  );
+  const saveTooltip = (
+    form.state.isPristine ? "no changes to save" :
+      form.state.isSubmitting ? "filter is being saved" :
+        !form.state.canSubmit ? "changes contain errors" : "save changes"
+  );
+  const resetTooltip = form.state.isDirty ? "reset" : "no changes to reset";
+  const deleteIcon = (
+    form.state.isSubmitting || form.state.values.id == "" ? <DeleteOffIcon height="1.5rem" /> :
+      <DeleteIcon height="1.5rem" />
+  );
+  const saveIcon = form.state.isSubmitting ? <HourglassOutlineIcon height="1.5rem" /> :
+    (!form.state.isPristine && form.state.canSubmit) ? <SaveIcon height="1.5rem" /> :
+      <SaveOffIcon height="1.5rem" />;
+  const resetIcon = form.state.isDirty ? <RestartIcon height="1.5rem" /> : <RestartOffIcon height="1.5rem" />;
+
 
   const formActions = [
-    { name: cloneTooltip, icon: cloneIcon, onClick: handleClone },
+    { name: deleteTooltip, icon: deleteIcon, onClick: handleFilterDelete },
     { name: saveTooltip, icon: saveIcon, onClick: form.handleSubmit },
-    { name: "Reset", icon: "material-symbols-light:restart-alt", onClick: form.reset },
+    { name: resetTooltip, icon: resetIcon, onClick: form.reset },
   ]
-  const formErrorMap = useStore(form.store, (state) => state.errorMap);
-  const formTitle = storeFilter ? "Update filter" : "Add new filter";
+
+
+  const acts = (
+    <SpeedDial
+      ariaLabel="SpeedDial basic example"
+      sx={{ position: 'absolute', bottom: 0, right: 0 }}
+      icon={<SpeedDialIcon />}
+    >
+      {formActions.map((action) => (
+        <SpeedDialAction
+          key={action.name}
+          icon={action.icon}
+          // @ts-ignore
+          onClick={action.onClick}
+          slotProps={{
+            tooltip: {
+              title: action.name,
+            },
+          }}
+        />
+      ))}
+    </SpeedDial>
+  );
+
+  return Dlg(cont, acts);
 
   return (
-    <Dialog fullWidth open={store.filterModal} onClose={closeModal} >
-      <IconButton aria-label="delete"
-        sx={{
-          display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
-        }}
-        onClick={closeModal}>
-        <Icon icon="material-symbols-light:close-rounded" width="30" height="30" />
-      </IconButton>
-
-
-      <form onSubmit={onFormSubmit}>
-
-        <DialogContent sx={dialogSx} >
-          <Box
-            component="section"
-            sx={{
-              marginTop: 0,
-              marginRight: "5rem",
-              // fontSize: '15px',
-              padding: 0,
-            }}>
-            <Stack spacing={0} sx={{ width: '100%' }} >
-              {isPending && <LinearProgress />}
-              {
-                !isPending && isError &&
-                <ErrorAlert message={error?.message || "An error occurred. Please try again"} />
-              }
-              {
-                !isError && !isPending && tagCategories.length == 0 &&
-                <AppH6Typography> No items found </AppH6Typography>
-              }
-              {mutation.error && (
-                <Fragment>
-                  <ErrorAlert message={mutation.error.message} />
-                  <h5 onClick={() => mutation.reset()}>{mutation.error.message}</h5>
-                </Fragment>
-              )}
-              {mutation.isSuccess && (
-                <Fragment>
-                  <SuccessAlert message="Filter updated!" />
-                </Fragment>
-              )}
-              {
-                formErrorMap.onChange && (<WarnAlert message={`${formErrorMap.onChange}`} />)
-              }
-              {
-                formErrorMap.onBlur && (<ErrorAlert message={`${formErrorMap.onBlur}`} />)
-              }
-              <AppH6Typography> {formTitle} </AppH6Typography>
-              {
-                tagCategories && tagCategories.length > 0 &&
-                <Fragment>
-                  <form.Field
-                    key={`Filter Name`}
-                    name={`___filterName`}
-                    children={(field) =>
-                      <Fragment>
-                        <TextField
-                          fullWidth
-                          multiline
-                          id={`Filter Name`}
-                          key={`___filterName`}
-                          value={field.state.value}
-                          label={`Filter Name`}
-                          onChange={
-                            (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
-                          size="small"
-                          variant="standard"
-                        />
-                        {!field.state.meta.isValid && (
-                          <ErrorAlert message={field.state.meta.errors.join(', ')} />
-                        )}
-                      </Fragment>
-                    }
-                  />
-                  <VirtuosoGrid
-                    style={{ height: "60vh", width: '100%' }}
-                    totalCount={tagCategories.length}
-                    // @ts-ignore
-                    components={gridComponents}
-                    itemContent={
-                      (index) => eachItem(index)
-                    }
-                  />
-                </Fragment>
-              }
-            </Stack>
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting]}
-            children={() => (
-              <Box sx={{ transform: 'translateZ(0px)', flexGrow: 1 }}>
-                <SpeedDial
-                  ariaLabel="SpeedDial basic example"
-                  sx={{ position: 'absolute', bottom: 16, right: 16 }}
-                  icon={<SpeedDialIcon />}
+    <>
+      <div
+        ref={parentRef}
+        className="List"
+        style={{ height: `50vh`, width: `100%`, overflow: 'auto', }}
+      >
+        <div
+          style={{
+            height: `${rowVirtualizer.getTotalSize()}px`,
+            width: `100%`,
+            // width: `${columnVirtualizer.getTotalSize()}px`,
+            position: 'relative',
+          }}
+        >
+          {rowVirtualizer.getVirtualItems().map((virtualRow) => (
+            <Fragment key={virtualRow.key}>
+              {columnVirtualizer.getVirtualItems().map((virtualColumn) => (
+                <div
+                  key={virtualColumn.key}
+                  className={
+                    virtualColumn.index % 2
+                      ? virtualRow.index % 2 === 0
+                        ? 'ListItemOdd'
+                        : 'ListItemEven'
+                      : virtualRow.index % 2
+                        ? 'ListItemOdd'
+                        : 'ListItemEven'
+                  }
+                  style={{
+                    position: 'relative',
+                    // position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: `${virtualColumn.size}px`,
+                    height: `${virtualRow.size}px`,
+                    transform: `translateX(${virtualColumn.start}px) translateY(${virtualRow.start}px)`,
+                  }}
                 >
-                  {formActions.map((action) => (
-                    <SpeedDialAction
-                      key={action.name}
-                      icon={<Icon icon={action.icon} width="36" height="36" />}
-                      // @ts-ignore
-                      onClick={action.onClick}
-                      slotProps={{
-                        tooltip: {
-                          title: action.name,
-                        },
-                      }}
-                    />
-                  ))}
-                </SpeedDial>
-              </Box>
-            )}
-          />
-        </DialogActions>
-      </form>
-    </Dialog>
+                  Cell {virtualRow.index}, {virtualColumn.index}
+                </div>
+              ))}
+            </Fragment>
+          ))}
+        </div>
+      </div>
+    </>
+  )
+}
+
+
+export function AppFilterModal({ compPropFilter }: { compPropFilter?: IFilter }): ReactNode {
+  const store: TBoundStore = useBoundStore((state) => state);
+  const queryClient = useQueryClient();
+  const { user } = useUser();
+  const theme: AppTheme = useTheme();
+  // The scrollable element for your list
+  const parentRef = useRef(null)
+
+  const tagQuery = { ...DefaultTagRead, userId: user?.id || "", pageSize: -1, }
+  const {
+    isPending, isError, data, error
+  }: UseQueryResult<ITagReadResponse> = useQuery(tagGroupOptions(tagQuery));
+
+
+
+  // Define invalidating  mutation
+  const mutation = useMutation({
+    mutationFn: (mutateItem: IFilter) => {
+      const mi = ZFilter.parse(mutateItem);
+      return postFilter(mi);
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["filter"] }),
+      ])
+    },
+    onError: (error) => {
+      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+        console.log(error);
+      }
+      store.setMessage(error.message);
+    },
+  });
+
+  function closeModal() {
+    store.setFilterModal(false);
+    store.setDisplayFilter(undefined);
+  }
+
+  useEffect(() => {
+    // if (!form.state.isSubmitted) return;
+    if (!mutation.isSuccess) return;
+
+    const timer = setTimeout(
+      () => {
+        if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+          console.log("Timer fired after 2 seconds");
+        }
+        closeModal();
+      }, 2000);
+    return () => clearTimeout(timer); // cleanup
+  }, [mutation.isSuccess]
   );
+  // }, [form.state.isSubmitted, mutation.isSuccess]);
+
+
+
+  function onFormSubmit(e: ChangeEvent<HTMLFormElement>) {
+    e.preventDefault()
+    e.stopPropagation()
+    //Note: form.handleSubmit is automatically called on form submit. it does not need to be called again. Calling it again results in the form getting sent multiple times.
+
+    //Note:  Modal should not be closed after form submission so success or error feedback can be sent to the user.
+  }
+
+  function formSubmission({ value }: { value: FormObjectType }): void {
+    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+      console.log("In formSubmission - value ", value);
+    }
+    let checkedCategories: string[] = value.tags.filter((i) => i.checked).map(i => i.id);
+
+
+    const prevId = value["id"] as string;
+
+    const submitValue = {
+      id: prevId !== "" ? prevId : uuidv4(),
+      userId: user?.id || "",
+      name: value.name as string,
+      tags: checkedCategories,
+      filters: [],
+      count: 0,
+    };
+    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+      console.info("In formSubmission - submitvalue ", submitValue);
+    }
+    mutation.mutate(submitValue);
+  }
+
+  const tagCategories: ITag[] = data && data.tags ? data.tags : [];
+
+
+  const existingTags = compPropFilter ? new Set([...compPropFilter.tags]) : new Set([]);
+
+  type CheckedTagType = {
+    name: string,
+    id: string,
+    checked: boolean,
+  };
+
+  type FormObjectType = {
+    // [key: string]: string | boolean;
+    name: string,
+    id: string,
+    tags: Array<CheckedTagType>,
+    softDelete: boolean,
+  };
+  let newFormData: FormObjectType = {
+    name: compPropFilter?.name ?? "",
+    id: compPropFilter?.id ?? "",
+    tags: [],
+    softDelete: false,
+  };
+
+  tagCategories.forEach((item: ITag) => {
+    if (existingTags.has(item.id)) {
+      newFormData.tags = [...newFormData.tags, { id: item.id, name: item.name, checked: true }];
+    } else {
+      newFormData.tags = [...newFormData.tags, { id: item.id, name: item.name, checked: false }];
+    }
+  });
+
+
+  function validateName(fname: string) {
+    if (fname.length < 1) {
+      return "Filter name is required";
+    }
+  }
+
+  function validateTag(value: Array<CheckedTagType>) {
+    let checked: Array<CheckedTagType> = value.filter((i) => i.checked);
+    console.info('In validateTag', checked);
+    if (checked.length < 1) {
+      return "At least one tag is required";
+    }
+  }
+
+  function formValidator({ value }: { value: FormObjectType }) {
+    const invalidName = validateName(value.name as string);
+    if (invalidName) {
+      return invalidName;
+    }
+
+    const invalidTag = validateTag(value.tags);
+    if (invalidTag) {
+      return invalidTag
+    }
+    return undefined;
+  }
+
+  function handleFilterDelete() {
+    form.setFieldValue('softDelete', true);
+    form.handleSubmit();
+  }
+
+  const form = useForm({
+    defaultValues: newFormData,
+    onSubmit: formSubmission,
+    validators: {
+      onChange({ value }: { value: FormObjectType }) {
+        return formValidator({ value });
+      },
+      onBlur({ value }: { value: FormObjectType }) {
+        return formValidator({ value });
+      },
+    },
+  });
+  const rowVirtualizer = useVirtualizer({
+    count: tagCategories.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 35,
+    overscan: 5,
+    lanes: 4,
+  });
+
+
+  const formErrorMap = useStore(form.store, (state) => state.errorMap);
+  const formTitle = compPropFilter ? "Update filter" : "Add new filter";
+
+  const dialogSx = {
+    display: 'block',
+    maxWidth: "100%",
+    width: "100%",
+    height: '70vh',
+    overflow: 'auto',
+    '&::-webkit-scrollbar': {
+      width: '15px', // width of the entire scrollbar
+    },
+    '&::-webkit-scrollbar-track': {
+      background: theme.palette.background.paper, // color of the tracking area
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.background.default, // color of the scroll thumb
+      borderRadius: '10px', // roundness of the scroll thumb
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: theme.palette.background.default,
+    },
+  }
+
+  function Dlg(content: ReactNode, actions?: ReactNode) {
+    return (
+      <Dialog fullWidth ref={parentRef} maxWidth="md" open={store.filterModal} onClose={closeModal} className="List">
+        <SpaceBetweenBox >
+          <DialogTitle
+            id="save-dialog-title"
+            sx={{
+              display: "flex", alignItems: "flex-start",
+              justifyContent: "space-between",
+              pb: 0, pt: 2, px: 3,
+            }}
+          >{formTitle}
+          </DialogTitle>
+          <IconButton aria-label="delete"
+            sx={{
+              display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
+            }}
+            onClick={closeModal}>
+            <Icon icon="material-symbols-light:close-rounded" width="30" height="30" />
+          </IconButton>
+        </SpaceBetweenBox>
+        <Divider />
+        {mutation.error && (
+          <Fragment>
+            <ErrorAlert message={mutation.error.message} />
+          </Fragment>
+        )}
+        {mutation.isSuccess && <SuccessAlert message="Filter updated!" />}
+        {formErrorMap.onChange && <WarnAlert message={`${formErrorMap.onChange}`} />}
+        {(formErrorMap.onChange || mutation.isSuccess) && <Divider />}
+
+        <form onSubmit={onFormSubmit}>
+          <DialogContent sx={dialogSx} >
+            <Box
+              component="section"
+              sx={{ padding: 0, marginTop: 0, marginRight: "2.5rem", }}>
+              {content}
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <form.Subscribe
+              selector={(state) => [state.canSubmit, state.isSubmitting]}
+              children={() => (
+                <Box sx={{ transform: 'translateZ(0px)', flexGrow: 1 }}>
+                  {actions}
+                </Box>
+              )}
+            />
+          </DialogActions>
+        </form>
+      </Dialog>
+    );
+  }
+
+  if (isPending) { return Dlg(<LinearProgress />); }
+  if (isError) { return Dlg(<ErrorAlert message={error?.message || "An error occurred. Please try again"} />); }
+  if (tagCategories.length == 0) { return Dlg(<AppH6Typography> No tags found </AppH6Typography>) }
+
+
+
+  const cont = (
+    <Fragment>
+      <form.Field
+        key={`name`}
+        name={`name`}
+        validators={{
+          onChange: ({ value }) => validateName(value as unknown as string),
+          onBlur: ({ value }) => validateName(value as unknown as string),
+        }}
+        children={(field) =>
+          <Fragment>
+            <TextField
+              fullWidth
+              slotProps={{
+                input: { style: { fontSize: "1rem" } },
+                inputLabel: { style: { fontSize: "1rem" } },
+              }}
+              multiline
+              id={`name`}
+              key={`___filterName`}
+              value={field.state.value}
+              label={`name`}
+              onChange={
+                (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
+              size="small"
+              variant="standard"
+              error={field.state.meta.errors.length > 0}
+              helperText={field.state.meta.errors.join(', ')}
+            />
+          </Fragment>
+        }
+      />
+      <>
+        <div
+          style={{
+            height: `${rowVirtualizer.getTotalSize()}px`,
+            width: '100%',
+            position: 'relative',
+          }}
+        >
+          {rowVirtualizer.getVirtualItems().map((virtualRow) => (
+            <div
+              key={virtualRow.index}
+              className={virtualRow.index % 2 ? 'ListItemOdd' : 'ListItemEven'}
+              style={{
+                position: 'absolute', top: 0,
+                left: `${virtualRow.lane * 25}%`,
+                width: 'fit-content',
+                height: `100px`,
+                transform: `translateY(${virtualRow.start}px)`,
+              }}
+            >
+              {/* Row {virtualRow.index} */}
+
+              <form.Field
+                key={virtualRow.index} name={`tags[${virtualRow.index}]`} >
+                {
+                  (subField: any) => {
+                    return (
+                      subField &&
+                      <Chip
+                        color="primary"
+                        // @ts-ignore
+                        icon={subField.state.value.checked && <DoneIcon />}
+                        sx={{ color: theme.palette.background.default, cursor: "pointer" }}
+                        label={<AppBody1ButtonTypography>#{subField.state.value.name}</AppBody1ButtonTypography>}
+                        onClick={() => {
+                          if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+                            console.log(`${subField.state.value.name} onClick: ${subField.state.value.checked}=>${!subField.state.value.checked}`);
+                          }
+                          subField.handleChange({ ...subField.state.value, checked: !subField.state.value.checked });
+                        }}
+                      />
+                    );
+                  }
+                }
+              </form.Field>
+
+
+            </div>
+          ))}
+        </div>
+      </>
+    </Fragment >
+  );
+
+  const deleteTooltip = (
+    form.state.values.id == "" ? "new filter can't be deleted" :
+      form.state.isSubmitting ? "filter is being saved" : "delete filter"
+  );
+  const saveTooltip = (
+    form.state.isPristine ? "no changes to save" :
+      form.state.isSubmitting ? "filter is being saved" :
+        !form.state.canSubmit ? "changes contain errors" : "save changes"
+  );
+  const resetTooltip = form.state.isDirty ? "reset" : "no changes to reset";
+  const deleteIcon = (
+    form.state.isSubmitting || form.state.values.id == "" ? <DeleteOffIcon height="1.5rem" /> :
+      <DeleteIcon height="1.5rem" />
+  );
+  const saveIcon = form.state.isSubmitting ? <HourglassOutlineIcon height="1.5rem" /> :
+    (!form.state.isPristine && form.state.canSubmit) ? <SaveIcon height="1.5rem" /> :
+      <SaveOffIcon height="1.5rem" />;
+  const resetIcon = form.state.isDirty ? <RestartIcon height="1.5rem" /> : <RestartOffIcon height="1.5rem" />;
+
+
+  const formActions = [
+    { name: deleteTooltip, icon: deleteIcon, onClick: handleFilterDelete },
+    { name: saveTooltip, icon: saveIcon, onClick: form.handleSubmit },
+    { name: resetTooltip, icon: resetIcon, onClick: form.reset },
+  ]
+
+
+  const acts = (
+    <SpeedDial
+      ariaLabel="SpeedDial basic example"
+      sx={{ position: 'absolute', bottom: 0, right: 0 }}
+      icon={<SpeedDialIcon />}
+    >
+      {formActions.map((action) => (
+        <SpeedDialAction
+          key={action.name}
+          icon={action.icon}
+          // @ts-ignore
+          onClick={action.onClick}
+          slotProps={{
+            tooltip: {
+              title: action.name,
+            },
+          }}
+        />
+      ))}
+    </SpeedDial>
+  );
+
+  return Dlg(cont, acts);
+
 }

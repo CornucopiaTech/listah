@@ -32,12 +32,11 @@ export function Filters() {
   }
 
   const mItems = <Fragment>
-    <MenuItem key="tag" onClick={handleTagClick}>
-      <AppListItemTypography>Add new tag </AppListItemTypography>
-    </MenuItem>
+    {/* <MenuItem key="tag" onClick={handleTagClick}>
+      <AppListItemTypography>Create new tag </AppListItemTypography>
+    </MenuItem> */}
     <MenuItem key="filter" onClick={handleFilterClick}>
-
-      <AppListItemTypography>Add new filter </AppListItemTypography>
+      <AppListItemTypography>Create new filter </AppListItemTypography>
     </MenuItem>
   </Fragment >;
 

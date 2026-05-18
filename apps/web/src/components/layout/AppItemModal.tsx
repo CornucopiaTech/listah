@@ -39,7 +39,9 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { Icon } from "@iconify/react";
 import { useUser } from '@clerk/react';
-import { Divider, LinearProgress, useTheme } from "@mui/material";
+import { useTheme } from "@mui/material";
+import LinearProgress from "@mui/material/LinearProgress";
+import Divider from "@mui/material/Divider";
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
@@ -49,7 +51,13 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-
+import RestartIcon from '@iconify-react/mdi/restart';
+import RestartOffIcon from '@iconify-react/mdi/restart-off';
+import SaveIcon from '@iconify-react/material-symbols/save';
+import SaveOffIcon from '@iconify-react/lucide/save-off';
+import DeleteIcon from '@iconify-react/mdi/delete';
+import DeleteOffIcon from '@iconify-react/mdi/delete-off';
+import HourglassOutlineIcon from '@iconify-react/material-symbols/hourglass-outline';
 
 
 
@@ -97,10 +105,6 @@ import {
   AppDangerButton,
   AppWarnButton,
   AppMutedButton,
-  AppDefaultTextButton,
-  AppDangerTextButton,
-  AppWarnTextButton,
-  AppMutedTextButton,
 } from "@/components/core/AppButton";
 
 
@@ -296,31 +300,32 @@ export function AppItemModal(): ReactNode {
     );
   }
 
+  const tboxSx = {
+    '& legend': { fontSize: '1rem', color: 'rgba(0, 0, 0, 0.6)' },
+    border: `0.5px solid`,
+    borderColor: "rgba(0, 0, 0, 0.23)",
+    margin: 0, borderRadius: 1,
+    fontSize: '1rem',
+    padding: '16.5px 14px', // Matches standard TextField padding
+    transition: 'border-color 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+    '&:hover': {
+      // Standard MUI hover border color
+      borderColor: 'rgba(0, 0, 0, 0.87)',
+    },
+    '&:focus-within': {
+      // Matches the "active" blue focus state
+      border: '2px solid',
+      borderColor: 'primary.main',
+      // Adjust padding to prevent "jumping" when border thickness changes
+      padding: '15.5px 13px',
+    },
+
+  }
   function getTagField() {
     // ToDo: Use Virtualised list for this.
     // Maybe ToDo: Use an alert to confirm the props that would be deleted when a tag is removed before a tag is removed.
     // ToDo: Change the font color of the tag that corresponds to a property that is in focus.
-    const tboxSx = {
-      '& legend': { fontSize: '1rem', color: 'rgba(0, 0, 0, 0.6)' },
-      border: `0.5px solid`,
-      borderColor: "rgba(0, 0, 0, 0.23)",
-      margin: 0, borderRadius: 1,
-      fontSize: '1rem',
-      padding: '16.5px 14px', // Matches standard TextField padding
-      transition: 'border-color 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-      '&:hover': {
-        // Standard MUI hover border color
-        borderColor: 'rgba(0, 0, 0, 0.87)',
-      },
-      '&:focus-within': {
-        // Matches the "active" blue focus state
-        border: '2px solid',
-        borderColor: 'primary.main',
-        // Adjust padding to prevent "jumping" when border thickness changes
-        padding: '15.5px 13px',
-      },
 
-    }
     return (
       <form.Field name="tags" mode="array" key="tag-parent">
         {
@@ -358,7 +363,7 @@ export function AppItemModal(): ReactNode {
                               return (
                                 <Grid
                                   key={i} //Using the tag id as the key causes the form to lose focus when adding new tags to the form, especially when the form length is longer than the maximum allowed length of the dialog.
-                                  size={{ xs: 12, sm: 6, md: 4 }}>
+                                  size={{ xs: 12, sm: 6, lg: 4 }}>
                                   <Autocomplete
                                     slotProps={{
                                       listbox: {
@@ -573,42 +578,6 @@ export function AppItemModal(): ReactNode {
   }
 
   const fields: itemFields[] = ['id', 'userId', 'name', "note"];
-  const dialogSx = {
-    display: 'block',
-    width: "md",
-    maxWidth: "md",
-    height: 'fit-content',
-    maxHeight: '70vh',
-    overflow: 'auto',
-    margin: "0",
-    '&::-webkit-scrollbar': {
-      width: '15px', // width of the entire scrollbar
-    },
-    '&::-webkit-scrollbar-track': {
-      background: theme.palette.background.paper, // color of the tracking area
-    },
-    '&::-webkit-scrollbar-thumb': {
-      backgroundColor: theme.palette.background.default, // color of the scroll thumb
-      borderRadius: '10px', // roundness of the scroll thumb
-    },
-    '&::-webkit-scrollbar-thumb:hover': {
-      background: theme.palette.background.default,
-    },
-  }
-
-
-
-  const deleteIcon = form.state.isSubmitting ? "ic:baseline-auto-delete" : (!form.state.canSubmit || form.state.values.id == "") ? "mdi:delete-off" : "ic:sharp-delete";
-  const deleteTooltip = (!form.state.canSubmit || form.state.values.id == "") ? "Unable to delete" : "Delete";
-  const saveIcon = form.state.isSubmitting ? "material-symbols:hourglass-top" : form.state.canSubmit ? "material-symbols:save-sharp" : "lucide:save-off";
-  const saveTooltip = !form.state.canSubmit ? "Unable to save" : "Save";
-
-
-  const formActions = [
-    { name: deleteTooltip, icon: deleteIcon, onClick: handleItemDelete },
-    { name: saveTooltip, icon: saveIcon, onClick: form.handleSubmit },
-    { name: "Reset", icon: "material-symbols-light:restart-alt", onClick: form.reset },
-  ]
 
   function TagDeleteDialog() {
     return (
@@ -657,10 +626,32 @@ export function AppItemModal(): ReactNode {
     );
   }
 
+  const dialogSx = {
+    display: 'block',
+    width: "sm",
+    maxWidth: "sm",
+    height: 'fit-content',
+    maxHeight: '70vh',
+    overflow: 'auto',
+    margin: "0",
+    '&::-webkit-scrollbar': {
+      width: '15px', // width of the entire scrollbar
+    },
+    '&::-webkit-scrollbar-track': {
+      background: theme.palette.background.paper, // color of the tracking area
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.background.default, // color of the scroll thumb
+      borderRadius: '10px', // roundness of the scroll thumb
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: theme.palette.background.default,
+    },
+  }
 
   function Dlg(content: ReactNode, actions?: ReactNode): ReactNode {
     return (
-      <Dialog fullWidth maxWidth="md" open={store.itemModal} onClose={closeModal} >
+      <Dialog fullWidth maxWidth="sm" open={store.itemModal} onClose={closeModal} >
         <SpaceBetweenBox >
           <DialogTitle
             id="save-dialog-title"
@@ -718,70 +709,51 @@ export function AppItemModal(): ReactNode {
     </Box>
   );
 
+
+  const deleteTooltip = (
+    form.state.values.id == "" ? "new item can't be deleted" :
+      form.state.isSubmitting ? "item is being saved" : "delete item"
+  );
+  const saveTooltip = (
+    form.state.isPristine ? "no changes to save" :
+      form.state.isSubmitting ? "item is being saved" :
+        !form.state.canSubmit ? "changes contain errors" : "save changes"
+  );
+  const resetTooltip = form.state.isDirty ? "reset" : "no changes to reset";
+  const deleteIcon = (
+    form.state.isSubmitting || form.state.values.id == "" ? <DeleteOffIcon height="1.5rem" /> :
+      <DeleteIcon height="1.5rem" />
+  );
+  const saveIcon = form.state.isSubmitting ? <HourglassOutlineIcon height="1.5rem" /> :
+    (!form.state.isPristine && form.state.canSubmit) ? <SaveIcon height="1.5rem" /> :
+      <SaveOffIcon height="1.5rem" />;
+  const resetIcon = form.state.isDirty ? <RestartIcon height="1.5rem" /> : <RestartOffIcon height="1.5rem" />;
+
+
+  const formActions = [
+    { name: deleteTooltip, icon: deleteIcon, onClick: handleItemDelete },
+    { name: saveTooltip, icon: saveIcon, onClick: form.handleSubmit },
+    { name: resetTooltip, icon: resetIcon, onClick: form.reset },
+  ];
+
   const act = (
     <form.Subscribe
       selector={(state) => [state.canSubmit, state.isSubmitting, state.values.name]}
       children={() => (
-        <Box sx={{ transform: 'translateZ(0px)', flexGrow: 1 }}>
-          <Stack direction="row" spacing={4}>
-            {
-              // For can save only when it has no errors and it is not in the process of getting submitted.
-              form.state.canSubmit && !form.state.isSubmitting ?
-                <AppDefaultButton label="Save" handleClick={form.handleSubmit} /> :
-                <AppMutedButton label="Save" />
-            }
-            {/* @ts-ignore */}
-            {
-              // Forms can reset only when they are dirty (i.e have been touched.)
-              form.state.isDirty ?
-                <AppWarnButton label="Reset" handleClick={form.reset} /> :
-                <AppMutedButton label="Reset" />
-            }
-
-            {
-              // Form deletion should only be enabled if the form is persisted in the server (i.e. has an id) and the form is not already being submitted.
-              (!form.state.canSubmit || form.state.values.id == "") ?
-                <AppMutedButton label="Delete" /> :
-                <AppDangerButton label="Delete" handleClick={handleItemDelete} />
-            }
-            {
-              // For can save only when it has no errors and it is not in the process of getting submitted.
-              form.state.canSubmit && !form.state.isSubmitting ?
-                <AppDefaultTextButton label="Save" handleClick={form.handleSubmit} /> :
-                <AppMutedTextButton label="Save" />
-            }
-            {/* @ts-ignore */}
-            {
-              // Forms can reset only when they are dirty (i.e have been touched.)
-              form.state.isDirty ?
-                <AppWarnTextButton label="Reset" handleClick={form.reset} /> :
-                <AppMutedTextButton label="Reset" />
-            }
-
-            {
-              // Form deletion should only be enabled if the form is persisted in the server (i.e. has an id) and the form is not already being submitted.
-              (!form.state.canSubmit || form.state.values.id == "") ?
-                <AppMutedTextButton label="Delete" /> :
-                <AppDangerTextButton label="Delete" handleClick={handleItemDelete} />
-            }
-          </Stack>
+        <Box sx={{ height: '5vh', transform: 'translateZ(0px)', flexGrow: 1 }}>
 
           <SpeedDial
             ariaLabel="SpeedDial basic example"
             sx={{
               position: 'absolute', bottom: 0, right: 0,
-              '& .MuiFab-primary': {
-                width: 50,
-                height: 50,
-                minHeight: 50,
-              }
+              '& .MuiFab-primary': { width: 50, height: 50, minHeight: 50, }
             }}
             icon={<SpeedDialIcon />}
           >
             {formActions.map((action) => (
               <SpeedDialAction
                 key={action.name}
-                icon={<Icon icon={action.icon} width="30" height="30" />}
+                icon={action.icon}
                 // @ts-ignore
                 onClick={action.onClick}
                 slotProps={{

@@ -27,25 +27,43 @@ import {
 import {
   AppListItemTypography,
 } from "@/components/core/Typography";
-
+import type {
+  // IItem,
+  // IItemReadRequest,
+  // IItemReadResponse,
+  IItemRouteSearch,
+} from "@/lib/model/item";
+import {
+  decodeState
+} from '@/lib/helper/encoders';
 
 
 export function Items() {
   const store: TBoundStore = useBoundStore((state) => state);
-  const isTag = store.displayTag !== undefined;
-  const isFilter = store.displayFilter !== undefined;
+  // const isTag = store.displayTag !== undefined;
+  // const isFilter = store.displayFilter !== undefined;
+
   const routeApi = getRouteApi('/items/');
   const { search } = routeApi.useRouteContext();
   const pageHeader = store.itemTitle ? store.itemTitle : search && search.title ? search.title : "All Items";
+  const urlSearch = decodeState(routeApi.useSearch().s) as unknown as IItemRouteSearch;
+  // console.info(' decodeState(routeApi.useSearch())', decodeState(routeApi.useSearch().s));
+  // console.info(' urlSearch', urlSearch);
+
+  const passedTag = store.displayTag || urlSearch.refTag;
+  const passedFilter = store.displayFilter || urlSearch.refFilter;
+  // console.info('passedFilter', passedFilter);
+
+
 
 
   function handleItemClick() {
     let newTags: string[] = []
-    if (store.displayTag) {
-      newTags = [...newTags, store.displayTag.id]
+    if (passedTag) {
+      newTags = [...newTags, passedTag.id]
     }
-    if (store.displayFilter) {
-      newTags = [...newTags, ...store.displayFilter.tags]
+    if (passedFilter) {
+      newTags = [...newTags, ...passedFilter.tags]
     }
     store.setDisplayItem({ ...DefaultItem, tags: newTags, });
     store.setItemModal(true);
@@ -53,36 +71,40 @@ export function Items() {
 
 
   function handleCategoryClick() {
-    if (isTag) {
+    if (passedTag) {
       store.setTagModal(true);
-    } else if (isFilter) {
+    } else if (passedFilter) {
       store.setFilterModal(true);
       // ToDo: Update Filter Modal to be able to create new filters and update existing filters.
     }
   }
 
-  const mItems = <Fragment>
-    <MenuItem key="tag" onClick={handleItemClick}>
-      <AppListItemTypography>Add new item </AppListItemTypography>
-    </MenuItem>
-    {
-      store.displayFilter &&
-      <MenuItem key="filter" onClick={handleCategoryClick}>
-        <AppListItemTypography>Update filter </AppListItemTypography>
+  const mItems = (
+    <Fragment>
+      <MenuItem key="tag" onClick={handleItemClick}>
+        <AppListItemTypography>Add new item </AppListItemTypography>
       </MenuItem>
-    }
-    {
-      store.displayTag &&
-      <MenuItem key="tag" onClick={handleCategoryClick}>
-        <AppListItemTypography>Update tag </AppListItemTypography>
-      </MenuItem>
-    }
-  </Fragment >
+      {
+        // ToDo: It should read from store or from url to find out if a filtered item is set.
+        (store.displayFilter || urlSearch?.refFilter) &&
+        <MenuItem key="filter" onClick={handleCategoryClick}>
+          <AppListItemTypography>Update filter </AppListItemTypography>
+        </MenuItem>
+      }
+      {
+        // ToDo: It should read from store or from url to find out if a filtered item is set.
+        (store.displayTag || urlSearch?.refTag) &&
+        <MenuItem key="tag" onClick={handleCategoryClick}>
+          <AppListItemTypography>Update tag </AppListItemTypography>
+        </MenuItem>
+      }
+    </Fragment >
+  );
   return (
     <AppContainer mw="md" menuItems={mItems} title={pageHeader}>
       {store.itemModal && <AppItemModal />}
       {store.tagModal && <AppTagModal />}
-      {store.filterModal && <AppFilterModal />}
+      {store.filterModal && <AppFilterModal compPropFilter={passedFilter} />}
       <AppPagePaper>
         <ItemListLayout />
       </AppPagePaper>

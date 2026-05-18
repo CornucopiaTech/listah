@@ -131,7 +131,7 @@ export function FilterListLayout(): ReactNode {
       userId: query.userId,
       query: { ...DefaultItemRead.query, tags: it.tags ? it.tags : [] },
     };
-    const s = { query: q, title: pageTitle, reference: it, }
+    const s = { query: q, title: pageTitle, refFilter: it, }
     const encoded = encodeState(s);
 
     navigate({ to: "/items", search: { s: encoded }, });
