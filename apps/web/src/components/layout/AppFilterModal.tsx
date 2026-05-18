@@ -4,6 +4,7 @@ import {
   Fragment,
   useEffect,
   useRef,
+  useLayoutEffect,
 } from "react";
 import type {
   ChangeEvent,
@@ -51,7 +52,7 @@ import SaveOffIcon from '@iconify-react/lucide/save-off';
 import DeleteIcon from '@iconify-react/mdi/delete';
 import DeleteOffIcon from '@iconify-react/mdi/delete-off';
 import HourglassOutlineIcon from '@iconify-react/material-symbols/hourglass-outline';
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { useVirtualizer, useWindowVirtualizer } from '@tanstack/react-virtual';
 
 
 
@@ -403,6 +404,8 @@ export function WrongAppFilterModal({ compPropFilter }: { compPropFilter?: IFilt
             height: `50vh`,
             width: `100%`,
             overflow: 'auto',
+            contain: 'strict',
+
           }}
         >
           <div
@@ -1003,7 +1006,6 @@ export function AppFilterModal({ compPropFilter }: { compPropFilter?: IFilter })
   const { user } = useUser();
   const theme: AppTheme = useTheme();
   // The scrollable element for your list
-  const parentRef = useRef(null)
 
   const tagQuery = { ...DefaultTagRead, userId: user?.id || "", pageSize: -1, }
   const {
@@ -1086,8 +1088,7 @@ export function AppFilterModal({ compPropFilter }: { compPropFilter?: IFilter })
   }
 
   const tagCategories: ITag[] = data && data.tags ? data.tags : [];
-
-
+  const count = tagCategories.length
   const existingTags = compPropFilter ? new Set([...compPropFilter.tags]) : new Set([]);
 
   type CheckedTagType = {
@@ -1163,14 +1164,6 @@ export function AppFilterModal({ compPropFilter }: { compPropFilter?: IFilter })
       },
     },
   });
-  const rowVirtualizer = useVirtualizer({
-    count: tagCategories.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 35,
-    overscan: 5,
-    lanes: 4,
-  });
-
 
   const formErrorMap = useStore(form.store, (state) => state.errorMap);
   const formTitle = compPropFilter ? "Update filter" : "Add new filter";
@@ -1198,7 +1191,7 @@ export function AppFilterModal({ compPropFilter }: { compPropFilter?: IFilter })
 
   function Dlg(content: ReactNode, actions?: ReactNode) {
     return (
-      <Dialog fullWidth ref={parentRef} maxWidth="md" open={store.filterModal} onClose={closeModal} className="List">
+      <Dialog fullWidth maxWidth="md" open={store.filterModal} onClose={closeModal} >
         <SpaceBetweenBox >
           <DialogTitle
             id="save-dialog-title"
@@ -1250,10 +1243,45 @@ export function AppFilterModal({ compPropFilter }: { compPropFilter?: IFilter })
     );
   }
 
+  const parentRef = useRef<HTMLDivElement | null>(null)
+
+  const parentOffsetRef = useRef(0)
+
+  useLayoutEffect(() => {
+    parentOffsetRef.current = parentRef.current?.offsetTop ?? 0
+  }, [])
+
+  // const getColumnWidth = (index: number) => columns[index].width
+  const getColumnWidth = (index: number) => 100
+
+  const virtualizer = useWindowVirtualizer({
+    count,
+    estimateSize: () => 350,
+    overscan: 5,
+    scrollMargin: parentOffsetRef.current,
+  })
+
+  const columnVirtualizer = useVirtualizer({
+    horizontal: true,
+    count: 4,
+    getScrollElement: () => parentRef.current,
+    estimateSize: getColumnWidth,
+    overscan: 5,
+  })
+  const columnItems = columnVirtualizer.getVirtualItems()
+  const [before, after] =
+    columnItems.length > 0
+      ? [
+        columnItems[0].start,
+        columnVirtualizer.getTotalSize() -
+        columnItems[columnItems.length - 1].end,
+      ]
+      : [0, 0]
+
+
   if (isPending) { return Dlg(<LinearProgress />); }
   if (isError) { return Dlg(<ErrorAlert message={error?.message || "An error occurred. Please try again"} />); }
   if (tagCategories.length == 0) { return Dlg(<AppH6Typography> No tags found </AppH6Typography>) }
-
 
 
   const cont = (
@@ -1288,57 +1316,65 @@ export function AppFilterModal({ compPropFilter }: { compPropFilter?: IFilter })
           </Fragment>
         }
       />
-      <>
+      <div
+        ref={parentRef}
+        style={{ overflowY: 'auto', border: '1px solid #c8c8c8' }}
+      >
         <div
           style={{
-            height: `${rowVirtualizer.getTotalSize()}px`,
-            width: '100%',
+            height: virtualizer.getTotalSize(),
             position: 'relative',
           }}
         >
-          {rowVirtualizer.getVirtualItems().map((virtualRow) => (
-            <div
-              key={virtualRow.index}
-              className={virtualRow.index % 2 ? 'ListItemOdd' : 'ListItemEven'}
-              style={{
-                position: 'absolute', top: 0,
-                left: `${virtualRow.lane * 25}%`,
-                width: 'fit-content',
-                height: `100px`,
-                transform: `translateY(${virtualRow.start}px)`,
-              }}
-            >
-              {/* Row {virtualRow.index} */}
-
-              <form.Field
-                key={virtualRow.index} name={`tags[${virtualRow.index}]`} >
-                {
-                  (subField: any) => {
-                    return (
-                      subField &&
-                      <Chip
-                        color="primary"
-                        // @ts-ignore
-                        icon={subField.state.value.checked && <DoneIcon />}
-                        sx={{ color: theme.palette.background.default, cursor: "pointer" }}
-                        label={<AppBody1ButtonTypography>#{subField.state.value.name}</AppBody1ButtonTypography>}
-                        onClick={() => {
-                          if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-                            console.log(`${subField.state.value.name} onClick: ${subField.state.value.checked}=>${!subField.state.value.checked}`);
-                          }
-                          subField.handleChange({ ...subField.state.value, checked: !subField.state.value.checked });
-                        }}
-                      />
-                    );
-                  }
-                }
-              </form.Field>
-
-
-            </div>
-          ))}
+          {virtualizer.getVirtualItems().map((row) => {
+            console.info('row', row);
+            return (
+              <div
+                key={row.key}
+                data-index={row.index}
+                ref={virtualizer.measureElement}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  transform: `translateY(${row.start - virtualizer.options.scrollMargin
+                    }px)`,
+                  display: 'flex',
+                }}
+              >
+                <div style={{ width: `${before}px` }} />
+                {columnItems.map((column) => {
+                  // console.info('column', column);
+                  return (
+                    <div
+                      key={column.key}
+                      style={{
+                        minHeight: row.index === 0 ? 50 : row.size,
+                        width: getColumnWidth(column.index),
+                        borderBottom: '1px solid #c8c8c8',
+                        borderRight: '1px solid #c8c8c8',
+                        padding: '7px 12px',
+                      }}
+                    >
+                      Col
+                      {/* {row.index === 0 ? (
+                        <div>{columns[column.index].name}</div>
+                      ) : (
+                        <div>{tagCategories[row.index*column.index].name}</div>
+                      )} */}
+                    </div>
+                  )
+                })}
+                <div style={{ width: `${after}px` }} />
+              </div>
+            )
+          })}
         </div>
-      </>
+      </div>
+
+
+
+
     </Fragment >
   );
 
