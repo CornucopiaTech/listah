@@ -98,7 +98,7 @@ export function TagListLayout(): ReactNode {
   if (data) {
     pageInfo.current = {
       pageSize: parseInt(data.pagination.pageSize as unknown as string, 10),
-      totalRecords: parseInt(data.totalRecordCount as unknown as string, 10),
+      totalRecords: data.totalRecordCount ? parseInt(data.totalRecordCount as unknown as string, 10) : 0,
       pageNumber: data.pagination.pageNumber ? parseInt(data.pagination.pageNumber as unknown as string, 10) : query.pagination.pageNumber
     };
   }
@@ -160,6 +160,7 @@ export function TagListLayout(): ReactNode {
           <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
           <Chip
             variant="contained"
+            // @ts-ignore
             color={itemKey % 2 == 0 ? "inherit" : "secondary"}
             label={item.count ? item.count.toString() : "0"}
           />
@@ -184,11 +185,12 @@ export function TagListLayout(): ReactNode {
         {children}
         <TablePagination
           component="div"
-          count={pageInfo.current.totalRecords}
+          count={pageInfo.current?.totalRecords ?? 0}
           page={pageInfo.current.pageNumber}
           onPageChange={handlePageChange}
           rowsPerPage={pageInfo.current.pageSize}
           onRowsPerPageChange={handlePageSizeChange}
+          rowsPerPageOptions={[100, 200, 500, 1000, { label: 'All', value: -1 }]}
         />
       </Fragment>
     );
@@ -198,7 +200,7 @@ export function TagListLayout(): ReactNode {
     return <ListBox> <OuterBox><LinearProgress /></OuterBox></ListBox>
   }
 
-  if (isError || errMsg !== "") {
+  if (!tags && (isError || errMsg !== "")) {
     return <ListBox><OuterBox>
       <Alert severity="error"> {errMsg ? errMsg : error?.message || "An error occurred. Please try again"}</Alert>
     </OuterBox></ListBox>

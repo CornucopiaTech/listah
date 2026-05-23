@@ -17,7 +17,8 @@ export const ZTag = z.object({
   userId: z.string().catch(''),
   name: z.string().catch(''),
   props: z.array(z.string()).catch([]),
-  count: z.number().catch(0),
+  count: z.nullish(z.number()).catch(0),
+  softDelete: z.nullish(z.boolean().catch(false)),
 });
 export type ITag = z.infer<typeof ZTag>;
 
@@ -47,6 +48,7 @@ export type ITagReadRequest = z.infer<typeof ZTagReadRequest>;
 
 export const ZTagReadResponse = z.object({
   tags: z.array(ZTag).catch([]),
+  tagidPropMap: ZTagProperty,
   totalRecordCount: z.number().catch(0),
   query: ZSearch.catch(DefaultTagFilterQuery),
   pagination: ZPagination.catch(DefaultPagination),

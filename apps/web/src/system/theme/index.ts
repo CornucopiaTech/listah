@@ -7,24 +7,16 @@ import { typography } from "@/system/tokens/typography";
 import { components } from "@/system/theme//components";
 
 
-// const theme = responsiveFontSizes(createTheme({
-//   palette: lightPalette,
-//   typography,
-//   components,
-//   shape: {
-//     borderRadius: 1
-//   },
-//   spacing: 8,
-// }));
-// // theme = responsiveFontSizes(theme);
-
 const theme = responsiveFontSizes(createTheme(
   {
+    // @ts-ignore
     "palette": lightPalette,
+    // @ts-ignore
     typography,
     "shape": {
       "borderRadius": 1
     },
+    // @ts-ignore
     components,
   }
 ));

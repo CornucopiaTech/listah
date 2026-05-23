@@ -94,7 +94,7 @@ export function FilterListLayout(): ReactNode {
   if (data) {
     pageInfo.current = {
       pageSize: parseInt(data.pagination.pageSize as unknown as string, 10),
-      totalRecords: parseInt(data.totalRecordCount as unknown as string, 10),
+      totalRecords: data.totalRecordCount ? parseInt(data.totalRecordCount as unknown as string, 10) : 0,
       pageNumber: data.pagination.pageNumber ? parseInt(data.pagination.pageNumber as unknown as string, 10) : query.pagination.pageNumber
     };
   }
@@ -152,6 +152,7 @@ export function FilterListLayout(): ReactNode {
           <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
           <Chip
             variant="contained"
+            // @ts-ignore
             color={itemKey % 2 == 0 ? "inherit" : "secondary"}
             label={item.count ? item.count.toString() : "0"}
           />
@@ -170,6 +171,7 @@ export function FilterListLayout(): ReactNode {
     );
   }
 
+  // ToDo: Include a go-to-page option so user can jump to a specific page and not have to page through the list.
   function ListBox({ children }: { children: ReactNode }): ReactNode {
     return (
       <Fragment>
@@ -181,6 +183,7 @@ export function FilterListLayout(): ReactNode {
           onPageChange={handlePageChange}
           rowsPerPage={pageInfo.current.pageSize}
           onRowsPerPageChange={handlePageSizeChange}
+          rowsPerPageOptions={[100, 200, 500, 1000, { label: 'All', value: -1 }]}
         />
       </Fragment>
     );

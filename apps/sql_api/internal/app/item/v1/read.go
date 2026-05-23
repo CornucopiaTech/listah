@@ -92,6 +92,16 @@ func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServic
 	}
 	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d records from repository", recordCnt))
 
+
+	readIdModel := []model.TagPropertyMapModel{}
+	err = s.BunRepo.Tag.ReadIdProperty(ctx, &readIdModel, sq)
+	if err != nil {
+		s.Logger.LogError(ctx, svcName, rpcName, "Error reading tags property map", errors.Cause(err).Error())
+		return nil, err
+	}
+	// fmt.Printf("\n\n\nreadIdModel  -  %s\n\n\n", readIdModel)
+
+
 	// Convert readModel to response proto
 	// using the model conversion function
 	rs, err := model.TagModelToTagProto(readModel)
@@ -100,8 +110,20 @@ func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServic
 		return nil, err
 	}
 
+
+
+	// Convert readModel to response proto
+	// using the model conversion function
+	ms, err := model.MapModelToTagPropertyMapProto(readIdModel)
+	if err != nil {
+		s.Logger.LogError(ctx, svcName, rpcName, "Error getting tag id proto from tag model", errors.Cause(err).Error())
+		return nil, err
+	}
+
+
 	resm := &pb.ItemServiceReadTagResponse{
 		Tags:             rs,
+		TagidPropMap: ms,
 		TotalRecordCount: int32(recordCnt),
 		UserId:           req.Msg.GetUserId(),
 		Query:            req.Msg.GetQuery(),
@@ -110,66 +132,6 @@ func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServic
 	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful tag read. Read %d records", len(readModel)))
 	return connect.NewResponse(resm), nil
 }
-
-// func (s *Server) ReadTagPropertyObject(ctx context.Context, req *connect.Request[pb.ItemServiceReadTagPropertyRequest]) (*connect.Response[pb.ItemServiceReadTagPropertyResponse], error) {
-// 	rpcName := "Read TagProperty"
-// 	rpcLogName := fmt.Sprintf("POST /%v/%v", svcName, rpcName)
-
-// 	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
-// 	defer span.End()
-// 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
-
-// 	// ToDo: Return List of Tags and a Map of tag_id and props for easy iteration in the frontend
-
-// 	var riq = &pb.ItemServiceReadItemRequest{}
-// 	err := modelutils.MarshalCopyProto(req.Msg, riq)
-// 	if err != nil {
-// 		s.Logger.LogError(ctx, svcName, rpcName, "Error marshalling proto message types", errors.Cause(err).Error())
-// 		return nil, err
-// 	}
-
-// 	sq, err := model.ReadItemRequestToRepoItemSearch(riq)
-// 	if err != nil {
-// 		s.Logger.LogError(ctx, svcName, rpcName, "Error getting search query from request", errors.Cause(err).Error())
-// 		return nil, err
-// 	}
-
-// 	readModel := []*model.TagProperty{}
-
-// 	recordCnt, err := s.BunRepo.Tag.ReadProperty(ctx, &readModel, sq)
-// 	if err != nil {
-// 		s.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
-// 		return nil, err
-// 	}
-// 	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d records from repository", recordCnt))
-
-
-
-// 	// Convert readModel to response proto
-// 	// using the model conversion function
-// 	rs, err := model.TagPropertyModelToTagPropertyProto(readModel)
-// 	if err != nil {
-// 		s.Logger.LogError(ctx, svcName, rpcName, "Error getting tag property proto from tag property model", errors.Cause(err).Error())
-// 		return nil, err
-// 	}
-
-// 	rm, err :=  model.TagPropertyModelToTagPropertyMapProto(readModel)
-// 	if err != nil {
-// 		s.Logger.LogError(ctx, svcName, rpcName, "Error getting tag property map proto from tag property model", errors.Cause(err).Error())
-// 		return nil, err
-// 	}
-
-// 	resm := &pb.ItemServiceReadTagPropertyResponse{
-// 		Props:             rs,
-// 		PropsMap:             rm,
-// 		TotalRecordCount: int32(recordCnt),
-// 		UserId:           req.Msg.GetUserId(),
-// 		Query:            req.Msg.GetQuery(),
-// 		Pagination:       req.Msg.GetPagination(),
-// 	}
-// 	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful tag property read. Read %d records", len(readModel)))
-// 	return connect.NewResponse(resm), nil
-// }
 
 func (s *Server) ReadTagProperty(ctx context.Context, req *connect.Request[pb.ItemServiceReadTagPropertyRequest]) (*connect.Response[pb.ItemServiceReadTagPropertyResponse], error) {
 	rpcName := "Read TagProperty"

@@ -16,6 +16,7 @@ type Tag interface {
 	Upsert(ctx context.Context, m *[]*model.Tag, c *model.UpsertInfo) (interface{}, error)
 	Read(ctx context.Context, m *[]*model.Tag, s *model.ItemSearch) (int, error)
 	ReadProperty(ctx context.Context, m *[]model.TagPropertyMapModel, s *model.ItemSearch) (int, error)
+	ReadIdProperty(ctx context.Context, m *[]model.TagPropertyMapModel, s *model.ItemSearch) error
 }
 
 type tag struct {
@@ -82,20 +83,22 @@ func (a *tag) Read(ctx context.Context, m *[]*model.Tag, s *model.ItemSearch) (i
 
 	cte := `
 		WITH items AS (
-			SELECT
-				t."id", t."user_id", t."name", t.props, COALESCE(COUNT(*), 0) count
+			SELECT *
 			FROM apps.items it
-				LEFT JOIN LATERAL jsonb_array_elements_text(it.tags::JSONB) AS elem(tag_id)
+				LEFT JOIN LATERAL JSONB_ARRAY_ELEMENTS_TEXT(it.tags::JSONB) AS elem(tag_id)
 					ON TRUE
-				FULL OUTER JOIN apps.tags t ON t.user_id = it.user_id AND t.id = elem.tag_id
-			GROUP BY t."id", t."user_id", t."name"
+			WHERE it.user_id::VARCHAR = '` + s.UserId + `'
 		)
 	`
 
 	query := `
-		SELECT it.*
-		FROM items it
-		WHERE it.user_id::VARCHAR = '` + s.UserId + `'
+		SELECT t."id", t."user_id", t."name", t.props::VARCHAR props
+			,SUM(CASE WHEN it.id IS NOT NULL THEN 1 ELSE 0 END) count
+		FROM apps.tags t LEFT JOIN items it
+			ON t.user_id = it.user_id AND t.id = it.tag_id
+		WHERE t.user_id::VARCHAR = '` + s.UserId + `'
+			AND (t.soft_delete = false OR t.soft_delete IS NULL)
+		GROUP BY 1, 2, 3, 4
 	`
 
 	if s.SearchQuery != "" {
@@ -233,6 +236,43 @@ func (a *tag) ReadProperty(ctx context.Context, m *[]model.TagPropertyMapModel, 
 
 	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
 	return recCnt[0].RowCount, nil
+}
+
+func (a *tag) ReadIdProperty(ctx context.Context, m *[]model.TagPropertyMapModel, s *model.ItemSearch) error {
+	ctx, span := otel.Tracer("tag-repository").Start(ctx, "TagRepository ReadIdProperty")
+	defer span.End()
+
+	var activity = "TagReadProperty"
+	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
+
+	cte := `
+		WITH a AS (
+			SELECT DISTINCT REPLACE(propName::VARCHAR, '"', '') propName, tg.id
+			FROM apps.tags tg
+				CROSS JOIN LATERAL JSONB_ARRAY_ELEMENTS(tg.props::JSONB) AS prop_arr(propName)
+			WHERE tg.props IS NOT NULL AND tg.user_id::VARCHAR = '` + s.UserId + `'
+		),
+		b AS (
+			SELECT
+				a.id,
+				--JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('value', a.propName)) props
+				JSON_AGG(DISTINCT a.propName) props
+			FROM a
+			GROUP BY 1
+		)
+	`
+
+	query := ` SELECT JSONB_BUILD_OBJECT(b.id, b.props) props FROM b `
+
+
+	err := a.db.NewRaw(cte+query).Scan(ctx, m)
+	if err != nil {
+		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
+		return err
+	}
+
+	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
+	return nil
 }
 
 func (a *tag) Upsert(ctx context.Context, m *[]*model.Tag, c *model.UpsertInfo) (interface{}, error) {

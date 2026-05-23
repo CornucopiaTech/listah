@@ -922,6 +922,12 @@ components:
           type: integer
           title: totalRecordCount
           format: int32
+        tagidPropMap:
+          type: object
+          title: tagidPropMap
+          additionalProperties:
+            title: value
+            $ref: '#/components/schemas/listah.v1.StringList'
         userId:
           type: string
           title: userId
@@ -932,6 +938,17 @@ components:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceReadTagResponse
+      additionalProperties: false
+    listah.v1.ItemServiceReadTagResponse.TagidPropMapEntry:
+      type: object
+      properties:
+        key:
+          type: string
+          title: key
+        value:
+          title: value
+          $ref: '#/components/schemas/listah.v1.StringList'
+      title: TagidPropMapEntry
       additionalProperties: false
     listah.v1.ItemServiceUpsertFilterRequest:
       type: object

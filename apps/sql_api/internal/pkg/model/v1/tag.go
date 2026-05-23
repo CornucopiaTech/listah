@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	// "fmt"
+	// "encoding/json"
 )
 
 func TagModelToTagProto(m []*Tag) ([]*pb.Tag, error) {
@@ -71,49 +72,6 @@ func TagProtoToTagModel(msg []*pb.Tag, genId bool) ([]*Tag, []string, error) {
 	return items, res, nil
 }
 
-// func TagPropertyModelToTagPropertyProto(m []*TagProperty) ([]*pb.TagProperty, error) {
-// 	c := []*pb.TagProperty{}
-// 	for _, v := range m {
-// 		to := []*pb.Tag{}
-// 		for _, iv := range v.TagObjs {
-// 			to = append(to, &pb.Tag{
-// 				Id:         iv.Id,
-// 				UserId:     iv.UserId,
-// 				Name:       iv.Name,
-// 				Props:      iv.Props,
-// 			})
-// 		}
-// 		c = append(c, &pb.TagProperty{
-// 			UserId:     v.UserId,
-// 			Name:       v.Name,
-// 			TagObjs:      to,
-// 		})
-// 	}
-// 	return c, nil
-// }
-
-// func TagPropertyModelToTagPropertyMapObjectProto(m []*TagProperty) (map[string]*pb.InnerPropTagMap, error) {
-// 	r := map[string]*pb.InnerPropTagMap{}
-// 	for _, v0 := range m {
-// 		if _, ok0 := r[v0.Name]; !ok0 {
-// 			r[v0.Name] = &pb.InnerPropTagMap{
-// 				Value: map[string] *pb.Tag{},
-// 			}
-// 		}
-// 		for _, v1 := range v0.TagObjs {
-// 			if _, ok1 := r[v0.Name].Value[v1.Id]; !ok1 {
-// 				r[v0.Name].Value[v1.Id] = &pb.Tag{
-// 					Id:         v1.Id,
-// 					UserId:     v1.UserId,
-// 					Name:       v1.Name,
-// 					Props:      v1.Props,
-// 				}
-// 			}
-// 		}
-// 	}
-// 	return r, nil
-// }
-
 func TagPropertyModelToTagPropertyMapProto(m []TagPropertyMapModel) (map[string]*pb.StringList, error) {
 	r := map[string]*pb.StringList{}
 	for _, v0 := range m {
@@ -123,5 +81,19 @@ func TagPropertyModelToTagPropertyMapProto(m []TagPropertyMapModel) (map[string]
 			r[k] = &pb.StringList{	Value: v1 }
 		}
 	}
+	return r, nil
+}
+
+func MapModelToTagPropertyMapProto(m []TagPropertyMapModel) (map[string]*pb.StringList, error) {
+	r := map[string]*pb.StringList{}
+
+	for _, v0 := range m {
+		// fmt.Printf("\n\n\ni -  %s\n\n\n", i)
+		// fmt.Printf("\n\n\nv0 -  %s\n\n\n", v0)
+		for k, v1 := range v0.Props {
+			r[k] = &pb.StringList{	Value: v1 }
+		}
+	}
+
 	return r, nil
 }

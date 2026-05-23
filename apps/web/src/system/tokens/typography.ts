@@ -16,7 +16,7 @@ export const typography = {
   h3: { fontSize: "3rem", fontWeight: 700, textAlign: "center" },
   h4: { fontSize: "2.5rem", fontWeight: 700, textAlign: "center" },
   h5: { fontSize: "2rem", fontWeight: 700, textAlign: "center" },
-  h6: { fontSize: "1.5rem", fontWeight: 700, },
+  h6: { fontSize: "1.5rem", fontWeight: 700, textAlign: "center", },
   body1: { fontSize: "1.2rem", fontWeight: 500 },
   body2: { fontSize: "1rem", fontWeight: 500 },
   condensedBody2: {

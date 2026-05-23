@@ -104,8 +104,8 @@ export function Items() {
   return (
     <AppContainer mw="md" menuItems={mItems} title={pageHeader}>
       {store.itemModal && <AppItemModal />}
-      {store.tagModal && <AppTagModal />}
-      {store.filterModal && <AppFilterModal compPropFilter={passedFilter} />}
+      {store.tagModal && <AppTagModal itemTag={passedTag} />}
+      {store.filterModal && <AppFilterModal itemFilter={passedFilter} />}
       <AppPagePaper>
         <ItemListLayout />
       </AppPagePaper>

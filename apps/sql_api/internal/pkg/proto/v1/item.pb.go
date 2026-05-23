@@ -313,6 +313,7 @@ type ItemServiceReadTagResponse struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Tags             []*Tag                 `protobuf:"bytes,1,rep,name=tags,proto3" json:"tags,omitempty"`
 	TotalRecordCount int32                  `protobuf:"varint,2,opt,name=totalRecordCount,proto3" json:"totalRecordCount,omitempty"`
+	TagidPropMap     map[string]*StringList `protobuf:"bytes,3,rep,name=tagidPropMap,proto3" json:"tagidPropMap,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	UserId           string                 `protobuf:"bytes,500,opt,name=userId,proto3" json:"userId,omitempty"`
 	Query            *Search                `protobuf:"bytes,501,opt,name=query,proto3" json:"query,omitempty"`
 	Pagination       *Pagination            `protobuf:"bytes,502,opt,name=pagination,proto3" json:"pagination,omitempty"`
@@ -362,6 +363,13 @@ func (x *ItemServiceReadTagResponse) GetTotalRecordCount() int32 {
 		return x.TotalRecordCount
 	}
 	return 0
+}
+
+func (x *ItemServiceReadTagResponse) GetTagidPropMap() map[string]*StringList {
+	if x != nil {
+		return x.TagidPropMap
+	}
+	return nil
 }
 
 func (x *ItemServiceReadTagResponse) GetUserId() string {
@@ -863,15 +871,19 @@ const file_v1_item_proto_rawDesc = "" +
 	"\x05query\x18\xf5\x03 \x01(\v2\x11.listah.v1.SearchR\x05query\x126\n" +
 	"\n" +
 	"pagination\x18\xf6\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
-	"pagination\"\xe7\x01\n" +
+	"pagination\"\x9c\x03\n" +
 	"\x1aItemServiceReadTagResponse\x12\"\n" +
 	"\x04tags\x18\x01 \x03(\v2\x0e.listah.v1.TagR\x04tags\x12*\n" +
-	"\x10totalRecordCount\x18\x02 \x01(\x05R\x10totalRecordCount\x12\x17\n" +
+	"\x10totalRecordCount\x18\x02 \x01(\x05R\x10totalRecordCount\x12[\n" +
+	"\ftagidPropMap\x18\x03 \x03(\v27.listah.v1.ItemServiceReadTagResponse.TagidPropMapEntryR\ftagidPropMap\x12\x17\n" +
 	"\x06userId\x18\xf4\x03 \x01(\tR\x06userId\x12(\n" +
 	"\x05query\x18\xf5\x03 \x01(\v2\x11.listah.v1.SearchR\x05query\x126\n" +
 	"\n" +
 	"pagination\x18\xf6\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
-	"pagination\"A\n" +
+	"pagination\x1aV\n" +
+	"\x11TagidPropMapEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12+\n" +
+	"\x05value\x18\x02 \x01(\v2\x15.listah.v1.StringListR\x05value:\x028\x01\"A\n" +
 	"\x1bItemServiceUpsertTagRequest\x12\"\n" +
 	"\x04tags\x18\x01 \x03(\v2\x0e.listah.v1.TagR\x04tags\"6\n" +
 	"\x1cItemServiceUpsertTagResponse\x12\x16\n" +
@@ -937,7 +949,7 @@ func file_v1_item_proto_rawDescGZIP() []byte {
 	return file_v1_item_proto_rawDescData
 }
 
-var file_v1_item_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_v1_item_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_v1_item_proto_goTypes = []any{
 	(*ItemServiceReadItemRequest)(nil),         // 0: listah.v1.ItemServiceReadItemRequest
 	(*ItemServiceReadItemResponse)(nil),        // 1: listah.v1.ItemServiceReadItemResponse
@@ -953,58 +965,61 @@ var file_v1_item_proto_goTypes = []any{
 	(*ItemServiceReadFilterResponse)(nil),      // 11: listah.v1.ItemServiceReadFilterResponse
 	(*ItemServiceUpsertFilterRequest)(nil),     // 12: listah.v1.ItemServiceUpsertFilterRequest
 	(*ItemServiceUpsertFilterResponse)(nil),    // 13: listah.v1.ItemServiceUpsertFilterResponse
-	nil,                                        // 14: listah.v1.ItemServiceReadTagPropertyResponse.PropsEntry
-	(*Search)(nil),                             // 15: listah.v1.Search
-	(*Pagination)(nil),                         // 16: listah.v1.Pagination
-	(*Item)(nil),                               // 17: listah.v1.Item
-	(*Tag)(nil),                                // 18: listah.v1.Tag
-	(*Filter)(nil),                             // 19: listah.v1.Filter
-	(*StringList)(nil),                         // 20: listah.v1.StringList
+	nil,                                        // 14: listah.v1.ItemServiceReadTagResponse.TagidPropMapEntry
+	nil,                                        // 15: listah.v1.ItemServiceReadTagPropertyResponse.PropsEntry
+	(*Search)(nil),                             // 16: listah.v1.Search
+	(*Pagination)(nil),                         // 17: listah.v1.Pagination
+	(*Item)(nil),                               // 18: listah.v1.Item
+	(*Tag)(nil),                                // 19: listah.v1.Tag
+	(*Filter)(nil),                             // 20: listah.v1.Filter
+	(*StringList)(nil),                         // 21: listah.v1.StringList
 }
 var file_v1_item_proto_depIdxs = []int32{
-	15, // 0: listah.v1.ItemServiceReadItemRequest.query:type_name -> listah.v1.Search
-	16, // 1: listah.v1.ItemServiceReadItemRequest.pagination:type_name -> listah.v1.Pagination
-	17, // 2: listah.v1.ItemServiceReadItemResponse.items:type_name -> listah.v1.Item
-	15, // 3: listah.v1.ItemServiceReadItemResponse.query:type_name -> listah.v1.Search
-	16, // 4: listah.v1.ItemServiceReadItemResponse.pagination:type_name -> listah.v1.Pagination
-	17, // 5: listah.v1.ItemServiceUpsertItemRequest.items:type_name -> listah.v1.Item
-	15, // 6: listah.v1.ItemServiceReadTagRequest.query:type_name -> listah.v1.Search
-	16, // 7: listah.v1.ItemServiceReadTagRequest.pagination:type_name -> listah.v1.Pagination
-	18, // 8: listah.v1.ItemServiceReadTagResponse.tags:type_name -> listah.v1.Tag
-	15, // 9: listah.v1.ItemServiceReadTagResponse.query:type_name -> listah.v1.Search
-	16, // 10: listah.v1.ItemServiceReadTagResponse.pagination:type_name -> listah.v1.Pagination
-	18, // 11: listah.v1.ItemServiceUpsertTagRequest.tags:type_name -> listah.v1.Tag
-	15, // 12: listah.v1.ItemServiceReadTagPropertyRequest.query:type_name -> listah.v1.Search
-	16, // 13: listah.v1.ItemServiceReadTagPropertyRequest.pagination:type_name -> listah.v1.Pagination
-	14, // 14: listah.v1.ItemServiceReadTagPropertyResponse.props:type_name -> listah.v1.ItemServiceReadTagPropertyResponse.PropsEntry
-	15, // 15: listah.v1.ItemServiceReadTagPropertyResponse.query:type_name -> listah.v1.Search
-	16, // 16: listah.v1.ItemServiceReadTagPropertyResponse.pagination:type_name -> listah.v1.Pagination
-	15, // 17: listah.v1.ItemServiceReadFilterRequest.query:type_name -> listah.v1.Search
-	16, // 18: listah.v1.ItemServiceReadFilterRequest.pagination:type_name -> listah.v1.Pagination
-	19, // 19: listah.v1.ItemServiceReadFilterResponse.filters:type_name -> listah.v1.Filter
-	15, // 20: listah.v1.ItemServiceReadFilterResponse.query:type_name -> listah.v1.Search
-	16, // 21: listah.v1.ItemServiceReadFilterResponse.pagination:type_name -> listah.v1.Pagination
-	19, // 22: listah.v1.ItemServiceUpsertFilterRequest.filters:type_name -> listah.v1.Filter
-	20, // 23: listah.v1.ItemServiceReadTagPropertyResponse.PropsEntry.value:type_name -> listah.v1.StringList
-	0,  // 24: listah.v1.ItemService.ReadItem:input_type -> listah.v1.ItemServiceReadItemRequest
-	2,  // 25: listah.v1.ItemService.UpsertItem:input_type -> listah.v1.ItemServiceUpsertItemRequest
-	8,  // 26: listah.v1.ItemService.ReadTagProperty:input_type -> listah.v1.ItemServiceReadTagPropertyRequest
-	4,  // 27: listah.v1.ItemService.ReadTag:input_type -> listah.v1.ItemServiceReadTagRequest
-	6,  // 28: listah.v1.ItemService.UpsertTag:input_type -> listah.v1.ItemServiceUpsertTagRequest
-	10, // 29: listah.v1.ItemService.ReadFilter:input_type -> listah.v1.ItemServiceReadFilterRequest
-	12, // 30: listah.v1.ItemService.UpsertFilter:input_type -> listah.v1.ItemServiceUpsertFilterRequest
-	1,  // 31: listah.v1.ItemService.ReadItem:output_type -> listah.v1.ItemServiceReadItemResponse
-	3,  // 32: listah.v1.ItemService.UpsertItem:output_type -> listah.v1.ItemServiceUpsertItemResponse
-	9,  // 33: listah.v1.ItemService.ReadTagProperty:output_type -> listah.v1.ItemServiceReadTagPropertyResponse
-	5,  // 34: listah.v1.ItemService.ReadTag:output_type -> listah.v1.ItemServiceReadTagResponse
-	7,  // 35: listah.v1.ItemService.UpsertTag:output_type -> listah.v1.ItemServiceUpsertTagResponse
-	11, // 36: listah.v1.ItemService.ReadFilter:output_type -> listah.v1.ItemServiceReadFilterResponse
-	13, // 37: listah.v1.ItemService.UpsertFilter:output_type -> listah.v1.ItemServiceUpsertFilterResponse
-	31, // [31:38] is the sub-list for method output_type
-	24, // [24:31] is the sub-list for method input_type
-	24, // [24:24] is the sub-list for extension type_name
-	24, // [24:24] is the sub-list for extension extendee
-	0,  // [0:24] is the sub-list for field type_name
+	16, // 0: listah.v1.ItemServiceReadItemRequest.query:type_name -> listah.v1.Search
+	17, // 1: listah.v1.ItemServiceReadItemRequest.pagination:type_name -> listah.v1.Pagination
+	18, // 2: listah.v1.ItemServiceReadItemResponse.items:type_name -> listah.v1.Item
+	16, // 3: listah.v1.ItemServiceReadItemResponse.query:type_name -> listah.v1.Search
+	17, // 4: listah.v1.ItemServiceReadItemResponse.pagination:type_name -> listah.v1.Pagination
+	18, // 5: listah.v1.ItemServiceUpsertItemRequest.items:type_name -> listah.v1.Item
+	16, // 6: listah.v1.ItemServiceReadTagRequest.query:type_name -> listah.v1.Search
+	17, // 7: listah.v1.ItemServiceReadTagRequest.pagination:type_name -> listah.v1.Pagination
+	19, // 8: listah.v1.ItemServiceReadTagResponse.tags:type_name -> listah.v1.Tag
+	14, // 9: listah.v1.ItemServiceReadTagResponse.tagidPropMap:type_name -> listah.v1.ItemServiceReadTagResponse.TagidPropMapEntry
+	16, // 10: listah.v1.ItemServiceReadTagResponse.query:type_name -> listah.v1.Search
+	17, // 11: listah.v1.ItemServiceReadTagResponse.pagination:type_name -> listah.v1.Pagination
+	19, // 12: listah.v1.ItemServiceUpsertTagRequest.tags:type_name -> listah.v1.Tag
+	16, // 13: listah.v1.ItemServiceReadTagPropertyRequest.query:type_name -> listah.v1.Search
+	17, // 14: listah.v1.ItemServiceReadTagPropertyRequest.pagination:type_name -> listah.v1.Pagination
+	15, // 15: listah.v1.ItemServiceReadTagPropertyResponse.props:type_name -> listah.v1.ItemServiceReadTagPropertyResponse.PropsEntry
+	16, // 16: listah.v1.ItemServiceReadTagPropertyResponse.query:type_name -> listah.v1.Search
+	17, // 17: listah.v1.ItemServiceReadTagPropertyResponse.pagination:type_name -> listah.v1.Pagination
+	16, // 18: listah.v1.ItemServiceReadFilterRequest.query:type_name -> listah.v1.Search
+	17, // 19: listah.v1.ItemServiceReadFilterRequest.pagination:type_name -> listah.v1.Pagination
+	20, // 20: listah.v1.ItemServiceReadFilterResponse.filters:type_name -> listah.v1.Filter
+	16, // 21: listah.v1.ItemServiceReadFilterResponse.query:type_name -> listah.v1.Search
+	17, // 22: listah.v1.ItemServiceReadFilterResponse.pagination:type_name -> listah.v1.Pagination
+	20, // 23: listah.v1.ItemServiceUpsertFilterRequest.filters:type_name -> listah.v1.Filter
+	21, // 24: listah.v1.ItemServiceReadTagResponse.TagidPropMapEntry.value:type_name -> listah.v1.StringList
+	21, // 25: listah.v1.ItemServiceReadTagPropertyResponse.PropsEntry.value:type_name -> listah.v1.StringList
+	0,  // 26: listah.v1.ItemService.ReadItem:input_type -> listah.v1.ItemServiceReadItemRequest
+	2,  // 27: listah.v1.ItemService.UpsertItem:input_type -> listah.v1.ItemServiceUpsertItemRequest
+	8,  // 28: listah.v1.ItemService.ReadTagProperty:input_type -> listah.v1.ItemServiceReadTagPropertyRequest
+	4,  // 29: listah.v1.ItemService.ReadTag:input_type -> listah.v1.ItemServiceReadTagRequest
+	6,  // 30: listah.v1.ItemService.UpsertTag:input_type -> listah.v1.ItemServiceUpsertTagRequest
+	10, // 31: listah.v1.ItemService.ReadFilter:input_type -> listah.v1.ItemServiceReadFilterRequest
+	12, // 32: listah.v1.ItemService.UpsertFilter:input_type -> listah.v1.ItemServiceUpsertFilterRequest
+	1,  // 33: listah.v1.ItemService.ReadItem:output_type -> listah.v1.ItemServiceReadItemResponse
+	3,  // 34: listah.v1.ItemService.UpsertItem:output_type -> listah.v1.ItemServiceUpsertItemResponse
+	9,  // 35: listah.v1.ItemService.ReadTagProperty:output_type -> listah.v1.ItemServiceReadTagPropertyResponse
+	5,  // 36: listah.v1.ItemService.ReadTag:output_type -> listah.v1.ItemServiceReadTagResponse
+	7,  // 37: listah.v1.ItemService.UpsertTag:output_type -> listah.v1.ItemServiceUpsertTagResponse
+	11, // 38: listah.v1.ItemService.ReadFilter:output_type -> listah.v1.ItemServiceReadFilterResponse
+	13, // 39: listah.v1.ItemService.UpsertFilter:output_type -> listah.v1.ItemServiceUpsertFilterResponse
+	33, // [33:40] is the sub-list for method output_type
+	26, // [26:33] is the sub-list for method input_type
+	26, // [26:26] is the sub-list for extension type_name
+	26, // [26:26] is the sub-list for extension extendee
+	0,  // [0:26] is the sub-list for field type_name
 }
 
 func init() { file_v1_item_proto_init() }
@@ -1019,7 +1034,7 @@ func file_v1_item_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_item_proto_rawDesc), len(file_v1_item_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   15,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

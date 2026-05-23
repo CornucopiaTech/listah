@@ -137,7 +137,7 @@ export const components = {
       },
       // 2b. Error Text Button
       {
-        props: { variant: 'contained', color: 'error' },
+        props: { variant: 'text', color: 'error' },
         style: {
           color: lightPalette.error.main,
           '&:hover': {
@@ -147,7 +147,7 @@ export const components = {
       },
       // 3b. Warning Text Button
       {
-        props: { variant: 'contained', color: 'warning' },
+        props: { variant: 'text', color: 'warning' },
         style: {
           color: lightPalette.warning.main,
           '&:hover': {
@@ -157,7 +157,7 @@ export const components = {
       },
       // 4b. Default / Inherit Text Button
       {
-        props: { variant: 'contained', color: 'inherit' },
+        props: { variant: 'text', color: 'inherit' },
         style: {
           color: lightPalette.primary.main,
           '&:hover': {
@@ -175,6 +175,7 @@ export const components = {
       // 100. Hero Contained / Inherit Button
       {
         props: { variant: 'heroContained', color: 'inherit' },
+        // @ts-ignore
         style: ({ theme }) => ({
           display: 'flex',
           marginLeft: "auto",
@@ -340,6 +341,7 @@ export const components = {
       icon: false,
     },
     styleOverrides: {
+      // @ts-ignore
       root: ({ theme }) => ({
         // // Set your custom font size
         // fontSize: '1.1rem',
@@ -358,6 +360,7 @@ export const components = {
   },
   MuiDialogContent: {
     styleOverrides: {
+      // @ts-ignore
       root: ({ theme }) => ({
         '&.MuiDialogContent-root': {
           display: 'block',
@@ -386,6 +389,7 @@ export const components = {
     variants: [
       {
         props: { variant: 'form' },
+        // @ts-ignore
         style: ({ theme }) => ({
           display: 'block',
           width: "sm",

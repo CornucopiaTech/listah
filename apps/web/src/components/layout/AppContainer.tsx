@@ -5,7 +5,6 @@ import {
 } from 'react';
 import {
   Outlet,
-  useMatches,
 
 } from '@tanstack/react-router';
 import type {
@@ -31,11 +30,6 @@ type widthType = "xs" | "sm" | "md" | "lg" | "xl";
 
 
 export function AppContainerShell() {
-  // const rContext = useMatches().find(m => m.context?.user)?.context;
-  // console.info('rContext', rContext);
-  // if (rContext?.user === undefined || rContext?.user === null || rContext?.user === "") {
-  //   return <LinearProgress />
-  // }
   const { isSignedIn, isLoaded, } = useUser();
   if (!isLoaded) return <LinearProgress />
   if (!isSignedIn) return <Landing />

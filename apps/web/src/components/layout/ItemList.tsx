@@ -99,7 +99,7 @@ export function ItemListLayout(): ReactNode {
   if (data) {
     pageInfo.current = {
       pageSize: parseInt(data.pagination.pageSize as unknown as string, 10),
-      totalRecords: parseInt(data.totalRecordCount as unknown as string, 10),
+      totalRecords: data.totalRecordCount ? parseInt(data.totalRecordCount as unknown as string, 10) : 0,
       pageNumber: data.pagination.pageNumber ? parseInt(data.pagination.pageNumber as unknown as string, 10) : query.pagination.pageNumber
     };
   }
@@ -167,6 +167,7 @@ export function ItemListLayout(): ReactNode {
     );
   }
 
+
   function ListBox({ children }: { children: ReactNode }): ReactNode {
     return (
       <Fragment>
@@ -178,6 +179,7 @@ export function ItemListLayout(): ReactNode {
           onPageChange={handlePageChange}
           rowsPerPage={pageInfo.current.pageSize}
           onRowsPerPageChange={handlePageSizeChange}
+          rowsPerPageOptions={[100, 200, 500, 1000, { label: 'All', value: -1 }]}
         />
       </Fragment>
     );

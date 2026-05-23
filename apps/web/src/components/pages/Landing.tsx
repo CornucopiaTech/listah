@@ -18,6 +18,7 @@ export function Landing() {
           <Typography variant="h5"> Manage task, shopping, and project lists. </Typography>
           <Typography variant="h5"> All in one place.</Typography>
           <SignInButton mode="modal">
+            {/* @ts-ignore */}
             <Button variant='heroContained' color="inherit">
               <Typography variant="h6"> Get Started - It's free! </Typography>
             </Button>

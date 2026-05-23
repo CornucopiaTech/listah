@@ -82,7 +82,7 @@ import {
 
 
 
-export function AppFilterModal({ compPropFilter }: { compPropFilter?: IFilter }): ReactNode {
+export function AppFilterModal({ itemFilter }: { itemFilter?: IFilter }): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
   const queryClient = useQueryClient();
   const { user } = useUser();
@@ -161,6 +161,7 @@ export function AppFilterModal({ compPropFilter }: { compPropFilter?: IFilter })
       tags: checkedCategories,
       filters: [],
       count: 0,
+      softDelete: value?.softDelete,
     };
     if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
       console.info("In formSubmission - submitvalue ", submitValue);
@@ -169,7 +170,7 @@ export function AppFilterModal({ compPropFilter }: { compPropFilter?: IFilter })
   }
 
   const tagCategories: ITag[] = data && data.tags ? data.tags : [];
-  const existingTags = compPropFilter ? new Set([...compPropFilter.tags]) : new Set([]);
+  const existingTags = itemFilter ? new Set([...itemFilter.tags]) : new Set([]);
 
   type CheckedTagType = {
     name: string,
@@ -185,8 +186,8 @@ export function AppFilterModal({ compPropFilter }: { compPropFilter?: IFilter })
   };
 
   let newFormData: FormObjectType = {
-    name: compPropFilter?.name ?? "",
-    id: compPropFilter?.id ?? "",
+    name: itemFilter?.name ?? "",
+    id: itemFilter?.id ?? "",
     tags: [],
     softDelete: false,
   };
@@ -245,7 +246,7 @@ export function AppFilterModal({ compPropFilter }: { compPropFilter?: IFilter })
   });
 
   const formErrorMap = useStore(form.store, (state) => state.errorMap);
-  const formTitle = compPropFilter ? "Update filter" : "Add new filter";
+  const formTitle = itemFilter ? "Update filter" : "Add new filter";
 
   function Dlg(content: ReactNode, actions?: ReactNode) {
     return (
@@ -279,8 +280,10 @@ export function AppFilterModal({ compPropFilter }: { compPropFilter?: IFilter })
   }
 
   const gridComponents = {
+    // @ts-ignore
     List: forwardRef(({ style, children, ...props }, ref) => (
       <div
+        // @ts-ignore
         ref={ref}
         {...props}
         style={{
@@ -292,6 +295,7 @@ export function AppFilterModal({ compPropFilter }: { compPropFilter?: IFilter })
         {children}
       </div>
     )),
+    // @ts-ignore
     Item: ({ children, ...props }) => (
       <div
         {...props}
@@ -384,6 +388,7 @@ export function AppFilterModal({ compPropFilter }: { compPropFilter?: IFilter })
         <VirtuosoGrid
           style={{ height: "50vh" }}
           totalCount={tagCategories.length}
+          // @ts-ignore
           components={gridComponents}
           itemContent={(index) => eachItem(index)}
         />

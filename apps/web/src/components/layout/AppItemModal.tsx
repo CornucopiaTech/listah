@@ -101,6 +101,8 @@ import { AppModalCloseButton } from "@/components/core/AppButton";
 type itemFields = "id" | "userId" | "name" | "note" | `props[${number}]` | "softDelete" | `tags[${number}]`
 
 
+// ToDo: Check the props of the tags for any recent changes to the prop.
+
 
 export function AppItemModal(): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
@@ -119,42 +121,96 @@ export function AppItemModal(): ReactNode {
   const {
     isPending, isError, data, error
   }: UseSuspenseQueryResult<ITagReadResponse> = useSuspenseQuery(tagGroupOptions(tagQuery));
-  const tags: ITag[] = data && data.tags ? data.tags : [];
-  const item: IItem = useBoundStore((state) => state.displayItem);
+
+
+  const tags: ITag[] = data?.tags ?? [];
   const knownTagNames = useRef<Set<string>>(new Set(tags.map(p => p.name)));
+  const item: IItem = useBoundStore((state) => state.displayItem);
+  const tagPropMap = new Map<string, { value: string[] }>(Object.entries(data?.tagidPropMap ?? {}));
+
+  // Get the list of all properties from tags in the items list.
+  let tagProps: string[] = []
+  item.tags.forEach(
+    (it) => (tagProps = [...tagProps, ...tagPropMap?.get(it)?.value ?? []])
+  );
+
+  // Get the values for the identified properties.
+  const tagPropsObj = tagProps.map((tg) => {
+    const ap = item?.propObjs?.filter(ip => ip.key == tg) ?? []
+    if (ap.length == 0) {
+      return { key: tg, value: "" }
+    }
+    return ap[0]
+  })
+
+  // const uniqProps = new Set([...tagProps, ...])
   const formData = {
     id: item.id, userId: item.userId, name: item.name,
-    note: item.note, props: item.propObjs,
+    note: item.note, props: tagPropsObj,
     tags: item.tagObjs, softDelete: item.softDelete
   };
+
+
+  function validateTags(fTagList: ITag[]) {
+    let errs = "";
+    let newMsg = "";
+    if (fTagList.filter((t) => t.name != "").length < 1) {
+      errs += "Item must contain one tag at least ";
+    }
+    // const unrecognisedTags = fTagList.filter((t) => !knownTagNames.current.has(t.name));
+    const unrecognisedTags = fTagList.filter((t) => t.name != "").filter((t) => !knownTagNames.current.has(t.name));
+    if (unrecognisedTags.length > 0) {
+      const unregognisedNames = unrecognisedTags.map(it => it.name).join(',')
+      newMsg = `Unrecognised tag(s): (${unregognisedNames}) will not be saved.`;
+      errs += errs == "" ? newMsg : "\n" + newMsg;
+    }
+    if (errs !== "") {
+      return errs
+    }
+  }
+
+  function validateTag(fTag: ITag) {
+    let errList: string[] = [];
+    if (fTag.name === "") {
+      errList = [...errList, "Tag name is required"]
+    }
+    if (!knownTagNames.current.has(fTag.name) && fTag.name != "") {
+      errList = [...errList, `Unrecognised tag (${fTag.name}) will not be saved. Please add new tag to app.`]
+    }
+    if (errList.length > 0) {
+      return errList.join("\n")
+    }
+  }
+
+  function validateName(fieldName: string) {
+    if (!fieldName || fieldName.length < 1) {
+      return "Item name is required";
+    }
+  }
+
+  function formValidator({ value }: { value: IFormItem }) {
+    const invalidName = validateName(value.name as string);
+    if (invalidName) {
+      return invalidName;
+    }
+
+    const invalidTag = validateTags(value.tags);
+    if (invalidTag) {
+      return invalidTag
+    }
+    return undefined;
+  }
+
   // @ts-ignore
   const form = useForm<IFormItem>({
     defaultValues: formData,
     onSubmit: formSubmission,
     validators: {
       onChange({ value }: { value: IFormItem }) {
-        const invalidName = nameValidation(value.name);
-        if (invalidName) {
-          return invalidName;
-        }
-        const invalidTag = tagsValidation(value.tags as unknown as ITag[]);
-        if (invalidTag) {
-          const msg = formErrorMap.onChange ? "\n" + invalidTag : invalidTag;
-          return msg;
-        }
-        return undefined
+        return formValidator({ value });
       },
       onBlur({ value }: { value: IFormItem }) {
-        const invalidName = nameValidation(value.name);
-        if (invalidName) {
-          return invalidName;
-        }
-        const invalidTag = tagsValidation(value.tags as unknown as ITag[]);
-        if (invalidTag) {
-          const msg = formErrorMap.onBlur ? "\n" + invalidTag : invalidTag;
-          return msg;
-        }
-        return undefined
+        return formValidator({ value });
       },
     },
   });
@@ -249,12 +305,12 @@ export function AppItemModal(): ReactNode {
         validators={{
           onChange: ({ value }) => {
             if (key == "name") {
-              return nameValidation(value as unknown as string)
+              return validateName(value as unknown as string)
             }
           },
           onBlur: ({ value }) => {
             if (key == "name") {
-              return nameValidation(value as unknown as string)
+              return validateName(value as unknown as string)
             }
           },
         }}
@@ -295,16 +351,19 @@ export function AppItemModal(): ReactNode {
     // ToDo: Change the font color of the tag that corresponds to a property that is in focus.
 
     return (
-      <form.Field name="tags" mode="array" key="tag-parent">
+      <form.Field name="tags" mode="array" key="tag-parent"
+        validators={{
+          onChange: ({ value }) => validateTags(value as unknown as Array<ITag>),
+          onBlur: ({ value }) => validateTags(value as unknown as Array<ITag>),
+        }}>
         {
           (field) => {
             return <Fragment>
+              {/* @ts-ignore */}
               <ItemFormTagBox key="tags" component="fieldset">
-                <legend style={{ padding: '0 0.5rem', color: theme.palette.primary.main }}>tags</legend>
-                <Button disableElevation variant="action" onClick={() => field.pushValue(DefaultTag)} >
-                  <Typography variant="body2">
-                    Click to add new tag
-                  </Typography>
+                <legend style={{ padding: '0 0.5rem', color: theme.palette.primary.main, fontSize: "12px" }}>tags</legend>
+                <Button variant="text" color="inherit" onClick={() => field.pushValue(DefaultTag)} >
+                  Click here to add a new tag
                 </Button>
                 {
                   field.state.value && field.state.value.length > 0 &&
@@ -314,8 +373,8 @@ export function AppItemModal(): ReactNode {
                         <form.Field
                           key={i} name={`tags[${i}]`}
                           validators={{
-                            onChange: ({ value }) => tagValidation(value as unknown as ITag),
-                            onBlur: ({ value }) => tagValidation(value as unknown as ITag),
+                            onChange: ({ value }) => validateTag(value as unknown as ITag),
+                            onBlur: ({ value }) => validateTag(value as unknown as ITag),
                           }}
                         >{
                             (subField: any) => {
@@ -446,6 +505,7 @@ export function AppItemModal(): ReactNode {
     const sval = newValue ? newValue : "";
     if (sval == "") {
       // If the value was deleted, replace the tag object with the default tag object.
+      // @ts-ignore
       setTagToDelete({ c: childF, p: parentF });
     } else {
       // If a nonzero value is added, then use the information to update the tag object.
@@ -472,7 +532,9 @@ export function AppItemModal(): ReactNode {
   function handleTagDeletePostConfirm(uInput: boolean) {
     // if (yesDelete) {
     if (uInput) {
+      // @ts-ignore
       const par = tagToDelete?.p;
+      // @ts-ignore
       const chd = tagToDelete?.c;
       const fField = par?.state?.value as unknown as ITag[] ?? [];
       const newTagList = fField.filter(fsv => fsv.id != chd.state.value.id);
@@ -491,43 +553,6 @@ export function AppItemModal(): ReactNode {
     setTagToDelete(null);
   }
 
-  function tagsValidation(fTagList: ITag[]) {
-    let errs = "";
-    let newMsg = "";
-    if (fTagList.filter((t) => t.name != "").length < 1) {
-      errs += "Item must contain one tag at least ";
-    }
-    // const unrecognisedTags = fTagList.filter((t) => !knownTagNames.current.has(t.name));
-    const unrecognisedTags = fTagList.filter((t) => t.name != "").filter((t) => !knownTagNames.current.has(t.name));
-    if (unrecognisedTags.length > 0) {
-      const unregognisedNames = unrecognisedTags.map(it => it.name).join(',')
-      newMsg = `Unrecognised tag(s): (${unregognisedNames}) will not be saved.`;
-      errs += errs == "" ? newMsg : "\n" + newMsg;
-    }
-    if (errs !== "") {
-      return errs
-    }
-  }
-
-  function tagValidation(fTag: ITag) {
-    let errList: string[] = [];
-    if (fTag.name === "") {
-      errList = [...errList, "Tag name is required"]
-    }
-    if (!knownTagNames.current.has(fTag.name) && fTag.name != "") {
-      errList = [...errList, `Unrecognised tag (${fTag.name}) will not be saved. Please add new tag to app.`]
-    }
-    if (errList.length > 0) {
-      return errList.join("\n")
-    }
-  }
-
-  function nameValidation(fieldName: string) {
-    if (!fieldName || fieldName.length < 1) {
-      return "Item name is required";
-    }
-  }
-
   function handleDelete() {
     form.setFieldValue('softDelete', true);
     form.handleSubmit();
@@ -539,6 +564,7 @@ export function AppItemModal(): ReactNode {
     return (
       < Dialog open={tagToDelete !== null} disableScrollLock >
         <DialogTitle id="save-dialog-title" >
+          {/* @ts-ignore */}
           {tagToDelete?.c?.state.value.name ?? ""}
         </DialogTitle>
         <Divider />
@@ -548,6 +574,7 @@ export function AppItemModal(): ReactNode {
           </Typography>
 
           <List>
+            {/* @ts-ignore */}
             {tagToDelete?.c?.state.value.props.map((tp) =>
               <ListItem disablePadding>
                 <ListItemButton>
@@ -585,7 +612,7 @@ export function AppItemModal(): ReactNode {
           </AppModalCloseButton>
         </DialogTitle>
         <Divider />
-        {mutation.isSuccess && <Alert severity="success"> {"Item updated!"} </Alert>}
+        {mutation.isSuccess && <Alert severity="success"> {"Changes saved!"} </Alert>}
         {mutation.error && (
           <Fragment>
             <Alert severity="error"> {mutation.error.message}</Alert>

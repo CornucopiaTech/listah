@@ -45,6 +45,7 @@ message ItemServiceReadTagRequest {
 message ItemServiceReadTagResponse {
   repeated Tag tags = 1;
   int32 totalRecordCount = 2;
+  map<string,StringList> tagidPropMap = 3;
 
   string userId = 500 [json_name = "userId"];
   Search query = 501;

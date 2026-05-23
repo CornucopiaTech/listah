@@ -91,27 +91,32 @@ func (a *filter) Read(ctx context.Context, m *[]*model.Filter, s *model.ItemSear
 
 	var activity = "ReadFilter"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
-	cte := ``
-	query := fmt.Sprintf(`
+	cte := fmt.Sprintf(`
+		WITH filts AS (
+			SELECT sf.*, elem.tag_id
+			FROM apps.filters sf
+				LEFT JOIN  LATERAL JSONB_ARRAY_ELEMENTS_TEXT(sf.tags::JSONB) AS elem(tag_id) ON TRUE
+			WHERE sf.user_id = '%v'
+				AND (sf.soft_delete = false OR sf.soft_delete IS NULL)
+		)
+		,its AS (
+				SELECT it.*, elem.tag_id
+				FROM apps.items it
+					LEFT JOIN LATERAL JSONB_ARRAY_ELEMENTS_TEXT(it.tags::JSONB) AS elem(tag_id) ON TRUE
+				WHERE it.user_id = '%v'
+					AND (it.soft_delete = false OR it.soft_delete IS NULL)
+		)
+	`, s.UserId, s.UserId)
+	query := `
 		SELECT
-			sf.id, sf.user_id, sf."name", sf.tags,
+			sf.id, sf.user_id, sf."name", sf.tags::VARCHAR tags,
 			SUM(CASE WHEN it.id IS NOT NULL THEN 1 ELSE 0 END) count
-		FROM apps.filters sf
-			LEFT JOIN apps.items it
+		FROM filts sf
+			LEFT JOIN its it
 				ON sf.user_id = it.user_id
-				--AND it.tag_ids::VARCHAR != 'null'
-				--AND sf.tags::JSONB  @> it.tags::JSONB --all of the tags
-				--AND sf.tags::JSONB  ?| it.tags::JSONB --any of the tags
-		WHERE sf.user_id::VARCHAR = '%v'
-				AND (it.soft_delete = false OR it.soft_delete IS NULL)
-				AND it.tags::VARCHAR != 'null'
-				AND EXISTS (
-					SELECT 1
-					FROM jsonb_array_elements(sf.tags::JSONB) AS elem
-					WHERE it.tags::JSONB @> jsonb_build_array(elem)
-				)
-		GROUP BY 1, 2, 3, 4::VARCHAR
-	`, s.UserId)
+				AND sf.tag_id = it.tag_id
+		GROUP BY 1, 2, 3, 4
+	`
 
 	countq := cte + fmt.Sprintf(`SELECT COUNT(*) row_count FROM (%v)`, query)
 	recCnt := []*model.RowCount{}

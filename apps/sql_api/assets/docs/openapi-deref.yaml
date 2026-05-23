@@ -122,7 +122,7 @@ paths:
                     type: array
                     items:
                       type: object
-                      properties: &ref_17
+                      properties: &ref_18
                         id:
                           type: string
                           title: id
@@ -302,7 +302,7 @@ paths:
                     type: array
                     items:
                       type: object
-                      properties: &ref_19
+                      properties: &ref_20
                         type:
                           type: string
                           description: 'A URL that acts as a globally unique identifier for the type of the serialized message. For example: `type.googleapis.com/google.rpc.ErrorInfo`. This is used to determine the schema of the data in the `value` field and is the discriminator for the `debug` field.'
@@ -461,7 +461,7 @@ paths:
                     type: array
                     items:
                       type: object
-                      properties: &ref_18
+                      properties: &ref_19
                         id:
                           type: string
                           title: id
@@ -902,6 +902,19 @@ paths:
                     type: integer
                     title: totalRecordCount
                     format: int32
+                  tagidPropMap:
+                    type: object
+                    title: tagidPropMap
+                    additionalProperties:
+                      title: value
+                      type: object
+                      properties: &ref_15
+                        value:
+                          type: array
+                          items:
+                            type: string
+                          title: value
+                      additionalProperties: false
                   userId:
                     type: string
                     title: userId
@@ -1008,7 +1021,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_15
+                properties: &ref_16
                   userId:
                     type: string
                     title: userId
@@ -1057,19 +1070,14 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_16
+                properties: &ref_17
                   props:
                     type: object
                     title: props
                     additionalProperties:
                       title: value
                       type: object
-                      properties: &ref_20
-                        value:
-                          type: array
-                          items:
-                            type: string
-                          title: value
+                      properties: *ref_15
                       additionalProperties: false
                   totalRecordCount:
                     type: integer
@@ -1127,7 +1135,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: *ref_15
+              properties: *ref_16
               title: ItemServiceReadTagPropertyRequest
               additionalProperties: false
               description: Tag Property Messages
@@ -1139,7 +1147,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: *ref_16
+                properties: *ref_17
                 title: ItemServiceReadTagPropertyResponse
                 additionalProperties: false
         default:
@@ -1185,7 +1193,7 @@ paths:
                   type: array
                   items:
                     type: object
-                    properties: *ref_17
+                    properties: *ref_18
                     title: Filter
                     additionalProperties: false
                   title: filters
@@ -1250,7 +1258,7 @@ paths:
                   type: array
                   items:
                     type: object
-                    properties: *ref_18
+                    properties: *ref_19
                     title: Item
                     additionalProperties: false
                   title: items
@@ -1379,7 +1387,7 @@ components:
       description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
     connect.error_details.Any:
       type: object
-      properties: *ref_19
+      properties: *ref_20
       additionalProperties: true
       description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message, with an additional debug field for ConnectRPC error details.
     encoding:
@@ -1489,7 +1497,7 @@ components:
         - AUDIT_UPDATER_ENUM_SYSOPS
     listah.v1.Filter:
       type: object
-      properties: *ref_17
+      properties: *ref_18
       title: Filter
       additionalProperties: false
     listah.v1.InnerPropTagMap:
@@ -1520,7 +1528,7 @@ components:
       additionalProperties: false
     listah.v1.Item:
       type: object
-      properties: *ref_18
+      properties: *ref_19
       title: Item
       additionalProperties: false
     listah.v1.Item.PropsEntry:
@@ -1558,13 +1566,13 @@ components:
       additionalProperties: false
     listah.v1.ItemServiceReadTagPropertyRequest:
       type: object
-      properties: *ref_15
+      properties: *ref_16
       title: ItemServiceReadTagPropertyRequest
       additionalProperties: false
       description: Tag Property Messages
     listah.v1.ItemServiceReadTagPropertyResponse:
       type: object
-      properties: *ref_16
+      properties: *ref_17
       title: ItemServiceReadTagPropertyResponse
       additionalProperties: false
     listah.v1.ItemServiceReadTagPropertyResponse.PropsEntry:
@@ -1576,7 +1584,7 @@ components:
         value:
           title: value
           type: object
-          properties: *ref_20
+          properties: *ref_15
           additionalProperties: false
       title: PropsEntry
       additionalProperties: false
@@ -1590,6 +1598,19 @@ components:
       type: object
       properties: *ref_14
       title: ItemServiceReadTagResponse
+      additionalProperties: false
+    listah.v1.ItemServiceReadTagResponse.TagidPropMapEntry:
+      type: object
+      properties:
+        key:
+          type: string
+          title: key
+        value:
+          title: value
+          type: object
+          properties: *ref_15
+          additionalProperties: false
+      title: TagidPropMapEntry
       additionalProperties: false
     listah.v1.ItemServiceUpsertFilterRequest:
       type: object
@@ -1638,7 +1659,7 @@ components:
       additionalProperties: false
     listah.v1.StringList:
       type: object
-      properties: *ref_20
+      properties: *ref_15
       title: StringList
       additionalProperties: false
     listah.v1.Tag:
@@ -1674,7 +1695,7 @@ components:
           additionalProperties:
             title: value
             type: object
-            properties: *ref_20
+            properties: *ref_15
             additionalProperties: false
       title: TagPropertyMap
       additionalProperties: false
@@ -1687,7 +1708,7 @@ components:
         value:
           title: value
           type: object
-          properties: *ref_20
+          properties: *ref_15
           additionalProperties: false
       title: ValueEntry
       additionalProperties: false

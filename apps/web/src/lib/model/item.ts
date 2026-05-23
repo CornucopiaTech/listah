@@ -23,7 +23,7 @@ export const ZFormItem = z.object({
   name: z.string().catch(''),
   note: z.string().catch(""),
   props: z.array(ZFormProps).catch([]),
-  tags: z.nullish(z.array(ZTag)).catch([]),
+  tags: z.array(ZTag).catch([]),
   softDelete: z.nullish(z.boolean().catch(false)),
 });
 export type IFormItem = z.infer<typeof ZFormItem>;
@@ -36,7 +36,7 @@ export const ZItem = z.object({
   userId: z.string().catch(''),
   name: z.string().catch(''),
   note: z.string().catch(""),
-  tags: z.nullish(z.array(z.string())).catch([]),
+  tags: z.array(z.string()).catch([]),
   props: z.any(),
   tagObjs: z.nullish(z.array(ZTag)).catch([]),
   propObjs: z.nullish(z.array(ZFormProps)).catch([]),
