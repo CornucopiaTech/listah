@@ -53,6 +53,7 @@ export function Items() {
   const passedTag = store.displayTag || urlSearch.refTag;
   const passedFilter = store.displayFilter || urlSearch.refFilter;
   // console.info('passedFilter', passedFilter);
+  // console.info('passedTag', passedTag);
 
 
 

@@ -204,11 +204,14 @@ func (s *Server) ReadTagProperty(ctx context.Context, req *connect.Request[pb.It
 	}
 	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d records from repository", recordCnt))
 
-	fmt.Printf("\n\n\nreadModel[0] -  %s\n\n\n", readModel[0])
-	fmt.Printf("\n\n\nreadModel[1] -  %s\n\n\n", readModel[1])
+	if len(readModel) > 0 {
+		fmt.Printf("\n\n\nreadModel[0] -  %s\n\n\n", readModel[0])
+		// fmt.Printf("\n\n\nreadModel[1] -  %s\n\n\n", readModel[1])
 
-	fmt.Printf("\n\n\nreadModel[0] -  %+v\n\n\n", readModel[0])
-	fmt.Printf("\n\n\nreadModel[1] -  %+v\n\n\n", readModel[1])
+		fmt.Printf("\n\n\nreadModel[0] -  %+v\n\n\n", readModel[0])
+		// fmt.Printf("\n\n\nreadModel[1] -  %+v\n\n\n", readModel[1])
+	}
+
 
 
 

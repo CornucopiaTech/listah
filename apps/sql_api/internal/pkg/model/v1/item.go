@@ -32,21 +32,24 @@ func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemS
 
 	pg := msg.GetPagination()
 
+	fmt.Printf("\n\n\n\n\npg -  %+v\n\n\n\n\n", pg);
+
+
 	if pg != nil {
-		if pSize > 0 {
+		if pg.PageSize > 0 {
 			pSize = pg.PageSize
 		}
-		if pNum > 0 {
+		if pg.PageNumber != pNum {
 			pNum = pg.PageNumber
 		}
-		if sortT != "" {
+		if pg.Sort != sortT {
 			sortT = pg.Sort
 		}
 	}
 
 	offset := int64(0)
-	if pSize > 0 {
-		offset = pSize * (pNum - 1)
+	if pSize > 0 && pNum > 0{
+		offset = pSize * pNum
 	}
 
 
@@ -82,6 +85,8 @@ func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemS
 		Offset:      offset,
 		PageNumber:  pNum,
 	}
+
+	fmt.Printf("\n\n\n\n\nItemSearch -  %+v\n\n\n\n\n", i);
 	return &i, nil
 }
 
@@ -118,7 +123,11 @@ func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
 			UpdatedBy:  v.UpdatedBy,
 		})
 	}
-	fmt.Printf("\n\n\n\n\nitems -  %+v\n\n\n\n\n", items[0])
+
+	if len(items) > 0 {
+		fmt.Printf("\n\n\n\n\nitems -  %+v\n\n\n\n\n", items[0]);
+	}
+
 	return items, nil
 }
 

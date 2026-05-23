@@ -16,6 +16,10 @@ databaseChangeLog:
                 schemaName: apps
                 tableName: items
             - uniqueConstraintExists:
+                constraintName: constraint_unique_filters_user_id_id
+                schemaName: apps
+                tableName: filters
+            - uniqueConstraintExists:
                 constraintName: constraint_unique_filters_name_user_id
                 schemaName: apps
                 tableName: filters
@@ -117,6 +121,12 @@ databaseChangeLog:
         - addUniqueConstraint:
             columnNames:  id, user_id
             constraintName:  constraint_unique_filters_id_user_id
+            schemaName:  apps
+            tableName:  filters
+            validate:  true
+        - addUniqueConstraint:
+            columnNames:  name, user_id
+            constraintName:  constraint_unique_filters_name_user_id
             schemaName:  apps
             tableName:  filters
             validate:  true

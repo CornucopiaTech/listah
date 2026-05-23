@@ -1,4 +1,5 @@
 import { Button, type ButtonProps } from "@mui/material";
+import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import { useTheme } from "@mui/material";
 
@@ -19,11 +20,9 @@ export type AppButtonProps = ButtonProps & {
 };
 
 
-// declare module '@mui/material/Button' {
-//   interface ButtonPropsColorOverrides {
-//     primary: true;
-//   }
-// }
+export const AppModalCloseButton = styled(IconButton)(() => ({
+  display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
+}));
 
 export const AppPrimaryButton = styled(Button)(() => ({
   borderRadius: 3,
@@ -45,29 +44,6 @@ export const AppDefaultButtonBase = styled(Button)(({ theme }: { theme: AppTheme
   textTransform: 'none',
   disableElevation: true,
 }));
-
-
-// const AppDefaultButtonBase = styled(Button)<{ variant?: 'contained' | 'outlined' | 'text' }>(
-//   ({ variant = 'contained', theme }) => ({
-//     ...(variant === 'contained' && {
-//       backgroundColor: theme.palette.primary.main,
-//       color: theme.palette.primary.main,
-//       '&:hover': { backgroundColor: theme.palette.primary.dark, },
-//       textTransform: 'none',
-//     }),
-//     ...(variant === 'outlined' && {
-//       borderColor: theme.palette.primary.main,
-//       color: theme.palette.primary.main,
-//       '&:hover': { backgroundColor: theme.palette.primary.light },
-//       textTransform: 'none',
-//     }),
-//     ...(variant === 'text' && {
-//       color: theme.palette.primary.main,
-//       // '&:hover': { color: theme.palette.primary.dark },
-//       textTransform: 'none',
-//     }),
-//   })
-// );
 
 
 export function AppDefaultButton({ label, handleClick }: { label: string; handleClick?: () => void }) {

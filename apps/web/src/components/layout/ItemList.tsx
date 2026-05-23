@@ -22,6 +22,9 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import TablePagination from '@mui/material/TablePagination';
+import Typography from '@mui/material/Typography';
+import LinearProgress from '@mui/material/LinearProgress';
+
 
 
 import type {
@@ -46,11 +49,7 @@ import { ErrorAlert } from "@/components/core/Alerts";
 import {
   encodeState
 } from '@/lib/helper/encoders';
-import {
-  AppH6Typography,
-  AppListItemTypography,
-} from "@/components/core/Typography";
-import LinearProgress from '@mui/material/LinearProgress';
+
 import {
   ListBoxSize,
 } from '@/lib/helper/defaults';
@@ -105,11 +104,6 @@ export function ItemListLayout(): ReactNode {
     };
   }
 
-  // if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-  //   console.info("store title - ", store.itemTitle);
-  //   console.info("store reference - ", store.itemReference);
-  // }
-
   function getRouteSearch(qs: IItemReadRequest) {
     const s = {
       query: qs, title, reference: reference || undefined,
@@ -146,21 +140,16 @@ export function ItemListLayout(): ReactNode {
   };
 
   function eachItem(itemKey: number, item: IItem): ReactNode {
-    let dis: string = item.name ? item.name : "";
+    let tc: string = item.name ? item.name : "";
     return (
       <Fragment>
         <ListItem key={itemKey + item.id}
           // component="div"
           disablePadding
           disableGutters
-          sx={{ p: 0, m: 0 }}
           onClick={() => handleItemClick(item)}>
           <ListItemButton >
-            <ListItemText
-              primary={
-                <AppListItemTypography sx={{ p: 0, m: 0 }}>{dis}</AppListItemTypography>
-              }
-            />
+            <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
           </ListItemButton>
         </ListItem>
 
@@ -184,7 +173,7 @@ export function ItemListLayout(): ReactNode {
         {children}
         <TablePagination
           component="div"
-          count={pageInfo.current.totalRecords}
+          count={pageInfo?.current?.totalRecords ?? 0}
           page={pageInfo.current.pageNumber}
           onPageChange={handlePageChange}
           rowsPerPage={pageInfo.current.pageSize}
@@ -206,9 +195,7 @@ export function ItemListLayout(): ReactNode {
 
   if (items.length == 0) {
     return <ListBox><OuterBox>
-      <AppH6Typography sx={{ display: 'flex', textTransform: "none", justifyContent: "center", alignContent: "center", }}>
-        No tags found
-      </AppH6Typography>
+      <Typography variant="h6"> No items found </Typography>
     </OuterBox></ListBox>
   }
 

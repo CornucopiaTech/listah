@@ -198,11 +198,12 @@ export function AppNavBar({ menuItems, title }: { menuItems?: ReactNode, title?:
           <ListItem key="signin" disablePadding>
             <ListItemButton>
               <Show when="signed-out" key="signout">
-                <ListItemText
-                  primary={
-                    <AppListItemTypography sx={{ p: 0, m: 0 }}>Sign In</AppListItemTypography>
-                  } />
-                <SignInButton />
+                <SignInButton style={{ border: 'none' }}>
+                  <ListItemText
+                    primary={
+                      <AppListItemTypography sx={{ p: 0, m: 0 }}>Sign In</AppListItemTypography>
+                    } />
+                </SignInButton>
               </Show>
             </ListItemButton>
           </ListItem>

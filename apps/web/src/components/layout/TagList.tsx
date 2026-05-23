@@ -26,6 +26,8 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Chip from '@mui/material/Chip';
 import TablePagination from '@mui/material/TablePagination';
+import Typography from '@mui/material/Typography';
+import Alert from '@mui/material/Alert';
 
 
 
@@ -43,7 +45,6 @@ import {
   ZTagReadResponse,
 } from "@/lib/model/tag";
 import { tagGroupOptions } from '@/lib/helper/querying';
-import { ErrorAlert } from "@/components/core/Alerts";
 import {
   encodeState
 } from '@/lib/helper/encoders';
@@ -51,13 +52,10 @@ import {
   DefaultItemRead,
   ListBoxSize,
 } from '@/lib/helper/defaults';
-import {
-  AppH6Typography,
-  AppListItemTypography,
-} from "@/components/core/Typography";
 
 
 
+// ToDo: Fix Tag Read Api not returning the second page but returning only the first page all the time.
 
 
 export function TagListLayout(): ReactNode {
@@ -67,6 +65,8 @@ export function TagListLayout(): ReactNode {
   // const routeSearch: ITagReadRequest = routeApi.useSearch() ### Do not use this.
   const routeApi = getRouteApi('/tags/');
   const { search: query } = routeApi.useRouteContext();
+
+  console.info('query', query);
 
   let pageInfo = useRef({
     pageNumber: query.pagination.pageNumber,
@@ -103,6 +103,9 @@ export function TagListLayout(): ReactNode {
     };
   }
 
+  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+    console.info("tags - ", tags.length);
+  }
 
   function handlePageChange(
     event: MouseEvent<HTMLButtonElement> | null,
@@ -154,10 +157,12 @@ export function TagListLayout(): ReactNode {
         onClick={() => handleItemClick(item)}
       >
         <ListItemButton>
-          <ListItemText primary={
-            <AppListItemTypography sx={{ p: 0, m: 0, }}>{tc}</AppListItemTypography>
-          } />
-          <Chip sx={{ background: "primary" }} label={item.count ? item.count.toString() : "0"} />
+          <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
+          <Chip
+            variant="contained"
+            color={itemKey % 2 == 0 ? "inherit" : "secondary"}
+            label={item.count ? item.count.toString() : "0"}
+          />
         </ListItemButton>
       </ListItem>
     );
@@ -194,22 +199,26 @@ export function TagListLayout(): ReactNode {
   }
 
   if (isError || errMsg !== "") {
-    return <ListBox><OuterBox><ErrorAlert message={errMsg ? errMsg : error?.message || "An error occurred. Please try again"} /></OuterBox></ListBox>
+    return <ListBox><OuterBox>
+      <Alert severity="error"> {errMsg ? errMsg : error?.message || "An error occurred. Please try again"}</Alert>
+    </OuterBox></ListBox>
   }
 
   if (tags.length == 0) {
     return <ListBox><OuterBox>
-      <AppH6Typography sx={{ display: 'flex', textTransform: "none", justifyContent: "center", alignContent: "center", }}>
-        No tags found
-      </AppH6Typography>
+      <Typography variant="h6"> No tags found </Typography>
     </OuterBox></ListBox>
   }
 
   if (tags.length > 0) {
-    return <ListBox><Virtuoso key="data-content"
-      style={ListBoxSize} data={tags}
-      itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
-    /></ListBox>
+    return <ListBox>
+      <Virtuoso key="data-content"
+        style={ListBoxSize} data={tags}
+        itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
+      />
+    </ListBox>
   }
-  return <ListBox><OuterBox><ErrorAlert message="An error occurred. Please try again" /></OuterBox></ListBox>
+  return <ListBox><OuterBox>
+    <Alert severity="error"> "An error occurred. Please try again"</Alert>
+  </OuterBox></ListBox>
 }

@@ -56,9 +56,14 @@ export function fakeTags(arraySize) {
       "updated_by": faker.helpers.arrayElement(updaters),
       "updated_at": faker.helpers.arrayElement([faker.date.past(), null]),
     }),
-    { count: arraySize }
+    { count: 2 * arraySize }
   );
-  return JSON.stringify({ tags: combFaked });
+  // Prevent duplicate tag name
+  const uniqueTagNames = [...new Set(combFaked.map(i => i.name))];
+  const uniqueCombFaked = uniqueTagNames.reduce((acc, it) => {
+    return [...acc, combFaked.filter((i) => i.name == it)[0]]
+  }, []);
+  return JSON.stringify({ tags: uniqueCombFaked });
 }
 
 async function loadTags(maxLoaded, maxGen, apiUrl) {
@@ -164,7 +169,7 @@ async function fakeItems(arraySize, tagList, user) {
     )
     return { ...i, props: prps }
   })
-  console.log(combFaked)
+  // console.log(combFaked)
 
   return await JSON.stringify({ items: combFaked });
 }
@@ -200,8 +205,8 @@ function load_db(aUrl) {
               // console.log('Retrieved data - ', data)
               // console.log('Retrieved Tags - ', tags);
               const tags = data.tags;
-              loadItems(1, 200, aUrl, tags, uId);
-              loadFilters(1, 200, aUrl, tags, uId);
+              loadItems(10, 1000, aUrl, tags, uId);
+              loadFilters(10, 1000, aUrl, tags, uId);
             }
           ).catch((error) => console.log('Load Filters and Items - ', error.message))
         }
@@ -209,6 +214,7 @@ function load_db(aUrl) {
     }
   ).catch((error) => console.log('Load Tags - ', error.message))
 }
+
 
 const urls = [
   "http://localhost:8080/listah.v1.ItemService",
