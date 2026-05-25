@@ -33,7 +33,7 @@ data "terraform_remote_state" "data" {
 #   }
 # }
 
-
+# ToDo: Check Api Url
 module "web_service" {
   source = "./modules/web_service"
   # api_url         = data.terraform_remote_state.api.outputs.api_urls[1]
