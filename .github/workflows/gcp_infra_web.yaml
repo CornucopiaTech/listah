@@ -116,5 +116,5 @@ jobs:
           TF_VAR_image_tag: ${{ env.WEB_IMAGE_NAME_TAG }}
           # sample: https://listah-dev-us-east4-api-service-${PROJECT_NUMBER}.us-east4.run.app/#tag/listah.v1.ItemService
           # sample: https://listah-dev-us-east4-api-service-${PROJECT_NUMBER_HASH}.a.run.app
-          TF_VAR_api_service_url: "https://${{ env.TF_VAR_name_in_tag }}-web-service-${{ secrets.GCP_PROJECT_NUMBER_HASH}}.a.run.app"
+          TF_VAR_api_service_url: "https://${{ env.TF_VAR_name_in_tag }}-api-service-${{ secrets.GCP_PROJECT_NUMBER_HASH}}.a.run.app"
           TF_VAR_auth_key: ${{ secrets.CLERK_AUTH_KEY }}
