@@ -68,7 +68,7 @@ jobs:
             INFRA_DATA_CHANGED="true"
           fi
 
-          if echo "$CHANGED_FILES" | grep -q "^apps/sql_api/"; then
+          if echo "$CHANGED_FILES" | grep -q "^apps/api/"; then
             APP_API_CHANGED="true"
           fi
 
@@ -160,6 +160,21 @@ jobs:
           echo "run_app_web=$RUN_APP_WEB" >> $GITHUB_OUTPUT
           echo "run_infra_api=$RUN_INFRA_API" >> $GITHUB_OUTPUT
           echo "run_infra_web=$RUN_INFRA_WEB" >> $GITHUB_OUTPUT
+
+
+  # STAGE 1.2: Checking output values
+  output-value-check:
+    needs: change-detection
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echos
+        run: |
+          echo "run_infra_networking: ${{ needs.change-detection.outputs.run_infra_networking}}"
+          echo "run_infra_data: ${{ needs.change-detection.outputs.run_infra_data}}"
+          echo "run_app_api: ${{ needs.change-detection.outputs.run_app_api}}"
+          echo "run_app_web: ${{ needs.change-detection.outputs.run_app_web}}"
+          echo "run_infra_api: ${{ needs.change-detection.outputs.run_infra_api}}"
+          echo "run_infra_web: ${{ needs.change-detection.outputs.run_infra_web}}"
 
 
   # STAGE 2.1: Build Networking Infra
