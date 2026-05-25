@@ -195,7 +195,7 @@ jobs:
   build-infra-data:
     needs: [change-detection, build-infra-networking]
     # Skip if no changes to relevant files
-    if: ${{ needs.build-infra-networking.result != 'failed' && needs.change-detection.outputs.run_infra_data == 'true' }}
+    if: ${{ !cancelled() && (needs.build-infra-networking.result == 'skipped' || needs.build-infra-networking.result == 'success') && needs.change-detection.outputs.run_infra_data == 'true' }}
     permissions:
       contents: read
       id-token: write # Required for Workload Identity Federation
@@ -209,7 +209,7 @@ jobs:
   build-app-api:
     needs: [change-detection, build-infra-data]
     # Skip if no changes to relevant files
-    if: ${{ needs.build-infra-data.result != 'failed' && needs.change-detection.outputs.run_app_api == 'true' }}
+    if: ${{ !cancelled() && (needs.build-infra-data.result  == 'skipped' || needs.build-infra-data.result == 'success') && needs.change-detection.outputs.run_app_api == 'true' }}
     permissions:
       contents: read
       id-token: write # Required for Workload Identity Federation
@@ -223,7 +223,7 @@ jobs:
   build-app-web:
     needs: [change-detection, build-infra-data]
     # Skip if no changes to relevant files
-    if: ${{ needs.build-infra-data.result != 'failed' && needs.change-detection.outputs.run_app_web == 'true' }}
+    if: ${{ !cancelled() && (needs.build-infra-data.result  == 'skipped' || needs.build-infra-data.result == 'success') && needs.change-detection.outputs.run_app_web == 'true' }}
     permissions:
       contents: read
       id-token: write # Required for Workload Identity Federation
@@ -237,7 +237,7 @@ jobs:
   build-infra-api:
     needs: [change-detection, build-app-api]
     # Skip if no changes to relevant files
-    if: ${{ needs.build-app-api.result != 'failed' && needs.change-detection.outputs.run_infra_api == 'true' }}
+    if: ${{ !cancelled() && (needs.build-app-api.result == 'skipped' || needs.build-app-api.result == 'success') && needs.change-detection.outputs.run_infra_api == 'true' }}
     permissions:
       contents: read
       id-token: write # Required for Workload Identity Federation
@@ -251,7 +251,7 @@ jobs:
   build-infra-web:
     needs: [change-detection, build-app-web]
     # Skip if no changes to relevant files
-    if: ${{ needs.build-app-web.result != 'failed' && needs.change-detection.outputs.run_infra_web == 'true' }}
+    if: ${{ !cancelled() && (needs.build-app-web.result == 'skipped' || needs.build-app-web.result == 'success') && needs.change-detection.outputs.run_infra_web == 'true' }}
     permissions:
       contents: read
       id-token: write # Required for Workload Identity Federation
