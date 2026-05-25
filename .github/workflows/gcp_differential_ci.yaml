@@ -114,28 +114,34 @@ jobs:
           RUN_INFRA_API="false"
           RUN_INFRA_WEB="false"
 
+          echo "Checking env.infra_networking_changed == 'true':  ${{ env.infra_networking_changed == 'true' }}"
           # 2. Assign values to variables
-          if [ ${{ env.infra_networking_changed == 'true' }} ]; then
+          if ${{ env.infra_networking_changed == 'true' }} ; then
             RUN_INFRA_NETWORKING="true"
           fi
 
-          if [ ${{ env.infra_networking_changed == 'true' }} ] || [ ${{ env.infra_data_changed == 'true' }} ]; then
+          echo "Checking env.infra_networking_changed == 'true' || env.infra_data_changed == 'true':  ${{ env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' }}"
+          if ${{ env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' }}; then
             RUN_INFRA_DATA="true"
           fi
 
-          if [ ${{ env.infra_data_changed == 'true' }} ] || [ ${{ env.app_api_changed == 'true' }} ]; then
+          echo "Checking env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_api_changed == 'true' :  ${{ env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_api_changed == 'true' }}"
+          if ${{ env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_api_changed == 'true' }}; then
             RUN_APP_API="true"
           fi
 
-          if [ ${{ env.infra_data_changed == 'true' }} ] || [ ${{ env.app_web_changed == 'true' }} ]; then
+          echo "Checking env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_api_changed == 'true' :  ${{ env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_web_changed == 'true' }}"
+          if ${{ env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_web_changed == 'true' }}; then
             RUN_APP_WEB="true"
           fi
 
-          if [ ${{ env.app_api_changed == 'true' }} ] || [ ${{ env.infra_api_changed == 'true' }} ]; then
+          echo "Checking env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_api_changed == 'true' || env.infra_api_changed == 'true':  ${{ env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_api_changed == 'true' || env.infra_api_changed == 'true' }}"
+          if ${{ env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_api_changed == 'true' || env.infra_api_changed == 'true' }}; then
             RUN_INFRA_API="true"
           fi
 
-          if [ ${{ env.app_web_changed == 'true' }} ] || [ ${{ env.infra_web_changed == 'true' }} ]; then
+          echo "Checking env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_web_changed == 'true' || env.infra_web_changed == 'true' :  ${{ env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_web_changed == 'true' || env.infra_web_changed == 'true' }}"
+          if ${{ env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_web_changed == 'true' || env.infra_web_changed == 'true' }}; then
             RUN_INFRA_WEB="true"
           fi
 
