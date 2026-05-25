@@ -41,3 +41,4 @@ variable "home_network" {
 
 variable "instance_tier" { type = string }
 variable "db_edition" { type = string }
+variable "name_in_tag" { type = string }

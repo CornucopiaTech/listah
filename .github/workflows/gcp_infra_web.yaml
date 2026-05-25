@@ -32,7 +32,9 @@ jobs:
       TF_VAR_state_management_prefix: gcp/${{ inputs.environment }}
       TF_VAR_project: ${{ vars.APP_NAME }}
       TF_VAR_environment: ${{ inputs.environment }}
+      TF_VAR_name_in_tag: "${{ vars.APP_NAME }}-${{ inputs.environment }}-${{ vars.GCP_REGION }}"
       TF_LOG: DEBUG
+
 
     steps:
       - name: Checkout
@@ -112,6 +114,6 @@ jobs:
           tofu apply -auto-approve tfplan
         env:
           TF_VAR_image_tag: ${{ env.WEB_IMAGE_NAME_TAG }}
-          # TF_VAR_api_url: ${{ env.API_URL }}
-          TF_VAR_api_url: ""
+          # sample: https://listah-dev-us-east4-api-service-${PROJECT_NUMBER}.us-east4.run.app/#tag/listah.v1.ItemService
+          TF_VAR_api_service_url: "https://${{ env.TF_VAR_name_in_tag }}-api-service-${{ secrets.GCP_PROJECT_NUMBER}}-${{ env.TF_VAR_gcp_region }}.run.app"
           TF_VAR_auth_key: ${{ secrets.CLERK_AUTH_KEY }}

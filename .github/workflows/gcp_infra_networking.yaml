@@ -27,6 +27,7 @@ jobs:
       TF_VAR_state_management_prefix: gcp/${{ inputs.environment }}
       TF_VAR_project: ${{ vars.APP_NAME }}
       TF_VAR_environment: ${{ inputs.environment }}
+      TF_VAR_name_in_tag: "${{ vars.APP_NAME }}-${{ inputs.environment }}-${{ vars.GCP_REGION }}"
       TF_LOG: DEBUG
     outputs:
       output1: ${{ steps.tofu_apply.outputs.db_certs }}

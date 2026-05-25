@@ -1,6 +1,6 @@
 locals {
   default_gcp_tags = {
-    name        = "${var.project}-${var.environment}-${var.gcp_region}"
+    name        = "${var.name_in_tag}"
     project     = var.project
     environment = var.environment
     region      = var.gcp_region

@@ -30,6 +30,7 @@ jobs:
       TF_VAR_state_management_prefix: gcp/${{ inputs.environment }}
       TF_VAR_project: ${{ vars.APP_NAME }}
       TF_VAR_environment: ${{ inputs.environment }}
+      TF_VAR_name_in_tag: "${{ vars.APP_NAME }}-${{ inputs.environment }}-${{ vars.GCP_REGION }}"
       TF_LOG: DEBUG
 
     steps:
@@ -109,5 +110,5 @@ jobs:
           tofu apply -auto-approve tfplan
         env:
           TF_VAR_image_tag: ${{ env.API_IMAGE_NAME_TAG }}
-          TF_VAR_known_origins: "a,b,c"
+          TF_VAR_known_origins: "https://${{ env.TF_VAR_name_in_tag }}-web-service-${{ secrets.GCP_PROJECT_NUMBER}}-${{ env.TF_VAR_gcp_region }}.run.app,"
           # ToDo: change known origins
