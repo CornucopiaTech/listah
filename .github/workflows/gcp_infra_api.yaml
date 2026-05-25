@@ -1,6 +1,6 @@
 
-name: Deploy App Infra
-run-name: Deploy App Infra to ${{ vars.APP_NAME }} by @${{ github.actor }}
+name: Deploy Api Infra
+run-name: Deploy Api Infra to ${{ vars.APP_NAME }} by @${{ github.actor }}
 on:
   workflow_call:
     inputs:
