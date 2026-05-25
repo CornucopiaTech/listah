@@ -96,6 +96,8 @@ jobs:
           )
           echo "LATEST_TAG: ${LATEST_TAG}"
 
+          IMAGE_NAME_TAG="${{ env.REPO_URI }}/${{ env.API_IMAGE_NAME }}:${LATEST_TAG}"
+          echo "IMAGE_NAME_TAG: ${IMAGE_NAME_TAG}"
 
           echo "WEB_LATEST_TAG="${LATEST_TAG}"" >> ${GITHUB_ENV}
           echo "WEB_IMAGE_NAME_TAG="${IMAGE_NAME_TAG}"" >> ${GITHUB_ENV}
