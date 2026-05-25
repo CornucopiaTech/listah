@@ -57,12 +57,14 @@ databaseChangeLog:
                     type:  timestamp
                     defaultValueComputed: CURRENT_TIMESTAMP
 
+
         - addUniqueConstraint:
             columnNames:  user_id, id
             constraintName:  constraint_unique_tags_user_id_id
             schemaName:  apps
             tableName:  tags
             validate:  true
+
 
         - addUniqueConstraint:
             columnNames:  user_id, name
