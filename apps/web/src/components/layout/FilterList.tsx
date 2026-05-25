@@ -28,6 +28,10 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Chip from '@mui/material/Chip';
 import TablePagination from '@mui/material/TablePagination';
+import Typography from '@mui/material/Typography';
+import Alert from '@mui/material/Alert';
+
+
 
 
 import {
@@ -44,16 +48,12 @@ import {
   ZFilterReadResponse,
 } from "@/lib/model/filter";
 import { filterGroupOptions } from '@/lib/helper/querying';
-import { ErrorAlert } from "@/components/core/Alerts";
 import { encodeState } from '@/lib/helper/encoders';
 import {
   DefaultItemRead,
   ListBoxSize,
 } from '@/lib/helper/defaults';
-import {
-  AppH6Typography,
-  AppListItemTypography,
-} from "@/components/core/Typography";
+
 
 
 export function FilterListLayout(): ReactNode {
@@ -94,7 +94,7 @@ export function FilterListLayout(): ReactNode {
   if (data) {
     pageInfo.current = {
       pageSize: parseInt(data.pagination.pageSize as unknown as string, 10),
-      totalRecords: parseInt(data.totalRecordCount as unknown as string, 10),
+      totalRecords: data.totalRecordCount ? parseInt(data.totalRecordCount as unknown as string, 10) : 0,
       pageNumber: data.pagination.pageNumber ? parseInt(data.pagination.pageNumber as unknown as string, 10) : query.pagination.pageNumber
     };
   }
@@ -149,11 +149,13 @@ export function FilterListLayout(): ReactNode {
         onClick={() => handleItemClick(item)}
       >
         <ListItemButton>
-          <ListItemText primary={
-            <AppListItemTypography sx={{ p: 0, m: 0 }}>{tc}</AppListItemTypography>
-          }
+          <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
+          <Chip
+            variant="contained"
+            // @ts-ignore
+            color={itemKey % 2 == 0 ? "inherit" : "secondary"}
+            label={item.count ? item.count.toString() : "0"}
           />
-          <Chip sx={{ background: "primary" }} label={item.count ? item.count.toString() : "0"} />
         </ListItemButton>
       </ListItem>
     );
@@ -169,6 +171,7 @@ export function FilterListLayout(): ReactNode {
     );
   }
 
+  // ToDo: Include a go-to-page option so user can jump to a specific page and not have to page through the list.
   function ListBox({ children }: { children: ReactNode }): ReactNode {
     return (
       <Fragment>
@@ -180,6 +183,7 @@ export function FilterListLayout(): ReactNode {
           onPageChange={handlePageChange}
           rowsPerPage={pageInfo.current.pageSize}
           onRowsPerPageChange={handlePageSizeChange}
+          rowsPerPageOptions={[100, 200, 500, 1000, { label: 'All', value: -1 }]}
         />
       </Fragment>
     );
@@ -190,22 +194,26 @@ export function FilterListLayout(): ReactNode {
   }
 
   if (isError || errMsg !== "") {
-    return <ListBox><OuterBox><ErrorAlert message={errMsg ? errMsg : error?.message || "An error occurred. Please try again"} /></OuterBox></ListBox>
+    return <ListBox><OuterBox>
+      <Alert severity="error"> {errMsg ? errMsg : error?.message || "An error occurred. Please try again"}</Alert>
+    </OuterBox></ListBox>
   }
 
   if (filters.length == 0) {
     return <ListBox><OuterBox>
-      <AppH6Typography sx={{ display: 'flex', textTransform: "none", justifyContent: "center", alignContent: "center", }}>
-        No filters found
-      </AppH6Typography>
+      <Typography variant="h6" >No filters found</Typography>
     </OuterBox></ListBox>
   }
 
   if (filters.length > 0) {
-    return <ListBox><Virtuoso key="data-content"
-      style={ListBoxSize} data={filters}
-      itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
-    /></ListBox>
+    return <ListBox>
+      <Virtuoso key="data-content"
+        style={ListBoxSize} data={filters}
+        itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
+      />
+    </ListBox>
   }
-  return <ListBox><OuterBox><ErrorAlert message="An error occurred. Please try again" /></OuterBox></ListBox>
+  return <ListBox><OuterBox>
+    <Alert severity="error"> "An error occurred. Please try again"</Alert>
+  </OuterBox></ListBox>
 }

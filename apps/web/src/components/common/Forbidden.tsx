@@ -1,4 +1,4 @@
-import type {ReactNode} from "react";
+import type { ReactNode } from "react";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -65,12 +65,7 @@ export default function Forbidden(): ReactNode {
           >
             <Typography
               variant="h3" noWrap
-              component="div"
-              sx={{
-                color: theme.palette.containedButton.main,
-                textTransform: 'none',
-              }}
-            >
+              component="div" >
               Go Home
             </Typography>
           </Button>

@@ -113,6 +113,10 @@ export async function getTagProperty(opts: ITagReadRequest): Promise<ITagReadRes
 
 export async function getFilter(opts: IFilterReadRequest): Promise<IFilterReadResponse> {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.readFilter}`;
+  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+    console.info("url", url);
+    console.info("opts", opts);
+  }
   const req = new Request(url, {
     method: "POST",
     body: JSON.stringify(opts),

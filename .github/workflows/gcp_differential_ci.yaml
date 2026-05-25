@@ -1,0 +1,265 @@
+name: GCP Selective CICD Pipeline
+run-name: GCP Selective CICD Pipeline for ${{ vars.APP_NAME }} by @${{ github.actor }}
+on:
+  pull_request:
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+
+jobs:
+  # STEP 1: The Native Upstream Detector
+  change-detection:
+    runs-on: ubuntu-latest
+    outputs:
+      run_infra_networking: ${{ steps.run-determination.outputs.run_infra_networking }}
+      run_infra_data: ${{ steps.run-determination.outputs.run_infra_data }}
+      run_app_api: ${{ steps.run-determination.outputs.run_app_api }}
+      run_app_web: ${{ steps.run-determination.outputs.run_app_web }}
+      run_infra_api: ${{ steps.run-determination.outputs.run_infra_api }}
+      run_infra_web: ${{ steps.run-determination.outputs.run_infra_web }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          # CRITICAL: By default, checkout fetches only 1 commit (depth 1).
+          # We need historical commits to compare differences accurately.
+          fetch-depth: 0
+
+      - name: Detect Changed Paths Natively
+        id: check-files
+        run: |
+          # 1. Determine the base commit to compare against
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            # For PRs, compare against the base branch target (e.g., origin/main)
+            BASE_REF="origin/${{ github.base_ref }}"
+          else
+            # For pushes to main, compare against the previous commit (or fall back to HEAD~1)
+            BASE_REF="${{ github.event.before }}"
+            if [ "$BASE_REF" = "0000000000000000000000000000000000000000" ] || [ -z "$BASE_REF" ]; then
+              BASE_REF="HEAD~1"
+            fi
+          fi
+
+          echo "Comparing current HEAD against base: $BASE_REF"
+
+          # 2. Get the list of changed files
+          CHANGED_FILES=$(git diff --name-only $BASE_REF HEAD)
+          echo "Files changed:"
+          echo "$CHANGED_FILES"
+
+          # 3. Initialize variables
+          INFRA_NETWORKING_CHANGED="false"
+          INFRA_DATA_CHANGED="false"
+          APP_API_CHANGED="false"
+          APP_WEB_CHANGED="false"
+          INFRA_API_CHANGED="false"
+          INFRA_WEB_CHANGED="false"
+
+
+          # 4. Use grep to look for specific path patterns
+
+          if echo "$CHANGED_FILES" | grep -q "^deployment/gcp/networking/"; then
+            INFRA_NETWORKING_CHANGED="true"
+          fi
+
+          if echo "$CHANGED_FILES" | grep -q "^liquibase/changelog/"; then
+            INFRA_DATA_CHANGED="true"
+          fi
+
+          if echo "$CHANGED_FILES" | grep -q "^deployment/gcp/data/"; then
+            INFRA_DATA_CHANGED="true"
+          fi
+
+          if echo "$CHANGED_FILES" | grep -q "^apps/api/"; then
+            APP_API_CHANGED="true"
+          fi
+
+          if echo "$CHANGED_FILES" | grep -q "^apps/web/"; then
+            APP_WEB_CHANGED="true"
+          fi
+
+          if echo "$CHANGED_FILES" | grep -q "^deployment/gcp/api/"; then
+            INFRA_API_CHANGED="true"
+          fi
+
+          if echo "$CHANGED_FILES" | grep -q "^deployment/gcp/web/"; then
+            INFRA_WEB_CHANGED="true"
+          fi
+
+
+          echo "infra_networking_changed=$INFRA_NETWORKING_CHANGED"
+          echo "infra_data_changed=$INFRA_DATA_CHANGED"
+          echo "app_api_changed=$APP_API_CHANGED"
+          echo "app_web_changed=$APP_WEB_CHANGED"
+          echo "infra_api_changed=$INFRA_API_CHANGED"
+          echo "infra_web_changed=$INFRA_WEB_CHANGED"
+
+
+          # 5. Output results to the GitHub Actions environment map
+          echo "infra_networking_changed=$INFRA_NETWORKING_CHANGED" >> $GITHUB_ENV
+          echo "infra_data_changed=$INFRA_DATA_CHANGED" >> $GITHUB_ENV
+          echo "app_api_changed=$APP_API_CHANGED" >> $GITHUB_ENV
+          echo "app_web_changed=$APP_WEB_CHANGED" >> $GITHUB_ENV
+          echo "infra_api_changed=$INFRA_API_CHANGED" >> $GITHUB_ENV
+          echo "infra_web_changed=$INFRA_WEB_CHANGED" >> $GITHUB_ENV
+
+
+      - name: Determine which portions to build and deploy
+        id: run-determination
+        run: |
+
+          # 1. Initialize variables
+          RUN_INFRA_NETWORKING="false"
+          RUN_INFRA_DATA="false"
+          RUN_APP_API="false"
+          RUN_APP_WEB="false"
+          RUN_INFRA_API="false"
+          RUN_INFRA_WEB="false"
+
+          echo "Checking env.infra_networking_changed == 'true':  ${{ env.infra_networking_changed == 'true' }}"
+          # 2. Assign values to variables
+          if ${{ env.infra_networking_changed == 'true' }} ; then
+            RUN_INFRA_NETWORKING="true"
+          fi
+
+          echo "Checking env.infra_networking_changed == 'true' || env.infra_data_changed == 'true':  ${{ env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' }}"
+          if ${{ env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' }}; then
+            RUN_INFRA_DATA="true"
+          fi
+
+          echo "Checking env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_api_changed == 'true' :  ${{ env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_api_changed == 'true' }}"
+          if ${{ env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_api_changed == 'true' }}; then
+            RUN_APP_API="true"
+          fi
+
+          echo "Checking env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_api_changed == 'true' :  ${{ env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_web_changed == 'true' }}"
+          if ${{ env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_web_changed == 'true' }}; then
+            RUN_APP_WEB="true"
+          fi
+
+          echo "Checking env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_api_changed == 'true' || env.infra_api_changed == 'true':  ${{ env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_api_changed == 'true' || env.infra_api_changed == 'true' }}"
+          if ${{ env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_api_changed == 'true' || env.infra_api_changed == 'true' }}; then
+            RUN_INFRA_API="true"
+          fi
+
+          echo "Checking env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_web_changed == 'true' || env.infra_web_changed == 'true' :  ${{ env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_web_changed == 'true' || env.infra_web_changed == 'true' }}"
+          if ${{ env.infra_networking_changed == 'true' || env.infra_data_changed == 'true' || env.app_web_changed == 'true' || env.infra_web_changed == 'true' }}; then
+            RUN_INFRA_WEB="true"
+          fi
+
+          echo "run_infra_networking=$RUN_INFRA_NETWORKING"
+          echo "run_infra_data=$RUN_INFRA_DATA"
+          echo "run_app_api=$RUN_APP_API"
+          echo "run_app_web=$RUN_APP_WEB"
+          echo "run_infra_api=$RUN_INFRA_API"
+          echo "run_infra_web=$RUN_INFRA_WEB"
+
+
+          # 3. Output results to the GitHub Actions environment map
+          echo "run_infra_networking=$RUN_INFRA_NETWORKING" >> $GITHUB_OUTPUT
+          echo "run_infra_data=$RUN_INFRA_DATA" >> $GITHUB_OUTPUT
+          echo "run_app_api=$RUN_APP_API" >> $GITHUB_OUTPUT
+          echo "run_app_web=$RUN_APP_WEB" >> $GITHUB_OUTPUT
+          echo "run_infra_api=$RUN_INFRA_API" >> $GITHUB_OUTPUT
+          echo "run_infra_web=$RUN_INFRA_WEB" >> $GITHUB_OUTPUT
+
+
+  # STAGE 1.2: Checking output values
+  output-value-check:
+    needs: change-detection
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echos
+        run: |
+          echo "run_infra_networking: ${{ needs.change-detection.outputs.run_infra_networking}}"
+          echo "run_infra_data: ${{ needs.change-detection.outputs.run_infra_data}}"
+          echo "run_app_api: ${{ needs.change-detection.outputs.run_app_api}}"
+          echo "run_app_web: ${{ needs.change-detection.outputs.run_app_web}}"
+          echo "run_infra_api: ${{ needs.change-detection.outputs.run_infra_api}}"
+          echo "run_infra_web: ${{ needs.change-detection.outputs.run_infra_web}}"
+
+
+  # STAGE 2.1: Build Networking Infra
+  build-infra-networking:
+    needs: change-detection
+    # Skip if no changes to relevant files
+    if: ${{ needs.change-detection.outputs.run_infra_networking == 'true' }}
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    uses: './.github/workflows/gcp_infra_networking.yaml'
+    with:
+      environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit
+
+
+  # STAGE 2.2: Build Data Infra
+  build-infra-data:
+    needs: [change-detection, build-infra-networking]
+    # Skip if no changes to relevant files
+    if: ${{ !cancelled() && (needs.build-infra-networking.result == 'skipped' || needs.build-infra-networking.result == 'success') && needs.change-detection.outputs.run_infra_data == 'true' }}
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    uses: './.github/workflows/gcp_infra_data.yaml'
+    with:
+      environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit
+
+
+  # STAGE 2.3: Build Api App
+  build-app-api:
+    needs: [change-detection, build-infra-data]
+    # Skip if no changes to relevant files
+    if: ${{ !cancelled() && (needs.build-infra-data.result  == 'skipped' || needs.build-infra-data.result == 'success') && needs.change-detection.outputs.run_app_api == 'true' }}
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    uses: './.github/workflows/gcp_app_api.yaml'
+    with:
+      environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit
+
+
+  # STAGE 2.4: Build Web App
+  build-app-web:
+    needs: [change-detection, build-infra-data]
+    # Skip if no changes to relevant files
+    if: ${{ !cancelled() && (needs.build-infra-data.result  == 'skipped' || needs.build-infra-data.result == 'success') && needs.change-detection.outputs.run_app_web == 'true' }}
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    uses: './.github/workflows/gcp_app_web.yaml'
+    with:
+      environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit
+
+
+  # STAGE 2.5: Build Api Infra
+  build-infra-api:
+    needs: [change-detection, build-app-api]
+    # Skip if no changes to relevant files
+    if: ${{ !cancelled() && (needs.build-app-api.result == 'skipped' || needs.build-app-api.result == 'success') && needs.change-detection.outputs.run_infra_api == 'true' }}
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    uses: './.github/workflows/gcp_infra_api.yaml'
+    with:
+      environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit
+
+
+  # STAGE 2.6: Build Web Infra
+  build-infra-web:
+    needs: [change-detection, build-app-web]
+    # Skip if no changes to relevant files
+    if: ${{ !cancelled() && (needs.build-app-web.result == 'skipped' || needs.build-app-web.result == 'success') && needs.change-detection.outputs.run_infra_web == 'true' }}
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    uses: './.github/workflows/gcp_infra_web.yaml'
+    with:
+      environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit

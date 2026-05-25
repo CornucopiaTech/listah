@@ -33,3 +33,8 @@ variable "project" {
   type        = string
   description = "Project name"
 }
+
+variable "name_in_tag" {
+  type        = string
+  description = "Name defined in labels"
+}

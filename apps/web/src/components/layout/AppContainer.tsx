@@ -3,7 +3,10 @@
 import {
   Fragment,
 } from 'react';
-import { Outlet } from '@tanstack/react-router';
+import {
+  Outlet,
+
+} from '@tanstack/react-router';
 import type {
   ReactNode
 } from 'react';
@@ -34,7 +37,6 @@ export function AppContainerShell() {
     <Fragment>
       <CssBaseline />
       <Box sx={{ width: "100vw", maxWidth: "100vw", height: `fit-content`, }}>
-
         <Outlet />
       </Box>
     </Fragment>

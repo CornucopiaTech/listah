@@ -75,6 +75,7 @@ export const DefaultTag: ITag = {
   name: "",
   props: [],
   count: 0,
+  softDelete: false,
 };
 
 export const DefaultFilter: IFilter = {
@@ -83,6 +84,7 @@ export const DefaultFilter: IFilter = {
   name: "",
   tags: [],
   count: 0,
+  softDelete: false,
 };
 
 

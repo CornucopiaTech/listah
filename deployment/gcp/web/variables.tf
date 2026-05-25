@@ -35,6 +35,8 @@ variable "project" {
 }
 
 variable "image_tag" { type = string }
+variable "name_in_tag" { type = string }
+variable "api_service_url" { type = string }
 variable "auth_key" {
   type      = string
   sensitive = true

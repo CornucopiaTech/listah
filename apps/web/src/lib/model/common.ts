@@ -3,6 +3,8 @@ import * as z from "zod";
 export interface IEnvConfig {
   apiUrl: string;
   authKey: string;
+  debug: boolean;
+  user: string;
 }
 
 export interface IApiEndpointConfig {

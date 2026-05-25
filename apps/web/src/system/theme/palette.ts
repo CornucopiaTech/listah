@@ -1,6 +1,6 @@
 import { color } from "@/system/tokens/colors";
 
-export const lightPalette = {
+export const prevLightPalette = {
   primary: {
     light: color.tropicalteal["100"],
     main: color.tropicalteal["700"],
@@ -94,3 +94,53 @@ export const lightPalette = {
   // },
   // customColors: {}
 };
+
+export const lightPalette = {
+  "mode": "light",
+  "primary": {
+    "main": "#30706e",
+    "light": "#599492",
+    "dark": "#1d4d4b",
+    "contrastText": "#ffffff"
+  },
+  "secondary": {
+    "main": "#e07a5f",
+    "light": "#e99983",
+    "dark": "#b3563c",
+    "contrastText": "#ffffff"
+  },
+  "error": {
+    "main": "#da3434",
+    "light": "#f36161",
+    "dark": "#b32020",
+    "contrastText": "#ffffff"
+  },
+  "warning": {
+    "main": "#e67e22",
+    "light": "#f39c12",
+    "dark": "#d35400",
+    "contrastText": "#ffffff"
+  },
+  "info": {
+    "main": "#2980b9",
+    "light": "#3498db",
+    "dark": "#21618c",
+    "contrastText": "#ffffff"
+  },
+  "success": {
+    "main": "#27ae60",
+    "light": "#2ecc71",
+    "dark": "#1e8449",
+    "contrastText": "#ffffff"
+  },
+  "text": {
+    "primary": "#172524",
+    "secondary": "#4a5e5d",
+    "disabled": "#859998"
+  },
+  "background": {
+    "default": "#f4f7f6",
+    "paper": "#ffffff"
+  },
+  "divider": "rgba(48, 112, 110, 0.12)"
+}

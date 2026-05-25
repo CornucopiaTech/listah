@@ -23,18 +23,11 @@ import {
 
 export function Filters() {
   const store: TBoundStore = useBoundStore((state) => state);
-  function handleTagClick() {
-    store.setTagModal(true);
-  }
-
   function handleFilterClick() {
     store.setFilterModal(true);
   }
 
   const mItems = <Fragment>
-    {/* <MenuItem key="tag" onClick={handleTagClick}>
-      <AppListItemTypography>Create new tag </AppListItemTypography>
-    </MenuItem> */}
     <MenuItem key="filter" onClick={handleFilterClick}>
       <AppListItemTypography>Create new filter </AppListItemTypography>
     </MenuItem>

@@ -80,7 +80,14 @@ resource "google_sql_database_instance" "main" {
       private_network = var.vpc_id
       ssl_mode        = "ENCRYPTED_ONLY"
       server_ca_mode  = "GOOGLE_MANAGED_INTERNAL_CA"
+      authorized_networks {
+        name  = "home-network"
+        value = var.home_network
+      }
     }
+
+
+
     connection_pool_config {
       connection_pooling_enabled = var.edition == "ENTERPRISE" ? false : true
     }

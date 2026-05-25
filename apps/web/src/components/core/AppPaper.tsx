@@ -31,18 +31,18 @@ export const AppPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
 })
 );
 
-export const AppHeroPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
-  height: "60vh",
-  display: "flex",
-  flexWrap: 'wrap',
-  justifyContent: "center",
-  alignContent: "center",
-  marginTop: "10vh",
-  marginBottom: "10vh",
-  backgroundColor: theme.palette.background.paper,
-  borderRadius: 8,
-  padding: "8%"
-}));
+// export const AppHeroPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
+//   height: "60vh",
+//   display: "flex",
+//   flexWrap: 'wrap',
+//   justifyContent: "center",
+//   alignContent: "center",
+//   marginTop: "10vh",
+//   marginBottom: "10vh",
+//   backgroundColor: theme.palette.background.paper,
+//   borderRadius: 8,
+//   padding: "8%"
+// }));
 
 
 export const AppHomePaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({

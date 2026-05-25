@@ -28,6 +28,7 @@ import type {
 import {
   v4 as uuidv4,
 } from 'uuid';
+import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -36,7 +37,6 @@ import DialogContent from '@mui/material/DialogContent';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import { Icon } from "@iconify/react";
 import { useUser } from '@clerk/react';
 import { useTheme } from "@mui/material";
@@ -46,6 +46,7 @@ import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
 import Autocomplete from '@mui/material/Autocomplete';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -61,11 +62,8 @@ import HourglassOutlineIcon from '@iconify-react/material-symbols/hourglass-outl
 
 
 
+
 // Internal imports
-import {
-  AppSubtitle1Typography,
-  AppDialogListItemSecondaryTypography,
-} from "@/components/core/Typography";
 import {
   useBoundStore,
   type TBoundStore
@@ -80,11 +78,6 @@ import type {
   IFormItem,
   IFormProps,
 } from "@/lib/model/item";
-import {
-  ErrorAlert,
-  SuccessAlert,
-  WarnAlert
-} from "@/components/core/Alerts";
 import type { AppTheme } from '@/system/theme';
 import {
   DefaultTagRead,
@@ -98,18 +91,17 @@ import {
   tagGroupOptions,
 } from '@/lib/helper/querying';
 import {
-  SpaceBetweenBox,
+  ItemFormTagBox,
+  ItemFormSpeedDialBox,
 } from "@/components/core/AppBox";
-import {
-  AppDefaultButton,
-  AppDangerButton,
-  AppWarnButton,
-  AppMutedButton,
-} from "@/components/core/AppButton";
+import { AppModalCloseButton } from "@/components/core/AppButton";
+
 
 
 type itemFields = "id" | "userId" | "name" | "note" | `props[${number}]` | "softDelete" | `tags[${number}]`
 
+
+// ToDo: Check the props of the tags for any recent changes to the prop.
 
 
 export function AppItemModal(): ReactNode {
@@ -129,42 +121,96 @@ export function AppItemModal(): ReactNode {
   const {
     isPending, isError, data, error
   }: UseSuspenseQueryResult<ITagReadResponse> = useSuspenseQuery(tagGroupOptions(tagQuery));
-  const tags: ITag[] = data && data.tags ? data.tags : [];
-  const item: IItem = useBoundStore((state) => state.displayItem);
+
+
+  const tags: ITag[] = data?.tags ?? [];
   const knownTagNames = useRef<Set<string>>(new Set(tags.map(p => p.name)));
+  const item: IItem = useBoundStore((state) => state.displayItem);
+  const tagPropMap = new Map<string, { value: string[] }>(Object.entries(data?.tagidPropMap ?? {}));
+
+  // Get the list of all properties from tags in the items list.
+  let tagProps: string[] = []
+  item.tags.forEach(
+    (it) => (tagProps = [...tagProps, ...tagPropMap?.get(it)?.value ?? []])
+  );
+
+  // Get the values for the identified properties.
+  const tagPropsObj = tagProps.map((tg) => {
+    const ap = item?.propObjs?.filter(ip => ip.key == tg) ?? []
+    if (ap.length == 0) {
+      return { key: tg, value: "" }
+    }
+    return ap[0]
+  })
+
+  // const uniqProps = new Set([...tagProps, ...])
   const formData = {
     id: item.id, userId: item.userId, name: item.name,
-    note: item.note, props: item.propObjs,
+    note: item.note, props: tagPropsObj,
     tags: item.tagObjs, softDelete: item.softDelete
   };
+
+
+  function validateTags(fTagList: ITag[]) {
+    let errs = "";
+    let newMsg = "";
+    if (fTagList.filter((t) => t.name != "").length < 1) {
+      errs += "Item must contain one tag at least ";
+    }
+    // const unrecognisedTags = fTagList.filter((t) => !knownTagNames.current.has(t.name));
+    const unrecognisedTags = fTagList.filter((t) => t.name != "").filter((t) => !knownTagNames.current.has(t.name));
+    if (unrecognisedTags.length > 0) {
+      const unregognisedNames = unrecognisedTags.map(it => it.name).join(',')
+      newMsg = `Unrecognised tag(s): (${unregognisedNames}) will not be saved.`;
+      errs += errs == "" ? newMsg : "\n" + newMsg;
+    }
+    if (errs !== "") {
+      return errs
+    }
+  }
+
+  function validateTag(fTag: ITag) {
+    let errList: string[] = [];
+    if (fTag.name === "") {
+      errList = [...errList, "Tag name is required"]
+    }
+    if (!knownTagNames.current.has(fTag.name) && fTag.name != "") {
+      errList = [...errList, `Unrecognised tag (${fTag.name}) will not be saved. Please add new tag to app.`]
+    }
+    if (errList.length > 0) {
+      return errList.join("\n")
+    }
+  }
+
+  function validateName(fieldName: string) {
+    if (!fieldName || fieldName.length < 1) {
+      return "Item name is required";
+    }
+  }
+
+  function formValidator({ value }: { value: IFormItem }) {
+    const invalidName = validateName(value.name as string);
+    if (invalidName) {
+      return invalidName;
+    }
+
+    const invalidTag = validateTags(value.tags);
+    if (invalidTag) {
+      return invalidTag
+    }
+    return undefined;
+  }
+
   // @ts-ignore
   const form = useForm<IFormItem>({
     defaultValues: formData,
     onSubmit: formSubmission,
     validators: {
       onChange({ value }: { value: IFormItem }) {
-        const invalidName = nameValidation(value.name);
-        if (invalidName) {
-          return invalidName;
-        }
-        const invalidTag = tagsValidation(value.tags as unknown as ITag[]);
-        if (invalidTag) {
-          const msg = formErrorMap.onChange ? "\n" + invalidTag : invalidTag;
-          return msg;
-        }
-        return undefined
+        return formValidator({ value });
       },
       onBlur({ value }: { value: IFormItem }) {
-        const invalidName = nameValidation(value.name);
-        if (invalidName) {
-          return invalidName;
-        }
-        const invalidTag = tagsValidation(value.tags as unknown as ITag[]);
-        if (invalidTag) {
-          const msg = formErrorMap.onBlur ? "\n" + invalidTag : invalidTag;
-          return msg;
-        }
-        return undefined
+        return formValidator({ value });
       },
     },
   });
@@ -190,6 +236,7 @@ export function AppItemModal(): ReactNode {
       }
     },
   });
+
   useEffect(() => {
     if (!form.state.isSubmitted) return;
     if (!mutation.isSuccess) return;
@@ -251,7 +298,6 @@ export function AppItemModal(): ReactNode {
   }
 
   function getSimpleField(key: itemFields) {
-    const sx = (key == "id" || key == "userId") ? { display: 'none' } : {}
     return (
       <form.Field
         key={`item-${key}`}
@@ -259,12 +305,12 @@ export function AppItemModal(): ReactNode {
         validators={{
           onChange: ({ value }) => {
             if (key == "name") {
-              return nameValidation(value as unknown as string)
+              return validateName(value as unknown as string)
             }
           },
           onBlur: ({ value }) => {
             if (key == "name") {
-              return nameValidation(value as unknown as string)
+              return validateName(value as unknown as string)
             }
           },
         }}
@@ -273,7 +319,6 @@ export function AppItemModal(): ReactNode {
             return <Grid container sx={{ width: '100%' }} spacing={0}>
               <Grid size={12}>
                 <TextField
-                  sx={sx}
                   slotProps={{
                     input: { style: { fontSize: "1rem" } },
                     inputLabel: { style: { fontSize: "1rem" } },
@@ -300,45 +345,25 @@ export function AppItemModal(): ReactNode {
     );
   }
 
-  const tboxSx = {
-    '& legend': { fontSize: '1rem', color: 'rgba(0, 0, 0, 0.6)' },
-    border: `0.5px solid`,
-    borderColor: "rgba(0, 0, 0, 0.23)",
-    margin: 0, borderRadius: 1,
-    fontSize: '1rem',
-    padding: '16.5px 14px', // Matches standard TextField padding
-    transition: 'border-color 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-    '&:hover': {
-      // Standard MUI hover border color
-      borderColor: 'rgba(0, 0, 0, 0.87)',
-    },
-    '&:focus-within': {
-      // Matches the "active" blue focus state
-      border: '2px solid',
-      borderColor: 'primary.main',
-      // Adjust padding to prevent "jumping" when border thickness changes
-      padding: '15.5px 13px',
-    },
-
-  }
   function getTagField() {
     // ToDo: Use Virtualised list for this.
     // Maybe ToDo: Use an alert to confirm the props that would be deleted when a tag is removed before a tag is removed.
     // ToDo: Change the font color of the tag that corresponds to a property that is in focus.
 
     return (
-      <form.Field name="tags" mode="array" key="tag-parent">
+      <form.Field name="tags" mode="array" key="tag-parent"
+        validators={{
+          onChange: ({ value }) => validateTags(value as unknown as Array<ITag>),
+          onBlur: ({ value }) => validateTags(value as unknown as Array<ITag>),
+        }}>
         {
           (field) => {
             return <Fragment>
-              <Box key="tags" component="fieldset" sx={tboxSx}>
-                <legend style={{ padding: '0 0.5rem' }}>tags</legend>
-                <Button disableElevation sx={{ display: 'flex', justifyContent: "flex-start", alignContent: "center", }}
-                  onClick={() => field.pushValue(DefaultTag)}
-                  type="button">
-                  <AppSubtitle1Typography sx={{ textTransform: "none", justifyContent: "center", alignContent: "center", fontSize: '1rem', }}>
-                    Click to add new tag
-                  </AppSubtitle1Typography>
+              {/* @ts-ignore */}
+              <ItemFormTagBox key="tags" component="fieldset">
+                <legend style={{ padding: '0 0.5rem', color: theme.palette.primary.main, fontSize: "12px" }}>tags</legend>
+                <Button variant="text" color="inherit" onClick={() => field.pushValue(DefaultTag)} >
+                  Click here to add a new tag
                 </Button>
                 {
                   field.state.value && field.state.value.length > 0 &&
@@ -348,18 +373,11 @@ export function AppItemModal(): ReactNode {
                         <form.Field
                           key={i} name={`tags[${i}]`}
                           validators={{
-                            onChange: ({ value }) => tagValidation(value as unknown as ITag),
-                            onBlur: ({ value }) => tagValidation(value as unknown as ITag),
+                            onChange: ({ value }) => validateTag(value as unknown as ITag),
+                            onBlur: ({ value }) => validateTag(value as unknown as ITag),
                           }}
                         >{
                             (subField: any) => {
-                              const textSx = {
-                                '& .MuiInputBase-input': {
-                                  fontSize: '1rem',
-                                }, // Changes the typed text size
-                                '& .MuiInputLabel-root': { fontSize: '1rem' }, // Changes the label size
-                              }
-
                               return (
                                 <Grid
                                   key={i} //Using the tag id as the key causes the form to lose focus when adding new tags to the form, especially when the form length is longer than the maximum allowed length of the dialog.
@@ -398,8 +416,6 @@ export function AppItemModal(): ReactNode {
                                           error={subField.state.meta.errors.length > 0}
                                           helperText={subField.state.meta.errors.join(', ')}
                                           // slotProps causes autocorrect to stop working
-                                          sx={textSx}
-
                                           margin="dense"
                                           {...params}
                                           label=""
@@ -416,7 +432,7 @@ export function AppItemModal(): ReactNode {
                     })
                   }</Grid>
                 }
-              </Box>
+              </ItemFormTagBox>
             </Fragment>
           }
         }
@@ -489,6 +505,7 @@ export function AppItemModal(): ReactNode {
     const sval = newValue ? newValue : "";
     if (sval == "") {
       // If the value was deleted, replace the tag object with the default tag object.
+      // @ts-ignore
       setTagToDelete({ c: childF, p: parentF });
     } else {
       // If a nonzero value is added, then use the information to update the tag object.
@@ -515,7 +532,9 @@ export function AppItemModal(): ReactNode {
   function handleTagDeletePostConfirm(uInput: boolean) {
     // if (yesDelete) {
     if (uInput) {
+      // @ts-ignore
       const par = tagToDelete?.p;
+      // @ts-ignore
       const chd = tagToDelete?.c;
       const fField = par?.state?.value as unknown as ITag[] ?? [];
       const newTagList = fField.filter(fsv => fsv.id != chd.state.value.id);
@@ -534,78 +553,34 @@ export function AppItemModal(): ReactNode {
     setTagToDelete(null);
   }
 
-  function tagsValidation(fTagList: ITag[]) {
-    let errs = "";
-    let newMsg = "";
-    if (fTagList.filter((t) => t.name != "").length < 1) {
-      errs += "Item must contain one tag at least ";
-    }
-    // const unrecognisedTags = fTagList.filter((t) => !knownTagNames.current.has(t.name));
-    const unrecognisedTags = fTagList.filter((t) => t.name != "").filter((t) => !knownTagNames.current.has(t.name));
-    if (unrecognisedTags.length > 0) {
-      const unregognisedNames = unrecognisedTags.map(it => it.name).join(',')
-      newMsg = `Unrecognised tag(s): (${unregognisedNames}) will not be saved.`;
-      errs += errs == "" ? newMsg : "\n" + newMsg;
-    }
-    // console.info('In tags validation - errs', errs)
-    if (errs !== "") {
-      return errs
-    }
-  }
-
-  function tagValidation(fTag: ITag) {
-    let errList: string[] = [];
-    if (fTag.name === "") {
-      errList = [...errList, "Tag name is required"]
-    }
-    if (!knownTagNames.current.has(fTag.name) && fTag.name != "") {
-      errList = [...errList, `Unrecognised tag (${fTag.name}) will not be saved. Please add new tag to app.`]
-    }
-    if (errList.length > 0) {
-      return errList.join("\n")
-    }
-  }
-
-  function nameValidation(fieldName: string) {
-    if (!fieldName || fieldName.length < 1) {
-      return "Item name is required";
-    }
-  }
-
-  function handleItemDelete() {
+  function handleDelete() {
     form.setFieldValue('softDelete', true);
     form.handleSubmit();
   }
 
-  const fields: itemFields[] = ['id', 'userId', 'name', "note"];
+  const fields: itemFields[] = ['name', "note"];
 
   function TagDeleteDialog() {
     return (
       < Dialog open={tagToDelete !== null} disableScrollLock >
-        <DialogTitle
-          id="save-dialog-title"
-          sx={{
-            display: "flex",
-            alignItems: "flex-start",
-            justifyContent: "space-between",
-            p: 3, paddingBottom: 0,
-          }}
-        >{tagToDelete?.c?.state.value.name ?? ""}
+        <DialogTitle id="save-dialog-title" >
+          {/* @ts-ignore */}
+          {tagToDelete?.c?.state.value.name ?? ""}
         </DialogTitle>
         <Divider />
         <DialogContent>
-          <AppSubtitle1Typography>
-            Deleting this will remove the following item properties:
-          </AppSubtitle1Typography>
+          <Typography variant="body2">
+            Deleting this tag will remove the following item properties:
+          </Typography>
 
-          <List sx={{ p: -1, m: -1 }}>
+          <List>
+            {/* @ts-ignore */}
             {tagToDelete?.c?.state.value.props.map((tp) =>
               <ListItem disablePadding>
                 <ListItemButton>
                   <ListItemText
                     primary={
-                      <AppDialogListItemSecondaryTypography
-                        sx={{ py: -1, my: -1 }}>{tp}</AppDialogListItemSecondaryTypography>
+                      <Typography variant="condensedBody2" >{tp}</Typography>
                     }
                   />
                 </ListItemButton>
@@ -617,8 +592,8 @@ export function AppItemModal(): ReactNode {
         <Divider />
         <DialogActions>
           <Stack direction="row" spacing={4}>
-            <AppDefaultButton label="Cancel" handleClick={() => handleTagDeletePostConfirm(false)} />
-            <AppDangerButton label="Delete" handleClick={() => handleTagDeletePostConfirm(true)} />
+            <Button variant="contained" onClick={() => handleTagDeletePostConfirm(false)}>Cancel</Button>
+            <Button variant="contained" color="error" onClick={() => handleTagDeletePostConfirm(true)}> Delete </Button>
           </Stack>
 
         </DialogActions>
@@ -626,82 +601,47 @@ export function AppItemModal(): ReactNode {
     );
   }
 
-  const dialogSx = {
-    display: 'block',
-    width: "sm",
-    maxWidth: "sm",
-    height: 'fit-content',
-    maxHeight: '70vh',
-    overflow: 'auto',
-    margin: "0",
-    '&::-webkit-scrollbar': {
-      width: '15px', // width of the entire scrollbar
-    },
-    '&::-webkit-scrollbar-track': {
-      background: theme.palette.background.paper, // color of the tracking area
-    },
-    '&::-webkit-scrollbar-thumb': {
-      backgroundColor: theme.palette.background.default, // color of the scroll thumb
-      borderRadius: '10px', // roundness of the scroll thumb
-    },
-    '&::-webkit-scrollbar-thumb:hover': {
-      background: theme.palette.background.default,
-    },
-  }
-
   function Dlg(content: ReactNode, actions?: ReactNode): ReactNode {
     return (
       <Dialog fullWidth maxWidth="sm" open={store.itemModal} onClose={closeModal} >
-        <SpaceBetweenBox >
-          <DialogTitle
-            id="save-dialog-title"
-            sx={{
-              display: "flex", alignItems: "flex-start",
-              justifyContent: "space-between",
-              pb: 0, pt: 2, px: 3,
-            }}
-          >{item.id == "" ? "Add new item" : "Update Item"}
-          </DialogTitle>
-
-          <IconButton aria-label="close dialog"
-            sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', }}
-            size="small"
-            onClick={closeModal}>
+        <DialogTitle id="save-dialog-title" >
+          {item.id == "" ? "Add new item" : "Update Item"}
+          <AppModalCloseButton aria-label="close dialog"
+            size="small" onClick={closeModal}>
             <Icon icon="material-symbols-light:close-rounded" width="30" height="30" />
-          </IconButton>
-        </SpaceBetweenBox>
+          </AppModalCloseButton>
+        </DialogTitle>
         <Divider />
-        {mutation.isSuccess && <SuccessAlert message="Item updated!" />}
-        {formErrorMap.onChange && <WarnAlert message={`${formErrorMap.onChange}`} />}
+        {mutation.isSuccess && <Alert severity="success"> {"Changes saved!"} </Alert>}
+        {mutation.error && (
+          <Fragment>
+            <Alert severity="error"> {mutation.error.message}</Alert>
+            <h5 onClick={() => mutation.reset()}>{mutation.error.message}</h5>
+          </Fragment>
+        )}
+        {formErrorMap.onChange && <Alert severity="warning"> {`${formErrorMap.onChange}`} </Alert>}
         <Divider />
         <TagDeleteDialog />
 
         <form onSubmit={onFormSubmit}>
-          <DialogContent sx={dialogSx} >
-            {content}
-          </DialogContent>
+          <DialogContent> {content} </DialogContent>
           <Divider />
-          {actions &&
-            <DialogActions>
-              {actions}
-            </DialogActions>}
+          {actions && <DialogActions> {actions} </DialogActions>}
         </form>
       </Dialog>
     );
   }
 
   if (isPending) { return Dlg(<LinearProgress />); }
-  if (isError) { return Dlg(<ErrorAlert message={error?.message || "An error occurred. Please try again"} />); }
+  if (isError) {
+    return Dlg(
+      <Alert severity="error"> {error?.message || "An error occurred. Please try again"}</Alert>
+    );
+  }
 
   const con = (
     <Box component="section" >
       <Stack spacing={0} sx={{ width: '100%' }} >
-        {mutation.error && (
-          <Fragment>
-            <ErrorAlert message={mutation.error.message} />
-            <h5 onClick={() => mutation.reset()}>{mutation.error.message}</h5>
-          </Fragment>
-        )}
         {fields.map((fds: itemFields) => getSimpleField(fds))}
         {getPropField()}
         {getTagField()}
@@ -709,63 +649,60 @@ export function AppItemModal(): ReactNode {
     </Box>
   );
 
-
-  const deleteTooltip = (
-    form.state.values.id == "" ? "new item can't be deleted" :
-      form.state.isSubmitting ? "item is being saved" : "delete item"
-  );
-  const saveTooltip = (
-    form.state.isPristine ? "no changes to save" :
-      form.state.isSubmitting ? "item is being saved" :
-        !form.state.canSubmit ? "changes contain errors" : "save changes"
-  );
-  const resetTooltip = form.state.isDirty ? "reset" : "no changes to reset";
-  const deleteIcon = (
-    form.state.isSubmitting || form.state.values.id == "" ? <DeleteOffIcon height="1.5rem" /> :
-      <DeleteIcon height="1.5rem" />
-  );
-  const saveIcon = form.state.isSubmitting ? <HourglassOutlineIcon height="1.5rem" /> :
-    (!form.state.isPristine && form.state.canSubmit) ? <SaveIcon height="1.5rem" /> :
-      <SaveOffIcon height="1.5rem" />;
-  const resetIcon = form.state.isDirty ? <RestartIcon height="1.5rem" /> : <RestartOffIcon height="1.5rem" />;
-
-
-  const formActions = [
-    { name: deleteTooltip, icon: deleteIcon, onClick: handleItemDelete },
-    { name: saveTooltip, icon: saveIcon, onClick: form.handleSubmit },
-    { name: resetTooltip, icon: resetIcon, onClick: form.reset },
-  ];
+  const dummyAction = () => undefined;
 
   const act = (
     <form.Subscribe
-      selector={(state) => [state.canSubmit, state.isSubmitting, state.values.name]}
-      children={() => (
-        <Box sx={{ height: '5vh', transform: 'translateZ(0px)', flexGrow: 1 }}>
+      selector={(state) => [state.canSubmit, state.isSubmitting, state.isPristine, state.isDirty, state.values.id]}
+      children={
+        ([canSubmit, isSubmitting, isPristine, isDirty, id]) => {
+          const canDelete = !isSubmitting && id !== "";
+          const canSave = (!isPristine && canSubmit);
+          const saveIcon = isSubmitting ? <HourglassOutlineIcon height="1.5rem" /> :
+            canSave ? <SaveIcon height="1.5rem" /> : <SaveOffIcon height="1.5rem" />
 
-          <SpeedDial
-            ariaLabel="SpeedDial basic example"
-            sx={{
-              position: 'absolute', bottom: 0, right: 0,
-              '& .MuiFab-primary': { width: 50, height: 50, minHeight: 50, }
-            }}
-            icon={<SpeedDialIcon />}
-          >
-            {formActions.map((action) => (
+          return <ItemFormSpeedDialBox>
+            <SpeedDial ariaLabel="SpeedDial basic example"
+              icon={<SpeedDialIcon />} >
               <SpeedDialAction
-                key={action.name}
-                icon={action.icon}
+                key={"delete"}
+                icon={canDelete ? <DeleteIcon height="1.5rem" /> : <DeleteOffIcon height="1.5rem" />}
                 // @ts-ignore
-                onClick={action.onClick}
+                onClick={canDelete ? handleDelete : dummyAction}
                 slotProps={{
                   tooltip: {
-                    title: action.name,
+                    title: canSave ? "save" : "cannot save changes",
                   },
                 }}
               />
-            ))}
-          </SpeedDial>
-        </Box>
-      )
+              <SpeedDialAction
+                key={"save"}
+                icon={saveIcon}
+                // @ts-ignore
+                onClick={!isSubmitting && canSave ? form.handleSubmit : dummyAction}
+                slotProps={{
+                  tooltip: {
+                    title: canSave ? "save" : "cannot save changes",
+                  },
+                }}
+              />
+
+              <SpeedDialAction
+                key={isDirty ? "reset" : "No changes yet"}
+                icon={isDirty ? <RestartIcon height="1.5rem" /> : <RestartOffIcon height="1.5rem" />}
+                // @ts-ignore
+                onClick={isDirty ? form.reset : dummyAction}
+                slotProps={{
+                  tooltip: {
+                    title: isDirty ? "reset" : "no changes yet",
+                  },
+                }}
+              />
+
+
+            </SpeedDial>
+          </ItemFormSpeedDialBox>
+        }
       }
     />
   );

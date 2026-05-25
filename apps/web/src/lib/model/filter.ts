@@ -17,7 +17,8 @@ export const ZFilter = z.object({
   userId: z.string().catch(''),
   name: z.string().catch(''),
   tags: z.array(z.string()).catch([]),
-  count: z.number().catch(0),
+  count: z.nullish(z.number()).catch(0),
+  softDelete: z.nullish(z.boolean().catch(false)),
 });
 export type IFilter = z.infer<typeof ZFilter>;
 

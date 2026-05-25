@@ -32,6 +32,7 @@ declare global {
       authKey: string;
       apiUrl: string;
       debug?: string;
+      user?: string;
     };
   }
 }
@@ -91,7 +92,16 @@ function StrictModeWrapper({ children }: { children: ReactNode }) {
 }
 
 function App() {
-  const { user, } = useUser();
+  let user;
+  user = useUser().user;
+  // if (process.env.NODE_ENV === "development") {
+  //   user = { id: window.runtimeConfig.user }
+  // } else {
+  //   user = useUser().user;
+  // }
+  // //  const { user, } = process.env.NODE_ENV === "development" ? { user:  } : useUser();
+
+
   // Use a useMemo for the context value to ensure stable object reference
   const routerContext = useMemo(() => {
     return {

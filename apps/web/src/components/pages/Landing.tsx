@@ -1,29 +1,29 @@
 import { Fragment } from "react";
 import { SignInButton } from '@clerk/react';
 
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Paper from '@mui/material/Paper';
 
-import { AppHeroPaper } from "@/components/core/AppPaper";
-import { AppButtonContained } from "@/components/core/AppButton";
-import { AppHeroTypography, AppH6Typography } from "@/components/core/Typography";
-import { AppH6ButtonTypography } from "@/components/core/ButtonTypography";
+
 import { AppContainer } from '@/components/layout/AppContainer';
 
 export function Landing() {
   return (
     <Fragment>
       <AppContainer mw="md">
-        <AppHeroPaper>
-          {/* <img src="/logo.png" width={120} height={120} /> */}
-          <AppHeroTypography>Simplify your life, one list at a time</AppHeroTypography>
-          <AppH6Typography sx={{ textAlign: "center", }}> Effortlessly manage task, shopping, and project lists. <br />All in one place.</AppH6Typography>
+        <Paper variant="hero">
+          <Typography variant="h1">Simplify your life.</Typography>
+          <Typography variant="h3">One list at a time.</Typography>
+          <Typography variant="h5"> Manage task, shopping, and project lists. </Typography>
+          <Typography variant="h5"> All in one place.</Typography>
           <SignInButton mode="modal">
-            <AppButtonContained variant='contained' href="">
-              <AppH6ButtonTypography sx={{ textAlign: "center", }}>
-                Get Started - Free
-              </AppH6ButtonTypography>
-            </AppButtonContained>
+            {/* @ts-ignore */}
+            <Button variant='heroContained' color="inherit">
+              <Typography variant="h6"> Get Started - It's free! </Typography>
+            </Button>
           </SignInButton>
-        </AppHeroPaper>
+        </Paper>
       </AppContainer>
     </Fragment>
   )
