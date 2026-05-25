@@ -28,6 +28,7 @@ jobs:
       TF_VAR_environment: ${{ inputs.environment }}
       TF_VAR_instance_tier: ${{ vars.GCP_DB_INSTANCE_TIER }}
       TF_VAR_db_edition: "ENTERPRISE"
+      TF_VAR_home_network: ${{secrets.DESKTOP_UBUNTU_ADDR}}
       # TF_LOG: DEBUG
 
     steps:

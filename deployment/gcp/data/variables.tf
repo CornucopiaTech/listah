@@ -34,5 +34,10 @@ variable "project" {
   description = "Project name"
 }
 
+variable "home_network" {
+  type        = string
+  description = "Whitelisted home network"
+}
+
 variable "instance_tier" { type = string }
 variable "db_edition" { type = string }
