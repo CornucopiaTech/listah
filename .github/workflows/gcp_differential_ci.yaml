@@ -148,7 +148,7 @@ jobs:
 
   # STAGE 2.5: Build Api Infra
   build-infra-api:
-    needs: [change-detection, build-infra-networking, build-infra-data]
+    needs: [change-detection, build-infra-networking, build-infra-data, build-app-api]
     # Skip if no changes to relevant files
     if: ${{ needs.change-detection.outputs.run_infra_api == 'true' }}
     permissions:
@@ -162,7 +162,7 @@ jobs:
 
   # STAGE 2.6: Build Web Infra
   build-infra-web:
-    needs: [change-detection, build-infra-networking, build-infra-data]
+    needs: [change-detection, build-infra-networking, build-infra-data, build-app-web]
     # Skip if no changes to relevant files
     if: ${{ needs.change-detection.outputs.run_infra_web == 'true' }}
     permissions:
