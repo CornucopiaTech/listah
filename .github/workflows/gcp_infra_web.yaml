@@ -9,7 +9,7 @@ on:
         type: string
 
 jobs:
-  deploy-app:
+  deploy-web:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     defaults:
@@ -81,16 +81,22 @@ jobs:
 
       - name: Retrieve latest Web Tag
         run: |
-          LATEST_TAG=$(gcloud artifacts docker images list \
-            ${{ env.REPO_URI }}/${{ env.WEB_IMAGE_NAME }} \
-            --sort-by="~UPDATE_TIME" \
+          LATEST_DIGEST=$(gcloud artifacts docker images list \
+          ${{ env.REPO_URI }}/${{ env.WEB_IMAGE_NAME }} \
+            --sort-by="~UPDATE_TIME"  \
             --limit=1 \
-            --format="value(tags)")
+            --format="value(DIGEST)" \
+          )
+          echo "LATEST_DIGEST: ${LATEST_DIGEST}"
 
-            IMAGE_NAME_TAG="${{ env.REPO_URI }}/${{ env.WEB_IMAGE_NAME }}:${LATEST_TAG}"
+          LATEST_TAG=$(gcloud artifacts docker tags list \
+          ${{ env.REPO_URI }}/${{ env.WEB_IMAGE_NAME }} \
+            --filter="DIGEST:${LATEST_DIGEST}" \
+            --format="value(TAG)"
+          )
+          echo "LATEST_TAG: ${LATEST_TAG}"
 
-          echo "The newest image tag is: $LATEST_TAG"
-          echo "The newest full image name is: $IMAGE_NAME_TAG"
+
           echo "WEB_LATEST_TAG="${LATEST_TAG}"" >> ${GITHUB_ENV}
           echo "WEB_IMAGE_NAME_TAG="${IMAGE_NAME_TAG}"" >> ${GITHUB_ENV}
 
@@ -103,7 +109,7 @@ jobs:
           tofu plan -out=tfplan
           tofu apply -auto-approve tfplan
         env:
-          TF_VAR_image_tag: ${{ env.WEB_IMAGE_FULL_NAME }}
+          TF_VAR_image_tag: ${{ env.WEB_IMAGE_NAME_TAG }}
           # TF_VAR_api_url: ${{ env.API_URL }}
           TF_VAR_api_url: ""
           TF_VAR_auth_key: ${{ secrets.CLERK_AUTH_KEY }}

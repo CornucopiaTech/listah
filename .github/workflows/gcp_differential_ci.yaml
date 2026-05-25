@@ -64,6 +64,10 @@ jobs:
             INFRA_NETWORKING_CHANGED="true"
           fi
 
+          if echo "$CHANGED_FILES" | grep -q "^liquibase/changelog/"; then
+            INFRA_DATA_CHANGED="true"
+          fi
+
           if echo "$CHANGED_FILES" | grep -q "^deployment/gcp/data/"; then
             INFRA_DATA_CHANGED="true"
           fi
