@@ -110,4 +110,4 @@ jobs:
           tofu apply -auto-approve tfplan
         env:
           TF_VAR_image_tag: ${{ env.API_IMAGE_NAME_TAG }}
-          TF_VAR_known_origins: "https://${{ env.TF_VAR_name_in_tag }}-web-service-${{ secrets.GCP_PROJECT_NUMBER}}-${{ env.TF_VAR_gcp_region }}.run.app:8080,https://${{ env.TF_VAR_name_in_tag }}-web-service-${{ secrets.GCP_PROJECT_NUMBER}}-${{ env.TF_VAR_gcp_region }}.run.app:80,https://${{ env.TF_VAR_name_in_tag }}-web-service-${{ secrets.GCP_PROJECT_NUMBER}}-${{ env.TF_VAR_gcp_region }}.run.app:3000"
+          TF_VAR_known_origins: "https://${{ env.TF_VAR_name_in_tag }}-web-service-${{ secrets.GCP_PROJECT_NUMBER}}.${{ env.TF_VAR_gcp_region }}.run.app"
