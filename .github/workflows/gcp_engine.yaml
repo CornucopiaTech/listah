@@ -9,7 +9,48 @@ on:
 
 
 jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Important for git diff to work
+
+      - id: set-matrix
+        run: |
+          # Use git diff to see what folders changed
+          # This example creates a JSON array based on changes
+          APPS=()
+          git diff --name-only HEAD~1 | grep -q "^apps/web/" && APPS+=('"app_web"')
+          git diff --name-only HEAD~1 | grep -q "^apps/sql_api/" && APPS+=('"app_api"')
+          git diff --name-only HEAD~1 | grep -q "^deployment/gcp/networking/" && APPS+=('"infra_networking"')
+          git diff --name-only HEAD~1 | grep -q "^deployment/gcp/data/" && APPS+=('"infra_data"')
+          git diff --name-only HEAD~1 | grep -q "^deployment/gcp/api/" && APPS+=('"infra_api"')
+          git diff --name-only HEAD~1 | grep -q "^deployment/gcp/web/" && APPS+=('"infra_web"')
+          # Join array with commas and format as JSON
+          MATRIX_JSON=$(IFS=,; echo "[${APPS[*]}]")
+          echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
+
+  build:
+    needs: detect-changes
+    # Skip if no apps changed
+    if: ${{ needs.detect-changes.outputs.matrix != '[]' && needs.detect-changes.outputs.matrix != '' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build App
+        run: npm run build --prefix apps/${{ matrix.app }}
+
   deploy_networking:
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.matrix != '[]' && needs.detect-changes.outputs.matrix != '' }}
     permissions:
       contents: read
       id-token: write # Required for Workload Identity Federation

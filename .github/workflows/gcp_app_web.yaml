@@ -1,0 +1,83 @@
+
+name: Build Web App
+run-name: Build Web App to ${{ vars.APP_NAME }} by @${{ github.actor }}
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+
+jobs:
+  deploy-app:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    defaults:
+      run:
+        working-directory: 'apps/web'
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    env:
+      API_IMAGE_NAME_TAG: ${{ vars.APP_NAME }}-api:${GITHUB_SHA::7}
+      WEB_IMAGE_NAME_TAG: ${{ vars.APP_NAME }}-web:${GITHUB_SHA::7}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Authenticate to Google Cloud
+        uses: 'google-github-actions/auth@v3'
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_WORKLOAD_SERVICE_ACCOUNT }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@main # Or a specific version
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Set up Cloud SDK
+        uses: 'google-github-actions/setup-gcloud@v3'
+        with:
+          version: '>= 363.0.0'
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GCP Artifact Registry
+        run: |-
+            gcloud auth configure-docker ${{ vars.GCP_REGION }}-docker.pkg.dev
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: latest
+
+      # The api needs the db certs from the output of the data job
+      #     to be able to access the database.
+      - name: Retrieve Outputs from Data Job Using Tofu Output
+        run: |
+          echo "pwd - $(pwd)"
+          cd ${{ github.workspace }}/deployment/gcp/data
+          tofu init
+
+          echo "REPO_URI="$(tofu output -raw artifact_repo_uri)"" >> ${GITHUB_ENV}
+          echo "pwd - $(pwd)"
+
+      - name: Build, Tag, and Push Docker Web Image to Container Repository Using Tofu Output
+        run: |-
+          echo "pwd - $(pwd)"
+          echo "repo_uri - ${{ env.REPO_URI }}"
+          echo "web_image_name - ${{ env.WEB_IMAGE_NAME_TAG }}"
+          web_image_full_name="${{ env.REPO_URI }}/${{ env.WEB_IMAGE_NAME_TAG }}"
+          echo "WEB_IMAGE_FULL_NAME="${web_image_full_name}"" >> ${GITHUB_ENV}
+          echo "web_image_full_name - ${web_image_full_name}"
+
+          echo "building web image ${web_image_full_name}"
+          docker build . -t "${web_image_full_name}"
+          echo "pushing web image ${web_image_full_name}"
+          docker push "${web_image_full_name}"
+          echo "pwd - $(pwd)"

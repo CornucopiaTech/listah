@@ -1,0 +1,174 @@
+name: GCP Selective CICD Pipeline
+run-name: GCP Selective CICD Pipeline for ${{ vars.APP_NAME }} by @${{ github.actor }}
+on:
+  pull_request:
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+
+jobs:
+  # STEP 1: The Native Upstream Detector
+  change-detection:
+    runs-on: ubuntu-latest
+    outputs:
+      run_app_api: ${{ steps.check-files.outputs.app_api }}
+      run_app_web: ${{ steps.check-files.outputs.app_web }}
+      run_infra_api: ${{ steps.check-files.outputs.infra_api }}
+      run_infra_web: ${{ steps.check-files.outputs.infra_web }}
+      run_infra_networking: ${{ steps.check-files.outputs.infra_networking }}
+      run_infra_data: ${{ steps.check-files.outputs.infra_data }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          # CRITICAL: By default, checkout fetches only 1 commit (depth 1).
+          # We need historical commits to compare differences accurately.
+          fetch-depth: 0
+
+      - name: Detect Changed Paths Natively
+        id: check-files
+        run: |
+          # 1. Determine the base commit to compare against
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            # For PRs, compare against the base branch target (e.g., origin/main)
+            BASE_REF="origin/${{ github.base_ref }}"
+          else
+            # For pushes to main, compare against the previous commit (or fall back to HEAD~1)
+            BASE_REF="${{ github.event.before }}"
+            if [ "$BASE_REF" = "0000000000000000000000000000000000000000" ] || [ -z "$BASE_REF" ]; then
+              BASE_REF="HEAD~1"
+            fi
+          fi
+
+          echo "Comparing current HEAD against base: $BASE_REF"
+
+          # 2. Get the list of changed files
+          CHANGED_FILES=$(git diff --name-only $BASE_REF HEAD)
+          echo "Files changed:"
+          echo "$CHANGED_FILES"
+
+          # 3. Initialize variables
+          APP_API_CHANGED="false"
+          APP_WEB_CHANGED="false"
+          INFRA_API_CHANGED="false"
+          INFRA_WEB_CHANGED="false"
+          INFRA_NETWORKING_CHANGED="false"
+          INFRA_DATA_CHANGED="false"
+
+          # 4. Use grep to look for specific path patterns
+          if echo "$CHANGED_FILES" | grep -q "^apps/sql_api/"; then
+          APP_API_CHANGED="true"
+          fi
+          if echo "$CHANGED_FILES" | grep -q "^apps/web/"; then
+          APP_WEB_CHANGED="true"
+          fi
+
+          if echo "$CHANGED_FILES" | grep -q "^deployment/gcp/api/"; then
+          INFRA_API_CHANGED="true"
+          fi
+
+          if echo "$CHANGED_FILES" | grep -q "^deployment/gcp/web/"; then
+          INFRA_WEB_CHANGED="true"
+          fi
+
+          if echo "$CHANGED_FILES" | grep -q "^deployment/gcp/networking/"; then
+          INFRA_NETWORKING_CHANGED="true"
+          fi
+
+          if echo "$CHANGED_FILES" | grep -q "^deployment/gcp/data/"; then
+          INFRA_DATA_CHANGED="true"
+          fi
+
+          # 5. Output results to the GitHub Actions environment map
+          echo "app_api=$APP_API_CHANGED" >> $GITHUB_OUTPUT
+          echo "app_web=$APP_WEB_CHANGED" >> $GITHUB_OUTPUT
+          echo "infra_api=$INFRA_API_CHANGED" >> $GITHUB_OUTPUT
+          echo "infra_web=$INFRA_WEB_CHANGED" >> $GITHUB_OUTPUT
+          echo "infra_networking=$INFRA_NETWORKING_CHANGED" >> $GITHUB_OUTPUT
+          echo "infra_data=$INFRA_DATA_CHANGED" >> $GITHUB_OUTPUT
+
+
+  # STAGE 2.1: Build Api App
+  build-app-api:
+    needs: change-detection
+    # Skip if no changes to relevant files
+    if: ${{ needs.change-detection.outputs.run_app_api == 'true' }}
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    uses: './.github/workflows/gcp_app_api.yaml'
+    with:
+      environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit
+
+
+  # STAGE 2.2: Build Web App
+  build-app-web:
+    needs: change-detection
+    # Skip if no changes to relevant files
+    if: ${{ needs.change-detection.outputs.run_app_web == 'true' }}
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    uses: './.github/workflows/gcp_app_web.yaml'
+    with:
+      environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit
+
+
+  # STAGE 2.3: Build Networking Infra
+  build-infra-networking:
+    needs: change-detection
+    # Skip if no changes to relevant files
+    if: ${{ needs.change-detection.outputs.run_infra_networking == 'true' }}
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    uses: './.github/workflows/gcp_infra_networking.yaml'
+    with:
+      environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit
+
+
+  # STAGE 2.4: Build Data Infra
+  build-infra-data:
+    needs: [change-detection, build-infra-networking]
+    # Skip if no changes to relevant files
+    if: ${{ needs.change-detection.outputs.run_infra_data == 'true' }}
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    uses: './.github/workflows/gcp_infra_data.yaml'
+    with:
+      environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit
+
+
+  # STAGE 2.5: Build Api Infra
+  build-infra-api:
+    needs: [change-detection, build-infra-networking, build-infra-data]
+    # Skip if no changes to relevant files
+    if: ${{ needs.change-detection.outputs.run_infra_api == 'true' }}
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    uses: './.github/workflows/gcp_infra_api.yaml'
+    with:
+      environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit
+
+
+  # STAGE 2.6: Build Web Infra
+  build-infra-web:
+    needs: [change-detection, build-infra-networking, build-infra-data]
+    # Skip if no changes to relevant files
+    if: ${{ needs.change-detection.outputs.run_infra_web == 'true' }}
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    uses: './.github/workflows/gcp_infra_web.yaml'
+    with:
+      environment:  ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit

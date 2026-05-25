@@ -89,6 +89,8 @@ func SetupOTelSDK(ctx context.Context, i *bootstrap.Infra) (shutdown func(contex
 	shutdownFuncs = append(shutdownFuncs, tracerProvider.Shutdown)
 	otel.SetTracerProvider(tracerProvider)
 
+
+	// Define metrics
 	// // Set up trace provider.
 	// tracerConsoleProvider, err := newConsoleTracerProvider(infra, res)
 	// if err != nil {
