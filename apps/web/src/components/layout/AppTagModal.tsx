@@ -85,7 +85,7 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
 
   function validateName(fname: string) {
     if (fname.length < 1) {
-      return "Tag name is required";
+      return "tag name is required";
     }
   }
 
@@ -133,6 +133,12 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
     },
   });
   const formErrorMap = useStore(form.store, (state) => state.errorMap);
+  const formErrors = useStore(form.store, (state) => state.errors);
+  const formCanSubmit = formErrors.length == 0;
+  const formIsSubmitting = useStore(form.store, (state) => state.isSubmitting);
+  const formIsDirty = useStore(form.store, (state) => state.isDirty);
+  const formStateId = useStore(form.store, (state) => state.values.id);
+
 
   // Define invalidating  mutation
   const mutation = useMutation({
@@ -242,8 +248,8 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
                   size="small"
                   variant="standard"
                   margin="dense"
-                  error={key == "name" && field.state.meta.errors.length > 0}
-                  helperText={field.state.meta.errors.join(', ')}
+                  error={field.state.meta.errors.length > 0 || field.state.value == ""}
+                  helperText={field.state.meta.errors.length > 0 ? field.state.meta.errors.join(', ') : field.state.value == "" ? "tag name is required" : ""}
                 />
               </Grid>
             </Grid>
@@ -256,10 +262,11 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
     // ToDo: Use Virtualised list for this.
     return (
       <form.Field name="props" mode="array"
-        validators={{
-          onChange: ({ value }) => validateProps(value as unknown as Array<string>),
-          onBlur: ({ value }) => validateProps(value as unknown as Array<string>),
-        }}>
+      // validators={{
+      //   onChange: ({ value }) => validateProps(value as unknown as Array<string>),
+      //   onBlur: ({ value }) => validateProps(value as unknown as Array<string>),
+      // }}
+      >
         {
           (field) => (
             <Fragment>
@@ -285,8 +292,6 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
                                 key={i} //Using the tag id as the key causes the form to lose focus when adding new tags to the form, especially when the form length is longer than the maximum allowed length of the dialog.
                                 size={{ xs: 12, sm: 6, md: 4 }}>
                                 <TextField
-                                  error={subField.state.meta.errors.length > 0}
-                                  helperText={subField.state.meta.errors.join(', ')}
                                   slotProps={{
                                     input: { style: { fontSize: "15px" } },
                                     inputLabel: { style: { fontSize: "15px" } },
@@ -299,6 +304,8 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
                                   size="small"
                                   variant="standard"
                                   margin="dense"
+                                  error={subField.state.meta.errors.length > 0 || subField.state.value == ""}
+                                  helperText={subField.state.meta.errors.length > 0 ? subField.state.meta.errors.join(', ') : subField.state.value == "" ? "property name is required" : ""}
                                 />
                               </Grid>
                             )
@@ -316,7 +323,7 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
     );
   }
 
-
+  // ToDo: successful mutation returns an error about Response.json: Body has already been consumed.
   const fields: itemFields[] = ['name'];
 
   function Dlg(content: ReactNode, actions?: ReactNode): ReactNode {
@@ -331,12 +338,8 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
         </DialogTitle>
         <Divider />
         {mutation.isSuccess && <Alert severity="success"> {"Changes saved!"} </Alert>}
-        {mutation.error && (
-          <Fragment>
-            <Alert severity="error"> {mutation.error.message}</Alert>
-            <h5 onClick={() => mutation.reset()}>{mutation.error.message}</h5>
-          </Fragment>
-        )}
+        {mutation.error && <Alert severity="error"> {mutation.error.message}</Alert>
+        }
         {formErrorMap.onChange && <Alert severity="warning"> {`${formErrorMap.onChange}`} </Alert>}
         <Divider />
         <form onSubmit={onFormSubmit}>
@@ -360,60 +363,48 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
 
   const dummyAction = () => undefined;
 
+  // ToDo: Add way to delete a property after adding it.
+
+  // Return something when form is submitting
+
+  const canDelete = !formIsSubmitting && formStateId !== "";
+  const saveIcon = formIsSubmitting ? <HourglassOutlineIcon height="1.5rem" /> :
+    formCanSubmit ? <SaveIcon height="1.5rem" /> : <SaveOffIcon height="1.5rem" />
   const act = (
-    <form.Subscribe
-      selector={(state) => [state.canSubmit, state.isSubmitting, state.isPristine, state.isDirty, state.values.id]}
-      children={
-        ([canSubmit, isSubmitting, isPristine, isDirty, id]) => {
-          const canDelete = !isSubmitting && id !== "";
-          const canSave = (!isPristine && canSubmit);
-          const saveIcon = isSubmitting ? <HourglassOutlineIcon height="1.5rem" /> :
-            canSave ? <SaveIcon height="1.5rem" /> : <SaveOffIcon height="1.5rem" />
+    <ItemFormSpeedDialBox>
+      <SpeedDial ariaLabel="SpeedDial basic example"
+        icon={<SpeedDialIcon />} >
+        <SpeedDialAction
+          key={"delete"}
+          icon={canDelete ? <DeleteIcon height="1.5rem" /> : <DeleteOffIcon height="1.5rem" />}
+          // @ts-ignore
+          onClick={canDelete ? handleDelete : dummyAction}
+          slotProps={{
+            tooltip: { title: formCanSubmit ? "save" : "cannot save changes", },
+          }}
+        />
 
-          return <ItemFormSpeedDialBox>
-            <SpeedDial ariaLabel="SpeedDial basic example"
-              icon={<SpeedDialIcon />} >
-              <SpeedDialAction
-                key={"delete"}
-                icon={canDelete ? <DeleteIcon height="1.5rem" /> : <DeleteOffIcon height="1.5rem" />}
-                // @ts-ignore
-                onClick={canDelete ? handleDelete : dummyAction}
-                slotProps={{
-                  tooltip: {
-                    title: canSave ? "save" : "cannot save changes",
-                  },
-                }}
-              />
-              <SpeedDialAction
-                key={"save"}
-                icon={saveIcon}
-                // @ts-ignore
-                onClick={!isSubmitting && canSave ? form.handleSubmit : dummyAction}
-                slotProps={{
-                  tooltip: {
-                    title: canSave ? "save" : "cannot save changes",
-                  },
-                }}
-              />
+        <SpeedDialAction
+          key={"save"}
+          icon={saveIcon}
+          // @ts-ignore
+          onClick={formCanSubmit ? form.handleSubmit : dummyAction}
+          slotProps={{
+            tooltip: { title: formCanSubmit ? "save" : "cannot save changes", },
+          }}
+        />
 
-              <SpeedDialAction
-                key={isDirty ? "reset" : "No changes yet"}
-                icon={isDirty ? <RestartIcon height="1.5rem" /> : <RestartOffIcon height="1.5rem" />}
-                // @ts-ignore
-                onClick={isDirty ? form.reset : dummyAction}
-                slotProps={{
-                  tooltip: {
-                    title: isDirty ? "reset" : "no changes yet",
-                  },
-                }}
-              />
-
-
-            </SpeedDial>
-          </ItemFormSpeedDialBox>
-        }
-      }
-    />
+        <SpeedDialAction
+          key={formIsDirty ? "reset" : "No changes yet"}
+          icon={formIsDirty ? <RestartIcon height="1.5rem" /> : <RestartOffIcon height="1.5rem" />}
+          // @ts-ignore
+          onClick={formIsDirty ? form.reset : dummyAction}
+          slotProps={{
+            tooltip: { title: formIsDirty ? "reset" : "no changes yet", },
+          }}
+        />
+      </SpeedDial>
+    </ItemFormSpeedDialBox>
   );
 
   return Dlg(con, act);

@@ -51,3 +51,4 @@ variable "username" { type = string }
 variable "root_password" { type = string }
 variable "user_password" { type = string }
 variable "db_edition" { type = string }
+variable "name_in_tag" { type = string }

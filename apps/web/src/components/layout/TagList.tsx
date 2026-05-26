@@ -66,8 +66,6 @@ export function TagListLayout(): ReactNode {
   const routeApi = getRouteApi('/tags/');
   const { search: query } = routeApi.useRouteContext();
 
-  console.info('query', query);
-
   let pageInfo = useRef({
     pageNumber: query.pagination.pageNumber,
     pageSize: query.pagination.pageSize,
