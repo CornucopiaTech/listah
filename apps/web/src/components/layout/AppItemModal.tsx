@@ -104,9 +104,6 @@ import { AppModalCloseButton } from "@/components/core/AppButton";
 type itemFields = "id" | "userId" | "name" | "note" | `props[${number}]` | "softDelete" | `tags[${number}]`
 
 
-// ToDo: Check the props of the tags for any recent changes to the prop.
-
-
 export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilter?: IFilter }): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
   const { user } = useUser();
@@ -154,6 +151,7 @@ export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilt
   if (itemFilter) {
     tgs = [...tgs, ...itemFilter.tags]
   }
+  // @ts-ignore
   const tagObj = [...new Set(tgs || [])].reduce((acc, tg) => {
     const ap = tags?.filter(ip => ip.id == tg) ?? [];
     if (ap.length > 0) {
@@ -162,12 +160,9 @@ export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilt
   }, []);
 
 
-  // const uniqProps = new Set([...tagProps, ...])
   const formData = {
     id: item.id, userId: item.userId, name: item.name,
-    note: item.note, props: tagPropsObj,
-    // tags: item.tagObjs,
-    tags: tagObj,
+    note: item.note, props: tagPropsObj, tags: tagObj,
     softDelete: item.softDelete
   };
 
