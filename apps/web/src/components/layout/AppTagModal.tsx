@@ -323,7 +323,7 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
     );
   }
 
-
+  // ToDo: successful mutation returns an error about Response.json: Body has already been consumed.
   const fields: itemFields[] = ['name'];
 
   function Dlg(content: ReactNode, actions?: ReactNode): ReactNode {
@@ -363,60 +363,7 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
 
   const dummyAction = () => undefined;
 
-  // const act = (
-  //   <form.Subscribe
-  //     selector={(state) => [state.canSubmit, state.isSubmitting, state.isDirty, state.values.id]}
-  //     children={
-  //       ([canSubmit, isSubmitting, isDirty, id]) => {
-  //         const canDelete = !isSubmitting && id !== "";
-  //         const saveIcon = isSubmitting ? <HourglassOutlineIcon height="1.5rem" /> :
-  //           canSubmit ? <SaveIcon height="1.5rem" /> : <SaveOffIcon height="1.5rem" />
-
-
-  //         return <ItemFormSpeedDialBox>
-  //           <SpeedDial ariaLabel="SpeedDial basic example"
-  //             icon={<SpeedDialIcon />} >
-  //             <SpeedDialAction
-  //               key={"delete"}
-  //               icon={canDelete ? <DeleteIcon height="1.5rem" /> : <DeleteOffIcon height="1.5rem" />}
-  //               // @ts-ignore
-  //               onClick={canDelete ? handleDelete : dummyAction}
-  //               slotProps={{
-  //                 tooltip: {
-  //                   title: canSubmit ? "save" : "cannot save changes",
-  //                 },
-  //               }}
-  //             />
-
-  //             <SpeedDialAction
-  //               key={"save"}
-  //               icon={saveIcon}
-  //               // @ts-ignore
-  //               onClick={!isSubmitting && canSubmit ? form.handleSubmit : dummyAction}
-  //               slotProps={{
-  //                 tooltip: {
-  //                   title: canSubmit ? "save" : "cannot save changes",
-  //                 },
-  //               }}
-  //             />
-
-  //             <SpeedDialAction
-  //               key={isDirty ? "reset" : "No changes yet"}
-  //               icon={isDirty ? <RestartIcon height="1.5rem" /> : <RestartOffIcon height="1.5rem" />}
-  //               // @ts-ignore
-  //               onClick={isDirty ? form.reset : dummyAction}
-  //               slotProps={{
-  //                 tooltip: {
-  //                   title: isDirty ? "reset" : "no changes yet",
-  //                 },
-  //               }}
-  //             />
-  //           </SpeedDial>
-  //         </ItemFormSpeedDialBox>
-  //       }
-  //     }
-  //   />
-  // );
+  // ToDo: Add way to delete a property after adding it.
 
   // Return something when form is submitting
 

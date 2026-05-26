@@ -27,8 +27,9 @@ export async function postTag(t: ITag) {
     headers: { "Content-Type": "application/json", "Accept": "*/*", },
   });
   const res = await fetch(req);
-  const msg = await res.text();
+
   if (!res.ok) {
+    const msg = await res.text();
     if (msg.includes("duplicate key value violates unique constraint")) {
       throw new Error('Tag name already exists on a different tag.');
     } else {
@@ -61,8 +62,9 @@ export async function postFilter(f: IFilter) {
     headers: { "Content-Type": "application/json", "Accept": "*/*", },
   });
   const res = await fetch(req);
-  const msg = await res.text();
+
   if (!res.ok) {
+    const msg = await res.text();
     if (msg.includes("duplicate key value violates unique constraint")) {
       throw new Error('Filter name already exists on a different filter.');
     } else {
