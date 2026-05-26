@@ -87,6 +87,9 @@ import type {
   ITag,
   ITagReadResponse,
 } from "@/lib/model/tag";
+import type {
+  IFilter,
+} from "@/lib/model/filter";
 import {
   tagGroupOptions,
 } from '@/lib/helper/querying';
@@ -104,7 +107,7 @@ type itemFields = "id" | "userId" | "name" | "note" | `props[${number}]` | "soft
 // ToDo: Check the props of the tags for any recent changes to the prop.
 
 
-export function AppItemModal(): ReactNode {
+export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilter?: IFilter }): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
   const { user } = useUser();
   const queryClient = useQueryClient();
@@ -143,11 +146,29 @@ export function AppItemModal(): ReactNode {
     return ap[0]
   })
 
+  // Get the existing or prospective tags.
+  let tgs = [...item.tags]
+  if (itemTag) {
+    tgs = [...tgs, itemTag.id]
+  }
+  if (itemFilter) {
+    tgs = [...tgs, ...itemFilter.tags]
+  }
+  const tagObj = [...new Set(tgs || [])].reduce((acc, tg) => {
+    const ap = tags?.filter(ip => ip.id == tg) ?? [];
+    if (ap.length > 0) {
+      return [...acc, ap[0]]
+    }
+  }, []);
+
+
   // const uniqProps = new Set([...tagProps, ...])
   const formData = {
     id: item.id, userId: item.userId, name: item.name,
     note: item.note, props: tagPropsObj,
-    tags: item.tagObjs, softDelete: item.softDelete
+    // tags: item.tagObjs,
+    tags: tagObj,
+    softDelete: item.softDelete
   };
 
 
@@ -169,6 +190,7 @@ export function AppItemModal(): ReactNode {
     }
   }
 
+
   function validateTag(fTag: ITag) {
     let errList: string[] = [];
     if (fTag.name === "") {
@@ -182,11 +204,13 @@ export function AppItemModal(): ReactNode {
     }
   }
 
+
   function validateName(fieldName: string) {
     if (!fieldName || fieldName.length < 1) {
       return "Item name is required";
     }
   }
+
 
   function formValidator({ value }: { value: IFormItem }) {
     const invalidName = validateName(value.name as string);
@@ -200,6 +224,7 @@ export function AppItemModal(): ReactNode {
     }
     return undefined;
   }
+
 
   // @ts-ignore
   const form = useForm<IFormItem>({
@@ -215,6 +240,12 @@ export function AppItemModal(): ReactNode {
     },
   });
   const formErrorMap = useStore(form.store, (state) => state.errorMap);
+  const formErrors = useStore(form.store, (state) => state.errors);
+  const formCanSubmit = formErrors.length == 0;
+  const formIsSubmitting = useStore(form.store, (state) => state.isSubmitting);
+  const formIsDirty = useStore(form.store, (state) => state.isDirty);
+  const formStateId = useStore(form.store, (state) => state.values.id);
+
 
   // Define invalidating  mutation
   const mutation = useMutation({
@@ -334,8 +365,8 @@ export function AppItemModal(): ReactNode {
                   size="small"
                   variant="standard"
                   margin="dense"
-                  error={key == "name" && field.state.meta.errors.length > 0}
-                  helperText={field.state.meta.errors.join(', ')}
+                  error={key == "name" && (field.state.meta.errors.length > 0 || field.state.value == "")}
+                  helperText={key == "name" && field.state.meta.errors.length > 0 ? key == "name" && field.state.meta.errors.join(', ') : key == "name" && field.state.value == "" ? "item name is required" : ""}
                 />
               </Grid>
             </Grid>
@@ -351,11 +382,7 @@ export function AppItemModal(): ReactNode {
     // ToDo: Change the font color of the tag that corresponds to a property that is in focus.
 
     return (
-      <form.Field name="tags" mode="array" key="tag-parent"
-        validators={{
-          onChange: ({ value }) => validateTags(value as unknown as Array<ITag>),
-          onBlur: ({ value }) => validateTags(value as unknown as Array<ITag>),
-        }}>
+      <form.Field name="tags" mode="array" key="tag-parent" >
         {
           (field) => {
             return <Fragment>
@@ -651,60 +678,44 @@ export function AppItemModal(): ReactNode {
 
   const dummyAction = () => undefined;
 
+  const canDelete = !formIsSubmitting && formStateId !== "";
+  const saveIcon = formIsSubmitting ? <HourglassOutlineIcon height="1.5rem" /> :
+    formCanSubmit ? <SaveIcon height="1.5rem" /> : <SaveOffIcon height="1.5rem" />
   const act = (
-    <form.Subscribe
-      selector={(state) => [state.canSubmit, state.isSubmitting, state.isPristine, state.isDirty, state.values.id]}
-      children={
-        ([canSubmit, isSubmitting, isPristine, isDirty, id]) => {
-          const canDelete = !isSubmitting && id !== "";
-          const canSave = (!isPristine && canSubmit);
-          const saveIcon = isSubmitting ? <HourglassOutlineIcon height="1.5rem" /> :
-            canSave ? <SaveIcon height="1.5rem" /> : <SaveOffIcon height="1.5rem" />
+    <ItemFormSpeedDialBox>
+      <SpeedDial ariaLabel="SpeedDial basic example"
+        icon={<SpeedDialIcon />} >
+        <SpeedDialAction
+          key={"delete"}
+          icon={canDelete ? <DeleteIcon height="1.5rem" /> : <DeleteOffIcon height="1.5rem" />}
+          // @ts-ignore
+          onClick={canDelete ? handleDelete : dummyAction}
+          slotProps={{
+            tooltip: { title: formCanSubmit ? "save" : "cannot save changes", },
+          }}
+        />
 
-          return <ItemFormSpeedDialBox>
-            <SpeedDial ariaLabel="SpeedDial basic example"
-              icon={<SpeedDialIcon />} >
-              <SpeedDialAction
-                key={"delete"}
-                icon={canDelete ? <DeleteIcon height="1.5rem" /> : <DeleteOffIcon height="1.5rem" />}
-                // @ts-ignore
-                onClick={canDelete ? handleDelete : dummyAction}
-                slotProps={{
-                  tooltip: {
-                    title: canSave ? "save" : "cannot save changes",
-                  },
-                }}
-              />
-              <SpeedDialAction
-                key={"save"}
-                icon={saveIcon}
-                // @ts-ignore
-                onClick={!isSubmitting && canSave ? form.handleSubmit : dummyAction}
-                slotProps={{
-                  tooltip: {
-                    title: canSave ? "save" : "cannot save changes",
-                  },
-                }}
-              />
+        <SpeedDialAction
+          key={"save"}
+          icon={saveIcon}
+          // @ts-ignore
+          onClick={formCanSubmit ? form.handleSubmit : dummyAction}
+          slotProps={{
+            tooltip: { title: formCanSubmit ? "save" : "cannot save changes", },
+          }}
+        />
 
-              <SpeedDialAction
-                key={isDirty ? "reset" : "No changes yet"}
-                icon={isDirty ? <RestartIcon height="1.5rem" /> : <RestartOffIcon height="1.5rem" />}
-                // @ts-ignore
-                onClick={isDirty ? form.reset : dummyAction}
-                slotProps={{
-                  tooltip: {
-                    title: isDirty ? "reset" : "no changes yet",
-                  },
-                }}
-              />
-
-
-            </SpeedDial>
-          </ItemFormSpeedDialBox>
-        }
-      }
-    />
+        <SpeedDialAction
+          key={formIsDirty ? "reset" : "No changes yet"}
+          icon={formIsDirty ? <RestartIcon height="1.5rem" /> : <RestartOffIcon height="1.5rem" />}
+          // @ts-ignore
+          onClick={formIsDirty ? form.reset : dummyAction}
+          slotProps={{
+            tooltip: { title: formIsDirty ? "reset" : "no changes yet", },
+          }}
+        />
+      </SpeedDial>
+    </ItemFormSpeedDialBox>
   );
 
   return Dlg(con, act);

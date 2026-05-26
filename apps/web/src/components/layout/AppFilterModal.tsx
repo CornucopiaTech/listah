@@ -247,6 +247,12 @@ export function AppFilterModal({ itemFilter }: { itemFilter?: IFilter }): ReactN
 
   const formErrorMap = useStore(form.store, (state) => state.errorMap);
   const formTitle = itemFilter ? "Update filter" : "Add new filter";
+  const formErrors = useStore(form.store, (state) => state.errors);
+  const formCanSubmit = formErrors.length == 0;
+  const formIsSubmitting = useStore(form.store, (state) => state.isSubmitting);
+  const formIsDirty = useStore(form.store, (state) => state.isDirty);
+  const formStateId = useStore(form.store, (state) => state.values.id);
+
 
   function Dlg(content: ReactNode, actions?: ReactNode) {
     return (
@@ -379,8 +385,8 @@ export function AppFilterModal({ itemFilter }: { itemFilter?: IFilter }): ReactN
                   (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)}
                 size="small"
                 variant="standard"
-                error={field.state.meta.errors.length > 0}
-                helperText={field.state.meta.errors.join(', ')}
+                error={field.state.meta.errors.length > 0 || field.state.value == ""}
+                helperText={field.state.meta.errors.length > 0 ? field.state.meta.errors.join(', ') : field.state.value == "" ? "filter name is required" : ""}
               />
             </Fragment>
           }
@@ -399,61 +405,46 @@ export function AppFilterModal({ itemFilter }: { itemFilter?: IFilter }): ReactN
 
   const dummyAction = () => undefined;
 
+  const canDelete = !formIsSubmitting && formStateId !== "";
+  const saveIcon = formIsSubmitting ? <HourglassOutlineIcon height="1.5rem" /> :
+    formCanSubmit ? <SaveIcon height="1.5rem" /> : <SaveOffIcon height="1.5rem" />
   const act = (
-    <form.Subscribe
-      selector={(state) => [state.canSubmit, state.isSubmitting, state.isPristine, state.isDirty, state.values.id]}
-      children={
-        ([canSubmit, isSubmitting, isPristine, isDirty, id]) => {
-          const canDelete = !isSubmitting && id !== "";
-          const canSave = (!isPristine && canSubmit);
-          const saveIcon = isSubmitting ? <HourglassOutlineIcon height="1.5rem" /> :
-            canSave ? <SaveIcon height="1.5rem" /> : <SaveOffIcon height="1.5rem" />
+    <ItemFormSpeedDialBox>
+      <SpeedDial ariaLabel="SpeedDial basic example"
+        icon={<SpeedDialIcon />} >
+        <SpeedDialAction
+          key={"delete"}
+          icon={canDelete ? <DeleteIcon height="1.5rem" /> : <DeleteOffIcon height="1.5rem" />}
+          // @ts-ignore
+          onClick={canDelete ? handleDelete : dummyAction}
+          slotProps={{
+            tooltip: { title: formCanSubmit ? "save" : "cannot save changes", },
+          }}
+        />
 
-          return <ItemFormSpeedDialBox>
-            <SpeedDial ariaLabel="SpeedDial basic example"
-              icon={<SpeedDialIcon />} >
-              <SpeedDialAction
-                key={"delete"}
-                icon={canDelete ? <DeleteIcon height="1.5rem" /> : <DeleteOffIcon height="1.5rem" />}
-                // @ts-ignore
-                onClick={canDelete ? handleDelete : dummyAction}
-                slotProps={{
-                  tooltip: {
-                    title: canSave ? "save" : "cannot save changes",
-                  },
-                }}
-              />
-              <SpeedDialAction
-                key={"save"}
-                icon={saveIcon}
-                // @ts-ignore
-                onClick={!isSubmitting && canSave ? form.handleSubmit : dummyAction}
-                slotProps={{
-                  tooltip: {
-                    title: canSave ? "save" : "cannot save changes",
-                  },
-                }}
-              />
+        <SpeedDialAction
+          key={"save"}
+          icon={saveIcon}
+          // @ts-ignore
+          onClick={formCanSubmit ? form.handleSubmit : dummyAction}
+          slotProps={{
+            tooltip: { title: formCanSubmit ? "save" : "cannot save changes", },
+          }}
+        />
 
-              <SpeedDialAction
-                key={isDirty ? "reset" : "No changes yet"}
-                icon={isDirty ? <RestartIcon height="1.5rem" /> : <RestartOffIcon height="1.5rem" />}
-                // @ts-ignore
-                onClick={isDirty ? form.reset : dummyAction}
-                slotProps={{
-                  tooltip: {
-                    title: isDirty ? "reset" : "no changes yet",
-                  },
-                }}
-              />
-
-
-            </SpeedDial>
-          </ItemFormSpeedDialBox>
-        }
-      }
-    />
+        <SpeedDialAction
+          key={formIsDirty ? "reset" : "No changes yet"}
+          icon={formIsDirty ? <RestartIcon height="1.5rem" /> : <RestartOffIcon height="1.5rem" />}
+          // @ts-ignore
+          onClick={formIsDirty ? form.reset : dummyAction}
+          slotProps={{
+            tooltip: { title: formIsDirty ? "reset" : "no changes yet", },
+          }}
+        />
+      </SpeedDial>
+    </ItemFormSpeedDialBox>
   );
+
   return Dlg(con, act);
 
 }

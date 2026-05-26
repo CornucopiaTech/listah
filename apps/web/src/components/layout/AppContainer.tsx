@@ -29,18 +29,23 @@ type widthType = "xs" | "sm" | "md" | "lg" | "xl";
 
 
 
-export function AppContainerShell() {
-  const { isSignedIn, isLoaded, } = useUser();
-  if (!isLoaded) return <LinearProgress />
-  if (!isSignedIn) return <Landing />
+export function AppShell({ children }: { children: ReactNode }) {
   return (
     <Fragment>
       <CssBaseline />
       <Box sx={{ width: "100vw", maxWidth: "100vw", height: `fit-content`, }}>
-        <Outlet />
+        {children}
       </Box>
     </Fragment>
   );
+}
+
+
+export function AppContainerShell() {
+  const { isSignedIn, isLoaded, } = useUser();
+  if (!isLoaded) return <AppShell><LinearProgress /></AppShell>
+  if (!isSignedIn) return <AppShell><Landing /></AppShell>
+  return <AppShell><Outlet /></AppShell>;
 }
 
 

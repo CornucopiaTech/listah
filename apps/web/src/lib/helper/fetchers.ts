@@ -27,8 +27,14 @@ export async function postTag(t: ITag) {
     headers: { "Content-Type": "application/json", "Accept": "*/*", },
   });
   const res = await fetch(req);
+  const msg = await res.text();
   if (!res.ok) {
-    throw new Error('Network response was not ok');
+    if (msg.includes("duplicate key value violates unique constraint")) {
+      throw new Error('Tag name already exists on a different tag.');
+    } else {
+      // throw new Error(msg);
+      throw new Error('Network response was not ok');
+    }
   }
   return await res.json();
 }
@@ -55,8 +61,14 @@ export async function postFilter(f: IFilter) {
     headers: { "Content-Type": "application/json", "Accept": "*/*", },
   });
   const res = await fetch(req);
+  const msg = await res.text();
   if (!res.ok) {
-    throw new Error('Network response was not ok');
+    if (msg.includes("duplicate key value violates unique constraint")) {
+      throw new Error('Filter name already exists on a different filter.');
+    } else {
+      // throw new Error(msg);
+      throw new Error('Network response was not ok');
+    }
   }
   return await res.json();
 }
