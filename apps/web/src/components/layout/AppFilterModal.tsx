@@ -357,7 +357,7 @@ export function AppFilterModal({ itemFilter }: { itemFilter?: IFilter }): ReactN
   }
   if (tagCategories.length == 0) { return Dlg(<AppH6Typography> No tags found </AppH6Typography>) }
 
-
+  // ToDo: Adjust the size of the chips. It is currently truncating the text.
   const con = (
     <Box component="section" >
       <Fragment>
