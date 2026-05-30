@@ -34,11 +34,15 @@ func TagProtoToTagModel(msg []*pb.Tag, genId bool) ([]*Tag, []string, error) {
 
 	for _, v := range msg {
 		if v.GetUserId() == "" {
-			return nil, nil, errors.New("no userId sent with request")
+			return nil, nil, errors.New("userId is required")
 		}
 		if v.GetName() == "" {
-			return nil, nil, errors.New("no tag name sent with request")
+			return nil, nil, errors.New("name of tag is required")
 		}
+		if len(v.GetProps()) == 0 {
+			return nil, nil, errors.New("at least one property is required")
+		}
+
 
 		id := v.GetId()
 		if id == "" && genId {

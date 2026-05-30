@@ -25,10 +25,15 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Chip from '@mui/material/Chip';
-import TablePagination from '@mui/material/TablePagination';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
-
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Divider from '@mui/material/Divider';
+import Select from '@mui/material/Select';
 
 
 import {
@@ -52,10 +57,10 @@ import {
   DefaultItemRead,
   ListBoxSize,
 } from '@/lib/helper/defaults';
+import {
+  CentredBox,
+} from '@/components/core/AppBox';
 
-
-
-// ToDo: Fix Tag Read Api not returning the second page but returning only the first page all the time.
 
 
 export function TagListLayout(): ReactNode {
@@ -96,7 +101,7 @@ export function TagListLayout(): ReactNode {
   if (data) {
     pageInfo.current = {
       pageSize: parseInt(data.pagination.pageSize as unknown as string, 10),
-      totalRecords: data.totalRecordCount ? parseInt(data.totalRecordCount as unknown as string, 10) : 0,
+      totalRecords: data.totalRecordCount ? parseInt(data.totalRecordCount as unknown as string, 10) : 1,
       pageNumber: data.pagination.pageNumber ? parseInt(data.pagination.pageNumber as unknown as string, 10) : query.pagination.pageNumber
     };
   }
@@ -122,7 +127,7 @@ export function TagListLayout(): ReactNode {
   function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const q: ITagReadRequest = {
       ...query, pagination: {
-        ...query.pagination, pageSize: parseInt(e.target.value, 10), pageNumber: 0,
+        ...query.pagination, pageSize: parseInt(e.target.value, 10), pageNumber: 1,
       }
     };
     const encoded = encodeState(q);
@@ -178,23 +183,50 @@ export function TagListLayout(): ReactNode {
   }
 
 
-  // ToDo: Include a go-to-page option so user can jump to a specific page and not have to page through the list.
   function ListBox({ children }: { children: ReactNode }): ReactNode {
+
+    const totalPages = Math.max(1, Math.ceil(pageInfo.current.totalRecords / pageInfo.current.pageSize));
     return (
       <Fragment>
-        {children}
-        <TablePagination
-          component="div"
-          count={pageInfo.current?.totalRecords ?? 0}
-          page={pageInfo.current.pageNumber}
-          onPageChange={handlePageChange}
-          rowsPerPage={pageInfo.current.pageSize}
-          onRowsPerPageChange={handlePageSizeChange}
-          rowsPerPageOptions={[100, 200, 500, 1000, { label: 'All', value: -1 }]}
-        />
-      </Fragment>
+        <Stack spacing={0}>
+          {children}
+          <Divider />
+          <CentredBox>
+            <CentredBox sx={{ maxWidth: 100, marginRight: 0 }}>
+              <FormControl sx={{ width: '100%' }}>
+                <InputLabel id="demo-simple-select-label">Rows</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={pageInfo.current.pageSize}
+                  label="rows-per-page"
+                  //  @ts-ignore
+                  onChange={handlePageSizeChange}
+                >
+                  <MenuItem value={200}>200</MenuItem>
+                  <MenuItem value={500}>500</MenuItem>
+                  <MenuItem value={1000}>1000</MenuItem>
+                  <MenuItem value={-1}>All</MenuItem>
+                </Select>
+              </FormControl>
+            </CentredBox>
+            <Pagination sx={{
+              justifyContent: 'center', alignContent: 'center',
+              display: 'flex', flexWrap: 'wrap',
+              alignItems: 'center'
+            }}
+              page={pageInfo.current.pageNumber}
+              count={totalPages}
+              color="primary"
+              //  @ts-ignore
+              onChange={handlePageChange}
+            />
+          </CentredBox>
+        </Stack >
+      </Fragment >
     );
   }
+
 
   if (isPending) {
     return <ListBox> <OuterBox><LinearProgress /></OuterBox></ListBox>

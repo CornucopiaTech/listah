@@ -1,6 +1,8 @@
 import { color } from "@/system/tokens/colors";
 import { lightPalette } from "@/system/theme/palette";
 
+
+
 export const components = {
   MuiInputLabel: {
     styleOverrides: {
@@ -367,11 +369,11 @@ export const components = {
           width: "sm",
           maxWidth: "sm",
           height: 'fit-content',
-          maxHeight: '60vh',
+          maxHeight: '70vh',
           overflow: 'auto',
           margin: "0",
           '&::-webkit-scrollbar': {
-            width: '15px', // width of the entire scrollbar
+            width: '25px', // width of the entire scrollbar
           },
           '&::-webkit-scrollbar-track': {
             background: theme.palette.background.paper, // color of the tracking area
@@ -422,7 +424,7 @@ export const components = {
           minWidth: '50vw',
           maxWidth: '80vw',
           height: 'fit-content',
-          maxHeight: 'calc(100% - 100px)',
+          maxHeight: 'calc(100% - 50px)',
         },
       }
     },

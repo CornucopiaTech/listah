@@ -23,7 +23,7 @@ var defaultPagination = Pagination{
 
 func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemSearch, error) {
 	if msg.GetUserId() == "" {
-		return nil, errors.New("no userId sent with request")
+		return nil, errors.New("userId is required")
 	}
 
 	pSize := defaultPagination.PageSize
@@ -49,7 +49,7 @@ func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemS
 
 	offset := int64(0)
 	if pSize > 0 && pNum > 0{
-		offset = pSize * pNum
+		offset = pSize * (1 - pNum)
 	}
 
 
@@ -137,10 +137,13 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, []string, error)
 
 	for _, v := range msg {
 		if v.GetUserId() == "" {
-			return nil, nil, errors.New("no userId sent with request")
+			return nil, nil, errors.New("userId is required")
 		}
 		if v.GetName() == "" {
-			return nil, nil, errors.New("no item name sent with request")
+			return nil, nil, errors.New("name of item is required")
+		}
+		if len(v.GetTags()) == 0 {
+			return nil, nil, errors.New("at least one tag is required")
 		}
 
 		id := v.GetId()

@@ -22,6 +22,7 @@ type filter struct {
 	logger *logging.Factory
 }
 
+// ToDo: raise error when tags are not included with a filter.
 func (a *filter) UpsertWithName(ctx context.Context, m interface{}, c *model.UpsertInfo) (interface{}, error) {
 	ctx, span := otel.Tracer("filter-repository").Start(ctx, "FilterRepository Upsert")
 	defer span.End()
@@ -46,7 +47,6 @@ func (a *filter) UpsertWithName(ctx context.Context, m interface{}, c *model.Ups
 			aliasCols = append(aliasCols, fmt.Sprintf(`i."%v"`, v))
 		}
 	}
-	// ToDo: Should filter upsert send a list of tag names or list of tag ids.
 	query := `
 		WITH literals (` + strings.Join(itemCols, ", ") + `) AS (
 			?

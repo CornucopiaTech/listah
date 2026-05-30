@@ -43,6 +43,8 @@ import SaveOffIcon from '@iconify-react/lucide/save-off';
 import DeleteIcon from '@iconify-react/mdi/delete';
 import DeleteOffIcon from '@iconify-react/mdi/delete-off';
 import HourglassOutlineIcon from '@iconify-react/material-symbols/hourglass-outline';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 
@@ -54,7 +56,7 @@ import {
   type TBoundStore
 } from '@/lib/store/boundStore';
 import { DefaultTag } from '@/lib/helper/defaults';
-import { postTag } from "@/lib/helper/fetchers"; //ToDo: Create this postTag Function.
+import { postTag } from "@/lib/helper/fetchers";
 import type {
   ITag,
 } from "@/lib/model/tag";
@@ -155,7 +157,6 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
       // router.push()
     },
     onError: (error) => {
-      // ToDo: Add error message
       if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
         console.log(error);
       }
@@ -259,14 +260,8 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
   }
 
   function getPropField() {
-    // ToDo: Use Virtualised list for this.
     return (
-      <form.Field name="props" mode="array"
-      // validators={{
-      //   onChange: ({ value }) => validateProps(value as unknown as Array<string>),
-      //   onBlur: ({ value }) => validateProps(value as unknown as Array<string>),
-      // }}
-      >
+      <form.Field name="props" mode="array" >
         {
           (field) => (
             <Fragment>
@@ -293,7 +288,12 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
                                 size={{ xs: 12, sm: 6, md: 4 }}>
                                 <TextField
                                   slotProps={{
-                                    input: { style: { fontSize: "15px" } },
+                                    input: {
+                                      style: { fontSize: "15px" },
+                                      endAdornment: < Icon icon="material-symbols-light:close-rounded" width="30" height="30"
+                                        onClick={() => subField.handleChange("")}
+                                      />
+                                    },
                                     inputLabel: { style: { fontSize: "15px" } },
                                   }}
                                   id={"item-tag-" + i}
@@ -307,6 +307,7 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
                                   error={subField.state.meta.errors.length > 0 || subField.state.value == ""}
                                   helperText={subField.state.meta.errors.length > 0 ? subField.state.meta.errors.join(', ') : subField.state.value == "" ? "property name is required" : ""}
                                 />
+
                               </Grid>
                             )
                           }
@@ -323,7 +324,6 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
     );
   }
 
-  // ToDo: successful mutation returns an error about Response.json: Body has already been consumed.
   const fields: itemFields[] = ['name'];
 
   function Dlg(content: ReactNode, actions?: ReactNode): ReactNode {
@@ -363,9 +363,7 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
 
   const dummyAction = () => undefined;
 
-  // ToDo: Add way to delete a property after adding it.
-
-  // Return something when form is submitting
+  // ToDo: Return something when form is submitting
 
   const canDelete = !formIsSubmitting && formStateId !== "";
   const saveIcon = formIsSubmitting ? <HourglassOutlineIcon height="1.5rem" /> :
@@ -406,6 +404,14 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
       </SpeedDial>
     </ItemFormSpeedDialBox>
   );
+
+  if (formIsSubmitting) {
+    // ToDo: Verify that this works
+    return <Backdrop
+      sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })} open={true}>
+      <CircularProgress color="inherit" />
+    </Backdrop>
+  }
 
   return Dlg(con, act);
 }
