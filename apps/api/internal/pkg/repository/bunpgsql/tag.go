@@ -24,56 +24,8 @@ type tag struct {
 	logger *logging.Factory
 }
 
-func (a *tag) FromItemsUpsert(ctx context.Context, m *[]model.Tag) (interface{}, error) {
-	ctx, span := otel.Tracer("tag-repository").Start(ctx, "TagRepository Upsert")
-	defer span.End()
 
-	var activity = "TagUpsert"
-	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
-
-	if len(*m) == 0 {
-		a.logger.LogInfo(ctx, svcName, activity, "No items to upsert")
-		return nil, nil
-	}
-
-	// ToDo: Tags should be predefined in the UI so adding new tags via add items would not be possible
-	values := a.db.NewValues(m).Column("id", "user_id", "name", "props")
-	query := `
-		WITH tagliterals (id, user_id, name, props) AS (
-			?
-		)
-		SELECT tl."id", tl."user_id", tl."name", tl."props"
-		FROM apps.tags t
-			FULL OUTER JOIN tagliterals tl
-				ON tl.name = t.name AND tl.user_id = t.user_id
-		WHERE t.name IS NULL
-	`
-	tR := []model.Tag{}
-	err := a.db.NewRaw(query, values).Scan(ctx, &tR)
-	if err != nil {
-		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
-		return nil, err
-	}
-
-	if len(tR) == 0 {
-		a.logger.LogInfo(ctx, svcName, activity, "No new tags to insert ")
-		a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
-		return nil, nil
-	}
-
-	// Add the nonexistent tags
-	tq := a.db.NewInsert().Model(&tR).Ignore().
-		On("CONFLICT(name, user_id) DO UPDATE").
-		Set("props = Excluded.props")
-	_, err = tq.Exec(ctx)
-	if err != nil {
-		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
-		return nil, err
-	}
-
-	return nil, nil
-}
-
+// ToDo: raise error when a prop is not included with a tag.
 func (a *tag) Read(ctx context.Context, m *[]*model.Tag, s *model.ItemSearch) (int, error) {
 	ctx, span := otel.Tracer("tag-repository").Start(ctx, "TagRepository Read")
 	defer span.End()

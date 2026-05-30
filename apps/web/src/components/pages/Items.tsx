@@ -76,7 +76,6 @@ export function Items() {
       store.setTagModal(true);
     } else if (passedFilter) {
       store.setFilterModal(true);
-      // ToDo: Update Filter Modal to be able to create new filters and update existing filters.
     }
   }
 
@@ -86,14 +85,12 @@ export function Items() {
         <AppListItemTypography>Add new item </AppListItemTypography>
       </MenuItem>
       {
-        // ToDo: It should read from store or from url to find out if a filtered item is set.
         (store.displayFilter || urlSearch?.refFilter) &&
         <MenuItem key="filter" onClick={handleCategoryClick}>
           <AppListItemTypography>Update filter </AppListItemTypography>
         </MenuItem>
       }
       {
-        // ToDo: It should read from store or from url to find out if a filtered item is set.
         (store.displayTag || urlSearch?.refTag) &&
         <MenuItem key="tag" onClick={handleCategoryClick}>
           <AppListItemTypography>Update tag </AppListItemTypography>

@@ -33,11 +33,15 @@ func FilterProtoToFilterModel(msg []*pb.Filter, genId bool) ([]*Filter, []string
 	check := map[string]bool{"name": true, "updated_by": true, "updated_at": true}
 	for _, v := range msg {
 		if v.GetUserId() == "" {
-			return nil, nil, errors.New("no userId sent with request")
+			return nil, nil, errors.New("userId is required")
 		}
 		if v.GetName() == "" {
-			return nil, nil, errors.New("no filter name sent with request")
+			return nil, nil, errors.New("name of filter is required")
 		}
+		if len(v.GetTags()) == 0 {
+			return nil, nil, errors.New("at least one tag is required")
+		}
+
 		id := v.GetId()
 		if id == "" && genId {
 			id = uuid.Must(uuid.NewV7()).String()

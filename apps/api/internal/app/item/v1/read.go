@@ -67,7 +67,6 @@ func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServic
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
-	// ToDo: Return List of Tags and a Map of tag_id and props for easy iteration in the frontend
 	// fmt.Printf("\n\n\nUserId -  %s\n\n\n", req.Msg.GetUserId())
 
 	var riq = &pb.ItemServiceReadItemRequest{}
@@ -140,8 +139,6 @@ func (s *Server) ReadTagProperty(ctx context.Context, req *connect.Request[pb.It
 	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
-
-	// ToDo: Return List of Tags and a Map of tag_id and props for easy iteration in the frontend
 
 	var riq = &pb.ItemServiceReadItemRequest{}
 	err := modelutils.MarshalCopyProto(req.Msg, riq)

@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package listah.v1;
+
+// Machine-readable error codes for the frontend to switch on
+enum ErrorCode {
+  ERROR_CODE_UNSPECIFIED = 0;
+  VALIDATION_FAILED = 1;
+  ALREADY_EXISTS = 2;
+  NOT_FOUND = 3;
+  INTERNAL_DATABASE_ERROR = 4; // Masked on the frontend as a generic 500
+}
+
+// Custom detail for form validation or constraint violations
+message FieldViolation {
+  string field = 1;       // e.g., "email"
+  string description = 2; // e.g., "This email is already registered."
+}
+
+// The core payload we will attach to the error status
+message BadRequestDetails {
+  ErrorCode code = 1;
+  repeated FieldViolation field_violations = 2;
+}
+
+// For generic or system-wide errors
+message SystemErrorDetails {
+  ErrorCode code = 1;
+  string tracking_id = 2; // A UUID to map frontend errors to backend server logs
+}

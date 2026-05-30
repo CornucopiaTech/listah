@@ -50,7 +50,8 @@ import DeleteIcon from '@iconify-react/mdi/delete';
 import DeleteOffIcon from '@iconify-react/mdi/delete-off';
 import HourglassOutlineIcon from '@iconify-react/material-symbols/hourglass-outline';
 import { VirtuosoGrid } from 'react-virtuoso'
-
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 // Internal imports
@@ -307,7 +308,7 @@ export function AppFilterModal({ itemFilter }: { itemFilter?: IFilter }): ReactN
         {...props}
         style={{
           padding: '0.5rem',
-          width: '16%',
+          width: '20%',
           height: "50px",
           display: 'flex',
           flex: 'none',
@@ -329,6 +330,7 @@ export function AppFilterModal({ itemFilter }: { itemFilter?: IFilter }): ReactN
           return (<Tooltip title={<Typography variant="body2">#{field.state.value?.name ?? ""}</Typography>}>
             <Chip
               color="primary"
+              sx={{ width: 'fit-content' }}
               // @ts-ignore
               icon={field.state.value?.checked && <DoneIcon />}
 
@@ -357,7 +359,6 @@ export function AppFilterModal({ itemFilter }: { itemFilter?: IFilter }): ReactN
   }
   if (tagCategories.length == 0) { return Dlg(<AppH6Typography> No tags found </AppH6Typography>) }
 
-  // ToDo: Adjust the size of the chips. It is currently truncating the text.
   const con = (
     <Box component="section" >
       <Fragment>
@@ -392,7 +393,7 @@ export function AppFilterModal({ itemFilter }: { itemFilter?: IFilter }): ReactN
           }
         />
         <VirtuosoGrid
-          style={{ height: "50vh" }}
+          style={{ height: "40vh" }}
           totalCount={tagCategories.length}
           // @ts-ignore
           components={gridComponents}
@@ -444,6 +445,14 @@ export function AppFilterModal({ itemFilter }: { itemFilter?: IFilter }): ReactN
       </SpeedDial>
     </ItemFormSpeedDialBox>
   );
+
+  if (formIsSubmitting) {
+    // ToDo: Verify that this works
+    return <Backdrop
+      sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })} open={true}>
+      <CircularProgress color="inherit" />
+    </Backdrop>
+  }
 
   return Dlg(con, act);
 

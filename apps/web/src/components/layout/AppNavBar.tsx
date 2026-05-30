@@ -7,6 +7,7 @@ import Drawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
 import type { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
@@ -22,10 +23,6 @@ import Link from '@mui/material/Link';
 
 
 
-import {
-  AppToolbarTypography,
-  AppListItemTypography,
-} from "@/components/core/Typography";
 import {
   AppBarHeight,
   AppDrawerWidth
@@ -109,7 +106,7 @@ export function AppNavBar({ menuItems, title }: { menuItems?: ReactNode, title?:
         position="static"
         sx={{ width: '100%', height: AppBarHeight, }}
         elevation={1} >
-        <Toolbar sx={{ bgcolor: theme.palette.primary.main, }}>
+        <Toolbar sx={{ backgroundColor: theme.palette.primary.main }}>
           <AppToolbarStack>
             <IconButton
               color="inherit"
@@ -122,7 +119,9 @@ export function AppNavBar({ menuItems, title }: { menuItems?: ReactNode, title?:
                 style={{ color: theme.palette.primary.contrastText }}
               />
             </IconButton>
-            <AppToolbarTypography> {pageTitle} </AppToolbarTypography>
+            <Typography variant="h6"
+            // sx={{ color: theme.palette.primary.contrastText, }}
+            > {pageTitle} </Typography>
             <AppItemSearchBar />
             {
               menuItems &&
@@ -147,11 +146,10 @@ export function AppNavBar({ menuItems, title }: { menuItems?: ReactNode, title?:
           </AppToolbarStack>
         </Toolbar>
       </AppBar>
-      <Drawer
-        sx={{
-          width: AppDrawerWidth, flexShrink: 0,
-          '& .MuiDrawer-paper': { width: AppDrawerWidth, boxSizing: 'border-box', },
-        }}
+      <Drawer sx={{
+        width: AppDrawerWidth, flexShrink: 0,
+        '& .MuiDrawer-paper': { width: AppDrawerWidth, boxSizing: 'border-box', },
+      }}
         variant="persistent"
         anchor="left"
         open={store.drawerOpen} >
@@ -167,7 +165,7 @@ export function AppNavBar({ menuItems, title }: { menuItems?: ReactNode, title?:
               <ListItemButton>
                 <ListItemText
                   primary={
-                    <AppListItemTypography sx={{ p: 0, m: 0 }}>Tags</AppListItemTypography>
+                    <Typography variant="body1" sx={{ p: 0, m: 0 }}>Tags</Typography>
                   } />
               </ListItemButton>
             </ListItem>
@@ -177,17 +175,7 @@ export function AppNavBar({ menuItems, title }: { menuItems?: ReactNode, title?:
               <ListItemButton>
                 <ListItemText
                   primary={
-                    <AppListItemTypography sx={{ p: 0, m: 0 }}>Filters</AppListItemTypography>
-                  } />
-              </ListItemButton>
-            </ListItem>
-          </Link>
-          <Link underline={checkActive("/settings")} key="settings" href="/settings" >
-            <ListItem disablePadding>
-              <ListItemButton>
-                <ListItemText
-                  primary={
-                    <AppListItemTypography sx={{ p: 0, m: 0 }}>Settings</AppListItemTypography>
+                    <Typography variant="body1" sx={{ p: 0, m: 0 }}>Filters</Typography>
                   } />
               </ListItemButton>
             </ListItem>
@@ -202,7 +190,7 @@ export function AppNavBar({ menuItems, title }: { menuItems?: ReactNode, title?:
                 <SignInButton style={{ border: 'none' }}>
                   <ListItemText
                     primary={
-                      <AppListItemTypography sx={{ p: 0, m: 0 }}>Sign In</AppListItemTypography>
+                      <Typography variant="body1" sx={{ p: 0, m: 0 }}>Sign In</Typography>
                     } />
                 </SignInButton>
               </Show>

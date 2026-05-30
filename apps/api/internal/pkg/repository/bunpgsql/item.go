@@ -24,6 +24,7 @@ type item struct {
 	logger *logging.Factory
 }
 
+// ToDo: raise error when a tag is not included with an item.
 func (a *item) UpsertWithName(ctx context.Context, m *[]*model.Item, c *model.UpsertInfo) (interface{}, error) {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Upsert")
 	defer span.End()
@@ -55,7 +56,6 @@ func (a *item) UpsertWithName(ctx context.Context, m *[]*model.Item, c *model.Up
 		}
 
 	}
-	// ToDo: Should item upsert send a list of tag names or list of tag ids.
 	query := `
 		WITH itemLiterals (` + strings.Join(itemCols, ", ") + `) AS (
 			?

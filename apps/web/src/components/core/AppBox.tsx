@@ -27,6 +27,7 @@ export const SpaceAroundBox = styled(Box)(() => ({
 export const CentredBox = styled(Box)(() => ({
   justifyContent: 'center', alignContent: 'center',
   display: 'flex', width: '100%', flexWrap: 'wrap',
+  alignItems: 'center'
 }));
 
 
@@ -53,5 +54,5 @@ export const ItemFormTagBox = styled(Box)(() => ({
 
 
 export const ItemFormSpeedDialBox = styled(Box)(() => ({
-  height: '5vh', transform: 'translateZ(0px)', flexGrow: 1
+  height: '50px', transform: 'translateZ(0px)', flexGrow: 1
 }));

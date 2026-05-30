@@ -59,7 +59,8 @@ import SaveOffIcon from '@iconify-react/lucide/save-off';
 import DeleteIcon from '@iconify-react/mdi/delete';
 import DeleteOffIcon from '@iconify-react/mdi/delete-off';
 import HourglassOutlineIcon from '@iconify-react/material-symbols/hourglass-outline';
-
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 
@@ -256,7 +257,6 @@ export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilt
       ])
     },
     onError: (error) => {
-      // ToDo: Add error message
       if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
         console.log(error);
       }
@@ -310,7 +310,8 @@ export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilt
       userId,
       name: value.name,
       note: value.note,
-      tags: tgs,
+      // tags: tgs,
+      tags: [],
       props: subProps,
       tagObjs: undefined,
       propObjList: undefined,
@@ -372,10 +373,6 @@ export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilt
   }
 
   function getTagField() {
-    // ToDo: Use Virtualised list for this.
-    // Maybe ToDo: Use an alert to confirm the props that would be deleted when a tag is removed before a tag is removed.
-    // ToDo: Change the font color of the tag that corresponds to a property that is in focus.
-
     return (
       <form.Field name="tags" mode="array" key="tag-parent" >
         {
@@ -713,5 +710,12 @@ export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilt
     </ItemFormSpeedDialBox>
   );
 
+  if (formIsSubmitting) {
+    // ToDo: Verify that this works
+    return <Backdrop
+      sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })} open={true}>
+      <CircularProgress color="inherit" />
+    </Backdrop>
+  }
   return Dlg(con, act);
 }
