@@ -3,9 +3,17 @@ package v1
 import (
 	"time"
 
+	"github.com/pkg/errors"
 	"connectrpc.com/connect"
 	"github.com/uptrace/bun"
 )
+
+var DuplicateName = errors.New("database: name already exists")
+var MissingUserId = errors.New("req: no userId present")
+var MissingName = errors.New("req: no name present")
+var MissingTags = errors.New("req: at least one tag is required")
+var MissingProps = errors.New("req: at least one property is required")
+
 
 type MapObj struct {
   Key string
@@ -16,10 +24,24 @@ type ApiLog struct {
 	bun.BaseModel `bun:"table:instrumentation.logs,alias:lg"`
 	Id            string `bun:",pk"`
 	RequestSource string
+	Method string
 	TraceId       string
 	SpanId        string
 	Request       connect.AnyRequest
 	RequestTime   time.Time
+}
+
+type ErrorLog struct {
+	bun.BaseModel `bun:"table:instrumentation.errors,alias:er"`
+	Id            string `bun:",pk"`
+	RequestSource string
+	Method string
+	TraceId       string
+	SpanId        string
+	Request       connect.AnyRequest
+	Code string
+	Error string
+	ResponseTime   time.Time
 }
 
 type Tag struct {

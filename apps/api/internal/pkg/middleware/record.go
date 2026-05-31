@@ -2,45 +2,18 @@ package middleware
 
 import (
 	"context"
-	"cornucopia/listah/internal/app/bootstrap"
-	model "cornucopia/listah/internal/pkg/model/v1"
-	"errors"
-
 	"time"
-
 	"connectrpc.com/connect"
 	"github.com/google/uuid"
 	"go.opentelemetry.io/otel/trace"
 
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/propagation"
+	"cornucopia/listah/internal/app/bootstrap"
+	model "cornucopia/listah/internal/pkg/model/v1"
+	"cornucopia/listah/internal/pkg/utils"
 )
 
-const tokenHeader = "Acme-Token"
 
-func NewAuthInterceptor() connect.UnaryInterceptorFunc {
-	interceptor := func(next connect.UnaryFunc) connect.UnaryFunc {
-		return connect.UnaryFunc(func(
-			ctx context.Context,
-			req connect.AnyRequest,
-		) (connect.AnyResponse, error) {
-			if req.Spec().IsClient {
-				// Send a token with client requests.
-				req.Header().Set(tokenHeader, "sample")
-			} else if req.Header().Get(tokenHeader) == "" {
-				// Check token in handlers.
-				return nil, connect.NewError(
-					connect.CodeUnauthenticated,
-					errors.New("no token provided"),
-				)
-			}
-			return next(ctx, req)
-		})
-	}
-	return connect.UnaryInterceptorFunc(interceptor)
-}
-
-func SetParentTraceInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFunc {
+func RecordRequestInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFunc {
 	// Create a new Middleware/interceptor
 	interceptor := func(next connect.UnaryFunc) connect.UnaryFunc {
 		// Define the handlerFunc which is called by the server eventually
@@ -49,8 +22,27 @@ func SetParentTraceInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorF
 			req connect.AnyRequest,
 		) (connect.AnyResponse, error) {
 			// Log request in db in middleware
-			propagator := otel.GetTextMapPropagator()
-			ctx = propagator.Extract(ctx, propagation.HeaderCarrier(req.Header()))
+			tid := ""
+			if val := ctx.Value(trackingIdKey); val != nil {
+				// Type assert the value back to a string safely
+				if strVal, ok := val.(string); ok {
+					tid = strVal
+				}
+			}
+			if tid == "" {
+				tid = "req_" + uuid.Must(uuid.NewV7()).String()
+			}
+			reqModel := model.ApiLog{
+				Id:            tid,
+				RequestSource: "api",
+				Method: req.Spec().Procedure, // e.g., "/app.v1.users.UserService/CreateUser"
+				TraceId:       trace.SpanFromContext(ctx).SpanContext().TraceID().String(),
+				SpanId:        trace.SpanFromContext(ctx).SpanContext().SpanID().String(),
+				Request:       req,
+				RequestTime:   time.Now().UTC(),
+			}
+			dctx := context.WithoutCancel(ctx)
+			go infra.BunRepo.ApiLog.Insert(dctx, &reqModel)
 
 			// Call the next middleware/handler in chain
 			return next(ctx, req)
@@ -62,7 +54,8 @@ func SetParentTraceInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorF
 	return connect.UnaryInterceptorFunc(interceptor)
 }
 
-func RecordRequestInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFunc {
+
+func RecordErrorResponseInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFunc {
 	// Create a new Middleware/interceptor
 	interceptor := func(next connect.UnaryFunc) connect.UnaryFunc {
 		// Define the handlerFunc which is called by the server eventually
@@ -70,22 +63,43 @@ func RecordRequestInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFu
 			ctx context.Context,
 			req connect.AnyRequest,
 		) (connect.AnyResponse, error) {
-			// Log request in db in middleware
-			reqModel := model.ApiLog{
-				Id:            uuid.Must(uuid.NewV7()).String(),
-				RequestSource: "api",
-				TraceId:       trace.SpanFromContext(ctx).SpanContext().TraceID().String(),
-				SpanId:        trace.SpanFromContext(ctx).SpanContext().SpanID().String(),
-				Request:       req,
-				RequestTime:   time.Now().UTC(),
-			}
-			err := infra.BunRepo.ApiLog.Insert(ctx, &reqModel)
-			if err != nil {
-				infra.Logger.LogInfo(ctx, "middleware", "middleware", "Unable to record request")
-			}
-
 			// Call the next middleware/handler in chain
-			return next(ctx, req)
+			res, err := next(ctx, req)
+			if err != nil {
+				// Log request in db in middleware
+				tid := ""
+				if val := ctx.Value(trackingIdKey); val != nil {
+					// Type assert the value back to a string safely
+					if strVal, ok := val.(string); ok {
+						tid = strVal
+					}
+				}
+				if tid == "" {
+					tid = "req_" + uuid.Must(uuid.NewV7()).String()
+				}
+				reqModel := model.ErrorLog{
+					Id:            tid,
+					RequestSource: "api",
+					Method: req.Spec().Procedure, // e.g., "/app.v1.users.UserService/CreateUser"
+					TraceId:       trace.SpanFromContext(ctx).SpanContext().TraceID().String(),
+					SpanId:        trace.SpanFromContext(ctx).SpanContext().SpanID().String(),
+					Code: connect.CodeOf(err).String(),
+					Error: err.Error(),
+					ResponseTime:   time.Now().UTC(),
+					Request:       req,
+
+				}
+				dctx := context.WithoutCancel(ctx)
+				go infra.BunRepo.ApiLog.Insert(dctx, &reqModel)
+
+				// 4. Return sanitized error structure back to frontend (using our pattern from before)
+				e := utils.HandleError(err)
+				// Clone any pre-existing error metadata (headers/trailers)
+				e.Meta().Set("X-Request-Id", tid)
+
+				return nil, e
+			}
+			return res, nil
 		})
 		// Return newly created handler
 		return handler

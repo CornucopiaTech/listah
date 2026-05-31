@@ -8,6 +8,8 @@ import (
 	"connectrpc.com/otelconnect"
 )
 
+const trackingIdKey = "trackingId"
+
 func GetInterceptors(infra *bootstrap.Infra) connect.Option {
 	// The generated constructors return a path and a plain net/http
 	// handler.
@@ -18,8 +20,10 @@ func GetInterceptors(infra *bootstrap.Infra) connect.Option {
 
 	return connect.WithInterceptors(
 		otelInterceptor,
+		SetRequestIdInterceptor(infra),
 		SetParentTraceInterceptor(infra),
 		RecordRequestInterceptor(infra),
+		RecordErrorResponseInterceptor(infra),
 	)
 
 }

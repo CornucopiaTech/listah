@@ -338,7 +338,10 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
         </DialogTitle>
         <Divider />
         {mutation.isSuccess && <Alert severity="success"> {"Changes saved!"} </Alert>}
-        {mutation.error && <Alert severity="error"> {mutation.error.message}</Alert>
+
+        {mutation.error && <Alert severity="error"> {mutation.error.message} <br />
+          {/* @ts-ignore */}
+          {mutation.error.tracking && "RequestId: " + mutation.error.tracking}</Alert>
         }
         {formErrorMap.onChange && <Alert severity="warning"> {`${formErrorMap.onChange}`} </Alert>}
         <Divider />

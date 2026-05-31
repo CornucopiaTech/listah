@@ -195,7 +195,7 @@ async function loadItems(maxLoaded, maxGen, apiUrl, tags, user) {
 
 
 function load_db(aUrl) {
-  loadTags(1, 1000, aUrl).then(
+  loadTags(1, 2000, aUrl).then(
     () => {
       allUserIds.forEach(
         uId => {

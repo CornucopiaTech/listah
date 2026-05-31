@@ -2,14 +2,12 @@ package v1
 
 import (
 	pb "cornucopia/listah/internal/pkg/proto/v1"
-	"errors"
 	"time"
 
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	// "fmt"
-	// "encoding/json"
 )
+
 
 func TagModelToTagProto(m []*Tag) ([]*pb.Tag, error) {
 	c := []*pb.Tag{}
@@ -33,15 +31,16 @@ func TagProtoToTagModel(msg []*pb.Tag, genId bool) ([]*Tag, []string, error) {
 	check := map[string]bool{"name": true, "updated_by": true, "updated_at": true}
 
 	for _, v := range msg {
-		if v.GetUserId() == "" {
-			return nil, nil, errors.New("userId is required")
+		if v.GetUserId() == "" { return nil, nil, MissingUserId }
+		if v.GetName() == "" { return nil, nil, MissingName }
+		if (len(v.GetProps()) == 0 ){ return nil, nil, MissingProps }
+		gProps := []string{}
+		for _, gP := range v.GetProps(){
+			if gP != ""{
+				gProps = append(gProps, gP)
+			}
 		}
-		if v.GetName() == "" {
-			return nil, nil, errors.New("name of tag is required")
-		}
-		if len(v.GetProps()) == 0 {
-			return nil, nil, errors.New("at least one property is required")
-		}
+		if (len(gProps) == 0 ){ return nil, nil, MissingProps }
 
 
 		id := v.GetId()
@@ -79,8 +78,6 @@ func TagProtoToTagModel(msg []*pb.Tag, genId bool) ([]*Tag, []string, error) {
 func TagPropertyModelToTagPropertyMapProto(m []TagPropertyMapModel) (map[string]*pb.StringList, error) {
 	r := map[string]*pb.StringList{}
 	for _, v0 := range m {
-		// fmt.Printf("\n\n\ni -  %s\n\n\n", i)
-		// fmt.Printf("\n\n\nv0 -  %s\n\n\n", v0)
 		for k, v1 := range v0.Props {
 			r[k] = &pb.StringList{	Value: v1 }
 		}
@@ -92,8 +89,6 @@ func MapModelToTagPropertyMapProto(m []TagPropertyMapModel) (map[string]*pb.Stri
 	r := map[string]*pb.StringList{}
 
 	for _, v0 := range m {
-		// fmt.Printf("\n\n\ni -  %s\n\n\n", i)
-		// fmt.Printf("\n\n\nv0 -  %s\n\n\n", v0)
 		for k, v1 := range v0.Props {
 			r[k] = &pb.StringList{	Value: v1 }
 		}

@@ -1,12 +1,11 @@
 package v1
 
 import (
-	pb "cornucopia/listah/internal/pkg/proto/v1"
-	"errors"
 	"time"
-
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/timestamppb"
+
+	pb "cornucopia/listah/internal/pkg/proto/v1"
 )
 
 func FilterModelToFilterProto(m []*Filter) ([]*pb.Filter, error) {
@@ -28,19 +27,17 @@ func FilterModelToFilterProto(m []*Filter) ([]*pb.Filter, error) {
 
 func FilterProtoToFilterModel(msg []*pb.Filter, genId bool) ([]*Filter, []string, error) {
 	savedFilters := []*Filter{}
-
-	// check := map[string]bool{"name": true}
 	check := map[string]bool{"name": true, "updated_by": true, "updated_at": true}
 	for _, v := range msg {
-		if v.GetUserId() == "" {
-			return nil, nil, errors.New("userId is required")
+		if v.GetUserId() == "" { return nil, nil, MissingUserId }
+		if v.GetName() == "" { return nil, nil, MissingName }
+		if len(v.GetTags()) == 0 { return nil, nil, MissingTags}
+		gTags := []string{}
+		for _, gP := range v.GetTags(){
+			if gP != "" { gTags = append(gTags, gP) }
 		}
-		if v.GetName() == "" {
-			return nil, nil, errors.New("name of filter is required")
-		}
-		if len(v.GetTags()) == 0 {
-			return nil, nil, errors.New("at least one tag is required")
-		}
+		if (len(gTags) == 0 ){ return nil, nil, MissingTags}
+
 
 		id := v.GetId()
 		if id == "" && genId {

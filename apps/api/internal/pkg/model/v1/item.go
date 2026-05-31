@@ -2,7 +2,6 @@ package v1
 
 import (
 	pb "cornucopia/listah/internal/pkg/proto/v1"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -22,9 +21,7 @@ var defaultPagination = Pagination{
 }
 
 func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemSearch, error) {
-	if msg.GetUserId() == "" {
-		return nil, errors.New("userId is required")
-	}
+	if msg.GetUserId() == "" { return nil, MissingUserId }
 
 	pSize := defaultPagination.PageSize
 	pNum := defaultPagination.PageNumber
@@ -32,19 +29,11 @@ func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemS
 
 	pg := msg.GetPagination()
 
-	fmt.Printf("\n\n\n\n\npg -  %+v\n\n\n\n\n", pg);
-
 
 	if pg != nil {
-		if pg.PageSize > 0 {
-			pSize = pg.PageSize
-		}
-		if pg.PageNumber != pNum {
-			pNum = pg.PageNumber
-		}
-		if pg.Sort != sortT {
-			sortT = pg.Sort
-		}
+		if pg.PageSize > 0 { pSize = pg.PageSize }
+		if pg.PageNumber != pNum { pNum = pg.PageNumber }
+		if pg.Sort != sortT { sortT = pg.Sort }
 	}
 
 	offset := int64(0)
@@ -70,9 +59,7 @@ func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemS
 			}
 		}
 
-		if q.Text != "" {
-			st = q.Text
-		}
+		if q.Text != "" { st = q.Text }
 	}
 
 	i := ItemSearch{
@@ -85,8 +72,6 @@ func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemS
 		Offset:      offset,
 		PageNumber:  pNum,
 	}
-
-	fmt.Printf("\n\n\n\n\nItemSearch -  %+v\n\n\n\n\n", i);
 	return &i, nil
 }
 
@@ -123,11 +108,6 @@ func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
 			UpdatedBy:  v.UpdatedBy,
 		})
 	}
-
-	if len(items) > 0 {
-		fmt.Printf("\n\n\n\n\nitems -  %+v\n\n\n\n\n", items[0]);
-	}
-
 	return items, nil
 }
 
@@ -136,15 +116,15 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, []string, error)
 	check := map[string]bool{"name": true, "updated_by": true, "updated_at": true}
 
 	for _, v := range msg {
-		if v.GetUserId() == "" {
-			return nil, nil, errors.New("userId is required")
+		if v.GetUserId() == "" { return nil, nil, MissingUserId }
+		if v.GetName() == "" { return nil, nil, MissingName }
+		if len(v.GetTags()) == 0 { return nil, nil, MissingTags}
+		gTags := []string{}
+		for _, gP := range v.GetTags(){
+			if gP != "" { gTags = append(gTags, gP) }
 		}
-		if v.GetName() == "" {
-			return nil, nil, errors.New("name of item is required")
-		}
-		if len(v.GetTags()) == 0 {
-			return nil, nil, errors.New("at least one tag is required")
-		}
+		if (len(gTags) == 0 ){ return nil, nil, MissingTags}
+
 
 		id := v.GetId()
 		if id == "" && genId {

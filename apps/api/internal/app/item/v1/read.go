@@ -2,20 +2,18 @@ package v1
 
 import (
 	"context"
+	"fmt"
+	"connectrpc.com/connect"
+	"go.opentelemetry.io/otel"
+
 	modelutils "cornucopia/listah/internal/pkg/model"
 	model "cornucopia/listah/internal/pkg/model/v1"
 	pb "cornucopia/listah/internal/pkg/proto/v1"
-	"fmt"
-
-	"connectrpc.com/connect"
-	"github.com/pkg/errors"
-	"go.opentelemetry.io/otel"
 )
 
 func (s *Server) ReadItem(ctx context.Context, req *connect.Request[pb.ItemServiceReadItemRequest]) (*connect.Response[pb.ItemServiceReadItemResponse], error) {
-	rpcName := "Read Item"
+	rpcName := "ReadItem"
 	rpcLogName := fmt.Sprintf("POST /%v/%v", svcName, rpcName)
-
 	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
@@ -25,28 +23,17 @@ func (s *Server) ReadItem(ctx context.Context, req *connect.Request[pb.ItemServi
 	// fmt.Printf("\n\n\nTag -  %s\n\n\n", req.Msg.GetQuery().Tags)
 
 	sq, err := model.ReadItemRequestToRepoItemSearch(req.Msg)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Error getting search query from request", errors.Cause(err).Error())
-		return nil, err
-	}
+	if err != nil { return nil, err }
 
 	readModel := []*model.Item{}
 
 	recordCnt, err := s.BunRepo.Item.Read(ctx, &readModel, sq)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
-		return nil, err
-	}
-	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d records from repository", recordCnt))
+	if err != nil { return nil, err }
 
 	// Convert readModel to response proto
 	// using the model conversion function
 	rs, err := model.ItemModelToItemProto(readModel)
-	// fmt.Printf("\n\n\n\n\nitems -  %+v\n\n\n\n\n", rs[0])
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Error getting item proto from item model", errors.Cause(err).Error())
-		return nil, err
-	}
+	if err != nil { return nil, err }
 
 	resm := &pb.ItemServiceReadItemResponse{
 		Items:            rs,
@@ -55,70 +42,38 @@ func (s *Server) ReadItem(ctx context.Context, req *connect.Request[pb.ItemServi
 		Query:            req.Msg.GetQuery(),
 		Pagination:       req.Msg.GetPagination(),
 	}
-	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful item read. Read %d records", len(readModel)))
 	return connect.NewResponse(resm), nil
 }
 
 func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServiceReadTagRequest]) (*connect.Response[pb.ItemServiceReadTagResponse], error) {
-	rpcName := "Read Tag"
+	rpcName := "ReadTag"
 	rpcLogName := fmt.Sprintf("POST /%v/%v", svcName, rpcName)
-
 	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
-	// fmt.Printf("\n\n\nUserId -  %s\n\n\n", req.Msg.GetUserId())
-
 	var riq = &pb.ItemServiceReadItemRequest{}
 	err := modelutils.MarshalCopyProto(req.Msg, riq)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Error marshalling proto message types", errors.Cause(err).Error())
-		return nil, err
-	}
+	if err != nil { return nil, err }
 
 	sq, err := model.ReadItemRequestToRepoItemSearch(riq)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Error getting search query from request", errors.Cause(err).Error())
-		return nil, err
-	}
+	if err != nil { return nil, err }
 
 	readModel := []*model.Tag{}
-
 	recordCnt, err := s.BunRepo.Tag.Read(ctx, &readModel, sq)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
-		return nil, err
-	}
-	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d records from repository", recordCnt))
-
+	if err != nil { return nil, err }
 
 	readIdModel := []model.TagPropertyMapModel{}
 	err = s.BunRepo.Tag.ReadIdProperty(ctx, &readIdModel, sq)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Error reading tags property map", errors.Cause(err).Error())
-		return nil, err
-	}
-	// fmt.Printf("\n\n\nreadIdModel  -  %s\n\n\n", readIdModel)
+	if err != nil { return nil, err }
 
-
-	// Convert readModel to response proto
-	// using the model conversion function
+	// Convert readModel to response proto using the model conversion function
 	rs, err := model.TagModelToTagProto(readModel)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Error getting tag proto from tag model", errors.Cause(err).Error())
-		return nil, err
-	}
+	if err != nil { return nil, err }
 
-
-
-	// Convert readModel to response proto
-	// using the model conversion function
+	// Convert readModel to response proto using the model conversion function
 	ms, err := model.MapModelToTagPropertyMapProto(readIdModel)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Error getting tag id proto from tag model", errors.Cause(err).Error())
-		return nil, err
-	}
-
+	if err != nil { return nil, err }
 
 	resm := &pb.ItemServiceReadTagResponse{
 		Tags:             rs,
@@ -128,59 +83,30 @@ func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServic
 		Query:            req.Msg.GetQuery(),
 		Pagination:       req.Msg.GetPagination(),
 	}
-	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful tag read. Read %d records", len(readModel)))
 	return connect.NewResponse(resm), nil
 }
 
 func (s *Server) ReadTagProperty(ctx context.Context, req *connect.Request[pb.ItemServiceReadTagPropertyRequest]) (*connect.Response[pb.ItemServiceReadTagPropertyResponse], error) {
 	rpcName := "Read TagProperty"
 	rpcLogName := fmt.Sprintf("POST /%v/%v", svcName, rpcName)
-
 	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
 	var riq = &pb.ItemServiceReadItemRequest{}
 	err := modelutils.MarshalCopyProto(req.Msg, riq)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Error marshalling proto message types", errors.Cause(err).Error())
-		return nil, err
-	}
+	if err != nil { return nil, err }
 
 	sq, err := model.ReadItemRequestToRepoItemSearch(riq)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Error getting search query from request", errors.Cause(err).Error())
-		return nil, err
-	}
+	if err != nil { return nil, err }
 
-	// readModel := []map[string]interface{}{}
 	readModel := []model.TagPropertyMapModel{}
-
 	recordCnt, err := s.BunRepo.Tag.ReadProperty(ctx, &readModel, sq)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
-		return nil, err
-	}
-	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d records from repository", recordCnt))
+	if err != nil { return nil, err }
 
-	if len(readModel) > 0 {
-		fmt.Printf("\n\n\nreadModel[0] -  %s\n\n\n", readModel[0])
-		// fmt.Printf("\n\n\nreadModel[1] -  %s\n\n\n", readModel[1])
-
-		fmt.Printf("\n\n\nreadModel[0] -  %+v\n\n\n", readModel[0])
-		// fmt.Printf("\n\n\nreadModel[1] -  %+v\n\n\n", readModel[1])
-	}
-
-
-
-
-	// Convert readModel to response proto
-	// using the model conversion function
+	// Convert readModel to response proto using the model conversion function
 	rs, err := model.TagPropertyModelToTagPropertyMapProto(readModel)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Error getting tag property proto from tag property model", errors.Cause(err).Error())
-		return nil, err
-	}
+	if err != nil { return nil, err }
 
 	resm := &pb.ItemServiceReadTagPropertyResponse{
 		Props:             rs,
@@ -189,49 +115,30 @@ func (s *Server) ReadTagProperty(ctx context.Context, req *connect.Request[pb.It
 		Query:            req.Msg.GetQuery(),
 		Pagination:       req.Msg.GetPagination(),
 	}
-	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful tag property read. Read %d records", len(readModel)))
 	return connect.NewResponse(resm), nil
 }
 
 func (s *Server) ReadFilter(ctx context.Context, req *connect.Request[pb.ItemServiceReadFilterRequest]) (*connect.Response[pb.ItemServiceReadFilterResponse], error) {
-	rpcName := "Read Saved Filter"
+	rpcName := "ReadFilter"
 	rpcLogName := fmt.Sprintf("POST /%v/%v", svcName, rpcName)
-
 	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
-	// fmt.Printf("\n\n\nUserId -  %s\n\n\n", req.Msg.GetUserId())
-
 	var riq = &pb.ItemServiceReadItemRequest{}
 	err := modelutils.MarshalCopyProto(req.Msg, riq)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Error marshalling proto message types", errors.Cause(err).Error())
-		return nil, err
-	}
+	if err != nil { return nil, err }
 
 	sq, err := model.ReadItemRequestToRepoItemSearch(riq)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Error getting search query from request", errors.Cause(err).Error())
-		return nil, err
-	}
+	if err != nil { return nil, err }
 
 	readModel := []*model.Filter{}
-
 	recordCnt, err := s.BunRepo.Filter.Read(ctx, &readModel, sq)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Repository read error", errors.Cause(err).Error())
-		return nil, err
-	}
-	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Read %d records from repository", recordCnt))
+	if err != nil { return nil, err }
 
-	// Convert readModel to response proto
-	// using the model conversion function
+	// Convert readModel to response proto using the model conversion function
 	rs, err := model.FilterModelToFilterProto(readModel)
-	if err != nil {
-		s.Logger.LogError(ctx, svcName, rpcName, "Error getting filter proto from filter model", errors.Cause(err).Error())
-		return nil, err
-	}
+	if err != nil { return nil, err }
 
 	resm := &pb.ItemServiceReadFilterResponse{
 		Filters:          rs,
@@ -240,6 +147,5 @@ func (s *Server) ReadFilter(ctx context.Context, req *connect.Request[pb.ItemSer
 		Query:            req.Msg.GetQuery(),
 		Pagination:       req.Msg.GetPagination(),
 	}
-	s.Logger.LogInfo(ctx, svcName, rpcName, fmt.Sprintf("Successful filter read. Read %d records", len(readModel)))
 	return connect.NewResponse(resm), nil
 }

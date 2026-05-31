@@ -106,9 +106,6 @@ export function TagListLayout(): ReactNode {
     };
   }
 
-  if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-    console.info("tags - ", tags.length);
-  }
 
   function handlePageChange(
     event: MouseEvent<HTMLButtonElement> | null,
