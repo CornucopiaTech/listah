@@ -58,12 +58,13 @@ export interface BackendErrorPayload {
 export class AppError extends Error {
   public code: string;
   public status: number;
-  public trackingId?: string;
+  public tracking?: string;
   public fieldViolations: Array<{ field: string; description: string }> = [];
 
-  constructor(message: string, status: number, payload?: BackendErrorPayload) {
+  constructor(message: string, status: number, trackingId?: string | null, payload?: BackendErrorPayload) {
     super(message);
     this.name = "AppError";
+    this.tracking = trackingId || "";
     this.status = status;
     this.code = payload?.code || "INTERNAL_ERROR";
 
@@ -73,12 +74,12 @@ export class AppError extends Error {
         if (detail.fieldViolations) {
           this.fieldViolations = detail.fieldViolations;
         }
-        // If your backend maps the tracking ID inside the JSON structure:
-        if (detail.type === "listah.v1.SystemErrorDetails" && typeof detail.value === "string") {
-          // If JSON mapping is configured, you might get a direct string,
-          // otherwise you'd decode base64 here if needed.
-          this.trackingId = detail.value;
-        }
+        // // If your backend maps the tracking ID inside the JSON structure:
+        // if (detail.type === "listah.v1.SystemErrorDetails" && typeof detail.value === "string") {
+        //   // If JSON mapping is configured, you might get a direct string,
+        //   // otherwise you'd decode base64 here if needed.
+        //   this.trackingId = detail.value;
+        // }
       });
     }
   }

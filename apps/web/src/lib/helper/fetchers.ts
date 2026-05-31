@@ -41,7 +41,8 @@ export async function postTag(t: ITag) {
       } catch {
         // Response wasn't JSON (e.g., gateway crash)
       }
-      throw new AppError(payload?.message || genericError, res.status, payload);
+      const rId: string | null = res.headers.get("X-Request-Id");
+      throw new AppError(payload?.message || genericError, res.status, rId, payload);
     }
 
     return await res.json();
@@ -49,7 +50,7 @@ export async function postTag(t: ITag) {
     if (e instanceof AppError) throw e;
 
     // Catch browser level network dropouts ("Failed to fetch" / "NetworkError")
-    throw new AppError(genericError, 0, { code, message: (e as Error).message });
+    throw new AppError(genericError, 0, undefined, { code, message: (e as Error).message });
   }
 }
 
@@ -71,7 +72,8 @@ export async function postItem(item: IItem) {
         // Response wasn't JSON (e.g., gateway crash)
       }
 
-      throw new AppError(payload?.message || genericError, res.status, payload);
+      const rId: string | null = res.headers.get("X-Request-Id");
+      throw new AppError(payload?.message || genericError, res.status, rId, payload);
     }
 
     return await res.json();
@@ -79,7 +81,7 @@ export async function postItem(item: IItem) {
     if (e instanceof AppError) throw e;
 
     // Catch browser level network dropouts ("Failed to fetch" / "NetworkError")
-    throw new AppError(genericError, 0, { code, message: (e as Error).message });
+    throw new AppError(genericError, 0, undefined, { code, message: (e as Error).message });
   }
 }
 
@@ -101,14 +103,15 @@ export async function postFilter(f: IFilter) {
       } catch {
         // Response wasn't JSON (e.g., gateway crash)
       }
-      throw new AppError(payload?.message || genericError, res.status, payload);
+      const rId: string | null = res.headers.get("X-Request-Id");
+      throw new AppError(payload?.message || genericError, res.status, rId, payload);
     }
     return await res.json();
   } catch (e) {
     if (e instanceof AppError) throw e;
 
     // Catch browser level network dropouts ("Failed to fetch" / "NetworkError")
-    throw new AppError(genericError, 0, { code, message: (e as Error).message });
+    throw new AppError(genericError, 0, undefined, { code, message: (e as Error).message });
   }
 }
 
@@ -129,7 +132,8 @@ export async function getItem(opts: IItemReadRequest): Promise<IItemReadResponse
       } catch {
         // Response wasn't JSON (e.g., gateway crash)
       }
-      throw new AppError(payload?.message || genericError, res.status, payload);
+      const rId: string | null = res.headers.get("X-Request-Id");
+      throw new AppError(payload?.message || genericError, res.status, rId, payload);
     }
 
     return await res.json();
@@ -137,7 +141,7 @@ export async function getItem(opts: IItemReadRequest): Promise<IItemReadResponse
     if (e instanceof AppError) throw e;
 
     // Catch browser level network dropouts ("Failed to fetch" / "NetworkError")
-    throw new AppError(genericError, 0, { code, message: (e as Error).message });
+    throw new AppError(genericError, 0, undefined, { code, message: (e as Error).message });
   }
 }
 
@@ -160,14 +164,15 @@ export async function getTag(opts: ITagReadRequest): Promise<ITagReadResponse> {
         // Response wasn't JSON (e.g., gateway crash)
       }
 
-      throw new AppError(payload?.message || genericError, res.status, payload);
+      const rId: string | null = res.headers.get("X-Request-Id");
+      throw new AppError(payload?.message || genericError, res.status, rId, payload);
     }
 
     return await res.json();
   } catch (e) {
     if (e instanceof AppError) throw e;
     // Catch browser level network dropouts ("Failed to fetch" / "NetworkError")
-    throw new AppError(genericError, 0, { code, message: (e as Error).message });
+    throw new AppError(genericError, 0, undefined, { code, message: (e as Error).message });
   }
 }
 
@@ -189,8 +194,8 @@ export async function getTagProperty(opts: ITagReadRequest): Promise<ITagReadRes
       } catch {
         // Response wasn't JSON (e.g., gateway crash)
       }
-
-      throw new AppError(payload?.message || genericError, res.status, payload);
+      const rId: string | null = res.headers.get("X-Request-Id");
+      throw new AppError(payload?.message || genericError, res.status, rId, payload);
     }
 
     return await res.json();
@@ -198,7 +203,7 @@ export async function getTagProperty(opts: ITagReadRequest): Promise<ITagReadRes
     if (e instanceof AppError) throw e;
 
     // Catch browser level network dropouts ("Failed to fetch" / "NetworkError")
-    throw new AppError(genericError, 0, { code, message: (e as Error).message });
+    throw new AppError(genericError, 0, undefined, { code, message: (e as Error).message });
   }
 }
 
@@ -221,7 +226,8 @@ export async function getFilter(opts: IFilterReadRequest): Promise<IFilterReadRe
         // Response wasn't JSON (e.g., gateway crash)
       }
 
-      throw new AppError(payload?.message || genericError, res.status, payload);
+      const rId: string | null = res.headers.get("X-Request-Id");
+      throw new AppError(payload?.message || genericError, res.status, rId, payload);
     }
 
     return await res.json();
@@ -229,6 +235,6 @@ export async function getFilter(opts: IFilterReadRequest): Promise<IFilterReadRe
     if (e instanceof AppError) throw e;
 
     // Catch browser level network dropouts ("Failed to fetch" / "NetworkError")
-    throw new AppError(genericError, 0, { code, message: (e as Error).message });
+    throw new AppError(genericError, 0, undefined, { code, message: (e as Error).message });
   }
 }

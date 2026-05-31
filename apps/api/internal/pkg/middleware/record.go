@@ -93,7 +93,11 @@ func RecordErrorResponseInterceptor(infra *bootstrap.Infra) connect.UnaryInterce
 				go infra.BunRepo.ApiLog.Insert(dctx, &reqModel)
 
 				// 4. Return sanitized error structure back to frontend (using our pattern from before)
-				return nil, utils.HandleError(err)
+				e := utils.HandleError(err)
+				// Clone any pre-existing error metadata (headers/trailers)
+				e.Meta().Set("X-Request-Id", tid)
+
+				return nil, e
 			}
 			return res, nil
 		})

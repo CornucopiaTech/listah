@@ -24,7 +24,8 @@ func handle(i *bootstrap.Infra) http.Handler {
 	mux.Use(cors.Handler(cors.Options{
 		AllowedOrigins: allowedOrigins,
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders: []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "traceparent"},
+		AllowedHeaders: []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "traceparent", "Connect-Protocol-Version", "X-Request-Id"},
+		ExposedHeaders: []string{"X-Request-Id"},
 	}))
 
 	mux.Use(chimiddleware.RequestID)
@@ -34,6 +35,9 @@ func handle(i *bootstrap.Infra) http.Handler {
 	mux.Use(chimiddleware.Timeout(60 * 60 * 1e9)) // 1 hour
 
 	fmt.Printf("Allowed Origins are: %v\n", allowedOrigins)
+
+
+
 
 	// Get gRPC interceptors chain
 	icp := middleware.GetInterceptors(i)
