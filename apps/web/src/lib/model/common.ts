@@ -43,3 +43,43 @@ export const ZSearch = z.object({
   text: z.string().catch(''),
 });
 export type ISearch = z.infer<typeof ZSearch>;
+
+
+export interface BackendErrorPayload {
+  code: string;
+  message: string;
+  details?: Array<{
+    type: string;
+    value: string; // Base64 encoded protobuf payload, or raw string if using pure JSON
+    fieldViolations?: Array<{ field: string; description: string }>;
+  }>;
+}
+
+export class AppError extends Error {
+  public code: string;
+  public status: number;
+  public trackingId?: string;
+  public fieldViolations: Array<{ field: string; description: string }> = [];
+
+  constructor(message: string, status: number, payload?: BackendErrorPayload) {
+    super(message);
+    this.name = "AppError";
+    this.status = status;
+    this.code = payload?.code || "INTERNAL_ERROR";
+
+    // Extract tracking IDs or validations if provided by the backend structure
+    if (payload?.details) {
+      payload.details.forEach((detail) => {
+        if (detail.fieldViolations) {
+          this.fieldViolations = detail.fieldViolations;
+        }
+        // If your backend maps the tracking ID inside the JSON structure:
+        if (detail.type === "listah.v1.SystemErrorDetails" && typeof detail.value === "string") {
+          // If JSON mapping is configured, you might get a direct string,
+          // otherwise you'd decode base64 here if needed.
+          this.trackingId = detail.value;
+        }
+      });
+    }
+  }
+}

@@ -657,6 +657,44 @@ components:
         - AUDIT_UPDATER_ENUM_UNSPECIFIED
         - AUDIT_UPDATER_ENUM_FRONTEND
         - AUDIT_UPDATER_ENUM_SYSOPS
+    listah.v1.BadRequestDetails:
+      type: object
+      properties:
+        code:
+          title: code
+          $ref: '#/components/schemas/listah.v1.ErrorCode'
+        fieldViolations:
+          type: array
+          items:
+            $ref: '#/components/schemas/listah.v1.FieldViolation'
+          title: field_violations
+      title: BadRequestDetails
+      additionalProperties: false
+      description: The core payload we will attach to the error status
+    listah.v1.ErrorCode:
+      type: string
+      title: ErrorCode
+      enum:
+        - ERROR_CODE_UNSPECIFIED
+        - VALIDATION_FAILED
+        - ALREADY_EXISTS
+        - NOT_FOUND
+        - INTERNAL_DATABASE_ERROR
+      description: Machine-readable error codes for the frontend to switch on
+    listah.v1.FieldViolation:
+      type: object
+      properties:
+        field:
+          type: string
+          title: field
+          description: e.g., "email"
+        description:
+          type: string
+          title: description
+          description: e.g., "This email is already registered."
+      title: FieldViolation
+      additionalProperties: false
+      description: Custom detail for form validation or constraint violations
     listah.v1.Filter:
       type: object
       properties:
@@ -1069,6 +1107,19 @@ components:
           title: value
       title: StringList
       additionalProperties: false
+    listah.v1.SystemErrorDetails:
+      type: object
+      properties:
+        code:
+          title: code
+          $ref: '#/components/schemas/listah.v1.ErrorCode'
+        trackingId:
+          type: string
+          title: tracking_id
+          description: A UUID to map frontend errors to backend server logs
+      title: SystemErrorDetails
+      additionalProperties: false
+      description: For generic or system-wide errors
     listah.v1.Tag:
       type: object
       properties:

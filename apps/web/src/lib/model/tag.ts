@@ -31,7 +31,7 @@ export type ITag = z.infer<typeof ZTag>;
 //   )
 // });
 
-export const ZTagProperty = z.map(
+export const ZTagProperty = z.record(
   z.string(), z.object({
     value: z.array(z.string())
   })

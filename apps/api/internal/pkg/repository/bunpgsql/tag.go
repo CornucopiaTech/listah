@@ -24,8 +24,6 @@ type tag struct {
 	logger *logging.Factory
 }
 
-
-// ToDo: raise error when a prop is not included with a tag.
 func (a *tag) Read(ctx context.Context, m *[]*model.Tag, s *model.ItemSearch) (int, error) {
 	ctx, span := otel.Tracer("tag-repository").Start(ctx, "TagRepository Read")
 	defer span.End()
@@ -94,62 +92,6 @@ func (a *tag) Read(ctx context.Context, m *[]*model.Tag, s *model.ItemSearch) (i
 	return recCnt[0].RowCount, nil
 }
 
-func (a *tag) ReadPropertyObject(ctx context.Context, m *[]*model.TagProperty, s *model.ItemSearch) (int, error) {
-	ctx, span := otel.Tracer("tag-repository").Start(ctx, "TagRepository ReadProperty")
-	defer span.End()
-
-	var activity = "TagReadProperty"
-	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
-
-	cte := `
-		WITH items AS (
-			SELECT p.user_id, REPLACE(p.propName::VARCHAR, '"', '') "name", jsonb_agg(tg.*) tag_objs
-			FROM (
-					SELECT DISTINCT user_id, propName, tg.id
-					FROM apps.tags tg
-						CROSS JOIN LATERAL jsonb_array_elements(tg.props::JSONB) AS prop_arr(propName)
-					WHERE tg.props IS NOT NULL
-				) p
-					LEFT JOIN apps.tags tg ON tg.id = p.id AND tg.user_id = p.user_id
-			GROUP BY 1, 2
-		)
-	`
-
-	query := `
-		SELECT it.*
-		FROM items it
-		WHERE it.user_id::VARCHAR = '` + s.UserId + `'
-	`
-
-	countq := cte + `
-		SELECT COUNT(*) row_count
-		FROM (` + query + `)`
-	recCnt := []*model.RowCount{}
-	err := a.db.NewRaw(countq).Scan(ctx, &recCnt)
-	if err != nil {
-		a.logger.LogError(ctx, svcName, activity, "Error occurred while getting total population", errors.Cause(err).Error())
-		return 0, err
-	}
-
-	if s.SortQuery != "" {
-		query = query + fmt.Sprintf(` ORDER BY %v `, s.SortQuery)
-	}
-	if s.Limit > 0 {
-		query = query + fmt.Sprintf(` LIMIT %d `, s.Limit)
-	}
-	if s.Offset > 0 {
-		query = query + fmt.Sprintf(` OFFSET %d `, s.Offset)
-	}
-
-	err = a.db.NewRaw(cte+query).Scan(ctx, m)
-	if err != nil {
-		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
-		return 0, err
-	}
-
-	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
-	return recCnt[0].RowCount, nil
-}
 
 func (a *tag) ReadProperty(ctx context.Context, m *[]model.TagPropertyMapModel, s *model.ItemSearch) (int, error) {
 	ctx, span := otel.Tracer("tag-repository").Start(ctx, "TagRepository ReadProperty")
@@ -250,9 +192,13 @@ func (a *tag) Upsert(ctx context.Context, m *[]*model.Tag, c *model.UpsertInfo) 
 	_, err := q.Exec(ctx)
 	if err != nil {
 		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
+		if strings.Contains(err.Error(), "unique_violation") || strings.Contains(err.Error(), "23505") {
+			// Return our safe sentinel error instead of the raw DB trace
+			return nil, model.DuplicateName
+		}
 		return nil, err
 	}
-
+	a.logger.LogInfo(ctx, svcName, activity, "Item successfully updated")
 	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
 	return nil, nil
 }

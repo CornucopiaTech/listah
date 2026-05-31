@@ -619,7 +619,7 @@ paths:
                           type: array
                           items:
                             type: object
-                            properties: &ref_27
+                            properties: &ref_29
                               key:
                                 type: string
                                 title: key
@@ -1188,7 +1188,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_21
+              properties: &ref_23
                 filters:
                   type: array
                   items:
@@ -1207,7 +1207,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_22
+                properties: &ref_24
                   filterIds:
                     type: array
                     items:
@@ -1253,7 +1253,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_23
+              properties: &ref_25
                 items:
                   type: array
                   items:
@@ -1272,7 +1272,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_24
+                properties: &ref_26
                   itemIds:
                     type: array
                     items:
@@ -1318,7 +1318,7 @@ paths:
           application/json:
             schema:
               type: object
-              properties: &ref_25
+              properties: &ref_27
                 tags:
                   type: array
                   items:
@@ -1337,7 +1337,7 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: &ref_26
+                properties: &ref_28
                   tagIds:
                     type: array
                     items:
@@ -1495,6 +1495,50 @@ components:
         - AUDIT_UPDATER_ENUM_UNSPECIFIED
         - AUDIT_UPDATER_ENUM_FRONTEND
         - AUDIT_UPDATER_ENUM_SYSOPS
+    listah.v1.BadRequestDetails:
+      type: object
+      properties:
+        code:
+          title: code
+          type: string
+          enum: &ref_21
+            - ERROR_CODE_UNSPECIFIED
+            - VALIDATION_FAILED
+            - ALREADY_EXISTS
+            - NOT_FOUND
+            - INTERNAL_DATABASE_ERROR
+          description: Machine-readable error codes for the frontend to switch on
+        fieldViolations:
+          type: array
+          items:
+            type: object
+            properties: &ref_22
+              field:
+                type: string
+                title: field
+                description: e.g., "email"
+              description:
+                type: string
+                title: description
+                description: e.g., "This email is already registered."
+            title: FieldViolation
+            additionalProperties: false
+            description: Custom detail for form validation or constraint violations
+          title: field_violations
+      title: BadRequestDetails
+      additionalProperties: false
+      description: The core payload we will attach to the error status
+    listah.v1.ErrorCode:
+      type: string
+      title: ErrorCode
+      enum: *ref_21
+      description: Machine-readable error codes for the frontend to switch on
+    listah.v1.FieldViolation:
+      type: object
+      properties: *ref_22
+      title: FieldViolation
+      additionalProperties: false
+      description: Custom detail for form validation or constraint violations
     listah.v1.Filter:
       type: object
       properties: *ref_18
@@ -1614,37 +1658,37 @@ components:
       additionalProperties: false
     listah.v1.ItemServiceUpsertFilterRequest:
       type: object
-      properties: *ref_21
+      properties: *ref_23
       title: ItemServiceUpsertFilterRequest
       additionalProperties: false
     listah.v1.ItemServiceUpsertFilterResponse:
       type: object
-      properties: *ref_22
+      properties: *ref_24
       title: ItemServiceUpsertFilterResponse
       additionalProperties: false
     listah.v1.ItemServiceUpsertItemRequest:
       type: object
-      properties: *ref_23
+      properties: *ref_25
       title: ItemServiceUpsertItemRequest
       additionalProperties: false
     listah.v1.ItemServiceUpsertItemResponse:
       type: object
-      properties: *ref_24
+      properties: *ref_26
       title: ItemServiceUpsertItemResponse
       additionalProperties: false
     listah.v1.ItemServiceUpsertTagRequest:
       type: object
-      properties: *ref_25
+      properties: *ref_27
       title: ItemServiceUpsertTagRequest
       additionalProperties: false
     listah.v1.ItemServiceUpsertTagResponse:
       type: object
-      properties: *ref_26
+      properties: *ref_28
       title: ItemServiceUpsertTagResponse
       additionalProperties: false
     listah.v1.MapObj:
       type: object
-      properties: *ref_27
+      properties: *ref_29
       title: MapObj
       additionalProperties: false
     listah.v1.Pagination:
@@ -1662,6 +1706,21 @@ components:
       properties: *ref_15
       title: StringList
       additionalProperties: false
+    listah.v1.SystemErrorDetails:
+      type: object
+      properties:
+        code:
+          title: code
+          type: string
+          enum: *ref_21
+          description: Machine-readable error codes for the frontend to switch on
+        trackingId:
+          type: string
+          title: tracking_id
+          description: A UUID to map frontend errors to backend server logs
+      title: SystemErrorDetails
+      additionalProperties: false
+      description: For generic or system-wide errors
     listah.v1.Tag:
       type: object
       properties: *ref_12

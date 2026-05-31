@@ -146,16 +146,64 @@ databaseChangeLog:
                     name:  request_source
                     type:  varchar
                 - column:
+                    name:  method
+                    type:  varchar
+                - column:
                     name:  trace_id
                     type:  varchar
                 - column:
                     name:  span_id
                     type:  varchar
                 - column:
+                    name:  request_time
+                    type:  timestamp
+                    defaultValueComputed: CURRENT_TIMESTAMP
+                - column:
                     name:  request
                     type:  json
                     constraints:
                       nullable:  false
+
+
+        - createTable:
+              schemaName: instrumentation
+              tableName:  errors
+              ifNotExists: true
+              columns:
                 - column:
-                    name:  request_time
+                    name:  id
+                    type:  varchar
+                    constraints:
+                      primaryKey:  true
+                      nullable:  false
+                - column:
+                    name:  request_source
+                    type:  varchar
+                - column:
+                    name:  method
+                    type:  varchar
+                - column:
+                    name:  trace_id
+                    type:  varchar
+                - column:
+                    name:  span_id
+                    type:  varchar
+                - column:
+                    name:  code
+                    type:  varchar
+                    constraints:
+                      nullable:  false
+                - column:
+                    name:  error
+                    type:  varchar
+                    constraints:
+                      nullable:  false
+                - column:
+                    name:  response_time
                     type:  timestamp
+                    defaultValueComputed: CURRENT_TIMESTAMP
+                - column:
+                    name:  request
+                    type:  json
+                    constraints:
+                      nullable:  false
