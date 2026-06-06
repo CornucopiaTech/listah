@@ -1,0 +1,26 @@
+export const typography = {
+  "fontFamily": '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+  "fontSize": 14,
+  "fontWeightLight": 300,
+  "fontWeightRegular": 400,
+  "fontWeightMedium": 500,
+  "fontWeightBold": 700,
+  h1: {
+    fontSize: '4rem', fontWeight: 700, textAlign: "center",
+    // lineHeight: 1.1,
+    //   letterSpacing: '-0.02em',
+    //   color: '#172524',
+    //   textTransform: 'uppercase',
+  },
+  h2: { fontSize: "3.5rem", fontWeight: 700, textAlign: "center" },
+  h3: { fontSize: "3rem", fontWeight: 700, textAlign: "center" },
+  h4: { fontSize: "2.5rem", fontWeight: 700, textAlign: "center" },
+  h5: { fontSize: "2rem", fontWeight: 700, textAlign: "center" },
+  h6: { fontSize: "1.5rem", fontWeight: 700, textAlign: "center", },
+  body1: { fontSize: "1.2rem", fontWeight: 500 },
+  body2: { fontSize: "1rem", fontWeight: 500 },
+  condensedBody2: {
+    fontSize: "1rem", fontWeight: 500, padding: -1.5,
+    margin: -1.5, lineHeight: 0.8,
+  },
+}

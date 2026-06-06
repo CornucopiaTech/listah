@@ -23,13 +23,14 @@ func Run() (err error) {
 	defer stop()
 
 	// Set up OpenTelemetry.
-	otelShutdown, err := telemetry.SetupOTelSDK(ctx, i)
+	otelShutdown, otelNoContextShutdown, err := telemetry.SetupOTelSDK(ctx, i)
 	if err != nil {
 		return
 	}
 	// Handle shutdown properly so nothing leaks.
 	defer func() {
 		err = errors.Join(err, otelShutdown(context.Background()))
+		err = errors.Join(err, otelNoContextShutdown())
 	}()
 
 	//

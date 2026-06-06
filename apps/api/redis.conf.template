@@ -1,0 +1,25 @@
+# Minimal production redis.conf template
+bind 127.0.0.1
+protected-mode yes
+port 6379
+tcp-backlog 511
+timeout 0
+tcp-keepalive 300
+
+# Persistence
+save 900 1
+save 300 10
+save 60 10000
+dir /data
+dbfilename dump.rdb
+appendonly yes
+appendfilename "appendonly.aof"
+appendfsync everysec
+
+# Security: disable default user and create an ACL user
+
+rename-command CONFIG ""
+rename-command FLUSHALL ""
+rename-command FLUSHDB ""
+user default off
+user ${__REDIS_USER__} on >${__REDIS_PASSWORD__} ~listah:sessions:* ~listah:users:* ~listah:items:* +@read +@write -@admin

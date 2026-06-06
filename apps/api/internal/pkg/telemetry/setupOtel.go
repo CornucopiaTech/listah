@@ -32,12 +32,14 @@ import (
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	// "go.opentelemetry.io/contrib/propagators/b3"
+	redisotel "github.com/redis/go-redis/extra/redisotel-native/v9"
 )
 
 // setupOTelSDK bootstraps the OpenTelemetry pipeline.
 // If it does not return an error, make sure to call shutdown for proper cleanup.
-func SetupOTelSDK(ctx context.Context, i *bootstrap.Infra) (shutdown func(context.Context) error, err error) {
+func SetupOTelSDK(ctx context.Context, i *bootstrap.Infra) (shutdown func(context.Context) error, noContextShutdown func() error, err error) {
 	var shutdownFuncs []func(context.Context) error
+	var noContextShutdownFuncs []func() error
 
 	// shutdown calls cleanup functions registered via shutdownFuncs.
 	// The errors from the calls are joined.
@@ -50,6 +52,14 @@ func SetupOTelSDK(ctx context.Context, i *bootstrap.Infra) (shutdown func(contex
 		shutdownFuncs = nil
 		return err
 	}
+	noContextShutdown = func() error {
+		var err error
+		for _, fn := range noContextShutdownFuncs {
+			err = errors.Join(err, fn())
+		}
+		noContextShutdownFuncs = nil
+		return err
+	}
 
 	// handleErr calls shutdown for cleanup and makes sure that all errors are returned.
 	handleErr := func(inErr error, errMsg string) {
@@ -59,18 +69,6 @@ func SetupOTelSDK(ctx context.Context, i *bootstrap.Infra) (shutdown func(contex
 	}
 	// Create resource.
 	// The resource is used to identify the source of telemetry.
-	// It is used to group telemetry by the source.
-	// res, err := resource.Merge(
-	// 	resource.Default(),
-	// 	resource.NewWithAttributes(
-	// 		semconv.SchemaURL,
-	// 		semconv.ServiceNameKey.String(i.Config.AppName),
-	// 	),
-	// )
-	// if err != nil {
-	// 	handleErr(err, "Failed to create a resource for Otel")
-	// 	log.Fatalf("Failed to create a resource for Otel: %v", err)
-	// }
 	res := resource.NewWithAttributes(
 		semconv.SchemaURL,
 		semconv.ServiceNameKey.String(i.Config.AppName),
@@ -90,16 +88,6 @@ func SetupOTelSDK(ctx context.Context, i *bootstrap.Infra) (shutdown func(contex
 	otel.SetTracerProvider(tracerProvider)
 
 
-	// Define metrics
-	// // Set up trace provider.
-	// tracerConsoleProvider, err := newConsoleTracerProvider(infra, res)
-	// if err != nil {
-	// 	handleErr(err, "Failed to create a trace provider for Otel")
-	// 	return
-	// }
-	// shutdownFuncs = append(shutdownFuncs, tracerConsoleProvider.Shutdown)
-	// otel.SetTracerProvider(tracerConsoleProvider)
-
 	// Set up meter provider.
 	meterProvider, err := newMeterProvider(i, res)
 	if err != nil {
@@ -109,14 +97,6 @@ func SetupOTelSDK(ctx context.Context, i *bootstrap.Infra) (shutdown func(contex
 	shutdownFuncs = append(shutdownFuncs, meterProvider.Shutdown)
 	otel.SetMeterProvider(meterProvider)
 
-	// // Set up meter provider.
-	// meterConsoleProvider, err := newConsoleMeterProvider(infra, res)
-	// if err != nil {
-	// 	handleErr(err, "Failed to create a meter provider for Otel")
-	// 	return
-	// }
-	// shutdownFuncs = append(shutdownFuncs, meterConsoleProvider.Shutdown)
-	// otel.SetMeterProvider(meterConsoleProvider)
 
 	// Set up logger provider.
 	loggerProvider, err := newLoggerProvider()
@@ -127,14 +107,16 @@ func SetupOTelSDK(ctx context.Context, i *bootstrap.Infra) (shutdown func(contex
 	shutdownFuncs = append(shutdownFuncs, loggerProvider.Shutdown)
 	global.SetLoggerProvider(loggerProvider)
 
-	// // Set up logger provider.
-	// loggerConsoleProvider, err := newConsoleLoggerProvider()
-	// if err != nil {
-	// 	handleErr(err, "Failed to create a log provider for Otel")
-	// 	return
-	// }
-	// shutdownFuncs = append(shutdownFuncs, loggerConsoleProvider.Shutdown)
-	// global.SetLoggerProvider(loggerConsoleProvider)
+
+
+	// Set up redis Instrumantation
+	rOtel, err := setupRedisOtel()
+	if err != nil {
+		handleErr(err, "Failed to instrument redis db")
+		return
+	}
+	noContextShutdownFuncs = append(noContextShutdownFuncs, rOtel.Shutdown)
+
 
 	return
 }
@@ -237,6 +219,45 @@ func createOtelMetricExporter(i *bootstrap.Infra) (sdkmetric.Exporter, error) {
 		return nil, fmt.Errorf("unrecognized exporter type %s", i.Config.Instrumentation.OltpExporterType)
 	}
 	return exporter, err
+}
+
+func setupRedisOtel() (*redisotel.ObservabilityInstance, error) {
+	otelInstance := redisotel.GetObservabilityInstance()
+	config := redisotel.NewConfig().
+		// You must enable OTel explicitly
+		WithEnabled(true).
+		// Enable the metric groups you want to collect. Use bitwise OR
+		// to combine multiple groups. The default is `MetricGroupAll`
+		// which includes all groups.
+		WithMetricGroups(redisotel.MetricGroupFlagCommand |
+			redisotel.MetricGroupFlagConnectionBasic |
+			redisotel.MetricGroupFlagResiliency |
+			redisotel.MetricGroupFlagConnectionAdvanced).
+		// Filter which commands to track
+		WithIncludeCommands([]string{"GET", "SET"}).
+		WithExcludeCommands([]string{"DEBUG", "SLOWLOG"}).
+		// Privacy controls
+		WithHidePubSubChannelNames(true).
+		WithHideStreamNames(true).
+		// Custom histogram buckets
+		WithHistogramBuckets([]float64{
+			0.0001, // 0.1ms
+			0.0005, // 0.5ms
+			0.001,  // 1ms
+			0.005,  // 5ms
+			0.01,   // 10ms
+			0.05,   // 50ms
+			0.1,    // 100ms
+			0.5,    // 500ms
+			1.0,    // 1s
+			5.0,    // 5s
+			10.0,   // 10s
+		})
+
+	if err := otelInstance.Init(config); err != nil {
+		return nil, err
+	}
+	return otelInstance, nil
 }
 
 func withSecure() bool {

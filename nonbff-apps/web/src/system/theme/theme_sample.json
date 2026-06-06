@@ -1,0 +1,201 @@
+{
+  "palette": {
+    "mode": "light | dark",
+    "primary": {
+      "light": "",
+      "main": "",
+      "dark": "",
+      "contrastText": "",
+      "200": "",
+      "300": "",
+      "400": "",
+      "500": "",
+      "600": "",
+      "700": "",
+      "800": "",
+      "900": "",
+      "A100": "",
+      "A200": "",
+      "A400": "",
+      "A700": ""
+    },
+    "secondary": {},
+    "error": {},
+    "warning": {},
+    "info": {},
+    "success": {},
+    "text": {
+      "primary": "",
+      "secondary": "",
+      "disabled": ""
+    },
+    "background": {
+      "default": "",
+      "paper": ""
+    },
+    "divider": "",
+    "action": {
+      "active": "",
+      "hover": "",
+      "selected": "",
+      "disabled": "",
+      "disabledBackground": "",
+      "focus": ""
+    },
+    "customColors": {}
+  },
+
+  "typography": {
+    "fontFamily": "",
+    "fontSize": 0,
+    "fontWeightLight": 0,
+    "fontWeightRegular": 0,
+    "fontWeightMedium": 0,
+    "fontWeightBold": 0,
+    "variants": {
+      "h1": {},
+      "h2": {},
+      "h3": {},
+      "h4": {},
+      "h5": {},
+      "h6": {},
+      "subtitle1": {},
+      "subtitle2": {},
+      "body1": {},
+      "body2": {},
+      "button": {},
+      "caption": {},
+      "overline": {},
+      "customVariants": {}
+    }
+  },
+
+  "spacing": "number | function",
+
+  "breakpoints": {
+    "values": {
+      "xs": 0,
+      "sm": 600,
+      "md": 900,
+      "lg": 1200,
+      "xl": 1536
+    },
+    "unit": "px",
+    "step": 5
+  },
+
+  "shape": {
+    "borderRadius": 4
+  },
+
+  "transitions": {
+    "duration": {
+      "shortest": 150,
+      "shorter": 200,
+      "short": 250,
+      "standard": 300,
+      "complex": 375,
+      "enteringScreen": 225,
+      "leavingScreen": 195
+    },
+    "easing": {
+      "easeInOut": "",
+      "easeOut": "",
+      "easeIn": "",
+      "sharp": ""
+    }
+  },
+
+  "zIndex": {
+    "mobileStepper": 1000,
+    "speedDial": 1050,
+    "appBar": 1100,
+    "drawer": 1200,
+    "modal": 1300,
+    "snackbar": 1400,
+    "tooltip": 1500
+  },
+
+  "components": {
+    "MuiButton": {
+      "defaultProps": {
+        "variant": "",
+        "color": "",
+        "size": "",
+        "disableElevation": false,
+        "disableRipple": false,
+        "fullWidth": false
+      },
+      "styleOverrides": {
+        "root": {},
+        "text": {},
+        "textPrimary": {},
+        "textSecondary": {},
+        "outlined": {},
+        "outlinedPrimary": {},
+        "outlinedSecondary": {},
+        "contained": {},
+        "containedPrimary": {},
+        "containedSecondary": {},
+        "sizeSmall": {},
+        "sizeMedium": {},
+        "sizeLarge": {},
+        "fullWidth": {},
+        "startIcon": {},
+        "endIcon": {},
+        "iconSizeSmall": {},
+        "iconSizeMedium": {},
+        "iconSizeLarge": {}
+      },
+      "variants": [
+        {
+          "props": {
+            "variant": "",
+            "color": "",
+            "size": ""
+          },
+          "style": {}
+        }
+      ]
+    },
+    "MuiTextField": {},
+    "MuiAppBar": {},
+    "MuiCard": {},
+    "otherComponents": {}
+  },
+
+  "mixins": {
+    "toolbar": {},
+    "customMixins": {}
+  },
+
+  "cssVariables": {
+    "cssVarPrefix": "",
+    "colorSchemes": {
+      "light": {},
+      "dark": {}
+    },
+    "opacity": {},
+    "overlays": []
+  },
+
+  "customExtensions": {
+    "customShadows": {},
+    "layout": {},
+    "brand": {}
+  },
+
+  "direction": "ltr | rtl",
+
+  "shadows": [
+    "shadow-0",
+    "shadow-1",
+    "shadow-2"
+  ],
+
+  "globalStyles": {
+    "MuiCssBaseline": {
+      "styleOverrides": {}
+    }
+  }
+}
