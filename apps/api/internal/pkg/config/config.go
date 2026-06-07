@@ -43,31 +43,42 @@ type instrumentationConfig struct {
 
 type Config struct {
 	AppName         string
+	AuthKey         string
+	AuthDomain         string
 	Env             string
 	ProjectRoot     string
 	Api             *appNetworkConfig
 	PgsqlDB         *pgsqlDBConfig
 	RedisCache         *redisCacheConfig
 	Instrumentation *instrumentationConfig
+	Endpoints map[string]map[string]string
 }
 
 func Init() (*Config, error) {
 	var appName string
 	mustMapEnv(&appName, "APP_NAME")
+	var authKey string
+	mustMapEnv(&authKey, "AUTH_KEY")
+	var authDomain string
+	mustMapEnv(&authDomain, "AUTH_DOMAIN")
 
 	a := loadApi()
 	d := loadPgsqlDatabase()
 	r := loadRedisCache()
 	t := loadInstrumentation()
+	e := loadEndpoints()
 
 	return &Config{
 		AppName:         fmt.Sprintf("%s-api", appName),
+		AuthKey:         authKey,
+		AuthDomain:         authDomain,
 		Env:             loadEnv(),
 		ProjectRoot:     loadProjectRoot(),
 		Api:             a,
 		PgsqlDB:         d,
 		RedisCache: r,
 		Instrumentation: t,
+		Endpoints: e,
 	}, nil
 
 }
@@ -178,7 +189,6 @@ func loadRedisCache() *redisCacheConfig {
 	}
 }
 
-
 func loadInstrumentation() *instrumentationConfig {
 	var otel_n string
 	mustMapEnv(&otel_n, "OTEL_EXPORTER_OTLP_ENDPOINT")
@@ -208,4 +218,11 @@ func loadInstrumentation() *instrumentationConfig {
 		MetricFreqSec:        mf,
 		OltpExporterType:     ot,
 	}
+}
+
+func loadEndpoints() map[string]map[string]string {
+	e := make(map[string]map[string]string)
+	e["auth"] = make(map[string]string)
+	e["auth"]["list_users"] = "https://api.clerk.com/v1/users"
+	return e
 }

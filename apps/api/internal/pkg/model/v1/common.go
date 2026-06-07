@@ -8,6 +8,7 @@ import (
 	"github.com/uptrace/bun"
 )
 
+var Unauthorised = errors.New("auth: unauthorised request")
 var DuplicateName = errors.New("database: name already exists")
 var MissingUserId = errors.New("req: no userId present")
 var MissingName = errors.New("req: no name present")

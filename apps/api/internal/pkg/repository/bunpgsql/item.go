@@ -41,6 +41,7 @@ func (a *item) Read(ctx context.Context, m *[]*model.Item, s *model.ItemSearch) 
 					,'props', tg.props, 'soft_delete', tg.soft_delete
 				)) tag_objs
 				,jsonb_agg(DISTINCT prop_arr) prop_objs
+				,jsonb_agg(DISTINCT tg."name") tag_names
 			FROM apps.items it
 				LEFT JOIN LATERAL jsonb_array_elements_text(it.tags::JSONB) AS elem(tag_id) ON TRUE
 				LEFT JOIN apps.tags tg ON tg.id = elem.tag_id AND tg.user_id = it.user_id
@@ -49,7 +50,10 @@ func (a *item) Read(ctx context.Context, m *[]*model.Item, s *model.ItemSearch) 
 		)
 	`
 
-	query := `SELECT it.*
+	query := `
+		SELECT
+			id ,user_id ,name ,note ,props
+			,tags ,soft_delete ,tag_objs ,prop_objs
 		FROM items it
 		WHERE it.user_id::VARCHAR = '` + s.UserId + `'
 			AND (it.soft_delete = false OR it.soft_delete IS NULL)

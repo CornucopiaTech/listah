@@ -1,18 +1,19 @@
 package redissrv
 
 import (
-	"cornucopia/listah/internal/pkg/config"
-	"cornucopia/listah/internal/pkg/logging"
+
 	"fmt"
 	"log"
-	// "strings"
 	"context"
-	// "time"
-
 	"github.com/pkg/errors"
 	redis "github.com/redis/go-redis/v9"
+	"net/http"
+	"io"
 
-	// "github.com/uptrace/opentelemetry-go-extra/otelsql"
+
+	"cornucopia/listah/internal/pkg/config"
+	"cornucopia/listah/internal/pkg/logging"
+	model "cornucopia/listah/internal/pkg/model/v1"
 )
 
 type Cache struct {
@@ -64,9 +65,42 @@ func Init(cfg *config.Config, logger *logging.Factory) *Cache{
 	}
 	fmt.Println(res3) // >>> 4972
 
+	// loadUsers(cfg, logger)
+
 	defer rdb.Close()
 
 	return &Cache{
 		Client:     rdb,
 	}
+}
+
+
+func loadUsers(cfg *config.Config, logger *logging.Factory) error {
+	if _, ok := cfg.Endpoints["auth"]; !ok {
+		log.Fatal("unable to read auth endpoint key from config.")
+	}
+	if _, ok := cfg.Endpoints["auth"]["list_users"]; !ok {
+		log.Fatal("unable to read list users endpoint key from config.")
+	}
+	url := cfg.Endpoints["auth"]["list_users"]
+	req, _ := http.NewRequest("GET", url, nil)
+	tk := fmt.Sprintf("Bearer %s", cfg.AuthKey)
+	req.Header.Add("Authorization", tk)
+	res, _ := http.DefaultClient.Do(req)
+	if res.StatusCode == 401 {
+		log.Fatal("invalid auth key.")
+	}
+	if res.StatusCode == 422 {
+		log.Fatal("invalid request parameters.")
+	}
+	if res.StatusCode == 400 {
+		log.Fatal("request was unsuccessful.")
+	}
+
+	body, _ := io.ReadAll(res.Body)
+	defer res.Body.Close()
+	model.AuthListItems(body)
+
+
+	return nil
 }

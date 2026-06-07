@@ -66,37 +66,7 @@ func RecordErrorResponseInterceptor(infra *bootstrap.Infra) connect.UnaryInterce
 			// Call the next middleware/handler in chain
 			res, err := next(ctx, req)
 			if err != nil {
-				// Log request in db in middleware
-				tid := ""
-				if val := ctx.Value(trackingIdKey); val != nil {
-					// Type assert the value back to a string safely
-					if strVal, ok := val.(string); ok {
-						tid = strVal
-					}
-				}
-				if tid == "" {
-					tid = "req_" + uuid.Must(uuid.NewV7()).String()
-				}
-				reqModel := model.ErrorLog{
-					Id:            tid,
-					RequestSource: "api",
-					Method: req.Spec().Procedure, // e.g., "/app.v1.users.UserService/CreateUser"
-					TraceId:       trace.SpanFromContext(ctx).SpanContext().TraceID().String(),
-					SpanId:        trace.SpanFromContext(ctx).SpanContext().SpanID().String(),
-					Code: connect.CodeOf(err).String(),
-					Error: err.Error(),
-					ResponseTime:   time.Now().UTC(),
-					Request:       req,
-
-				}
-				dctx := context.WithoutCancel(ctx)
-				go infra.BunRepo.ApiLog.Insert(dctx, &reqModel)
-
-				// 4. Return sanitized error structure back to frontend (using our pattern from before)
-				e := utils.HandleError(err)
-				// Clone any pre-existing error metadata (headers/trailers)
-				e.Meta().Set("X-Request-Id", tid)
-
+				e := utils.HandleError(infra, ctx, req, err)
 				return nil, e
 			}
 			return res, nil

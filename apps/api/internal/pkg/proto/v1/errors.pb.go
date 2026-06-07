@@ -29,7 +29,8 @@ const (
 	ErrorCode_VALIDATION_FAILED       ErrorCode = 1
 	ErrorCode_ALREADY_EXISTS          ErrorCode = 2
 	ErrorCode_NOT_FOUND               ErrorCode = 3
-	ErrorCode_INTERNAL_DATABASE_ERROR ErrorCode = 4 // Masked on the frontend as a generic 500
+	ErrorCode_UNAUTHORISED            ErrorCode = 4
+	ErrorCode_INTERNAL_DATABASE_ERROR ErrorCode = 5 // Masked on the frontend as a generic 500
 )
 
 // Enum value maps for ErrorCode.
@@ -39,14 +40,16 @@ var (
 		1: "VALIDATION_FAILED",
 		2: "ALREADY_EXISTS",
 		3: "NOT_FOUND",
-		4: "INTERNAL_DATABASE_ERROR",
+		4: "UNAUTHORISED",
+		5: "INTERNAL_DATABASE_ERROR",
 	}
 	ErrorCode_value = map[string]int32{
 		"ERROR_CODE_UNSPECIFIED":  0,
 		"VALIDATION_FAILED":       1,
 		"ALREADY_EXISTS":          2,
 		"NOT_FOUND":               3,
-		"INTERNAL_DATABASE_ERROR": 4,
+		"UNAUTHORISED":            4,
+		"INTERNAL_DATABASE_ERROR": 5,
 	}
 )
 
@@ -250,13 +253,14 @@ const file_v1_errors_proto_rawDesc = "" +
 	"\x12SystemErrorDetails\x12(\n" +
 	"\x04code\x18\x01 \x01(\x0e2\x14.listah.v1.ErrorCodeR\x04code\x12\x1f\n" +
 	"\vtracking_id\x18\x02 \x01(\tR\n" +
-	"trackingId*~\n" +
+	"trackingId*\x90\x01\n" +
 	"\tErrorCode\x12\x1a\n" +
 	"\x16ERROR_CODE_UNSPECIFIED\x10\x00\x12\x15\n" +
 	"\x11VALIDATION_FAILED\x10\x01\x12\x12\n" +
 	"\x0eALREADY_EXISTS\x10\x02\x12\r\n" +
-	"\tNOT_FOUND\x10\x03\x12\x1b\n" +
-	"\x17INTERNAL_DATABASE_ERROR\x10\x04B)Z'cornucopia/listah/internal/pkg/proto/v1b\x06proto3"
+	"\tNOT_FOUND\x10\x03\x12\x10\n" +
+	"\fUNAUTHORISED\x10\x04\x12\x1b\n" +
+	"\x17INTERNAL_DATABASE_ERROR\x10\x05B)Z'cornucopia/listah/internal/pkg/proto/v1b\x06proto3"
 
 var (
 	file_v1_errors_proto_rawDescOnce sync.Once

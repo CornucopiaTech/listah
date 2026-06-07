@@ -679,6 +679,7 @@ components:
         - VALIDATION_FAILED
         - ALREADY_EXISTS
         - NOT_FOUND
+        - UNAUTHORISED
         - INTERNAL_DATABASE_ERROR
       description: Machine-readable error codes for the frontend to switch on
     listah.v1.FieldViolation:

@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/signal"
 	"time"
+	"github.com/clerk/clerk-sdk-go/v2"
 
 	"cornucopia/listah/internal/app/bootstrap"
 	"cornucopia/listah/internal/pkg/telemetry"
@@ -17,6 +18,8 @@ func Run() (err error) {
 
 	// Run application bootstrapping
 	i := bootstrap.InitInfra()
+
+	clerk.SetKey(i.Config.AuthKey)
 
 	// Handle SIGINT (CTRL+C) gracefully.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)

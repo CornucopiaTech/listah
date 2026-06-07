@@ -8,6 +8,7 @@ import (
 
 	chi "github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
+	// clerkhttp "github.com/clerk/clerk-sdk-go/v2/http"
 	"github.com/go-chi/cors"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
@@ -46,6 +47,7 @@ func handle(i *bootstrap.Infra) http.Handler {
 	// Handle Item connect-go generated paths
 	ip, ih := v1connect.NewItemServiceHandler(itemV1.NewServer(i), icp)
 	mux.Mount(ip, ih)
+	// mux.Mount(ip, clerkhttp.WithHeaderAuthorization()(ih))
 
 	handleDoc := func(w http.ResponseWriter, r *http.Request) {
 		p := path.Join(i.Config.ProjectRoot, "public", "index.html")
