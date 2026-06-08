@@ -40,23 +40,12 @@ import {
 
 export function Items() {
   const store: TBoundStore = useBoundStore((state) => state);
-  // const isTag = store.displayTag !== undefined;
-  // const isFilter = store.displayFilter !== undefined;
-
   const routeApi = getRouteApi('/items/');
   const { search } = routeApi.useRouteContext();
   const pageHeader = store.itemTitle ? store.itemTitle : search && search.title ? search.title : "All Items";
   const urlSearch = decodeState(routeApi.useSearch().s) as unknown as IItemRouteSearch;
-  // console.info(' decodeState(routeApi.useSearch())', decodeState(routeApi.useSearch().s));
-  // console.info(' urlSearch', urlSearch);
-
   const passedTag = store.displayTag || urlSearch.refTag;
   const passedFilter = store.displayFilter || urlSearch.refFilter;
-  // console.info('passedFilter', passedFilter);
-  // console.info('passedTag', passedTag);
-
-
-
 
   function handleItemClick() {
     let newTags: string[] = []
@@ -100,7 +89,7 @@ export function Items() {
   );
   return (
     <AppContainer mw="md" menuItems={mItems} title={pageHeader}>
-      {store.itemModal && <AppItemModal itemTag={passedTag} itemFilter={passedFilter} />}
+      {store.itemModal && <AppItemModal passedPropTag={passedTag} passedPropFilter={passedFilter} />}
       {store.tagModal && <AppTagModal itemTag={passedTag} />}
       {store.filterModal && <AppFilterModal itemFilter={passedFilter} />}
       <AppPagePaper>

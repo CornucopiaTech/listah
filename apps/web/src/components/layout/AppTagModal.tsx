@@ -2,6 +2,7 @@
 import {
   Fragment,
   useEffect,
+  useRef,
 } from "react";
 import type {
   ChangeEvent,
@@ -134,14 +135,6 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
       },
     },
   });
-  const formErrorMap = useStore(form.store, (state) => state.errorMap);
-  const formErrors = useStore(form.store, (state) => state.errors);
-  const formCanSubmit = formErrors.length == 0;
-  const formIsSubmitting = useStore(form.store, (state) => state.isSubmitting);
-  const formIsDirty = useStore(form.store, (state) => state.isDirty);
-  const formStateId = useStore(form.store, (state) => state.values.id);
-
-
   // Define invalidating  mutation
   const mutation = useMutation({
     mutationFn: (mutateTag: ITag) => {
@@ -160,23 +153,30 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
       if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
         console.log(error);
       }
+      // form.reset()
     },
   });
 
   useEffect(() => {
-    // if (!form.state.isSubmitted) return;
+    if (!form.state.isSubmitted) return;
     if (!mutation.isSuccess) return;
-
-    const timer = setTimeout(
-      () => {
-        if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-          console.log("Timer fired after 2 seconds");
-        }
-        closeModal();
-      }, 2000);
+    const timer = setTimeout(() => { closeModal(); }, 2000);
     return () => clearTimeout(timer); // cleanup
-    // }, [form.state.isSubmitted, mutation.isSuccess]);
-  }, [mutation.isSuccess]);
+  }, [form.state.isSubmitted, mutation.isSuccess]);
+
+  const formErrorMap = useStore(form.store, (state) => state.errorMap);
+  const formErrors = useStore(form.store, (state) => state.errors);
+  const formCanSubmit = formErrors.length == 0;
+  const formIsSubmitted = useStore(form.store, (state) => state.isSubmitted);
+  const formIsDirty = useStore(form.store, (state) => state.isDirty);
+  const formStateId = useStore(form.store, (state) => state.values.id);
+  const openBackdrop = useRef(false);
+  if (mutation.isSuccess) {
+    openBackdrop.current = false;
+  } else {
+    openBackdrop.current = formIsSubmitted;
+  }
+
 
   function closeModal() {
     store.setTagModal(false);
@@ -188,13 +188,10 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
     e.stopPropagation()
     //Note: form.handleSubmit is automatically called on form submit. it does not need to be called again. Calling it again results in the form getting sent multiple times.
 
-    //Note:  Modal should not be closed after form submission so success or error feedback can be sent to the user.
+    //Note:  Modal should not be closed immediately after form submission so success or error feedback can be sent to the user.
   }
 
   function formSubmission({ value }: { value: ITag }) {
-    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-      console.log("In formSubmission - value ", value);
-    }
     const itemId = value.id && value.id != "" ? value.id : uuidv4();
     const userId = user && user.id ? user.id : value.userId;
     const submitValue = {
@@ -205,11 +202,7 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
       softDelete: value?.softDelete,
       count: undefined,
     }
-    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-      console.log("In formSubmission - submitValue ", submitValue);
-    }
     mutation.mutate(submitValue);
-
   }
 
   function getSimpleField(key: itemFields) {
@@ -345,6 +338,10 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
         }
         {formErrorMap.onChange && <Alert severity="warning"> {`${formErrorMap.onChange}`} </Alert>}
         <Divider />
+        <Backdrop
+          sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })} open={openBackdrop.current}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
         <form onSubmit={onFormSubmit}>
           <DialogContent > {content} </DialogContent>
           <Divider />
@@ -366,10 +363,8 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
 
   const dummyAction = () => undefined;
 
-  // ToDo: Return something when form is submitting
-
-  const canDelete = !formIsSubmitting && formStateId !== "";
-  const saveIcon = formIsSubmitting ? <HourglassOutlineIcon height="1.5rem" /> :
+  const canDelete = !formIsSubmitted && formStateId !== "";
+  const saveIcon = formIsSubmitted ? <HourglassOutlineIcon height="1.5rem" /> :
     formCanSubmit ? <SaveIcon height="1.5rem" /> : <SaveOffIcon height="1.5rem" />
   const act = (
     <ItemFormSpeedDialBox>
@@ -407,14 +402,6 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
       </SpeedDial>
     </ItemFormSpeedDialBox>
   );
-
-  if (formIsSubmitting) {
-    // ToDo: Verify that this works
-    return <Backdrop
-      sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })} open={true}>
-      <CircularProgress color="inherit" />
-    </Backdrop>
-  }
 
   return Dlg(con, act);
 }

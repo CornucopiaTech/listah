@@ -3,6 +3,7 @@ package utils
 import (
 	"connectrpc.com/connect"
 	"github.com/pkg/errors"
+	"strings"
 
 
 	pb "cornucopia/listah/internal/pkg/proto/v1"
@@ -12,7 +13,15 @@ import (
 
 func getError(e error, reqId string) *connect.Error{
 	var err *connect.Error
-	if errors.Is(e, model.Unauthorised) {
+	var em = e.Error()
+
+	// strings.HasPrefix(header, "Bearer ")
+	isAuthError := errors.Is(e, model.Unauthorised) ||
+		strings.HasPrefix(em, model.InvalidJWTMsg) ||
+		strings.HasPrefix(em, model.FailedJWKSLoadMsg) ||
+		strings.HasPrefix(em, model.MissingTokenMsg)
+
+	if (isAuthError) {
 		err = unauthorised()
 	} else if errors.Is(e, model.DuplicateName) {
 		err = duplicateName()
@@ -42,7 +51,7 @@ func addDetails(d *pb.BadRequestDetails, cr *connect.Error) {
 
 func unauthorised() *connect.Error{
 	// 1. Construct Protobuf error detail
-	m := "Unauthorised request. Please login."
+	m := "Unable to authorised request. Please login and try again."
 	d := &pb.BadRequestDetails{
 		Code: pb.ErrorCode_UNAUTHORISED,
 	}

@@ -4,10 +4,12 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"connectrpc.com/connect"
 	"github.com/uptrace/bun"
 )
 
+var InvalidJWTMsg = "invalid JWT: "
+var FailedJWKSLoadMsg = "failed to load JWKS: "
+var MissingTokenMsg = "missing token"
 var Unauthorised = errors.New("auth: unauthorised request")
 var DuplicateName = errors.New("database: name already exists")
 var MissingUserId = errors.New("req: no userId present")
@@ -20,6 +22,10 @@ type MapObj struct {
   Key string
   Value string
 }
+type DbReq struct {
+	Header interface{}
+	Msg interface{}
+}
 
 type ApiLog struct {
 	bun.BaseModel `bun:"table:instrumentation.logs,alias:lg"`
@@ -28,7 +34,7 @@ type ApiLog struct {
 	Method string
 	TraceId       string
 	SpanId        string
-	Request       connect.AnyRequest
+	Request       DbReq
 	RequestTime   time.Time
 }
 
@@ -39,7 +45,7 @@ type ErrorLog struct {
 	Method string
 	TraceId       string
 	SpanId        string
-	Request       connect.AnyRequest
+	Request       DbReq
 	Code string
 	Error string
 	ResponseTime   time.Time

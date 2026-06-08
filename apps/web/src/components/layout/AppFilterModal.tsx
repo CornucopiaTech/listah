@@ -3,6 +3,7 @@ import {
   forwardRef,
   Fragment,
   useEffect,
+  useRef,
 } from "react";
 import type {
   ChangeEvent,
@@ -87,6 +88,7 @@ export function AppFilterModal({ itemFilter }: { itemFilter?: IFilter }): ReactN
   const store: TBoundStore = useBoundStore((state) => state);
   const queryClient = useQueryClient();
   const { user } = useUser();
+
   // The scrollable element for your list
 
   const tagQuery = { ...DefaultTagRead, userId: user?.id || "", pageSize: -1, }
@@ -96,79 +98,10 @@ export function AppFilterModal({ itemFilter }: { itemFilter?: IFilter }): ReactN
 
 
 
-  // Define invalidating  mutation
-  const mutation = useMutation({
-    mutationFn: (mutateItem: IFilter) => {
-      const mi = ZFilter.parse(mutateItem);
-      return postFilter(mi);
-    },
-    onSuccess: async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["filter"] }),
-      ])
-    },
-    onError: (error) => {
-      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-        console.log(error);
-      }
-      store.setMessage(error.message);
-    },
-  });
-
-  function closeModal() {
-    store.setFilterModal(false);
-    store.setDisplayFilter(undefined);
-  }
-
-  useEffect(() => {
-    // if (!form.state.isSubmitted) return;
-    if (!mutation.isSuccess) return;
-
-    const timer = setTimeout(
-      () => {
-        if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-          console.log("Timer fired after 2 seconds");
-        }
-        closeModal();
-      }, 2000);
-    return () => clearTimeout(timer); // cleanup
-  }, [mutation.isSuccess]
-  );
-  // }, [form.state.isSubmitted, mutation.isSuccess]);
 
 
 
-  function onFormSubmit(e: ChangeEvent<HTMLFormElement>) {
-    e.preventDefault()
-    e.stopPropagation()
-    //Note: form.handleSubmit is automatically called on form submit. it does not need to be called again. Calling it again results in the form getting sent multiple times.
 
-    //Note:  Modal should not be closed after form submission so success or error feedback can be sent to the user.
-  }
-
-  function formSubmission({ value }: { value: FormObjectType }): void {
-    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-      console.log("In formSubmission - value ", value);
-    }
-    let checkedCategories: string[] = value.tags.filter((i) => i.checked).map(i => i.id);
-
-
-    const prevId = value["id"] as string;
-
-    const submitValue = {
-      id: prevId !== "" ? prevId : uuidv4(),
-      userId: user?.id || "",
-      name: value.name as string,
-      tags: checkedCategories,
-      filters: [],
-      count: 0,
-      softDelete: value?.softDelete,
-    };
-    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-      console.info("In formSubmission - submitvalue ", submitValue);
-    }
-    mutation.mutate(submitValue);
-  }
 
   const tagCategories: ITag[] = data && data.tags ? data.tags : [];
   const existingTags = itemFilter ? new Set([...itemFilter.tags]) : new Set([]);
@@ -233,6 +166,41 @@ export function AppFilterModal({ itemFilter }: { itemFilter?: IFilter }): ReactN
     form.handleSubmit();
   }
 
+  function closeModal() {
+    store.setFilterModal(false);
+    store.setDisplayFilter(undefined);
+  }
+  function onFormSubmit(e: ChangeEvent<HTMLFormElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    openBackdrop.current = true;
+    //Note: form.handleSubmit is automatically called on form submit. it does not need to be called again. Calling it again results in the form getting sent multiple times.
+
+    //Note:  Modal should not be closed after form submission so success or error feedback can be sent to the user.
+  }
+
+  function formSubmission({ value }: { value: FormObjectType }): void {
+
+    let checkedCategories: string[] = value.tags.filter((i) => i.checked).map(i => i.id);
+
+
+    const prevId = value["id"] as string;
+
+    const submitValue = {
+      id: prevId !== "" ? prevId : uuidv4(),
+      userId: user?.id || "",
+      name: value.name as string,
+      tags: checkedCategories,
+      filters: [],
+      count: 0,
+      softDelete: value?.softDelete,
+    };
+    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+      console.info("In formSubmission - submitvalue ", submitValue);
+    }
+    mutation.mutate(submitValue);
+  }
+
   const form = useForm({
     defaultValues: newFormData,
     onSubmit: formSubmission,
@@ -246,13 +214,45 @@ export function AppFilterModal({ itemFilter }: { itemFilter?: IFilter }): ReactN
     },
   });
 
+  // Define invalidating  mutation
+  const mutation = useMutation({
+    mutationFn: (mutateItem: IFilter) => {
+      const mi = ZFilter.parse(mutateItem);
+      return postFilter(mi);
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["filter"] }),
+      ])
+    },
+    onError: (error) => {
+      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+        console.log(error);
+      }
+      store.setMessage(error.message);
+    },
+  });
+
+  useEffect(() => {
+    if (!form.state.isSubmitted) return;
+    if (!mutation.isSuccess) return;
+    const timer = setTimeout(() => { closeModal(); }, 2000);
+    return () => clearTimeout(timer); // cleanup
+  }, [form.state.isSubmitted, mutation.isSuccess]);
+
   const formErrorMap = useStore(form.store, (state) => state.errorMap);
   const formTitle = itemFilter ? "Update filter" : "Add new filter";
   const formErrors = useStore(form.store, (state) => state.errors);
   const formCanSubmit = formErrors.length == 0;
-  const formIsSubmitting = useStore(form.store, (state) => state.isSubmitting);
+  const formIsSubmitted = useStore(form.store, (state) => state.isSubmitted);
   const formIsDirty = useStore(form.store, (state) => state.isDirty);
   const formStateId = useStore(form.store, (state) => state.values.id);
+  const openBackdrop = useRef(false);
+  if (mutation.isSuccess) {
+    openBackdrop.current = false;
+  } else {
+    openBackdrop.current = formIsSubmitted;
+  }
 
 
   function Dlg(content: ReactNode, actions?: ReactNode) {
@@ -267,15 +267,15 @@ export function AppFilterModal({ itemFilter }: { itemFilter?: IFilter }): ReactN
         </SpaceBetweenBox>
         <Divider />
 
-        {mutation.error && (
-          <Fragment>
-            <Alert severity="error"> {mutation.error.message}</Alert>
-            <h5 onClick={() => mutation.reset()}>{mutation.error.message}</h5>
-          </Fragment>
-        )}
+        {mutation.error && <Alert severity="error"> {mutation.error.message}</Alert>}
         {mutation.isSuccess && <Alert severity="success"> {"Filter updated!"} </Alert>}
         {formErrorMap.onChange && <Alert severity="warning"> {`${formErrorMap.onChange}`} </Alert>}
-        {(formErrorMap.onChange || mutation.isSuccess) && <Divider />}
+        {(formErrorMap.onChange || mutation.isSuccess)}
+        <Divider />
+        <Backdrop
+          sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })} open={openBackdrop.current}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
 
         <form onSubmit={onFormSubmit}>
           <DialogContent > {content} </DialogContent>
@@ -406,8 +406,8 @@ export function AppFilterModal({ itemFilter }: { itemFilter?: IFilter }): ReactN
 
   const dummyAction = () => undefined;
 
-  const canDelete = !formIsSubmitting && formStateId !== "";
-  const saveIcon = formIsSubmitting ? <HourglassOutlineIcon height="1.5rem" /> :
+  const canDelete = !formIsSubmitted && formStateId !== "";
+  const saveIcon = formIsSubmitted ? <HourglassOutlineIcon height="1.5rem" /> :
     formCanSubmit ? <SaveIcon height="1.5rem" /> : <SaveOffIcon height="1.5rem" />
   const act = (
     <ItemFormSpeedDialBox>
@@ -445,14 +445,6 @@ export function AppFilterModal({ itemFilter }: { itemFilter?: IFilter }): ReactN
       </SpeedDial>
     </ItemFormSpeedDialBox>
   );
-
-  if (formIsSubmitting) {
-    // ToDo: Verify that this works
-    return <Backdrop
-      sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })} open={true}>
-      <CircularProgress color="inherit" />
-    </Backdrop>
-  }
 
   return Dlg(con, act);
 

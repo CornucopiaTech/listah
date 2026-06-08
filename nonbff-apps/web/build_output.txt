@@ -1,17 +1,0 @@
-
-> build
-> vite build && tsc
-
-vite v8.0.13 building client environment for production...
-[2Ktransforming...✓ 1484 modules transformed.
-rendering chunks...
-computing gzip size...
-dist/index.html                            0.50 kB │ gzip:   0.30 kB
-dist/assets/AppFilterModal-DA4b9dYL.css    1.33 kB │ gzip:   0.71 kB
-dist/assets/filters-DUCosbqn.js            4.07 kB │ gzip:   1.63 kB
-dist/assets/tags-DGvCk47W.js               4.17 kB │ gzip:   1.65 kB
-dist/assets/items-Dn1LMTVe.js             36.66 kB │ gzip:  12.37 kB
-dist/assets/AppFilterModal-fBW5n67d.js   257.68 kB │ gzip:  76.12 kB
-dist/assets/index-BQAoEzq-.js            903.06 kB │ gzip: 275.82 kB
-
-✓ built in 827ms

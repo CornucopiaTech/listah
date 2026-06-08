@@ -43,16 +43,6 @@ export function AppShell({ children }: { children: ReactNode }) {
 
 export function AppContainerShell() {
   const { isSignedIn, isLoaded, } = useUser();
-  const auth = useAuth();
-  console.info('auth', auth);
-  // const getToken = async () => await auth.getToken();
-  // console.info('auth.getToken()', getToken());
-  auth.getToken({ template: "api-jwt" }).then(
-    (res) => {
-      console.info('auth.getToken()', res);
-      alert(res);
-    }
-  );
   if (!isLoaded) return <AppShell><LinearProgress /></AppShell>
   if (!isSignedIn) return <AppShell><Landing /></AppShell>
   return <AppShell><Outlet /></AppShell>;

@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 	"connectrpc.com/connect"
-	"github.com/google/uuid"
 	"go.opentelemetry.io/otel/trace"
 
 	"cornucopia/listah/internal/app/bootstrap"
@@ -22,23 +21,14 @@ func RecordRequestInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFu
 			req connect.AnyRequest,
 		) (connect.AnyResponse, error) {
 			// Log request in db in middleware
-			tid := ""
-			if val := ctx.Value(trackingIdKey); val != nil {
-				// Type assert the value back to a string safely
-				if strVal, ok := val.(string); ok {
-					tid = strVal
-				}
-			}
-			if tid == "" {
-				tid = "req_" + uuid.Must(uuid.NewV7()).String()
-			}
+			tid := utils.GetRequestId(ctx)
 			reqModel := model.ApiLog{
 				Id:            tid,
 				RequestSource: "api",
 				Method: req.Spec().Procedure, // e.g., "/app.v1.users.UserService/CreateUser"
 				TraceId:       trace.SpanFromContext(ctx).SpanContext().TraceID().String(),
 				SpanId:        trace.SpanFromContext(ctx).SpanContext().SpanID().String(),
-				Request:       req,
+				Request:       utils.GetDbRequest(req),
 				RequestTime:   time.Now().UTC(),
 			}
 			dctx := context.WithoutCancel(ctx)

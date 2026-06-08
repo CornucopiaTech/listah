@@ -8,12 +8,12 @@ import (
 	"github.com/pkg/errors"
 	redis "github.com/redis/go-redis/v9"
 	"net/http"
-	"io"
+	// "io"
 
 
 	"cornucopia/listah/internal/pkg/config"
 	"cornucopia/listah/internal/pkg/logging"
-	model "cornucopia/listah/internal/pkg/model/v1"
+	// model "cornucopia/listah/internal/pkg/model/v1"
 )
 
 type Cache struct {
@@ -97,9 +97,8 @@ func loadUsers(cfg *config.Config, logger *logging.Factory) error {
 		log.Fatal("request was unsuccessful.")
 	}
 
-	body, _ := io.ReadAll(res.Body)
-	defer res.Body.Close()
-	model.AuthListItems(body)
+	// body, _ := io.ReadAll(res.Body)
+	// defer res.Body.Close()
 
 
 	return nil

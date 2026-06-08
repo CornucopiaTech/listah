@@ -6,6 +6,8 @@ import type {
 import {
   Fragment,
   useRef,
+  useEffect,
+  useState,
 } from "react";
 import {
   useSuspenseQuery,
@@ -17,7 +19,8 @@ import {
   getRouteApi,
 } from '@tanstack/react-router';
 import Box from '@mui/material/Box';
-import { Virtuoso } from 'react-virtuoso';
+// import { Virtuoso } from 'react-virtuoso';
+import { Virtuoso, type VirtuosoHandle, type StateSnapshot } from 'react-virtuoso';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
@@ -65,7 +68,7 @@ import {
 
 
 
-
+// ToDo: Set the focus as part of the url params so it can be returned to in the backbutton or when modal closes. This prevents the focus to always return to the beginning of the page when the url is gone to.
 export function ItemListLayout(): ReactNode {
   const navigate = useNavigate();
   const store: TBoundStore = useBoundStore((state) => state);
@@ -80,6 +83,7 @@ export function ItemListLayout(): ReactNode {
     pageSize: query.pagination.pageSize,
     totalRecords: 0,
   });
+
 
 
   const {
@@ -111,6 +115,22 @@ export function ItemListLayout(): ReactNode {
     };
   }
 
+
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+  const scrollKey = `vscroll:${location.pathname}${location.search}`;
+  const virtuosoRef = useRef<VirtuosoHandle>(null);
+
+  const [virtuosoState] = useState<StateSnapshot | undefined>(() => {
+    const saved = sessionStorage.getItem(scrollKey);
+    return saved ? JSON.parse(saved) : undefined;
+  });
+  useEffect(() => {
+    if (virtuosoState) sessionStorage.removeItem(scrollKey);
+  }, []);
+
+
   function getRouteSearch(qs: IItemReadRequest) {
     const s = {
       query: qs, title, reference: reference || undefined,
@@ -131,8 +151,11 @@ export function ItemListLayout(): ReactNode {
   };
 
   function handleItemClick(anitem: IItem) {
-    store.setDisplayItem(anitem);
-    store.setItemModal(true);
+    virtuosoRef.current?.getState((state: StateSnapshot) => {
+      sessionStorage.setItem(scrollKey, JSON.stringify(state));
+      store.setDisplayItem(anitem);
+      store.setItemModal(true);
+    });
   }
 
   function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -236,10 +259,14 @@ export function ItemListLayout(): ReactNode {
   }
 
   if (items.length > 0) {
-    return <ListBox><Virtuoso key="data-content"
-      style={ListBoxSize} data={items}
-      itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
-    /></ListBox>
+    return <ListBox>
+      <Virtuoso key="data-content"
+        ref={virtuosoRef}
+        restoreStateFrom={virtuosoState}
+        style={ListBoxSize} data={items}
+        itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
+      />
+    </ListBox>
   }
   return <ListBox><OuterBox><ErrorAlert message="An error occurred. Please try again" /></OuterBox></ListBox>
 }

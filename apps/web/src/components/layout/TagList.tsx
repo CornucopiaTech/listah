@@ -8,6 +8,7 @@ import type {
 import {
   Fragment,
   useRef,
+  useEffect,
 } from "react";
 import { Virtuoso } from 'react-virtuoso';
 import {
@@ -76,6 +77,12 @@ export function TagListLayout(): ReactNode {
     pageSize: query.pagination.pageSize,
     totalRecords: 0,
   });
+  useEffect(() => {
+    const saved = window.history.state?.tagScrollY;
+    if (typeof saved === "number") {
+      window.scrollTo(0, saved);
+    }
+  }, []);
 
   const {
     isPending, isError, data, error
@@ -132,6 +139,10 @@ export function TagListLayout(): ReactNode {
   };
 
   function handleItemClick(it: ITag) {
+    window.history.replaceState(
+      { ...window.history.state, tagScrollY: window.scrollY },
+      ""
+    );
     const pageTitle = it && it.name ? `#${it.name}` : "Tags";
     const pageTags = it && it.id ? [it.id] : [];
     const q: IItemReadRequest = {
