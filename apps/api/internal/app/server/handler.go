@@ -37,9 +37,6 @@ func handle(i *bootstrap.Infra) http.Handler {
 
 	fmt.Printf("Allowed Origins are: %v\n", allowedOrigins)
 
-
-
-
 	// Get gRPC interceptors chain
 	icp := middleware.GetInterceptors(i)
 

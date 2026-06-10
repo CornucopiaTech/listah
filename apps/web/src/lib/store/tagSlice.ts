@@ -17,6 +17,7 @@ import type {
 export const tagInitState: ITagState = {
   tagModal: false,
   displayTag: undefined,
+  tagScroll: 0,
 }
 
 export const createTagSlice: StateCreator<
@@ -28,5 +29,6 @@ export const createTagSlice: StateCreator<
   ...tagInitState,
   setTagModal: (tagModal: boolean) => set(() => ({ tagModal })),
   setDisplayTag: (displayTag: undefined | ITag) => set(() => ({ displayTag })),
+  setTagScroll: (tagScroll: undefined | number) => set(() => ({ tagScroll })),
   reset: () => set(tagInitState),
 });

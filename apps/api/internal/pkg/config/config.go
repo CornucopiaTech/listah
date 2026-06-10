@@ -24,14 +24,14 @@ type pgsqlDBConfig struct {
 }
 
 type redisCacheConfig struct {
-	Host         string
-	DatabaseName string
-	Port         string
-	User         string
-	Password     string
-	Address      string
+	Host          string
+	DatabaseName  string
+	Port          string
+	User          string
+	Password      string
+	Address       string
 	ConnectionUrl string
-	Ttl      string
+	Ttl           string
 }
 
 type instrumentationConfig struct {
@@ -44,14 +44,13 @@ type instrumentationConfig struct {
 type Config struct {
 	AppName         string
 	AuthKey         string
-	AuthDomain         string
+	AuthDomain      string
 	Env             string
 	ProjectRoot     string
 	Api             *appNetworkConfig
 	PgsqlDB         *pgsqlDBConfig
-	RedisCache         *redisCacheConfig
+	RedisCache      *redisCacheConfig
 	Instrumentation *instrumentationConfig
-	Endpoints map[string]map[string]string
 }
 
 func Init() (*Config, error) {
@@ -64,21 +63,19 @@ func Init() (*Config, error) {
 
 	a := loadApi()
 	d := loadPgsqlDatabase()
-	r := loadRedisCache()
+	// r := loadRedisCache()
 	t := loadInstrumentation()
-	e := loadEndpoints()
 
 	return &Config{
-		AppName:         fmt.Sprintf("%s-api", appName),
-		AuthKey:         authKey,
-		AuthDomain:         authDomain,
-		Env:             loadEnv(),
-		ProjectRoot:     loadProjectRoot(),
-		Api:             a,
-		PgsqlDB:         d,
-		RedisCache: r,
+		AppName:     fmt.Sprintf("%s-api", appName),
+		AuthKey:     authKey,
+		AuthDomain:  authDomain,
+		Env:         loadEnv(),
+		ProjectRoot: loadProjectRoot(),
+		Api:         a,
+		PgsqlDB:     d,
+		// RedisCache: r,
 		Instrumentation: t,
-		Endpoints: e,
 	}, nil
 
 }
@@ -179,12 +176,12 @@ func loadRedisCache() *redisCacheConfig {
 	mustMapEnv(&cn, "CACHE_CONNECTION_URL")
 
 	return &redisCacheConfig{
-		Host:         dh,
-		Port:         dp,
-		User:         usr,
-		Password:     pwd,
-		DatabaseName: dn,
-		Address:      net.JoinHostPort(dh, dp),
+		Host:          dh,
+		Port:          dp,
+		User:          usr,
+		Password:      pwd,
+		DatabaseName:  dn,
+		Address:       net.JoinHostPort(dh, dp),
 		ConnectionUrl: cn,
 	}
 }
@@ -218,11 +215,4 @@ func loadInstrumentation() *instrumentationConfig {
 		MetricFreqSec:        mf,
 		OltpExporterType:     ot,
 	}
-}
-
-func loadEndpoints() map[string]map[string]string {
-	e := make(map[string]map[string]string)
-	e["auth"] = make(map[string]string)
-	e["auth"]["list_users"] = "https://api.clerk.com/v1/users"
-	return e
 }

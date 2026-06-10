@@ -92,7 +92,6 @@ func (a *tag) Read(ctx context.Context, m *[]*model.Tag, s *model.ItemSearch) (i
 	return recCnt[0].RowCount, nil
 }
 
-
 func (a *tag) ReadProperty(ctx context.Context, m *[]model.TagPropertyMapModel, s *model.ItemSearch) (int, error) {
 	ctx, span := otel.Tracer("tag-repository").Start(ctx, "TagRepository ReadProperty")
 	defer span.End()
@@ -157,7 +156,6 @@ func (a *tag) ReadIdProperty(ctx context.Context, m *[]model.TagPropertyMapModel
 	`
 
 	query := ` SELECT JSONB_BUILD_OBJECT(b.id, b.props) props FROM b `
-
 
 	err := a.db.NewRaw(cte+query).Scan(ctx, m)
 	if err != nil {

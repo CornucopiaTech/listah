@@ -138,7 +138,7 @@ export function TagListLayout(): ReactNode {
     navigate({ to: ".", search: { s: encoded } });
   };
 
-  function handleItemClick(it: ITag) {
+  function handleItemClick(idx: number, it: ITag) {
     window.history.replaceState(
       { ...window.history.state, tagScrollY: window.scrollY },
       ""
@@ -157,15 +157,17 @@ export function TagListLayout(): ReactNode {
     store.setItemTitle(pageTitle);
     store.setItemReference(it);
     store.setDisplayTag(it);
+    store.setTagScroll(idx);
   }
 
-  function eachItem(itemKey: number, item: ITag): ReactNode {
+  function eachItem(itemKey: number): ReactNode {
+    const item = tags[itemKey];
     const tc = item && item.name ? item.name : "";
     return (
       <ListItem
         key={itemKey + tc}
         component="div" disablePadding
-        onClick={() => handleItemClick(item)}
+        onClick={() => handleItemClick(itemKey, item)}
       >
         <ListItemButton>
           <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
@@ -190,9 +192,7 @@ export function TagListLayout(): ReactNode {
     );
   }
 
-
   function ListBox({ children }: { children: ReactNode }): ReactNode {
-
     const totalPages = Math.max(1, Math.ceil(pageInfo.current.totalRecords / pageInfo.current.pageSize));
     return (
       <Fragment>
@@ -235,7 +235,6 @@ export function TagListLayout(): ReactNode {
     );
   }
 
-
   if (isPending) {
     return <ListBox> <OuterBox><LinearProgress /></OuterBox></ListBox>
   }
@@ -252,11 +251,16 @@ export function TagListLayout(): ReactNode {
     </OuterBox></ListBox>
   }
 
+  const scrollIdx = Math.max(0, Math.min(store.tagScroll - 5, store.tagScroll));
+
   if (tags.length > 0) {
     return <ListBox>
-      <Virtuoso key="data-content"
-        style={ListBoxSize} data={tags}
-        itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
+      <Virtuoso
+        key="data-content"
+        style={ListBoxSize}
+        initialTopMostItemIndex={scrollIdx}
+        totalCount={tags.length}
+        itemContent={(ii) => eachItem(ii)}
       />
     </ListBox>
   }

@@ -133,7 +133,7 @@ export function FilterListLayout(): ReactNode {
     navigate({ to: ".", search: { s: encoded } });
   };
 
-  function handleItemClick(it: IFilter) {
+  function handleItemClick(idx: number, it: IFilter) {
     const pageTitle = it && it.name ? `##${it.name}` : "Filters";
     const q: IItemReadRequest = {
       ...DefaultItemRead,
@@ -147,15 +147,17 @@ export function FilterListLayout(): ReactNode {
     store.setItemTitle(pageTitle);
     store.setItemReference(it);
     store.setDisplayFilter(it);
+    store.setFilterScroll(idx);
   }
 
-  function eachItem(itemKey: number, item: IFilter): ReactNode {
+  function eachItem(itemKey: number): ReactNode {
+    const item: IFilter = filters[itemKey];
     const tc = item && item.name ? item.name : "";
     return (
       <ListItem
         key={itemKey + tc}
         component="div" disablePadding
-        onClick={() => handleItemClick(item)}
+        onClick={() => handleItemClick(itemKey, item)}
       >
         <ListItemButton>
           <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
@@ -182,7 +184,6 @@ export function FilterListLayout(): ReactNode {
 
 
   function ListBox({ children }: { children: ReactNode }): ReactNode {
-
     const totalPages = Math.max(1, Math.ceil(pageInfo.current.totalRecords / pageInfo.current.pageSize));
     return (
       <Fragment>
@@ -241,11 +242,16 @@ export function FilterListLayout(): ReactNode {
     </OuterBox></ListBox>
   }
 
+  const scrollIdx = Math.max(0, Math.min(store.filterScroll - 5, store.filterScroll));
+
   if (filters.length > 0) {
     return <ListBox>
-      <Virtuoso key="data-content"
-        style={ListBoxSize} data={filters}
-        itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
+      <Virtuoso
+        key="data-content"
+        style={ListBoxSize}
+        initialTopMostItemIndex={scrollIdx}
+        totalCount={filters.length}
+        itemContent={(ii) => eachItem(ii)}
       />
     </ListBox>
   }

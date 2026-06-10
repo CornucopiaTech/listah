@@ -1,11 +1,11 @@
 package bootstrap
 
 import (
-	"log"
 	"github.com/sirupsen/logrus"
 	"github.com/uptrace/opentelemetry-go-extra/otelzap"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
+	"log"
 
 	"cornucopia/listah/internal/pkg/config"
 	"cornucopia/listah/internal/pkg/logging"
@@ -19,7 +19,7 @@ type Infra struct {
 	OtelLogger *otelzap.Logger
 	Config     *config.Config
 	BunRepo    *bunpgsql.Repository
-	RedisCache    *redissrv.Cache
+	RedisCache *redissrv.Cache
 	Tracer     trace.Tracer
 }
 
@@ -41,7 +41,7 @@ func InitInfra() *Infra {
 	bunrepo := bunpgsql.Init(cfgs, logger)
 
 	lgrus := logging.InitLogrus()
-	rCache := redissrv.Init(cfgs, logger)
+	// rCache := redissrv.Init(cfgs, logger)
 
 	// ToDo: Define metrics
 	// //
@@ -55,7 +55,7 @@ func InitInfra() *Infra {
 		BunRepo:    bunrepo,
 		Logrus:     lgrus,
 		Tracer:     otel.Tracer(cfgs.AppName),
-		RedisCache:   rCache,
+		// RedisCache:   rCache,
 	}
 
 }

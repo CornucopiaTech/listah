@@ -112,7 +112,15 @@ resource "google_cloud_run_v2_service" "app" {
         value = var.known_origins
       }
       env {
-        name = "POSTGRES_PASSWORD"
+        name  = "AUTH_KEY"
+        value = var.auth_key
+      }
+      env {
+        name  = "AUTH_DOMAIN"
+        value = var.auth_domain
+      }
+      env {
+        name = "DATABASE_PASSWORD"
         value_source {
           secret_key_ref {
             secret  = var.db_password
@@ -121,11 +129,11 @@ resource "google_cloud_run_v2_service" "app" {
         }
       }
       env {
-        name  = "POSTGRES_USER"
+        name  = "DATABASE_USER"
         value = var.db_username
       }
       env {
-        name  = "POSTGRES_DB"
+        name  = "DATABASE_DB"
         value = var.db_name
       }
       env {
@@ -137,7 +145,7 @@ resource "google_cloud_run_v2_service" "app" {
         value = "5432"
       }
       env {
-        name  = "POSTGRES_USE_TLS"
+        name  = "DATABASE_USE_TLS"
         value = "true"
       }
       env {

@@ -87,7 +87,6 @@ func SetupOTelSDK(ctx context.Context, i *bootstrap.Infra) (shutdown func(contex
 	shutdownFuncs = append(shutdownFuncs, tracerProvider.Shutdown)
 	otel.SetTracerProvider(tracerProvider)
 
-
 	// Set up meter provider.
 	meterProvider, err := newMeterProvider(i, res)
 	if err != nil {
@@ -96,7 +95,6 @@ func SetupOTelSDK(ctx context.Context, i *bootstrap.Infra) (shutdown func(contex
 	}
 	shutdownFuncs = append(shutdownFuncs, meterProvider.Shutdown)
 	otel.SetMeterProvider(meterProvider)
-
 
 	// Set up logger provider.
 	loggerProvider, err := newLoggerProvider()
@@ -107,8 +105,6 @@ func SetupOTelSDK(ctx context.Context, i *bootstrap.Infra) (shutdown func(contex
 	shutdownFuncs = append(shutdownFuncs, loggerProvider.Shutdown)
 	global.SetLoggerProvider(loggerProvider)
 
-
-
 	// Set up redis Instrumantation
 	rOtel, err := setupRedisOtel()
 	if err != nil {
@@ -116,7 +112,6 @@ func SetupOTelSDK(ctx context.Context, i *bootstrap.Infra) (shutdown func(contex
 		return
 	}
 	noContextShutdownFuncs = append(noContextShutdownFuncs, rOtel.Shutdown)
-
 
 	return
 }

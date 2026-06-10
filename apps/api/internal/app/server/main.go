@@ -3,12 +3,12 @@ package server
 import (
 	"context"
 	"errors"
+	"github.com/clerk/clerk-sdk-go/v2"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
-	"github.com/clerk/clerk-sdk-go/v2"
 
 	"cornucopia/listah/internal/app/bootstrap"
 	"cornucopia/listah/internal/pkg/telemetry"

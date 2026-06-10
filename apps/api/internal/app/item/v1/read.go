@@ -1,9 +1,9 @@
 package v1
 
 import (
+	"connectrpc.com/connect"
 	"context"
 	"fmt"
-	"connectrpc.com/connect"
 	"go.opentelemetry.io/otel"
 
 	modelutils "cornucopia/listah/internal/pkg/model"
@@ -23,17 +23,23 @@ func (s *Server) ReadItem(ctx context.Context, req *connect.Request[pb.ItemServi
 	// fmt.Printf("\n\n\nTag -  %s\n\n\n", req.Msg.GetQuery().Tags)
 
 	sq, err := model.ReadItemRequestToRepoItemSearch(req.Msg)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	readModel := []*model.Item{}
 
 	recordCnt, err := s.BunRepo.Item.Read(ctx, &readModel, sq)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	// Convert readModel to response proto
 	// using the model conversion function
 	rs, err := model.ItemModelToItemProto(readModel)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	resm := &pb.ItemServiceReadItemResponse{
 		Items:            rs,
@@ -54,30 +60,42 @@ func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServic
 
 	var riq = &pb.ItemServiceReadItemRequest{}
 	err := modelutils.MarshalCopyProto(req.Msg, riq)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	sq, err := model.ReadItemRequestToRepoItemSearch(riq)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	readModel := []*model.Tag{}
 	recordCnt, err := s.BunRepo.Tag.Read(ctx, &readModel, sq)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	readIdModel := []model.TagPropertyMapModel{}
 	err = s.BunRepo.Tag.ReadIdProperty(ctx, &readIdModel, sq)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	// Convert readModel to response proto using the model conversion function
 	rs, err := model.TagModelToTagProto(readModel)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	// Convert readModel to response proto using the model conversion function
 	ms, err := model.MapModelToTagPropertyMapProto(readIdModel)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	resm := &pb.ItemServiceReadTagResponse{
 		Tags:             rs,
-		TagidPropMap: ms,
+		TagidPropMap:     ms,
 		TotalRecordCount: int32(recordCnt),
 		UserId:           req.Msg.GetUserId(),
 		Query:            req.Msg.GetQuery(),
@@ -95,21 +113,29 @@ func (s *Server) ReadTagProperty(ctx context.Context, req *connect.Request[pb.It
 
 	var riq = &pb.ItemServiceReadItemRequest{}
 	err := modelutils.MarshalCopyProto(req.Msg, riq)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	sq, err := model.ReadItemRequestToRepoItemSearch(riq)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	readModel := []model.TagPropertyMapModel{}
 	recordCnt, err := s.BunRepo.Tag.ReadProperty(ctx, &readModel, sq)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	// Convert readModel to response proto using the model conversion function
 	rs, err := model.TagPropertyModelToTagPropertyMapProto(readModel)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	resm := &pb.ItemServiceReadTagPropertyResponse{
-		Props:             rs,
+		Props:            rs,
 		TotalRecordCount: int32(recordCnt),
 		UserId:           req.Msg.GetUserId(),
 		Query:            req.Msg.GetQuery(),
@@ -127,18 +153,26 @@ func (s *Server) ReadFilter(ctx context.Context, req *connect.Request[pb.ItemSer
 
 	var riq = &pb.ItemServiceReadItemRequest{}
 	err := modelutils.MarshalCopyProto(req.Msg, riq)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	sq, err := model.ReadItemRequestToRepoItemSearch(riq)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	readModel := []*model.Filter{}
 	recordCnt, err := s.BunRepo.Filter.Read(ctx, &readModel, sq)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	// Convert readModel to response proto using the model conversion function
 	rs, err := model.FilterModelToFilterProto(readModel)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	resm := &pb.ItemServiceReadFilterResponse{
 		Filters:          rs,

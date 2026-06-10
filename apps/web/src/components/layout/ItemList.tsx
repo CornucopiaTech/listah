@@ -6,8 +6,6 @@ import type {
 import {
   Fragment,
   useRef,
-  useEffect,
-  useState,
 } from "react";
 import {
   useSuspenseQuery,
@@ -19,8 +17,7 @@ import {
   getRouteApi,
 } from '@tanstack/react-router';
 import Box from '@mui/material/Box';
-// import { Virtuoso } from 'react-virtuoso';
-import { Virtuoso, type VirtuosoHandle, type StateSnapshot } from 'react-virtuoso';
+import { Virtuoso } from 'react-virtuoso';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
@@ -68,7 +65,7 @@ import {
 
 
 
-// ToDo: Set the focus as part of the url params so it can be returned to in the backbutton or when modal closes. This prevents the focus to always return to the beginning of the page when the url is gone to.
+// ToDo: Check on virtuoso initial index to be sure it always works.
 export function ItemListLayout(): ReactNode {
   const navigate = useNavigate();
   const store: TBoundStore = useBoundStore((state) => state);
@@ -115,22 +112,6 @@ export function ItemListLayout(): ReactNode {
     };
   }
 
-
-  if ('scrollRestoration' in history) {
-    history.scrollRestoration = 'manual';
-  }
-  const scrollKey = `vscroll:${location.pathname}${location.search}`;
-  const virtuosoRef = useRef<VirtuosoHandle>(null);
-
-  const [virtuosoState] = useState<StateSnapshot | undefined>(() => {
-    const saved = sessionStorage.getItem(scrollKey);
-    return saved ? JSON.parse(saved) : undefined;
-  });
-  useEffect(() => {
-    if (virtuosoState) sessionStorage.removeItem(scrollKey);
-  }, []);
-
-
   function getRouteSearch(qs: IItemReadRequest) {
     const s = {
       query: qs, title, reference: reference || undefined,
@@ -150,12 +131,10 @@ export function ItemListLayout(): ReactNode {
     navigate({ to: ".", search: { s: getRouteSearch(q) }, });
   };
 
-  function handleItemClick(anitem: IItem) {
-    virtuosoRef.current?.getState((state: StateSnapshot) => {
-      sessionStorage.setItem(scrollKey, JSON.stringify(state));
-      store.setDisplayItem(anitem);
-      store.setItemModal(true);
-    });
+  function handleItemClick(idx: number, anitem: IItem) {
+    store.setDisplayItem(anitem);
+    store.setItemModal(true);
+    store.setItemScroll(idx);
   }
 
   function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -169,7 +148,8 @@ export function ItemListLayout(): ReactNode {
     navigate({ to: ".", search: { s: getRouteSearch(q) }, });
   };
 
-  function eachItem(itemKey: number, item: IItem): ReactNode {
+  function eachItem(itemKey: number): ReactNode {
+    const item = items[itemKey]
     let tc: string = item.name ? item.name : "";
     return (
       <Fragment>
@@ -177,7 +157,7 @@ export function ItemListLayout(): ReactNode {
           // component="div"
           disablePadding
           disableGutters
-          onClick={() => handleItemClick(item)}>
+          onClick={() => handleItemClick(itemKey, item)}>
           <ListItemButton >
             <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
           </ListItemButton>
@@ -258,13 +238,16 @@ export function ItemListLayout(): ReactNode {
     </OuterBox></ListBox>
   }
 
+  const scrollIdx = Math.max(0, Math.min(store.itemScroll - 5, store.itemScroll))
+
   if (items.length > 0) {
     return <ListBox>
-      <Virtuoso key="data-content"
-        ref={virtuosoRef}
-        restoreStateFrom={virtuosoState}
-        style={ListBoxSize} data={items}
-        itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
+      <Virtuoso
+        key="data-content"
+        style={ListBoxSize}
+        initialTopMostItemIndex={scrollIdx}
+        totalCount={items.length}
+        itemContent={(ii) => eachItem(ii)}
       />
     </ListBox>
   }

@@ -1,16 +1,15 @@
 package middleware
 
 import (
-	"context"
-	"time"
 	"connectrpc.com/connect"
+	"context"
 	"go.opentelemetry.io/otel/trace"
+	"time"
 
 	"cornucopia/listah/internal/app/bootstrap"
 	model "cornucopia/listah/internal/pkg/model/v1"
 	"cornucopia/listah/internal/pkg/utils"
 )
-
 
 func RecordRequestInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFunc {
 	// Create a new Middleware/interceptor
@@ -25,7 +24,7 @@ func RecordRequestInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFu
 			reqModel := model.ApiLog{
 				Id:            tid,
 				RequestSource: "api",
-				Method: req.Spec().Procedure, // e.g., "/app.v1.users.UserService/CreateUser"
+				Method:        req.Spec().Procedure, // e.g., "/app.v1.users.UserService/CreateUser"
 				TraceId:       trace.SpanFromContext(ctx).SpanContext().TraceID().String(),
 				SpanId:        trace.SpanFromContext(ctx).SpanContext().SpanID().String(),
 				Request:       utils.GetDbRequest(req),
@@ -43,7 +42,6 @@ func RecordRequestInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFu
 	// Return newly created middleware
 	return connect.UnaryInterceptorFunc(interceptor)
 }
-
 
 func RecordErrorResponseInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFunc {
 	// Create a new Middleware/interceptor

@@ -111,3 +111,5 @@ jobs:
         env:
           TF_VAR_image_tag: ${{ env.API_IMAGE_NAME_TAG }}
           TF_VAR_known_origins: "https://${{ env.TF_VAR_name_in_tag }}-web-service-${{ secrets.GCP_PROJECT_NUMBER}}.${{ env.TF_VAR_gcp_region }}.run.app,https://${{ env.TF_VAR_name_in_tag }}-web-service-${{ secrets.GCP_PROJECT_NUMBER}}.${{ env.TF_VAR_gcp_region }}.run.app:8080,https://${{ env.TF_VAR_name_in_tag }}-web-service-${{ secrets.GCP_PROJECT_NUMBER_HASH}}.a.run.app,https://${{ env.TF_VAR_name_in_tag }}-web-service-${{ secrets.GCP_PROJECT_NUMBER_HASH}}.a.run.app:8080"
+          TF_VAR_auth_key: ${{ secrets.CLERK_SECRET_KEY }}
+          TF_VAR_auth_domain: ${{ secrets.CLERK_FRONTEND_API }}

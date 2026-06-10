@@ -11,9 +11,6 @@ import (
 	"go.opentelemetry.io/otel/propagation"
 )
 
-const tokenHeader = "Acme-Token"
-
-
 func SetParentTraceInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFunc {
 	// Create a new Middleware/interceptor
 	interceptor := func(next connect.UnaryFunc) connect.UnaryFunc {

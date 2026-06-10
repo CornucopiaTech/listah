@@ -1,11 +1,11 @@
 package utils
 
 import (
+	"connectrpc.com/connect"
 	"context"
-	"time"
 	"github.com/google/uuid"
 	"go.opentelemetry.io/otel/trace"
-	"connectrpc.com/connect"
+	"time"
 
 	"cornucopia/listah/internal/app/bootstrap"
 	model "cornucopia/listah/internal/pkg/model/v1"
@@ -13,17 +13,14 @@ import (
 
 const TrackingIdKey = "trackingId"
 
-
-
-func HandleError(infra *bootstrap.Infra, ctx context.Context, req connect.AnyRequest, err error) *connect.Error{
+func HandleError(infra *bootstrap.Infra, ctx context.Context, req connect.AnyRequest, err error) *connect.Error {
 	reqId := GetRequestId(ctx)
 	recordError(infra, ctx, req, err, reqId)
 	e := getError(err, reqId)
 	return e
 }
 
-
-func GetRequestId(ctx context.Context) string{
+func GetRequestId(ctx context.Context) string {
 	// Log request in db in middleware
 	tid := ""
 	if val := ctx.Value(TrackingIdKey); val != nil {
@@ -38,27 +35,24 @@ func GetRequestId(ctx context.Context) string{
 	return tid
 }
 
-
-
-func GetDbRequest(req connect.AnyRequest) model.DbReq{
+func GetDbRequest(req connect.AnyRequest) model.DbReq {
 	headerMap := make(map[string]string)
 	for key := range req.Header() {
 		headerMap[key] = req.Header().Get(key)
 	}
-	return model.DbReq{Msg: req, Header: headerMap,}
+	return model.DbReq{Msg: req, Header: headerMap}
 }
 
-
-func recordError(infra *bootstrap.Infra, ctx context.Context, req connect.AnyRequest, err error, reqId string){
+func recordError(infra *bootstrap.Infra, ctx context.Context, req connect.AnyRequest, err error, reqId string) {
 	reqModel := model.ErrorLog{
 		Id:            reqId,
 		RequestSource: "api",
-		Method: req.Spec().Procedure, // e.g., "/app.v1.users.UserService/CreateUser"
+		Method:        req.Spec().Procedure, // e.g., "/app.v1.users.UserService/CreateUser"
 		TraceId:       trace.SpanFromContext(ctx).SpanContext().TraceID().String(),
 		SpanId:        trace.SpanFromContext(ctx).SpanContext().SpanID().String(),
-		Code: connect.CodeOf(err).String(),
-		Error: err.Error(),
-		ResponseTime:   time.Now().UTC(),
+		Code:          connect.CodeOf(err).String(),
+		Error:         err.Error(),
+		ResponseTime:  time.Now().UTC(),
 		Request:       GetDbRequest(req),
 	}
 	dctx := context.WithoutCancel(ctx)

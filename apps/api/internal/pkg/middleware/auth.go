@@ -1,22 +1,21 @@
 package middleware
 
 import (
-	"context"
 	"connectrpc.com/connect"
+	"context"
 	"fmt"
 	"github.com/pkg/errors"
 	// "net/http"
+	"github.com/lestrrat-go/jwx/v2/jwk"
+	"github.com/lestrrat-go/jwx/v2/jwt"
 	"strings"
 	"sync"
 	"time"
-	"github.com/lestrrat-go/jwx/v2/jwk"
-	"github.com/lestrrat-go/jwx/v2/jwt"
 
 	"cornucopia/listah/internal/app/bootstrap"
 	model "cornucopia/listah/internal/pkg/model/v1"
 	"cornucopia/listah/internal/pkg/utils"
 )
-
 
 func CheckAuth(infra *bootstrap.Infra) connect.UnaryInterceptorFunc {
 	// Create a new Middleware/interceptor
@@ -28,13 +27,13 @@ func CheckAuth(infra *bootstrap.Infra) connect.UnaryInterceptorFunc {
 		) (connect.AnyResponse, error) {
 			fmt.Printf("\n\n\n\n")
 
-			tkn := extractAuth(req.Header().Get("Authorization") )
+			tkn := extractAuth(req.Header().Get("Authorization"))
 			ptkn, err := parseJWT(ctx, tkn, infra.Config.AuthDomain)
 			if err != nil {
 				e := utils.HandleError(infra, ctx, req, err)
 				return nil, e
 			}
-			if err = verifyJWT(ctx, ptkn, infra.Config.AuthDomain);err != nil {
+			if err = verifyJWT(ctx, ptkn, infra.Config.AuthDomain); err != nil {
 				e := utils.HandleError(infra, ctx, req, err)
 				return nil, e
 			}
@@ -48,16 +47,12 @@ func CheckAuth(infra *bootstrap.Infra) connect.UnaryInterceptorFunc {
 	return connect.UnaryInterceptorFunc(interceptor)
 }
 
-
-
-
 var (
 	jwksCache     jwk.Set
 	jwksCacheTime time.Time
 	jwksMutex     sync.Mutex
 )
 var maxCacheTime time.Duration = 60
-
 
 func parseJWT(ctx context.Context, tokenString string, authDomain string) (jwt.Token, error) {
 	if tokenString == "" {
@@ -93,18 +88,16 @@ func verifyJWT(ctx context.Context, token jwt.Token, authDomain string) error {
 	return nil
 }
 
-
 func extractAuth(header string) string {
 	// extracts the bearer token from authorization header.
-    if header == "" {
-        return ""
-    }
-    if !strings.HasPrefix(header, "Bearer ") {
-        return ""
-    }
-    return strings.TrimPrefix(header, "Bearer ")
+	if header == "" {
+		return ""
+	}
+	if !strings.HasPrefix(header, "Bearer ") {
+		return ""
+	}
+	return strings.TrimPrefix(header, "Bearer ")
 }
-
 
 func getClerkJWKS(ctx context.Context, authDomain string) (jwk.Set, error) {
 	//fetches and caches Clerk's JWKS for defined minutes.
@@ -114,14 +107,14 @@ func getClerkJWKS(ctx context.Context, authDomain string) (jwk.Set, error) {
 
 	// Cache for defined minutes
 	if time.Since(jwksCacheTime) < maxCacheTime*time.Minute && jwksCache != nil {
-			return jwksCache, nil
+		return jwksCache, nil
 	}
 
 	jwksURL := fmt.Sprintf("https://%s/.well-known/jwks.json", authDomain)
 
 	keySet, err := jwk.Fetch(ctx, jwksURL)
 	if err != nil {
-			return nil, err
+		return nil, err
 	}
 
 	jwksCache = keySet

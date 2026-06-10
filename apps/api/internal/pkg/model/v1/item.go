@@ -10,7 +10,6 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-var svcName string = "listah.v1.ItemService"
 var ItemConflictFields = []string{
 	"id", "user_id",
 }
@@ -21,7 +20,9 @@ var defaultPagination = Pagination{
 }
 
 func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemSearch, error) {
-	if msg.GetUserId() == "" { return nil, MissingUserId }
+	if msg.GetUserId() == "" {
+		return nil, MissingUserId
+	}
 
 	pSize := defaultPagination.PageSize
 	pNum := defaultPagination.PageNumber
@@ -29,18 +30,22 @@ func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemS
 
 	pg := msg.GetPagination()
 
-
 	if pg != nil {
-		if pg.PageSize > 0 { pSize = pg.PageSize }
-		if pg.PageNumber != pNum { pNum = pg.PageNumber }
-		if pg.Sort != sortT { sortT = pg.Sort }
+		if pg.PageSize > 0 {
+			pSize = pg.PageSize
+		}
+		if pg.PageNumber != pNum {
+			pNum = pg.PageNumber
+		}
+		if pg.Sort != sortT {
+			sortT = pg.Sort
+		}
 	}
 
 	offset := int64(0)
-	if pSize > 0 && pNum > 0{
+	if pSize > 0 && pNum > 0 {
 		offset = pSize * (1 - pNum)
 	}
-
 
 	s := []string{}
 	t := []string{}
@@ -59,7 +64,9 @@ func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemS
 			}
 		}
 
-		if q.Text != "" { st = q.Text }
+		if q.Text != "" {
+			st = q.Text
+		}
 	}
 
 	i := ItemSearch{
@@ -81,17 +88,17 @@ func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
 		to := []*pb.Tag{}
 		for _, iv := range v.TagObjs {
 			to = append(to, &pb.Tag{
-				Id:         iv.Id,
-				UserId:     iv.UserId,
-				Name:       iv.Name,
-				Props:      iv.Props,
+				Id:     iv.Id,
+				UserId: iv.UserId,
+				Name:   iv.Name,
+				Props:  iv.Props,
 			})
 		}
 		mo := []*pb.MapObj{}
 		for _, iv := range v.PropObjs {
 			mo = append(mo, &pb.MapObj{
-				Key:     iv.Key,
-				Value:       iv.Value,
+				Key:   iv.Key,
+				Value: iv.Value,
 			})
 		}
 		items = append(items, &pb.Item{
@@ -102,8 +109,8 @@ func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
 			Tags:       v.Tags,
 			Props:      v.Props,
 			SoftDelete: v.SoftDelete,
-			TagObjs:   to,
-			PropObjs: mo,
+			TagObjs:    to,
+			PropObjs:   mo,
 			UpdatedAt:  timestamppb.New(v.UpdatedAt),
 			UpdatedBy:  v.UpdatedBy,
 		})
@@ -116,15 +123,24 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, []string, error)
 	check := map[string]bool{"name": true, "updated_by": true, "updated_at": true}
 
 	for _, v := range msg {
-		if v.GetUserId() == "" { return nil, nil, MissingUserId }
-		if v.GetName() == "" { return nil, nil, MissingName }
-		if len(v.GetTags()) == 0 { return nil, nil, MissingTags}
-		gTags := []string{}
-		for _, gP := range v.GetTags(){
-			if gP != "" { gTags = append(gTags, gP) }
+		if v.GetUserId() == "" {
+			return nil, nil, MissingUserId
 		}
-		if (len(gTags) == 0 ){ return nil, nil, MissingTags}
-
+		if v.GetName() == "" {
+			return nil, nil, MissingName
+		}
+		if len(v.GetTags()) == 0 {
+			return nil, nil, MissingTags
+		}
+		gTags := []string{}
+		for _, gP := range v.GetTags() {
+			if gP != "" {
+				gTags = append(gTags, gP)
+			}
+		}
+		if len(gTags) == 0 {
+			return nil, nil, MissingTags
+		}
 
 		id := v.GetId()
 		if id == "" && genId {
@@ -136,7 +152,6 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, []string, error)
 			Name:      v.GetName(),
 			UpdatedBy: "api",
 			UpdatedAt: time.Now(),
-
 		}
 
 		// Set values that have not been set to nil
@@ -161,7 +176,7 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, []string, error)
 
 	// Get the fields that need to be updated for conflict resolution
 	res := []string{}
-	for k, _ := range check {
+	for k := range check {
 		res = append(res, k)
 	}
 	return items, res, nil

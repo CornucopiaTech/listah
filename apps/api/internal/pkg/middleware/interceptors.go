@@ -6,11 +6,9 @@ import (
 
 	"connectrpc.com/connect"
 	"connectrpc.com/otelconnect"
-
 )
 
 const trackingIdKey = "trackingId"
-
 
 func GetInterceptors(infra *bootstrap.Infra) connect.Option {
 	// The generated constructors return a path and a plain net/http

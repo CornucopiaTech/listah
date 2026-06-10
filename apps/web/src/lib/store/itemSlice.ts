@@ -26,6 +26,7 @@ export const itemInitState: IItemState = {
   itemSearchQuery: '',
   itemTitle: undefined,
   itemReference: undefined,
+  itemScroll: 0,
 }
 
 export const createItemSlice: StateCreator<
@@ -41,5 +42,6 @@ export const createItemSlice: StateCreator<
   setItemSearchQuery: (itemSearchQuery: string) => set(() => ({ itemSearchQuery })),
   setItemTitle: (itemTitle: string) => set(() => ({ itemTitle })),
   setItemReference: (itemReference: undefined | ITag | IFilter) => set(() => ({ itemReference })),
+  setItemScroll: (itemScroll: undefined | number) => set(() => ({ itemScroll })),
   reset: () => set(itemInitState),
 });

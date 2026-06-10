@@ -24,6 +24,14 @@ variable "db_host" {
   type      = string
   sensitive = true
 }
+variable "auth_key" {
+  type      = string
+  sensitive = true
+}
+variable "auth_domain" {
+  type      = string
+  sensitive = true
+}
 variable "vpc_id" { type = string }
 variable "subnet_id" { type = string }
 variable "project_id" { type = string }

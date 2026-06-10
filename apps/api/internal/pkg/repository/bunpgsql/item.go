@@ -122,7 +122,6 @@ func (a *item) Upsert(ctx context.Context, m *[]*model.Item, c *model.UpsertInfo
 		conflict = fmt.Sprintf("CONFLICT(%v) DO UPDATE", strings.Join(c.Conflict, ", "))
 	}
 
-
 	q := a.db.NewInsert().Model(m).Ignore().On(conflict)
 
 	for _, v := range c.Resolve {

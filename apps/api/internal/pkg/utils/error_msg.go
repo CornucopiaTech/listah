@@ -5,13 +5,11 @@ import (
 	"github.com/pkg/errors"
 	"strings"
 
-
-	pb "cornucopia/listah/internal/pkg/proto/v1"
 	model "cornucopia/listah/internal/pkg/model/v1"
+	pb "cornucopia/listah/internal/pkg/proto/v1"
 )
 
-
-func getError(e error, reqId string) *connect.Error{
+func getError(e error, reqId string) *connect.Error {
 	var err *connect.Error
 	var em = e.Error()
 
@@ -21,7 +19,7 @@ func getError(e error, reqId string) *connect.Error{
 		strings.HasPrefix(em, model.FailedJWKSLoadMsg) ||
 		strings.HasPrefix(em, model.MissingTokenMsg)
 
-	if (isAuthError) {
+	if isAuthError {
 		err = unauthorised()
 	} else if errors.Is(e, model.DuplicateName) {
 		err = duplicateName()
@@ -49,7 +47,7 @@ func addDetails(d *pb.BadRequestDetails, cr *connect.Error) {
 	}
 }
 
-func unauthorised() *connect.Error{
+func unauthorised() *connect.Error {
 	// 1. Construct Protobuf error detail
 	m := "Unable to authorised request. Please login and try again."
 	d := &pb.BadRequestDetails{
@@ -62,7 +60,7 @@ func unauthorised() *connect.Error{
 	return cr
 }
 
-func duplicateName() *connect.Error{
+func duplicateName() *connect.Error {
 	// 1. Construct Protobuf error detail
 	m := "Name provided is already in use."
 	d := &pb.BadRequestDetails{
@@ -81,7 +79,7 @@ func duplicateName() *connect.Error{
 	return cr
 }
 
-func missingUserId() *connect.Error{
+func missingUserId() *connect.Error {
 	// 1. Construct Protobuf error detail
 	m := "Unknown user. Please sign in"
 	d := &pb.BadRequestDetails{
@@ -99,7 +97,7 @@ func missingUserId() *connect.Error{
 	return cr
 }
 
-func missingName() *connect.Error{
+func missingName() *connect.Error {
 	// 1. Construct Protobuf error detail
 	m := "Name is required."
 	d := &pb.BadRequestDetails{
@@ -117,7 +115,7 @@ func missingName() *connect.Error{
 	return cr
 }
 
-func missingTags() *connect.Error{
+func missingTags() *connect.Error {
 	// 1. Construct Protobuf error detail
 	m := "At least one tag is required."
 	d := &pb.BadRequestDetails{
@@ -135,7 +133,7 @@ func missingTags() *connect.Error{
 	return cr
 }
 
-func missingProps() *connect.Error{
+func missingProps() *connect.Error {
 	// 1. Construct Protobuf error detail
 	m := "At least one property is required."
 	d := &pb.BadRequestDetails{

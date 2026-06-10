@@ -1,15 +1,11 @@
 package redissrv
 
 import (
-
-	"fmt"
-	"log"
 	"context"
+	"fmt"
 	"github.com/pkg/errors"
 	redis "github.com/redis/go-redis/v9"
-	"net/http"
-	// "io"
-
+	"log"
 
 	"cornucopia/listah/internal/pkg/config"
 	"cornucopia/listah/internal/pkg/logging"
@@ -20,9 +16,7 @@ type Cache struct {
 	Client *redis.Client
 }
 
-
-
-func Init(cfg *config.Config, logger *logging.Factory) *Cache{
+func Init(cfg *config.Config, logger *logging.Factory) *Cache {
 	opt, err := redis.ParseURL(cfg.RedisCache.ConnectionUrl)
 	if err != nil {
 		log.Printf("unable to parse url for redis cache.")
@@ -70,36 +64,6 @@ func Init(cfg *config.Config, logger *logging.Factory) *Cache{
 	defer rdb.Close()
 
 	return &Cache{
-		Client:     rdb,
+		Client: rdb,
 	}
-}
-
-
-func loadUsers(cfg *config.Config, logger *logging.Factory) error {
-	if _, ok := cfg.Endpoints["auth"]; !ok {
-		log.Fatal("unable to read auth endpoint key from config.")
-	}
-	if _, ok := cfg.Endpoints["auth"]["list_users"]; !ok {
-		log.Fatal("unable to read list users endpoint key from config.")
-	}
-	url := cfg.Endpoints["auth"]["list_users"]
-	req, _ := http.NewRequest("GET", url, nil)
-	tk := fmt.Sprintf("Bearer %s", cfg.AuthKey)
-	req.Header.Add("Authorization", tk)
-	res, _ := http.DefaultClient.Do(req)
-	if res.StatusCode == 401 {
-		log.Fatal("invalid auth key.")
-	}
-	if res.StatusCode == 422 {
-		log.Fatal("invalid request parameters.")
-	}
-	if res.StatusCode == 400 {
-		log.Fatal("request was unsuccessful.")
-	}
-
-	// body, _ := io.ReadAll(res.Body)
-	// defer res.Body.Close()
-
-
-	return nil
 }
