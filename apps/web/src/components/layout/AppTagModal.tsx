@@ -284,7 +284,8 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
                                     input: {
                                       style: { fontSize: "15px" },
                                       endAdornment: < Icon icon="material-symbols-light:close-rounded" width="30" height="30"
-                                        onClick={() => subField.handleChange("")}
+                                        onClick={() => field.removeValue(i)}
+                                      // onClick={() => subField.handleChange("")}
                                       />
                                     },
                                     inputLabel: { style: { fontSize: "15px" } },
