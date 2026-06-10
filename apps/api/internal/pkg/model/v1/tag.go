@@ -8,7 +8,6 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-
 func TagModelToTagProto(m []*Tag) ([]*pb.Tag, error) {
 	c := []*pb.Tag{}
 	for _, v := range m {
@@ -31,17 +30,24 @@ func TagProtoToTagModel(msg []*pb.Tag, genId bool) ([]*Tag, []string, error) {
 	check := map[string]bool{"name": true, "updated_by": true, "updated_at": true}
 
 	for _, v := range msg {
-		if v.GetUserId() == "" { return nil, nil, MissingUserId }
-		if v.GetName() == "" { return nil, nil, MissingName }
-		if (len(v.GetProps()) == 0 ){ return nil, nil, MissingProps }
+		if v.GetUserId() == "" {
+			return nil, nil, MissingUserId
+		}
+		if v.GetName() == "" {
+			return nil, nil, MissingName
+		}
+		if len(v.GetProps()) == 0 {
+			return nil, nil, MissingProps
+		}
 		gProps := []string{}
-		for _, gP := range v.GetProps(){
-			if gP != ""{
+		for _, gP := range v.GetProps() {
+			if gP != "" {
 				gProps = append(gProps, gP)
 			}
 		}
-		if (len(gProps) == 0 ){ return nil, nil, MissingProps }
-
+		if len(gProps) == 0 {
+			return nil, nil, MissingProps
+		}
 
 		id := v.GetId()
 		if id == "" && genId {
@@ -69,7 +75,7 @@ func TagProtoToTagModel(msg []*pb.Tag, genId bool) ([]*Tag, []string, error) {
 
 	// Get the fields that need to be updated for conflict resolution
 	res := []string{}
-	for k, _ := range check {
+	for k := range check {
 		res = append(res, k)
 	}
 	return items, res, nil
@@ -79,7 +85,7 @@ func TagPropertyModelToTagPropertyMapProto(m []TagPropertyMapModel) (map[string]
 	r := map[string]*pb.StringList{}
 	for _, v0 := range m {
 		for k, v1 := range v0.Props {
-			r[k] = &pb.StringList{	Value: v1 }
+			r[k] = &pb.StringList{Value: v1}
 		}
 	}
 	return r, nil
@@ -90,7 +96,7 @@ func MapModelToTagPropertyMapProto(m []TagPropertyMapModel) (map[string]*pb.Stri
 
 	for _, v0 := range m {
 		for k, v1 := range v0.Props {
-			r[k] = &pb.StringList{	Value: v1 }
+			r[k] = &pb.StringList{Value: v1}
 		}
 	}
 

@@ -1,17 +1,15 @@
 package middleware
 
 import (
-	"context"
-	"time"
 	"connectrpc.com/connect"
-	"github.com/google/uuid"
+	"context"
 	"go.opentelemetry.io/otel/trace"
+	"time"
 
 	"cornucopia/listah/internal/app/bootstrap"
 	model "cornucopia/listah/internal/pkg/model/v1"
 	"cornucopia/listah/internal/pkg/utils"
 )
-
 
 func RecordRequestInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFunc {
 	// Create a new Middleware/interceptor
@@ -22,23 +20,14 @@ func RecordRequestInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFu
 			req connect.AnyRequest,
 		) (connect.AnyResponse, error) {
 			// Log request in db in middleware
-			tid := ""
-			if val := ctx.Value(trackingIdKey); val != nil {
-				// Type assert the value back to a string safely
-				if strVal, ok := val.(string); ok {
-					tid = strVal
-				}
-			}
-			if tid == "" {
-				tid = "req_" + uuid.Must(uuid.NewV7()).String()
-			}
+			tid := utils.GetRequestId(ctx)
 			reqModel := model.ApiLog{
 				Id:            tid,
 				RequestSource: "api",
-				Method: req.Spec().Procedure, // e.g., "/app.v1.users.UserService/CreateUser"
+				Method:        req.Spec().Procedure, // e.g., "/app.v1.users.UserService/CreateUser"
 				TraceId:       trace.SpanFromContext(ctx).SpanContext().TraceID().String(),
 				SpanId:        trace.SpanFromContext(ctx).SpanContext().SpanID().String(),
-				Request:       req,
+				Request:       utils.GetDbRequest(req),
 				RequestTime:   time.Now().UTC(),
 			}
 			dctx := context.WithoutCancel(ctx)
@@ -54,7 +43,6 @@ func RecordRequestInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFu
 	return connect.UnaryInterceptorFunc(interceptor)
 }
 
-
 func RecordErrorResponseInterceptor(infra *bootstrap.Infra) connect.UnaryInterceptorFunc {
 	// Create a new Middleware/interceptor
 	interceptor := func(next connect.UnaryFunc) connect.UnaryFunc {
@@ -66,37 +54,7 @@ func RecordErrorResponseInterceptor(infra *bootstrap.Infra) connect.UnaryInterce
 			// Call the next middleware/handler in chain
 			res, err := next(ctx, req)
 			if err != nil {
-				// Log request in db in middleware
-				tid := ""
-				if val := ctx.Value(trackingIdKey); val != nil {
-					// Type assert the value back to a string safely
-					if strVal, ok := val.(string); ok {
-						tid = strVal
-					}
-				}
-				if tid == "" {
-					tid = "req_" + uuid.Must(uuid.NewV7()).String()
-				}
-				reqModel := model.ErrorLog{
-					Id:            tid,
-					RequestSource: "api",
-					Method: req.Spec().Procedure, // e.g., "/app.v1.users.UserService/CreateUser"
-					TraceId:       trace.SpanFromContext(ctx).SpanContext().TraceID().String(),
-					SpanId:        trace.SpanFromContext(ctx).SpanContext().SpanID().String(),
-					Code: connect.CodeOf(err).String(),
-					Error: err.Error(),
-					ResponseTime:   time.Now().UTC(),
-					Request:       req,
-
-				}
-				dctx := context.WithoutCancel(ctx)
-				go infra.BunRepo.ApiLog.Insert(dctx, &reqModel)
-
-				// 4. Return sanitized error structure back to frontend (using our pattern from before)
-				e := utils.HandleError(err)
-				// Clone any pre-existing error metadata (headers/trailers)
-				e.Meta().Set("X-Request-Id", tid)
-
+				e := utils.HandleError(infra, ctx, req, err)
 				return nil, e
 			}
 			return res, nil

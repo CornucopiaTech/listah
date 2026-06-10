@@ -2,6 +2,7 @@
 
 lint_issues*.txt
 local-infra/*.jar
+local-infra/db_data
 
 # compiled output
 dist
@@ -48,7 +49,8 @@ Thumbs.db
 
 .angular
 *.bkup.*
-docker/local
+*.bkup*
+apps/web/build_output.txt
 
 
 # Env variables

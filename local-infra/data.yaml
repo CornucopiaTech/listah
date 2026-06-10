@@ -37,6 +37,22 @@ services:
       LIQUIBASE_CLASSPATH: /liquibase/lib/postgresql-42.7.10.jar
     command: "update "
 
+  redis:
+      image: redis:8.6.4-alpine
+      container_name: redis_server
+      restart: unless-stopped
+      ports:
+        - "6379:6379"
+      command: redis-server /usr/local/etc/redis/redis.conf
+      volumes:
+        - ./db_data/redis:/data
+        - ./redis.conf:/usr/local/etc/redis/redis.conf
+      healthcheck:
+        test: ["CMD", "redis-cli", "ping"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+
 networks:
   default:
     driver: bridge

@@ -4,30 +4,36 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"connectrpc.com/connect"
 	"github.com/uptrace/bun"
 )
 
+var InvalidJWTMsg = "invalid JWT: "
+var FailedJWKSLoadMsg = "failed to load JWKS: "
+var MissingTokenMsg = "missing token"
+var Unauthorised = errors.New("auth: unauthorised request")
 var DuplicateName = errors.New("database: name already exists")
 var MissingUserId = errors.New("req: no userId present")
 var MissingName = errors.New("req: no name present")
 var MissingTags = errors.New("req: at least one tag is required")
 var MissingProps = errors.New("req: at least one property is required")
 
-
 type MapObj struct {
-  Key string
-  Value string
+	Key   string
+	Value string
+}
+type DbReq struct {
+	Header interface{}
+	Msg    interface{}
 }
 
 type ApiLog struct {
 	bun.BaseModel `bun:"table:instrumentation.logs,alias:lg"`
 	Id            string `bun:",pk"`
 	RequestSource string
-	Method string
+	Method        string
 	TraceId       string
 	SpanId        string
-	Request       connect.AnyRequest
+	Request       DbReq
 	RequestTime   time.Time
 }
 
@@ -35,13 +41,13 @@ type ErrorLog struct {
 	bun.BaseModel `bun:"table:instrumentation.errors,alias:er"`
 	Id            string `bun:",pk"`
 	RequestSource string
-	Method string
+	Method        string
 	TraceId       string
 	SpanId        string
-	Request       connect.AnyRequest
-	Code string
-	Error string
-	ResponseTime   time.Time
+	Request       DbReq
+	Code          string
+	Error         string
+	ResponseTime  time.Time
 }
 
 type Tag struct {
@@ -65,30 +71,29 @@ type Item struct {
 	Tags          []string          `bun:"type:jsonb"`
 	Props         map[string]string `bun:"type:jsonb"`
 	SoftDelete    bool              `bun:",nullzero,default:false"`
-	TagObjs        []Tag          `bun:"type:jsonb,scanonly"`
+	TagObjs       []Tag             `bun:"type:jsonb,scanonly"`
 	PropObjs      []MapObj          `bun:"type:jsonb,scanonly"`
 	UpdatedBy     string
 	UpdatedAt     time.Time
 }
 
 type TagProperty struct {
-	UserId        string
-	Name          string
-	TagObjs          []Tag          `bun:"type:jsonb,scanonly"`
+	UserId  string
+	Name    string
+	TagObjs []Tag `bun:"type:jsonb,scanonly"`
 }
 
 type StringList struct {
-	Value        []string
+	Value []string
 }
 
 type TagPropertyMap struct {
-	Value        map[string]StringList
+	Value map[string]StringList
 }
 
 type TagPropertyMapModel struct {
-	Props        map[string][]string
+	Props map[string][]string
 }
-
 
 type Filter struct {
 	bun.BaseModel `bun:"table:apps.filters,alias:sf"`

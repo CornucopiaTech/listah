@@ -37,3 +37,11 @@ variable "image_tag" { type = string }
 
 variable "known_origins" { type = string }
 variable "name_in_tag" { type = string }
+variable "auth_key" {
+  type      = string
+  sensitive = true
+}
+variable "auth_domain" {
+  type      = string
+  sensitive = true
+}

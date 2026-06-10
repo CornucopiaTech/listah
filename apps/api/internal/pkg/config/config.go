@@ -23,6 +23,17 @@ type pgsqlDBConfig struct {
 	Address      string
 }
 
+type redisCacheConfig struct {
+	Host          string
+	DatabaseName  string
+	Port          string
+	User          string
+	Password      string
+	Address       string
+	ConnectionUrl string
+	Ttl           string
+}
+
 type instrumentationConfig struct {
 	OtelExporterEndpoint string
 	TraceFreqSec         int
@@ -32,27 +43,38 @@ type instrumentationConfig struct {
 
 type Config struct {
 	AppName         string
+	AuthKey         string
+	AuthDomain      string
 	Env             string
 	ProjectRoot     string
 	Api             *appNetworkConfig
 	PgsqlDB         *pgsqlDBConfig
+	RedisCache      *redisCacheConfig
 	Instrumentation *instrumentationConfig
 }
 
 func Init() (*Config, error) {
 	var appName string
 	mustMapEnv(&appName, "APP_NAME")
+	var authKey string
+	mustMapEnv(&authKey, "AUTH_KEY")
+	var authDomain string
+	mustMapEnv(&authDomain, "AUTH_DOMAIN")
 
 	a := loadApi()
 	d := loadPgsqlDatabase()
+	// r := loadRedisCache()
 	t := loadInstrumentation()
 
 	return &Config{
-		AppName:         fmt.Sprintf("%s-api", appName),
-		Env:             loadEnv(),
-		ProjectRoot:     loadProjectRoot(),
-		Api:             a,
-		PgsqlDB:         d,
+		AppName:     fmt.Sprintf("%s-api", appName),
+		AuthKey:     authKey,
+		AuthDomain:  authDomain,
+		Env:         loadEnv(),
+		ProjectRoot: loadProjectRoot(),
+		Api:         a,
+		PgsqlDB:     d,
+		// RedisCache: r,
 		Instrumentation: t,
 	}, nil
 
@@ -103,20 +125,21 @@ func loadPgsqlDatabase() *pgsqlDBConfig {
 	var dh string
 	mustMapEnv(&dh, "DATABASE_HOST")
 
+	// ToDo: Change the environment variables in the build engine to account for this change.
 	// Get database port in environmental variables
 	var dp string
 	mustMapEnv(&dp, "DATABASE_PORT")
 
 	// Get database name in environmental variables
 	var dn string
-	mustMapEnv(&dn, "POSTGRES_DB")
+	mustMapEnv(&dn, "DATABASE_DB")
 
 	var usr string
-	mustMapEnv(&usr, "POSTGRES_USER")
+	mustMapEnv(&usr, "DATABASE_USER")
 
 	// Get database password in environmental variables
 	var pwd string
-	mustMapEnv(&pwd, "POSTGRES_PASSWORD")
+	mustMapEnv(&pwd, "DATABASE_PASSWORD")
 
 	return &pgsqlDBConfig{
 		Host:         dh,
@@ -128,6 +151,40 @@ func loadPgsqlDatabase() *pgsqlDBConfig {
 	}
 }
 
+func loadRedisCache() *redisCacheConfig {
+	// Get database host in environmental variables
+	var dh string
+	mustMapEnv(&dh, "CACHE_HOST")
+
+	// Get database port in environmental variables
+	var dp string
+	mustMapEnv(&dp, "CACHE_PORT")
+
+	// Get database name in environmental variables
+	var dn string
+	mustMapEnv(&dn, "CACHE_DB")
+
+	var usr string
+	mustMapEnv(&usr, "CACHE_USER")
+
+	// Get database password in environmental variables
+	var pwd string
+	mustMapEnv(&pwd, "CACHE_PASSWORD")
+
+	// Get database password in environmental variables
+	var cn string
+	mustMapEnv(&cn, "CACHE_CONNECTION_URL")
+
+	return &redisCacheConfig{
+		Host:          dh,
+		Port:          dp,
+		User:          usr,
+		Password:      pwd,
+		DatabaseName:  dn,
+		Address:       net.JoinHostPort(dh, dp),
+		ConnectionUrl: cn,
+	}
+}
 
 func loadInstrumentation() *instrumentationConfig {
 	var otel_n string

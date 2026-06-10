@@ -3,10 +3,10 @@ package bunpgsql
 import (
 	"context"
 	"fmt"
-	"strings"
 	"github.com/pkg/errors"
 	"github.com/uptrace/bun"
 	"go.opentelemetry.io/otel"
+	"strings"
 
 	"cornucopia/listah/internal/pkg/logging"
 	model "cornucopia/listah/internal/pkg/model/v1"

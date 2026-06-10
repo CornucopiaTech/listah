@@ -1,9 +1,9 @@
 package v1
 
 import (
+	"connectrpc.com/connect"
 	"context"
 	"fmt"
-	"connectrpc.com/connect"
 	"go.opentelemetry.io/otel"
 
 	model "cornucopia/listah/internal/pkg/model/v1"
@@ -20,15 +20,21 @@ func (s *Server) UpsertItem(ctx context.Context, req *connect.Request[pb.ItemSer
 
 	// Create model for repository from request message
 	i, c, err := model.ItemProtoToItemModel(req.Msg.Items, true)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	w := model.UpsertInfo{Conflict: model.ItemConflictFields, Resolve: c}
 	_, err = s.BunRepo.Item.Upsert(ctx, &i, &w)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	// Get the ids of the inserted items
 	rs := []string{}
-	for _, v := range i { rs = append(rs, v.Id) }
+	for _, v := range i {
+		rs = append(rs, v.Id)
+	}
 
 	resm := &pb.ItemServiceUpsertItemResponse{ItemIds: rs}
 	return connect.NewResponse(resm), nil
@@ -44,16 +50,22 @@ func (s *Server) UpsertFilter(ctx context.Context, req *connect.Request[pb.ItemS
 
 	// Create model for repository from request message
 	ins, res, err := model.FilterProtoToFilterModel(req.Msg.Filters, true)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
-	w := model.UpsertInfo{ Conflict: []string{"user_id", "id"}, Resolve:  res, }
+	w := model.UpsertInfo{Conflict: []string{"user_id", "id"}, Resolve: res}
 	_, err = s.BunRepo.Filter.Upsert(ctx, &ins, &w)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 	s.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository update")
 
 	// Get the ids of the inserted items
 	rs := []string{}
-	for _, v := range ins { rs = append(rs, v.Id) }
+	for _, v := range ins {
+		rs = append(rs, v.Id)
+	}
 
 	resm := &pb.ItemServiceUpsertFilterResponse{FilterIds: rs}
 	return connect.NewResponse(resm), nil
@@ -69,16 +81,22 @@ func (s *Server) UpsertTag(ctx context.Context, req *connect.Request[pb.ItemServ
 
 	// Create model for repository from request message
 	ins, res, err := model.TagProtoToTagModel(req.Msg.Tags, true)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	w := model.UpsertInfo{Conflict: []string{"user_id", "id"}, Resolve: res}
 	_, err = s.BunRepo.Tag.Upsert(ctx, &ins, &w)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 	s.Logger.LogInfo(ctx, svcName, rpcName, "Successful repository update")
 
 	// Get the ids of the inserted items
 	rs := []string{}
-	for _, v := range ins { rs = append(rs, v.Id) }
+	for _, v := range ins {
+		rs = append(rs, v.Id)
+	}
 	resm := &pb.ItemServiceUpsertTagResponse{TagIds: rs}
 	return connect.NewResponse(resm), nil
 }

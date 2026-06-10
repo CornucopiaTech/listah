@@ -3,30 +3,40 @@ package utils
 import (
 	"connectrpc.com/connect"
 	"github.com/pkg/errors"
+	"strings"
 
-	pb "cornucopia/listah/internal/pkg/proto/v1"
 	model "cornucopia/listah/internal/pkg/model/v1"
+	pb "cornucopia/listah/internal/pkg/proto/v1"
 )
 
+func getError(e error, reqId string) *connect.Error {
+	var err *connect.Error
+	var em = e.Error()
 
-func HandleError(e error) *connect.Error{
-	if errors.Is(e, model.DuplicateName) {
-		return duplicateName()
-	}
-	if errors.Is(e, model.MissingUserId) {
-		return missingUserId()
-	}
-	if errors.Is(e, model.MissingName) {
-		return missingName()
-	}
-	if errors.Is(e, model.MissingTags) {
-		return missingTags()
-	}
-	if errors.Is(e, model.MissingProps) {
-		return missingProps()
-	}
+	// strings.HasPrefix(header, "Bearer ")
+	isAuthError := errors.Is(e, model.Unauthorised) ||
+		strings.HasPrefix(em, model.InvalidJWTMsg) ||
+		strings.HasPrefix(em, model.FailedJWKSLoadMsg) ||
+		strings.HasPrefix(em, model.MissingTokenMsg)
 
-	return connect.NewError(connect.CodeInternal, errors.New("Internal error occurred. Please try again."))
+	if isAuthError {
+		err = unauthorised()
+	} else if errors.Is(e, model.DuplicateName) {
+		err = duplicateName()
+	} else if errors.Is(e, model.MissingUserId) {
+		err = missingUserId()
+	} else if errors.Is(e, model.MissingName) {
+		err = missingName()
+	} else if errors.Is(e, model.MissingTags) {
+		err = missingTags()
+	} else if errors.Is(e, model.MissingProps) {
+		err = missingProps()
+	} else {
+		err = connect.NewError(connect.CodeInternal, errors.New("Internal error occurred. Please try again."))
+	}
+	err.Meta().Set("X-Request-Id", reqId)
+
+	return err
 }
 
 func addDetails(d *pb.BadRequestDetails, cr *connect.Error) {
@@ -37,7 +47,20 @@ func addDetails(d *pb.BadRequestDetails, cr *connect.Error) {
 	}
 }
 
-func duplicateName() *connect.Error{
+func unauthorised() *connect.Error {
+	// 1. Construct Protobuf error detail
+	m := "Unable to authorised request. Please login and try again."
+	d := &pb.BadRequestDetails{
+		Code: pb.ErrorCode_UNAUTHORISED,
+	}
+
+	// 2. Create the base Connect error (Automatically sets HTTP 401)
+	cr := connect.NewError(connect.CodeUnauthenticated, errors.New(m))
+	addDetails(d, cr)
+	return cr
+}
+
+func duplicateName() *connect.Error {
 	// 1. Construct Protobuf error detail
 	m := "Name provided is already in use."
 	d := &pb.BadRequestDetails{
@@ -56,7 +79,7 @@ func duplicateName() *connect.Error{
 	return cr
 }
 
-func missingUserId() *connect.Error{
+func missingUserId() *connect.Error {
 	// 1. Construct Protobuf error detail
 	m := "Unknown user. Please sign in"
 	d := &pb.BadRequestDetails{
@@ -74,7 +97,7 @@ func missingUserId() *connect.Error{
 	return cr
 }
 
-func missingName() *connect.Error{
+func missingName() *connect.Error {
 	// 1. Construct Protobuf error detail
 	m := "Name is required."
 	d := &pb.BadRequestDetails{
@@ -92,7 +115,7 @@ func missingName() *connect.Error{
 	return cr
 }
 
-func missingTags() *connect.Error{
+func missingTags() *connect.Error {
 	// 1. Construct Protobuf error detail
 	m := "At least one tag is required."
 	d := &pb.BadRequestDetails{
@@ -110,7 +133,7 @@ func missingTags() *connect.Error{
 	return cr
 }
 
-func missingProps() *connect.Error{
+func missingProps() *connect.Error {
 	// 1. Construct Protobuf error detail
 	m := "At least one property is required."
 	d := &pb.BadRequestDetails{

@@ -23,13 +23,40 @@ import { AppError, type BackendErrorPayload } from "@/lib/model/common";
 const genericError = "An unexpected error occurred. Please try again later";
 const code = "NETWORK_DISCONNECTED";
 
+
+
+async function getToken() {
+  let token = "";
+  if (typeof window !== 'undefined' && (window as any).Clerk?.session) {
+    try {
+      // Fetch a fresh token directly from the vanilla instance
+      token = await (window as any).Clerk.session.getToken({ template: "api-jwt" });
+
+      if (token) {
+        token = `Bearer ${token}`;
+        return token;
+      }
+    } catch (error) {
+      console.error("Failed to fetch Clerk token outside component:", error);
+    }
+  }
+}
+
 export async function postTag(t: ITag) {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.updateTag}`;
   try {
+    const token = await getToken();
+    if (!token) {
+      throw new AppError(genericError, 500);
+    }
     const req = new Request(url, {
       method: "POST",
       body: JSON.stringify({ tags: [t] }),
-      headers: { "Content-Type": "application/json", "Accept": "*/*", },
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "*/*",
+        "Authorization": token,
+      },
     });
     const res = await fetch(req);
 
@@ -57,10 +84,18 @@ export async function postTag(t: ITag) {
 export async function postItem(item: IItem) {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.updateItem}`;
   try {
+    const token = await getToken();
+    if (!token) {
+      throw new AppError(genericError, 500);
+    }
     const req = new Request(url, {
       method: "POST",
       body: JSON.stringify({ items: [item] }),
-      headers: { "Content-Type": "application/json", "Accept": "*/*", },
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "*/*",
+        "Authorization": token,
+      },
     });
     const res = await fetch(req);
     if (!res.ok) {
@@ -88,10 +123,18 @@ export async function postItem(item: IItem) {
 export async function postFilter(f: IFilter) {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.updateFilter}`;
   try {
+    const token = await getToken();
+    if (!token) {
+      throw new AppError(genericError, 500);
+    }
     const req = new Request(url, {
       method: "POST",
       body: JSON.stringify({ filters: [f] }),
-      headers: { "Content-Type": "application/json", "Accept": "*/*", },
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "*/*",
+        "Authorization": token,
+      },
     });
     const res = await fetch(req);
 
@@ -118,10 +161,18 @@ export async function postFilter(f: IFilter) {
 export async function getItem(opts: IItemReadRequest): Promise<IItemReadResponse> {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.readItem}`;
   try {
+    const token = await getToken();
+    if (!token) {
+      throw new AppError(genericError, 500);
+    }
     const req = new Request(url, {
       method: "POST",
       body: JSON.stringify(opts),
-      headers: { "Content-Type": "application/json", "Accept": "*/*" },
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "*/*",
+        "Authorization": token,
+      },
     });
     const res = await fetch(req);
     if (!res.ok) {
@@ -149,10 +200,18 @@ export async function getItem(opts: IItemReadRequest): Promise<IItemReadResponse
 export async function getTag(opts: ITagReadRequest): Promise<ITagReadResponse> {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.readTag}`;
   try {
+    const token = await getToken();
+    if (!token) {
+      throw new AppError(genericError, 500);
+    }
     const req = new Request(url, {
       method: "POST",
       body: JSON.stringify(opts),
-      headers: { "Content-Type": "application/json", "Accept": "*/*" },
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "*/*",
+        "Authorization": token,
+      },
     });
     const res = await fetch(req);
     if (!res.ok) {
@@ -180,10 +239,18 @@ export async function getTag(opts: ITagReadRequest): Promise<ITagReadResponse> {
 export async function getTagProperty(opts: ITagReadRequest): Promise<ITagReadResponse> {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.readTagProperty}`;
   try {
+    const token = await getToken();
+    if (!token) {
+      throw new AppError(genericError, 500);
+    }
     const req = new Request(url, {
       method: "POST",
       body: JSON.stringify(opts),
-      headers: { "Content-Type": "application/json", "Accept": "*/*" },
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "*/*",
+        "Authorization": token,
+      },
     });
     const res = await fetch(req);
     if (!res.ok) {
@@ -211,10 +278,18 @@ export async function getFilter(opts: IFilterReadRequest): Promise<IFilterReadRe
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.readFilter}`;
 
   try {
+    const token = await getToken();
+    if (!token) {
+      throw new AppError(genericError, 500);
+    }
     const req = new Request(url, {
       method: "POST",
       body: JSON.stringify(opts),
-      headers: { "Content-Type": "application/json", "Accept": "*/*" },
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "*/*",
+        "Authorization": token,
+      },
     });
     const res = await fetch(req);
     if (!res.ok) {

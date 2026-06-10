@@ -13,7 +13,10 @@ import {
 } from '@/lib/helper/defaults';
 
 
-export const ZFormProps = z.object({ key: z.string().catch(''), value: z.string().catch(''), })
+export const ZFormProps = z.object({
+  key: z.string().catch(''),
+  value: z.string().catch(''),
+})
 export type IFormProps = z.infer<typeof ZFormProps>;
 
 // Item Definitions

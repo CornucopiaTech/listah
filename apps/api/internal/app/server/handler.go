@@ -8,6 +8,7 @@ import (
 
 	chi "github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
+	// clerkhttp "github.com/clerk/clerk-sdk-go/v2/http"
 	"github.com/go-chi/cors"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
@@ -35,9 +36,6 @@ func handle(i *bootstrap.Infra) http.Handler {
 	mux.Use(chimiddleware.Timeout(60 * 60 * 1e9)) // 1 hour
 
 	fmt.Printf("Allowed Origins are: %v\n", allowedOrigins)
-
-
-
 
 	// Get gRPC interceptors chain
 	icp := middleware.GetInterceptors(i)

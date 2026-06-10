@@ -9,7 +9,8 @@ enum ErrorCode {
   VALIDATION_FAILED = 1;
   ALREADY_EXISTS = 2;
   NOT_FOUND = 3;
-  INTERNAL_DATABASE_ERROR = 4; // Masked on the frontend as a generic 500
+  UNAUTHORISED = 4;
+  INTERNAL_DATABASE_ERROR = 5; // Masked on the frontend as a generic 500
 }
 
 // Custom detail for form validation or constraint violations

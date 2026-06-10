@@ -105,7 +105,7 @@ import { AppModalCloseButton } from "@/components/core/AppButton";
 type itemFields = "id" | "userId" | "name" | "note" | `props[${number}]` | "softDelete" | `tags[${number}]`
 
 
-export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilter?: IFilter }): ReactNode {
+export function AppItemModal({ passedPropTag, passedPropFilter }: { passedPropTag?: ITag, passedPropFilter?: IFilter }): ReactNode {
   const store: TBoundStore = useBoundStore((state) => state);
   const { user } = useUser();
   const queryClient = useQueryClient();
@@ -124,19 +124,41 @@ export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilt
   }: UseSuspenseQueryResult<ITagReadResponse> = useSuspenseQuery(tagGroupOptions(tagQuery));
 
 
-  const tags: ITag[] = data?.tags ?? [];
-  const knownTagNames = useRef<Set<string>>(new Set(tags.map(p => p.name)));
+
+  const serverTags: ITag[] = data?.tags ?? [];
+  const knownServerTagNames = useRef<Set<string>>(new Set(serverTags.map(p => p.name)));
   const item: IItem = useBoundStore((state) => state.displayItem);
-  const tagPropMap = new Map<string, { value: string[] }>(Object.entries(data?.tagidPropMap ?? {}));
+  const serverTagPropMap = new Map<string, { value: string[] }>(Object.entries(data?.tagidPropMap ?? {}));
 
-  // Get the list of all properties from tags in the items list.
-  let tagProps: string[] = []
-  item.tags.forEach(
-    (it) => (tagProps = [...tagProps, ...tagPropMap?.get(it)?.value ?? []])
+  // Use the list of all possible tags for the display object using the tags in the item iteself and the tags from the passed tag or passed filter.
+  let allItemTags = item && item.tags ? [...item.tags] : [];
+  let tgs = item && item.tags ? [...item.tags] : [];
+  if (passedPropTag) {
+    tgs = [...tgs, passedPropTag.id]
+    allItemTags = [...allItemTags, passedPropTag.id]
+  }
+  if (passedPropFilter) {
+    tgs = [...tgs, ...passedPropFilter.tags]
+    allItemTags = [...allItemTags, ...passedPropFilter.tags]
+  }
+  allItemTags = [...new Set(allItemTags)]
+  tgs = [...new Set(tgs)]
+
+  // Use this comprehensive list of tags to get all possible properties for the display item using serverTags.
+  let displayItemProps: string[] = []
+  allItemTags.forEach(
+    (it) => {
+      const iVal = serverTagPropMap.get(it);
+      if (iVal) {
+        displayItemProps = [...displayItemProps, ...iVal.value]
+      }
+    }
   );
+  displayItemProps = [...new Set(displayItemProps)]
 
-  // Get the values for the identified properties.
-  const tagPropsObj = tagProps.map((tg) => {
+
+  // Get the key-values object for the identified properties.
+  const displayItemPropsObj = displayItemProps.map((tg) => {
     const ap = item?.propObjs?.filter(ip => ip.key == tg) ?? []
     if (ap.length == 0) {
       return { key: tg, value: "" }
@@ -144,26 +166,18 @@ export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilt
     return ap[0]
   })
 
-  // Get the existing or prospective tags.
-  let tgs = [...item.tags]
-  if (itemTag) {
-    tgs = [...tgs, itemTag.id]
-  }
-  if (itemFilter) {
-    tgs = [...tgs, ...itemFilter.tags]
-  }
-  // @ts-ignore
-  const tagObj = [...new Set(tgs || [])].reduce((acc, tg) => {
-    const ap = tags?.filter(ip => ip.id == tg) ?? [];
+  let tagObj: ITag[] = []
+  allItemTags.forEach((tg: string) => {
+    const ap = serverTags?.filter(ip => ip.id == tg) ?? [];
     if (ap.length > 0) {
-      return [...acc, ap[0]]
+      tagObj = [...tagObj, ap[0]]
     }
-  }, []);
+  });
 
 
   const formData = {
     id: item.id, userId: item.userId, name: item.name,
-    note: item.note, props: tagPropsObj, tags: tagObj,
+    note: item.note, props: displayItemPropsObj, tags: tagObj,
     softDelete: item.softDelete
   };
 
@@ -174,8 +188,8 @@ export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilt
     if (fTagList.filter((t) => t.name != "").length < 1) {
       errs += "Item must contain one tag at least ";
     }
-    // const unrecognisedTags = fTagList.filter((t) => !knownTagNames.current.has(t.name));
-    const unrecognisedTags = fTagList.filter((t) => t.name != "").filter((t) => !knownTagNames.current.has(t.name));
+    // const unrecognisedTags = fTagList.filter((t) => !knownServerTagNames.current.has(t.name));
+    const unrecognisedTags = fTagList.filter((t) => t.name != "").filter((t) => !knownServerTagNames.current.has(t.name));
     if (unrecognisedTags.length > 0) {
       const unregognisedNames = unrecognisedTags.map(it => it.name).join(',')
       newMsg = `Unrecognised tag(s): (${unregognisedNames}) will not be saved.`;
@@ -192,7 +206,7 @@ export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilt
     if (fTag.name === "") {
       errList = [...errList, "Tag name is required"]
     }
-    if (!knownTagNames.current.has(fTag.name) && fTag.name != "") {
+    if (!knownServerTagNames.current.has(fTag.name) && fTag.name != "") {
       errList = [...errList, `Unrecognised tag (${fTag.name}) will not be saved. Please add new tag to app.`]
     }
     if (errList.length > 0) {
@@ -235,13 +249,6 @@ export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilt
       },
     },
   });
-  const formErrorMap = useStore(form.store, (state) => state.errorMap);
-  const formErrors = useStore(form.store, (state) => state.errors);
-  const formCanSubmit = formErrors.length == 0;
-  const formIsSubmitting = useStore(form.store, (state) => state.isSubmitting);
-  const formIsDirty = useStore(form.store, (state) => state.isDirty);
-  const formStateId = useStore(form.store, (state) => state.values.id);
-
 
   // Define invalidating  mutation
   const mutation = useMutation({
@@ -266,16 +273,24 @@ export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilt
   useEffect(() => {
     if (!form.state.isSubmitted) return;
     if (!mutation.isSuccess) return;
-
-    const timer = setTimeout(
-      () => {
-        if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-          console.log("Timer fired after 2 seconds");
-        }
-        closeModal();
-      }, 5000);
+    const timer = setTimeout(() => { closeModal(); }, 2000);
     return () => clearTimeout(timer); // cleanup
   }, [form.state.isSubmitted, mutation.isSuccess]);
+
+
+  const formErrorMap = useStore(form.store, (state) => state.errorMap);
+  const formErrors = useStore(form.store, (state) => state.errors);
+  const formCanSubmit = formErrors.length == 0;
+  const formIsSubmitted = useStore(form.store, (state) => state.isSubmitted);
+  const formIsDirty = useStore(form.store, (state) => state.isDirty);
+  const formStateId = useStore(form.store, (state) => state.values.id);
+  const openBackdrop = useRef(false);
+  if (mutation.isSuccess) {
+    openBackdrop.current = false;
+  } else {
+    openBackdrop.current = formIsSubmitted;
+  }
+
 
 
   function closeModal() {
@@ -292,18 +307,13 @@ export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilt
   }
 
   function formSubmission({ value }: { value: IFormItem }) {
-    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-      console.log("In formSubmission - value ", value);
-    }
     const itemId = value.id && value.id != "" ? value.id : uuidv4();
     const userId = user && user.id ? user.id : value.userId;
-    const subProps = value.props.reduce((acc: any, i: IFormProps) => {
-      acc[i.key] = i.value;
-      return acc
-    }, {})
-    // @ts-ignore
+    const subProps: Record<string, string> = {};
+    value.props.forEach((i: IFormProps) => {
+      subProps[i.key] = i.value;
+    })
     const tgs = value.tags?.filter(t => t.name != "").map(t => t.id);
-
 
     const submitValue = {
       id: itemId,
@@ -316,11 +326,8 @@ export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilt
       propObjList: undefined,
       softDelete: value.softDelete,
     }
-    if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
-      console.log("In formSubmission - submitValue ", submitValue);
-    }
-    mutation.mutate(submitValue);
 
+    mutation.mutate(submitValue);
   }
 
   function getSimpleField(key: itemFields) {
@@ -409,7 +416,7 @@ export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilt
                                     size="small"
                                     id={"item-tag-" + i}
                                     autoHighlight
-                                    options={tags.map((opt) => opt.name)}
+                                    options={serverTags.map((opt) => opt.name)}
                                     value={subField.state.value.name}
                                     inputValue={subField.state.value.name}
                                     onChange={
@@ -501,20 +508,23 @@ export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilt
 
   function addNewTagProps({ value }: any) {
     const oldProps = form.getFieldValue('props');
-    const pL = (value as ITag[]).reduce((acc: string[], ev: ITag) => {
-      const epL = ev.props || []
-      return [...acc, ...epL]
+    let newPropList: string[] = [];
+    (value as ITag[]).forEach((iterTag: ITag) => {
+      const iterTagProps = iterTag?.props ?? []
+      newPropList = [...newPropList, ...iterTagProps]
     }, []);
-    const prpList = [...new Set(pL)].sort()
+    newPropList = [...new Set(newPropList)].sort()
     let newProps: IFormProps[] = [];
-    prpList.filter(i => i !== "").forEach((npl: string) => {
-      const anpl = oldProps.filter((i: IFormProps) => i.key == npl)
-      if (anpl.length == 0) {
-        newProps = [...newProps, { key: npl, value: "" }]
-      } else {
-        newProps = [...newProps, { key: npl, value: anpl[0].value }]
+    newPropList.filter(i => i !== "").forEach(
+      (iterProp: string) => {
+        const inOldProp = oldProps.filter((i: IFormProps) => i.key == iterProp)
+        if (inOldProp.length == 0) {
+          newProps = [...newProps, { key: iterProp, value: "" }]
+        } else {
+          newProps = [...newProps, { key: iterProp, value: inOldProp[0].value }]
+        }
       }
-    })
+    )
     newProps = newProps.sort((a: IFormProps, b: IFormProps) => b.value.localeCompare(a.value))
     form.setFieldValue('props', newProps)
   }
@@ -536,7 +546,7 @@ export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilt
     const fField = parentF?.state?.value as unknown as ITag[] ?? [];
 
     // If a nonzero value is added, then use the information to update the tag object.
-    const it = tags.filter(itt => itt.name == sval);
+    const it = serverTags.filter(itt => itt.name == sval);
     if (it.length > 0) {
       // If the passed value is a known name of a tag..
       childF.handleChange(it[0]);
@@ -631,14 +641,13 @@ export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilt
         </DialogTitle>
         <Divider />
         {mutation.isSuccess && <Alert severity="success"> {"Changes saved!"} </Alert>}
-        {mutation.error && (
-          <Fragment>
-            <Alert severity="error"> {mutation.error.message}</Alert>
-            <h5 onClick={() => mutation.reset()}>{mutation.error.message}</h5>
-          </Fragment>
-        )}
+        {mutation.error && <Alert severity="error"> {mutation.error.message}</Alert>}
         {formErrorMap.onChange && <Alert severity="warning"> {`${formErrorMap.onChange}`} </Alert>}
         <Divider />
+        <Backdrop
+          sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })} open={openBackdrop.current}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
         <TagDeleteDialog />
 
         <form onSubmit={onFormSubmit}>
@@ -669,8 +678,8 @@ export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilt
 
   const dummyAction = () => undefined;
 
-  const canDelete = !formIsSubmitting && formStateId !== "";
-  const saveIcon = formIsSubmitting ? <HourglassOutlineIcon height="1.5rem" /> :
+  const canDelete = !formIsSubmitted && formStateId !== "";
+  const saveIcon = formIsSubmitted ? <HourglassOutlineIcon height="1.5rem" /> :
     formCanSubmit ? <SaveIcon height="1.5rem" /> : <SaveOffIcon height="1.5rem" />
   const act = (
     <ItemFormSpeedDialBox>
@@ -709,12 +718,5 @@ export function AppItemModal({ itemTag, itemFilter }: { itemTag?: ITag, itemFilt
     </ItemFormSpeedDialBox>
   );
 
-  if (formIsSubmitting) {
-    // ToDo: Verify that this works
-    return <Backdrop
-      sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })} open={true}>
-      <CircularProgress color="inherit" />
-    </Backdrop>
-  }
   return Dlg(con, act);
 }

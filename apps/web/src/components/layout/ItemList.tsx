@@ -65,7 +65,7 @@ import {
 
 
 
-
+// ToDo: Check on virtuoso initial index to be sure it always works.
 export function ItemListLayout(): ReactNode {
   const navigate = useNavigate();
   const store: TBoundStore = useBoundStore((state) => state);
@@ -80,6 +80,7 @@ export function ItemListLayout(): ReactNode {
     pageSize: query.pagination.pageSize,
     totalRecords: 0,
   });
+
 
 
   const {
@@ -130,9 +131,10 @@ export function ItemListLayout(): ReactNode {
     navigate({ to: ".", search: { s: getRouteSearch(q) }, });
   };
 
-  function handleItemClick(anitem: IItem) {
+  function handleItemClick(idx: number, anitem: IItem) {
     store.setDisplayItem(anitem);
     store.setItemModal(true);
+    store.setItemScroll(idx);
   }
 
   function handlePageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -146,7 +148,8 @@ export function ItemListLayout(): ReactNode {
     navigate({ to: ".", search: { s: getRouteSearch(q) }, });
   };
 
-  function eachItem(itemKey: number, item: IItem): ReactNode {
+  function eachItem(itemKey: number): ReactNode {
+    const item = items[itemKey]
     let tc: string = item.name ? item.name : "";
     return (
       <Fragment>
@@ -154,7 +157,7 @@ export function ItemListLayout(): ReactNode {
           // component="div"
           disablePadding
           disableGutters
-          onClick={() => handleItemClick(item)}>
+          onClick={() => handleItemClick(itemKey, item)}>
           <ListItemButton >
             <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
           </ListItemButton>
@@ -235,11 +238,18 @@ export function ItemListLayout(): ReactNode {
     </OuterBox></ListBox>
   }
 
+  const scrollIdx = Math.max(0, Math.min(store.itemScroll - 5, store.itemScroll))
+
   if (items.length > 0) {
-    return <ListBox><Virtuoso key="data-content"
-      style={ListBoxSize} data={items}
-      itemContent={(itemIndex, item) => eachItem(itemIndex, item)}
-    /></ListBox>
+    return <ListBox>
+      <Virtuoso
+        key="data-content"
+        style={ListBoxSize}
+        initialTopMostItemIndex={scrollIdx}
+        totalCount={items.length}
+        itemContent={(ii) => eachItem(ii)}
+      />
+    </ListBox>
   }
   return <ListBox><OuterBox><ErrorAlert message="An error occurred. Please try again" /></OuterBox></ListBox>
 }

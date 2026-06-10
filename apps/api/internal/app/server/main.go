@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"errors"
+	"github.com/clerk/clerk-sdk-go/v2"
 	"net"
 	"net/http"
 	"os"
@@ -18,18 +19,21 @@ func Run() (err error) {
 	// Run application bootstrapping
 	i := bootstrap.InitInfra()
 
+	clerk.SetKey(i.Config.AuthKey)
+
 	// Handle SIGINT (CTRL+C) gracefully.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 
 	// Set up OpenTelemetry.
-	otelShutdown, err := telemetry.SetupOTelSDK(ctx, i)
+	otelShutdown, otelNoContextShutdown, err := telemetry.SetupOTelSDK(ctx, i)
 	if err != nil {
 		return
 	}
 	// Handle shutdown properly so nothing leaks.
 	defer func() {
 		err = errors.Join(err, otelShutdown(context.Background()))
+		err = errors.Join(err, otelNoContextShutdown())
 	}()
 
 	//

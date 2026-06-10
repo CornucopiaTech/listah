@@ -23,7 +23,7 @@ func GetInterceptors(infra *bootstrap.Infra) connect.Option {
 		SetRequestIdInterceptor(infra),
 		SetParentTraceInterceptor(infra),
 		RecordRequestInterceptor(infra),
+		CheckAuth(infra),
 		RecordErrorResponseInterceptor(infra),
 	)
-
 }
