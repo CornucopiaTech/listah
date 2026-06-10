@@ -44,7 +44,6 @@ func handle(i *bootstrap.Infra) http.Handler {
 	// Handle Item connect-go generated paths
 	ip, ih := v1connect.NewItemServiceHandler(itemV1.NewServer(i), icp)
 	mux.Mount(ip, ih)
-	// mux.Mount(ip, clerkhttp.WithHeaderAuthorization()(ih))
 
 	handleDoc := func(w http.ResponseWriter, r *http.Request) {
 		p := path.Join(i.Config.ProjectRoot, "public", "index.html")
