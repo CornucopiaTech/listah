@@ -74,12 +74,6 @@ export class AppError extends Error {
         if (detail.fieldViolations) {
           this.fieldViolations = detail.fieldViolations;
         }
-        // // If your backend maps the tracking ID inside the JSON structure:
-        // if (detail.type === "listah.v1.SystemErrorDetails" && typeof detail.value === "string") {
-        //   // If JSON mapping is configured, you might get a direct string,
-        //   // otherwise you'd decode base64 here if needed.
-        //   this.trackingId = detail.value;
-        // }
       });
     }
   }

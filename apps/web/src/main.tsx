@@ -38,6 +38,7 @@ declare global {
 }
 
 
+
 enableMapSet();
 export const queryClient = new QueryClient();
 
@@ -84,6 +85,7 @@ async function loadConfig() {
   window.runtimeConfig = config;
 }
 
+
 function StrictModeWrapper({ children }: { children: ReactNode }) {
   if (process.env.NODE_ENV === "development") {
     return <StrictMode>{children}</StrictMode>
@@ -94,13 +96,6 @@ function StrictModeWrapper({ children }: { children: ReactNode }) {
 function App() {
   let user;
   user = useUser().user;
-  // if (process.env.NODE_ENV === "development") {
-  //   user = { id: window.runtimeConfig.user }
-  // } else {
-  //   user = useUser().user;
-  // }
-  // //  const { user, } = process.env.NODE_ENV === "development" ? { user:  } : useUser();
-
 
   // Use a useMemo for the context value to ensure stable object reference
   const routerContext = useMemo(() => {
