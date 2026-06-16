@@ -49,7 +49,7 @@ func addDetails(d *pb.BadRequestDetails, cr *connect.Error) {
 
 func unauthorised() *connect.Error {
 	// 1. Construct Protobuf error detail
-	m := "Unable to authorised request. Please login and try again."
+	m := "Unable to authorise request. Please login and try again."
 	d := &pb.BadRequestDetails{
 		Code: pb.ErrorCode_UNAUTHORISED,
 	}

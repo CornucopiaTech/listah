@@ -1,53 +1,89 @@
 
-import { Fragment } from "react";
 import {
-  getRouteApi,
-} from '@tanstack/react-router';
+  Fragment,
+} from "react";
+import type {
+  ReactNode,
+} from 'react';
+import type {
+  UseSuspenseQueryResult,
+} from '@tanstack/react-query';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import Typography from '@mui/material/Typography';
 
 
-
-import { AppItemModal } from "@/components/layout/AppItemModal";
-import { ItemListLayout } from "@/components/layout/ItemList";
+// Internal
 import {
-  useBoundStore,
-  type TBoundStore
-} from '@/lib/store/boundStore';
+  AppItemModal
+} from "@/components/layout/AppItemModal";
+import {
+  useAppStore,
+  type TAppStore
+} from '@/store/boundStore';
 import { AppContainer } from '@/components/layout/AppContainer';
 import {
   AppPagePaper,
 } from '@/components/core/AppPaper';
-import { AppTagModal } from "@/components/layout/AppTagModal";
-import { AppFilterModal } from "@/components/layout/AppFilterModal";
+import {
+  AppTagModal
+} from "@/components/layout/AppTagModal";
+import {
+  AppFilterModal
+} from "@/components/layout/AppFilterModal";
 import {
   MenuItem,
 } from '@/components/base/Menubar';
 import {
   DefaultItem,
-} from "@/lib/helper/defaults";
+} from "@/utils/defaults";
 import {
-  AppListItemTypography,
-} from "@/components/core/Typography";
+  useItemRouteContext,
+  useItemPagination,
+} from "@/services/useItems";
+import {
+  useListItem,
+} from '@/queries/item';
+import {
+  ListLayout
+} from '@/components/layout/ListLayout';
 import type {
-  // IItem,
-  // IItemReadRequest,
-  // IItemReadResponse,
-  IItemRouteSearch,
-} from "@/lib/model/item";
-import {
-  decodeState
-} from '@/lib/helper/encoders';
+  IItem,
+  IItemReadResponse,
+} from "@/entities/item";
+
 
 
 export function Items() {
-  const store: TBoundStore = useBoundStore((state) => state);
-  const routeApi = getRouteApi('/items/');
-  const { search } = routeApi.useRouteContext();
-  const pageHeader = store.itemTitle ? store.itemTitle : search && search.title ? search.title : "All Items";
-  const urlSearch = decodeState(routeApi.useSearch().s) as unknown as IItemRouteSearch;
-  const passedTag = store.displayTag || urlSearch.refTag;
-  const passedFilter = store.displayFilter || urlSearch.refFilter;
+  const store: TAppStore = useAppStore((state) => state);
 
-  function handleItemClick() {
+  const {
+    query,
+    reference,
+    title,
+    pageHeader,
+    urlSearch,
+    passedTag,
+    passedFilter,
+  } = useItemRouteContext()
+
+  const {
+    pageInfo,
+    pageChange,
+    pageSizeChange,
+    setPaginationInfo,
+  } = useItemPagination(query, title, reference);
+
+  const {
+    data, isPending, isFetching, isError, error
+  }: UseSuspenseQueryResult<IItemReadResponse> = useListItem(query);
+
+  if (data) {
+    setPaginationInfo(data);
+  }
+
+  function newItemClick() {
     let newTags: string[] = []
     if (passedTag) {
       newTags = [...newTags, passedTag.id]
@@ -59,8 +95,7 @@ export function Items() {
     store.setItemModal(true);
   }
 
-
-  function handleCategoryClick() {
+  function updateTagFilterClick() {
     if (passedTag) {
       store.setTagModal(true);
     } else if (passedFilter) {
@@ -68,32 +103,66 @@ export function Items() {
     }
   }
 
+  function listItemClick(idx: number, anitem: IItem) {
+    store.setDisplayItem(anitem);
+    store.setItemModal(true);
+    store.setItemScroll(idx);
+  }
+
+  function renderItem(itemKey: number): ReactNode {
+    const items = data?.items ?? [];
+    const item = items[itemKey]
+    let tc: string = item.name ? item.name : "";
+    return (
+      <Fragment>
+        <ListItem key={itemKey + item.id}
+          disablePadding
+          disableGutters
+          onClick={() => listItemClick(itemKey, item)}>
+          <ListItemButton >
+            <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
+          </ListItemButton>
+        </ListItem>
+      </Fragment>
+    );
+  }
+
+  const props = {
+    data: data?.items ?? [],
+    isPending, isFetching, isError, error,
+    scrollIndex: Math.max(0, store.itemScroll),
+    pagination: pageInfo.current,
+    renderItem,
+    pageSizeChange,
+    pageChange,
+  }
   const mItems = (
     <Fragment>
-      <MenuItem key="tag" onClick={handleItemClick}>
-        <AppListItemTypography>Add new item </AppListItemTypography>
+      <MenuItem key="tag" onClick={newItemClick}>
+        <Typography variant="body1">Add new item </Typography>
       </MenuItem>
       {
         (store.displayFilter || urlSearch?.refFilter) &&
-        <MenuItem key="filter" onClick={handleCategoryClick}>
-          <AppListItemTypography>Update filter </AppListItemTypography>
+        <MenuItem key="filter" onClick={updateTagFilterClick}>
+          <Typography variant="body1">Update filter</Typography>
         </MenuItem>
       }
       {
         (store.displayTag || urlSearch?.refTag) &&
-        <MenuItem key="tag" onClick={handleCategoryClick}>
-          <AppListItemTypography>Update tag </AppListItemTypography>
+        <MenuItem key="tag" onClick={updateTagFilterClick}>
+          <Typography variant="body1">Update tag </Typography>
         </MenuItem>
       }
     </Fragment >
   );
+
   return (
     <AppContainer mw="md" menuItems={mItems} title={pageHeader}>
       {store.itemModal && <AppItemModal passedPropTag={passedTag} passedPropFilter={passedFilter} />}
       {store.tagModal && <AppTagModal itemTag={passedTag} />}
       {store.filterModal && <AppFilterModal itemFilter={passedFilter} />}
       <AppPagePaper>
-        <ItemListLayout />
+        <ListLayout {...props} />
       </AppPagePaper>
     </AppContainer>
   );

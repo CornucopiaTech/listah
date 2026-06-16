@@ -66,39 +66,41 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 // Internal imports
 import {
-  useBoundStore,
-  type TBoundStore
-} from '@/lib/store/boundStore';
-import { DefaultItem } from '@/lib/helper/defaults';
+  useAppStore,
+  type TAppStore
+} from '@/store/boundStore';
+import { DefaultItem } from '@/utils/defaults';
 import {
   ZItem
-} from "@/lib/model/item";
-import { postItem } from "@/lib/helper/fetchers";
+} from "@/entities/item";
+import { postItem } from "@/utils/fetchers";
 import type {
   IItem,
   IFormItem,
   IFormProps,
-} from "@/lib/model/item";
+} from "@/entities/item";
 import type { AppTheme } from '@/system/theme';
 import {
   DefaultTagRead,
   DefaultTag,
-} from '@/lib/helper/defaults';
+} from '@/utils/defaults';
 import type {
   ITag,
   ITagReadResponse,
-} from "@/lib/model/tag";
+} from "@/entities/tag";
 import type {
   IFilter,
-} from "@/lib/model/filter";
+} from "@/entities/filter";
 import {
   tagGroupOptions,
-} from '@/lib/helper/querying';
+} from '@/utils/querying';
 import {
   ItemFormTagBox,
   ItemFormSpeedDialBox,
 } from "@/components/core/AppBox";
 import { AppModalCloseButton } from "@/components/core/AppButton";
+import { useUpdateItem } from '@/queries/item';
+
 
 
 
@@ -106,12 +108,12 @@ type itemFields = "id" | "userId" | "name" | "note" | `props[${number}]` | "soft
 
 
 export function AppItemModal({ passedPropTag, passedPropFilter }: { passedPropTag?: ITag, passedPropFilter?: IFilter }): ReactNode {
-  const store: TBoundStore = useBoundStore((state) => state);
+  const store: TAppStore = useAppStore((state) => state);
   const { user } = useUser();
   const queryClient = useQueryClient();
   const theme: AppTheme = useTheme();
   const [tagToDelete, setTagToDelete] = useState<ITag | null>(null);
-  const routeApi = getRouteApi('/items/');
+  const routeApi = getRouteApi('/items');
   const { search } = routeApi.useRouteContext();
   const { query } = search;
   const tagQuery = {
@@ -127,7 +129,8 @@ export function AppItemModal({ passedPropTag, passedPropFilter }: { passedPropTa
 
   const serverTags: ITag[] = data?.tags ?? [];
   const knownServerTagNames = useRef<Set<string>>(new Set(serverTags.map(p => p.name)));
-  const item: IItem = useBoundStore((state) => state.displayItem);
+  const item: IItem = useAppStore((state) => state.displayItem);
+  const updateItem = useUpdateItem();
   const serverTagPropMap = new Map<string, { value: string[] }>(Object.entries(data?.tagidPropMap ?? {}));
 
   // Use the list of all possible tags for the display object using the tags in the item iteself and the tags from the passed tag or passed filter.
@@ -327,7 +330,7 @@ export function AppItemModal({ passedPropTag, passedPropFilter }: { passedPropTa
       softDelete: value.softDelete,
     }
 
-    mutation.mutate(submitValue);
+    updateItem.mutate(submitValue);
   }
 
   function getSimpleField(key: itemFields) {

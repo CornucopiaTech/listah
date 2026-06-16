@@ -15,7 +15,7 @@ var ItemConflictFields = []string{
 }
 var defaultPagination = Pagination{
 	PageNumber: 1,
-	PageSize:   100,
+	PageSize:   1000,
 	Sort:       "name ASC",
 }
 

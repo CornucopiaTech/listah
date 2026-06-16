@@ -57,22 +57,21 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 // Internal imports
 
-import { AppH6Typography } from "@/components/core/Typography";
 import {
-  useBoundStore,
-  type TBoundStore
-} from '@/lib/store/boundStore';
-import { postFilter } from "@/lib/helper/fetchers";
+  useAppStore,
+  type TAppStore
+} from '@/store/boundStore';
+import { postFilter } from "@/utils/fetchers";
 import type {
   ITag,
   ITagReadResponse,
-} from "@/lib/model/tag";
-import { tagGroupOptions } from '@/lib/helper/querying';
-import type { IFilter, } from "@/lib/model/filter";
-import { ZFilter } from "@/lib/model/filter";
+} from "@/entities/tag";
+import { tagGroupOptions } from '@/utils/querying';
+import type { IFilter, } from "@/entities/filter";
+import { ZFilter } from "@/entities/filter";
 import {
   DefaultTagRead,
-} from '@/lib/helper/defaults';
+} from '@/utils/defaults';
 import {
   SpaceBetweenBox,
   ItemFormSpeedDialBox,
@@ -85,7 +84,7 @@ import {
 
 
 export function AppFilterModal({ itemFilter }: { itemFilter?: IFilter }): ReactNode {
-  const store: TBoundStore = useBoundStore((state) => state);
+  const store: TAppStore = useAppStore((state) => state);
   const queryClient = useQueryClient();
   const { user } = useUser();
 
@@ -357,7 +356,7 @@ export function AppFilterModal({ itemFilter }: { itemFilter?: IFilter }): ReactN
       <Alert severity="error"> {error?.message || "An error occurred. Please try again"}</Alert>
     );
   }
-  if (tagCategories.length == 0) { return Dlg(<AppH6Typography> No tags found </AppH6Typography>) }
+  if (tagCategories.length == 0) { return Dlg(<Typography variant="h6"> No tags found </Typography>) }
 
   const con = (
     <Box component="section" >

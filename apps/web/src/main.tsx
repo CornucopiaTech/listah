@@ -15,6 +15,7 @@ import { ThemeProvider, } from '@mui/material/styles';
 import { useUser } from '@clerk/react';
 import LinearProgress from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 // Internal imports
@@ -22,7 +23,6 @@ import Box from '@mui/material/Box';
 import { routeTree } from './routeTree.gen'
 // import reportWebVitals from './reportWebVitals.ts'
 import NotFound from '@/components/common/NotFound';
-import { ErrorAlert } from "@/components/core/Alerts";
 import theme from '@/system/theme';
 
 
@@ -46,7 +46,7 @@ export const queryClient = new QueryClient();
 const router = createRouter({
   routeTree,
   defaultPendingComponent: LinearProgress,
-  defaultErrorComponent: ({ error }) => <ErrorAlert message={error.message} />,
+  defaultErrorComponent: ({ error }) => <Alert severity="error">{error.message}</Alert>,
   defaultNotFoundComponent: NotFound,
   Wrap: Wrapper,
   context: {

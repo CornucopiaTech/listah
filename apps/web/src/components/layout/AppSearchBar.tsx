@@ -14,20 +14,20 @@ import { useUser } from '@clerk/react';
 
 import type {
   IItemReadRequest,
-} from "@/lib/model/item";
-import { encodeState } from '@/lib/helper/encoders';
+} from "@/entities/item";
+import { encodeState } from '@/utils/encoders';
 import { AppSearchPaper } from '@/components/core/AppPaper';
-import { useBoundStore, type TBoundStore } from '@/lib/store/boundStore';
+import { useAppStore, type TAppStore } from '@/store/boundStore';
 import {
   DefaultItemRead,
   DefaultIItemRouteSearch,
 
-} from '@/lib/helper/defaults';
+} from '@/utils/defaults';
 
 
 
 export function AppItemSearchBar(): ReactNode {
-  const store: TBoundStore = useBoundStore((state) => state);
+  const store: TAppStore = useAppStore((state) => state);
   const { user } = useUser();
   const navigate = useNavigate();
   const textValue = store.searchQuery ? store.searchQuery : "";

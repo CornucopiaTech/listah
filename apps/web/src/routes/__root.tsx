@@ -9,10 +9,10 @@ import {
   tagGroupOptions,
   tagPropertyGroupOptions
 
-} from '@/lib/helper/querying';
+} from '@/utils/querying';
 import {
   DefaultTagRead,
-} from '@/lib/helper/defaults';
+} from '@/utils/defaults';
 
 
 

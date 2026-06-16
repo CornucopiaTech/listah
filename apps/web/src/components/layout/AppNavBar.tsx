@@ -26,12 +26,12 @@ import Link from '@mui/material/Link';
 import {
   AppBarHeight,
   AppDrawerWidth
-} from '@/lib/helper/defaults';
-import type { AppTheme } from '@/lib/styles/theme';
+} from '@/utils/defaults';
+import type { AppTheme } from '@/system/theme';
 import {
-  useBoundStore,
-  type TBoundStore
-} from '@/lib/store/boundStore';
+  useAppStore,
+  type TAppStore
+} from '@/store/boundStore';
 import {
   AppItemSearchBar,
 } from "@/components/layout/AppSearchBar";
@@ -89,7 +89,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export function AppNavBar({ menuItems, title }: { menuItems?: ReactNode, title?: string }) {
   const theme: AppTheme = useTheme();
-  const store: TBoundStore = useBoundStore((state) => state);
+  const store: TAppStore = useAppStore((state) => state);
   const pathname = useLocation({
     select: (location) => location.pathname,
   });

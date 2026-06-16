@@ -1,4 +1,5 @@
 
+
 import {
   Fragment,
   useEffect,
@@ -53,17 +54,17 @@ import CircularProgress from '@mui/material/CircularProgress';
 // Internal imports
 import type { AppTheme } from '@/system/theme';
 import {
-  useBoundStore,
-  type TBoundStore
-} from '@/lib/store/boundStore';
-import { DefaultTag } from '@/lib/helper/defaults';
-import { postTag } from "@/lib/helper/fetchers";
+  useAppStore,
+  type TAppStore
+} from '@/store/boundStore';
+import { DefaultTag } from '@/utils/defaults';
+import { postTag } from "@/utils/fetchers";
 import type {
   ITag,
-} from "@/lib/model/tag";
+} from "@/entities/tag";
 import {
   ZTag,
-} from "@/lib/model/tag";
+} from "@/entities/tag";
 import {
   ItemFormTagBox,
   ItemFormSpeedDialBox,
@@ -78,7 +79,7 @@ import {
 type itemFields = "id" | "userId" | "name" | `props[${number}]`
 
 export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
-  const store: TBoundStore = useBoundStore((state) => state);
+  const store: TAppStore = useAppStore((state) => state);
   const theme: AppTheme = useTheme();
   const queryClient = useQueryClient();
   const { user } = useUser();
