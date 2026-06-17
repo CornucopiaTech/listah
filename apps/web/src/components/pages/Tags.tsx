@@ -1,5 +1,6 @@
 import {
   Fragment,
+  useRef,
 } from "react";
 import type {
   ReactNode,
@@ -18,9 +19,13 @@ import Chip from '@mui/material/Chip';
 import {
   useAppStore,
   type TAppStore
-} from '@/store/boundStore';
-import { AppTagModal } from "@/components/layout/AppTagModal";
-import { AppFilterModal } from "@/components/layout/AppFilterModal";
+} from '@/hooks/store/boundStore';
+import {
+  AppTagModal
+} from "@/components/layout/AppTagModal";
+import {
+  AppFilterModal
+} from "@/components/layout/AppFilterModal";
 import {
   AppPagePaper,
 } from '@/components/core/AppPaper';
@@ -30,18 +35,29 @@ import {
 } from '@/components/base/Menubar';
 import {
   useListTag,
-} from '@/queries/tag';
+} from '@/hooks/queries/tag';
 import {
   useTagRouteContext,
   useTagPagination,
   useTagListItemClick,
-} from '@/services/useTags';
+} from '@/hooks/services/useTags';
 import {
   ListLayout
 } from '@/components/layout/ListLayout';
+import {
+  DefaultPagination,
+} from '@/utils/defaults';
 import type {
+  IItemReadRequest,
+  IItemReadResponse,
+  ITag,
+  IFilter,
   ITagReadResponse,
-} from '@/entities/tag';
+  IPagination,
+} from '@/domain/entities';
+import {
+  setPaginationInfo
+} from "@/domain/rules";
 
 
 export function Tags() {
@@ -49,11 +65,15 @@ export function Tags() {
   const {
     query,
   } = useTagRouteContext()
+  let pageInfo = useRef<IPagination>({
+    pageNumber: query.pagination.pageNumber,
+    pageSize: query.pagination.pageSize && query.pagination.pageSize ? query.pagination.pageSize : DefaultPagination.pageSize,
+    totalRecords: 0,
+    sort: "name",
+  });
   const {
-    pageInfo,
     pageChange,
     pageSizeChange,
-    setPaginationInfo,
   } = useTagPagination(query);
   const {
     data, isPending, isFetching, isError, error
@@ -63,8 +83,12 @@ export function Tags() {
   } = useTagListItemClick(query);
 
   if (data) {
-    setPaginationInfo(data);
+    pageInfo.current = setPaginationInfo(
+      { ...data.pagination, totalRecords: data.totalRecordCount },
+      pageInfo.current
+    );
   }
+
   function newTagClick() {
     store.setTagModal(true);
   }
@@ -74,11 +98,7 @@ export function Tags() {
     const item = tags[itemKey];
     const tc = item && item.name ? item.name : "";
     return (
-      <ListItem
-        key={itemKey + tc}
-        component="div" disablePadding
-        onClick={() => listItemClick(itemKey, item)}
-      >
+      <ListItem key={itemKey + tc} component="div" disablePadding onClick={() => listItemClick(itemKey, item)} >
         <ListItemButton>
           <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
           <Chip
@@ -107,12 +127,13 @@ export function Tags() {
       <Typography variant="body1">Create new tag </Typography>
     </MenuItem>
   </Fragment >
+
+  console.info('Before return')
   return (
-    <AppContainer mw="md" menuItems={mItems}>
+    <AppContainer mw="sm" menuItems={mItems}>
       {store.tagModal && <AppTagModal />}
       {store.filterModal && <AppFilterModal />}
       <AppPagePaper key="tags">
-        {/* <TagListLayout /> */}
         <ListLayout {...props} />
       </AppPagePaper>
     </AppContainer >

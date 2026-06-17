@@ -1,7 +1,7 @@
 
 import { decodeState, } from '@/utils/encoders';
 import { DefaultItemRead } from '@/utils/defaults';
-import type { IItemReadRequest } from '@/entities/item';
+import type { IItemReadRequest } from '@/domain/entities/item';
 
 
 export function setItemsUrlSearch(params: any): IItemReadRequest { // eslint-disable-line @typescript-eslint/no-explicit-any

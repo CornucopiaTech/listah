@@ -60,15 +60,15 @@ import CircularProgress from '@mui/material/CircularProgress';
 import {
   useAppStore,
   type TAppStore
-} from '@/store/boundStore';
+} from '@/hooks/store/boundStore';
 import { postFilter } from "@/utils/fetchers";
 import type {
   ITag,
   ITagReadResponse,
-} from "@/entities/tag";
+} from "@/domain/entities/tag";
 import { tagGroupOptions } from '@/utils/querying';
-import type { IFilter, } from "@/entities/filter";
-import { ZFilter } from "@/entities/filter";
+import type { IFilter, } from "@/domain/entities/filter";
+import { ZFilter } from "@/domain/entities/filter";
 import {
   DefaultTagRead,
 } from '@/utils/defaults';

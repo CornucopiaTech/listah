@@ -17,7 +17,7 @@ import {
 } from '@/utils/defaults';
 import type {
   ITagReadRequest,
-} from "@/entities/tag";
+} from "@/domain/entities/tag";
 import { tagGroupOptions } from '@/utils/querying';
 
 

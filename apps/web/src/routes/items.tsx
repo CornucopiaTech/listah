@@ -15,7 +15,7 @@ import {
 } from '@/utils/defaults';
 import type {
   IItemRouteSearch,
-} from "@/entities/item";
+} from "@/domain/entities/item";
 import { itemGroupOptions } from '@/utils/querying';
 
 

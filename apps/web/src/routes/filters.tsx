@@ -15,7 +15,7 @@ import {
 } from '@/utils/defaults';
 import type {
   IFilterReadRequest,
-} from "@/entities/filter";
+} from "@/domain/entities/filter";
 import { filterGroupOptions } from '@/utils/querying';
 
 

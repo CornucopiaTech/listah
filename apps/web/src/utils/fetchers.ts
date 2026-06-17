@@ -4,28 +4,28 @@ import type {
   IItemReadRequest,
   IItem,
   IItemReadResponse,
-} from '@/entities/item';
+} from '@/domain/entities/item';
 import type {
   ITag,
   ITagReadRequest,
   ITagReadResponse,
   ITagPropertyReadRequest,
   ITagPropertyReadResponse,
-} from '@/entities/tag';
+} from '@/domain/entities/tag';
 import type {
   IFilter,
   IFilterReadRequest,
   IFilterReadResponse
-} from '@/entities/filter';
+} from '@/domain/entities/filter';
 import {
   ZItemReadResponse,
-} from "@/entities/item";
+} from "@/domain/entities/item";
 import {
   ZTagReadResponse,
   ZTagPropertyReadResponse,
-} from "@/entities/tag";
+} from "@/domain/entities/tag";
 import { ApiEndpoints } from '@/utils/defaults';
-import { AppError, type BackendErrorPayload } from "@/entities/common";
+import { AppError, type BackendErrorPayload } from "@/domain/entities/common";
 
 
 const genericError = "An unexpected error occurred. Please try again later";
@@ -237,7 +237,8 @@ export async function getTag(opts: ITagReadRequest): Promise<ITagReadResponse> {
       throw new AppError(payload?.message || genericError, res.status, rId, payload);
     }
     const data = await res.json();
-    return ZTagReadResponse.parse(data);
+    // return ZTagReadResponse.parse(data);
+    return data;
 
   } catch (e) {
     if (e instanceof AppError) throw e;

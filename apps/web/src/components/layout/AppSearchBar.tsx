@@ -14,10 +14,10 @@ import { useUser } from '@clerk/react';
 
 import type {
   IItemReadRequest,
-} from "@/entities/item";
+} from "@/domain/entities/item";
 import { encodeState } from '@/utils/encoders';
 import { AppSearchPaper } from '@/components/core/AppPaper';
-import { useAppStore, type TAppStore } from '@/store/boundStore';
+import { useAppStore, type TAppStore } from '@/hooks/store/boundStore';
 import {
   DefaultItemRead,
   DefaultIItemRouteSearch,

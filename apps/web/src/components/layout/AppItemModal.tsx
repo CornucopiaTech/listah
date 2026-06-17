@@ -68,17 +68,17 @@ import CircularProgress from '@mui/material/CircularProgress';
 import {
   useAppStore,
   type TAppStore
-} from '@/store/boundStore';
+} from '@/hooks/store/boundStore';
 import { DefaultItem } from '@/utils/defaults';
 import {
   ZItem
-} from "@/entities/item";
+} from "@/domain/entities/item";
 import { postItem } from "@/utils/fetchers";
 import type {
   IItem,
   IFormItem,
   IFormProps,
-} from "@/entities/item";
+} from "@/domain/entities/item";
 import type { AppTheme } from '@/system/theme';
 import {
   DefaultTagRead,
@@ -87,10 +87,10 @@ import {
 import type {
   ITag,
   ITagReadResponse,
-} from "@/entities/tag";
+} from "@/domain/entities/tag";
 import type {
   IFilter,
-} from "@/entities/filter";
+} from "@/domain/entities/filter";
 import {
   tagGroupOptions,
 } from '@/utils/querying';
@@ -99,7 +99,7 @@ import {
   ItemFormSpeedDialBox,
 } from "@/components/core/AppBox";
 import { AppModalCloseButton } from "@/components/core/AppButton";
-import { useUpdateItem } from '@/queries/item';
+import { useUpdateItem } from '@/hooks/queries/item';
 
 
 

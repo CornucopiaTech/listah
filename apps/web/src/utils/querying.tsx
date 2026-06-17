@@ -6,9 +6,9 @@ import {
 
 import type {
   IItemReadRequest,
-} from '@/entities/item';
-import type { ITagReadRequest } from '@/entities/tag';
-import type { IFilterReadRequest } from '@/entities/filter';
+} from '@/domain/entities/item';
+import type { ITagReadRequest } from '@/domain/entities/tag';
+import type { IFilterReadRequest } from '@/domain/entities/filter';
 import {
   getItem, getFilter, getTag, getTagProperty
 } from '@/utils/fetchers';

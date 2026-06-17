@@ -4,20 +4,20 @@ import type {
   IItem,
   IItemReadRequest,
   IItemRouteSearch,
-} from '@/entities/item';
+} from '@/domain/entities/item';
 import type {
   ITagReadRequest,
   ITag,
-} from '@/entities/tag';
+} from '@/domain/entities/tag';
 import type {
   IFilterReadRequest,
   IFilter,
-} from '@/entities/filter';
+} from '@/domain/entities/filter';
 import type {
   IApiEndpointConfig,
   ISearch,
   IPagination,
-} from '@/entities/common';
+} from '@/domain/entities/common';
 
 
 

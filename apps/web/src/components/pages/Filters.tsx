@@ -1,9 +1,16 @@
 import {
   Fragment,
+  useRef,
 } from "react";
 import type {
   ReactNode,
+  ChangeEvent,
+  MouseEvent,
 } from 'react';
+import {
+  useNavigate,
+  getRouteApi,
+} from '@tanstack/react-router';
 import type {
   UseSuspenseQueryResult,
 } from '@tanstack/react-query';
@@ -18,7 +25,7 @@ import Chip from '@mui/material/Chip';
 import {
   useAppStore,
   type TAppStore
-} from '@/store/boundStore';
+} from '@/hooks/store/boundStore';
 import { AppTagModal } from "@/components/layout/AppTagModal";
 import { AppFilterModal } from "@/components/layout/AppFilterModal";
 import {
@@ -30,33 +37,45 @@ import {
 } from '@/components/base/Menubar';
 import {
   useListFilter,
-} from '@/queries/filter';
+} from '@/hooks/queries/filter';
 import {
   useFilterRouteContext,
   useFilterPagination,
   useFilterListItemClick,
-} from '@/services/useFilters';
+} from '@/hooks/services/useFilters';
 import {
   ListLayout
 } from '@/components/layout/ListLayout';
 import type {
+  IPagination,
+} from '@/domain/entities';
+import {
+  DefaultPagination,
+} from '@/utils/defaults';
+import {
+  setPaginationInfo
+} from "@/domain/rules";
+import type {
   IFilter,
+  IFilterReadRequest,
   IFilterReadResponse,
-} from '@/entities/filter';
-
+} from "@/domain/entities/filter";
+import {
+  encodeState
+} from '@/utils/encoders';
 
 
 export function Filters() {
   const store: TAppStore = useAppStore((state) => state);
-  const {
-    query,
-  } = useFilterRouteContext()
-  const {
-    pageInfo,
-    pageChange,
-    pageSizeChange,
-    setPaginationInfo,
-  } = useFilterPagination(query);
+  const navigate = useNavigate();
+  // routeApi.useSearch() only contains data from validate search and does not contain the information that was injected into the route loader from the context. So the search information retrieved from routeApi.useSearch() will not contain the user information.
+  const routeApi = getRouteApi('/filters');
+  const { search: query } = routeApi.useRouteContext();
+
+  // const {
+  //   pageChange,
+  //   pageSizeChange,
+  // } = useFilterPagination(query);
   const {
     data, isPending, isFetching, isError, error
   }: UseSuspenseQueryResult<IFilterReadResponse> = useListFilter(query);
@@ -64,13 +83,49 @@ export function Filters() {
     listItemClick
   } = useFilterListItemClick(query);
 
+  let pageInfo = useRef<IPagination>({
+    pageNumber: query.pagination.pageNumber,
+    pageSize: query.pagination.pageSize && query.pagination.pageSize ? query.pagination.pageSize : DefaultPagination.pageSize,
+    totalRecords: 0,
+    sort: "name",
+  });
+
+  console.info('In filter', query);
   if (data) {
-    setPaginationInfo(data);
+    pageInfo.current = setPaginationInfo(
+      { ...data.pagination, totalRecords: data.totalRecordCount },
+      pageInfo.current
+    );
   }
 
   function newFilterClick() {
     store.setFilterModal(true);
   }
+  const pageChange = (
+    event: MouseEvent<HTMLButtonElement> | null,
+    value: number
+  ) => {
+    event && event.stopPropagation();
+    const q: IFilterReadRequest = {
+      ...query, pagination: {
+        ...query.pagination, pageNumber: value
+      }
+    };
+    console.info('In pageChange', q);
+    const encoded = encodeState(q);
+    navigate({ to: ".", search: { s: encoded } });
+  };
+
+
+  const pageSizeChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const q: IFilterReadRequest = {
+      ...query, pagination: {
+        ...query.pagination, pageSize: parseInt(e.target.value, 10), pageNumber: 1,
+      }
+    };
+    const encoded = encodeState(q);
+    navigate({ to: ".", search: { s: encoded } });
+  };
   function renderItem(itemKey: number): ReactNode {
     const filters = data?.filters ?? [];
     const item: IFilter = filters[itemKey];

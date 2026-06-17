@@ -31,7 +31,7 @@ import type { AppTheme } from '@/system/theme';
 import {
   useAppStore,
   type TAppStore
-} from '@/store/boundStore';
+} from '@/hooks/store/boundStore';
 import {
   AppItemSearchBar,
 } from "@/components/layout/AppSearchBar";

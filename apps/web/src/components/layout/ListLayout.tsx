@@ -25,7 +25,7 @@ import Alert from '@mui/material/Alert';
 
 import type {
   IPagination,
-} from '@/entities/common';
+} from '@/domain/entities/common';
 import {
   ListBoxSize,
 } from '@/utils/defaults';
