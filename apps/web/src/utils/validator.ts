@@ -1,15 +1,17 @@
 
 import { decodeState, } from '@/utils/encoders';
-import { DefaultItemRead } from '@/utils/defaults';
-import type { IItemReadRequest } from '@/domain/entities/item';
+import {
+  type IReadRequest,
+  DefaultReadRequest,
+} from '@/domain/entities';
 
 
-export function setItemsUrlSearch(params: any): IItemReadRequest { // eslint-disable-line @typescript-eslint/no-explicit-any
+export function setItemsUrlSearch(params: any): IReadRequest { // eslint-disable-line @typescript-eslint/no-explicit-any
   if (!params || Object.keys(params).length === 0 || !params.s) {
     if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
       console.info("In validateItemQueryParams - using default");
     }
-    return DefaultItemRead;
+    return DefaultReadRequest;
   }
 
   if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
@@ -23,7 +25,7 @@ export function setItemsUrlSearch(params: any): IItemReadRequest { // eslint-dis
     console.info("In validateItemQueryParams - Decoded ");
     console.info(dcd);
   }
-  return dcd as IItemReadRequest;
+  return dcd as IReadRequest;
   // console.info("In validateItemQueryParams - Parsed ");
   // console.info(parsed);
   // return parsed.data
@@ -31,16 +33,16 @@ export function setItemsUrlSearch(params: any): IItemReadRequest { // eslint-dis
 }
 
 
-export function validateItemsUrlSearch(params: any): IItemReadRequest { // eslint-disable-line @typescript-eslint/no-explicit-any
+export function validateItemsUrlSearch(params: any): IReadRequest { // eslint-disable-line @typescript-eslint/no-explicit-any
   if (!params || Object.keys(params).length === 0 || !params.s) {
-    return DefaultItemRead;
+    return DefaultReadRequest;
   }
   const dcd = decodeState(params.s);
   // const parsed = ZItemsSearch.safeParse(dcd);
 
   // console.info("In validateItemQueryParams - Decoded ");
   // console.info(dcd);
-  return dcd as IItemReadRequest;
+  return dcd as IReadRequest;
   // return parsed.data
 
 }

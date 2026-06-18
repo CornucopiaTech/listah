@@ -11,29 +11,27 @@ import {
 } from '@/hooks/store/boundStore';
 import type {
   IFilter,
-  IFilterReadRequest,
-} from "@/domain/entities/filter";
+  IReadRequest,
+} from "@/domain/entities";
+import {
+  DefaultReadRequest,
+} from "@/domain/entities";
 import {
   encodeState
 } from '@/utils/encoders';
-import {
-  DefaultItemRead,
-} from '@/utils/defaults';
-import type {
-  IItemReadRequest,
-} from '@/domain/entities/item';
 
 
 
-export function useFilterListItemClick(query: IFilterReadRequest) {
+
+export function useFilterListItemClick(query: IReadRequest) {
   const navigate = useNavigate();
   const store: TAppStore = useAppStore((state) => state);
   const listItemClick = (idx: number, it: IFilter) => {
     const pageTitle = it && it.name ? `##${it.name}` : "Filters";
-    const q: IItemReadRequest = {
-      ...DefaultItemRead,
-      userId: query.userId,
-      query: { ...DefaultItemRead.query, tags: it.tags ? it.tags : [] },
+    const q: IReadRequest = {
+      ...DefaultReadRequest,
+
+      query: { ...DefaultReadRequest.query, userId: query.query.userId, tags: it.tags ? it.tags : [] },
     };
     const s = { query: q, title: pageTitle, refFilter: it, }
     const encoded = encodeState(s);

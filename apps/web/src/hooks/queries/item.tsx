@@ -13,34 +13,40 @@ import type {
 // Internal imports
 import {
   ZItem
-} from "@/domain/entities/item";
-import {
-  QueryStaleTime
-} from '@/utils/defaults';
+} from "@/domain/entities";
 import type {
   IItem,
-  IItemReadRequest,
+  IReadRequest,
   IItemReadResponse,
   // IItemRouteSearch,
-} from "@/domain/entities/item";
+} from "@/domain/entities";
 import {
   getItem,
   postItem,
-} from '@/utils/fetchers';
-
+} from '@/infra/api';
+import {
+  QueryStaleTime
+} from '@/utils/defaults';
 
 if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
   console.info("Node environment", process.env.NODE_ENV)
 }
 
 
-export function useListItem(opts: IItemReadRequest): UseSuspenseQueryResult<IItemReadResponse> {
-  return useSuspenseQuery(queryOptions({
+
+
+export function itemGroupOptions(opts: IReadRequest) {
+  return queryOptions({
     queryKey: ["item", opts],
     queryFn: () => getItem(opts),
     staleTime: QueryStaleTime,
-    enabled: !!opts?.userId,
-  }))
+    enabled: !!opts?.query?.userId,
+  });
+}
+
+
+export function useListItem(opts: IReadRequest): UseSuspenseQueryResult<IItemReadResponse> {
+  return useSuspenseQuery(itemGroupOptions(opts))
 }
 
 

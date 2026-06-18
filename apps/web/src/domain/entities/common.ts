@@ -17,6 +17,16 @@ export interface IApiEndpointConfig {
   updateFilter: string;
 }
 
+export const ApiEndpoints: IApiEndpointConfig = {
+  readItem: "listah.v1.ItemService/ReadItem",
+  readTag: "listah.v1.ItemService/ReadTag",
+  readTagProperty: "listah.v1.ItemService/ReadTagProperty",
+  readFilter: "listah.v1.ItemService/ReadFilter",
+  updateTag: "listah.v1.ItemService/UpsertTag",
+  updateItem: "listah.v1.ItemService/UpsertItem",
+  updateFilter: "listah.v1.ItemService/UpsertFilter",
+}
+
 
 export type AuditUpdaterEnum = "AUDIT_UPDATER_ENUM_UNSPECIFIED" | "AUDIT_UPDATER_ENUM_FRONTEND" | "AUDIT_UPDATER_ENUM_SYSOPS";
 
@@ -27,23 +37,6 @@ export interface TraceBaggage {
   tracestate?: string;
   b3?: string;
 }
-
-export const ZPagination = z.object({
-  pageSize: z.number().catch(200),
-  pageNumber: z.number().catch(1),
-  sort: z.string().catch('name'),
-  totalRecords: z.number().catch(0),
-});
-export type IPagination = z.infer<typeof ZPagination>;
-
-// Item Definitions
-export const ZSearch = z.object({
-  tags: z.array(z.string()).catch([]),
-  filters: z.array(z.string()).catch([]),
-  text: z.string().catch(''),
-});
-export type ISearch = z.infer<typeof ZSearch>;
-
 
 export interface BackendErrorPayload {
   code: string;

@@ -69,37 +69,37 @@ import {
   useAppStore,
   type TAppStore
 } from '@/hooks/store/boundStore';
-import { DefaultItem } from '@/utils/defaults';
 import {
   ZItem
 } from "@/domain/entities/item";
-import { postItem } from "@/utils/fetchers";
+import { postItem } from "@/infra/api";
+import type { AppTheme } from '@/system/theme';
+import {
+  DefaultReadRequest,
+  DefaultTag,
+  DefaultItem
+} from "@/domain/entities";
 import type {
   IItem,
   IFormItem,
   IFormProps,
-} from "@/domain/entities/item";
-import type { AppTheme } from '@/system/theme';
-import {
-  DefaultTagRead,
-  DefaultTag,
-} from '@/utils/defaults';
-import type {
   ITag,
   ITagReadResponse,
-} from "@/domain/entities/tag";
-import type {
   IFilter,
-} from "@/domain/entities/filter";
+} from "@/domain/entities";
 import {
   tagGroupOptions,
-} from '@/utils/querying';
+} from '@/hooks/queries';
 import {
   ItemFormTagBox,
   ItemFormSpeedDialBox,
 } from "@/components/core/AppBox";
-import { AppModalCloseButton } from "@/components/core/AppButton";
-import { useUpdateItem } from '@/hooks/queries/item';
+import {
+  AppModalCloseButton
+} from "@/components/core/AppButton";
+import {
+  useUpdateItem
+} from '@/hooks/queries/item';
 
 
 
@@ -117,9 +117,9 @@ export function AppItemModal({ passedPropTag, passedPropFilter }: { passedPropTa
   const { search } = routeApi.useRouteContext();
   const { query } = search;
   const tagQuery = {
-    ...DefaultTagRead,
+    ...DefaultReadRequest,
     userId: query.userId,
-    pagination: { ...DefaultTagRead.pagination, pageSize: -1 }
+    pagination: { ...DefaultReadRequest.pagination, pageSize: -1 }
   }
   const {
     isPending, isError, data, error

@@ -25,7 +25,7 @@ import Alert from '@mui/material/Alert';
 
 import type {
   IPagination,
-} from '@/domain/entities/common';
+} from '@/domain/entities';
 import {
   ListBoxSize,
 } from '@/utils/defaults';
@@ -62,7 +62,7 @@ export function ListBox({
     value: number) => void
 
 }): ReactNode {
-  const totalPages = Math.max(1, Math.ceil(pagination.totalRecords / pagination.pageSize));
+  const totalPages = Math.max(1, Math.ceil(pagination.volume / pagination.size));
   return (
     <Fragment>
       <Stack spacing={0}>
@@ -75,20 +75,20 @@ export function ListBox({
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={pagination.pageSize}
+                value={pagination.size}
                 label="rows-per-page"
                 //  @ts-ignore
                 onChange={pageSizeChange}
               >
-                <MenuItem value={200}>200</MenuItem>
-                <MenuItem value={500}>500</MenuItem>
-                <MenuItem value={1000}>1000</MenuItem>
+                <MenuItem value={128}>128</MenuItem>
+                <MenuItem value={512}>512</MenuItem>
+                <MenuItem value={2048}>2048</MenuItem>
                 <MenuItem value={-1}>All</MenuItem>
               </Select>
             </FormControl>
           </CentredBox>
           <AppCentredPagination
-            page={pagination.pageNumber}
+            page={pagination.page}
             count={totalPages}
             color="primary"
             //  @ts-ignore

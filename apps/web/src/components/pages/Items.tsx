@@ -7,7 +7,6 @@ import type {
   ReactNode,
 } from 'react';
 import {
-  getRouteApi,
   useNavigate,
 } from '@tanstack/react-router';
 import type {
@@ -21,6 +20,7 @@ import type {
   ChangeEvent,
   MouseEvent,
 } from 'react';
+
 
 // Internal
 import {
@@ -46,13 +46,6 @@ import {
   MenuItem,
 } from '@/components/base/Menubar';
 import {
-  DefaultItem,
-} from "@/utils/defaults";
-import {
-  useItemRouteContext,
-  useItemPagination,
-} from "@/hooks/services/useItems";
-import {
   useListItem,
 } from '@/hooks/queries/item';
 import {
@@ -62,77 +55,60 @@ import type {
 
 } from "@/domain/entities";
 import {
-  setPaginationInfo
-} from "@/domain/rules";
-import {
-  DefaultPagination,
-} from '@/utils/defaults';
+  DefaultItem,
+  Pagination,
+} from '@/domain/entities';
 import type {
   IItem,
   IItemReadResponse,
-  IItemReadRequest,
+  IReadRequest,
   ITag,
   IFilter,
   ITagReadResponse,
   IPagination,
 } from '@/domain/entities';
-import type {
-  IItemRouteSearch,
-} from "@/domain/entities/item";
-import {
-  decodeState
-} from '@/utils/encoders';
 import {
   encodeState
 } from '@/utils/encoders';
+import {
+  getRouteContext,
+} from "@/utils/routing";
+import { TagFormProvider } from '@/hooks/services/useTags';
 
 
 
 export function Items() {
   const store: TAppStore = useAppStore((state) => state);
   const navigate = useNavigate();
-
-  // routeApi.useSearch() only contains data from validate search and does not contain the information that was injected into the route loader from the context. So the search information retrieved from routeApi.useSearch() will not contain the user information.
-  const routeApi = getRouteApi('/items');
-  const { search } = routeApi.useRouteContext();
-  const { query, title, refTag, refFilter, } = search;
-  const pageHeader = store.itemTitle ? store.itemTitle : search && title ? title : "All Items";
-  const urlSearch = decodeState(routeApi.useSearch().s) as unknown as IItemRouteSearch;
-  const passedTag = store.displayTag || urlSearch.refTag;
-  const passedFilter = store.displayFilter || urlSearch.refFilter;
-
-  // const {
-  //   query,
-  //   refTag,
-  //   refFilter,
-  //   title,
-  //   pageHeader,
-  //   urlSearch,
-  //   passedTag,
-  //   passedFilter,
-  // } = useItemRouteContext()
-
-  // const {
-  //   pageChange,
-  //   pageSizeChange,
-  // } = useItemPagination(query, title, refTag, refFilter);
-
+  const { query, pagination, reference, title } = getRouteContext("/items");
+  // ToDo: The actions below should be in the getRouteContext function
+  const pageHeader = store.itemTitle ? store.itemTitle : title ? title : "All Items";
+  const passedTag = store.displayTag || reference.tag;
+  const passedFilter = store.displayFilter || reference.filter;
   const {
     data, isPending, isFetching, isError, error
-  }: UseSuspenseQueryResult<IItemReadResponse> = useListItem(query);
+  }: UseSuspenseQueryResult<IItemReadResponse> = useListItem({ query, pagination, });
 
-  let pageInfo = useRef<IPagination>({
-    pageNumber: query.pagination.pageNumber,
-    pageSize: query.pagination.pageSize && query.pagination.pageSize ? query.pagination.pageSize : DefaultPagination.pageSize,
-    totalRecords: 0,
-    sort: "name",
-  });
+
+
+  // Pagination Details
+  const initialPagination = new Pagination(pagination);
+  let pageInfo = useRef<Pagination>(initialPagination);
   if (data) {
-    pageInfo.current = setPaginationInfo(
-      { ...data.pagination, totalRecords: data.totalRecordCount },
-      pageInfo.current
-    );
+    pageInfo.current.updatePaging(data.pagination, pagination);
   }
+  function pageChange(event: MouseEvent<HTMLButtonElement> | null, value: number) {
+    event && event.stopPropagation();
+    pageInfo.current.changePage(value);
+    const encoded = encodeState({ query, title, reference, pagination: pageInfo.current.paging });
+    navigate({ to: ".", search: { s: encoded } });
+  };
+  function pageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    pageInfo.current.changeSize(e.target.value);
+    const encoded = encodeState({ query, title, reference, pagination: pageInfo.current.paging });
+    navigate({ to: ".", search: { s: encoded } });
+  };
+
 
   function newItemClick() {
     let newTags: string[] = []
@@ -153,34 +129,6 @@ export function Items() {
       store.setFilterModal(true);
     }
   }
-
-  function getRouteSearch(qs: IItemReadRequest) {
-    const s = { query: qs, title, refTag, refFilter, }
-    return encodeState(s);
-  }
-
-  const pageChange = (
-    event: MouseEvent<HTMLButtonElement> | null,
-    value: number
-  ) => {
-    event && event.stopPropagation();
-    const q = { ...query, pagination: { ...query.pagination, pageNumber: value } };
-    ;
-    navigate({ to: ".", search: { s: getRouteSearch(q) }, });
-  };
-
-
-  const pageSizeChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const q = {
-      ...query,
-      pagination: {
-        ...query.pagination,
-        pageSize: parseInt(e.target.value, 10), pageNumber: 1
-      }
-    };
-    console.info('In Items - pageSizeChange', q.pagination.pageSize);
-    navigate({ to: ".", search: { s: getRouteSearch(q) }, });
-  };
 
   function listItemClick(idx: number, anitem: IItem) {
     store.setDisplayItem(anitem);
@@ -210,7 +158,7 @@ export function Items() {
     data: data?.items ?? [],
     isPending, isFetching, isError, error,
     scrollIndex: Math.max(0, store.itemScroll),
-    pagination: pageInfo.current,
+    pagination: pageInfo.current.paging,
     renderItem,
     pageSizeChange,
     pageChange,
@@ -221,13 +169,13 @@ export function Items() {
         <Typography variant="body1">Add new item </Typography>
       </MenuItem>
       {
-        (store.displayFilter || urlSearch?.refFilter) &&
+        (store.displayFilter || reference?.filter) &&
         <MenuItem key="filter" onClick={updateTagFilterClick}>
           <Typography variant="body1">Update filter</Typography>
         </MenuItem>
       }
       {
-        (store.displayTag || urlSearch?.refTag) &&
+        (store.displayTag || reference?.tag) &&
         <MenuItem key="tag" onClick={updateTagFilterClick}>
           <Typography variant="body1">Update tag </Typography>
         </MenuItem>
@@ -238,8 +186,14 @@ export function Items() {
   return (
     <AppContainer mw="md" menuItems={mItems} title={pageHeader}>
       {store.itemModal && <AppItemModal passedPropTag={passedTag} passedPropFilter={passedFilter} />}
-      {store.tagModal && <AppTagModal itemTag={passedTag} />}
-      {store.filterModal && <AppFilterModal itemFilter={passedFilter} />}
+      {
+        store.tagModal &&
+        <TagFormProvider displayTag={passedTag}>
+          <AppTagModal />
+        </TagFormProvider>
+      }
+      {/* {store.tagModal && <AppTagModal itemTag={passedTag} />} */}
+      {/* {store.filterModal && <AppFilterModal itemFilter={passedFilter} />} */}
       <AppPagePaper>
         <ListLayout {...props} />
       </AppPagePaper>

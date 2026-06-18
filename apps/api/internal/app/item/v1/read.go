@@ -18,11 +18,13 @@ func (s *Server) ReadItem(ctx context.Context, req *connect.Request[pb.ItemServi
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
-	// fmt.Printf("\n\n\nUserId -  %s\n\n\n", req.Msg.GetUserId())
-	// fmt.Printf("\n\n\nFilter -  %s\n\n\n", req.Msg.GetQuery().Filters)
-	// fmt.Printf("\n\n\nTag -  %s\n\n\n", req.Msg.GetQuery().Tags)
+	fmt.Printf("\n\n\n\n")
+	fmt.Printf("\n\n\nUserId -  %s\n", req.Msg.GetQuery().UserId)
+	fmt.Printf("\nTag -  %s\n", req.Msg.GetQuery().Tags)
+	fmt.Printf("\nPagination -  %s\n", req.Msg.GetPagination())
 
-	sq, err := model.ReadItemRequestToRepoItemSearch(req.Msg)
+
+	sq, err := model.ReadItemRequestToRepoRepoSearch(req.Msg)
 	if err != nil {
 		return nil, err
 	}
@@ -41,12 +43,13 @@ func (s *Server) ReadItem(ctx context.Context, req *connect.Request[pb.ItemServi
 		return nil, err
 	}
 
+	pg := req.Msg.GetPagination()
+	pg.Volume = int64(recordCnt)
+	fmt.Printf("\nResponse Pagination -  %+v\n", pg)
 	resm := &pb.ItemServiceReadItemResponse{
 		Items:            rs,
-		TotalRecordCount: int32(recordCnt),
-		UserId:           req.Msg.GetUserId(),
 		Query:            req.Msg.GetQuery(),
-		Pagination:       req.Msg.GetPagination(),
+		Pagination:       pg,
 	}
 	return connect.NewResponse(resm), nil
 }
@@ -58,13 +61,19 @@ func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServic
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
+	// fmt.Printf("\n\n\n\n")
+	// fmt.Printf("\n\n\nUserId -  %s\n", req.Msg.GetQuery().UserId)
+	// fmt.Printf("\nTag -  %s\n", req.Msg.GetQuery().Tags)
+	// fmt.Printf("\nPagination -  %s\n", req.Msg.GetPagination())
+
+
 	var riq = &pb.ItemServiceReadItemRequest{}
 	err := modelutils.MarshalCopyProto(req.Msg, riq)
 	if err != nil {
 		return nil, err
 	}
 
-	sq, err := model.ReadItemRequestToRepoItemSearch(riq)
+	sq, err := model.ReadItemRequestToRepoRepoSearch(riq)
 	if err != nil {
 		return nil, err
 	}
@@ -86,21 +95,24 @@ func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServic
 	if err != nil {
 		return nil, err
 	}
-
+	// fmt.Printf("\nTags -  %+v\n", rs[0])
 	// Convert readModel to response proto using the model conversion function
 	ms, err := model.MapModelToTagPropertyMapProto(readIdModel)
 	if err != nil {
 		return nil, err
 	}
+	// fmt.Printf("\nTagProps -  %+v\n", ms)
 
+	pg := req.Msg.GetPagination()
+	pg.Volume = int64(recordCnt)
 	resm := &pb.ItemServiceReadTagResponse{
 		Tags:             rs,
 		TagidPropMap:     ms,
-		TotalRecordCount: int32(recordCnt),
-		UserId:           req.Msg.GetUserId(),
 		Query:            req.Msg.GetQuery(),
-		Pagination:       req.Msg.GetPagination(),
+		Pagination:       pg,
 	}
+	// fmt.Printf("\nResponse -  %+v\n", resm)
+	// fmt.Printf("\n\n\n\n")
 	return connect.NewResponse(resm), nil
 }
 
@@ -117,7 +129,7 @@ func (s *Server) ReadTagProperty(ctx context.Context, req *connect.Request[pb.It
 		return nil, err
 	}
 
-	sq, err := model.ReadItemRequestToRepoItemSearch(riq)
+	sq, err := model.ReadItemRequestToRepoRepoSearch(riq)
 	if err != nil {
 		return nil, err
 	}
@@ -134,12 +146,12 @@ func (s *Server) ReadTagProperty(ctx context.Context, req *connect.Request[pb.It
 		return nil, err
 	}
 
+	pg := req.Msg.GetPagination()
+	pg.Volume = int64(recordCnt)
 	resm := &pb.ItemServiceReadTagPropertyResponse{
 		Props:            rs,
-		TotalRecordCount: int32(recordCnt),
-		UserId:           req.Msg.GetUserId(),
 		Query:            req.Msg.GetQuery(),
-		Pagination:       req.Msg.GetPagination(),
+		Pagination:       pg,
 	}
 	return connect.NewResponse(resm), nil
 }
@@ -157,7 +169,7 @@ func (s *Server) ReadFilter(ctx context.Context, req *connect.Request[pb.ItemSer
 		return nil, err
 	}
 
-	sq, err := model.ReadItemRequestToRepoItemSearch(riq)
+	sq, err := model.ReadItemRequestToRepoRepoSearch(riq)
 	if err != nil {
 		return nil, err
 	}
@@ -174,12 +186,12 @@ func (s *Server) ReadFilter(ctx context.Context, req *connect.Request[pb.ItemSer
 		return nil, err
 	}
 
+	pg := req.Msg.GetPagination()
+	pg.Volume = int64(recordCnt)
 	resm := &pb.ItemServiceReadFilterResponse{
 		Filters:          rs,
-		TotalRecordCount: int32(recordCnt),
-		UserId:           req.Msg.GetUserId(),
 		Query:            req.Msg.GetQuery(),
-		Pagination:       req.Msg.GetPagination(),
+		Pagination:       pg,
 	}
 	return connect.NewResponse(resm), nil
 }

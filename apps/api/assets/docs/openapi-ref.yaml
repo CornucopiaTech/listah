@@ -811,15 +811,18 @@ components:
     listah.v1.ItemServiceReadFilterRequest:
       type: object
       properties:
-        userId:
-          type: string
-          title: userId
         query:
           title: query
-          $ref: '#/components/schemas/listah.v1.Search'
+          $ref: '#/components/schemas/listah.v1.ReadQuery'
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
+        reference:
+          title: reference
+          $ref: '#/components/schemas/listah.v1.ReadReference'
+        title:
+          type: string
+          title: title
       title: ItemServiceReadFilterRequest
       additionalProperties: false
       description: Filter Messages
@@ -831,33 +834,35 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Filter'
           title: filters
-        totalRecordCount:
-          type: integer
-          title: totalRecordCount
-          format: int32
-        userId:
-          type: string
-          title: userId
         query:
           title: query
-          $ref: '#/components/schemas/listah.v1.Search'
+          $ref: '#/components/schemas/listah.v1.ReadQuery'
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
+        reference:
+          title: reference
+          $ref: '#/components/schemas/listah.v1.ReadReference'
+        title:
+          type: string
+          title: title
       title: ItemServiceReadFilterResponse
       additionalProperties: false
     listah.v1.ItemServiceReadItemRequest:
       type: object
       properties:
-        userId:
-          type: string
-          title: userId
         query:
           title: query
-          $ref: '#/components/schemas/listah.v1.Search'
+          $ref: '#/components/schemas/listah.v1.ReadQuery'
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
+        reference:
+          title: reference
+          $ref: '#/components/schemas/listah.v1.ReadReference'
+        title:
+          type: string
+          title: title
       title: ItemServiceReadItemRequest
       additionalProperties: false
       description: Item Messages
@@ -869,33 +874,35 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
-        totalRecordCount:
-          type: integer
-          title: totalRecordCount
-          format: int32
-        userId:
-          type: string
-          title: userId
         query:
           title: query
-          $ref: '#/components/schemas/listah.v1.Search'
+          $ref: '#/components/schemas/listah.v1.ReadQuery'
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
+        reference:
+          title: reference
+          $ref: '#/components/schemas/listah.v1.ReadReference'
+        title:
+          type: string
+          title: title
       title: ItemServiceReadItemResponse
       additionalProperties: false
     listah.v1.ItemServiceReadTagPropertyRequest:
       type: object
       properties:
-        userId:
-          type: string
-          title: userId
         query:
           title: query
-          $ref: '#/components/schemas/listah.v1.Search'
+          $ref: '#/components/schemas/listah.v1.ReadQuery'
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
+        reference:
+          title: reference
+          $ref: '#/components/schemas/listah.v1.ReadReference'
+        title:
+          type: string
+          title: title
       title: ItemServiceReadTagPropertyRequest
       additionalProperties: false
       description: Tag Property Messages
@@ -908,19 +915,18 @@ components:
           additionalProperties:
             title: value
             $ref: '#/components/schemas/listah.v1.StringList'
-        totalRecordCount:
-          type: integer
-          title: totalRecordCount
-          format: int32
-        userId:
-          type: string
-          title: userId
         query:
           title: query
-          $ref: '#/components/schemas/listah.v1.Search'
+          $ref: '#/components/schemas/listah.v1.ReadQuery'
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
+        reference:
+          title: reference
+          $ref: '#/components/schemas/listah.v1.ReadReference'
+        title:
+          type: string
+          title: title
       title: ItemServiceReadTagPropertyResponse
       additionalProperties: false
     listah.v1.ItemServiceReadTagPropertyResponse.PropsEntry:
@@ -937,15 +943,18 @@ components:
     listah.v1.ItemServiceReadTagRequest:
       type: object
       properties:
-        userId:
-          type: string
-          title: userId
         query:
           title: query
-          $ref: '#/components/schemas/listah.v1.Search'
+          $ref: '#/components/schemas/listah.v1.ReadQuery'
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
+        reference:
+          title: reference
+          $ref: '#/components/schemas/listah.v1.ReadReference'
+        title:
+          type: string
+          title: title
       title: ItemServiceReadTagRequest
       additionalProperties: false
       description: Tag Messages
@@ -957,25 +966,24 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.Tag'
           title: tags
-        totalRecordCount:
-          type: integer
-          title: totalRecordCount
-          format: int32
         tagidPropMap:
           type: object
           title: tagidPropMap
           additionalProperties:
             title: value
             $ref: '#/components/schemas/listah.v1.StringList'
-        userId:
-          type: string
-          title: userId
         query:
           title: query
-          $ref: '#/components/schemas/listah.v1.Search'
+          $ref: '#/components/schemas/listah.v1.ReadQuery'
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
+        reference:
+          title: reference
+          $ref: '#/components/schemas/listah.v1.ReadReference'
+        title:
+          type: string
+          title: title
       title: ItemServiceReadTagResponse
       additionalProperties: false
     listah.v1.ItemServiceReadTagResponse.TagidPropMapEntry:
@@ -1063,22 +1071,72 @@ components:
     listah.v1.Pagination:
       type: object
       properties:
-        pageSize:
+        size:
           type:
             - integer
             - string
-          title: pageSize
+          title: size
           format: int64
-        pageNumber:
+        page:
           type:
             - integer
             - string
-          title: pageNumber
+          title: page
           format: int64
         sort:
           type: string
           title: sort
+        volume:
+          type:
+            - integer
+            - string
+          title: volume
+          format: int64
       title: Pagination
+      additionalProperties: false
+    listah.v1.ReadQuery:
+      type: object
+      properties:
+        userId:
+          type: string
+          title: userId
+        tags:
+          type: array
+          items:
+            type: string
+          title: tags
+        text:
+          type: string
+          title: text
+      title: ReadQuery
+      additionalProperties: false
+    listah.v1.ReadReference:
+      type: object
+      properties:
+        tag:
+          title: tag
+          $ref: '#/components/schemas/listah.v1.Tag'
+        filter:
+          title: filter
+          $ref: '#/components/schemas/listah.v1.Filter'
+      title: ReadReference
+      additionalProperties: false
+    listah.v1.ReadRequest:
+      type: object
+      properties:
+        query:
+          title: query
+          $ref: '#/components/schemas/listah.v1.ReadQuery'
+        pagination:
+          title: pagination
+          $ref: '#/components/schemas/listah.v1.Pagination'
+        reference:
+          title: reference
+          $ref: '#/components/schemas/listah.v1.ReadReference'
+        title:
+          type: string
+          title: title
+      title: ReadRequest
       additionalProperties: false
     listah.v1.Search:
       type: object

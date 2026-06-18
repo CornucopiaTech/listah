@@ -6,10 +6,8 @@ import type {
   ITagState,
   ITagSlice,
   IStore,
-} from '@/domain/entities/store';
-import type {
   ITag,
-} from "@/domain/entities/tag";
+} from "@/domain/entities";
 
 
 

@@ -3,12 +3,19 @@
 
 import type {
   IFilter,
-  IFilterReadRequest,
-  IFilterReadResponse
-} from '@/domain/entities/filter';
-import { ApiEndpoints } from '@/utils/defaults';
-import { AppError, type BackendErrorPayload } from "@/domain/entities/common";
-import { getToken, GenericCode, GenericError } from '@/infra/api/auth';
+  IReadRequest,
+  IFilterReadResponse,
+  BackendErrorPayload,
+} from '@/domain/entities';
+import {
+  AppError,
+  ApiEndpoints,
+} from "@/domain/entities";
+import {
+  getToken,
+  GenericCode,
+  GenericError
+} from '@/infra/api/auth';
 
 
 
@@ -51,8 +58,9 @@ export async function postFilter(f: IFilter) {
   }
 }
 
-export async function getFilter(opts: IFilterReadRequest): Promise<IFilterReadResponse> {
+export async function getFilter(opts: IReadRequest): Promise<IFilterReadResponse> {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.readFilter}`;
+  console.info('readFilter', opts)
 
   try {
     const token = await getToken();

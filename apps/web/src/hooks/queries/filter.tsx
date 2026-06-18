@@ -11,31 +11,34 @@ import type {
 
 // Internal
 import type {
-  IFilterReadRequest,
+  IReadRequest,
   IFilterReadResponse,
-} from '@/domain/entities/filter';
+  IFilter,
+} from '@/domain/entities';
 import {
   getFilter,
   postFilter,
-} from '@/utils/fetchers';
+} from '@/infra/api/filters';
 import {
   QueryStaleTime,
 } from '@/utils/defaults';
-import type {
-  IFilter,
-} from "@/domain/entities/filter";
 import {
   ZFilter,
 } from "@/domain/entities/filter";
 
 
-export function useListFilter(opts: IFilterReadRequest): UseSuspenseQueryResult<IFilterReadResponse> {
-  return useSuspenseQuery(queryOptions({
+
+export function filterGroupOptions(opts: IReadRequest) {
+  return queryOptions({
     queryKey: ["filter", opts],
     queryFn: () => getFilter(opts),
     staleTime: QueryStaleTime,
-    enabled: !!opts?.userId,
-  }))
+    enabled: !!opts?.query?.userId,
+  })
+}
+export function useListFilter(opts: IReadRequest): UseSuspenseQueryResult<IFilterReadResponse> {
+  // console.info('useListFilter', opts);
+  return useSuspenseQuery(filterGroupOptions(opts))
 }
 
 

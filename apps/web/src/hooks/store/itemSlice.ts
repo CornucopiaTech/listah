@@ -3,22 +3,16 @@ import type { StateCreator } from 'zustand';
 
 
 import type {
-  IItem
-} from '@/domain/entities/item';
-import type {
+  IItem,
   IItemState,
   IItemSlice,
   IStore,
-} from '@/domain/entities/store';
-import type {
   ITag,
-} from "@/domain/entities/tag";
-import type {
   IFilter,
-} from "@/domain/entities/filter";
+} from "@/domain/entities";
 import {
   DefaultItem,
-} from '@/utils/defaults';
+} from "@/domain/entities";
 
 
 

@@ -13,16 +13,16 @@ import { useUser } from '@clerk/react';
 
 
 import type {
-  IItemReadRequest,
-} from "@/domain/entities/item";
+  IReadQuery,
+} from "@/domain/entities";
+import {
+  DefaultReadRequest,
+  DefaultReadQuery,
+} from "@/domain/entities";
 import { encodeState } from '@/utils/encoders';
 import { AppSearchPaper } from '@/components/core/AppPaper';
 import { useAppStore, type TAppStore } from '@/hooks/store/boundStore';
-import {
-  DefaultItemRead,
-  DefaultIItemRouteSearch,
 
-} from '@/utils/defaults';
 
 
 
@@ -34,12 +34,8 @@ export function AppItemSearchBar(): ReactNode {
   const placeholderText = "Search for item";
 
   function handleSearchSubmit() {
-    const q: IItemReadRequest = {
-      ...DefaultItemRead,
-      userId: user?.id || "",
-      query: { ...DefaultItemRead.query, text: textValue },
-    };
-    const s = { ...DefaultIItemRouteSearch, query: q, title: `Items like '${textValue}'` }
+    const q: IReadQuery = { ...DefaultReadQuery, userId: user?.id || "", text: textValue };
+    const s = { ...DefaultReadRequest, query: q, title: `Items like '${textValue}'` }
     const encoded = encodeState(s);
 
     navigate({ to: "/items", from: "/", search: { s: encoded }, });

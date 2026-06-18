@@ -12,7 +12,8 @@ var FailedJWKSLoadMsg = "failed to load JWKS: "
 var MissingTokenMsg = "missing token"
 var Unauthorised = errors.New("auth: unauthorised request")
 var DuplicateName = errors.New("database: name already exists")
-var MissingUserId = errors.New("req: no userId present")
+var MissingQuery = errors.New("req: no query present")
+var MissingUserId = errors.New("req: no userId in query present")
 var MissingName = errors.New("req: no name present")
 var MissingTags = errors.New("req: at least one tag is required")
 var MissingProps = errors.New("req: at least one property is required")
@@ -108,33 +109,27 @@ type Filter struct {
 }
 
 type Pagination struct {
-	PageNumber int64
-	PageSize   int64
+	Page int64
+	Size   int64
 	Sort       string
+	Volume   int64
 }
 
 type RowCount struct {
 	RowCount int
 }
 
-type ItemSearch struct {
+type RepoSearch struct {
 	UserId      string
 	Tags        string
-	Filters     string
-	SearchQuery string
-	SortQuery   string
+	Text string
+	Sort   string
 	Limit       int64
 	Offset      int64
-	PageNumber  int64
+	Page  int64
 }
 
 type UpsertInfo struct {
 	Conflict []string
 	Resolve  []string
-}
-
-type ItemUpsert struct {
-	Items  *[]*Item
-	Update []string
-	Tags   *[]Tag
 }

@@ -13,7 +13,9 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Divider from "@mui/material/Divider";
 import Alert from '@mui/material/Alert';
-
+import {
+  useStore,
+} from "@tanstack/react-form";
 
 
 
@@ -23,26 +25,26 @@ import {
   CloseDialogButton,
   AppBackdrop,
 } from "@/components/core/AppButton";
-
+import { useFormContext } from '@/hooks/services/useForm';
 
 export function FormDialog({
-  title, content, actions, openDialog, showBackDrop,
-  form, mutation, formWarning,
-  closeDialog,
+  title, content, actions, openDialog, closeDialog,
 }: {
   title: string, content: ReactNode, actions?: ReactNode,
-  openDialog: boolean, showBackDrop: boolean,
-  form: any, mutation: any, formWarning: any,
-  closeDialog: () => void,
+  openDialog: boolean, closeDialog: () => void,
 }): ReactNode {
 
-
+  const { form, mutation } = useFormContext();
   useEffect(() => {
     if (!form.state.isSubmitted) return;
     if (!mutation.isSuccess) return;
     const timer = setTimeout(() => { closeDialog(); }, 2000);
     return () => clearTimeout(timer); // cleanup
   }, [form.state.isSubmitted, mutation.isSuccess]);
+
+  const errorMap = useStore(form.store, (state) => state.errorMap);
+  const isSubmitted = useStore(form.store, (state) => state.isSubmitted);
+  const openBackDrop = isSubmitted && !mutation.isSuccess;
 
 
   function onFormSubmit(e: ChangeEvent) {
@@ -66,9 +68,9 @@ export function FormDialog({
         {/* @ts-ignore */}
         {mutation.error.tracking && "RequestId: " + mutation.error.tracking}</Alert>
       }
-      {formWarning && <Alert severity="warning"> {`${formWarning}`} </Alert>}
+      {errorMap.onChange && <Alert severity="warning"> {`${errorMap.onChange}`} </Alert>}
       <Divider />
-      <AppBackdrop showBackDrop={showBackDrop} />
+      <AppBackdrop showBackDrop={openBackDrop} />
       <form onSubmit={onFormSubmit}>
         <DialogContent > {content} </DialogContent>
         <Divider />

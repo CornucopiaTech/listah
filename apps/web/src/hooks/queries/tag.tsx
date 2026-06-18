@@ -10,45 +10,54 @@ import type {
 
 
 // Internal
-import type {
-  ITagReadRequest,
-  ITagReadResponse,
-  ITagPropertyReadRequest,
-  ITagPropertyReadResponse,
-} from '@/domain/entities/tag';
-import {
-  getTag,
-  getTagProperty
-} from '@/utils/fetchers';
-import {
-  QueryStaleTime
-} from '@/utils/defaults';
-import { postTag } from "@/utils/fetchers";
-import type {
-  ITag,
-} from "@/domain/entities/tag";
 import {
   ZTag,
-} from "@/domain/entities/tag";
+} from "@/domain/entities";
+import type {
+  ITag,
+  IReadRequest,
+  ITagReadResponse,
+  ITagPropertyReadResponse,
+} from '@/domain/entities';
+import {
+  getTag,
+  getTagProperty,
+  postTag,
+} from '@/infra/api';
+import {
+  QueryStaleTime,
+} from '@/utils/defaults';
 
 
-
-export function useListTag(opts: ITagReadRequest): UseSuspenseQueryResult<ITagReadResponse> {
-  return useSuspenseQuery(queryOptions({
+// ToDo: Take ceiling for page count
+export function tagGroupOptions(opts: IReadRequest) {
+  return queryOptions({
     queryKey: ["tag", opts],
     queryFn: () => getTag(opts),
     staleTime: QueryStaleTime,
-    enabled: !!opts?.userId,
-  }))
+    enabled: !!opts?.query?.userId,
+  })
 }
 
-export function useListTagProperty(opts: ITagPropertyReadRequest): UseSuspenseQueryResult<ITagPropertyReadResponse> {
-  return useSuspenseQuery(queryOptions({
+export function useListTag(opts: IReadRequest): UseSuspenseQueryResult<ITagReadResponse> {
+  return useSuspenseQuery(tagGroupOptions(opts))
+}
+
+
+
+export function tagPropertyGroupOptions(opts: IReadRequest) {
+  // console.info('tagPropertyGroupOptions', opts);
+  return queryOptions({
     queryKey: ["tagProperty", opts],
     queryFn: () => getTagProperty(opts),
     staleTime: QueryStaleTime,
-    enabled: !!opts?.userId,
-  }))
+    enabled: !!opts?.query?.userId,
+  })
+}
+
+export function useListTagProperty(opts: IReadRequest): UseSuspenseQueryResult<ITagPropertyReadResponse> {
+  // console.info('useListTagProperty', opts);
+  return useSuspenseQuery(tagPropertyGroupOptions(opts))
 }
 
 

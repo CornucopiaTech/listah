@@ -61,17 +61,21 @@ import {
   useAppStore,
   type TAppStore
 } from '@/hooks/store/boundStore';
-import { postFilter } from "@/utils/fetchers";
+import {
+  postFilter
+} from "@/infra/api";
 import type {
   ITag,
   ITagReadResponse,
-} from "@/domain/entities/tag";
-import { tagGroupOptions } from '@/utils/querying';
-import type { IFilter, } from "@/domain/entities/filter";
-import { ZFilter } from "@/domain/entities/filter";
+  IFilter,
+} from "@/domain/entities";
 import {
-  DefaultTagRead,
-} from '@/utils/defaults';
+  tagGroupOptions
+} from '@/hooks/queries';
+import {
+  DefaultReadRequest,
+  ZFilter,
+} from '@/domain/entities';
 import {
   SpaceBetweenBox,
   ItemFormSpeedDialBox,
@@ -90,7 +94,7 @@ export function AppFilterModal({ itemFilter }: { itemFilter?: IFilter }): ReactN
 
   // The scrollable element for your list
 
-  const tagQuery = { ...DefaultTagRead, userId: user?.id || "", pageSize: -1, }
+  const tagQuery = { ...DefaultReadRequest, userId: user?.id || "", pageSize: -1, }
   const {
     isPending, isError, data, error
   }: UseQueryResult<ITagReadResponse> = useQuery(tagGroupOptions(tagQuery));

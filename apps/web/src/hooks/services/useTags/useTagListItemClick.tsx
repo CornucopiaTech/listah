@@ -9,32 +9,28 @@ import {
   useAppStore,
   type TAppStore
 } from '@/hooks/store/boundStore';
-import type {
-  ITag,
-  ITagReadRequest,
-} from "@/domain/entities/tag";
 import {
   encodeState
 } from '@/utils/encoders';
 import {
-  DefaultItemRead,
-} from '@/utils/defaults';
+  DefaultReadRequest,
+} from '@/domain/entities';
 import type {
-  IItemReadRequest,
-} from '@/domain/entities/item';
+  IReadRequest,
+  ITag,
+} from '@/domain/entities';
 
 
 
-export function useTagListItemClick(query: ITagReadRequest) {
+export function useTagListItemClick(query: IReadRequest) {
   const navigate = useNavigate();
   const store: TAppStore = useAppStore((state) => state);
   const listItemClick = (idx: number, it: ITag) => {
     const pageTitle = it && it.name ? `#${it.name}` : "Tags";
     const pageTags = it && it.id ? [it.id] : [];
-    const q: IItemReadRequest = {
-      ...DefaultItemRead,
-      userId: query.userId,
-      query: { ...DefaultItemRead.query, tags: pageTags },
+    const q: IReadRequest = {
+      ...DefaultReadRequest,
+      query: { ...DefaultReadRequest.query, userId: query.query.userId, tags: pageTags },
     };
     const s = { query: q, title: pageTitle, refTag: it, }
     const encoded = encodeState(s);

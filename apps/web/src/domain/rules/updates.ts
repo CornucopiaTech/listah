@@ -7,7 +7,7 @@ import {
 
 
 import type {
-  IItemReadRequest,
+  IReadRequest,
   IItemReadResponse,
   ITag,
   IFilter,
@@ -27,13 +27,4 @@ export function prepTagUpdate({ value, userId }: { value: ITag, userId: string }
     count: undefined,
   }
   return submitValue;
-}
-
-
-export function setPaginationInfo(data: IPagination, prev: IPagination) {
-  const pageSize = parseInt(data.pageSize as unknown as string, 10);
-  const totalRecords = data.totalRecords ? parseInt(data.totalRecords as unknown as string, 10) : 1;
-  const pageNumber = data.pageNumber ? parseInt(data.pageNumber as unknown as string, 10) : prev.pageNumber
-  const sort = "name";
-  return { sort, pageSize, totalRecords, pageNumber };
 }

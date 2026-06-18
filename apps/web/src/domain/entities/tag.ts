@@ -1,16 +1,5 @@
 import * as z from "zod";
 
-import {
-  ZPagination,
-  ZSearch,
-} from "@/domain/entities/common";
-import {
-  DefaultTagFilterQuery,
-  DefaultPagination,
-
-} from '@/utils/defaults';
-
-
 
 export const ZTag = z.object({
   id: z.string().catch(''),
@@ -22,6 +11,16 @@ export const ZTag = z.object({
 });
 export type ITag = z.infer<typeof ZTag>;
 
+export const DefaultTag: ITag = {
+  id: "",
+  userId: "",
+  name: "",
+  props: [],
+  count: 0,
+  softDelete: false,
+}
+
+
 
 export const ZTagProperty = z.record(
   z.string(), z.object({
@@ -29,37 +28,3 @@ export const ZTagProperty = z.record(
   })
 );
 export type ITagProperty = z.infer<typeof ZTagProperty>;
-
-
-export const ZTagReadRequest = z.object({
-  userId: z.string().catch(''),
-  query: ZSearch.catch(DefaultTagFilterQuery),
-  pagination: ZPagination.catch(DefaultPagination),
-});
-export type ITagReadRequest = z.infer<typeof ZTagReadRequest>;
-
-export const ZTagReadResponse = z.object({
-  tags: z.array(ZTag).catch([]),
-  tagidPropMap: ZTagProperty,
-  totalRecordCount: z.number().catch(0),
-  query: ZSearch.catch(DefaultTagFilterQuery),
-  pagination: ZPagination.catch(DefaultPagination),
-});
-export type ITagReadResponse = z.infer<typeof ZTagReadResponse>;
-
-
-// Tag Properties
-export const ZTagPropertyReadRequest = z.object({
-  userId: z.string().catch(''),
-  query: ZSearch.catch(DefaultTagFilterQuery),
-  pagination: ZPagination.catch(DefaultPagination),
-});
-export type ITagPropertyReadRequest = z.infer<typeof ZTagPropertyReadRequest>;
-
-export const ZTagPropertyReadResponse = z.object({
-  props: ZTagProperty,
-  totalRecordCount: z.number().catch(0),
-  query: ZSearch.catch(DefaultTagFilterQuery),
-  pagination: ZPagination.catch(DefaultPagination),
-});
-export type ITagPropertyReadResponse = z.infer<typeof ZTagPropertyReadResponse>;

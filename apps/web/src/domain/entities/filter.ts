@@ -1,15 +1,5 @@
 import * as z from "zod";
 
-import {
-  ZPagination,
-  ZSearch,
-} from "@/domain/entities/common";
-import {
-  DefaultTagFilterQuery,
-  DefaultPagination,
-
-} from '@/utils/defaults';
-
 
 
 export const ZFilter = z.object({
@@ -21,21 +11,11 @@ export const ZFilter = z.object({
   softDelete: z.nullish(z.boolean().catch(false)),
 });
 export type IFilter = z.infer<typeof ZFilter>;
-
-
-
-export const ZFilterReadRequest = z.object({
-  userId: z.string().catch(''),
-  query: ZSearch.catch(DefaultTagFilterQuery),
-  pagination: ZPagination.catch(DefaultPagination),
-});
-export type IFilterReadRequest = z.infer<typeof ZFilterReadRequest>;
-
-export const ZFilterReadResponse = z.object({
-  filters: z.array(ZFilter).catch([]),
-  totalRecordCount: z.number().catch(0),
-  userId: z.string().catch(''),
-  query: ZSearch.catch(DefaultTagFilterQuery),
-  pagination: ZPagination.catch(DefaultPagination),
-});
-export type IFilterReadResponse = z.infer<typeof ZFilterReadResponse>;
+export const DefaultFilter: IFilter = {
+  id: '',
+  userId: '',
+  name: '',
+  tags: [],
+  count: 0,
+  softDelete: false,
+}

@@ -6,3 +6,5 @@ export * from "./item";
 export * from "./material.d";
 export * from "./store";
 export * from "./tag";
+export * from "./pagination";
+export * from "./routing";

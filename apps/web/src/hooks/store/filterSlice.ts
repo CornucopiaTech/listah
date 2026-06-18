@@ -6,11 +6,8 @@ import type {
   IFilterState,
   IFilterSlice,
   IStore,
-} from '@/domain/entities/store';
-import type {
   IFilter,
-} from "@/domain/entities/filter";
-// import { DefaultTag, DefaultFilter } from '@/utils/defaults';
+} from "@/domain/entities";
 
 
 export const filterInitState: IFilterState = {

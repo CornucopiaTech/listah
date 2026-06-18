@@ -3,18 +3,22 @@
 
 import type {
   ITag,
-  ITagReadRequest,
+  IReadRequest,
   ITagReadResponse,
-  ITagPropertyReadRequest,
   ITagPropertyReadResponse,
-} from '@/domain/entities/tag';
+  BackendErrorPayload
+} from '@/domain/entities';
 import {
   // ZTagReadResponse,
   ZTagPropertyReadResponse,
-} from "@/domain/entities/tag";
-import { ApiEndpoints } from '@/utils/defaults';
-import { AppError, type BackendErrorPayload } from "@/domain/entities/common";
-import { getToken, GenericCode, GenericError } from '@/infra/api/auth';
+  AppError,
+  ApiEndpoints
+} from "@/domain/entities";
+import {
+  getToken,
+  GenericCode,
+  GenericError
+} from '@/infra/api/auth';
 
 
 
@@ -60,7 +64,7 @@ export async function postTag(t: ITag) {
   }
 }
 
-export async function getTag(opts: ITagReadRequest): Promise<ITagReadResponse> {
+export async function getTag(opts: IReadRequest): Promise<ITagReadResponse> {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.readTag}`;
   try {
     const token = await getToken();
@@ -101,7 +105,7 @@ export async function getTag(opts: ITagReadRequest): Promise<ITagReadResponse> {
 }
 
 
-export async function getTagProperty(opts: ITagPropertyReadRequest): Promise<ITagPropertyReadResponse> {
+export async function getTagProperty(opts: IReadRequest): Promise<ITagPropertyReadResponse> {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.readTagProperty}`;
   try {
     const token = await getToken();

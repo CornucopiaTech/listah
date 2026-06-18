@@ -1,16 +1,9 @@
 import * as z from "zod";
 
-import {
-  ZPagination,
-  ZSearch,
-} from "@/domain/entities/common";
-import { ZFilter } from "@/domain/entities/filter";
-import { ZTag } from "@/domain/entities/tag";
-import {
-  DefaultTagFilterQuery,
-  DefaultPagination,
 
-} from '@/utils/defaults';
+import {
+  ZTag,
+} from "@/domain/entities/tag";
 
 
 export const ZFormProps = z.object({
@@ -46,35 +39,14 @@ export const ZItem = z.object({
   softDelete: z.nullish(z.boolean().catch(false)),
 });
 export type IItem = z.infer<typeof ZItem>;
-
-
-
-
-export const ZItemReadRequest = z.object({
-  userId: z.string().catch(''),
-  query: ZSearch.catch(DefaultTagFilterQuery),
-  pagination: ZPagination.catch(DefaultPagination),
-
-});
-export type IItemReadRequest = z.infer<typeof ZItemReadRequest>;
-
-
-
-export const ZItemRouteSearch = z.object({
-  query: ZItemReadRequest,
-  title: z.nullish(z.string()).catch('All Items'),
-  refTag: z.union([z.undefined(), ZTag]),
-  refFilter: z.union([z.undefined(), ZFilter]),
-});
-export type IItemRouteSearch = z.infer<typeof ZItemRouteSearch>;
-
-
-
-export const ZItemReadResponse = z.object({
-  items: z.array(ZItem).catch([]),
-  totalRecordCount: z.number().catch(0),
-  userId: z.string().catch(''),
-  query: ZSearch,
-  pagination: ZPagination,
-});
-export type IItemReadResponse = z.infer<typeof ZItemReadResponse>;
+export const DefaultItem = {
+  id: "",
+  userId: "",
+  name: "",
+  note: "",
+  tags: [],
+  props: {},
+  tagObjs: [],
+  propObjs: [],
+  softDelete: false,
+}

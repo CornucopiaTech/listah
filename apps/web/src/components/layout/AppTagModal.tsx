@@ -1,20 +1,11 @@
 
-import {
-  useRef,
-  useCallback,
-  useMemo,
-  createContext,
-} from 'react';
+
 import type {
   ReactNode,
 } from 'react';
 import {
-  useForm,
   useStore,
 } from "@tanstack/react-form";
-import {
-  useUser
-} from '@clerk/react';
 import Stack from '@mui/material/Stack';
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
@@ -38,66 +29,28 @@ import {
   type TAppStore
 } from '@/hooks/store/boundStore';
 import {
-  DefaultTag
-} from '@/utils/defaults';
-import type {
-  ITag,
-} from "@/domain/entities/tag";
-import {
   ItemFormSpeedDialBox,
 } from "@/components/core/AppBox";
-import { useUpdateTag } from "@/hooks/queries/tag";
 import { SimpleTextField } from "@/components/layout/SimpleTextField";
 import { FormDialog } from "@/components/layout/FormDialog";
 import { SimpleArrayTextField } from "./SimpleArrayTextField";
-import {
-  prepTagUpdate,
-  formValidator,
-} from "@/domain/rules";
+import { useFormContext } from '@/hooks/services/useForm';
 
 
 type itemFields = "id" | "userId" | "name" | `props[${number}]`
 
-export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
+export function AppTagModal(): ReactNode {
   const store: TAppStore = useAppStore((state) => state);
-  const formTag: ITag = itemTag ? itemTag : DefaultTag;
-  const { user } = useUser();
-  const mutation = useUpdateTag();
-  const formSubmission = ({ value }: { value: ITag }) => {
-    const submitValue = prepTagUpdate({ value, userId: user?.id ?? "" });
-    mutation.mutate(submitValue);
-  };
-
+  const { form, } = useFormContext();
+  const canSubmit = useStore(form.store, (state) => state.errors).length == 0;
+  const isSubmitted = useStore(form.store, (state) => state.isSubmitted);
+  const isDirty = useStore(form.store, (state) => state.isDirty);
+  const id = useStore(form.store, (state) => state.values.id);
+  const canDelete = isSubmitted && id !== "";
   const handleDelete = () => {
     form.setFieldValue('softDelete', true);
     form.handleSubmit();
   };
-
-  const form = useForm({
-    defaultValues: { ...formTag },
-    onSubmit: formSubmission,
-    validators: {
-      onChange({ value }: { value: ITag }) {
-        return formValidator({ value });
-      },
-      onBlur({ value }: { value: ITag }) {
-        return formValidator({ value });
-      },
-    },
-  });
-
-  const formErrorMap = useStore(form.store, (state) => state.errorMap);
-  const formErrors = useStore(form.store, (state) => state.errors);
-  const formCanSubmit = formErrors.length == 0;
-  const formIsSubmitted = useStore(form.store, (state) => state.isSubmitted);
-  const formIsDirty = useStore(form.store, (state) => state.isDirty);
-  const formStateId = useStore(form.store, (state) => state.values.id);
-  const openBackdrop = useRef(false);
-  if (mutation.isSuccess) {
-    openBackdrop.current = false;
-  } else {
-    openBackdrop.current = formIsSubmitted;
-  }
 
 
 
@@ -126,9 +79,8 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
 
   const dummyAction = () => undefined;
 
-  const canDelete = !formIsSubmitted && formStateId !== "";
-  const saveIcon = formIsSubmitted ? <HourglassOutlineIcon height="1.5rem" /> :
-    formCanSubmit ? <SaveIcon height="1.5rem" /> : <SaveOffIcon height="1.5rem" />
+  const saveIcon = isSubmitted ? <HourglassOutlineIcon height="1.5rem" /> :
+    canSubmit ? <SaveIcon height="1.5rem" /> : <SaveOffIcon height="1.5rem" />
   const formActions = (
     <ItemFormSpeedDialBox>
       <SpeedDial ariaLabel="SpeedDial basic example"
@@ -139,7 +91,7 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
           // @ts-ignore
           onClick={canDelete ? handleDelete : dummyAction}
           slotProps={{
-            tooltip: { title: formCanSubmit ? "save" : "cannot save changes", },
+            tooltip: { title: canSubmit ? "save" : "cannot save changes", },
           }}
         />
 
@@ -147,19 +99,19 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
           key={"save"}
           icon={saveIcon}
           // @ts-ignore
-          onClick={formCanSubmit ? form.handleSubmit : dummyAction}
+          onClick={canSubmit ? form.handleSubmit : dummyAction}
           slotProps={{
-            tooltip: { title: formCanSubmit ? "save" : "cannot save changes", },
+            tooltip: { title: canSubmit ? "save" : "cannot save changes", },
           }}
         />
 
         <SpeedDialAction
-          key={formIsDirty ? "reset" : "No changes yet"}
-          icon={formIsDirty ? <RestartIcon height="1.5rem" /> : <RestartOffIcon height="1.5rem" />}
+          key={isDirty ? "reset" : "No changes yet"}
+          icon={isDirty ? <RestartIcon height="1.5rem" /> : <RestartOffIcon height="1.5rem" />}
           // @ts-ignore
-          onClick={formIsDirty ? form.reset : dummyAction}
+          onClick={isDirty ? form.reset : dummyAction}
           slotProps={{
-            tooltip: { title: formIsDirty ? "reset" : "no changes yet", },
+            tooltip: { title: isDirty ? "reset" : "no changes yet", },
           }}
         />
       </SpeedDial>
@@ -167,15 +119,11 @@ export function AppTagModal({ itemTag }: { itemTag?: ITag }): ReactNode {
   );
 
   const props = {
-    title: formTag.id == "" ? "Add new tag" : "Update tag",
+    title: id == "" ? "Add new tag" : "Update tag",
     content: formContent,
     actions: formActions,
-    formWarning: formErrorMap.onChange,
     openDialog: store.tagModal,
-    showBackDrop: openBackdrop.current,
     closeDialog: closeModal,
-    form,
-    mutation,
   }
   return (
     <FormDialog {...props} />

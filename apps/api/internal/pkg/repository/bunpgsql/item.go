@@ -15,7 +15,7 @@ import (
 var svcName string = "PgDB"
 
 type Item interface {
-	Read(ctx context.Context, m *[]*model.Item, s *model.ItemSearch) (int, error)
+	Read(ctx context.Context, m *[]*model.Item, s *model.RepoSearch) (int, error)
 	Upsert(ctx context.Context, m *[]*model.Item, c *model.UpsertInfo) (interface{}, error)
 }
 
@@ -24,7 +24,7 @@ type item struct {
 	logger *logging.Factory
 }
 
-func (a *item) Read(ctx context.Context, m *[]*model.Item, s *model.ItemSearch) (int, error) {
+func (a *item) Read(ctx context.Context, m *[]*model.Item, s *model.RepoSearch) (int, error) {
 	ctx, span := otel.Tracer("item-repository").Start(ctx, "ItemRepository Read")
 	defer span.End()
 
@@ -59,12 +59,12 @@ func (a *item) Read(ctx context.Context, m *[]*model.Item, s *model.ItemSearch) 
 			AND (it.soft_delete = false OR it.soft_delete IS NULL)
 	`
 
-	if s.SearchQuery != "" {
+	if s.Text != "" {
 		n := `AND (
-				it.name LIKE '%` + s.SearchQuery + `%' OR
-				it.note LIKE '%` + s.SearchQuery + `%' OR
-				it.props::VARCHAR LIKE '%` + s.SearchQuery + `%' OR
-				it.tag_names::VARCHAR LIKE '%` + s.SearchQuery + `%'
+				it.name LIKE '%` + s.Text + `%' OR
+				it.note LIKE '%` + s.Text + `%' OR
+				it.props::VARCHAR LIKE '%` + s.Text + `%' OR
+				it.tag_names::VARCHAR LIKE '%` + s.Text + `%'
 			)
 		`
 		query = query + n
@@ -83,8 +83,8 @@ func (a *item) Read(ctx context.Context, m *[]*model.Item, s *model.ItemSearch) 
 		return 0, err
 	}
 
-	if s.SortQuery != "" {
-		query = query + fmt.Sprintf(` ORDER BY %v `, s.SortQuery)
+	if s.Sort != "" {
+		query = query + fmt.Sprintf(` ORDER BY %v `, s.Sort)
 	}
 	if s.Limit > 0 {
 		query = query + fmt.Sprintf(` LIMIT %d `, s.Limit)

@@ -1,16 +1,23 @@
 
 
+
 import type {
-  IItemReadRequest,
   IItem,
+  IReadRequest,
   IItemReadResponse,
-} from '@/domain/entities/item';
+  BackendErrorPayload
+} from '@/domain/entities';
 import {
   ZItemReadResponse,
-} from "@/domain/entities/item";
-import { ApiEndpoints } from '@/utils/defaults';
-import { AppError, type BackendErrorPayload } from "@/domain/entities/common";
-import { getToken, GenericCode, GenericError } from '@/infra/api/auth';
+  AppError,
+  ApiEndpoints
+} from "@/domain/entities";
+import {
+  getToken,
+  GenericCode,
+  GenericError
+} from '@/infra/api/auth';
+
 
 
 export async function postItem(item: IItem) {
@@ -53,8 +60,9 @@ export async function postItem(item: IItem) {
 }
 
 
-export async function getItem(opts: IItemReadRequest): Promise<IItemReadResponse> {
+export async function getItem(opts: IReadRequest): Promise<IItemReadResponse> {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.readItem}`;
+  console.info('getItem', opts);
   try {
     const token = await getToken();
     if (!token) {
@@ -84,7 +92,13 @@ export async function getItem(opts: IItemReadRequest): Promise<IItemReadResponse
 
     // return await res.json();
     const data = await res.json();
-    return ZItemReadResponse.parse(data);
+    console.info('getItem response ', data.pagination);
+    return data;
+    // console.info('getItem response ', data.pagination);
+    // const parsedData = ZItemReadResponse.parse(data);
+    // console.info('getItem response parsedData', parsedData.pagination);
+    // return parsedData;
+    // return ZItemReadResponse.parse(data);
   } catch (e) {
     if (e instanceof AppError) throw e;
 
