@@ -12,12 +12,6 @@ enum AuditUpdaterEnum {
   AUDIT_UPDATER_ENUM_SYSOPS = 2;
 }
 
-message Pagination {
-  int64 pageSize = 1;
-  int64 pageNumber = 2;
-  string sort = 3;
-}
-
 
 
 message Tag {
@@ -83,4 +77,31 @@ message Search {
   string text = 1;
   repeated string tags = 2;
   repeated string filters = 3;
+}
+
+
+message Pagination {
+  int64 size = 1;
+  int64 page = 2;
+  string sort = 3;
+  int64 volume = 4;
+}
+
+
+message ReadQuery {
+  string userId = 1;
+  repeated string tags = 2;
+  string text = 3;
+}
+
+message ReadReference {
+  Tag tag = 1;
+  Filter filter = 2;
+}
+
+message ReadRequest {
+  ReadQuery query = 500;
+  Pagination pagination = 501;
+  ReadReference reference = 502;
+  string title = 503;
 }

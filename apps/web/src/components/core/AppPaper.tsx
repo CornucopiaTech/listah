@@ -8,7 +8,7 @@ import { styled } from '@mui/material/styles';
 import type { AppTheme } from '@/system/theme';
 import {
   AppBarHeight,
-} from '@/lib/helper/defaults';
+} from '@/utils/defaults';
 
 
 export const AppStyledPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
@@ -31,27 +31,6 @@ export const AppPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
 })
 );
 
-// export const AppHeroPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
-//   height: "60vh",
-//   display: "flex",
-//   flexWrap: 'wrap',
-//   justifyContent: "center",
-//   alignContent: "center",
-//   marginTop: "10vh",
-//   marginBottom: "10vh",
-//   backgroundColor: theme.palette.background.paper,
-//   borderRadius: 8,
-//   padding: "8%"
-// }));
-
-
-export const AppHomePaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
-  height: "fit-content",
-  display: "flex",
-  backgroundColor: theme.palette.background.paper,
-  borderRadius: 8,
-}));
-
 
 export function AppSearchPaper({ children }: { children: ReactNode }) {
   return (
@@ -62,55 +41,11 @@ export function AppSearchPaper({ children }: { children: ReactNode }) {
   );
 }
 
-export function AppCategoryListPaper({ sx, children }: { sx?: any, children: ReactNode }) {
-  return (
-    <AppStyledPaper elevation={8} sx={{
-      ...sx,
-      borderRadius: 4,
-      width: '100%',
-      maxWidth: '100%',
-      height: "fit-content",
-    }}>
-      {children}
-    </AppStyledPaper>
-  );
-}
 
-export function AppPagePaper({ sx, children }: { sx?: any, children: ReactNode }) {
-  return (
-    <AppStyledPaper elevation={2} sx={{
-      ...sx,
-      borderRadius: 4,
-      width: '100%',
-      maxWidth: '100%',
-      height: "fit-content",
-    }}>
-      {children}
-    </AppStyledPaper>
-  );
-}
-
-export function AppItemListPaper({ children }: { children: ReactNode }) {
-  return (
-    <AppStyledPaper
-      elevation={8}
-      sx={{ borderRadius: 4, width: "100%", maxWidth: "100%", height: "fit-content", }}>
-      {children}
-    </AppStyledPaper>
-  );
-}
-
-
-export const AppListPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
-  maxWidth: "50%",
-  display: "flex",
-  flexWrap: 'wrap',
-  justifyContent: "center",
-  alignContent: "center",
-  marginLeft: "1vw",
-  marginRight: "1vw",
-  marginTop: "2vh",
-  marginBottom: "2vh",
-  backgroundColor: theme.palette.background.paper,
+export const AppPagePaper = styled(Paper)(() => ({
   borderRadius: 4,
-}));
+  width: '100%',
+  maxWidth: '100%',
+  height: "fit-content",
+})
+);

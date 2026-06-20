@@ -7,12 +7,11 @@ import NotFound from '@/components/common/NotFound';
 import { AppContainerShell } from '@/components/layout/AppContainer';
 import {
   tagGroupOptions,
-  tagPropertyGroupOptions
 
-} from '@/lib/helper/querying';
+} from '@/hooks/queries';
 import {
-  DefaultTagRead,
-} from '@/lib/helper/defaults';
+  DefaultReadRequest,
+} from "@/domain/entities";
 
 
 
@@ -36,15 +35,20 @@ export const Route = createRootRoute({
     // Since the search parameter in loaderDeps does not contain userinformation, it will not be used in the loader.
     if (context.user) {
       const query = {
-        ...DefaultTagRead,
-        userId: context.user.id,
-        pagination: { ...DefaultTagRead.pagination, pageSize: -1 }
+        ...DefaultReadRequest,
+        query: { ...DefaultReadRequest.query, userId: context.user.id },
+        pagination: { ...DefaultReadRequest.pagination, size: -1 }
       }
-      const [tags, props] = await Promise.all([
-        context.queryClient.ensureQueryData(tagPropertyGroupOptions(query)),
-        context.queryClient.ensureQueryData(tagGroupOptions(query)),
-      ]);
-      return { tags, props };
+      return context.queryClient.ensureQueryData(tagGroupOptions(query));
+      // const [tags] = await Promise.all([
+      //   context.queryClient.ensureQueryData(tagGroupOptions(query)),
+      // ]);
+      // return { tags };
+      // const [tags, props] = await Promise.all([
+      //   context.queryClient.ensureQueryData(tagPropertyGroupOptions(query)),
+      //   context.queryClient.ensureQueryData(tagGroupOptions(query)),
+      // ]);
+      // return { tags, props };
     }
     return null
   },

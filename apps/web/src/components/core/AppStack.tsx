@@ -2,28 +2,8 @@ import type { ReactNode } from "react";
 import Stack from "@mui/material/Stack";
 import Divider from '@mui/material/Divider';
 
-import { SpaceBetweenBox } from "@/components/core/AppBox";
 
 
-
-export function WrongAppHomeStack({ children }: { children: ReactNode }): ReactNode {
-  return (
-    <Stack direction={{ sm: "column", md: "row" }} spacing={{ xs: 1, sm: 2, md: 4 }}
-      sx={{
-        maxWidth: "60vh", width: "60vh",
-        height: "60vh",
-        display: "flex",
-        flexWrap: 'wrap',
-        justifyContent: "space-around",
-        alignContent: "center",
-      }} divider={<Divider orientation="vertical" flexItem />} useFlexGap>
-      <SpaceBetweenBox>
-        {children}
-      </SpaceBetweenBox>
-
-    </Stack>
-  );
-}
 
 export function AppHomeStack({ children }: { children: ReactNode }): ReactNode {
   return (

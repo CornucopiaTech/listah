@@ -14,71 +14,62 @@ var ItemConflictFields = []string{
 	"id", "user_id",
 }
 var defaultPagination = Pagination{
-	PageNumber: 1,
-	PageSize:   100,
+	Page: 1,
+	Size:   200,
 	Sort:       "name ASC",
 }
 
-func ReadItemRequestToRepoItemSearch(msg *pb.ItemServiceReadItemRequest) (*ItemSearch, error) {
-	if msg.GetUserId() == "" {
+func ReadItemRequestToRepoRepoSearch(msg *pb.ItemServiceReadItemRequest) (*RepoSearch, error) {
+	if msg.GetQuery() == nil {
+		return nil, MissingQuery
+	}
+	q := msg.GetQuery()
+	if q.UserId == "" {
 		return nil, MissingUserId
 	}
-
-	pSize := defaultPagination.PageSize
-	pNum := defaultPagination.PageNumber
-	sortT := defaultPagination.Sort
-
-	pg := msg.GetPagination()
-
-	if pg != nil {
-		if pg.PageSize > 0 {
-			pSize = pg.PageSize
+	t := []string{}
+	if q.Tags != nil {
+		for _, v := range msg.GetQuery().Tags {
+			t = append(t, fmt.Sprintf(`'%v'`, v))
 		}
-		if pg.PageNumber != pNum {
-			pNum = pg.PageNumber
+	}
+
+
+	pSize := defaultPagination.Size
+	pNum := defaultPagination.Page
+	sortT := defaultPagination.Sort
+	pg := msg.GetPagination()
+	// fmt.Printf("\npg  %+v\n", pg)
+	if pg != nil {
+		if pg.Size > 0 {
+			pSize = pg.Size
+		}
+		if pg.Page != pNum {
+			pNum = pg.Page
 		}
 		if pg.Sort != sortT {
 			sortT = pg.Sort
 		}
-	}
 
+	}
 	offset := int64(0)
 	if pSize > 0 && pNum > 0 {
-		offset = pSize * (1 - pNum)
+		offset = pSize * (pNum - 1)
 	}
 
-	s := []string{}
-	t := []string{}
-	st := ""
-	q := msg.GetQuery()
-	if q != nil {
-		if q.Filters != nil {
-			for _, v := range msg.GetQuery().Filters {
-				s = append(s, fmt.Sprintf(`'%v'`, v))
-			}
-		}
 
-		if q.Tags != nil {
-			for _, v := range msg.GetQuery().Tags {
-				t = append(t, fmt.Sprintf(`'%v'`, v))
-			}
-		}
 
-		if q.Text != "" {
-			st = q.Text
-		}
-	}
 
-	i := ItemSearch{
-		UserId:      msg.GetUserId(),
+	i := RepoSearch{
+		UserId:      q.UserId,
 		Tags:        strings.Join(t, ", "),
-		Filters:     strings.Join(s, ", "),
-		SearchQuery: st,
-		SortQuery:   sortT,
+		Text: q.Text,
+		Sort:   sortT,
 		Limit:       pSize,
 		Offset:      offset,
-		PageNumber:  pNum,
+		Page:  pNum,
 	}
+	// fmt.Printf("\nRepo Search -  %+v\n", i)
 	return &i, nil
 }
 

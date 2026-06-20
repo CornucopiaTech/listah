@@ -13,18 +13,17 @@ import "gnostic/openapi/v3/annotations.proto";
 
 // Item Messages
 message ItemServiceReadItemRequest {
-  string userId = 500 [json_name = "userId"];
-  Search query = 501;
-  Pagination pagination = 502;
+  ReadQuery query = 500;
+  Pagination pagination = 501;
+  ReadReference reference = 502;
+  string title = 503;
 }
 message ItemServiceReadItemResponse {
   repeated Item items = 1;
-  int32 totalRecordCount = 2;
-
-  string userId = 500 [json_name = "userId"];
-  Search query = 501;
-  Pagination pagination = 502;
-
+  ReadQuery query = 500;
+  Pagination pagination = 501;
+  ReadReference reference = 502;
+  string title = 503;
 }
 message ItemServiceUpsertItemRequest {
   repeated Item items = 1;
@@ -36,18 +35,19 @@ message ItemServiceUpsertItemResponse {
 
 // Tag Messages
 message ItemServiceReadTagRequest {
-  string userId = 500 [json_name = "userId"];
-  Search query = 501;
-  Pagination pagination = 502;
+  ReadQuery query = 500;
+  Pagination pagination = 501;
+  ReadReference reference = 502;
+  string title = 503;
 }
 message ItemServiceReadTagResponse {
   repeated Tag tags = 1;
-  int32 totalRecordCount = 2;
-  map<string,StringList> tagidPropMap = 3;
+  map<string,StringList> tagidPropMap = 2;
 
-  string userId = 500 [json_name = "userId"];
-  Search query = 501;
-  Pagination pagination = 502;
+  ReadQuery query = 500;
+  Pagination pagination = 501;
+  ReadReference reference = 502;
+  string title = 503;
 }
 message ItemServiceUpsertTagRequest {
   repeated Tag tags = 1;
@@ -59,33 +59,34 @@ message ItemServiceUpsertTagResponse {
 
 // Tag Property Messages
 message ItemServiceReadTagPropertyRequest {
-  string userId = 500 [json_name = "userId"];
-  Search query = 501;
-  Pagination pagination = 502;
+  ReadQuery query = 500;
+  Pagination pagination = 501;
+  ReadReference reference = 502;
+  string title = 503;
 }
 message ItemServiceReadTagPropertyResponse {
   map<string,StringList> props = 1;
-  int32 totalRecordCount = 2;
 
-  string userId = 500 [json_name = "userId"];
-  Search query = 501;
-  Pagination pagination = 502;
+  ReadQuery query = 500;
+  Pagination pagination = 501;
+  ReadReference reference = 502;
+  string title = 503;
 }
 
 
 // Filter Messages
 message ItemServiceReadFilterRequest {
-  string userId = 500 [json_name = "userId"];
-  Search query = 501;
-  Pagination pagination = 502;
+  ReadQuery query = 500;
+  Pagination pagination = 501;
+  ReadReference reference = 502;
+  string title = 503;
 }
 message ItemServiceReadFilterResponse {
   repeated Filter filters = 1;
-  int32 totalRecordCount = 2;
-
-  string userId = 500 [json_name = "userId"];
-  Search query = 501;
-  Pagination pagination = 502;
+  ReadQuery query = 500;
+  Pagination pagination = 501;
+  ReadReference reference = 502;
+  string title = 503;
 }
 message ItemServiceUpsertFilterRequest {
   repeated Filter filters = 1;

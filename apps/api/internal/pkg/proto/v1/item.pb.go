@@ -26,9 +26,10 @@ const (
 // Item Messages
 type ItemServiceReadItemRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        string                 `protobuf:"bytes,500,opt,name=userId,proto3" json:"userId,omitempty"`
-	Query         *Search                `protobuf:"bytes,501,opt,name=query,proto3" json:"query,omitempty"`
-	Pagination    *Pagination            `protobuf:"bytes,502,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Query         *ReadQuery             `protobuf:"bytes,500,opt,name=query,proto3" json:"query,omitempty"`
+	Pagination    *Pagination            `protobuf:"bytes,501,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Reference     *ReadReference         `protobuf:"bytes,502,opt,name=reference,proto3" json:"reference,omitempty"`
+	Title         string                 `protobuf:"bytes,503,opt,name=title,proto3" json:"title,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -63,14 +64,7 @@ func (*ItemServiceReadItemRequest) Descriptor() ([]byte, []int) {
 	return file_v1_item_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *ItemServiceReadItemRequest) GetUserId() string {
-	if x != nil {
-		return x.UserId
-	}
-	return ""
-}
-
-func (x *ItemServiceReadItemRequest) GetQuery() *Search {
+func (x *ItemServiceReadItemRequest) GetQuery() *ReadQuery {
 	if x != nil {
 		return x.Query
 	}
@@ -84,15 +78,29 @@ func (x *ItemServiceReadItemRequest) GetPagination() *Pagination {
 	return nil
 }
 
+func (x *ItemServiceReadItemRequest) GetReference() *ReadReference {
+	if x != nil {
+		return x.Reference
+	}
+	return nil
+}
+
+func (x *ItemServiceReadItemRequest) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
 type ItemServiceReadItemResponse struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Items            []*Item                `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	TotalRecordCount int32                  `protobuf:"varint,2,opt,name=totalRecordCount,proto3" json:"totalRecordCount,omitempty"`
-	UserId           string                 `protobuf:"bytes,500,opt,name=userId,proto3" json:"userId,omitempty"`
-	Query            *Search                `protobuf:"bytes,501,opt,name=query,proto3" json:"query,omitempty"`
-	Pagination       *Pagination            `protobuf:"bytes,502,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*Item                `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	Query         *ReadQuery             `protobuf:"bytes,500,opt,name=query,proto3" json:"query,omitempty"`
+	Pagination    *Pagination            `protobuf:"bytes,501,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Reference     *ReadReference         `protobuf:"bytes,502,opt,name=reference,proto3" json:"reference,omitempty"`
+	Title         string                 `protobuf:"bytes,503,opt,name=title,proto3" json:"title,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ItemServiceReadItemResponse) Reset() {
@@ -132,21 +140,7 @@ func (x *ItemServiceReadItemResponse) GetItems() []*Item {
 	return nil
 }
 
-func (x *ItemServiceReadItemResponse) GetTotalRecordCount() int32 {
-	if x != nil {
-		return x.TotalRecordCount
-	}
-	return 0
-}
-
-func (x *ItemServiceReadItemResponse) GetUserId() string {
-	if x != nil {
-		return x.UserId
-	}
-	return ""
-}
-
-func (x *ItemServiceReadItemResponse) GetQuery() *Search {
+func (x *ItemServiceReadItemResponse) GetQuery() *ReadQuery {
 	if x != nil {
 		return x.Query
 	}
@@ -158,6 +152,20 @@ func (x *ItemServiceReadItemResponse) GetPagination() *Pagination {
 		return x.Pagination
 	}
 	return nil
+}
+
+func (x *ItemServiceReadItemResponse) GetReference() *ReadReference {
+	if x != nil {
+		return x.Reference
+	}
+	return nil
+}
+
+func (x *ItemServiceReadItemResponse) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
 }
 
 type ItemServiceUpsertItemRequest struct {
@@ -251,9 +259,10 @@ func (x *ItemServiceUpsertItemResponse) GetItemIds() []string {
 // Tag Messages
 type ItemServiceReadTagRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        string                 `protobuf:"bytes,500,opt,name=userId,proto3" json:"userId,omitempty"`
-	Query         *Search                `protobuf:"bytes,501,opt,name=query,proto3" json:"query,omitempty"`
-	Pagination    *Pagination            `protobuf:"bytes,502,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Query         *ReadQuery             `protobuf:"bytes,500,opt,name=query,proto3" json:"query,omitempty"`
+	Pagination    *Pagination            `protobuf:"bytes,501,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Reference     *ReadReference         `protobuf:"bytes,502,opt,name=reference,proto3" json:"reference,omitempty"`
+	Title         string                 `protobuf:"bytes,503,opt,name=title,proto3" json:"title,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -288,14 +297,7 @@ func (*ItemServiceReadTagRequest) Descriptor() ([]byte, []int) {
 	return file_v1_item_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *ItemServiceReadTagRequest) GetUserId() string {
-	if x != nil {
-		return x.UserId
-	}
-	return ""
-}
-
-func (x *ItemServiceReadTagRequest) GetQuery() *Search {
+func (x *ItemServiceReadTagRequest) GetQuery() *ReadQuery {
 	if x != nil {
 		return x.Query
 	}
@@ -309,16 +311,30 @@ func (x *ItemServiceReadTagRequest) GetPagination() *Pagination {
 	return nil
 }
 
+func (x *ItemServiceReadTagRequest) GetReference() *ReadReference {
+	if x != nil {
+		return x.Reference
+	}
+	return nil
+}
+
+func (x *ItemServiceReadTagRequest) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
 type ItemServiceReadTagResponse struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Tags             []*Tag                 `protobuf:"bytes,1,rep,name=tags,proto3" json:"tags,omitempty"`
-	TotalRecordCount int32                  `protobuf:"varint,2,opt,name=totalRecordCount,proto3" json:"totalRecordCount,omitempty"`
-	TagidPropMap     map[string]*StringList `protobuf:"bytes,3,rep,name=tagidPropMap,proto3" json:"tagidPropMap,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	UserId           string                 `protobuf:"bytes,500,opt,name=userId,proto3" json:"userId,omitempty"`
-	Query            *Search                `protobuf:"bytes,501,opt,name=query,proto3" json:"query,omitempty"`
-	Pagination       *Pagination            `protobuf:"bytes,502,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Tags          []*Tag                 `protobuf:"bytes,1,rep,name=tags,proto3" json:"tags,omitempty"`
+	TagidPropMap  map[string]*StringList `protobuf:"bytes,2,rep,name=tagidPropMap,proto3" json:"tagidPropMap,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Query         *ReadQuery             `protobuf:"bytes,500,opt,name=query,proto3" json:"query,omitempty"`
+	Pagination    *Pagination            `protobuf:"bytes,501,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Reference     *ReadReference         `protobuf:"bytes,502,opt,name=reference,proto3" json:"reference,omitempty"`
+	Title         string                 `protobuf:"bytes,503,opt,name=title,proto3" json:"title,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ItemServiceReadTagResponse) Reset() {
@@ -358,13 +374,6 @@ func (x *ItemServiceReadTagResponse) GetTags() []*Tag {
 	return nil
 }
 
-func (x *ItemServiceReadTagResponse) GetTotalRecordCount() int32 {
-	if x != nil {
-		return x.TotalRecordCount
-	}
-	return 0
-}
-
 func (x *ItemServiceReadTagResponse) GetTagidPropMap() map[string]*StringList {
 	if x != nil {
 		return x.TagidPropMap
@@ -372,14 +381,7 @@ func (x *ItemServiceReadTagResponse) GetTagidPropMap() map[string]*StringList {
 	return nil
 }
 
-func (x *ItemServiceReadTagResponse) GetUserId() string {
-	if x != nil {
-		return x.UserId
-	}
-	return ""
-}
-
-func (x *ItemServiceReadTagResponse) GetQuery() *Search {
+func (x *ItemServiceReadTagResponse) GetQuery() *ReadQuery {
 	if x != nil {
 		return x.Query
 	}
@@ -391,6 +393,20 @@ func (x *ItemServiceReadTagResponse) GetPagination() *Pagination {
 		return x.Pagination
 	}
 	return nil
+}
+
+func (x *ItemServiceReadTagResponse) GetReference() *ReadReference {
+	if x != nil {
+		return x.Reference
+	}
+	return nil
+}
+
+func (x *ItemServiceReadTagResponse) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
 }
 
 type ItemServiceUpsertTagRequest struct {
@@ -484,9 +500,10 @@ func (x *ItemServiceUpsertTagResponse) GetTagIds() []string {
 // Tag Property Messages
 type ItemServiceReadTagPropertyRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        string                 `protobuf:"bytes,500,opt,name=userId,proto3" json:"userId,omitempty"`
-	Query         *Search                `protobuf:"bytes,501,opt,name=query,proto3" json:"query,omitempty"`
-	Pagination    *Pagination            `protobuf:"bytes,502,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Query         *ReadQuery             `protobuf:"bytes,500,opt,name=query,proto3" json:"query,omitempty"`
+	Pagination    *Pagination            `protobuf:"bytes,501,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Reference     *ReadReference         `protobuf:"bytes,502,opt,name=reference,proto3" json:"reference,omitempty"`
+	Title         string                 `protobuf:"bytes,503,opt,name=title,proto3" json:"title,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -521,14 +538,7 @@ func (*ItemServiceReadTagPropertyRequest) Descriptor() ([]byte, []int) {
 	return file_v1_item_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *ItemServiceReadTagPropertyRequest) GetUserId() string {
-	if x != nil {
-		return x.UserId
-	}
-	return ""
-}
-
-func (x *ItemServiceReadTagPropertyRequest) GetQuery() *Search {
+func (x *ItemServiceReadTagPropertyRequest) GetQuery() *ReadQuery {
 	if x != nil {
 		return x.Query
 	}
@@ -542,15 +552,29 @@ func (x *ItemServiceReadTagPropertyRequest) GetPagination() *Pagination {
 	return nil
 }
 
+func (x *ItemServiceReadTagPropertyRequest) GetReference() *ReadReference {
+	if x != nil {
+		return x.Reference
+	}
+	return nil
+}
+
+func (x *ItemServiceReadTagPropertyRequest) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
 type ItemServiceReadTagPropertyResponse struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Props            map[string]*StringList `protobuf:"bytes,1,rep,name=props,proto3" json:"props,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	TotalRecordCount int32                  `protobuf:"varint,2,opt,name=totalRecordCount,proto3" json:"totalRecordCount,omitempty"`
-	UserId           string                 `protobuf:"bytes,500,opt,name=userId,proto3" json:"userId,omitempty"`
-	Query            *Search                `protobuf:"bytes,501,opt,name=query,proto3" json:"query,omitempty"`
-	Pagination       *Pagination            `protobuf:"bytes,502,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Props         map[string]*StringList `protobuf:"bytes,1,rep,name=props,proto3" json:"props,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Query         *ReadQuery             `protobuf:"bytes,500,opt,name=query,proto3" json:"query,omitempty"`
+	Pagination    *Pagination            `protobuf:"bytes,501,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Reference     *ReadReference         `protobuf:"bytes,502,opt,name=reference,proto3" json:"reference,omitempty"`
+	Title         string                 `protobuf:"bytes,503,opt,name=title,proto3" json:"title,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ItemServiceReadTagPropertyResponse) Reset() {
@@ -590,21 +614,7 @@ func (x *ItemServiceReadTagPropertyResponse) GetProps() map[string]*StringList {
 	return nil
 }
 
-func (x *ItemServiceReadTagPropertyResponse) GetTotalRecordCount() int32 {
-	if x != nil {
-		return x.TotalRecordCount
-	}
-	return 0
-}
-
-func (x *ItemServiceReadTagPropertyResponse) GetUserId() string {
-	if x != nil {
-		return x.UserId
-	}
-	return ""
-}
-
-func (x *ItemServiceReadTagPropertyResponse) GetQuery() *Search {
+func (x *ItemServiceReadTagPropertyResponse) GetQuery() *ReadQuery {
 	if x != nil {
 		return x.Query
 	}
@@ -618,12 +628,27 @@ func (x *ItemServiceReadTagPropertyResponse) GetPagination() *Pagination {
 	return nil
 }
 
+func (x *ItemServiceReadTagPropertyResponse) GetReference() *ReadReference {
+	if x != nil {
+		return x.Reference
+	}
+	return nil
+}
+
+func (x *ItemServiceReadTagPropertyResponse) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
 // Filter Messages
 type ItemServiceReadFilterRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        string                 `protobuf:"bytes,500,opt,name=userId,proto3" json:"userId,omitempty"`
-	Query         *Search                `protobuf:"bytes,501,opt,name=query,proto3" json:"query,omitempty"`
-	Pagination    *Pagination            `protobuf:"bytes,502,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Query         *ReadQuery             `protobuf:"bytes,500,opt,name=query,proto3" json:"query,omitempty"`
+	Pagination    *Pagination            `protobuf:"bytes,501,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Reference     *ReadReference         `protobuf:"bytes,502,opt,name=reference,proto3" json:"reference,omitempty"`
+	Title         string                 `protobuf:"bytes,503,opt,name=title,proto3" json:"title,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -658,14 +683,7 @@ func (*ItemServiceReadFilterRequest) Descriptor() ([]byte, []int) {
 	return file_v1_item_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *ItemServiceReadFilterRequest) GetUserId() string {
-	if x != nil {
-		return x.UserId
-	}
-	return ""
-}
-
-func (x *ItemServiceReadFilterRequest) GetQuery() *Search {
+func (x *ItemServiceReadFilterRequest) GetQuery() *ReadQuery {
 	if x != nil {
 		return x.Query
 	}
@@ -679,15 +697,29 @@ func (x *ItemServiceReadFilterRequest) GetPagination() *Pagination {
 	return nil
 }
 
+func (x *ItemServiceReadFilterRequest) GetReference() *ReadReference {
+	if x != nil {
+		return x.Reference
+	}
+	return nil
+}
+
+func (x *ItemServiceReadFilterRequest) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
 type ItemServiceReadFilterResponse struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Filters          []*Filter              `protobuf:"bytes,1,rep,name=filters,proto3" json:"filters,omitempty"`
-	TotalRecordCount int32                  `protobuf:"varint,2,opt,name=totalRecordCount,proto3" json:"totalRecordCount,omitempty"`
-	UserId           string                 `protobuf:"bytes,500,opt,name=userId,proto3" json:"userId,omitempty"`
-	Query            *Search                `protobuf:"bytes,501,opt,name=query,proto3" json:"query,omitempty"`
-	Pagination       *Pagination            `protobuf:"bytes,502,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Filters       []*Filter              `protobuf:"bytes,1,rep,name=filters,proto3" json:"filters,omitempty"`
+	Query         *ReadQuery             `protobuf:"bytes,500,opt,name=query,proto3" json:"query,omitempty"`
+	Pagination    *Pagination            `protobuf:"bytes,501,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Reference     *ReadReference         `protobuf:"bytes,502,opt,name=reference,proto3" json:"reference,omitempty"`
+	Title         string                 `protobuf:"bytes,503,opt,name=title,proto3" json:"title,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ItemServiceReadFilterResponse) Reset() {
@@ -727,21 +759,7 @@ func (x *ItemServiceReadFilterResponse) GetFilters() []*Filter {
 	return nil
 }
 
-func (x *ItemServiceReadFilterResponse) GetTotalRecordCount() int32 {
-	if x != nil {
-		return x.TotalRecordCount
-	}
-	return 0
-}
-
-func (x *ItemServiceReadFilterResponse) GetUserId() string {
-	if x != nil {
-		return x.UserId
-	}
-	return ""
-}
-
-func (x *ItemServiceReadFilterResponse) GetQuery() *Search {
+func (x *ItemServiceReadFilterResponse) GetQuery() *ReadQuery {
 	if x != nil {
 		return x.Query
 	}
@@ -753,6 +771,20 @@ func (x *ItemServiceReadFilterResponse) GetPagination() *Pagination {
 		return x.Pagination
 	}
 	return nil
+}
+
+func (x *ItemServiceReadFilterResponse) GetReference() *ReadReference {
+	if x != nil {
+		return x.Reference
+	}
+	return nil
+}
+
+func (x *ItemServiceReadFilterResponse) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
 }
 
 type ItemServiceUpsertFilterRequest struct {
@@ -847,79 +879,83 @@ var File_v1_item_proto protoreflect.FileDescriptor
 
 const file_v1_item_proto_rawDesc = "" +
 	"\n" +
-	"\rv1/item.proto\x12\tlistah.v1\x1a\x10v1/commons.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a$gnostic/openapi/v3/annotations.proto\"\x97\x01\n" +
-	"\x1aItemServiceReadItemRequest\x12\x17\n" +
-	"\x06userId\x18\xf4\x03 \x01(\tR\x06userId\x12(\n" +
-	"\x05query\x18\xf5\x03 \x01(\v2\x11.listah.v1.SearchR\x05query\x126\n" +
+	"\rv1/item.proto\x12\tlistah.v1\x1a\x10v1/commons.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a$gnostic/openapi/v3/annotations.proto\"\xd1\x01\n" +
+	"\x1aItemServiceReadItemRequest\x12+\n" +
+	"\x05query\x18\xf4\x03 \x01(\v2\x14.listah.v1.ReadQueryR\x05query\x126\n" +
 	"\n" +
-	"pagination\x18\xf6\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
-	"pagination\"\xeb\x01\n" +
+	"pagination\x18\xf5\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
+	"pagination\x127\n" +
+	"\treference\x18\xf6\x03 \x01(\v2\x18.listah.v1.ReadReferenceR\treference\x12\x15\n" +
+	"\x05title\x18\xf7\x03 \x01(\tR\x05title\"\xf9\x01\n" +
 	"\x1bItemServiceReadItemResponse\x12%\n" +
-	"\x05items\x18\x01 \x03(\v2\x0f.listah.v1.ItemR\x05items\x12*\n" +
-	"\x10totalRecordCount\x18\x02 \x01(\x05R\x10totalRecordCount\x12\x17\n" +
-	"\x06userId\x18\xf4\x03 \x01(\tR\x06userId\x12(\n" +
-	"\x05query\x18\xf5\x03 \x01(\v2\x11.listah.v1.SearchR\x05query\x126\n" +
+	"\x05items\x18\x01 \x03(\v2\x0f.listah.v1.ItemR\x05items\x12+\n" +
+	"\x05query\x18\xf4\x03 \x01(\v2\x14.listah.v1.ReadQueryR\x05query\x126\n" +
 	"\n" +
-	"pagination\x18\xf6\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
-	"pagination\"E\n" +
+	"pagination\x18\xf5\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
+	"pagination\x127\n" +
+	"\treference\x18\xf6\x03 \x01(\v2\x18.listah.v1.ReadReferenceR\treference\x12\x15\n" +
+	"\x05title\x18\xf7\x03 \x01(\tR\x05title\"E\n" +
 	"\x1cItemServiceUpsertItemRequest\x12%\n" +
 	"\x05items\x18\x01 \x03(\v2\x0f.listah.v1.ItemR\x05items\"9\n" +
 	"\x1dItemServiceUpsertItemResponse\x12\x18\n" +
-	"\aitemIds\x18\x01 \x03(\tR\aitemIds\"\x96\x01\n" +
-	"\x19ItemServiceReadTagRequest\x12\x17\n" +
-	"\x06userId\x18\xf4\x03 \x01(\tR\x06userId\x12(\n" +
-	"\x05query\x18\xf5\x03 \x01(\v2\x11.listah.v1.SearchR\x05query\x126\n" +
+	"\aitemIds\x18\x01 \x03(\tR\aitemIds\"\xd0\x01\n" +
+	"\x19ItemServiceReadTagRequest\x12+\n" +
+	"\x05query\x18\xf4\x03 \x01(\v2\x14.listah.v1.ReadQueryR\x05query\x126\n" +
 	"\n" +
-	"pagination\x18\xf6\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
-	"pagination\"\x9c\x03\n" +
+	"pagination\x18\xf5\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
+	"pagination\x127\n" +
+	"\treference\x18\xf6\x03 \x01(\v2\x18.listah.v1.ReadReferenceR\treference\x12\x15\n" +
+	"\x05title\x18\xf7\x03 \x01(\tR\x05title\"\xaa\x03\n" +
 	"\x1aItemServiceReadTagResponse\x12\"\n" +
-	"\x04tags\x18\x01 \x03(\v2\x0e.listah.v1.TagR\x04tags\x12*\n" +
-	"\x10totalRecordCount\x18\x02 \x01(\x05R\x10totalRecordCount\x12[\n" +
-	"\ftagidPropMap\x18\x03 \x03(\v27.listah.v1.ItemServiceReadTagResponse.TagidPropMapEntryR\ftagidPropMap\x12\x17\n" +
-	"\x06userId\x18\xf4\x03 \x01(\tR\x06userId\x12(\n" +
-	"\x05query\x18\xf5\x03 \x01(\v2\x11.listah.v1.SearchR\x05query\x126\n" +
+	"\x04tags\x18\x01 \x03(\v2\x0e.listah.v1.TagR\x04tags\x12[\n" +
+	"\ftagidPropMap\x18\x02 \x03(\v27.listah.v1.ItemServiceReadTagResponse.TagidPropMapEntryR\ftagidPropMap\x12+\n" +
+	"\x05query\x18\xf4\x03 \x01(\v2\x14.listah.v1.ReadQueryR\x05query\x126\n" +
 	"\n" +
-	"pagination\x18\xf6\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
-	"pagination\x1aV\n" +
+	"pagination\x18\xf5\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
+	"pagination\x127\n" +
+	"\treference\x18\xf6\x03 \x01(\v2\x18.listah.v1.ReadReferenceR\treference\x12\x15\n" +
+	"\x05title\x18\xf7\x03 \x01(\tR\x05title\x1aV\n" +
 	"\x11TagidPropMapEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12+\n" +
 	"\x05value\x18\x02 \x01(\v2\x15.listah.v1.StringListR\x05value:\x028\x01\"A\n" +
 	"\x1bItemServiceUpsertTagRequest\x12\"\n" +
 	"\x04tags\x18\x01 \x03(\v2\x0e.listah.v1.TagR\x04tags\"6\n" +
 	"\x1cItemServiceUpsertTagResponse\x12\x16\n" +
-	"\x06tagIds\x18\x01 \x03(\tR\x06tagIds\"\x9e\x01\n" +
-	"!ItemServiceReadTagPropertyRequest\x12\x17\n" +
-	"\x06userId\x18\xf4\x03 \x01(\tR\x06userId\x12(\n" +
-	"\x05query\x18\xf5\x03 \x01(\v2\x11.listah.v1.SearchR\x05query\x126\n" +
+	"\x06tagIds\x18\x01 \x03(\tR\x06tagIds\"\xd8\x01\n" +
+	"!ItemServiceReadTagPropertyRequest\x12+\n" +
+	"\x05query\x18\xf4\x03 \x01(\v2\x14.listah.v1.ReadQueryR\x05query\x126\n" +
 	"\n" +
-	"pagination\x18\xf6\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
-	"pagination\"\xec\x02\n" +
+	"pagination\x18\xf5\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
+	"pagination\x127\n" +
+	"\treference\x18\xf6\x03 \x01(\v2\x18.listah.v1.ReadReferenceR\treference\x12\x15\n" +
+	"\x05title\x18\xf7\x03 \x01(\tR\x05title\"\xfa\x02\n" +
 	"\"ItemServiceReadTagPropertyResponse\x12N\n" +
-	"\x05props\x18\x01 \x03(\v28.listah.v1.ItemServiceReadTagPropertyResponse.PropsEntryR\x05props\x12*\n" +
-	"\x10totalRecordCount\x18\x02 \x01(\x05R\x10totalRecordCount\x12\x17\n" +
-	"\x06userId\x18\xf4\x03 \x01(\tR\x06userId\x12(\n" +
-	"\x05query\x18\xf5\x03 \x01(\v2\x11.listah.v1.SearchR\x05query\x126\n" +
+	"\x05props\x18\x01 \x03(\v28.listah.v1.ItemServiceReadTagPropertyResponse.PropsEntryR\x05props\x12+\n" +
+	"\x05query\x18\xf4\x03 \x01(\v2\x14.listah.v1.ReadQueryR\x05query\x126\n" +
 	"\n" +
-	"pagination\x18\xf6\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
-	"pagination\x1aO\n" +
+	"pagination\x18\xf5\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
+	"pagination\x127\n" +
+	"\treference\x18\xf6\x03 \x01(\v2\x18.listah.v1.ReadReferenceR\treference\x12\x15\n" +
+	"\x05title\x18\xf7\x03 \x01(\tR\x05title\x1aO\n" +
 	"\n" +
 	"PropsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12+\n" +
-	"\x05value\x18\x02 \x01(\v2\x15.listah.v1.StringListR\x05value:\x028\x01\"\x99\x01\n" +
-	"\x1cItemServiceReadFilterRequest\x12\x17\n" +
-	"\x06userId\x18\xf4\x03 \x01(\tR\x06userId\x12(\n" +
-	"\x05query\x18\xf5\x03 \x01(\v2\x11.listah.v1.SearchR\x05query\x126\n" +
+	"\x05value\x18\x02 \x01(\v2\x15.listah.v1.StringListR\x05value:\x028\x01\"\xd3\x01\n" +
+	"\x1cItemServiceReadFilterRequest\x12+\n" +
+	"\x05query\x18\xf4\x03 \x01(\v2\x14.listah.v1.ReadQueryR\x05query\x126\n" +
 	"\n" +
-	"pagination\x18\xf6\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
-	"pagination\"\xf3\x01\n" +
+	"pagination\x18\xf5\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
+	"pagination\x127\n" +
+	"\treference\x18\xf6\x03 \x01(\v2\x18.listah.v1.ReadReferenceR\treference\x12\x15\n" +
+	"\x05title\x18\xf7\x03 \x01(\tR\x05title\"\x81\x02\n" +
 	"\x1dItemServiceReadFilterResponse\x12+\n" +
-	"\afilters\x18\x01 \x03(\v2\x11.listah.v1.FilterR\afilters\x12*\n" +
-	"\x10totalRecordCount\x18\x02 \x01(\x05R\x10totalRecordCount\x12\x17\n" +
-	"\x06userId\x18\xf4\x03 \x01(\tR\x06userId\x12(\n" +
-	"\x05query\x18\xf5\x03 \x01(\v2\x11.listah.v1.SearchR\x05query\x126\n" +
+	"\afilters\x18\x01 \x03(\v2\x11.listah.v1.FilterR\afilters\x12+\n" +
+	"\x05query\x18\xf4\x03 \x01(\v2\x14.listah.v1.ReadQueryR\x05query\x126\n" +
 	"\n" +
-	"pagination\x18\xf6\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
-	"pagination\"M\n" +
+	"pagination\x18\xf5\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
+	"pagination\x127\n" +
+	"\treference\x18\xf6\x03 \x01(\v2\x18.listah.v1.ReadReferenceR\treference\x12\x15\n" +
+	"\x05title\x18\xf7\x03 \x01(\tR\x05title\"M\n" +
 	"\x1eItemServiceUpsertFilterRequest\x12+\n" +
 	"\afilters\x18\x01 \x03(\v2\x11.listah.v1.FilterR\afilters\"?\n" +
 	"\x1fItemServiceUpsertFilterResponse\x12\x1c\n" +
@@ -967,59 +1003,68 @@ var file_v1_item_proto_goTypes = []any{
 	(*ItemServiceUpsertFilterResponse)(nil),    // 13: listah.v1.ItemServiceUpsertFilterResponse
 	nil,                                        // 14: listah.v1.ItemServiceReadTagResponse.TagidPropMapEntry
 	nil,                                        // 15: listah.v1.ItemServiceReadTagPropertyResponse.PropsEntry
-	(*Search)(nil),                             // 16: listah.v1.Search
+	(*ReadQuery)(nil),                          // 16: listah.v1.ReadQuery
 	(*Pagination)(nil),                         // 17: listah.v1.Pagination
-	(*Item)(nil),                               // 18: listah.v1.Item
-	(*Tag)(nil),                                // 19: listah.v1.Tag
-	(*Filter)(nil),                             // 20: listah.v1.Filter
-	(*StringList)(nil),                         // 21: listah.v1.StringList
+	(*ReadReference)(nil),                      // 18: listah.v1.ReadReference
+	(*Item)(nil),                               // 19: listah.v1.Item
+	(*Tag)(nil),                                // 20: listah.v1.Tag
+	(*Filter)(nil),                             // 21: listah.v1.Filter
+	(*StringList)(nil),                         // 22: listah.v1.StringList
 }
 var file_v1_item_proto_depIdxs = []int32{
-	16, // 0: listah.v1.ItemServiceReadItemRequest.query:type_name -> listah.v1.Search
+	16, // 0: listah.v1.ItemServiceReadItemRequest.query:type_name -> listah.v1.ReadQuery
 	17, // 1: listah.v1.ItemServiceReadItemRequest.pagination:type_name -> listah.v1.Pagination
-	18, // 2: listah.v1.ItemServiceReadItemResponse.items:type_name -> listah.v1.Item
-	16, // 3: listah.v1.ItemServiceReadItemResponse.query:type_name -> listah.v1.Search
-	17, // 4: listah.v1.ItemServiceReadItemResponse.pagination:type_name -> listah.v1.Pagination
-	18, // 5: listah.v1.ItemServiceUpsertItemRequest.items:type_name -> listah.v1.Item
-	16, // 6: listah.v1.ItemServiceReadTagRequest.query:type_name -> listah.v1.Search
-	17, // 7: listah.v1.ItemServiceReadTagRequest.pagination:type_name -> listah.v1.Pagination
-	19, // 8: listah.v1.ItemServiceReadTagResponse.tags:type_name -> listah.v1.Tag
-	14, // 9: listah.v1.ItemServiceReadTagResponse.tagidPropMap:type_name -> listah.v1.ItemServiceReadTagResponse.TagidPropMapEntry
-	16, // 10: listah.v1.ItemServiceReadTagResponse.query:type_name -> listah.v1.Search
-	17, // 11: listah.v1.ItemServiceReadTagResponse.pagination:type_name -> listah.v1.Pagination
-	19, // 12: listah.v1.ItemServiceUpsertTagRequest.tags:type_name -> listah.v1.Tag
-	16, // 13: listah.v1.ItemServiceReadTagPropertyRequest.query:type_name -> listah.v1.Search
-	17, // 14: listah.v1.ItemServiceReadTagPropertyRequest.pagination:type_name -> listah.v1.Pagination
-	15, // 15: listah.v1.ItemServiceReadTagPropertyResponse.props:type_name -> listah.v1.ItemServiceReadTagPropertyResponse.PropsEntry
-	16, // 16: listah.v1.ItemServiceReadTagPropertyResponse.query:type_name -> listah.v1.Search
-	17, // 17: listah.v1.ItemServiceReadTagPropertyResponse.pagination:type_name -> listah.v1.Pagination
-	16, // 18: listah.v1.ItemServiceReadFilterRequest.query:type_name -> listah.v1.Search
-	17, // 19: listah.v1.ItemServiceReadFilterRequest.pagination:type_name -> listah.v1.Pagination
-	20, // 20: listah.v1.ItemServiceReadFilterResponse.filters:type_name -> listah.v1.Filter
-	16, // 21: listah.v1.ItemServiceReadFilterResponse.query:type_name -> listah.v1.Search
-	17, // 22: listah.v1.ItemServiceReadFilterResponse.pagination:type_name -> listah.v1.Pagination
-	20, // 23: listah.v1.ItemServiceUpsertFilterRequest.filters:type_name -> listah.v1.Filter
-	21, // 24: listah.v1.ItemServiceReadTagResponse.TagidPropMapEntry.value:type_name -> listah.v1.StringList
-	21, // 25: listah.v1.ItemServiceReadTagPropertyResponse.PropsEntry.value:type_name -> listah.v1.StringList
-	0,  // 26: listah.v1.ItemService.ReadItem:input_type -> listah.v1.ItemServiceReadItemRequest
-	2,  // 27: listah.v1.ItemService.UpsertItem:input_type -> listah.v1.ItemServiceUpsertItemRequest
-	8,  // 28: listah.v1.ItemService.ReadTagProperty:input_type -> listah.v1.ItemServiceReadTagPropertyRequest
-	4,  // 29: listah.v1.ItemService.ReadTag:input_type -> listah.v1.ItemServiceReadTagRequest
-	6,  // 30: listah.v1.ItemService.UpsertTag:input_type -> listah.v1.ItemServiceUpsertTagRequest
-	10, // 31: listah.v1.ItemService.ReadFilter:input_type -> listah.v1.ItemServiceReadFilterRequest
-	12, // 32: listah.v1.ItemService.UpsertFilter:input_type -> listah.v1.ItemServiceUpsertFilterRequest
-	1,  // 33: listah.v1.ItemService.ReadItem:output_type -> listah.v1.ItemServiceReadItemResponse
-	3,  // 34: listah.v1.ItemService.UpsertItem:output_type -> listah.v1.ItemServiceUpsertItemResponse
-	9,  // 35: listah.v1.ItemService.ReadTagProperty:output_type -> listah.v1.ItemServiceReadTagPropertyResponse
-	5,  // 36: listah.v1.ItemService.ReadTag:output_type -> listah.v1.ItemServiceReadTagResponse
-	7,  // 37: listah.v1.ItemService.UpsertTag:output_type -> listah.v1.ItemServiceUpsertTagResponse
-	11, // 38: listah.v1.ItemService.ReadFilter:output_type -> listah.v1.ItemServiceReadFilterResponse
-	13, // 39: listah.v1.ItemService.UpsertFilter:output_type -> listah.v1.ItemServiceUpsertFilterResponse
-	33, // [33:40] is the sub-list for method output_type
-	26, // [26:33] is the sub-list for method input_type
-	26, // [26:26] is the sub-list for extension type_name
-	26, // [26:26] is the sub-list for extension extendee
-	0,  // [0:26] is the sub-list for field type_name
+	18, // 2: listah.v1.ItemServiceReadItemRequest.reference:type_name -> listah.v1.ReadReference
+	19, // 3: listah.v1.ItemServiceReadItemResponse.items:type_name -> listah.v1.Item
+	16, // 4: listah.v1.ItemServiceReadItemResponse.query:type_name -> listah.v1.ReadQuery
+	17, // 5: listah.v1.ItemServiceReadItemResponse.pagination:type_name -> listah.v1.Pagination
+	18, // 6: listah.v1.ItemServiceReadItemResponse.reference:type_name -> listah.v1.ReadReference
+	19, // 7: listah.v1.ItemServiceUpsertItemRequest.items:type_name -> listah.v1.Item
+	16, // 8: listah.v1.ItemServiceReadTagRequest.query:type_name -> listah.v1.ReadQuery
+	17, // 9: listah.v1.ItemServiceReadTagRequest.pagination:type_name -> listah.v1.Pagination
+	18, // 10: listah.v1.ItemServiceReadTagRequest.reference:type_name -> listah.v1.ReadReference
+	20, // 11: listah.v1.ItemServiceReadTagResponse.tags:type_name -> listah.v1.Tag
+	14, // 12: listah.v1.ItemServiceReadTagResponse.tagidPropMap:type_name -> listah.v1.ItemServiceReadTagResponse.TagidPropMapEntry
+	16, // 13: listah.v1.ItemServiceReadTagResponse.query:type_name -> listah.v1.ReadQuery
+	17, // 14: listah.v1.ItemServiceReadTagResponse.pagination:type_name -> listah.v1.Pagination
+	18, // 15: listah.v1.ItemServiceReadTagResponse.reference:type_name -> listah.v1.ReadReference
+	20, // 16: listah.v1.ItemServiceUpsertTagRequest.tags:type_name -> listah.v1.Tag
+	16, // 17: listah.v1.ItemServiceReadTagPropertyRequest.query:type_name -> listah.v1.ReadQuery
+	17, // 18: listah.v1.ItemServiceReadTagPropertyRequest.pagination:type_name -> listah.v1.Pagination
+	18, // 19: listah.v1.ItemServiceReadTagPropertyRequest.reference:type_name -> listah.v1.ReadReference
+	15, // 20: listah.v1.ItemServiceReadTagPropertyResponse.props:type_name -> listah.v1.ItemServiceReadTagPropertyResponse.PropsEntry
+	16, // 21: listah.v1.ItemServiceReadTagPropertyResponse.query:type_name -> listah.v1.ReadQuery
+	17, // 22: listah.v1.ItemServiceReadTagPropertyResponse.pagination:type_name -> listah.v1.Pagination
+	18, // 23: listah.v1.ItemServiceReadTagPropertyResponse.reference:type_name -> listah.v1.ReadReference
+	16, // 24: listah.v1.ItemServiceReadFilterRequest.query:type_name -> listah.v1.ReadQuery
+	17, // 25: listah.v1.ItemServiceReadFilterRequest.pagination:type_name -> listah.v1.Pagination
+	18, // 26: listah.v1.ItemServiceReadFilterRequest.reference:type_name -> listah.v1.ReadReference
+	21, // 27: listah.v1.ItemServiceReadFilterResponse.filters:type_name -> listah.v1.Filter
+	16, // 28: listah.v1.ItemServiceReadFilterResponse.query:type_name -> listah.v1.ReadQuery
+	17, // 29: listah.v1.ItemServiceReadFilterResponse.pagination:type_name -> listah.v1.Pagination
+	18, // 30: listah.v1.ItemServiceReadFilterResponse.reference:type_name -> listah.v1.ReadReference
+	21, // 31: listah.v1.ItemServiceUpsertFilterRequest.filters:type_name -> listah.v1.Filter
+	22, // 32: listah.v1.ItemServiceReadTagResponse.TagidPropMapEntry.value:type_name -> listah.v1.StringList
+	22, // 33: listah.v1.ItemServiceReadTagPropertyResponse.PropsEntry.value:type_name -> listah.v1.StringList
+	0,  // 34: listah.v1.ItemService.ReadItem:input_type -> listah.v1.ItemServiceReadItemRequest
+	2,  // 35: listah.v1.ItemService.UpsertItem:input_type -> listah.v1.ItemServiceUpsertItemRequest
+	8,  // 36: listah.v1.ItemService.ReadTagProperty:input_type -> listah.v1.ItemServiceReadTagPropertyRequest
+	4,  // 37: listah.v1.ItemService.ReadTag:input_type -> listah.v1.ItemServiceReadTagRequest
+	6,  // 38: listah.v1.ItemService.UpsertTag:input_type -> listah.v1.ItemServiceUpsertTagRequest
+	10, // 39: listah.v1.ItemService.ReadFilter:input_type -> listah.v1.ItemServiceReadFilterRequest
+	12, // 40: listah.v1.ItemService.UpsertFilter:input_type -> listah.v1.ItemServiceUpsertFilterRequest
+	1,  // 41: listah.v1.ItemService.ReadItem:output_type -> listah.v1.ItemServiceReadItemResponse
+	3,  // 42: listah.v1.ItemService.UpsertItem:output_type -> listah.v1.ItemServiceUpsertItemResponse
+	9,  // 43: listah.v1.ItemService.ReadTagProperty:output_type -> listah.v1.ItemServiceReadTagPropertyResponse
+	5,  // 44: listah.v1.ItemService.ReadTag:output_type -> listah.v1.ItemServiceReadTagResponse
+	7,  // 45: listah.v1.ItemService.UpsertTag:output_type -> listah.v1.ItemServiceUpsertTagResponse
+	11, // 46: listah.v1.ItemService.ReadFilter:output_type -> listah.v1.ItemServiceReadFilterResponse
+	13, // 47: listah.v1.ItemService.UpsertFilter:output_type -> listah.v1.ItemServiceUpsertFilterResponse
+	41, // [41:48] is the sub-list for method output_type
+	34, // [34:41] is the sub-list for method input_type
+	34, // [34:34] is the sub-list for extension type_name
+	34, // [34:34] is the sub-list for extension extendee
+	0,  // [0:34] is the sub-list for field type_name
 }
 
 func init() { file_v1_item_proto_init() }

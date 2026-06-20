@@ -1,0 +1,45 @@
+import type { StateCreator } from 'zustand';
+
+
+
+import type {
+  IItem,
+  IItemState,
+  IItemSlice,
+  IStore,
+  ITag,
+  IFilter,
+} from "@/domain/entities";
+import {
+  DefaultItem,
+} from "@/domain/entities";
+
+
+
+
+export const itemInitState: IItemState = {
+  message: "",
+  itemModal: false,
+  displayItem: DefaultItem,
+  itemSearchQuery: '',
+  itemTitle: undefined,
+  itemReference: undefined,
+  itemScroll: 0,
+}
+
+export const createItemSlice: StateCreator<
+  IStore,
+  [['zustand/devtools', never]],
+  [],
+  IItemSlice
+> = (set) => ({
+  ...itemInitState,
+  setMessage: (message: string) => set(() => ({ message })),
+  setItemModal: (itemModal: boolean) => set(() => ({ itemModal })),
+  setDisplayItem: (displayItem: IItem) => set(() => ({ displayItem })),
+  setItemSearchQuery: (itemSearchQuery: string) => set(() => ({ itemSearchQuery })),
+  setItemTitle: (itemTitle: string) => set(() => ({ itemTitle })),
+  setItemReference: (itemReference: undefined | ITag | IFilter) => set(() => ({ itemReference })),
+  setItemScroll: (itemScroll: undefined | number) => set(() => ({ itemScroll })),
+  reset: () => set(itemInitState),
+});

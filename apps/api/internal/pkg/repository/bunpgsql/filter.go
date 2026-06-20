@@ -13,7 +13,7 @@ import (
 )
 
 type Filter interface {
-	Read(ctx context.Context, m *[]*model.Filter, s *model.ItemSearch) (int, error)
+	Read(ctx context.Context, m *[]*model.Filter, s *model.RepoSearch) (int, error)
 	Upsert(ctx context.Context, m *[]*model.Filter, c *model.UpsertInfo) (interface{}, error)
 }
 
@@ -22,7 +22,7 @@ type filter struct {
 	logger *logging.Factory
 }
 
-func (a *filter) Read(ctx context.Context, m *[]*model.Filter, s *model.ItemSearch) (int, error) {
+func (a *filter) Read(ctx context.Context, m *[]*model.Filter, s *model.RepoSearch) (int, error) {
 	ctx, span := otel.Tracer("filter-repository").Start(ctx, "FilterRepository Read")
 	defer span.End()
 
@@ -63,8 +63,8 @@ func (a *filter) Read(ctx context.Context, m *[]*model.Filter, s *model.ItemSear
 		return 0, err
 	}
 
-	if s.SortQuery != "" {
-		query = query + fmt.Sprintf(` ORDER BY %v `, s.SortQuery)
+	if s.Sort != "" {
+		query = query + fmt.Sprintf(` ORDER BY %v `, s.Sort)
 	}
 	if s.Limit > 0 {
 		query = query + fmt.Sprintf(` LIMIT %d `, s.Limit)

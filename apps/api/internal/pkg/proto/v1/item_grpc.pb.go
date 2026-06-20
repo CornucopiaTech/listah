@@ -53,7 +53,9 @@ func (c *itemServiceClient) ReadItem(ctx context.Context, in *ItemServiceReadIte
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ItemServiceReadItemResponse)
 	err := c.cc.Invoke(ctx, ItemService_ReadItem_FullMethodName, in, out, cOpts...)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 	return out, nil
 }
 
@@ -61,7 +63,9 @@ func (c *itemServiceClient) UpsertItem(ctx context.Context, in *ItemServiceUpser
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ItemServiceUpsertItemResponse)
 	err := c.cc.Invoke(ctx, ItemService_UpsertItem_FullMethodName, in, out, cOpts...)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 	return out, nil
 }
 
@@ -69,7 +73,9 @@ func (c *itemServiceClient) ReadTagProperty(ctx context.Context, in *ItemService
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ItemServiceReadTagPropertyResponse)
 	err := c.cc.Invoke(ctx, ItemService_ReadTagProperty_FullMethodName, in, out, cOpts...)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 	return out, nil
 }
 
@@ -77,7 +83,9 @@ func (c *itemServiceClient) ReadTag(ctx context.Context, in *ItemServiceReadTagR
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ItemServiceReadTagResponse)
 	err := c.cc.Invoke(ctx, ItemService_ReadTag_FullMethodName, in, out, cOpts...)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 	return out, nil
 }
 
@@ -85,7 +93,9 @@ func (c *itemServiceClient) UpsertTag(ctx context.Context, in *ItemServiceUpsert
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ItemServiceUpsertTagResponse)
 	err := c.cc.Invoke(ctx, ItemService_UpsertTag_FullMethodName, in, out, cOpts...)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 	return out, nil
 }
 
@@ -93,7 +103,9 @@ func (c *itemServiceClient) ReadFilter(ctx context.Context, in *ItemServiceReadF
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ItemServiceReadFilterResponse)
 	err := c.cc.Invoke(ctx, ItemService_ReadFilter_FullMethodName, in, out, cOpts...)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 	return out, nil
 }
 
@@ -101,7 +113,9 @@ func (c *itemServiceClient) UpsertFilter(ctx context.Context, in *ItemServiceUps
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ItemServiceUpsertFilterResponse)
 	err := c.cc.Invoke(ctx, ItemService_UpsertFilter_FullMethodName, in, out, cOpts...)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 	return out, nil
 }
 

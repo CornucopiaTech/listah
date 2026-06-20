@@ -13,33 +13,29 @@ import { useUser } from '@clerk/react';
 
 
 import type {
-  IItemReadRequest,
-} from "@/lib/model/item";
-import { encodeState } from '@/lib/helper/encoders';
-import { AppSearchPaper } from '@/components/core/AppPaper';
-import { useBoundStore, type TBoundStore } from '@/lib/store/boundStore';
+  IReadQuery,
+} from "@/domain/entities";
 import {
-  DefaultItemRead,
-  DefaultIItemRouteSearch,
+  DefaultReadRequest,
+  DefaultReadQuery,
+} from "@/domain/entities";
+import { encodeState } from '@/utils/encoders';
+import { AppSearchPaper } from '@/components/core/AppPaper';
+import { useAppStore, type TAppStore } from '@/hooks/store/boundStore';
 
-} from '@/lib/helper/defaults';
 
 
 
 export function AppItemSearchBar(): ReactNode {
-  const store: TBoundStore = useBoundStore((state) => state);
+  const store: TAppStore = useAppStore((state) => state);
   const { user } = useUser();
   const navigate = useNavigate();
   const textValue = store.searchQuery ? store.searchQuery : "";
   const placeholderText = "Search for item";
 
   function handleSearchSubmit() {
-    const q: IItemReadRequest = {
-      ...DefaultItemRead,
-      userId: user?.id || "",
-      query: { ...DefaultItemRead.query, text: textValue },
-    };
-    const s = { ...DefaultIItemRouteSearch, query: q, title: `Items like '${textValue}'` }
+    const q: IReadQuery = { ...DefaultReadQuery, userId: user?.id || "", text: textValue };
+    const s = { ...DefaultReadRequest, query: q, title: `Items like '${textValue}'` }
     const encoded = encodeState(s);
 
     navigate({ to: "/items", from: "/", search: { s: encoded }, });

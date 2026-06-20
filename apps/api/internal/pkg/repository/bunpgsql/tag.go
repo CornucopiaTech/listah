@@ -14,9 +14,9 @@ import (
 
 type Tag interface {
 	Upsert(ctx context.Context, m *[]*model.Tag, c *model.UpsertInfo) (interface{}, error)
-	Read(ctx context.Context, m *[]*model.Tag, s *model.ItemSearch) (int, error)
-	ReadProperty(ctx context.Context, m *[]model.TagPropertyMapModel, s *model.ItemSearch) (int, error)
-	ReadIdProperty(ctx context.Context, m *[]model.TagPropertyMapModel, s *model.ItemSearch) error
+	Read(ctx context.Context, m *[]*model.Tag, s *model.RepoSearch) (int, error)
+	ReadProperty(ctx context.Context, m *[]model.TagPropertyMapModel, s *model.RepoSearch) (int, error)
+	ReadIdProperty(ctx context.Context, m *[]model.TagPropertyMapModel, s *model.RepoSearch) error
 }
 
 type tag struct {
@@ -24,7 +24,7 @@ type tag struct {
 	logger *logging.Factory
 }
 
-func (a *tag) Read(ctx context.Context, m *[]*model.Tag, s *model.ItemSearch) (int, error) {
+func (a *tag) Read(ctx context.Context, m *[]*model.Tag, s *model.RepoSearch) (int, error) {
 	ctx, span := otel.Tracer("tag-repository").Start(ctx, "TagRepository Read")
 	defer span.End()
 
@@ -51,8 +51,8 @@ func (a *tag) Read(ctx context.Context, m *[]*model.Tag, s *model.ItemSearch) (i
 		GROUP BY 1, 2, 3, 4
 	`
 
-	if s.SearchQuery != "" {
-		n := ` AND ( it.name LIKE '%` + s.SearchQuery + `%' ) `
+	if s.Text != "" {
+		n := ` AND ( it.name LIKE '%` + s.Text + `%' ) `
 		query = query + n
 	}
 	if s.Tags != "" {
@@ -72,8 +72,8 @@ func (a *tag) Read(ctx context.Context, m *[]*model.Tag, s *model.ItemSearch) (i
 		return 0, err
 	}
 
-	if s.SortQuery != "" {
-		query = query + fmt.Sprintf(` ORDER BY %v `, s.SortQuery)
+	if s.Sort != "" {
+		query = query + fmt.Sprintf(` ORDER BY %v `, s.Sort)
 	}
 	if s.Limit > 0 {
 		query = query + fmt.Sprintf(` LIMIT %d `, s.Limit)
@@ -92,7 +92,7 @@ func (a *tag) Read(ctx context.Context, m *[]*model.Tag, s *model.ItemSearch) (i
 	return recCnt[0].RowCount, nil
 }
 
-func (a *tag) ReadProperty(ctx context.Context, m *[]model.TagPropertyMapModel, s *model.ItemSearch) (int, error) {
+func (a *tag) ReadProperty(ctx context.Context, m *[]model.TagPropertyMapModel, s *model.RepoSearch) (int, error) {
 	ctx, span := otel.Tracer("tag-repository").Start(ctx, "TagRepository ReadProperty")
 	defer span.End()
 
@@ -131,7 +131,7 @@ func (a *tag) ReadProperty(ctx context.Context, m *[]model.TagPropertyMapModel, 
 	return recCnt[0].RowCount, nil
 }
 
-func (a *tag) ReadIdProperty(ctx context.Context, m *[]model.TagPropertyMapModel, s *model.ItemSearch) error {
+func (a *tag) ReadIdProperty(ctx context.Context, m *[]model.TagPropertyMapModel, s *model.RepoSearch) error {
 	ctx, span := otel.Tracer("tag-repository").Start(ctx, "TagRepository ReadIdProperty")
 	defer span.End()
 
