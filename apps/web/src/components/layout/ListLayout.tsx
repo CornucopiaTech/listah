@@ -34,7 +34,7 @@ import {
 } from '@/components/core/AppBox';
 import {
   AppCentredPagination,
-} from "@/components/core/Pagination";
+} from "@/components/core";
 
 
 
@@ -100,11 +100,11 @@ export function ListBox({
   );
 }
 
+// ToDo: Get data from context and do not pass it as props
 export function ListLayout(
   {
     data, isPending, isFetching, error, scrollIndex, pagination,
     renderItem, pageSizeChange, pageChange,
-
   }: {
     data: any[],
     isPending: boolean,

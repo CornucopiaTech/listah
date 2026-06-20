@@ -8,3 +8,4 @@ export * from "./store";
 export * from "./tag";
 export * from "./pagination";
 export * from "./routing";
+export * from "./form";

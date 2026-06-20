@@ -10,12 +10,10 @@ import {
 } from '@clerk/react';
 
 
-import {
-  DefaultTag
-} from "@/domain/entities/tag";
 import type {
   ITag,
-} from "@/domain/entities/tag";
+  IFormDataContext,
+} from "@/domain/entities";
 import {
   prepTagUpdate,
   tagFormValidator,
@@ -23,12 +21,14 @@ import {
 import {
   useUpdateTag
 } from "@/hooks/queries/tag";
-import { FormContext } from "@/hooks/services/useForm/useForm";
+import {
+  FormContext,
+  useFormDataContext
+} from '@/hooks/services/useForm/useForm';
 
 
-
-export function TagFormProvider({ children, displayTag }: { children: ReactNode, displayTag?: ITag }) {
-  const formTag: ITag = displayTag ? displayTag : DefaultTag;
+export function TagFormProvider({ children }: { children: ReactNode, }) {
+  const { formData } = useFormDataContext() as unknown as IFormDataContext;
   const { user } = useUser();
   const mutation = useUpdateTag();
   const formSubmission = ({ value }: { value: ITag }) => {
@@ -37,7 +37,7 @@ export function TagFormProvider({ children, displayTag }: { children: ReactNode,
   };
 
   const form = useForm({
-    defaultValues: { ...formTag },
+    defaultValues: { ...formData },
     onSubmit: formSubmission,
     validators: {
       onChange({ value }: { value: ITag }) {

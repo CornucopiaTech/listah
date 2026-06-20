@@ -26,15 +26,20 @@ import {
   AppBackdrop,
 } from "@/components/core/AppButton";
 import { useFormContext } from '@/hooks/services/useForm';
+import type {
+  IFormContext,
+} from "@/domain/entities"
 
-export function FormDialog({
-  title, content, actions, openDialog, closeDialog,
-}: {
-  title: string, content: ReactNode, actions?: ReactNode,
-  openDialog: boolean, closeDialog: () => void,
-}): ReactNode {
 
-  const { form, mutation } = useFormContext();
+export function FormDialog(
+  {
+    title, content, actions, openDialog, closeDialog,
+  }: {
+    title: string, content: ReactNode, actions?: ReactNode,
+    openDialog: boolean, closeDialog: () => void,
+  }): ReactNode {
+
+  const { form, mutation } = useFormContext() as unknown as IFormContext;
   useEffect(() => {
     if (!form.state.isSubmitted) return;
     if (!mutation.isSuccess) return;
@@ -42,8 +47,8 @@ export function FormDialog({
     return () => clearTimeout(timer); // cleanup
   }, [form.state.isSubmitted, mutation.isSuccess]);
 
-  const errorMap = useStore(form.store, (state) => state.errorMap);
-  const isSubmitted = useStore(form.store, (state) => state.isSubmitted);
+  const errorMap = useStore(form.store, (state: any) => state.errorMap);
+  const isSubmitted = useStore(form.store, (state: any) => state.isSubmitted);
   const openBackDrop = isSubmitted && !mutation.isSuccess;
 
 

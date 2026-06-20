@@ -61,11 +61,6 @@ import {
 import type {
   IItem,
   IItemReadResponse,
-  IReadRequest,
-  ITag,
-  IFilter,
-  ITagReadResponse,
-  IPagination,
 } from '@/domain/entities';
 import {
   encodeState
@@ -73,7 +68,14 @@ import {
 import {
   getRouteContext,
 } from "@/utils/routing";
-import { TagFormProvider } from '@/hooks/services/useTags';
+import {
+  TagFormDataProvider,
+  TagFormProvider,
+  FilterFormDataProvider,
+  FilterFormProvider,
+  ItemFormDataProvider,
+  ItemFormProvider,
+} from '@/hooks/services/useForm';
 
 
 
@@ -185,15 +187,32 @@ export function Items() {
 
   return (
     <AppContainer mw="md" menuItems={mItems} title={pageHeader}>
-      {store.itemModal && <AppItemModal passedPropTag={passedTag} passedPropFilter={passedFilter} />}
+      {
+        store.itemModal &&
+        <ItemFormDataProvider displayTag={passedTag} displayFilter={passedFilter}>
+          <ItemFormProvider>
+            <AppItemModal />
+          </ItemFormProvider>
+        </ItemFormDataProvider>
+
+      }
       {
         store.tagModal &&
-        <TagFormProvider displayTag={passedTag}>
-          <AppTagModal />
-        </TagFormProvider>
+        <TagFormDataProvider displayTag={passedTag}>
+          <TagFormProvider>
+            <AppTagModal />
+          </TagFormProvider>
+        </TagFormDataProvider>
       }
-      {/* {store.tagModal && <AppTagModal itemTag={passedTag} />} */}
-      {/* {store.filterModal && <AppFilterModal itemFilter={passedFilter} />} */}
+      {
+        store.filterModal &&
+        <FilterFormDataProvider displayFilter={passedFilter}>
+          <FilterFormProvider >
+            <AppFilterModal />
+          </ FilterFormProvider>
+        </FilterFormDataProvider>
+
+      }
       <AppPagePaper>
         <ListLayout {...props} />
       </AppPagePaper>

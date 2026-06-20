@@ -8,7 +8,6 @@ import type {
   BackendErrorPayload
 } from '@/domain/entities';
 import {
-  ZItemReadResponse,
   AppError,
   ApiEndpoints
 } from "@/domain/entities";

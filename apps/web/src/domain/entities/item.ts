@@ -6,23 +6,23 @@ import {
 } from "@/domain/entities/tag";
 
 
-export const ZFormProps = z.object({
+export const ZItemFormProps = z.object({
   key: z.string().catch(''),
   value: z.string().catch(''),
 })
-export type IFormProps = z.infer<typeof ZFormProps>;
+export type IItemFormProps = z.infer<typeof ZItemFormProps>;
 
 // Item Definitions
-export const ZFormItem = z.object({
+export const ZItemForm = z.object({
   id: z.string().catch(''),
   userId: z.string().catch(''),
   name: z.string().catch(''),
   note: z.string().catch(""),
-  props: z.array(ZFormProps).catch([]),
+  props: z.array(ZItemFormProps).catch([]),
   tags: z.array(ZTag).catch([]),
   softDelete: z.nullish(z.boolean().catch(false)),
 });
-export type IFormItem = z.infer<typeof ZFormItem>;
+export type IItemForm = z.infer<typeof ZItemForm>;
 
 
 
@@ -35,7 +35,7 @@ export const ZItem = z.object({
   tags: z.array(z.string()).catch([]),
   props: z.any(),
   tagObjs: z.nullish(z.array(ZTag)).catch([]),
-  propObjs: z.nullish(z.array(ZFormProps)).catch([]),
+  propObjs: z.nullish(z.array(ZItemFormProps)).catch([]),
   softDelete: z.nullish(z.boolean().catch(false)),
 });
 export type IItem = z.infer<typeof ZItem>;

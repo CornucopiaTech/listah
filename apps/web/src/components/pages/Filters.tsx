@@ -25,12 +25,12 @@ import {
   useAppStore,
   type TAppStore
 } from '@/hooks/store/boundStore';
-// import {
-//   AppTagModal,
-// } from "@/components/layout/AppTagModal";
-// import {
-//   AppFilterModal,
-// } from "@/components/layout/AppFilterModal";
+import {
+  AppTagModal,
+} from "@/components/layout/AppTagModal";
+import {
+  AppFilterModal,
+} from "@/components/layout/AppFilterModal";
 import {
   AppPagePaper,
 } from '@/components/core/AppPaper';
@@ -61,6 +61,13 @@ import {
 import {
   getRouteContext,
 } from "@/utils/routing";
+import {
+  TagFormDataProvider,
+  TagFormProvider,
+  FilterFormDataProvider,
+  FilterFormProvider,
+} from '@/hooks/services/useForm';
+
 
 
 export function Filters() {
@@ -90,15 +97,12 @@ export function Filters() {
   };
 
 
-  function newFilterClick() {
-    store.setFilterModal(true);
-  }
+
   const listItemClick = (idx: number, it: IFilter) => {
     const pageTitle = it && it.name ? `##${it.name}` : "Filters";
     const q: IReadQuery = { ...DefaultReadQuery, userId: query.userId, tags: it.tags };
     const s = { query: q, pagination, title: pageTitle, reference: { filter: it }, }
     const encoded = encodeState(s);
-
     navigate({ to: "/items", search: { s: encoded }, });
     store.setItemTitle(pageTitle);
     store.setDisplayFilter(it);
@@ -138,15 +142,32 @@ export function Filters() {
     pageChange,
   }
   const mItems = <Fragment>
-    <MenuItem key="filter" onClick={newFilterClick}>
+    <MenuItem key="tag" onClick={() => store.setTagModal(true)}>
+      <Typography variant="body1">Create new tag </Typography>
+    </MenuItem>
+    <MenuItem key="filter" onClick={() => store.setFilterModal(true)}>
       <Typography variant="body1">Create new filter </Typography>
     </MenuItem>
   </Fragment >;
 
   return (
-    <AppContainer mw="md" menuItems={mItems}>
-      {/* {store.tagModal && <AppTagModal />}
-      {store.filterModal && <AppFilterModal />} */}
+    <AppContainer mw="sm" menuItems={mItems}>
+      {
+        store.tagModal &&
+        <TagFormDataProvider>
+          <TagFormProvider>
+            <AppTagModal />
+          </TagFormProvider>
+        </TagFormDataProvider>
+      }
+      {
+        store.filterModal &&
+        <FilterFormDataProvider>
+          <FilterFormProvider >
+            <AppFilterModal />
+          </ FilterFormProvider>
+        </FilterFormDataProvider>
+      }
       <AppPagePaper key="tags">
         <ListLayout {...props} />
       </AppPagePaper>

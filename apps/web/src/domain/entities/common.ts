@@ -1,4 +1,3 @@
-import * as z from "zod";
 
 export interface IEnvConfig {
   apiUrl: string;

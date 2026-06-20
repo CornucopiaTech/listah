@@ -41,37 +41,11 @@ export function AppSearchPaper({ children }: { children: ReactNode }) {
   );
 }
 
-// export function AppPagePaper({ sx, children }: { sx?: any, children: ReactNode }) {
-//   return (
-//     <AppStyledPaper elevation={2} sx={{
-//       ...sx,
-//       borderRadius: 4,
-//       width: '100%',
-//       maxWidth: '100%',
-//       height: "fit-content",
-//     }}>
-//       {children}
-//     </AppStyledPaper>
-//   );
-// }
 
-export const AppPagePaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
+export const AppPagePaper = styled(Paper)(() => ({
   borderRadius: 4,
   width: '100%',
   maxWidth: '100%',
   height: "fit-content",
 })
 );
-
-
-
-// ({ sx, children }: { sx?: any, children: ReactNode }) {
-//   return (
-//     <AppStyledPaper elevation={2} sx={{
-//       ...sx,
-
-//     }}>
-//       {children}
-//     </AppStyledPaper>
-//   );
-// }

@@ -10,12 +10,7 @@ import {
 } from '@clerk/react';
 
 
-import {
-  DefaultFilter
-} from "@/domain/entities";
-import type {
-  IFilter,
-} from "@/domain/entities";
+
 import {
   prepFilterUpdate,
   filterFormValidator,
@@ -23,27 +18,39 @@ import {
 import {
   useUpdateFilter
 } from "@/hooks/queries";
-import { FormContext } from "@/hooks/services/useForm/useForm";
+import {
+  FormContext,
+  useFormDataContext,
+} from "@/hooks/services/useForm/useForm";
+import type {
+  IFilterForm,
+  IFormDataContext,
+} from '@/domain/entities';
+
+// IFormDataContext
 
 
 
-export function FilterFormProvider({ children, displayFilter }: { children: ReactNode, displayFilter?: IFilter }) {
-  const formFilter: IFilter = displayFilter ? displayFilter : DefaultFilter;
+
+export function FilterFormProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const mutation = useUpdateFilter();
-  const formSubmission = ({ value }: { value: IFilter }) => {
+  const { formData } = useFormDataContext() as unknown as IFormDataContext;
+  console.info('FilterFormProviderContext', useFormDataContext())
+
+  function formSubmission({ value }: { value: IFilterForm }): void {
     const submitValue = prepFilterUpdate({ value, userId: user?.id || "" });
     mutation.mutate(submitValue);
-  };
+  }
 
   const form = useForm({
-    defaultValues: { ...formFilter },
+    defaultValues: formData,
     onSubmit: formSubmission,
     validators: {
-      onChange({ value }: { value: IFilter }) {
+      onChange({ value }: { value: IFilterForm }) {
         return filterFormValidator({ value });
       },
-      onBlur({ value }: { value: IFilter }) {
+      onBlur({ value }: { value: IFilterForm }) {
         return filterFormValidator({ value });
       },
     },
