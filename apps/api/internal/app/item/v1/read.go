@@ -18,12 +18,6 @@ func (s *Server) ReadItem(ctx context.Context, req *connect.Request[pb.ItemServi
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
-	fmt.Printf("\n\n\n\n")
-	fmt.Printf("\n\n\nUserId -  %s\n", req.Msg.GetQuery().UserId)
-	fmt.Printf("\nTag -  %s\n", req.Msg.GetQuery().Tags)
-	fmt.Printf("\nPagination -  %s\n", req.Msg.GetPagination())
-
-
 	sq, err := model.ReadItemRequestToRepoRepoSearch(req.Msg)
 	if err != nil {
 		return nil, err
@@ -45,7 +39,6 @@ func (s *Server) ReadItem(ctx context.Context, req *connect.Request[pb.ItemServi
 
 	pg := req.Msg.GetPagination()
 	pg.Volume = int64(recordCnt)
-	fmt.Printf("\nResponse Pagination -  %+v\n", pg)
 	resm := &pb.ItemServiceReadItemResponse{
 		Items:            rs,
 		Query:            req.Msg.GetQuery(),
@@ -60,12 +53,6 @@ func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServic
 	ctx, span := otel.Tracer(svcName).Start(ctx, rpcLogName)
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
-
-	// fmt.Printf("\n\n\n\n")
-	// fmt.Printf("\n\n\nUserId -  %s\n", req.Msg.GetQuery().UserId)
-	// fmt.Printf("\nTag -  %s\n", req.Msg.GetQuery().Tags)
-	// fmt.Printf("\nPagination -  %s\n", req.Msg.GetPagination())
-
 
 	var riq = &pb.ItemServiceReadItemRequest{}
 	err := modelutils.MarshalCopyProto(req.Msg, riq)
@@ -101,7 +88,6 @@ func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServic
 	if err != nil {
 		return nil, err
 	}
-	// fmt.Printf("\nTagProps -  %+v\n", ms)
 
 	pg := req.Msg.GetPagination()
 	pg.Volume = int64(recordCnt)
@@ -111,8 +97,6 @@ func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServic
 		Query:            req.Msg.GetQuery(),
 		Pagination:       pg,
 	}
-	// fmt.Printf("\nResponse -  %+v\n", resm)
-	// fmt.Printf("\n\n\n\n")
 	return connect.NewResponse(resm), nil
 }
 
