@@ -27,6 +27,12 @@ import {
 import {
   QueryStaleTime,
 } from '@/utils/defaults';
+import {
+  DefaultReadRequest,
+  DefaultPagination,
+  DefaultReadQuery,
+} from '@/domain/entities';
+import { useUser } from '@clerk/react';
 
 
 
@@ -59,6 +65,30 @@ export function tagPropertyGroupOptions(opts: IReadRequest) {
 export function useListTagProperty(opts: IReadRequest): UseSuspenseQueryResult<ITagPropertyReadResponse> {
   // console.info('useListTagProperty', opts);
   return useSuspenseQuery(tagPropertyGroupOptions(opts))
+}
+
+export function useUpdateTag() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (mutateTag: ITag) => {
+      const mi = ZTag.parse(mutateTag);
+      await postTag(mi);
+      // const mId: { tagIds: string[] } = await postTag(mi);
+      return mutateTag;
+      // return postTag(mi);
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["tag"], refetchType: 'all', }),
+        queryClient.invalidateQueries({ queryKey: ["item"], refetchType: 'all', }),
+      ])
+    },
+    onError: (error) => {
+      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+        console.log(error);
+      }
+    },
+  });
 }
 
 export function useUpdateTag() {

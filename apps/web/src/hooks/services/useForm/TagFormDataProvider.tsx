@@ -11,6 +11,7 @@ import type {
 // Internal imports
 import type {
   IFilter,
+  IItem,
 } from "@/domain/entities";
 import {
   DefaultTag,
@@ -19,6 +20,10 @@ import {
   FormDataContext
 } from './useForm';
 import {
+  useAppStore,
+  type TAppStore
+} from '@/hooks/store/boundStore';
+import {
   DefaultReadRequest,
   DefaultPagination,
   DefaultReadQuery,
@@ -26,12 +31,80 @@ import {
 import type {
   ITag,
   ITagReadResponse,
+  IReadRequest,
+  ITagReadResponse,
+  ITagPropertyReadResponse,
 } from '@/domain/entities';
 import {
   useListTag
 } from "@/hooks/queries/tag";
 
 
+    qisPending = isPending;
+    qisError = isError;
+    qerror = error;
+    const tags = data?.tags?.filter((i: ITag) => i.id === displayTag.id) ?? [];
+    if (tags.length > 0) {
+      qformData = tags[0];
+      qdata = tags[0];
+    }
+  }
+
+
+  return <FormDataContext.Provider value={{
+    isPending: qisPending,
+    isError: qisError,
+    data: qdata,
+    formData: qformData,
+    error: qerror,
+  }}>
+    {children}
+  </FormDataContext.Provider>
+}
+
+
+export function AggressiveTagFormDataProvider({ children, displayTag, }: { children: ReactNode, displayTag?: IFilter }) {
+  let qformData = DefaultTag;
+  let qisPending = false;
+  let qisError = false;
+  let qdata = DefaultTag;
+  let qerror = null;
+
+  if (displayTag) {
+    // Todo: Remove the ability for filters page to create tags. That way, the only route that can be calling tags page is /tags or /items
+    const loaderData = getRouteLoaderData("__root__");
+    console.info('loaderData', loaderData)
+    return loaderData.tags.then((data: ITagReadResponse) => {
+      console.info('data', data)
+      const tags = data?.tags?.filter((i: ITag) => i.id === displayTag.id) ?? [];
+      console.info('tags', tags)
+      if (tags.length > 0) {
+        qformData = tags[0];
+        qdata = tags[0];
+      }
+      return <FormDataContext.Provider value={{
+        isPending: qisPending,
+        isError: qisError,
+        data: qdata,
+        formData: qformData,
+        error: qerror,
+      }}>
+        {children}
+      </FormDataContext.Provider>
+    })
+  }
+
+
+  return <FormDataContext.Provider value={{
+    isPending: qisPending,
+    isError: qisError,
+    data: qdata,
+    formData: qformData,
+    error: qerror,
+  }}>
+    {children}
+  </FormDataContext.Provider>
+}
 
 
 export function TagFormDataProvider({ children, displayTag, }: { children: ReactNode, displayTag?: IFilter }) {
