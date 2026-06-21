@@ -25,8 +25,9 @@ export function getGridComponent() {
       <div
         {...props}
         style={{
-          width: '33%',
-          height: "50px",
+          width: '50%',
+          marginRight: "10px",
+          height: "35px",
           display: 'flex',
           flex: 'none',
           alignContent: 'stretch',

@@ -10,10 +10,9 @@ import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
-import { VirtuosoGrid } from 'react-virtuoso'
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
-
+import { Virtuoso } from 'react-virtuoso';
 
 
 
@@ -33,7 +32,6 @@ import {
 } from "@/domain/rules/fieldLength";
 import {
   AppFormTextField,
-  getGridComponent,
   AppUpdateFormActions,
 } from "@/components/core";
 import type {
@@ -52,7 +50,6 @@ export function AppFilterModal(): ReactNode {
     store.setFilterModal(false);
     store.setDisplayFilter(undefined);
   }
-  const gridComponents = getGridComponent();
   function renderCell(idx: number): ReactNode {
     return (
       <form.Field name={`tags[${idx}]`}
@@ -98,12 +95,12 @@ export function AppFilterModal(): ReactNode {
           keyName="name" form={form}
           validation={validateName}
         />
-        <VirtuosoGrid
+        <Virtuoso
+          key="data-content"
           style={{ height: "40vh" }}
+          initialTopMostItemIndex={0}
           totalCount={data.tags.length}
-          // @ts-ignore
-          components={gridComponents}
-          itemContent={(index) => renderCell(index)}
+          itemContent={(i) => renderCell(i)}
         />
       </Box>
     );

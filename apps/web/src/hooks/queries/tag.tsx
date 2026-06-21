@@ -47,7 +47,6 @@ export function useListTag(opts: IReadRequest): UseSuspenseQueryResult<ITagReadR
 
 
 export function tagPropertyGroupOptions(opts: IReadRequest) {
-  // console.info('tagPropertyGroupOptions', opts);
   return queryOptions({
     queryKey: ["tagProperty", opts],
     queryFn: () => getTagProperty(opts),
@@ -57,7 +56,6 @@ export function tagPropertyGroupOptions(opts: IReadRequest) {
 }
 
 export function useListTagProperty(opts: IReadRequest): UseSuspenseQueryResult<ITagPropertyReadResponse> {
-  // console.info('useListTagProperty', opts);
   return useSuspenseQuery(tagPropertyGroupOptions(opts))
 }
 

@@ -37,7 +37,6 @@ export function filterGroupOptions(opts: IReadRequest) {
   })
 }
 export function useListFilter(opts: IReadRequest): UseSuspenseQueryResult<IFilterReadResponse> {
-  // console.info('useListFilter', opts);
   return useSuspenseQuery(filterGroupOptions(opts))
 }
 

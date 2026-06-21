@@ -36,7 +36,6 @@ export function FilterFormProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const mutation = useUpdateFilter();
   const { formData } = useFormDataContext() as unknown as IFormDataContext;
-  console.info('FilterFormProviderContext', useFormDataContext())
 
   function formSubmission({ value }: { value: IFilterForm }): void {
     const submitValue = prepFilterUpdate({ value, userId: user?.id || "" });
