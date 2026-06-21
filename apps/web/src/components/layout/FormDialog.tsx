@@ -61,7 +61,7 @@ export function FormDialog(
   }
 
   return (
-    <Dialog fullWidth maxWidth="lg" open={openDialog} onClose={closeDialog} >
+    <Dialog maxWidth="md" open={openDialog} onClose={closeDialog} >
       <DialogTitle id="save-dialog-title" >
         {title}
         <CloseDialogButton closeDialog={closeDialog} />

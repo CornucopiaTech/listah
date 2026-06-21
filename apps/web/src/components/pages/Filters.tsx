@@ -20,6 +20,8 @@ import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 
 
+
+
 // Internal
 import {
   useAppStore,
@@ -31,9 +33,6 @@ import {
 import {
   AppFilterModal,
 } from "@/components/layout/AppFilterModal";
-import {
-  AppPagePaper,
-} from '@/components/core/AppPaper';
 import { AppContainer } from '@/components/layout/AppContainer';
 import {
   MenuItem,
@@ -141,17 +140,19 @@ export function Filters() {
     pageSizeChange,
     pageChange,
   }
-  const mItems = <Fragment>
+
+  const menuItems = <Fragment>
     <MenuItem key="tag" onClick={() => store.setTagModal(true)}>
-      <Typography variant="body1">Create new tag </Typography>
+      <Typography variant="body2">Create new tag </Typography>
     </MenuItem>
     <MenuItem key="filter" onClick={() => store.setFilterModal(true)}>
-      <Typography variant="body1">Create new filter </Typography>
+      <Typography variant="body2">Create new filter </Typography>
     </MenuItem>
-  </Fragment >;
+  </Fragment>
+
 
   return (
-    <AppContainer mw="sm" menuItems={mItems}>
+    <AppContainer {...{ menuItems, title: "Filters", displayPage: true }}>
       {
         store.tagModal &&
         <TagFormDataProvider>
@@ -168,9 +169,8 @@ export function Filters() {
           </ FilterFormProvider>
         </FilterFormDataProvider>
       }
-      <AppPagePaper key="tags">
-        <ListLayout {...props} />
-      </AppPagePaper>
-    </AppContainer >
-  );
+      <ListLayout {...props} />
+    </AppContainer>
+  )
+
 }

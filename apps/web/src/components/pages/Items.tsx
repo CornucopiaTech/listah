@@ -34,9 +34,6 @@ import {
   AppContainer,
 } from '@/components/layout/AppContainer';
 import {
-  AppPagePaper,
-} from '@/components/core/AppPaper';
-import {
   AppTagModal
 } from "@/components/layout/AppTagModal";
 import {
@@ -76,7 +73,6 @@ import {
   ItemFormDataProvider,
   ItemFormProvider,
 } from '@/hooks/services/useForm';
-
 
 
 export function Items() {
@@ -165,7 +161,7 @@ export function Items() {
     pageSizeChange,
     pageChange,
   }
-  const mItems = (
+  const menuItems = (
     <Fragment>
       <MenuItem key="tag" onClick={newItemClick}>
         <Typography variant="body1">Add new item </Typography>
@@ -186,7 +182,7 @@ export function Items() {
   );
 
   return (
-    <AppContainer mw="md" menuItems={mItems} title={pageHeader}>
+    <AppContainer mw="md" menuItems={menuItems} title={pageHeader} displayPage={true} >
       {
         store.itemModal &&
         <ItemFormDataProvider displayTag={passedTag} displayFilter={passedFilter}>
@@ -213,9 +209,7 @@ export function Items() {
         </FilterFormDataProvider>
 
       }
-      <AppPagePaper>
-        <ListLayout {...props} />
-      </AppPagePaper>
+      <ListLayout {...props} />
     </AppContainer>
   );
 }

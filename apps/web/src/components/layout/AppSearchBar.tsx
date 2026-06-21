@@ -25,7 +25,6 @@ import { useAppStore, type TAppStore } from '@/hooks/store/boundStore';
 
 
 
-
 export function AppItemSearchBar(): ReactNode {
   const store: TAppStore = useAppStore((state) => state);
   const { user } = useUser();
@@ -49,9 +48,9 @@ export function AppItemSearchBar(): ReactNode {
     <Fragment>
       <AppSearchPaper>
         <Stack direction="row" spacing={2}
-          sx={{ maxWidth: "100%", width: "100%", p: "1%", height: "100%", justifyContent: "center", alignItems: "center" }} >
+          sx={{ maxWidth: "100%", width: "100%", p: "10px", height: "100%", justifyContent: "center", alignItems: "center" }} >
           <InputBase
-            sx={{ ml: 1, flex: 1, width: "90%" }}
+            sx={{ ml: 1, flex: 1, width: "90%", }}
             placeholder={placeholderText}
             inputProps={{ 'aria-label': 'search google maps' }}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {

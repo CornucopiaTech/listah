@@ -28,20 +28,6 @@ export function SimpleTextField({ keyName, form }: { keyName: string, form: any 
     onChange: ({ value }: { value: any }) => fieldValidation(value as unknown as string),
     onBlur: ({ value }: { value: any }) => fieldValidation(value as unknown as string),
   }
-  // return (
-  //   <form.Field
-  //     key={`item-${keyName}`} name={keyName} validators={validators}
-  //     children={
-  //       (field: any) => (
-  //         <Grid container sx={{ width: '100%' }} spacing={0}>
-  //           <Grid size={12}>
-  //             <AppTextField keyName={keyName} field={field} />
-  //           </Grid>
-  //         </Grid>
-  //       )
-  //     }
-  //   />
-  // );
 
   return (
     <form.Field

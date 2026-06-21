@@ -31,9 +31,6 @@ import {
 import {
   AppFilterModal
 } from "@/components/layout/AppFilterModal";
-import {
-  AppPagePaper,
-} from '@/components/core/AppPaper';
 import { AppContainer } from '@/components/layout/AppContainer';
 import {
   MenuItem,
@@ -143,7 +140,7 @@ export function Tags() {
   </Fragment >
 
   return (
-    <AppContainer mw="sm" menuItems={mItems}>
+    <AppContainer mw="md" menuItems={mItems} title="Tags" displayPage={true}>
       {
         store.tagModal &&
         <TagFormDataProvider>
@@ -160,9 +157,7 @@ export function Tags() {
           </ FilterFormProvider>
         </FilterFormDataProvider>
       }
-      <AppPagePaper key="tags">
-        <ListLayout {...props} />
-      </AppPagePaper>
+      <ListLayout {...props} />
     </AppContainer >
   );
 }

@@ -68,7 +68,7 @@ export function ListBox({
       <Stack spacing={0}>
         {children}
         <Divider />
-        <CentredBox>
+        <CentredBox sx={{ height: "80px" }}>
           <CentredBox sx={{ maxWidth: 100, marginRight: 0 }}>
             <FormControl sx={{ width: '100%' }}>
               <InputLabel id="demo-simple-select-label">Rows</InputLabel>
@@ -79,6 +79,12 @@ export function ListBox({
                 label="rows-per-page"
                 //  @ts-ignore
                 onChange={pageSizeChange}
+                sx={{
+                  height: 48,                     // overall component height
+                  '& .MuiSelect-select': {
+                    paddingY: 1.2,                // vertical padding
+                  },
+                }}
               >
                 <MenuItem value={128}>128</MenuItem>
                 <MenuItem value={512}>512</MenuItem>
