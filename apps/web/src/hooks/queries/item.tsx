@@ -18,7 +18,6 @@ import type {
   IItem,
   IReadRequest,
   IItemReadResponse,
-  // IItemRouteSearch,
 } from "@/domain/entities";
 import {
   getItem,
