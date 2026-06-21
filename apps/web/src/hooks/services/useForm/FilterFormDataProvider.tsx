@@ -14,6 +14,7 @@ import type {
   ITag,
   ITagReadResponse,
   IFilter,
+  IFilterReadResponse,
   IFilterForm,
 } from "@/domain/entities";
 import {
@@ -23,7 +24,8 @@ import {
   DefaultPagination,
 } from '@/domain/entities';
 import {
-  useListTag
+  useListTag,
+  useListFilter
 } from '@/hooks/queries';
 import {
   FormDataContext
@@ -33,7 +35,28 @@ import {
 
 export function FilterFormDataProvider({ children, displayFilter, }: { children: ReactNode, displayFilter?: IFilter }) {
   const { user } = useUser();
-  const formFilter = displayFilter ? displayFilter : DefaultFilter;
+  let formFilter = DefaultFilter;
+
+  if (displayFilter) {
+    const { user } = useUser();
+    const tagQuery = {
+      ...DefaultReadRequest,
+      query: { ...DefaultReadQuery, userId: user?.id ?? "", filter: { tags: [...displayFilter.tags] } },
+      pagination: { ...DefaultPagination, pageSize: -1, }
+    }
+    const { data: filterData, }: UseSuspenseQueryResult<IFilterReadResponse> = useListFilter(tagQuery);
+
+    // Todo: Remove the ability for filters page to create tags. That way, the only route that can be calling tags page is /tags or /items
+    const filters = filterData?.filters?.filter(
+      (i: IFilter) => i.id === displayFilter.id
+    ) ?? [];
+    if (filters.length > 0) {
+      formFilter = filters[0];
+    }
+  }
+
+
+
   // The scrollable element for your list
   const tagQuery = {
     ...DefaultReadRequest,
@@ -64,7 +87,9 @@ export function FilterFormDataProvider({ children, displayFilter, }: { children:
     }
   });
 
-  return <FormDataContext.Provider value={{ isPending, isError, data, formData, error }}>
+  return <FormDataContext.Provider value={{
+    isPending, isError, data, formData, error
+  }}>
     {children}
   </FormDataContext.Provider>
 }

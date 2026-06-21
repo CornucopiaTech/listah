@@ -150,9 +150,10 @@ export function AppNavBar({ menuItems, title }: { menuItems?: ReactNode, title?:
         width: AppDrawerWidth, flexShrink: 0,
         '& .MuiDrawer-paper': { width: AppDrawerWidth, boxSizing: 'border-box', },
       }}
-        variant="persistent"
-        anchor="left"
-        open={store.drawerOpen} >
+        variant="persistent" anchor="left"
+        open={store.drawerOpen}
+        onClose={() => store.toggleDrawer(false)}>
+
         <DrawerHeader>
           <IconButton onClick={() => store.toggleDrawer(false)}>
             {theme.direction === 'ltr' ? <Icon icon="ic:baseline-chevron-left" width="24" height="24" style={{ color: theme.palette.primary.main }} /> : <Icon icon="ic:baseline-chevron-right" width="24" height="24" style={{ color: theme.palette.primary.main }} />}
@@ -160,7 +161,7 @@ export function AppNavBar({ menuItems, title }: { menuItems?: ReactNode, title?:
         </DrawerHeader>
         {/* <Divider /> */}
         <List>
-          <Link underline={checkActive("/tags")} key="tags" href="/tags" >
+          <Link underline={checkActive("/tags")} key="tags" href="/tags" onClick={() => store.toggleDrawer(false)}>
             <ListItem disablePadding>
               <ListItemButton>
                 <ListItemText
@@ -170,7 +171,7 @@ export function AppNavBar({ menuItems, title }: { menuItems?: ReactNode, title?:
               </ListItemButton>
             </ListItem>
           </Link>
-          <Link underline={checkActive("/filters")} key="filters" href="/filters" >
+          <Link underline={checkActive("/filters")} key="filters" href="/filters" onClick={() => store.toggleDrawer(false)}>
             <ListItem disablePadding>
               <ListItemButton>
                 <ListItemText
