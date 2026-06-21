@@ -112,7 +112,6 @@ export function AppItemFormTagAutocompleteField(): ReactNode {
         }
       }
     )
-    // console.info('addNewTagProps', newProps)
     newProps = newProps.sort((a: IItemFormProps, b: IItemFormProps) => b.value.localeCompare(a.value))
     form.setFieldValue('props', newProps)
   }
