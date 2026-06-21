@@ -45,7 +45,6 @@ export function AppTagModal(): ReactNode {
   }
   const fields: itemFields[] = ['name'];
 
-  // key, form, legend, addValueHeader
   const propsProps = {
     keyName: "props",
     form,

@@ -40,7 +40,6 @@ export async function postItem(item: IItem) {
       let payload: BackendErrorPayload | undefined;
       try {
         payload = await res.json();
-        console.info('payloa', payload)
       } catch {
         // Response wasn't JSON (e.g., gateway crash)
       }
@@ -80,7 +79,6 @@ export async function getItem(opts: IReadRequest): Promise<IItemReadResponse> {
       let payload: BackendErrorPayload | undefined;
       try {
         payload = await res.json();
-        console.info('payload', payload)
       } catch {
         // Response wasn't JSON (e.g., gateway crash)
       }

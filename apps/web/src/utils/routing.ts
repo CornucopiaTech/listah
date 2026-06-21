@@ -26,6 +26,5 @@ export function getRouteLoaderData(rt: routes) {
     return routeApi.useLoaderData();
   }
   catch {
-    console.info('Error Route API data - ', rt)
   }
 }

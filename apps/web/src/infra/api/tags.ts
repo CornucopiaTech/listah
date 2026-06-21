@@ -47,7 +47,6 @@ export async function postTag(t: ITag) {
       let payload: BackendErrorPayload | undefined;
       try {
         payload = await res.json();
-        console.info('payloa', payload)
       } catch {
         // Response wasn't JSON (e.g., gateway crash)
       }
@@ -85,7 +84,6 @@ export async function getTag(opts: IReadRequest): Promise<ITagReadResponse> {
       let payload: BackendErrorPayload | undefined;
       try {
         payload = await res.json();
-        console.info('payloa', payload)
       } catch {
         // Response wasn't JSON (e.g., gateway crash)
       }
@@ -94,7 +92,6 @@ export async function getTag(opts: IReadRequest): Promise<ITagReadResponse> {
       throw new AppError(payload?.message || GenericError, res.status, rId, payload);
     }
     const data = await res.json();
-    // return ZTagReadResponse.parse(data);
     return data;
 
   } catch (e) {
@@ -126,7 +123,6 @@ export async function getTagProperty(opts: IReadRequest): Promise<ITagPropertyRe
       let payload: BackendErrorPayload | undefined;
       try {
         payload = await res.json();
-        console.info('payloa', payload)
       } catch {
         // Response wasn't JSON (e.g., gateway crash)
       }

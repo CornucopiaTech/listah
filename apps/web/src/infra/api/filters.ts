@@ -42,7 +42,6 @@ export async function postFilter(f: IFilter) {
       let payload: BackendErrorPayload | undefined;
       try {
         payload = await res.json();
-        console.info('payloa', payload)
       } catch {
         // Response wasn't JSON (e.g., gateway crash)
       }
@@ -60,8 +59,6 @@ export async function postFilter(f: IFilter) {
 
 export async function getFilter(opts: IReadRequest): Promise<IFilterReadResponse> {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.readFilter}`;
-  console.info('readFilter', opts)
-
   try {
     const token = await getToken();
     if (!token) {
@@ -81,7 +78,6 @@ export async function getFilter(opts: IReadRequest): Promise<IFilterReadResponse
       let payload: BackendErrorPayload | undefined;
       try {
         payload = await res.json();
-        console.info('payloa', payload)
       } catch {
         // Response wasn't JSON (e.g., gateway crash)
       }
