@@ -173,7 +173,7 @@ export function AppItemFormTagAutocompleteField(): ReactNode {
   const dialogContent = (
     <Fragment>
       <Typography variant="body2">
-        Deleting this tag will remove the following item properties:
+        Deleting this tag might remove the following item properties:
       </Typography>
 
       <List>

@@ -61,7 +61,6 @@ export async function postItem(item: IItem) {
 
 export async function getItem(opts: IReadRequest): Promise<IItemReadResponse> {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.readItem}`;
-  console.info('getItem', opts);
   try {
     const token = await getToken();
     if (!token) {
@@ -81,7 +80,7 @@ export async function getItem(opts: IReadRequest): Promise<IItemReadResponse> {
       let payload: BackendErrorPayload | undefined;
       try {
         payload = await res.json();
-        console.info('payloa', payload)
+        console.info('payload', payload)
       } catch {
         // Response wasn't JSON (e.g., gateway crash)
       }
@@ -91,7 +90,6 @@ export async function getItem(opts: IReadRequest): Promise<IItemReadResponse> {
 
     // return await res.json();
     const data = await res.json();
-    console.info('getItem response ', data.pagination);
     return data;
     // console.info('getItem response ', data.pagination);
     // const parsedData = ZItemReadResponse.parse(data);
