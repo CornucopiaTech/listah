@@ -91,11 +91,6 @@ export async function getItem(opts: IReadRequest): Promise<IItemReadResponse> {
     // return await res.json();
     const data = await res.json();
     return data;
-    // console.info('getItem response ', data.pagination);
-    // const parsedData = ZItemReadResponse.parse(data);
-    // console.info('getItem response parsedData', parsedData.pagination);
-    // return parsedData;
-    // return ZItemReadResponse.parse(data);
   } catch (e) {
     if (e instanceof AppError) throw e;
 
