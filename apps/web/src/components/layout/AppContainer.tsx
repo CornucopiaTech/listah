@@ -82,10 +82,16 @@ export function AppContainer(
   }) {
   const theme = useTheme<AppTheme>();
   return (
-    <Grid container spacing={0} padding="10px">
-      {displayPage && <Grid key="menu" size={0.5} sx={{ marginTop: "-1" }}> <AppMenuButton /> </Grid>}
+    <Grid container spacing={0}>
+      {displayPage && <Grid key="menu" size={0.5}> <AppMenuButton /> </Grid>}
       <Grid key="main content" size={displayPage ? 11.5 : 12} >
-        <Container maxWidth={mw ? mw : "md"} >
+        <Container maxWidth={mw ? mw : "md"} sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center', // Vertically centers the content inside the container
+          alignItems: 'center',     // Horizontally centers the content inside the container
+          minHeight: '100vh',       // Forces the container to take up the full screen height
+        }}>
           <AppPagePaper key="tags">
             <Stack direction="column" spacing={0}>
               {displayPage && <Grid container spacing={0}>

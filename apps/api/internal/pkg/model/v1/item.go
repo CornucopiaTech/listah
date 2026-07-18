@@ -15,8 +15,8 @@ var ItemConflictFields = []string{
 }
 var defaultPagination = Pagination{
 	Page: 1,
-	Size:   200,
-	Sort:       "name ASC",
+	Size: 200,
+	Sort: "name ASC",
 }
 
 func ReadItemRequestToRepoRepoSearch(msg *pb.ItemServiceReadItemRequest) (*RepoSearch, error) {
@@ -33,7 +33,6 @@ func ReadItemRequestToRepoRepoSearch(msg *pb.ItemServiceReadItemRequest) (*RepoS
 			t = append(t, fmt.Sprintf(`'%v'`, v))
 		}
 	}
-
 
 	pSize := defaultPagination.Size
 	pNum := defaultPagination.Page
@@ -57,17 +56,14 @@ func ReadItemRequestToRepoRepoSearch(msg *pb.ItemServiceReadItemRequest) (*RepoS
 		offset = pSize * (pNum - 1)
 	}
 
-
-
-
 	i := RepoSearch{
-		UserId:      q.UserId,
-		Tags:        strings.Join(t, ", "),
-		Text: q.Text,
+		UserId: q.UserId,
+		Tags:   strings.Join(t, ", "),
+		Text:   q.Text,
 		Sort:   sortT,
-		Limit:       pSize,
-		Offset:      offset,
-		Page:  pNum,
+		Limit:  pSize,
+		Offset: offset,
+		Page:   pNum,
 	}
 	// fmt.Printf("\nRepo Search -  %+v\n", i)
 	return &i, nil

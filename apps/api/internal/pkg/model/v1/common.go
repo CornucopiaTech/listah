@@ -1,10 +1,10 @@
 package v1
 
 import (
-	"time"
-
+	pb "cornucopia/listah/internal/pkg/proto/v1"
 	"github.com/pkg/errors"
 	"github.com/uptrace/bun"
+	"time"
 )
 
 var InvalidJWTMsg = "invalid JWT: "
@@ -109,10 +109,22 @@ type Filter struct {
 }
 
 type Pagination struct {
-	Page int64
+	Page   int64
 	Size   int64
-	Sort       string
-	Volume   int64
+	Sort   string
+	Volume int64
+}
+
+var DefaultPagination = Pagination{
+	Page: 1,
+	Size: 200,
+	Sort: "name ASC",
+}
+
+var DefaultPbPagination = &pb.Pagination{
+	Page: 1,
+	Size: 200,
+	Sort: "name ASC",
 }
 
 type RowCount struct {
@@ -120,13 +132,13 @@ type RowCount struct {
 }
 
 type RepoSearch struct {
-	UserId      string
-	Tags        string
-	Text string
+	UserId string
+	Tags   string
+	Text   string
 	Sort   string
-	Limit       int64
-	Offset      int64
-	Page  int64
+	Limit  int64
+	Offset int64
+	Page   int64
 }
 
 type UpsertInfo struct {

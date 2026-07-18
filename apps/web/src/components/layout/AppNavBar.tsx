@@ -331,7 +331,8 @@ export function AppMenuButton() {
   return (
     <Fragment>
       <Box sx={{
-        backgroundColor: theme.palette.background.default, width: 'fit-content', display: "flex", justifyContent: "center", alignItems: "center",
+        backgroundColor: theme.palette.background.default,
+        padding: "10px"
       }}>
         <IconButton
           color="inherit"
@@ -344,6 +345,7 @@ export function AppMenuButton() {
             style={{ color: theme.palette.primary.main }}
           />
         </IconButton>
+
       </Box>
       <Drawer sx={drawerSx} variant="persistent" anchor="left"
         open={store.drawerOpen} onClose={() => store.toggleDrawer(false)}>

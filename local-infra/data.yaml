@@ -1,6 +1,6 @@
 services:
-  db:
-    container_name: db
+  db-listah:
+    container_name: db-listah
     image: postgres
     restart: always
     shm_size: 128mb
@@ -16,11 +16,11 @@ services:
     ports:
       - "5434:5432"
 
-  liquibase:
-    container_name: liquibase
+  liquibase-listah:
+    container_name: liquibase-listah
     image: liquibase/liquibase:latest
     depends_on:
-      db:
+      db-listah:
         condition: service_healthy
         restart: true
     volumes:
@@ -37,21 +37,21 @@ services:
       LIQUIBASE_CLASSPATH: /liquibase/lib/postgresql-42.7.10.jar
     command: "update "
 
-  redis:
-      image: redis:8.6.4-alpine
-      container_name: redis_server
-      restart: unless-stopped
-      ports:
-        - "6379:6379"
-      command: redis-server /usr/local/etc/redis/redis.conf
-      volumes:
-        - ./db_data/redis:/data
-        - ./redis.conf:/usr/local/etc/redis/redis.conf
-      healthcheck:
-        test: ["CMD", "redis-cli", "ping"]
-        interval: 10s
-        timeout: 5s
-        retries: 5
+  redis-server-listah:
+    image: redis:8.6.4-alpine
+    container_name: redis-server-listah
+    restart: unless-stopped
+    ports:
+      - "6378:6379"
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./db_data/redis:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
   default:

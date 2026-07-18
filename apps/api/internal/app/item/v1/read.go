@@ -38,11 +38,14 @@ func (s *Server) ReadItem(ctx context.Context, req *connect.Request[pb.ItemServi
 	}
 
 	pg := req.Msg.GetPagination()
+	if pg == nil {
+		pg = model.DefaultPbPagination
+	}
 	pg.Volume = int64(recordCnt)
 	resm := &pb.ItemServiceReadItemResponse{
-		Items:            rs,
-		Query:            req.Msg.GetQuery(),
-		Pagination:       pg,
+		Items:      rs,
+		Query:      req.Msg.GetQuery(),
+		Pagination: pg,
 	}
 	return connect.NewResponse(resm), nil
 }
@@ -90,12 +93,15 @@ func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServic
 	}
 
 	pg := req.Msg.GetPagination()
+	if pg == nil {
+		pg = model.DefaultPbPagination
+	}
 	pg.Volume = int64(recordCnt)
 	resm := &pb.ItemServiceReadTagResponse{
-		Tags:             rs,
-		TagidPropMap:     ms,
-		Query:            req.Msg.GetQuery(),
-		Pagination:       pg,
+		Tags:         rs,
+		TagidPropMap: ms,
+		Query:        req.Msg.GetQuery(),
+		Pagination:   pg,
 	}
 	return connect.NewResponse(resm), nil
 }
@@ -131,11 +137,14 @@ func (s *Server) ReadTagProperty(ctx context.Context, req *connect.Request[pb.It
 	}
 
 	pg := req.Msg.GetPagination()
+	if pg == nil {
+		pg = model.DefaultPbPagination
+	}
 	pg.Volume = int64(recordCnt)
 	resm := &pb.ItemServiceReadTagPropertyResponse{
-		Props:            rs,
-		Query:            req.Msg.GetQuery(),
-		Pagination:       pg,
+		Props:      rs,
+		Query:      req.Msg.GetQuery(),
+		Pagination: pg,
 	}
 	return connect.NewResponse(resm), nil
 }
@@ -171,11 +180,14 @@ func (s *Server) ReadFilter(ctx context.Context, req *connect.Request[pb.ItemSer
 	}
 
 	pg := req.Msg.GetPagination()
+	if pg == nil {
+		pg = model.DefaultPbPagination
+	}
 	pg.Volume = int64(recordCnt)
 	resm := &pb.ItemServiceReadFilterResponse{
-		Filters:          rs,
-		Query:            req.Msg.GetQuery(),
-		Pagination:       pg,
+		Filters:    rs,
+		Query:      req.Msg.GetQuery(),
+		Pagination: pg,
 	}
 	return connect.NewResponse(resm), nil
 }
