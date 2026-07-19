@@ -1,0 +1,128 @@
+syntax = "proto3";
+package listah.v1;
+option go_package = "cornucopia/listah/internal/pkg/proto/v1";
+
+
+import "v1/commons.proto";
+import "google/protobuf/timestamp.proto";
+import "gnostic/openapi/v3/annotations.proto";
+
+
+
+
+
+// Item Messages
+message ItemServiceReadItemRequest {
+  ReadQuery query = 500;
+  Pagination pagination = 501;
+  ReadReference reference = 502;
+  string title = 503;
+}
+message ItemServiceReadItemResponse {
+  repeated Item items = 1;
+  ReadQuery query = 500;
+  Pagination pagination = 501;
+  ReadReference reference = 502;
+  string title = 503;
+}
+message ItemServiceUpsertItemRequest {
+  repeated Item items = 1;
+}
+message ItemServiceUpsertItemResponse {
+  repeated string itemIds = 1;
+}
+
+
+// Tag Messages
+message ItemServiceReadTagRequest {
+  ReadQuery query = 500;
+  Pagination pagination = 501;
+  ReadReference reference = 502;
+  string title = 503;
+}
+message ItemServiceReadTagResponse {
+  repeated Tag tags = 1;
+  map<string,StringList> tagidPropMap = 2;
+
+  ReadQuery query = 500;
+  Pagination pagination = 501;
+  ReadReference reference = 502;
+  string title = 503;
+}
+message ItemServiceUpsertTagRequest {
+  repeated Tag tags = 1;
+}
+message ItemServiceUpsertTagResponse {
+  repeated string tagIds = 1;
+}
+
+
+// Tag Property Messages
+message ItemServiceReadTagPropertyRequest {
+  ReadQuery query = 500;
+  Pagination pagination = 501;
+  ReadReference reference = 502;
+  string title = 503;
+}
+message ItemServiceReadTagPropertyResponse {
+  map<string,StringList> props = 1;
+
+  ReadQuery query = 500;
+  Pagination pagination = 501;
+  ReadReference reference = 502;
+  string title = 503;
+}
+
+
+// Filter Messages
+message ItemServiceReadFilterRequest {
+  ReadQuery query = 500;
+  Pagination pagination = 501;
+  ReadReference reference = 502;
+  string title = 503;
+}
+message ItemServiceReadFilterResponse {
+  repeated Filter filters = 1;
+  ReadQuery query = 500;
+  Pagination pagination = 501;
+  ReadReference reference = 502;
+  string title = 503;
+}
+message ItemServiceUpsertFilterRequest {
+  repeated Filter filters = 1;
+}
+message ItemServiceUpsertFilterResponse {
+  repeated string filterIds = 1;
+}
+
+
+
+
+
+service ItemService {
+  rpc ReadItem(ItemServiceReadItemRequest) returns (ItemServiceReadItemResponse){
+    option idempotency_level = NO_SIDE_EFFECTS;
+    option (gnostic.openapi.v3.operation).description = "Read Item";
+  }
+  rpc UpsertItem(ItemServiceUpsertItemRequest) returns (ItemServiceUpsertItemResponse){
+    option (gnostic.openapi.v3.operation).description = "Upsert Item";
+  }
+  rpc ReadTagProperty(ItemServiceReadTagPropertyRequest) returns (ItemServiceReadTagPropertyResponse){
+    option idempotency_level = NO_SIDE_EFFECTS;
+    option (gnostic.openapi.v3.operation).description = "Read Tag Property";
+  }
+  rpc ReadTag(ItemServiceReadTagRequest) returns (ItemServiceReadTagResponse){
+    option idempotency_level = NO_SIDE_EFFECTS;
+    option (gnostic.openapi.v3.operation).description = "Read Tag";
+  }
+  rpc UpsertTag(ItemServiceUpsertTagRequest) returns (ItemServiceUpsertTagResponse){
+    option (gnostic.openapi.v3.operation).description = "Upsert Tag";
+  }
+  rpc ReadFilter(ItemServiceReadFilterRequest) returns (ItemServiceReadFilterResponse){
+    option idempotency_level = NO_SIDE_EFFECTS;
+    option (gnostic.openapi.v3.operation).description = "Read Filter";
+  }
+  rpc UpsertFilter(ItemServiceUpsertFilterRequest) returns (ItemServiceUpsertFilterResponse){
+    option (gnostic.openapi.v3.operation).description = "Upsert Filter";
+  }
+}

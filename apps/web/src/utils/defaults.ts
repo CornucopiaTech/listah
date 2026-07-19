@@ -12,9 +12,15 @@ export const ListBoxSize: {
 } = {
   height: `calc(100vh - 250px)`, width: '100%',
 }
+export const ListItemStyling = { height: "fit-content", maxHeight: "50px" };
 
-export const AppBarHeight = 32;
-export const AppDrawerWidth = 128;
+
+export const AppBarHeight = 48;
+export const AppDrawerWidth = 240;
+export const AppBarBottom = 0;
+export const AppAllowance = AppBarHeight + AppBarBottom;
+
+
 
 export const QueryStaleTime = process.env.NODE_ENV === "production" ? 24 * 60 * 60 * 1000 : 10;
 

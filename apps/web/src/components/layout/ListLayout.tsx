@@ -2,8 +2,6 @@
 
 import type {
   ReactNode,
-  ChangeEvent,
-  MouseEvent,
 } from 'react';
 import {
   Fragment,
@@ -16,15 +14,15 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Divider from '@mui/material/Divider';
 import Select from '@mui/material/Select';
-import Typography from '@mui/material/Typography';
-import LinearProgress from '@mui/material/LinearProgress';
-import Alert from '@mui/material/Alert';
 
 
 
 
+import {
+  PaginationMenu,
+} from '@/domain/entities';
 import type {
-  IPagination,
+  IListContext,
 } from '@/domain/entities';
 import {
   ListBoxSize,
@@ -35,9 +33,7 @@ import {
 import {
   AppCentredPagination,
 } from "@/components/core";
-
-
-
+import { useLists } from "@/hooks/context/lists";
 
 
 
@@ -45,23 +41,23 @@ import {
 export function OuterBox({ children }: { children: ReactNode }): ReactNode {
   return (
     <Fragment>
-      <Box key="data-content" sx={ListBoxSize}>
+      <Box key="data-content" sx={{
+        ...ListBoxSize,          // Binds the vertical size
+        overflowY: 'auto',    // Enables scrolling when content overflows
+      }}>
         {children}
       </Box>
     </Fragment>
   );
 }
 
-export function ListBox({
-  children, pagination, pageSizeChange, pageChange
-}: {
-  children: ReactNode,
-  pagination: IPagination,
-  pageSizeChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
-  pageChange?: (event: MouseEvent<HTMLButtonElement> | null,
-    value: number) => void
 
-}): ReactNode {
+export function ListBox({ children }: { children: ReactNode }): ReactNode {
+  const {
+    pagination,
+    pageChange,
+    pageSizeChange,
+  } = useLists() as unknown as IListContext;
   const totalPages = Math.max(1, Math.ceil(pagination.volume / pagination.size));
   return (
     <Fragment>
@@ -86,10 +82,7 @@ export function ListBox({
                   },
                 }}
               >
-                <MenuItem value={128}>128</MenuItem>
-                <MenuItem value={512}>512</MenuItem>
-                <MenuItem value={2048}>2048</MenuItem>
-                <MenuItem value={-1}>All</MenuItem>
+                {PaginationMenu.map((i, _) => <MenuItem value={i.value}>{i.label}</MenuItem>)}
               </Select>
             </FormControl>
           </CentredBox>
@@ -106,71 +99,20 @@ export function ListBox({
   );
 }
 
-// ToDo: Get data from context and do not pass it as props
-export function ListLayout(
-  {
-    data, isPending, isFetching, error, scrollIndex, pagination,
-    renderItem, pageSizeChange, pageChange,
-  }: {
-    data: any[],
-    isPending: boolean,
-    isFetching: boolean,
-    isError: boolean,
-    error: Error | null,
-    scrollIndex: number,
-    pagination: IPagination,
-    renderItem: (i: number) => ReactNode,
-    pageSizeChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
-    pageChange?: (event: MouseEvent<HTMLButtonElement> | null,
-      value: number) => void
-  }
-): ReactNode {
-
-  if (isPending || isFetching) {
-    return (
-      <ListBox pagination={pagination} >
-        <OuterBox><LinearProgress /></OuterBox>
-      </ListBox>
-    )
-  }
-
-  if (error) {
-    return (
-      <ListBox pagination={pagination} >
-        <OuterBox><Alert severity="error">{error.message || "An error occurred. Please try again"}</Alert> </OuterBox>
-      </ListBox>
-    )
-  }
-
-  if (data.length == 0) {
-    return (
-      <ListBox pagination={pagination} >
-        <OuterBox>
-          <Typography variant="h6"> No items found </Typography>
-        </OuterBox>
-      </ListBox>
-    )
-  }
-
-
-  if (data.length > 0) {
-    return (
-      <ListBox pagination={pagination} pageChange={pageChange} pageSizeChange={pageSizeChange}>
-        <Virtuoso
-          key="data-content"
-          style={ListBoxSize}
-          initialTopMostItemIndex={scrollIndex}
-          totalCount={data.length}
-          itemContent={(i) => renderItem(i)}
-        />
-      </ListBox>
-    )
-  }
-
+export function ListLayout(): ReactNode {
+  const {
+    data,
+    scrollIndex,
+    renderRow,
+  } = useLists() as unknown as IListContext;
 
   return (
-    <ListBox pagination={pagination}>
-      <OuterBox><Alert severity="error">"An error occurred. Please try again"</Alert> </OuterBox>
-    </ListBox>
+    <Virtuoso
+      // useWindowScroll // style={ListBoxSize}
+      key="data-content"
+      initialTopMostItemIndex={scrollIndex ?? 0}
+      data={data}
+      itemContent={(i) => renderRow(i)}
+    />
   )
 }

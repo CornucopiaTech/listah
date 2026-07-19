@@ -1,4 +1,17 @@
 import * as z from "zod";
+import type {
+  ChangeEvent,
+  MouseEvent,
+  ReactNode
+} from 'react';
+
+
+import type {
+  IReadQuery,
+} from "./query";
+import {
+  type Pagination,
+} from "./pagination";
 
 
 export const ZTag = z.object({
@@ -28,3 +41,17 @@ export const ZTagProperty = z.record(
   })
 );
 export type ITagProperty = z.infer<typeof ZTagProperty>;
+
+
+export type ITagDataContext = {
+  query: IReadQuery,
+  tags: ITag[],
+  pagination: Pagination,
+  isPending: boolean,
+  isError: boolean,
+  isFetching: boolean,
+  error: Error | null,
+  pageChange: (event: MouseEvent<HTMLButtonElement> | null, value: number) => void,
+  pageSizeChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
+  listItemClick: (idx: number) => ReactNode,
+}

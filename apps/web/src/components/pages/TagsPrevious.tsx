@@ -28,31 +28,29 @@ import {
   type TAppStore
 } from '@/hooks/store/boundStore';
 import {
-  AppTagModal,
+  AppTagModal
 } from "@/components/layout/AppTagModal";
 import {
-  AppFilterModal,
+  AppFilterModal
 } from "@/components/layout/AppFilterModal";
+import {
+  AppContainer,
+  AppListHeader,
+} from '@/components/layout/AppContainer';
 import {
   MenuItem,
 } from '@/components/base/Menubar';
 import {
-  useListFilter,
-} from '@/hooks/queries/filter';
+  useListTag,
+} from '@/hooks/queries/tag';
 import {
   ListLayout
 } from '@/components/layout/ListLayout';
-import {
-} from "@/domain/rules";
 import type {
-  IFilter,
+  ITag,
   IReadQuery,
-  IFilterReadResponse,
-} from "@/domain/entities";
-import {
-  DefaultReadQuery,
-  Pagination,
-} from "@/domain/entities";
+  ITagReadResponse,
+} from '@/domain/entities';
 import {
   encodeState
 } from '@/utils/encoders';
@@ -60,25 +58,25 @@ import {
   getRouteContext,
 } from "@/utils/routing";
 import {
+  DefaultReadQuery,
+  Pagination,
+} from "@/domain/entities";
+import {
   TagFormDataProvider,
   TagFormProvider,
   FilterFormDataProvider,
   FilterFormProvider,
 } from '@/hooks/services/useForm';
-import {
-  AppContainer,
-  AppListHeader,
-} from '@/components/layout/AppContainer';
 
 
 
-export function Filters() {
+export function Tags() {
   const store: TAppStore = useAppStore((state) => state);
   const navigate = useNavigate();
-  const { query, pagination, } = getRouteContext("/filters");
+  const { query, pagination, } = getRouteContext("/tags");
   const {
     data, isPending, isFetching, isError, error
-  }: UseSuspenseQueryResult<IFilterReadResponse> = useListFilter({ query, pagination, });
+  }: UseSuspenseQueryResult<ITagReadResponse> = useListTag({ query, pagination, });
 
   // Pagination Details
   const initialPagination = new Pagination(pagination);
@@ -98,29 +96,23 @@ export function Filters() {
     navigate({ to: ".", search: { s: encoded } });
   };
 
-
-
-  const listItemClick = (idx: number, it: IFilter) => {
-    const pageTitle = it && it.name ? `##${it.name}` : "Filters";
-    const q: IReadQuery = { ...DefaultReadQuery, userId: query.userId, tags: it.tags };
-    const s = { query: q, pagination, title: pageTitle, reference: { filter: it }, }
+  const listItemClick = (idx: number, it: ITag) => {
+    const pageTitle = it && it.name ? `#${it.name}` : "Tags";
+    const q: IReadQuery = { ...DefaultReadQuery, userId: query.userId, tags: [it.id] };
+    const s = { query: q, pagination, title: pageTitle, reference: { tag: it }, }
     const encoded = encodeState(s);
+
     navigate({ to: "/items", search: { s: encoded }, });
     store.setItemTitle(pageTitle);
-    store.setDisplayFilter(it);
-    store.setFilterScroll(idx);
+    store.setDisplayTag(it);
+    store.setTagScroll(idx);
   }
-
   function renderItem(itemKey: number): ReactNode {
-    const filters = data?.filters ?? [];
-    const item: IFilter = filters[itemKey];
+    const tags = data?.tags ?? [];
+    const item = tags[itemKey];
     const tc = item && item.name ? item.name : "";
     return (
-      <ListItem
-        key={itemKey + tc}
-        component="div" disablePadding
-        onClick={() => listItemClick(itemKey, item)}
-      >
+      <ListItem key={itemKey + tc} component="div" disablePadding onClick={() => listItemClick(itemKey, item)} >
         <ListItemButton>
           <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
           <Chip
@@ -135,28 +127,26 @@ export function Filters() {
   }
 
   const props = {
-    data: data?.filters ?? [],
+    data: data?.tags ?? [],
     isPending, isFetching, isError, error,
-    scrollIndex: Math.max(0, store.filterScroll),
+    scrollIndex: Math.max(0, store.tagScroll),
     pagination: pageInfo.current.paging,
     renderItem,
     pageSizeChange,
     pageChange,
   }
-
-  const menuItems = <Fragment>
+  const mItems = <Fragment>
     <MenuItem key="tag" onClick={() => store.setTagModal(true)}>
-      <Typography variant="body2">Create new tag </Typography>
+      <Typography variant="body1">Create new tag </Typography>
     </MenuItem>
     <MenuItem key="filter" onClick={() => store.setFilterModal(true)}>
-      <Typography variant="body2">Create new filter </Typography>
+      <Typography variant="body1">Create new filter </Typography>
     </MenuItem>
-  </Fragment>
-
+  </Fragment >
 
   return (
-    <AppContainer>
-      <AppListHeader title="Filters" menuItems={menuItems} />
+    <AppContainer mw="md" >
+      <AppListHeader title="Tags" menuItems={mItems} />
       {
         store.tagModal &&
         <TagFormDataProvider>
@@ -174,7 +164,6 @@ export function Filters() {
         </FilterFormDataProvider>
       }
       <ListLayout {...props} />
-    </AppContainer>
-  )
-
+    </AppContainer >
+  );
 }

@@ -5,9 +5,6 @@ import {
   Fragment,
 } from 'react';
 import {
-  Outlet,
-} from '@tanstack/react-router';
-import {
   useUser
 } from '@clerk/react';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -43,25 +40,28 @@ import {
   AppItemSearchBar,
 } from "@/components/layout/AppSearchBar";
 import type { AppTheme } from '@/system/theme';
-
-
-
-
 import {
   AppMenuButton,
 } from '@/components/layout/AppNavBar';
 import { Landing } from '@/components/pages/Landing';
-
+import { AppNavDrawer } from "@/components/layout/AppNavDrawer";
+import {
+  AppAllowance,
+} from '@/utils/defaults';
+import { SpaceBetweenBox, CentredBox } from '@/components/core/AppBox';
 
 type widthType = "xs" | "sm" | "md" | "lg" | "xl";
 
 
-
-export function AppShell({ children }: { children: ReactNode }) {
+function Shell({ children }: { children: ReactNode }) {
   return (
     <Fragment>
       <CssBaseline />
-      <Box sx={{ width: "100vw", maxWidth: "100vw", height: `fit-content`, }}>
+      <Box
+        sx={{
+          display: "flex",
+          width: "100vw", maxWidth: "100vw", height: `100vh`,
+        }}>
         {children}
       </Box>
     </Fragment>
@@ -69,21 +69,31 @@ export function AppShell({ children }: { children: ReactNode }) {
 }
 
 
-export function AppContainerShell() {
+export function AppShell({ children }: { children: ReactNode }) {
   const { isSignedIn, isLoaded, } = useUser();
-  if (!isLoaded) return <AppShell><LinearProgress /></AppShell>
-  if (!isSignedIn) return <AppShell><Landing /></AppShell>
-  return <AppShell><Outlet /></AppShell>;
+  if (!isLoaded) return <Shell><LinearProgress /></Shell>
+  if (!isSignedIn) return <Shell><Landing /></Shell>
+  return (
+    <Fragment>
+      <Shell>
+        <AppNavDrawer />
+        {children}
+      </Shell>
+    </Fragment>
+  );
 }
 
-export function AppContainer(
-  { children, mw, title, menuItems, displayPage }: {
-    children: ReactNode, mw?: widthType, title?: string, menuItems?: ReactNode, displayPage?: boolean
-  }) {
+
+export function PrevAppContainer(
+  {
+    children, mw, title, menuItems, displayPage }: {
+      children: ReactNode, mw?: widthType, title?: string,
+      menuItems?: ReactNode, displayPage?: boolean
+    }) {
   const theme = useTheme<AppTheme>();
   return (
     <Grid container spacing={0}>
-      {displayPage && <Grid key="menu" size={0.5}> <AppMenuButton /> </Grid>}
+      {/* {displayPage && <Grid key="menu" size={0.5}> <AppMenuButton /> </Grid>} */}
       <Grid key="main content" size={displayPage ? 11.5 : 12} >
         <Container maxWidth={mw ? mw : "md"} sx={{
           display: 'flex',
@@ -129,5 +139,81 @@ export function AppContainer(
         </Container>
       </Grid>
     </Grid>
+  );
+}
+
+
+export function AppListHeader({ title, menuItems }: { title?: string, menuItems?: ReactNode, }) {
+  const theme = useTheme<AppTheme>();
+  return (
+    <Fragment>
+      <SpaceBetweenBox>
+        <CentredBox><Typography variant="h5" component="div"> {title} </Typography></CentredBox>
+        <Menubar style={{
+          backgroundColor: theme.palette.background.paper,
+          display: "flex", justifyContent: "flex-end", alignItems: "center",
+        }}>
+          <MenuRoot>
+            <MenuTrigger>
+              <Icon
+                icon="charm:menu-kebab" width="30" height="30"
+                style={{ color: theme.palette.primary.main }}
+              />
+            </MenuTrigger>
+            <MenuPortal>
+              <MenuPositioner sideOffset={4} alignOffset={-2}>
+                <MenuPopup>
+                  {menuItems}
+                </MenuPopup>
+              </MenuPositioner>
+            </MenuPortal>
+          </MenuRoot>
+        </Menubar>
+
+      </SpaceBetweenBox>
+      <AppItemSearchBar />
+    </Fragment>
+
+
+
+
+  );
+}
+
+
+
+export function AppContainer({ children, mw }: { children: ReactNode, mw?: widthType, }) {
+  const theme: AppTheme = useTheme();
+  const appbarAllowance = `calc(${theme.spacing(7)} + 1px)`;
+  const pageHeight = `calc(100vh - ${AppAllowance}px)`;
+  return (
+    <Fragment>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          ml: `${appbarAllowance}px`, // key part: reserves drawer space
+          mt: `${AppAllowance}px`, // key part: reserves drawer space
+          display: "flex",
+          justifyContent: "center", // horizontal centering
+          alignItems: 'center',     // Horizontally centers the content inside the container
+          minHeight: pageHeight,
+        }}>
+
+        <Container maxWidth={mw ? mw : "md"} sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center', // Vertically centers the content inside the container
+          alignItems: 'center',     // Horizontally centers the content inside the container
+          maxHeight: pageHeight,       // Forces the container to take up the full screen height
+        }}>
+          <AppPagePaper>
+            <Stack direction="column" spacing={0} sx={{ marginTop: "10px" }}>
+              {children}
+            </Stack>
+          </AppPagePaper>
+        </Container>
+      </Box>
+    </Fragment>
   );
 }

@@ -1,10 +1,12 @@
-import { createRootRoute, defer } from '@tanstack/react-router';
-import LinearProgress from '@mui/material/LinearProgress';
+import {
+  createRootRoute,
+} from '@tanstack/react-router';
+import {
+  Outlet,
+} from '@tanstack/react-router';
 
 
-
-import NotFound from '@/components/common/NotFound';
-import { AppContainerShell } from '@/components/layout/AppContainer';
+import { AppShell } from '@/components/layout/AppContainer';
 import {
   tagGroupOptions,
   filterGroupOptions,
@@ -40,24 +42,10 @@ export const Route = createRootRoute({
         query: { ...DefaultReadRequest.query, userId: context.user.id },
         pagination: { ...DefaultReadRequest.pagination, size: -1 }
       }
-      const tags = context.queryClient.ensureQueryData(tagGroupOptions(query));
-      const filters = context.queryClient.ensureQueryData(filterGroupOptions(query));
-      return {
-        tags: defer(tags), filters: defer(filters)
-      }
-      // const [tags] = await Promise.all([
-      //   context.queryClient.ensureQueryData(tagGroupOptions(query)),
-      // ]);
-      // return { tags };
-      // const [tags, props] = await Promise.all([
-      //   context.queryClient.ensureQueryData(tagPropertyGroupOptions(query)),
-      //   context.queryClient.ensureQueryData(tagGroupOptions(query)),
-      // ]);
-      // return { tags, props };
+      context.queryClient.ensureQueryData(tagGroupOptions(query));
+      context.queryClient.ensureQueryData(filterGroupOptions(query));
     }
     return null
   },
-  component: AppContainerShell,
-  notFoundComponent: NotFound,
-  pendingComponent: LinearProgress,
+  component: () => <AppShell><Outlet /></AppShell>,
 })

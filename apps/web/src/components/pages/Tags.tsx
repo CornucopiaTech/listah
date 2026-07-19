@@ -1,113 +1,80 @@
 import {
   Fragment,
-  useRef,
 } from "react";
 import type {
   ReactNode,
-  ChangeEvent,
-  MouseEvent,
 } from 'react';
-import {
-  useNavigate,
-} from '@tanstack/react-router';
-import type {
-  UseSuspenseQueryResult,
-} from '@tanstack/react-query';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
+import LinearProgress from '@mui/material/LinearProgress';
+import Alert from '@mui/material/Alert';
+
 
 
 // Internal
 import {
-  useAppStore,
-  type TAppStore
-} from '@/hooks/store/boundStore';
-import {
-  AppTagModal
-} from "@/components/layout/AppTagModal";
-import {
-  AppFilterModal
-} from "@/components/layout/AppFilterModal";
-import { AppContainer } from '@/components/layout/AppContainer';
-import {
   MenuItem,
 } from '@/components/base/Menubar';
 import {
-  useListTag,
-} from '@/hooks/queries/tag';
+  useAppStore,
+} from '@/hooks/store/boundStore';
 import {
-  ListLayout
-} from '@/components/layout/ListLayout';
+  AppTagModal,
+  AppFilterModal,
+  AppContainer,
+  AppListHeader,
+  ListLayout,
+  ListBox,
+  OuterBox,
+} from '@/components/layout';
 import type {
-  ITag,
-  IReadQuery,
-  ITagReadResponse,
+  ITagDataContext,
+  IListContext,
 } from '@/domain/entities';
-import {
-  encodeState
-} from '@/utils/encoders';
-import {
-  getRouteContext,
-} from "@/utils/routing";
-import {
-  DefaultReadQuery,
-  Pagination,
-} from "@/domain/entities";
 import {
   TagFormDataProvider,
   TagFormProvider,
   FilterFormDataProvider,
   FilterFormProvider,
 } from '@/hooks/services/useForm';
+import {
+  useTags
+} from "@/hooks/context/tags";
+import {
+  ListContext,
+} from "@/hooks/context/lists";
+import { ListItemStyling } from "@/utils/defaults";
 
 
 
-export function Tags() {
-  const store: TAppStore = useAppStore((state) => state);
-  const navigate = useNavigate();
-  const { query, pagination, } = getRouteContext("/tags");
+export function TagShell({ children }: { children: ReactNode }) {
   const {
-    data, isPending, isFetching, isError, error
-  }: UseSuspenseQueryResult<ITagReadResponse> = useListTag({ query, pagination, });
+    tags,
+    pagination,
+    isPending,
+    isError,
+    isFetching,
+    error,
+    pageChange,
+    pageSizeChange,
+    listItemClick,
+  } = useTags() as unknown as ITagDataContext;
+  const storeTagScroll = useAppStore((state) => state.tagScroll);
+  const storeTagModal = useAppStore((state) => state.tagModal);
+  const storeFilterModal = useAppStore((state) => state.filterModal);
 
-  // Pagination Details
-  const initialPagination = new Pagination(pagination);
-  let pageInfo = useRef<Pagination>(initialPagination);
-  if (data) {
-    pageInfo.current.updatePaging(data.pagination, pagination);
-  }
-  function pageChange(event: MouseEvent<HTMLButtonElement> | null, value: number) {
-    event && event.stopPropagation();
-    pageInfo.current.changePage(value);
-    const encoded = encodeState({ query, pagination: pageInfo.current.paging });
-    navigate({ to: ".", search: { s: encoded } });
-  };
-  function pageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    pageInfo.current.changeSize(e.target.value);
-    const encoded = encodeState({ query, pagination: pageInfo.current.paging });
-    navigate({ to: ".", search: { s: encoded } });
-  };
+  const storeSetTagModal = useAppStore((state) => state.setTagModal);
+  const storeSetFilterModal = useAppStore((state) => state.setFilterModal);
 
-  const listItemClick = (idx: number, it: ITag) => {
-    const pageTitle = it && it.name ? `#${it.name}` : "Tags";
-    const q: IReadQuery = { ...DefaultReadQuery, userId: query.userId, tags: [it.id] };
-    const s = { query: q, pagination, title: pageTitle, reference: { tag: it }, }
-    const encoded = encodeState(s);
 
-    navigate({ to: "/items", search: { s: encoded }, });
-    store.setItemTitle(pageTitle);
-    store.setDisplayTag(it);
-    store.setTagScroll(idx);
-  }
-  function renderItem(itemKey: number): ReactNode {
-    const tags = data?.tags ?? [];
+  function renderRow(itemKey: number): ReactNode {
     const item = tags[itemKey];
     const tc = item && item.name ? item.name : "";
     return (
-      <ListItem key={itemKey + tc} component="div" disablePadding onClick={() => listItemClick(itemKey, item)} >
+      <ListItem key={itemKey + tc} component="div" disablePadding sx={ListItemStyling} onClick={() => listItemClick(itemKey)} >
         <ListItemButton>
           <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
           <Chip
@@ -121,28 +88,35 @@ export function Tags() {
     );
   }
 
-  const props = {
-    data: data?.tags ?? [],
-    isPending, isFetching, isError, error,
-    scrollIndex: Math.max(0, store.tagScroll),
-    pagination: pageInfo.current.paging,
-    renderItem,
-    pageSizeChange,
+  const contextValue = {
+    data: tags,
+    pagination: pagination.paging,
+    isPending,
+    isError,
+    isFetching,
+    error,
+    scrollIndex: Math.max(0, storeTagScroll),
     pageChange,
-  }
+    pageSizeChange,
+    clickRow: listItemClick,
+    renderRow,
+  } as unknown as IListContext;
+
   const mItems = <Fragment>
-    <MenuItem key="tag" onClick={() => store.setTagModal(true)}>
+    <MenuItem key="tag" onClick={() => storeSetTagModal(true)}>
       <Typography variant="body1">Create new tag </Typography>
     </MenuItem>
-    <MenuItem key="filter" onClick={() => store.setFilterModal(true)}>
+    <MenuItem key="filter" onClick={() => storeSetFilterModal(true)}>
       <Typography variant="body1">Create new filter </Typography>
     </MenuItem>
   </Fragment >
 
+
   return (
-    <AppContainer mw="md" menuItems={mItems} title="Tags" displayPage={true}>
+    <AppContainer mw="md" >
+      <AppListHeader title="Tags" menuItems={mItems} />
       {
-        store.tagModal &&
+        storeTagModal &&
         <TagFormDataProvider>
           <TagFormProvider>
             <AppTagModal />
@@ -150,14 +124,47 @@ export function Tags() {
         </TagFormDataProvider>
       }
       {
-        store.filterModal &&
+        storeFilterModal &&
         <FilterFormDataProvider>
           <FilterFormProvider >
             <AppFilterModal />
           </ FilterFormProvider>
         </FilterFormDataProvider>
       }
-      <ListLayout {...props} />
+      <ListContext.Provider value={contextValue}>
+        <ListBox><OuterBox>{children}  </OuterBox></ListBox>
+      </ListContext.Provider>
     </AppContainer >
   );
+}
+
+
+
+export function Tags() {
+  const {
+    tags,
+    isPending,
+    error,
+  } = useTags() as unknown as ITagDataContext;
+
+  if (isPending) {
+    return <LinearProgress />
+  }
+
+
+  if (error) {
+    return <Alert severity="error">{error.message || "An error occurred. Please try again"}</Alert>
+  }
+  if (tags.length == 0) {
+    return (
+      <Typography variant="h6"> No items found </Typography>
+    )
+  }
+
+  if (tags.length > 0) {
+    return (<ListLayout />)
+  }
+  return (
+    <Alert severity="error">"An error occurred. Please try again"</Alert>
+  )
 }
