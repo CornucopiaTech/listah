@@ -18,7 +18,13 @@ func (s *Server) ReadItem(ctx context.Context, req *connect.Request[pb.ItemServi
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
-	sq, err := model.ReadItemRequestToRepoRepoSearch(req.Msg)
+	var riq = &pb.ReadRequest{}
+	err := modelutils.MarshalCopyProto(req.Msg, riq)
+	if err != nil {
+		return nil, err
+	}
+
+	sq, err := model.ReadRequestToRepoSearch(riq)
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +38,7 @@ func (s *Server) ReadItem(ctx context.Context, req *connect.Request[pb.ItemServi
 
 	// Convert readModel to response proto
 	// using the model conversion function
-	rs, err := model.ItemModelToItemProto(readModel)
+	rs, err := model.ItemModelListToItemProtoList(readModel)
 	if err != nil {
 		return nil, err
 	}
@@ -57,13 +63,13 @@ func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServic
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
-	var riq = &pb.ItemServiceReadItemRequest{}
+	var riq = &pb.ReadRequest{}
 	err := modelutils.MarshalCopyProto(req.Msg, riq)
 	if err != nil {
 		return nil, err
 	}
 
-	sq, err := model.ReadItemRequestToRepoRepoSearch(riq)
+	sq, err := model.ReadRequestToRepoSearch(riq)
 	if err != nil {
 		return nil, err
 	}
@@ -79,18 +85,12 @@ func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServic
 	if err != nil {
 		return nil, err
 	}
+	// Convert readModel to response proto using the model conversion function
+	rs := model.TagModelListToTagProtoList(readModel)
+
 
 	// Convert readModel to response proto using the model conversion function
-	rs, err := model.TagModelToTagProto(readModel)
-	if err != nil {
-		return nil, err
-	}
-	// fmt.Printf("\nTags -  %+v\n", rs[0])
-	// Convert readModel to response proto using the model conversion function
-	ms, err := model.MapModelToTagPropertyMapProto(readIdModel)
-	if err != nil {
-		return nil, err
-	}
+	ms := model.MapModelToTagPropertyMapProto(readIdModel)
 
 	pg := req.Msg.GetPagination()
 	if pg == nil {
@@ -113,13 +113,13 @@ func (s *Server) ReadTagProperty(ctx context.Context, req *connect.Request[pb.It
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
-	var riq = &pb.ItemServiceReadItemRequest{}
+	var riq = &pb.ReadRequest{}
 	err := modelutils.MarshalCopyProto(req.Msg, riq)
 	if err != nil {
 		return nil, err
 	}
 
-	sq, err := model.ReadItemRequestToRepoRepoSearch(riq)
+	sq, err := model.ReadRequestToRepoSearch(riq)
 	if err != nil {
 		return nil, err
 	}
@@ -129,12 +129,9 @@ func (s *Server) ReadTagProperty(ctx context.Context, req *connect.Request[pb.It
 	if err != nil {
 		return nil, err
 	}
-
 	// Convert readModel to response proto using the model conversion function
-	rs, err := model.TagPropertyModelToTagPropertyMapProto(readModel)
-	if err != nil {
-		return nil, err
-	}
+	rs := model.TagPropertyModelToTagPropertyMapProto(readModel)
+
 
 	pg := req.Msg.GetPagination()
 	if pg == nil {
@@ -156,13 +153,13 @@ func (s *Server) ReadFilter(ctx context.Context, req *connect.Request[pb.ItemSer
 	defer span.End()
 	s.Logger.LogInfo(ctx, svcName, rpcName, rpcLogName)
 
-	var riq = &pb.ItemServiceReadItemRequest{}
+	var riq = &pb.ReadRequest{}
 	err := modelutils.MarshalCopyProto(req.Msg, riq)
 	if err != nil {
 		return nil, err
 	}
 
-	sq, err := model.ReadItemRequestToRepoRepoSearch(riq)
+	sq, err := model.ReadRequestToRepoSearch(riq)
 	if err != nil {
 		return nil, err
 	}
@@ -172,12 +169,9 @@ func (s *Server) ReadFilter(ctx context.Context, req *connect.Request[pb.ItemSer
 	if err != nil {
 		return nil, err
 	}
-
 	// Convert readModel to response proto using the model conversion function
-	rs, err := model.FilterModelToFilterProto(readModel)
-	if err != nil {
-		return nil, err
-	}
+	rs := model.FilterModelListToFilterProtoList(readModel)
+
 
 	pg := req.Msg.GetPagination()
 	if pg == nil {

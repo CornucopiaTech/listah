@@ -5,11 +5,11 @@ import {
 } from "react";
 
 import type {
-  ITagDataContext
+  ITagListContext
 } from "@/domain/entities"
 
 
-export const TagDataContext = createContext<ITagDataContext | undefined>(undefined);
-export function useTags() {
-  return useContext(TagDataContext);
+export const TagListContext = createContext<ITagListContext | undefined>(undefined);
+export function useListTags() {
+  return useContext(TagListContext);
 }

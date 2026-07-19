@@ -28,22 +28,27 @@ func (a *filter) Read(ctx context.Context, m *[]*model.Filter, s *model.RepoSear
 
 	var activity = "ReadFilter"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
-	cte := fmt.Sprintf(`
+
+	var idFilter string
+	if s.Id != "" {
+		idFilter = fmt.Sprintf(` AND sf.id = '%v' `, s.Id)
+	}
+	cte := `
 		WITH filts AS (
 			SELECT sf.*, elem.tag_id
 			FROM apps.filters sf
 				LEFT JOIN  LATERAL JSONB_ARRAY_ELEMENTS_TEXT(sf.tags::JSONB) AS elem(tag_id) ON TRUE
-			WHERE sf.user_id = '%v'
+			WHERE sf.user_id = '`+ s.UserId + `' ` + idFilter + `
 				AND (sf.soft_delete = false OR sf.soft_delete IS NULL)
 		)
 		,its AS (
 				SELECT it.*, elem.tag_id
 				FROM apps.items it
 					LEFT JOIN LATERAL JSONB_ARRAY_ELEMENTS_TEXT(it.tags::JSONB) AS elem(tag_id) ON TRUE
-				WHERE it.user_id = '%v'
+				WHERE it.user_id = '`+ s.UserId + `'
 					AND (it.soft_delete = false OR it.soft_delete IS NULL)
 		)
-	`, s.UserId, s.UserId)
+	`
 	query := `
 		SELECT
 			sf.id, sf.user_id, sf."name", sf.tags::VARCHAR tags,

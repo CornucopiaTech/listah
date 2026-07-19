@@ -69,7 +69,7 @@ export const DefaultItem = {
 
 
 
-export type IItemDataContext = {
+export type IItemListContext = {
   query: IReadQuery,
   reference: ITag | IFilter,
   title: string,

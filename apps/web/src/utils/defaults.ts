@@ -7,18 +7,22 @@ import type {
 
 
 
-export const ListBoxSize: {
-  height: string, width: string
-} = {
-  height: `calc(100vh - 250px)`, width: '100%',
-}
-export const ListItemStyling = { height: "fit-content", maxHeight: "50px" };
 
 
 export const AppBarHeight = 48;
 export const AppDrawerWidth = 240;
 export const AppBarBottom = 0;
-export const AppAllowance = AppBarHeight + AppBarBottom;
+export const AppPageAllowance = AppBarHeight + AppBarBottom;
+export const AppPageContentHeight = `calc(100vh - ${AppPageAllowance}px) - 100px`;
+
+export const ListBoxSize: {
+  height: string, width: string
+} = {
+  height: `calc(${AppPageContentHeight} - 150px)`,
+  // height: `calc(100vh - 250px)`,
+  width: '100%',
+}
+export const ListItemStyling = { height: "fit-content", maxHeight: "50px" };
 
 
 

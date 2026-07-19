@@ -37,7 +37,7 @@ import {
   DefaultItem,
 } from '@/domain/entities';
 import type {
-  IItemDataContext,
+  IItemListContext,
   IListContext,
 } from '@/domain/entities';
 import {
@@ -50,7 +50,7 @@ import {
 } from '@/hooks/services/useForm';
 import { ListItemStyling } from "@/utils/defaults";
 import {
-  useItems
+  useListItems
 } from "@/hooks/context/items";
 import {
   ListContext,
@@ -72,7 +72,7 @@ export function ItemShell({ children }: { children: ReactNode }) {
     pageChange,
     pageSizeChange,
     listItemClick,
-  } = useItems() as unknown as IItemDataContext;
+  } = useListItems() as unknown as IItemListContext;
 
 
   const storeTagScroll = useAppStore((state) => state.tagScroll);
@@ -210,7 +210,7 @@ export function Items() {
     items,
     isPending,
     error,
-  } = useItems() as unknown as IItemDataContext;
+  } = useListItems() as unknown as IItemListContext;
 
   if (isPending) {
     return <LinearProgress />

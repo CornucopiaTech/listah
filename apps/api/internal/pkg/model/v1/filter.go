@@ -1,28 +1,49 @@
 package v1
 
 import (
-	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"github.com/uptrace/bun"
+	"github.com/google/uuid"
 	"time"
+
 
 	pb "cornucopia/listah/internal/pkg/proto/v1"
 )
 
-func FilterModelToFilterProto(m []*Filter) ([]*pb.Filter, error) {
+
+type Filter struct {
+	bun.BaseModel `bun:"table:apps.filters,alias:sf"`
+	Id            string `bun:",pk"`
+	UserId        string
+	Name          string
+	Tags          []string `bun:"type:jsonb"`
+	Count         int32    `bun:",scanonly"`
+	SoftDelete    bool
+	UpdatedBy     string
+	UpdatedAt     time.Time
+}
+
+
+func (v *Filter) ToFilterProto() *pb.Filter {
+	return &pb.Filter{
+		Id:         v.Id,
+		UserId:     v.UserId,
+		Name:       v.Name,
+		Tags:       v.Tags,
+		Count:      int32(v.Count),
+		SoftDelete: v.SoftDelete,
+		UpdatedAt:  timestamppb.New(v.UpdatedAt),
+		UpdatedBy:  v.UpdatedBy,
+	}
+}
+
+
+func FilterModelListToFilterProtoList(m []*Filter) []*pb.Filter {
 	c := []*pb.Filter{}
 	for _, v := range m {
-		c = append(c, &pb.Filter{
-			Id:         v.Id,
-			UserId:     v.UserId,
-			Name:       v.Name,
-			Tags:       v.Tags,
-			Count:      int32(v.Count),
-			SoftDelete: v.SoftDelete,
-			UpdatedAt:  timestamppb.New(v.UpdatedAt),
-			UpdatedBy:  v.UpdatedBy,
-		})
+		c = append(c, v.ToFilterProto())
 	}
-	return c, nil
+	return c
 }
 
 func FilterProtoToFilterModel(msg []*pb.Filter, genId bool) ([]*Filter, []string, error) {

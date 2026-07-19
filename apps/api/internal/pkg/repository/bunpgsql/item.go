@@ -31,6 +31,10 @@ func (a *item) Read(ctx context.Context, m *[]*model.Item, s *model.RepoSearch) 
 	var activity = "ItemRead"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
+	var idFilter string
+	if s.Id != "" {
+		idFilter = fmt.Sprintf(` AND it.id = '%v' `, s.Id)
+	}
 	cte := `
 		WITH items AS (
 			SELECT
@@ -46,6 +50,8 @@ func (a *item) Read(ctx context.Context, m *[]*model.Item, s *model.RepoSearch) 
 				LEFT JOIN LATERAL jsonb_array_elements_text(it.tags::JSONB) AS elem(tag_id) ON TRUE
 				LEFT JOIN apps.tags tg ON tg.id = elem.tag_id AND tg.user_id = it.user_id
 				CROSS JOIN LATERAL jsonb_each_text(it.props::JSONB) AS prop_arr
+			WHERE it.user_id = '` + s.UserId + `' ` + idFilter + `
+				AND (it.soft_delete = false OR it.soft_delete IS NULL)
 			GROUP BY it.id, it.user_id
 		)
 	`
@@ -55,8 +61,7 @@ func (a *item) Read(ctx context.Context, m *[]*model.Item, s *model.RepoSearch) 
 			id ,user_id ,name ,note ,props
 			,tags ,soft_delete ,tag_objs ,prop_objs
 		FROM items it
-		WHERE it.user_id::VARCHAR = '` + s.UserId + `'
-			AND (it.soft_delete = false OR it.soft_delete IS NULL)
+		WHERE 1 = 1
 	`
 
 	if s.Text != "" {

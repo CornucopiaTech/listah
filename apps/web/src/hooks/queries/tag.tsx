@@ -2,10 +2,10 @@ import {
   queryOptions,
   useQueryClient,
   useMutation,
-  useSuspenseQuery,
+  useQuery,
 } from '@tanstack/react-query';
 import type {
-  UseSuspenseQueryResult,
+  useQueryResult,
 } from '@tanstack/react-query';
 
 
@@ -40,8 +40,8 @@ export function tagGroupOptions(opts: IReadRequest) {
   })
 }
 
-export function useListTag(opts: IReadRequest): UseSuspenseQueryResult<ITagReadResponse> {
-  return useSuspenseQuery(tagGroupOptions(opts))
+export function useListTag(opts: IReadRequest): useQueryResult<ITagReadResponse> {
+  return useQuery(tagGroupOptions(opts))
 }
 
 
@@ -55,8 +55,8 @@ export function tagPropertyGroupOptions(opts: IReadRequest) {
   })
 }
 
-export function useListTagProperty(opts: IReadRequest): UseSuspenseQueryResult<ITagPropertyReadResponse> {
-  return useSuspenseQuery(tagPropertyGroupOptions(opts))
+export function useListTagProperty(opts: IReadRequest): useQueryResult<ITagPropertyReadResponse> {
+  return useQuery(tagPropertyGroupOptions(opts))
 }
 
 export function useUpdateTag() {

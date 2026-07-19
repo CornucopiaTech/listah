@@ -10,7 +10,7 @@ import {
   useNavigate,
 } from '@tanstack/react-router';
 import type {
-  UseSuspenseQueryResult,
+  useQueryResult,
 } from '@tanstack/react-query';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -96,7 +96,7 @@ export function Items() {
   const passedFilter = storeDisplayFilter || reference?.filter;
   const {
     data, isPending, isFetching, isError, error
-  }: UseSuspenseQueryResult<IItemReadResponse> = useListItem({ query, pagination, });
+  }: useQueryResult<IItemReadResponse> = useListItem({ query, pagination, });
 
 
 

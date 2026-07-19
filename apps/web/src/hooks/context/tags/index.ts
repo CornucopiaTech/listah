@@ -1,3 +1,4 @@
 
 export * from "./useTag";
-export * from "./TagDataProvider";
+export * from "./TagListProvider";
+export * from "./TagUpdateProvider";

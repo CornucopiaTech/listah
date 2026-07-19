@@ -10,7 +10,7 @@ import {
   useNavigate,
 } from '@tanstack/react-router';
 import type {
-  UseSuspenseQueryResult,
+  useQueryResult,
 } from '@tanstack/react-query';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -52,7 +52,7 @@ import {
 import type {
   IItem,
   IItemReadResponse,
-  IItemDataContext,
+  IItemListContext,
   IListContext,
 } from '@/domain/entities';
 import {
@@ -71,7 +71,7 @@ import {
 } from '@/hooks/services/useForm';
 import { ListItemStyling } from "@/utils/defaults";
 import {
-  useItems
+  useListItems
 } from "@/hooks/context/items";
 import {
   ListContext,
@@ -90,7 +90,7 @@ export function ItemShell({ children }: { children: ReactNode }) {
     pageChange,
     pageSizeChange,
     listItemClick,
-  } = useItems() as unknown as IItemDataContext;
+  } = useListItems() as unknown as IItemListContext;
   const storeTagScroll = useAppStore((state) => state.tagScroll);
   const storeTagModal = useAppStore((state) => state.tagModal);
   const storeFilterModal = useAppStore((state) => state.filterModal);
@@ -192,7 +192,7 @@ export function Items() {
   const passedFilter = storeDisplayFilter || reference?.filter;
   const {
     data, isPending, isFetching, isError, error
-  }: UseSuspenseQueryResult<IItemReadResponse> = useListItem({ query, pagination, });
+  }: useQueryResult<IItemReadResponse> = useListItem({ query, pagination, });
 
 
 

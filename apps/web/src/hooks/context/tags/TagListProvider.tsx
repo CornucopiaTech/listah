@@ -5,7 +5,7 @@ import type {
   MouseEvent,
 } from 'react';
 import {
-  type UseSuspenseQueryResult,
+  type useQueryResult,
 } from '@tanstack/react-query';
 import { useUser } from '@clerk/react';
 import {
@@ -19,7 +19,7 @@ import {
   useAppStore,
 } from '@/hooks/store/boundStore';
 import type {
-  ITagDataContext,
+  ITagListContext,
   ITagReadResponse,
   IReadRequest,
 } from "@/domain/entities";
@@ -32,7 +32,7 @@ import {
   useListTag
 } from '@/hooks/queries';
 import {
-  TagDataContext
+  TagListContext
 } from './useTag';
 import {
   getRouteSearch,
@@ -45,11 +45,12 @@ import {
 
 
 
-export function TagDataProvider({ children }: { children: ReactNode }) {
+export function TagListProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const storeSetItemTitle = useAppStore((state) => state.setItemTitle);
   const storeSetDisplayTag = useAppStore((state) => state.setDisplayTag);
   const storeSetTagScroll = useAppStore((state) => state.setTagScroll);
+  const storeSetItemScroll = useAppStore((state) => state.setItemScroll);
 
 
   const navigate = useNavigate();
@@ -62,7 +63,7 @@ export function TagDataProvider({ children }: { children: ReactNode }) {
 
   const {
     data, isPending, isError, error, isFetching,
-  }: UseSuspenseQueryResult<ITagReadResponse> = useListTag(opts);
+  }: useQueryResult<ITagReadResponse> = useListTag(opts);
   const tags = data?.tags ?? [];
   const paginationObj = data?.pagination ? data.pagination : urlPagination ? urlPagination : DefaultPagination;
   const pagination = new Pagination(paginationObj);
@@ -71,13 +72,13 @@ export function TagDataProvider({ children }: { children: ReactNode }) {
   function pageChange(event: MouseEvent<HTMLButtonElement> | null, value: number) {
     if (event) { event.stopPropagation() };
     pagination.changePage(value);
-    const encoded = encodeState({ query, pagination: pagination.paging });
-    navigate({ to: ".", search: { s: encoded } });
+    const s = encodeState({ query, pagination: pagination.paging });
+    navigate({ to: ".", search: { s } });
   };
   function pageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     pagination.changeSize(e.target.value);
-    const encoded = encodeState({ query, pagination: pagination.paging });
-    navigate({ to: ".", search: { s: encoded } });
+    const s = encodeState({ query, pagination: pagination.paging });
+    navigate({ to: ".", search: { s } });
   };
   const listItemClick = (idx: number) => {
     const it = tags[idx];
@@ -92,6 +93,7 @@ export function TagDataProvider({ children }: { children: ReactNode }) {
     storeSetItemTitle(pageTitle);
     storeSetDisplayTag(it);
     storeSetTagScroll(idx);
+    storeSetItemScroll(0);
   }
 
 
@@ -107,9 +109,9 @@ export function TagDataProvider({ children }: { children: ReactNode }) {
     pageChange,
     pageSizeChange,
     listItemClick,
-  } as unknown as ITagDataContext;
+  } as unknown as ITagListContext;
 
-  return <TagDataContext.Provider value={contextValue}>
+  return <TagListContext.Provider value={contextValue}>
     {children}
-  </TagDataContext.Provider>
+  </TagListContext.Provider>
 }

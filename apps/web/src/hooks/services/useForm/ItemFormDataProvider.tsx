@@ -6,7 +6,7 @@ import {
   useRef,
 } from 'react';
 import {
-  type UseSuspenseQueryResult,
+  type useQueryResult,
 } from '@tanstack/react-query';
 import { useUser } from '@clerk/react';
 
@@ -47,7 +47,7 @@ export function ItemFormDataProvider({ children, displayTag, displayFilter }: { 
   }
   const {
     isPending, isError, data, error
-  }: UseSuspenseQueryResult<ITagReadResponse> = useListTag(tagQuery);
+  }: useQueryResult<ITagReadResponse> = useListTag(tagQuery);
 
 
 

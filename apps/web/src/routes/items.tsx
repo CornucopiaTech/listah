@@ -16,7 +16,7 @@ import {
   ItemShell
 } from "@/components/pages/Items";
 import {
-  ItemDataProvider
+  ItemListProvider
 } from "@/hooks/context/items";
 
 
@@ -25,5 +25,5 @@ export const Route = createFileRoute('/items')({
     const s = search && search.s ? search.s : encodeState(DefaultReadRequest);
     return { s: s as unknown as string };
   },
-  component: () => <ItemDataProvider><ItemShell><Items /></ItemShell></ItemDataProvider>,
+  component: () => <ItemListProvider><ItemShell><Items /></ItemShell></ItemListProvider>,
 })

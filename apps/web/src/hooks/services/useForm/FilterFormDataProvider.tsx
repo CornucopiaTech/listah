@@ -3,7 +3,7 @@ import type {
   ReactNode,
 } from 'react';
 import {
-  type UseSuspenseQueryResult,
+  type useQueryResult,
 } from '@tanstack/react-query';
 import { useUser } from '@clerk/react';
 
@@ -44,7 +44,7 @@ export function FilterFormDataProvider({ children, displayFilter, }: { children:
       query: { ...DefaultReadQuery, userId: user?.id ?? "", filter: { tags: [...displayFilter.tags] } },
       pagination: { ...DefaultPagination, pageSize: -1, }
     }
-    const { data: filterData, }: UseSuspenseQueryResult<IFilterReadResponse> = useListFilter(tagQuery);
+    const { data: filterData, }: useQueryResult<IFilterReadResponse> = useListFilter(tagQuery);
 
     // Todo: Remove the ability for filters page to create tags. That way, the only route that can be calling tags page is /tags or /items
     const filters = filterData?.filters?.filter(
@@ -65,7 +65,7 @@ export function FilterFormDataProvider({ children, displayFilter, }: { children:
   }
   const {
     isPending, isError, data, error
-  }: UseSuspenseQueryResult<ITagReadResponse> = useListTag(tagQuery);
+  }: useQueryResult<ITagReadResponse> = useListTag(tagQuery);
 
 
   const tagCategories: ITag[] = data && data.tags ? data.tags : [];

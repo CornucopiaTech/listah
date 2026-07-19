@@ -3,10 +3,10 @@ import {
   queryOptions,
   useQueryClient,
   useMutation,
-  useSuspenseQuery,
+  useQuery,
 } from '@tanstack/react-query';
 import type {
-  UseSuspenseQueryResult,
+  useQueryResult,
 } from '@tanstack/react-query';
 
 
@@ -44,8 +44,8 @@ export function itemGroupOptions(opts: IReadRequest) {
 }
 
 
-export function useListItem(opts: IReadRequest): UseSuspenseQueryResult<IItemReadResponse> {
-  return useSuspenseQuery(itemGroupOptions(opts))
+export function useListItem(opts: IReadRequest): useQueryResult<IItemReadResponse> {
+  return useQuery(itemGroupOptions(opts))
 }
 
 

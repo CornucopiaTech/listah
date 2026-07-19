@@ -2,10 +2,10 @@ import {
   queryOptions,
   useQueryClient,
   useMutation,
-  useSuspenseQuery,
+  useQuery,
 } from '@tanstack/react-query';
 import type {
-  UseSuspenseQueryResult,
+  UseQueryResult,
 } from '@tanstack/react-query';
 
 
@@ -36,8 +36,8 @@ export function filterGroupOptions(opts: IReadRequest) {
     enabled: !!opts?.query?.userId,
   })
 }
-export function useListFilter(opts: IReadRequest): UseSuspenseQueryResult<IFilterReadResponse> {
-  return useSuspenseQuery(filterGroupOptions(opts))
+export function useListFilter(opts: IReadRequest): UseQueryResult<IFilterReadResponse> {
+  return useQuery(filterGroupOptions(opts))
 }
 
 

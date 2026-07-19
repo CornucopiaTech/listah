@@ -6,11 +6,11 @@ option go_package = "cornucopia/listah/internal/pkg/proto/v1";
 
 import "google/protobuf/timestamp.proto";
 
-enum AuditUpdaterEnum {
-  AUDIT_UPDATER_ENUM_UNSPECIFIED = 0;
-  AUDIT_UPDATER_ENUM_FRONTEND = 1;
-  AUDIT_UPDATER_ENUM_SYSOPS = 2;
-}
+// enum AuditUpdaterEnum {
+//   AUDIT_UPDATER_ENUM_UNSPECIFIED = 0;
+//   AUDIT_UPDATER_ENUM_FRONTEND = 1;
+//   AUDIT_UPDATER_ENUM_SYSOPS = 2;
+// }
 
 
 
@@ -25,11 +25,11 @@ message Tag {
   google.protobuf.Timestamp updatedAt = 501;
 }
 
-message TagProperty1 {
-  string userId = 1;
-  string name = 2;
-  repeated Tag tagObjs = 3;
-}
+// message TagProperty1 {
+//   string userId = 1;
+//   string name = 2;
+//   repeated Tag tagObjs = 3;
+// }
 
 
 message InnerPropTagMap {
@@ -73,11 +73,11 @@ message Filter {
   google.protobuf.Timestamp updatedAt = 501;
 }
 
-message Search {
-  string text = 1;
-  repeated string tags = 2;
-  repeated string filters = 3;
-}
+// message Search {
+//   string text = 1;
+//   repeated string tags = 2;
+//   repeated string filters = 3;
+// }
 
 
 message Pagination {
@@ -90,18 +90,17 @@ message Pagination {
 
 message ReadQuery {
   string userId = 1;
-  repeated string tags = 2;
-  string text = 3;
+  string id = 2;
+  repeated string tags = 3;
+  string text = 4;
 }
 
-message ReadReference {
-  Tag tag = 1;
-  Filter filter = 2;
-}
+// message ReadReference {
+//   Tag tag = 1;
+//   Filter filter = 2;
+// }
 
 message ReadRequest {
   ReadQuery query = 500;
   Pagination pagination = 501;
-  ReadReference reference = 502;
-  string title = 503;
 }

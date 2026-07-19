@@ -43,7 +43,7 @@ export const ZTagProperty = z.record(
 export type ITagProperty = z.infer<typeof ZTagProperty>;
 
 
-export type ITagDataContext = {
+export type ITagListContext = {
   query: IReadQuery,
   tags: ITag[],
   pagination: Pagination,

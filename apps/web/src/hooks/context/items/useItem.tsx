@@ -5,10 +5,10 @@ import {
 } from "react";
 
 import type {
-  IItemDataContext
+  IItemListContext
 } from "@/domain/entities"
 
-export const ItemDataContext = createContext<IItemDataContext | undefined>(undefined);
-export function useItems() {
-  return useContext(ItemDataContext);
+export const ItemListContext = createContext<IItemListContext | undefined>(undefined);
+export function useListItems() {
+  return useContext(ItemListContext);
 }

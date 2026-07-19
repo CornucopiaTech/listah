@@ -20,7 +20,7 @@ import { itemGroupOptions } from '@/hooks/queries';
 
 
 
-export const Route = createFileRoute('/items/$itemid')({
+export const Route = createFileRoute('/items/$id')({
   // Ensure correct search parameters are passed down. Adds default value if no seach parameter is passed down.
   validateSearch: (search: Record<string, unknown>): { s: string } => {
     const s = search && search.s ? decodeState(search.s as string) as IReadRequest : DefaultReadRequest;

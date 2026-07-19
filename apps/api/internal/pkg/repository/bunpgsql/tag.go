@@ -31,6 +31,10 @@ func (a *tag) Read(ctx context.Context, m *[]*model.Tag, s *model.RepoSearch) (i
 	var activity = "TagRead"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
+	var idFilter string
+	if s.Id != "" {
+		idFilter = fmt.Sprintf(` AND t.id = '%v' `, s.Id)
+	}
 	cte := `
 		WITH items AS (
 			SELECT *
@@ -46,7 +50,7 @@ func (a *tag) Read(ctx context.Context, m *[]*model.Tag, s *model.RepoSearch) (i
 			,SUM(CASE WHEN it.id IS NOT NULL THEN 1 ELSE 0 END) count
 		FROM apps.tags t LEFT JOIN items it
 			ON t.user_id = it.user_id AND t.id = it.tag_id
-		WHERE t.user_id::VARCHAR = '` + s.UserId + `'
+		WHERE t.user_id = '` + s.UserId + `' ` + idFilter + `
 			AND (t.soft_delete = false OR t.soft_delete IS NULL)
 		GROUP BY 1, 2, 3, 4
 	`
@@ -99,12 +103,18 @@ func (a *tag) ReadProperty(ctx context.Context, m *[]model.TagPropertyMapModel, 
 	var activity = "TagReadProperty"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
+	var idFilter string
+	if s.Id != "" {
+		idFilter = fmt.Sprintf(` AND tg.id = '%v' `, s.Id)
+	}
 	cte := `
 		WITH a AS (
-			SELECT DISTINCT REPLACE(propName::VARCHAR, '"', '') "name", tg.id
+			SELECT DISTINCT
+				jsonb_path_query(tg.props::JSONB, '$[*]') #>> '{}' "name"
+				,tg.id
 			FROM apps.tags tg
-				CROSS JOIN LATERAL jsonb_array_elements(tg.props::JSONB) AS prop_arr(propName)
-			WHERE tg.props IS NOT NULL AND tg.user_id::VARCHAR = '` + s.UserId + `'
+			WHERE tg.props IS NOT NULL
+				AND tg.user_id::VARCHAR = '` + s.UserId + `' ` + idFilter + `
 		),
 		b AS (SELECT a.name, JSON_AGG(DISTINCT a.id) tags FROM a  GROUP BY 1)
 	`
@@ -138,12 +148,18 @@ func (a *tag) ReadIdProperty(ctx context.Context, m *[]model.TagPropertyMapModel
 	var activity = "TagReadProperty"
 	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
 
+	var idFilter string
+	if s.Id != "" {
+		idFilter = fmt.Sprintf(` AND tg.id = '%v' `, s.Id)
+	}
 	cte := `
 		WITH a AS (
-			SELECT DISTINCT REPLACE(propName::VARCHAR, '"', '') propName, tg.id
+			SELECT DISTINCT
+				jsonb_path_query(tg.props::JSONB, '$[*]') #>> '{}' propName
+				,tg.id
 			FROM apps.tags tg
-				CROSS JOIN LATERAL JSONB_ARRAY_ELEMENTS(tg.props::JSONB) AS prop_arr(propName)
-			WHERE tg.props IS NOT NULL AND tg.user_id::VARCHAR = '` + s.UserId + `'
+			WHERE tg.props IS NOT NULL
+				AND tg.user_id = '` + s.UserId + `' ` + idFilter + `
 		),
 		b AS (
 			SELECT

@@ -1,22 +1,37 @@
 import {
+  Fragment,
+} from 'react';
+import {
+  useUser
+} from '@clerk/react';
+import {
   createRootRoute,
 } from '@tanstack/react-router';
 import {
   Outlet,
 } from '@tanstack/react-router';
+import LinearProgress from '@mui/material/LinearProgress';
 
 
-import { AppShell } from '@/components/layout/AppContainer';
+
 import {
   tagGroupOptions,
   filterGroupOptions,
-
 } from '@/hooks/queries';
 import {
   DefaultReadRequest,
 } from "@/domain/entities";
+import { Landing } from '@/components/pages/Landing';
+import { AppShell } from '@/components/layout';
 
 
+
+const RootComponent = () => {
+  const { isSignedIn, isLoaded, } = useUser();
+  if (!isLoaded) return <AppShell> <LinearProgress /></AppShell>
+  if (!isSignedIn) return <AppShell><Landing /></AppShell>
+  return <AppShell><Outlet /></AppShell>;
+}
 
 export const Route = createRootRoute({
   head: () => ({
@@ -47,5 +62,6 @@ export const Route = createRootRoute({
     }
     return null
   },
-  component: () => <AppShell><Outlet /></AppShell>,
+  component: RootComponent,
+  pendingComponent: () => <AppShell> <LinearProgress /></AppShell>,
 })

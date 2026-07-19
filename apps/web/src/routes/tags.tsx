@@ -16,7 +16,7 @@ import {
   DefaultReadRequest,
 } from "@/domain/entities";
 import {
-  TagDataProvider
+  TagListProvider
 } from "@/hooks/context/tags";
 
 
@@ -27,5 +27,5 @@ export const Route = createFileRoute('/tags')({
     const s = search && search.s ? search.s : encodeState(DefaultReadRequest);
     return { s: s as unknown as string };
   },
-  component: () => <TagDataProvider><TagShell><Tags /></TagShell></TagDataProvider>,
+  component: () => <TagListProvider><TagShell><Tags /></TagShell></TagListProvider>,
 })

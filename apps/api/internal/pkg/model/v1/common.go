@@ -5,6 +5,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/uptrace/bun"
 	"time"
+	"fmt"
+	"strings"
 )
 
 var InvalidJWTMsg = "invalid JWT: "
@@ -51,32 +53,7 @@ type ErrorLog struct {
 	ResponseTime  time.Time
 }
 
-type Tag struct {
-	bun.BaseModel `bun:"table:apps.tags,alias:t"`
-	Id            string `bun:",pk"`
-	UserId        string
-	Name          string
-	Props         []string
-	Count         int32 `bun:",scanonly"`
-	SoftDelete    bool
-	UpdatedBy     string
-	UpdatedAt     time.Time
-}
 
-type Item struct {
-	bun.BaseModel `bun:"table:apps.items,alias:it"`
-	Id            string `bun:",pk"`
-	UserId        string
-	Name          string
-	Note          string
-	Tags          []string          `bun:"type:jsonb"`
-	Props         map[string]string `bun:"type:jsonb"`
-	SoftDelete    bool              `bun:",nullzero,default:false"`
-	TagObjs       []Tag             `bun:"type:jsonb,scanonly"`
-	PropObjs      []MapObj          `bun:"type:jsonb,scanonly"`
-	UpdatedBy     string
-	UpdatedAt     time.Time
-}
 
 type TagProperty struct {
 	UserId  string
@@ -94,18 +71,6 @@ type TagPropertyMap struct {
 
 type TagPropertyMapModel struct {
 	Props map[string][]string
-}
-
-type Filter struct {
-	bun.BaseModel `bun:"table:apps.filters,alias:sf"`
-	Id            string `bun:",pk"`
-	UserId        string
-	Name          string
-	Tags          []string `bun:"type:jsonb"`
-	Count         int32    `bun:",scanonly"`
-	SoftDelete    bool
-	UpdatedBy     string
-	UpdatedAt     time.Time
 }
 
 type Pagination struct {
@@ -133,6 +98,7 @@ type RowCount struct {
 
 type RepoSearch struct {
 	UserId string
+	Id     string
 	Tags   string
 	Text   string
 	Sort   string
@@ -144,4 +110,56 @@ type RepoSearch struct {
 type UpsertInfo struct {
 	Conflict []string
 	Resolve  []string
+}
+
+// func ReadRequestToRepoSearch(msg *pb.ItemServiceReadItemRequest) (*RepoSearch, error) {
+func ReadRequestToRepoSearch(msg *pb.ReadRequest) (*RepoSearch, error) {
+	if msg.GetQuery() == nil {
+		return nil, MissingQuery
+	}
+	q := msg.GetQuery()
+	if q.UserId == "" {
+		return nil, MissingUserId
+	}
+	t := []string{}
+	if q.Tags != nil {
+		for _, v := range msg.GetQuery().Tags {
+			t = append(t, fmt.Sprintf(`'%v'`, v))
+		}
+	}
+
+	pSize := DefaultPagination.Size
+	pNum := DefaultPagination.Page
+	sortT := DefaultPagination.Sort
+	pg := msg.GetPagination()
+	// fmt.Printf("\npg  %+v\n", pg)
+	if pg != nil {
+		if pg.Size > 0 {
+			pSize = pg.Size
+		}
+		if pg.Page != pNum {
+			pNum = pg.Page
+		}
+		if pg.Sort != sortT {
+			sortT = pg.Sort
+		}
+
+	}
+	offset := int64(0)
+	if pSize > 0 && pNum > 0 {
+		offset = pSize * (pNum - 1)
+	}
+
+	i := RepoSearch{
+		Id: q.GetId(),
+		UserId: q.GetUserId(),
+		Tags:   strings.Join(t, ", "),
+		Text:   q.GetText(),
+		Sort:   sortT,
+		Limit:  pSize,
+		Offset: offset,
+		Page:   pNum,
+	}
+	// fmt.Printf("\nRepo Search -  %+v\n", i)
+	return &i, nil
 }

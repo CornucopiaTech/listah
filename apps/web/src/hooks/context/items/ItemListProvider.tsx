@@ -5,7 +5,7 @@ import type {
   MouseEvent,
 } from 'react';
 import {
-  type UseSuspenseQueryResult,
+  type useQueryResult,
 } from '@tanstack/react-query';
 import { useUser } from '@clerk/react';
 import {
@@ -30,11 +30,11 @@ import type {
   IItemReadResponse,
 } from '@/domain/entities';
 import type {
-  IItemDataContext,
+  IItemListContext,
   IReadRequest,
 } from "@/domain/entities";
 import {
-  ItemDataContext
+  ItemListContext
 } from './useItem';
 import {
   getRouteSearch,
@@ -50,7 +50,7 @@ import {
 
 
 
-export function ItemDataProvider({ children }: { children: ReactNode }) {
+export function ItemListProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const storeItemTitle = useAppStore((state) => state.itemTitle);
   const storeDisplayTag = useAppStore((state) => state.displayTag);
@@ -68,12 +68,12 @@ export function ItemDataProvider({ children }: { children: ReactNode }) {
 
   const {
     data, isPending, isError, error, isFetching,
-  }: UseSuspenseQueryResult<IItemReadResponse> = useListItem(opts);
+  }: useQueryResult<IItemReadResponse> = useListItem(opts);
   const items = data?.items ?? [];
   const paginationObj = data?.pagination ? data.pagination : urlPagination ? urlPagination : DefaultPagination;
   const pagination = new Pagination(paginationObj);
 
-  const title = storeItemTitle ? storeItemTitle : urlTitle ? urlTitle : "All Items";
+  const title = urlTitle ? urlTitle : "All Items";
   const passedTag = storeDisplayTag || reference?.tag;
   const passedFilter = storeDisplayFilter || reference?.filter;
 
@@ -116,9 +116,9 @@ export function ItemDataProvider({ children }: { children: ReactNode }) {
     pageChange,
     pageSizeChange,
     listItemClick,
-  } as unknown as IItemDataContext;
+  } as unknown as IItemListContext;
 
-  return <ItemDataContext.Provider value={contextValue}>
+  return <ItemListContext.Provider value={contextValue}>
     {children}
-  </ItemDataContext.Provider>
+  </ItemListContext.Provider>
 }

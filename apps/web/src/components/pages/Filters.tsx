@@ -1,64 +1,42 @@
 import {
   Fragment,
-  useRef,
 } from "react";
 import type {
   ReactNode,
-  ChangeEvent,
-  MouseEvent,
 } from 'react';
-import {
-  useNavigate,
-} from '@tanstack/react-router';
-import type {
-  UseSuspenseQueryResult,
-} from '@tanstack/react-query';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
-
+import LinearProgress from '@mui/material/LinearProgress';
+import Alert from '@mui/material/Alert';
 
 
 
 // Internal
 import {
   useAppStore,
-  type TAppStore
 } from '@/hooks/store/boundStore';
 import {
   AppTagModal,
-} from "@/components/layout/AppTagModal";
-import {
   AppFilterModal,
-} from "@/components/layout/AppFilterModal";
+  ListLayout,
+  AppContainer,
+  AppListHeader,
+  ListBox,
+  OuterBox,
+} from '@/components/layout';
 import {
   MenuItem,
 } from '@/components/base/Menubar';
 import {
-  useListFilter,
-} from '@/hooks/queries/filter';
-import {
-  ListLayout
-} from '@/components/layout/ListLayout';
-import {
 } from "@/domain/rules";
 import type {
   IFilter,
-  IReadQuery,
-  IFilterReadResponse,
+  IFilterListContext,
+  IListContext,
 } from "@/domain/entities";
-import {
-  DefaultReadQuery,
-  Pagination,
-} from "@/domain/entities";
-import {
-  encodeState
-} from '@/utils/encoders';
-import {
-  getRouteContext,
-} from "@/utils/routing";
 import {
   TagFormDataProvider,
   TagFormProvider,
@@ -66,60 +44,41 @@ import {
   FilterFormProvider,
 } from '@/hooks/services/useForm';
 import {
-  AppContainer,
-  AppListHeader,
-} from '@/components/layout/AppContainer';
+  useListFilters,
+} from "@/hooks/context/filters";
+import {
+  ListContext,
+} from "@/hooks/context/lists";
+import { ListItemStyling } from "@/utils/defaults";
 
 
 
-export function Filters() {
-  const store: TAppStore = useAppStore((state) => state);
-  const navigate = useNavigate();
-  const { query, pagination, } = getRouteContext("/filters");
+
+export function FilterShell({ children }: { children: ReactNode }) {
   const {
-    data, isPending, isFetching, isError, error
-  }: UseSuspenseQueryResult<IFilterReadResponse> = useListFilter({ query, pagination, });
+    filters,
+    pagination,
+    isPending,
+    isError,
+    isFetching,
+    error,
+    pageChange,
+    pageSizeChange,
+    listItemClick,
+  } = useListFilters() as unknown as IFilterListContext;
+  const storeFilterScroll = useAppStore((state) => state.filterScroll);
+  const storeTagModal = useAppStore((state) => state.tagModal);
+  const storeFilterModal = useAppStore((state) => state.filterModal);
 
-  // Pagination Details
-  const initialPagination = new Pagination(pagination);
-  let pageInfo = useRef<Pagination>(initialPagination);
-  if (data) {
-    pageInfo.current.updatePaging(data.pagination, pagination);
-  }
-  function pageChange(event: MouseEvent<HTMLButtonElement> | null, value: number) {
-    event && event.stopPropagation();
-    pageInfo.current.changePage(value);
-    const encoded = encodeState({ query, pagination: pageInfo.current.paging });
-    navigate({ to: ".", search: { s: encoded } });
-  };
-  function pageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    pageInfo.current.changeSize(e.target.value);
-    const encoded = encodeState({ query, pagination: pageInfo.current.paging });
-    navigate({ to: ".", search: { s: encoded } });
-  };
-
-
-
-  const listItemClick = (idx: number, it: IFilter) => {
-    const pageTitle = it && it.name ? `##${it.name}` : "Filters";
-    const q: IReadQuery = { ...DefaultReadQuery, userId: query.userId, tags: it.tags };
-    const s = { query: q, pagination, title: pageTitle, reference: { filter: it }, }
-    const encoded = encodeState(s);
-    navigate({ to: "/items", search: { s: encoded }, });
-    store.setItemTitle(pageTitle);
-    store.setDisplayFilter(it);
-    store.setFilterScroll(idx);
-  }
-
-  function renderItem(itemKey: number): ReactNode {
-    const filters = data?.filters ?? [];
+  function renderRow(itemKey: number): ReactNode {
     const item: IFilter = filters[itemKey];
     const tc = item && item.name ? item.name : "";
     return (
       <ListItem
         key={itemKey + tc}
         component="div" disablePadding
-        onClick={() => listItemClick(itemKey, item)}
+        sx={ListItemStyling}
+        onClick={() => listItemClick(itemKey)}
       >
         <ListItemButton>
           <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
@@ -134,15 +93,21 @@ export function Filters() {
     );
   }
 
-  const props = {
-    data: data?.filters ?? [],
-    isPending, isFetching, isError, error,
-    scrollIndex: Math.max(0, store.filterScroll),
-    pagination: pageInfo.current.paging,
-    renderItem,
-    pageSizeChange,
+
+
+  const contextValue = {
+    data: filters,
+    pagination: pagination.paging,
+    isPending,
+    isError,
+    isFetching,
+    error,
+    scrollIndex: Math.max(0, storeFilterScroll),
     pageChange,
-  }
+    pageSizeChange,
+    clickRow: listItemClick,
+    renderRow,
+  } as unknown as IListContext;
 
   const menuItems = <Fragment>
     <MenuItem key="tag" onClick={() => store.setTagModal(true)}>
@@ -155,10 +120,10 @@ export function Filters() {
 
 
   return (
-    <AppContainer>
+    <AppContainer mw="md" >
       <AppListHeader title="Filters" menuItems={menuItems} />
       {
-        store.tagModal &&
+        storeTagModal &&
         <TagFormDataProvider>
           <TagFormProvider>
             <AppTagModal />
@@ -166,15 +131,39 @@ export function Filters() {
         </TagFormDataProvider>
       }
       {
-        store.filterModal &&
+        storeFilterModal &&
         <FilterFormDataProvider>
           <FilterFormProvider >
             <AppFilterModal />
           </ FilterFormProvider>
         </FilterFormDataProvider>
       }
-      <ListLayout {...props} />
-    </AppContainer>
-  )
+      <ListContext.Provider value={contextValue}>
+        <ListBox><OuterBox>{children}  </OuterBox></ListBox>
+      </ListContext.Provider>
+    </AppContainer >
+  );
+}
 
+
+export function Filters() {
+  const {
+    filters,
+    isPending,
+    error,
+  } = useListFilters() as unknown as IFilterListContext;
+
+  if (isPending) { return <LinearProgress /> }
+
+  if (error) {
+    return <Alert severity="error">{error.message || "An error occurred. Please try again"}</Alert>
+  }
+  if (filters.length == 0) {
+    return (<Typography variant="h6"> No items found </Typography>)
+  }
+
+  if (filters.length > 0) { return (<ListLayout />) }
+  return (
+    <Alert severity="error">"An error occurred. Please try again"</Alert>
+  )
 }

@@ -11,7 +11,7 @@ import {
   useNavigate,
 } from '@tanstack/react-router';
 import type {
-  UseSuspenseQueryResult,
+  useQueryResult,
 } from '@tanstack/react-query';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -76,7 +76,7 @@ export function Tags() {
   const { query, pagination, } = getRouteContext("/tags");
   const {
     data, isPending, isFetching, isError, error
-  }: UseSuspenseQueryResult<ITagReadResponse> = useListTag({ query, pagination, });
+  }: useQueryResult<ITagReadResponse> = useListTag({ query, pagination, });
 
   // Pagination Details
   const initialPagination = new Pagination(pagination);

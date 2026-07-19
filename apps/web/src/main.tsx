@@ -14,7 +14,7 @@ import { enableMapSet } from 'immer';
 import { ThemeProvider, } from '@mui/material/styles';
 import { useUser } from '@clerk/react';
 import LinearProgress from '@mui/material/LinearProgress';
-import Box from '@mui/material/Box';
+// import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
@@ -24,6 +24,8 @@ import { routeTree } from './routeTree.gen'
 // import reportWebVitals from './reportWebVitals.ts'
 import NotFound from '@/components/common/NotFound';
 import theme from '@/system/theme';
+import { GlobalShell } from '@/components/layout';
+
 
 
 declare global {
@@ -41,6 +43,22 @@ declare global {
 
 enableMapSet();
 export const queryClient = new QueryClient();
+
+
+// const router = createRouter({
+//   routeTree,
+//   defaultPendingComponent: LinearProgress,
+//   defaultErrorComponent: ({ error }) => <Alert severity="error">{error.message}</Alert>,
+//   defaultNotFoundComponent: NotFound,
+//   Wrap: Wrapper,
+//   context: {
+//     queryClient,
+//     user: undefined,
+//   },
+//   defaultPreload: 'intent',
+//   defaultPreloadStaleTime: 0,
+//   scrollRestoration: true,
+// })
 
 
 const router = createRouter({
@@ -141,9 +159,7 @@ loadConfig().then(
         <ClerkProvider publishableKey={aKey} appearance={{
           theme: 'simple',
         }}>
-          <Box sx={{ overflowX: "hidden" }}>
-            <App />
-          </Box>
+          <GlobalShell> <App /> </GlobalShell>
         </ClerkProvider>
 
       )

@@ -40,20 +40,18 @@ import {
   AppItemSearchBar,
 } from "@/components/layout/AppSearchBar";
 import type { AppTheme } from '@/system/theme';
-import {
-  AppMenuButton,
-} from '@/components/layout/AppNavBar';
 import { Landing } from '@/components/pages/Landing';
 import { AppNavDrawer } from "@/components/layout/AppNavDrawer";
 import {
-  AppAllowance,
+  AppPageAllowance,
+  AppPageContentHeight,
 } from '@/utils/defaults';
 import { SpaceBetweenBox, CentredBox } from '@/components/core/AppBox';
 
 type widthType = "xs" | "sm" | "md" | "lg" | "xl";
 
 
-function Shell({ children }: { children: ReactNode }) {
+export function GlobalShell({ children }: { children: ReactNode }) {
   return (
     <Fragment>
       <CssBaseline />
@@ -61,6 +59,7 @@ function Shell({ children }: { children: ReactNode }) {
         sx={{
           display: "flex",
           width: "100vw", maxWidth: "100vw", height: `100vh`,
+          overflowX: "hidden",
         }}>
         {children}
       </Box>
@@ -68,17 +67,25 @@ function Shell({ children }: { children: ReactNode }) {
   );
 }
 
-
 export function AppShell({ children }: { children: ReactNode }) {
-  const { isSignedIn, isLoaded, } = useUser();
-  if (!isLoaded) return <Shell><LinearProgress /></Shell>
-  if (!isSignedIn) return <Shell><Landing /></Shell>
+  const theme: AppTheme = useTheme();
+  const appbarAllowance = `calc(${theme.spacing(7)} + 1px)`;
   return (
     <Fragment>
-      <Shell>
-        <AppNavDrawer />
+      <AppNavDrawer />
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          ml: `${appbarAllowance}px`, // key part: reserves drawer space
+          mt: `${AppPageAllowance}px`, // key part: reserves drawer space
+          display: "flex",
+          justifyContent: "center", // horizontal centering
+          alignItems: 'center',     // Horizontally centers the content inside the container
+          minHeight: AppPageContentHeight,
+        }}>
         {children}
-      </Shell>
+      </Box>
     </Fragment>
   );
 }
@@ -183,37 +190,19 @@ export function AppListHeader({ title, menuItems }: { title?: string, menuItems?
 
 
 export function AppContainer({ children, mw }: { children: ReactNode, mw?: widthType, }) {
-  const theme: AppTheme = useTheme();
-  const appbarAllowance = `calc(${theme.spacing(7)} + 1px)`;
-  const pageHeight = `calc(100vh - ${AppAllowance}px)`;
   return (
-    <Fragment>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          ml: `${appbarAllowance}px`, // key part: reserves drawer space
-          mt: `${AppAllowance}px`, // key part: reserves drawer space
-          display: "flex",
-          justifyContent: "center", // horizontal centering
-          alignItems: 'center',     // Horizontally centers the content inside the container
-          minHeight: pageHeight,
-        }}>
-
-        <Container maxWidth={mw ? mw : "md"} sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center', // Vertically centers the content inside the container
-          alignItems: 'center',     // Horizontally centers the content inside the container
-          maxHeight: pageHeight,       // Forces the container to take up the full screen height
-        }}>
-          <AppPagePaper>
-            <Stack direction="column" spacing={0} sx={{ marginTop: "10px" }}>
-              {children}
-            </Stack>
-          </AppPagePaper>
-        </Container>
-      </Box>
-    </Fragment>
+    <Container maxWidth={mw ? mw : "md"} sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center', // Vertically centers the content inside the container
+      alignItems: 'center',     // Horizontally centers the content inside the container
+      maxHeight: AppPageContentHeight,       // Forces the container to take up the full screen height
+    }}>
+      <AppPagePaper>
+        <Stack direction="column" spacing={0} sx={{ marginTop: "10px" }}>
+          {children}
+        </Stack>
+      </AppPagePaper>
+    </Container>
   );
 }
