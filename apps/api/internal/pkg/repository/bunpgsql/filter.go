@@ -45,7 +45,7 @@ func (a *filter) Read(ctx context.Context, m *[]*model.Filter, s *model.RepoSear
 				SELECT it.*, elem.tag_id
 				FROM apps.items it
 					LEFT JOIN LATERAL JSONB_ARRAY_ELEMENTS_TEXT(it.tags::JSONB) AS elem(tag_id) ON TRUE
-				WHERE it.user_id = '`+ s.UserId + `'
+				WHERE it.user_id = '`+ s.UserId + `' ` + idFilter + `
 					AND (it.soft_delete = false OR it.soft_delete IS NULL)
 		)
 	`
