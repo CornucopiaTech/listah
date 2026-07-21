@@ -44,10 +44,21 @@ export function getRouteSearch(rt: routes) {
   try {
     const routeApi = getRouteApi(rt);
     const { s }: { s: string } = routeApi.useSearch();
-    const { query, pagination, reference, title, } = decodeState(s) as unknown as IReadRequest;
-    return { query, pagination, reference, title, };
+    const { query, pagination, reference, title, editor } = decodeState(s) as unknown as IReadRequest;
+    return { query, pagination, reference, title, editor };
   }
   catch {
-    return { query: null, pagination: null, reference: null, title: null, }
+    return { query: undefined, pagination: undefined, reference: undefined, title: null, editor: undefined }
+  }
+}
+
+
+export function getRouteParams(rt: routes) {
+  try {
+    const routeApi = getRouteApi(rt);
+    const param = routeApi.useParams();
+    return param;
+  }
+  catch {
   }
 }

@@ -1,11 +1,10 @@
 package v1
 
 import (
-	"google.golang.org/protobuf/types/known/timestamppb"
-	"github.com/uptrace/bun"
 	"github.com/google/uuid"
+	"github.com/uptrace/bun"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
-
 
 	pb "cornucopia/listah/internal/pkg/proto/v1"
 )
@@ -13,7 +12,6 @@ import (
 var ItemConflictFields = []string{
 	"id", "user_id",
 }
-
 
 type Item struct {
 	bun.BaseModel `bun:"table:apps.items,alias:it"`
@@ -61,7 +59,6 @@ func (v *Item) ItemModelToItemProto() *pb.Item {
 		UpdatedBy:  v.UpdatedBy,
 	}
 }
-
 
 func ItemModelListToItemProtoList(m []*Item) ([]*pb.Item, error) {
 	items := []*pb.Item{}

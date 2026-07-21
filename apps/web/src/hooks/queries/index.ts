@@ -1,4 +1,4 @@
 
 export * from "./item";
 export * from "../context/filters/queries";
-export * from "./tag";
+export * from "../context/tags/queries";

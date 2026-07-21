@@ -1,15 +1,13 @@
 package v1
 
 import (
-	"google.golang.org/protobuf/types/known/timestamppb"
-	"github.com/uptrace/bun"
 	"github.com/google/uuid"
+	"github.com/uptrace/bun"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
-
 
 	pb "cornucopia/listah/internal/pkg/proto/v1"
 )
-
 
 type Tag struct {
 	bun.BaseModel `bun:"table:apps.tags,alias:t"`

@@ -88,7 +88,6 @@ func (s *Server) ReadTag(ctx context.Context, req *connect.Request[pb.ItemServic
 	// Convert readModel to response proto using the model conversion function
 	rs := model.TagModelListToTagProtoList(readModel)
 
-
 	// Convert readModel to response proto using the model conversion function
 	ms := model.MapModelToTagPropertyMapProto(readIdModel)
 
@@ -132,7 +131,6 @@ func (s *Server) ReadTagProperty(ctx context.Context, req *connect.Request[pb.It
 	// Convert readModel to response proto using the model conversion function
 	rs := model.TagPropertyModelToTagPropertyMapProto(readModel)
 
-
 	pg := req.Msg.GetPagination()
 	if pg == nil {
 		pg = model.DefaultPbPagination
@@ -171,7 +169,6 @@ func (s *Server) ReadFilter(ctx context.Context, req *connect.Request[pb.ItemSer
 	}
 	// Convert readModel to response proto using the model conversion function
 	rs := model.FilterModelListToFilterProtoList(readModel)
-
 
 	pg := req.Msg.GetPagination()
 	if pg == nil {

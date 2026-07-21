@@ -38,14 +38,14 @@ func (a *filter) Read(ctx context.Context, m *[]*model.Filter, s *model.RepoSear
 			SELECT sf.*, elem.tag_id
 			FROM apps.filters sf
 				LEFT JOIN  LATERAL JSONB_ARRAY_ELEMENTS_TEXT(sf.tags::JSONB) AS elem(tag_id) ON TRUE
-			WHERE sf.user_id = '`+ s.UserId + `' ` + idFilter + `
+			WHERE sf.user_id = '` + s.UserId + `' ` + idFilter + `
 				AND (sf.soft_delete = false OR sf.soft_delete IS NULL)
 		)
 		,its AS (
 				SELECT it.*, elem.tag_id
 				FROM apps.items it
 					LEFT JOIN LATERAL JSONB_ARRAY_ELEMENTS_TEXT(it.tags::JSONB) AS elem(tag_id) ON TRUE
-				WHERE it.user_id = '`+ s.UserId + `' ` + idFilter + `
+				WHERE it.user_id = '` + s.UserId + `' ` + idFilter + `
 					AND (it.soft_delete = false OR it.soft_delete IS NULL)
 		)
 	`

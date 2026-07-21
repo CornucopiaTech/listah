@@ -1,16 +1,15 @@
 
 import type {
   ReactNode,
-  ChangeEvent,
-  MouseEvent,
 } from 'react';
 import {
-  type useQueryResult,
+  type UseQueryResult,
 } from '@tanstack/react-query';
 import { useUser } from '@clerk/react';
 import {
-  useNavigate,
-} from '@tanstack/react-router';
+  useForm,
+} from "@tanstack/react-form";
+
 
 
 
@@ -19,99 +18,101 @@ import {
   useAppStore,
 } from '@/hooks/store/boundStore';
 import type {
-  ITagListContext,
+  ITag,
+  ITagUpdateContext,
   ITagReadResponse,
   IReadRequest,
 } from "@/domain/entities";
 import {
-  DefaultReadQuery,
-  DefaultPagination,
-  Pagination,
+  DefaultTag,
 } from '@/domain/entities';
 import {
-  useListTag
-} from '@/hooks/queries';
+  useListTag,
+  useUpdateTag,
+} from './queries';
 import {
-  TagListContext
+  TagUpdateContext
 } from './useTag';
 import {
   getRouteSearch,
 } from "@/utils/routing";
 import {
-  encodeState
-} from '@/utils/encoders';
-
-
+  prepTagUpdate,
+  tagFormValidator,
+} from "@/domain/rules";
+import {
+  validateName,
+} from "@/domain/rules/fieldLength";
 
 
 
 export function TagUpdateProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
-  const storeSetItemTitle = useAppStore((state) => state.setItemTitle);
-  const storeSetDisplayTag = useAppStore((state) => state.setDisplayTag);
-  const storeSetTagScroll = useAppStore((state) => state.setTagScroll);
-  const storeSetItemScroll = useAppStore((state) => state.setItemScroll);
+  const storeSetTagModal = useAppStore((state) => state.setTagModal);
+  const storeTagModal = useAppStore((state) => state.tagModal);
 
-
-  const navigate = useNavigate();
+  // Get route params
   const search = getRouteSearch("/tags") as unknown as IReadRequest;
   const opts = {
     ...search,
     query: { ...search.query, userId: user?.id ?? "", },
   };
-  const { query, pagination: urlPagination } = opts;
+  const { editor, query, pagination } = opts;
 
-  const {
-    data, isPending, isError, error, isFetching,
-  }: useQueryResult<ITagReadResponse> = useListTag(opts);
+  const { data, isPending, error, }: UseQueryResult<ITagReadResponse> = useListTag({ query, pagination });
   const tags = data?.tags ?? [];
-  const paginationObj = data?.pagination ? data.pagination : urlPagination ? urlPagination : DefaultPagination;
-  const pagination = new Pagination(paginationObj);
 
+  const editorId = editor && editor.flag ? editor.tag : ""
+  const tagVal = tags.filter((i: ITag) => i.id == editorId)
+  const tag = tagVal.length > 0 ? tagVal[0] : DefaultTag;
 
-  function pageChange(event: MouseEvent<HTMLButtonElement> | null, value: number) {
-    if (event) { event.stopPropagation() };
-    pagination.changePage(value);
-    const s = encodeState({ query, pagination: pagination.paging });
-    navigate({ to: ".", search: { s } });
+  const title = tag.id == "" ? "Add new tag" : "Update tag";
+
+  const mutation = useUpdateTag();
+  const formSubmission = ({ value }: { value: ITag }) => {
+    const submitValue = prepTagUpdate({ value, userId: user?.id || "" });
+    mutation.mutate(submitValue);
+    if (mutation.isSuccess) {
+
+    }
   };
-  function pageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    pagination.changeSize(e.target.value);
-    const s = encodeState({ query, pagination: pagination.paging });
-    navigate({ to: ".", search: { s } });
-  };
-  const listItemClick = (idx: number) => {
-    const it = tags[idx];
-    const pageTitle = it && it.name ? `#${it.name}` : "Items";
-    const s = encodeState({
-      query: { ...DefaultReadQuery, userId: query.userId, tags: [it.id] },
-      pagination: { ...DefaultPagination, size: pagination.paging.size },
-      title: pageTitle,
-      reference: { tag: it },
-    })
-    navigate({ to: "/items", search: { s }, });
-    storeSetItemTitle(pageTitle);
-    storeSetDisplayTag(it);
-    storeSetTagScroll(idx);
-    storeSetItemScroll(0);
+
+  const form = useForm({
+    defaultValues: { ...tag },
+    onSubmit: formSubmission,
+    validators: {
+      onChange({ value }: { value: ITag }) {
+        return tagFormValidator({ value });
+      },
+      onBlur({ value }: { value: ITag }) {
+        return tagFormValidator({ value });
+      },
+    },
+  });
+
+  function exitUpdate() {
+    storeSetTagModal(false);
   }
+  const validator = {
+    onChange: ({ value }: { value: any }) => validateName(value as unknown as string),
+    onBlur: ({ value }: { value: any }) => validateName(value as unknown as string),
+  }
+  const beginUpdate = storeTagModal;
 
 
 
   const contextValue = {
-    query,
-    tags,
-    pagination,
+    title,
     isPending,
-    isFetching,
-    isError,
     error,
-    pageChange,
-    pageSizeChange,
-    listItemClick,
-  } as unknown as ITagListContext;
+    form,
+    mutation,
+    validator,
+    beginUpdate,
+    exitUpdate,
+  } as unknown as ITagUpdateContext;
 
-  return <TagListContext.Provider value={contextValue}>
+  return <TagUpdateContext.Provider value={contextValue}>
     {children}
-  </TagListContext.Provider>
+  </TagUpdateContext.Provider>
 }

@@ -12,6 +12,7 @@ import {
 } from "@/domain/entities/tag";
 import {
   ZItem,
+  DefaultItem,
 } from "@/domain/entities/item";
 import {
   ZPagination,
@@ -23,6 +24,21 @@ import {
 } from "./query";
 
 
+
+
+export const ZReadEditor = z.object({
+  flag: z.nullish(z.boolean()).catch(false),
+  tag: z.nullish(z.string()),
+  filter: z.nullish(z.string()),
+  item: z.nullish(z.string()),
+});
+export type IReadEditor = z.infer<typeof ZReadEditor>;
+export const DefaultReadEditor: IReadEditor = {
+  flag: undefined,
+  item: undefined,
+  tag: undefined,
+  filter: undefined,
+}
 
 
 export const ZReadReference = z.object({
@@ -39,8 +55,9 @@ export const DefaultReadReference: IReadReference = {
 export const ZReadRequest = z.object({
   query: ZReadQuery.catch(DefaultReadQuery),
   pagination: ZPagination.catch(DefaultPagination),
-  reference: z.nullish(ZReadReference).catch(DefaultReadReference),
-  title: z.nullish(z.string()).catch(""),
+  reference: z.nullish(ZReadReference),
+  title: z.nullish(z.string()),
+  editor: z.nullish(ZReadEditor),
 });
 export type IReadRequest = z.infer<typeof ZReadRequest>;
 export const DefaultReadRequest: IReadRequest = {
@@ -53,8 +70,6 @@ export const ZItemReadResponse = z.object({
   items: z.array(ZItem).catch([]),
   query: ZReadQuery.catch(DefaultReadQuery),
   pagination: ZPagination.catch(DefaultPagination),
-  reference: z.nullish(ZReadReference).catch(DefaultReadReference),
-  title: z.nullish(z.string()).catch(""),
 });
 export type IItemReadResponse = z.infer<typeof ZItemReadResponse>;
 export const DefaultItemReadResponse: IItemReadResponse = {
@@ -68,8 +83,6 @@ export const ZFilterReadResponse = z.object({
   filters: z.array(ZFilter).catch([]),
   query: ZReadQuery.catch(DefaultReadQuery),
   pagination: ZPagination.catch(DefaultPagination),
-  reference: z.nullish(ZReadReference).catch(DefaultReadReference),
-  title: z.nullish(z.string()).catch(""),
 });
 export type IFilterReadResponse = z.infer<typeof ZFilterReadResponse>;
 export const DefaultFilterReadResponse: IFilterReadResponse = {
@@ -84,8 +97,6 @@ export const ZTagReadResponse = z.object({
   tagidPropMap: ZTagProperty.catch({}),
   query: ZReadQuery.catch(DefaultReadQuery),
   pagination: ZPagination.catch(DefaultPagination),
-  reference: z.nullish(ZReadReference).catch(DefaultReadReference),
-  title: z.nullish(z.string()).catch(""),
 });
 export type ITagReadResponse = z.infer<typeof ZTagReadResponse>;
 export const DefaultReadRequestResponse: ITagReadResponse = {
@@ -100,8 +111,6 @@ export const ZTagPropertyReadResponse = z.object({
   props: z.array(ZTagProperty).catch([]),
   query: ZReadQuery.catch(DefaultReadQuery),
   pagination: ZPagination.catch(DefaultPagination),
-  reference: z.nullish(ZReadReference).catch(DefaultReadReference),
-  title: z.nullish(z.string()).catch(""),
 });
 export type ITagPropertyReadResponse = z.infer<typeof ZTagPropertyReadResponse>;
 export const DefaultTagPropertyReadResponse: ITagPropertyReadResponse = {

@@ -5,7 +5,7 @@ import type {
   MouseEvent,
 } from 'react';
 import {
-  type useQueryResult,
+  type UseQueryResult,
 } from '@tanstack/react-query';
 import { useUser } from '@clerk/react';
 import {
@@ -68,7 +68,7 @@ export function ItemListProvider({ children }: { children: ReactNode }) {
 
   const {
     data, isPending, isError, error, isFetching,
-  }: useQueryResult<IItemReadResponse> = useListItem(opts);
+  }: UseQueryResult<IItemReadResponse> = useListItem(opts);
   const items = data?.items ?? [];
   const paginationObj = data?.pagination ? data.pagination : urlPagination ? urlPagination : DefaultPagination;
   const pagination = new Pagination(paginationObj);

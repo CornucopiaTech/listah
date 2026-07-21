@@ -20,7 +20,7 @@ import {
 } from "@/domain/rules";
 import {
   useUpdateTag
-} from "@/hooks/queries/tag";
+} from "@/hooks/context/tags/queries";
 import {
   FormContext,
   useFormDataContext

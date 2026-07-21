@@ -6,7 +6,7 @@ import {
   useQuery,
 } from '@tanstack/react-query';
 import type {
-  useQueryResult,
+  UseQueryResult,
 } from '@tanstack/react-query';
 
 
@@ -44,7 +44,7 @@ export function itemGroupOptions(opts: IReadRequest) {
 }
 
 
-export function useListItem(opts: IReadRequest): useQueryResult<IItemReadResponse> {
+export function useListItem(opts: IReadRequest): UseQueryResult<IItemReadResponse> {
   return useQuery(itemGroupOptions(opts))
 }
 

@@ -5,7 +5,7 @@ import type {
   MouseEvent,
 } from 'react';
 import {
-  type useQueryResult,
+  type UseQueryResult,
 } from '@tanstack/react-query';
 import { useUser } from '@clerk/react';
 import {
@@ -30,7 +30,7 @@ import {
 } from '@/domain/entities';
 import {
   useListTag
-} from '@/hooks/queries';
+} from './queries';
 import {
   TagListContext
 } from './useTag';
@@ -63,7 +63,7 @@ export function TagListProvider({ children }: { children: ReactNode }) {
 
   const {
     data, isPending, isError, error, isFetching,
-  }: useQueryResult<ITagReadResponse> = useListTag(opts);
+  }: UseQueryResult<ITagReadResponse> = useListTag(opts);
   const tags = data?.tags ?? [];
   const paginationObj = data?.pagination ? data.pagination : urlPagination ? urlPagination : DefaultPagination;
   const pagination = new Pagination(paginationObj);
@@ -111,7 +111,5 @@ export function TagListProvider({ children }: { children: ReactNode }) {
     listItemClick,
   } as unknown as ITagListContext;
 
-  return <TagListContext.Provider value={contextValue}>
-    {children}
-  </TagListContext.Provider>
+  return <TagListContext.Provider value={contextValue}> {children} </TagListContext.Provider>
 }

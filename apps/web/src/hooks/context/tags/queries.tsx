@@ -5,7 +5,7 @@ import {
   useQuery,
 } from '@tanstack/react-query';
 import type {
-  useQueryResult,
+  UseQueryResult,
 } from '@tanstack/react-query';
 
 
@@ -40,7 +40,7 @@ export function tagGroupOptions(opts: IReadRequest) {
   })
 }
 
-export function useListTag(opts: IReadRequest): useQueryResult<ITagReadResponse> {
+export function useListTag(opts: IReadRequest): UseQueryResult<ITagReadResponse> {
   return useQuery(tagGroupOptions(opts))
 }
 
@@ -55,7 +55,7 @@ export function tagPropertyGroupOptions(opts: IReadRequest) {
   })
 }
 
-export function useListTagProperty(opts: IReadRequest): useQueryResult<ITagPropertyReadResponse> {
+export function useListTagProperty(opts: IReadRequest): UseQueryResult<ITagPropertyReadResponse> {
   return useQuery(tagPropertyGroupOptions(opts))
 }
 

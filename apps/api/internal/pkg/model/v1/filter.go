@@ -1,15 +1,13 @@
 package v1
 
 import (
-	"google.golang.org/protobuf/types/known/timestamppb"
-	"github.com/uptrace/bun"
 	"github.com/google/uuid"
+	"github.com/uptrace/bun"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
-
 
 	pb "cornucopia/listah/internal/pkg/proto/v1"
 )
-
 
 type Filter struct {
 	bun.BaseModel `bun:"table:apps.filters,alias:sf"`
@@ -23,7 +21,6 @@ type Filter struct {
 	UpdatedAt     time.Time
 }
 
-
 func (v *Filter) ToFilterProto() *pb.Filter {
 	return &pb.Filter{
 		Id:         v.Id,
@@ -36,7 +33,6 @@ func (v *Filter) ToFilterProto() *pb.Filter {
 		UpdatedBy:  v.UpdatedBy,
 	}
 }
-
 
 func FilterModelListToFilterProtoList(m []*Filter) []*pb.Filter {
 	c := []*pb.Filter{}

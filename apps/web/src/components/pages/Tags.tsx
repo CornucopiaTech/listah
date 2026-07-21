@@ -11,6 +11,10 @@ import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 import LinearProgress from '@mui/material/LinearProgress';
 import Alert from '@mui/material/Alert';
+import TableCell from '@mui/material/TableCell';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+
 
 
 
@@ -73,18 +77,34 @@ export function TagShell({ children }: { children: ReactNode }) {
   function renderRow(itemKey: number): ReactNode {
     const item = tags[itemKey];
     const tc = item && item.name ? item.name : "";
+    const itemcount = item.count ? item.count.toString() : "0";
     return (
-      <ListItem key={itemKey + tc} component="div" disablePadding sx={ListItemStyling} onClick={() => listItemClick(itemKey)} >
-        <ListItemButton>
-          <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
-          <Chip
-            variant="contained"
-            // @ts-ignore
-            color={itemKey % 2 == 0 ? "inherit" : "secondary"}
-            label={item.count ? item.count.toString() : "0"}
-          />
-        </ListItemButton>
-      </ListItem>
+      <Fragment>
+        {/* <ListItem key={itemKey + tc} component="div" sx={ListItemStyling} onClick={() => listItemClick(itemKey)} >
+          <Typography variant="body2" component="div">{tc}</Typography>
+          <ListItemButton>
+            <Typography variant="body2" component="div">{tc}</Typography>
+            <ListItemText primary={<Typography variant="body2" component="div">{tc}</Typography>} />
+            <ListItemText primary={<Typography variant="body2">Item count: {item.count ? item.count.toString() : "0"}</Typography>} />
+            <Chip
+              variant="contained"
+              // @ts-ignore
+              color={itemKey % 2 == 0 ? "inherit" : "secondary"}
+              label={item.count ? item.count.toString() : "0"}
+            />
+          </ListItemButton>
+        </ListItem> */}
+        <TableCell key={itemKey + tc} component="div" sx={ListItemStyling} >
+          <Typography variant="body1" component="div">{tc}</Typography>
+          <Typography variant="body2" sx={{ fontWeight: "700" }}>Item count: {itemcount}
+            <Button variant="text" > Edit</Button>
+            <Button variant="text"> Delete</Button>
+            <Button variant="text" sx={{ display: itemcount == "0" ? "none" : "inline-flex" }} onClick={() => listItemClick(itemKey)}> View items</Button>
+          </Typography>
+        </TableCell>
+        <Divider />
+      </Fragment>
+
     );
   }
 
@@ -113,7 +133,7 @@ export function TagShell({ children }: { children: ReactNode }) {
 
 
   return (
-    <AppContainer mw="md" >
+    <AppContainer mw="sm" >
       <AppListHeader title="Tags" menuItems={mItems} />
       {
         storeTagModal &&

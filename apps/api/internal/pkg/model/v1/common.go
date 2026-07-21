@@ -2,11 +2,11 @@ package v1
 
 import (
 	pb "cornucopia/listah/internal/pkg/proto/v1"
+	"fmt"
 	"github.com/pkg/errors"
 	"github.com/uptrace/bun"
-	"time"
-	"fmt"
 	"strings"
+	"time"
 )
 
 var InvalidJWTMsg = "invalid JWT: "
@@ -52,8 +52,6 @@ type ErrorLog struct {
 	Error         string
 	ResponseTime  time.Time
 }
-
-
 
 type TagProperty struct {
 	UserId  string
@@ -151,7 +149,7 @@ func ReadRequestToRepoSearch(msg *pb.ReadRequest) (*RepoSearch, error) {
 	}
 
 	i := RepoSearch{
-		Id: q.GetId(),
+		Id:     q.GetId(),
 		UserId: q.GetUserId(),
 		Tags:   strings.Join(t, ", "),
 		Text:   q.GetText(),

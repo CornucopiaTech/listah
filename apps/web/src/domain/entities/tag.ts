@@ -55,3 +55,17 @@ export type ITagListContext = {
   pageSizeChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
   listItemClick: (idx: number) => ReactNode,
 }
+
+export type ITagUpdateContext = {
+  title: string,
+  isPending: boolean,
+  error: Error | null,
+  form: any,
+  mutation: any,
+  beginUpdate: boolean,
+  exitUpdate: () => void,
+  validator: {
+    onChange: ({ value }: { value: any }) => string,
+    onBlur: ({ value }: { value: any }) => string
+  }
+}

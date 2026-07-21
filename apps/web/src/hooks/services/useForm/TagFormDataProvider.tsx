@@ -4,7 +4,7 @@ import type {
 } from 'react';
 import { useUser } from '@clerk/react';
 import type {
-  useQueryResult,
+  UseQueryResult,
 } from '@tanstack/react-query';
 
 
@@ -29,7 +29,7 @@ import type {
 } from '@/domain/entities';
 import {
   useListTag
-} from "@/hooks/queries/tag";
+} from "@/hooks/context/tags/queries";
 
 
 
@@ -51,7 +51,7 @@ export function TagFormDataProvider({ children, displayTag, }: { children: React
     }
     const {
       isPending, isError, data, error
-    }: useQueryResult<ITagReadResponse> = useListTag(tagQuery);
+    }: UseQueryResult<ITagReadResponse> = useListTag(tagQuery);
 
     // Todo: Remove the ability for filters page to create tags. That way, the only route that can be calling tags page is /tags or /items
     qisPending = isPending;

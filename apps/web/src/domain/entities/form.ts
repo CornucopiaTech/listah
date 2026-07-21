@@ -1,4 +1,6 @@
-
+import type {
+  ReactNode,
+} from 'react';
 
 
 export type IFilterFormCheckedTag = {
@@ -25,4 +27,9 @@ export type IFormDataContext = {
 export type IFormContext = {
   form: any,
   mutation: any,
+  title: string,
+  content: ReactNode,
+  actions: ReactNode,
+  openDialog: boolean,
+  closeDialog: () => void,
 }

@@ -31,15 +31,8 @@ import type {
 } from "@/domain/entities"
 
 
-export function FormDialog(
-  {
-    title, content, actions, openDialog, closeDialog,
-  }: {
-    title: string, content: ReactNode, actions?: ReactNode,
-    openDialog: boolean, closeDialog: () => void,
-  }): ReactNode {
-
-  const { form, mutation } = useFormContext() as unknown as IFormContext;
+export function FormDialog(): ReactNode {
+  const { title, content, actions, openDialog, closeDialog, form, mutation } = useFormContext() as unknown as IFormContext;
   useEffect(() => {
     if (!form.state.isSubmitted) return;
     if (!mutation.isSuccess) return;

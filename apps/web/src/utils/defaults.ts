@@ -18,7 +18,7 @@ export const AppPageContentHeight = `calc(100vh - ${AppPageAllowance}px) - 100px
 export const ListBoxSize: {
   height: string, width: string
 } = {
-  height: `calc(${AppPageContentHeight} - 150px)`,
+  height: `calc(${AppPageContentHeight} - 100px)`,
   // height: `calc(100vh - 250px)`,
   width: '100%',
 }
