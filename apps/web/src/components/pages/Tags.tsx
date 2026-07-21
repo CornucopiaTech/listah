@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 import LinearProgress from '@mui/material/LinearProgress';
 import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
 import TableCell from '@mui/material/TableCell';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
@@ -94,13 +95,27 @@ export function TagShell({ children }: { children: ReactNode }) {
             />
           </ListItemButton>
         </ListItem> */}
-        <TableCell key={itemKey + tc} component="div" sx={ListItemStyling} >
+        <TableCell key={itemKey + tc} sx={ListItemStyling} >
           <Typography variant="body1" component="div">{tc}</Typography>
-          <Typography variant="body2" sx={{ fontWeight: "700" }}>Item count: {itemcount}
+          <Stack direction="row" spacing={1}>
+            {/* <Typography variant="body2" sx={{ fontWeight: "700" }}>Item count: {itemcount}
+            </Typography> */}
+            <Button variant="text" >Item count: {itemcount}</Button>
             <Button variant="text" > Edit</Button>
             <Button variant="text"> Delete</Button>
             <Button variant="text" sx={{ display: itemcount == "0" ? "none" : "inline-flex" }} onClick={() => listItemClick(itemKey)}> View items</Button>
-          </Typography>
+          </Stack>
+          <Stack direction="row" spacing="auto">
+            <Typography variant="body2" >Item count:
+              {itemcount}
+            </Typography>
+            <Typography variant="body2">Edit
+            </Typography>
+            <Typography variant="body2" >Delete
+            </Typography>
+            <Typography variant="body2" sx={{ display: itemcount == "0" ? "none" : "inline-flex" }} onClick={() => listItemClick(itemKey)}> View items</Typography>
+          </Stack>
+
         </TableCell>
         <Divider />
       </Fragment>
