@@ -48,7 +48,7 @@ import {
   ItemFormDataProvider,
   ItemFormProvider,
 } from '@/hooks/services/useForm';
-import { ListItemStyling } from "@/utils/defaults";
+import { ListItemStyling } from "@/helpers/defaults";
 import {
   useListItems
 } from "@/hooks/context/items";
@@ -178,7 +178,6 @@ export function ItemShell({ children }: { children: ReactNode }) {
             <AppItemModal />
           </ItemFormProvider>
         </ItemFormDataProvider>
-
       }
       {/* {
         storeTagModal &&

@@ -7,12 +7,18 @@ import {
 import type {
   ITagListContext,
   ITagUpdateContext,
+  ITagRouteContext,
 } from "@/domain/entities"
 
 
 export const TagListContext = createContext<ITagListContext | undefined>(undefined);
 export function useListTags() {
   return useContext(TagListContext);
+}
+
+export const TagRouteContext = createContext<ITagRouteContext | undefined>(undefined);
+export function useRouteTags() {
+  return useContext(TagRouteContext);
 }
 
 

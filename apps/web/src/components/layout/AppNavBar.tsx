@@ -27,7 +27,7 @@ import Link from '@mui/material/Link';
 import {
   AppBarHeight,
   AppDrawerWidth
-} from '@/utils/defaults';
+} from '@/helpers/defaults';
 import type { AppTheme } from '@/system/theme';
 import {
   useAppStore,

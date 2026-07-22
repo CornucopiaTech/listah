@@ -6,18 +6,15 @@ import {
 
 
 import {
-  Tags,
-  TagShell
+  Tags
 } from "@/components/pages/Tags";
 import {
   encodeState
-} from '@/utils/encoders';
+} from '@/helpers/encoders';
 import {
   DefaultReadRequest,
 } from "@/domain/entities";
-import {
-  TagListProvider
-} from "@/hooks/context/tags";
+
 
 
 
@@ -27,5 +24,5 @@ export const Route = createFileRoute('/tags')({
     const s = search && search.s ? search.s : encodeState(DefaultReadRequest);
     return { s: s as unknown as string };
   },
-  component: () => <TagListProvider><TagShell><Tags /></TagShell></TagListProvider>,
+  component: Tags,
 })

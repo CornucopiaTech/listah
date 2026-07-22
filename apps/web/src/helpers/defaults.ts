@@ -13,20 +13,24 @@ export const AppBarHeight = 48;
 export const AppDrawerWidth = 240;
 export const AppBarBottom = 0;
 export const AppPageAllowance = AppBarHeight + AppBarBottom;
-export const AppPageContentHeight = `calc(100vh - ${AppPageAllowance}px) - 100px`;
+export const AppPageContentHeight = `calc(100vh - ${AppPageAllowance}px) - 10px`;
 
 export const ListBoxSize: {
-  height: string, width: string
+  height: string, width: string, overflowY: string
 } = {
-  height: `calc(${AppPageContentHeight} - 100px)`,
+  height: `calc(${AppPageContentHeight} - 120px)`,
   // height: `calc(100vh - 250px)`,
-  width: '100%',
+  width: '100%', overflowY: 'auto',    // Enables scrolling when content overflows
 }
-export const ListItemStyling = { height: "fit-content", maxHeight: "50px" };
+
+// export const ListItemStyling = { height: "fit-content", maxHeight: "50px" };
+export const ListItemStyling = { height: "fit-content" };
 
 
 
-export const QueryStaleTime = process.env.NODE_ENV === "production" ? 24 * 60 * 60 * 1000 : 10;
+// ToDo: change query time to dev time again
+// export const QueryStaleTime = process.env.NODE_ENV === "production" ? 24 * 60 * 60 * 1000 : 10;
+export const QueryStaleTime = process.env.NODE_ENV === "production" ? 24 * 60 * 60 * 1000 : 60 * 1000;
 
 
 export const PAGE_SIZE_OPTIONS: { label: number, value: number }[] = [

@@ -8,7 +8,7 @@ import { Items } from "@/components/pages/Items";
 import {
   decodeState,
   encodeState
-} from '@/utils/encoders';
+} from '@/helpers/encoders';
 import {
   DefaultReadRequest,
   DefaultPagination,

@@ -21,12 +21,12 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Link from '@mui/material/Link';
-import Tooltip from '@mui/material/Tooltip';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import LoginIcon from '@mui/icons-material/Login';
 import CategoryIcon from '@mui/icons-material/Category';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import TagIcon from '@mui/icons-material/Tag';
-import PageviewIcon from '@mui/icons-material/Pageview';
 import { useLocation } from '@tanstack/react-router';
 import {
   Show, SignInButton, UserButton,
@@ -41,8 +41,12 @@ import {
 } from '@/hooks/store/boundStore';
 import {
   AppDrawerWidth,
-} from '@/utils/defaults';
+} from '@/helpers/defaults';
 import { AppTooltip } from "@/components/core/AppTooltip";
+import {
+  AppItemSearchBar,
+} from "@/components/layout/AppSearchBar";
+
 
 
 
@@ -172,7 +176,7 @@ export function AppNavDrawer(): ReactNode {
     { minWidth: 0, justifyContent: 'center', },
     store.drawerOpen ? { mr: 3, } : { mr: 'auto', },
   ];
-  const drawerTextStyling = [store.drawerOpen ? { opacity: 1, } : { opacity: 0, },];
+  const drawerTextStyling = [store.drawerOpen ? { display: 1, } : { opacity: 0, },];
   const drawerButtonStyling = [
     { minHeight: 48, px: 2.5, },
     store.drawerOpen ? { justifyContent: 'initial', }
@@ -185,11 +189,27 @@ export function AppNavDrawer(): ReactNode {
         position="fixed" open={store.drawerOpen} elevation={1}
         sx={{
           backgroundColor: theme.palette.background.default, width: appbarWidth,
+          // height: AppBarHeight,
         }}>
-        <Toolbar variant="dense">
-          <Typography variant="h6" color="primary" noWrap component="div" >
-            Listah
-          </Typography>
+        <Toolbar variant="dense" sx={{ minWidth: "100%", justifyContent: 'space-between' }}>
+          <Box>
+            <Typography variant="h6" color="primary" noWrap >
+              Listah
+            </Typography>
+          </Box>
+          <Box sx={{ flexGrow: 1 }}></Box>
+          <Stack direction="row" spacing={2}>
+            <AppItemSearchBar />
+            <Show when="signed-out" key="signout">
+              {/* @ts-expect-error valid style prop is not recognised */}
+              <SignInButton style={{ border: 'none' }}>
+                <LoginIcon sx={altIconStyle} />
+              </SignInButton>
+            </Show>
+            <Show when="signed-in" key="signin">
+              <UserButton />
+            </Show>
+          </Stack>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={store.drawerOpen} >

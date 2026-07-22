@@ -4,12 +4,22 @@ import { styled } from '@mui/material/styles';
 
 
 export const SpaceBetweenBox = styled(Box)(() => ({
-  justifyContent: 'space-between', alignContent: 'center',
+  justifyContent: 'space-between', //alignContent: 'center',
+  display: 'flex',
+}));
+
+export const SpaceAroundBox = styled(Box)(() => ({
+  justifyContent: 'space-around', alignContent: 'center',
+  display: 'flex',
+}));
+
+export const SpaceEvenlyBox = styled(Box)(() => ({
+  justifyContent: 'space-evenly', //alignContent: 'center',
   display: 'flex',
 }));
 
 export const FlexEndBox = styled(Box)(() => ({
-  justifyContent: 'flex-end', alignContent: 'center',
+  justifyContent: 'flex-end', // alignContent: 'center',
   display: 'flex', width: '100%',
 }));
 
@@ -18,10 +28,6 @@ export const FlexStartBox = styled(Box)(() => ({
   display: 'flex', width: '100%',
 }));
 
-export const SpaceAroundBox = styled(Box)(() => ({
-  justifyContent: 'space-around', alignContent: 'center',
-  display: 'flex',
-}));
 
 
 export const CentredBox = styled(Box)(() => ({

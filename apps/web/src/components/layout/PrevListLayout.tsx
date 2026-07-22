@@ -29,7 +29,7 @@ import type {
 } from '@/domain/entities';
 import {
   ListBoxSize,
-} from '@/utils/defaults';
+} from '@/helpers/defaults';
 import {
   CentredBox,
 } from '@/components/core/AppBox';

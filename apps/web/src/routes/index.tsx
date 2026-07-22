@@ -7,7 +7,7 @@ import { LinearProgress } from '@mui/material';
 
 import {
   encodeState
-} from '@/utils/encoders';
+} from '@/helpers/encoders';
 import {
   DefaultReadRequest,
 } from "@/domain/entities";

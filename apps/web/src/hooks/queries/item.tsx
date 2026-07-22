@@ -25,7 +25,7 @@ import {
 } from '@/infra/api';
 import {
   QueryStaleTime
-} from '@/utils/defaults';
+} from '@/helpers/defaults';
 
 if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
   console.info("Node environment", process.env.NODE_ENV)

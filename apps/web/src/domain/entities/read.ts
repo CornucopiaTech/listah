@@ -26,38 +26,18 @@ import {
 
 
 
-export const ZReadEditor = z.object({
-  flag: z.nullish(z.boolean()).catch(false),
-  tag: z.nullish(z.string()),
-  filter: z.nullish(z.string()),
-  item: z.nullish(z.string()),
+export const ZChildReadRequest = z.object({
+  pagination: ZPagination,
+  query: ZReadQuery,
+  id: z.nullish(z.string()),
+  name: z.nullish(z.string()),
 });
-export type IReadEditor = z.infer<typeof ZReadEditor>;
-export const DefaultReadEditor: IReadEditor = {
-  flag: undefined,
-  item: undefined,
-  tag: undefined,
-  filter: undefined,
-}
-
-
-export const ZReadReference = z.object({
-  tag: ZTag.catch(DefaultTag),
-  filter: ZFilter.catch(DefaultFilter),
-});
-export type IReadReference = z.infer<typeof ZReadReference>;
-export const DefaultReadReference: IReadReference = {
-  tag: DefaultTag,
-  filter: DefaultFilter,
-}
-
+export type IChildReadRequest = z.infer<typeof ZChildReadRequest>;
 
 export const ZReadRequest = z.object({
   query: ZReadQuery.catch(DefaultReadQuery),
   pagination: ZPagination.catch(DefaultPagination),
-  reference: z.nullish(ZReadReference),
-  title: z.nullish(z.string()),
-  editor: z.nullish(ZReadEditor),
+  child: z.nullish(ZChildReadRequest),
 });
 export type IReadRequest = z.infer<typeof ZReadRequest>;
 export const DefaultReadRequest: IReadRequest = {

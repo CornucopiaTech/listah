@@ -26,7 +26,7 @@ import type {
 } from '@/domain/entities';
 import {
   ListBoxSize,
-} from '@/utils/defaults';
+} from '@/helpers/defaults';
 import {
   CentredBox,
 } from '@/components/core/AppBox';
@@ -38,16 +38,21 @@ import { useLists } from "@/hooks/context/lists";
 
 
 
-export function OuterBox({ children }: { children: ReactNode }): ReactNode {
+export function OuterBox({ children }: { kind?: string, children: ReactNode }): ReactNode {
+  // const sx = kind && kind == "item" ? {
+  //   ...ItemListBoxSize,          // Binds the vertical size
+  //   overflowY: 'auto',    // Enables scrolling when content overflows
+  // } : {
+  //   ...TagFilterListBoxSize,          // Binds the vertical size
+  // }
+  const sx = {
+    ...ListBoxSize,          // Binds the vertical size
+    overflowY: 'auto',    // Enables scrolling when content overflows
+  }
   return (
-    <Fragment>
-      <Box key="data-content" sx={{
-        ...ListBoxSize,          // Binds the vertical size
-        overflowY: 'auto',    // Enables scrolling when content overflows
-      }}>
-        {children}
-      </Box>
-    </Fragment>
+    <Box key="data-content"
+      sx={sx}
+    > {children} </Box>
   );
 }
 
@@ -102,7 +107,7 @@ export function ListBox({ children }: { children: ReactNode }): ReactNode {
 export function ListLayout(): ReactNode {
   const {
     data,
-    scrollIndex,
+    // scrollIndex,
     renderRow,
   } = useLists() as unknown as IListContext;
 
@@ -110,7 +115,7 @@ export function ListLayout(): ReactNode {
     <Virtuoso
       // useWindowScroll // style={ListBoxSize}
       key="data-content"
-      initialTopMostItemIndex={scrollIndex ?? 0}
+      // initialTopMostItemIndex={scrollIndex ?? 0}
       data={data}
       itemContent={(i) => renderRow(i)}
     />

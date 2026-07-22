@@ -19,7 +19,7 @@ import {
   DefaultReadRequest,
   DefaultReadQuery,
 } from "@/domain/entities";
-import { encodeState } from '@/utils/encoders';
+import { encodeState } from '@/helpers/encoders';
 import { AppSearchPaper } from '@/components/core/AppPaper';
 import { useAppStore, type TAppStore } from '@/hooks/store/boundStore';
 

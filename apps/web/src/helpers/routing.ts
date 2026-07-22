@@ -10,7 +10,7 @@ import type {
 } from "@/domain/entities";
 import {
   decodeState,
-} from '@/utils/encoders';
+} from '@/helpers/encoders';
 
 
 // routeApi.useSearch() only contains data from validate search and does not contain the information that was injected into the route loader from the context. So the search information retrieved from routeApi.useSearch() will not contain the user information.
@@ -40,15 +40,28 @@ export function getRouteLoaderData(rt: routes) {
 }
 
 
+export function getParentRouteSearch(rt: routes) {
+  try {
+    const routeApi = getRouteApi(rt);
+    const { s }: { s: string } = routeApi.useSearch();
+    const { query, pagination, child } = decodeState(s) as unknown as IReadRequest;
+    return { query, pagination, child };
+  }
+  catch {
+    return { query: undefined, pagination: undefined, child: undefined }
+  }
+}
+
+
 export function getRouteSearch(rt: routes) {
   try {
     const routeApi = getRouteApi(rt);
     const { s }: { s: string } = routeApi.useSearch();
-    const { query, pagination, reference, title, editor } = decodeState(s) as unknown as IReadRequest;
-    return { query, pagination, reference, title, editor };
+    const { query, pagination, child } = decodeState(s) as unknown as IReadRequest;
+    return { query, pagination, child };
   }
   catch {
-    return { query: undefined, pagination: undefined, reference: undefined, title: null, editor: undefined }
+    return { query: undefined, pagination: undefined, child: undefined }
   }
 }
 

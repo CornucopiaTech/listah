@@ -21,7 +21,7 @@ import {
 } from '@/infra/api/filters';
 import {
   QueryStaleTime,
-} from '@/utils/defaults';
+} from '@/helpers/defaults';
 import {
   ZFilter,
 } from "@/domain/entities/filter";

@@ -26,7 +26,7 @@ import {
 } from '@/infra/api';
 import {
   QueryStaleTime,
-} from '@/utils/defaults';
+} from '@/helpers/defaults';
 
 
 

@@ -8,14 +8,14 @@ import { styled } from '@mui/material/styles';
 import type { AppTheme } from '@/system/theme';
 import {
   AppBarHeight,
-} from '@/utils/defaults';
+} from '@/helpers/defaults';
 
 
 export const AppStyledPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
   width: "100%",
   height: "100%",
-  // backgroundColor: theme.palette.background.paper,
-  backgroundColor: theme.palette.background.default,
+  backgroundColor: theme.palette.background.paper,
+  // backgroundColor: theme.palette.background.default,
   borderRadius: 4,
   margin: 0,
   padding: 0,
@@ -34,7 +34,7 @@ export const AppPaper = styled(Paper)(({ theme }: { theme: AppTheme }) => ({
 
 export function AppSearchPaper({ children }: { children: ReactNode }) {
   return (
-    <AppStyledPaper sx={{ width: "100%", height: AppBarHeight, marginY: "5px", elevation: 12, }}>
+    <AppStyledPaper sx={{ width: "50vw", height: AppBarHeight, elevation: 12, }}>
       {children}
     </AppStyledPaper>
   );
@@ -45,6 +45,13 @@ export const AppPagePaper = styled(Paper)(() => ({
   borderRadius: 4,
   width: '100%',
   maxWidth: '100%',
+  height: "fit-content",
+})
+);
+
+
+export const AppSectionPaper = styled(Paper)(() => ({
+  borderRadius: 4,
   height: "fit-content",
 })
 );

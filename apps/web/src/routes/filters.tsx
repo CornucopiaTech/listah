@@ -13,7 +13,7 @@ import {
 } from "@/components/pages/Filters";
 import {
   encodeState
-} from '@/utils/encoders';
+} from '@/helpers/encoders';
 import {
   DefaultReadRequest,
 } from "@/domain/entities";
