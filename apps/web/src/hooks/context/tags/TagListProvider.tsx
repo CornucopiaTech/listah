@@ -27,7 +27,8 @@ import {
 import type {
   ITagListContext,
   ITagReadResponse,
-  IReadRequest,
+  IReadQuery,
+  IPagination,
 } from "@/domain/entities";
 import {
   DefaultReadQuery,
@@ -40,13 +41,6 @@ import {
 import {
   TagListContext
 } from './useTag';
-// import {
-//   getRouteSearch,
-// } from "@/helpers/routing";
-import {
-  encodeState,
-  decodeState,
-} from '@/helpers/encoders';
 
 
 
@@ -56,13 +50,12 @@ export function TagListProvider({ children }: { children: ReactNode }) {
   const storeSetItemScroll = useAppStore((state) => state.setItemScroll);
   const navigate = useNavigate();
   const routeApi = getRouteApi("/tags");
-  const search = decodeState(routeApi.useSearch({ select: (search) => search.s, })) as unknown as IReadRequest;
-  const { query: urlQuery, pagination: urlPagination } = search;
+  const urlQuery = routeApi.useSearch({ select: (search) => search.query, }) as unknown as IReadQuery;
+  const urlPagination = routeApi.useSearch({ select: (search) => search.pagination, }) as unknown as IPagination;
   const opts = {
     pagination: { ...urlPagination },
     query: { ...urlQuery, userId: user?.id ?? "", },
   };
-  const urlC = routeApi.useSearch({ select: (search) => search.c, });
 
   const { data, isPending, isError, error, }: UseQueryResult<ITagReadResponse> = useListTag(opts);
   const tags = data?.tags ?? [];
@@ -73,31 +66,27 @@ export function TagListProvider({ children }: { children: ReactNode }) {
   const pageChange = useCallback((event: MouseEvent<HTMLButtonElement> | null, value: number) => {
     if (event) { event.stopPropagation() };
     pagination.changePage(value);
-    const s = encodeState({ query: urlQuery, pagination: pagination.paging });
-    navigate({ to: ".", search: { s, c: urlC } });
+    navigate({ to: ".", search: (prev) => ({ ...prev, pagination: pagination.paging }) });
   }, [opts]);
   const pageSizeChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     pagination.changeSize(e.target.value);
-    const s = encodeState({ query: urlQuery, pagination: pagination.paging });
-    navigate({ to: ".", search: { s, c: urlC } });
+    navigate({ to: ".", search: (prev) => ({ ...prev, pagination: pagination.paging }) });
   }, [opts]);
 
   const listItemClick = useCallback((idx: number) => {
     const it = tags[idx];
     storeSetTagScroll(idx);
     storeSetItemScroll(0);
-    const s = encodeState({ query: opts.query, pagination: pagination.paging, });
-    const c = encodeState({
+    const c = {
       query: { ...DefaultReadQuery, userId: opts.query.userId, tags: [it.id] },
       pagination: { ...DefaultPagination, size: pagination.paging.size },
       id: it.id, name: it.name,
-    });
-    navigate({ to: ".", search: { s, c } });
+    };
+    navigate({ to: ".", search: (prev) => ({ ...prev, c }) });
   }, [opts]);
 
 
   const contextValue = useMemo(() => ({
-    search,
     tags,
     pagination,
     isPending,
@@ -108,7 +97,6 @@ export function TagListProvider({ children }: { children: ReactNode }) {
     listItemClick,
   } as unknown as ITagListContext),
     [
-      search,
       tags,
       pagination,
       isPending,

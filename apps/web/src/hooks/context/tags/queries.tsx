@@ -3,6 +3,7 @@ import {
   useQueryClient,
   useMutation,
   useQuery,
+  keepPreviousData,
 } from '@tanstack/react-query';
 import type {
   UseQueryResult,
@@ -37,6 +38,7 @@ export function tagGroupOptions(opts: IReadRequest) {
     queryFn: () => getTag(opts),
     staleTime: QueryStaleTime,
     enabled: !!opts?.query?.userId,
+    placeholderData: keepPreviousData,
   })
 }
 
@@ -52,6 +54,7 @@ export function tagPropertyGroupOptions(opts: IReadRequest) {
     queryFn: () => getTagProperty(opts),
     staleTime: QueryStaleTime,
     enabled: !!opts?.query?.userId,
+    placeholderData: keepPreviousData,
   })
 }
 

@@ -62,41 +62,27 @@ export function TagItemListProvider({ children }: { children: ReactNode }) {
   const storeSetItemModal = useAppStore((state) => state.setItemModal);
 
 
-
   const navigate = useNavigate();
-  // const search = getRouteSearch("/tags") as unknown as IReadRequest;
-  // // const opts = {
-  // //   ...search,
-  // //   query: { ...search.query, userId: user?.id ?? "", },
-  // // };
-  // const { child, } = search;
-
   const routeApi = getRouteApi("/tags");
-  const getUrlS = useCallback(() => {
-    return routeApi.useSearch({ select: (search) => search.s, });
-  }, [routeApi, getRouteApi,]);
-
   const getOpts = useCallback(() => {
-    const routeApi = getRouteApi("/tags");
-    const search = decodeState(routeApi.useSearch({ select: (search) => search.c, })) as unknown as IReadRequest;
-    let opts = {} as IChildReadRequest;
+    const search = routeApi.useSearch({ select: (search) => search.c, }) as unknown as IChildReadRequest;
+    let opt = {} as IChildReadRequest;
     if (search) {
       const { query: urlQuery, pagination: urlPagination } = search;
-      opts = {
+      opt = {
         pagination: { ...urlPagination },
         query: { ...urlQuery, userId: user?.id ?? "", },
       };
     } else {
-      opts = {
+      opt = {
         query: { ...DefaultReadQuery, userId: user?.id ?? "", },
         pagination: { ...DefaultPagination, },
       };
     }
-    return opts;
+    return opt;
   }, [routeApi, getRouteApi,]);
 
   const opts = getOpts();
-  const urlS = getUrlS();
   const {
     data, isPending, isError, error
   }: UseQueryResult<IItemReadResponse> = useListItem(opts);
@@ -108,18 +94,12 @@ export function TagItemListProvider({ children }: { children: ReactNode }) {
   const pageSizeChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     e.stopPropagation()
     pagination.changeSize(e.target.value);
-    const encoded = encodeState({
-      ...opts, pagination: pagination.paging,
-    });
-    navigate({ to: ".", search: { s: urlS, c: encoded } });
+    navigate({ to: ".", search: (prev) => ({ ...prev, c: { ...prev.c, pagination: pagination.paging } }) });
   };
   const pageChange = (event: MouseEvent<HTMLButtonElement> | null, value: number) => {
     if (event) { event.stopPropagation() };
     pagination.changePage(value);
-    const encoded = encodeState({
-      ...opts, pagination: pagination.paging,
-    });
-    navigate({ to: ".", search: { s: urlS, c: encoded } });
+    navigate({ to: ".", search: (prev) => ({ ...prev, c: { ...prev.c, pagination: pagination.paging } }) });
   };
 
   const listItemClick = (idx: number) => {
@@ -139,7 +119,6 @@ export function TagItemListProvider({ children }: { children: ReactNode }) {
     listItemClick,
   } as unknown as IItemListContext),
     [
-      getUrlS,
       getOpts,
       items,
       pagination,

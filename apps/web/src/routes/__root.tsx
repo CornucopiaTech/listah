@@ -48,20 +48,20 @@ export const Route = createRootRoute({
       },
     ],
   }),
-  // Execute loader.
-  loader: async ({ context }: { context: any }) => {
-    // Since the search parameter in loaderDeps does not contain userinformation, it will not be used in the loader.
-    if (context.user) {
-      const query = {
-        ...DefaultReadRequest,
-        query: { ...DefaultReadRequest.query, userId: context.user.id },
-        pagination: { ...DefaultReadRequest.pagination, size: -1 }
-      }
-      context.queryClient.ensureQueryData(tagGroupOptions(query));
-      context.queryClient.ensureQueryData(filterGroupOptions(query));
-    }
-    return null
-  },
+  // // Execute loader.
+  // loader: async ({ context }: { context: any }) => {
+  //   // Since the search parameter in loaderDeps does not contain userinformation, it will not be used in the loader.
+  //   if (context.user) {
+  //     const query = {
+  //       ...DefaultReadRequest,
+  //       query: { ...DefaultReadRequest.query, userId: context.user.id },
+  //       pagination: { ...DefaultReadRequest.pagination, size: -1 }
+  //     }
+  //     context.queryClient.ensureQueryData(tagGroupOptions(query));
+  //     context.queryClient.ensureQueryData(filterGroupOptions(query));
+  //   }
+  //   return null
+  // },
   component: RootComponent,
   pendingComponent: () => <AppShell> <LinearProgress /></AppShell>,
 })

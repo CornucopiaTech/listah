@@ -30,7 +30,7 @@ import {
 
 
 
-export function TagRouteProvider({ children }: { children: ReactNode }) {
+export function PrevTagRouteProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const routeApi = getRouteApi("/tags");
   const psearch = decodeState(routeApi.useSearch({ select: (search) => search.s, })) as unknown as IReadRequest;
@@ -45,6 +45,37 @@ export function TagRouteProvider({ children }: { children: ReactNode }) {
     navigate({ to: ".", search: { s } });
   }
   const breadcrumbTail = csearch?.name ?? "";
+
+  const contextValue = useMemo(() => ({
+    breadcrumbClick,
+    breadcrumbTail,
+  } as unknown as ITagRouteContext),
+    [
+      breadcrumbClick,
+      breadcrumbTail,
+    ]
+  );
+
+
+  return <TagRouteContext.Provider value={contextValue}> {children} </TagRouteContext.Provider>
+}
+
+
+export function TagRouteProvider({ children }: { children: ReactNode }) {
+  const navigate = useNavigate();
+  const routeApi = getRouteApi("/tags");
+  // const psearch = routeApi.useSearch({ select: (search) => search.s, }) as unknown as IReadRequest;
+  // const csearch = routeApi.useSearch({ select: (search) => search.c, }) as unknown as IChildReadRequest;
+
+
+
+
+
+  const breadcrumbClick = () => {
+    navigate({ to: ".", search: (prev) => ({ query: prev.query, pagination: prev.pagination }) });
+  }
+  const name = routeApi.useSearch({ select: (search) => search.c?.name, }) as unknown as string;
+  const breadcrumbTail = name ?? "";
 
   const contextValue = useMemo(() => ({
     breadcrumbClick,
