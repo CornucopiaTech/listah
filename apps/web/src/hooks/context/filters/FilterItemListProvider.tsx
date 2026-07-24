@@ -44,13 +44,15 @@ import {
 } from "@/hooks/context/items";
 
 
-export function TagItemListProvider({ children }: { children: ReactNode }) {
+
+
+export function FilterItemListProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const storeSetItemScroll = useAppStore((state) => state.setItemScroll);
-
+  const storeSetItemModal = useAppStore((state) => state.setItemModal);
 
   const navigate = useNavigate();
-  const routeApi = getRouteApi("/tags");
+  const routeApi = getRouteApi("/filters");
   const { query: urlQuery, pagination: urlPagination } = decodeState(routeApi.useSearch({ select: (search) => search.c, })) as unknown as IReadRequest;
   const opts = {
     pagination: { ...urlPagination },
@@ -87,17 +89,9 @@ export function TagItemListProvider({ children }: { children: ReactNode }) {
     });
   }, [opts]);
 
-  const editItemClick = useCallback((idx: number) => {
+  const listItemClick = useCallback((idx: number) => {
+    storeSetItemModal(true);
     storeSetItemScroll(idx);
-    const it = items[idx];
-    navigate({
-      to: ".",
-      search: (prev: IUrlSearch) => {
-        return {
-          ...prev, e: encodeState({ obj: it, flag: true, modal: "item" })
-        }
-      }
-    });
   }, [opts]);
 
 
@@ -109,7 +103,7 @@ export function TagItemListProvider({ children }: { children: ReactNode }) {
     error,
     pageChange,
     pageSizeChange,
-    editItemClick,
+    listItemClick,
   } as unknown as IItemListContext),
     [
       items,
@@ -119,7 +113,7 @@ export function TagItemListProvider({ children }: { children: ReactNode }) {
       error,
       pageChange,
       pageSizeChange,
-      editItemClick,
+      listItemClick,
     ]
   );
   return <ItemListContext.Provider value={contextValue}> {children} </ItemListContext.Provider>

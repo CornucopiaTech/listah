@@ -6,10 +6,6 @@ import type {
 
 
 
-
-import type {
-  IReadQuery,
-} from "./query";
 import {
   type Pagination,
 } from "./pagination";
@@ -42,8 +38,19 @@ export type IListContext = {
 }
 
 
+export type IItemListContext = {
+  items: IItem[],
+  pagination: Pagination,
+  isPending: boolean,
+  isError: boolean,
+  error: Error | null,
+  pageChange: (event: MouseEvent<HTMLButtonElement> | null, value: number) => void,
+  pageSizeChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
+  editItemClick: (idx: number) => void,
+}
+
+
 export type ITagListContext = {
-  // query: IReadQuery,
   tags: ITag[],
   pagination: Pagination,
   isPending: boolean,
@@ -51,18 +58,21 @@ export type ITagListContext = {
   error: Error | null,
   pageChange: (event: MouseEvent<HTMLButtonElement> | null, value: number) => void,
   pageSizeChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
-  listItemClick: (idx: number) => ReactNode,
+  listItemClick: (idx: number) => void,
+  viewItemsClick: (idx: number) => void,
+  editTagClick: (idx: number) => void,
+}
 
 
-  // childQuery: IReadQuery,
-  items: IItem[],
-  childPagination: Pagination,
-  childIsPending: boolean,
-  childIsError: boolean,
-  childError: Error | null,
-  childPageChange: (event: MouseEvent<HTMLButtonElement> | null, value: number) => void,
-  childPageSizeChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
-  childListItemClick: (idx: number) => ReactNode,
-
-
+export type IFilterListContext = {
+  filters: IFilter[],
+  pagination: Pagination,
+  isPending: boolean,
+  isError: boolean,
+  error: Error | null,
+  pageChange: (event: MouseEvent<HTMLButtonElement> | null, value: number) => void,
+  pageSizeChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
+  listItemClick: (idx: number) => void,
+  viewItemsClick: (idx: number) => void,
+  editFilterClick: (idx: number) => void,
 }

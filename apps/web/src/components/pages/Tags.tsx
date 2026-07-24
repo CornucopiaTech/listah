@@ -6,6 +6,7 @@ import type {
   ReactNode,
 } from 'react';
 import { useTheme, } from '@mui/material/styles';
+import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -19,10 +20,15 @@ import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
+import Stack from '@mui/material/Stack';
+import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import CategoryIcon from '@mui/icons-material/Category';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import TagIcon from '@mui/icons-material/Tag';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 
 
 
@@ -31,58 +37,52 @@ import TagIcon from '@mui/icons-material/Tag';
 import {
   useAppStore,
 } from '@/hooks/store/boundStore';
+import type {
+  ITagListContext,
+  IBreadcrumbContext,
+  IListContext,
+  IFormContext,
+  ITagFormContext,
+} from '@/domain/entities';
 import {
-  AppTagModal,
-  AppFilterModal,
+  ListItemStyling
+} from "@/helpers/defaults";
+import type { AppTheme } from '@/system/theme';
+import {
+  useTagList,
+  useBreadcrumb,
+  FormContext,
+  ListContext,
+  TagListProvider,
+  TagItemListProvider,
+  TagFormProvider,
+  useUpdateTags,
+  BreadcrumbProvider,
+  ItemFormProvider,
+} from "@/hooks/context";
+import {
+  getFormArrayTextFieldProps,
+  getFormTextFieldProps,
+  ItemFormTagBox,
+  AppSectionPaper,
   AppContainer,
   ListLayout,
   ListBox,
   OuterBox,
   ItemList,
-  AppItemModal
-} from '@/components/layout';
-import type {
-  ITagListContext,
-  ITagRouteContext,
-  IListContext,
-} from '@/domain/entities';
-import {
-  TagFormDataProvider,
-  TagFormProvider,
-  FilterFormDataProvider,
-  FilterFormProvider,
-  ItemFormDataProvider,
-  ItemFormProvider,
-} from '@/hooks/services/useForm';
-
-import {
-  ListContext,
-} from "@/hooks/context/lists";
-import {
-  ListItemStyling
-} from "@/helpers/defaults";
-import {
-  AppSectionPaper,
-} from '@/components/core/AppPaper';
-import type { AppTheme } from '@/system/theme';
-import {
-  useListTags,
-  useRouteTags,
-  TagListProvider,
-  TagItemListProvider,
-  TagRouteProvider,
-} from "@/hooks/context/tags";
+  FormDialog,
+  UpdateFormActions,
+  AppTooltip,
+  FlexEndBox,
+  FlexStartBox,
+  ItemUpdate,
+} from "@/components";
 
 
 
-// ToDo: Stop List (or Tag) from re-rendering when the other changes its context.
-// ToDo: Disable pagination button when there is no content
+
 export function Tags() {
   const theme: AppTheme = useTheme();
-  const storeTagModal = useAppStore((state) => state.tagModal);
-  const storeFilterModal = useAppStore((state) => state.filterModal);
-  const storeItemModal = useAppStore((state) => state.itemModal);
-
   // ToDo: change background colour of tooltip of speeddial
   const actions = [
     { icon: <TagIcon />, name: 'Create new tag' },
@@ -92,6 +92,8 @@ export function Tags() {
 
   return (
     <AppContainer mw="md" >
+      <TagFormProvider> <UpdateTag /> </TagFormProvider>
+      <ItemFormProvider route="/tags"> <ItemUpdate /> </ItemFormProvider>
       <SpeedDial
         direction="up"
         ariaLabel="SpeedDial basic example"
@@ -129,10 +131,11 @@ export function Tags() {
         </Grid>
         <Divider orientation="vertical" key="divider" sx={{ borderColor: theme.palette.primary.contrastText }} />
         <Grid key="item" size={6.5} >
-          <TagRouteProvider><ListedItems /></TagRouteProvider>
+          <BreadcrumbProvider route="/tags"><ListedItems /></BreadcrumbProvider>
         </Grid>
       </Grid>
-      {
+
+      {/* {
         storeItemModal &&
         <ItemFormDataProvider>
           <ItemFormProvider>
@@ -141,13 +144,9 @@ export function Tags() {
         </ItemFormDataProvider>
       }
       {
-        storeTagModal &&
-        <TagFormDataProvider> <TagFormProvider> <AppTagModal /> </TagFormProvider> </TagFormDataProvider>
-      }
-      {
         storeFilterModal &&
         <FilterFormDataProvider> <FilterFormProvider > <AppFilterModal /> </ FilterFormProvider> </FilterFormDataProvider>
-      }
+      } */}
     </AppContainer >
   );
 }
@@ -163,7 +162,9 @@ export function TagList() {
     pageChange,
     pageSizeChange,
     listItemClick,
-  } = useListTags() as unknown as ITagListContext;
+    viewItemsClick,
+    editTagClick,
+  } = useTagList() as unknown as ITagListContext;
   const storeTagScroll = useAppStore((state) => state.tagScroll);
 
   function renderRow(itemKey: number): ReactNode {
@@ -171,18 +172,20 @@ export function TagList() {
     const tc = item?.name ?? "";
     const itemcount = item?.count?.toString() ?? "0";
     return (
-      <ListItem key={itemKey + tc} component="div"
-        disablePadding sx={ListItemStyling}
-        onClick={() => listItemClick(itemKey)} >
-        <ListItemButton>
-          <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
-          <Chip
-            variant="contained"
+      <ListItem key={itemKey + tc} component="div" disablePadding sx={ListItemStyling} >
+        <FlexStartBox >
+          <ListItemButton onClick={() => viewItemsClick(itemKey)}>
+            <ListItemText primary={<Typography variant="body2" >{tc}</Typography>} />
+          </ListItemButton>
+        </FlexStartBox>
+        <FlexEndBox >
+          <Chip variant="contained" sx={{ marginX: "10px", marginY: 0, }}
             // @ts-ignore
-            color={itemKey % 2 == 0 ? "inherit" : "secondary"}
-            label={itemcount}
+            color={itemKey % 2 == 0 ? "inherit" : "secondary"} label={itemcount}
           />
-        </ListItemButton>
+          <IconButton aria-label="view" onClick={() => viewItemsClick(itemKey)}> <AppTooltip title="View items in tag"><VisibilityIcon /></AppTooltip> </IconButton>
+          <IconButton aria-label="edit" onClick={() => editTagClick(itemKey)}> <AppTooltip title="Edit tag"><EditIcon /></AppTooltip> </IconButton>
+        </FlexEndBox>
       </ListItem>
     );
   }
@@ -231,7 +234,7 @@ function ListedItems() {
   const {
     breadcrumbClick,
     breadcrumbTail,
-  } = useRouteTags() as unknown as ITagRouteContext;
+  } = useBreadcrumb() as unknown as IBreadcrumbContext;
   return (<Fragment>
     <Breadcrumbs aria-label="breadcrumb" >
       <Link underline="hover" color="inherit" onClick={breadcrumbClick}>
@@ -243,4 +246,85 @@ function ListedItems() {
       <TagItemListProvider> <ItemList /> </TagItemListProvider>
     </AppSectionPaper>
   </Fragment>)
+}
+
+
+function UpdateTag() {
+  const theme: AppTheme = useTheme();
+  const legendStyle = {
+    padding: '0 0.5rem',
+    color: theme.palette.primary.main,
+    fontSize: "12px"
+  }
+  const {
+    openDialog,
+    closeDialog,
+    mutation,
+    form,
+    title,
+  } = useUpdateTags() as unknown as ITagFormContext;
+
+  const content = (
+    <Box component="section" >
+      <Stack spacing={0} sx={{ width: '100%' }} >
+        <form.Field
+          key="name"
+          name="name"
+          // validators={validator}
+          children={
+            (field: any) => {
+              const props = getFormTextFieldProps({ key: "name", field, });
+              // @ts-ignore
+              return < TextField {...props} />
+            }
+          }
+        />
+        <form.Field key="props" name="props" mode="array" >
+          {(field: any) => (
+            // @ts-ignore
+            <ItemFormTagBox component="fieldset">
+              <legend style={legendStyle}>properties</legend>
+              <Button variant="text" color="inherit" onClick={() => field.pushValue("")} >
+                Click here to add a new property
+              </Button>
+              {
+                field.state.value && field.state.value.length > 0 &&
+                <Grid container spacing={3} sx={{ width: '100%' }}>{
+                  field.state.value && field.state.value.map((_: any, i: number) => {
+                    const childKeyName = "props" + `[${i}]`;
+                    return <form.Field key={i} name={childKeyName}
+                    // validators={validator}
+                    >
+                      {(subField: any) => {
+                        const cprops = getFormArrayTextFieldProps({ key: "props", field, subField, idx: i });
+
+                        return (
+                          <Grid size="auto" key={i} /*Using the tag id as the key causes the form to lose focus when adding new tags to the form, especially when the form length is longer than the maximum allowed length of the dialog. */ >
+                            {/* @ts-ignore */}
+                            <TextField {...cprops} />
+                          </Grid>
+                        )
+                      }}
+                    </form.Field>
+                  })
+                }</Grid>
+              }
+            </ItemFormTagBox>
+          )}
+        </form.Field>
+      </Stack>
+    </Box>
+  )
+
+  const contextValue = {
+    title,
+    content,
+    actions: <UpdateFormActions />,
+    openDialog,
+    closeDialog,
+    form,
+    mutation,
+  } as unknown as IFormContext;
+
+  return <FormContext.Provider value={contextValue} > <FormDialog /> </FormContext.Provider >
 }

@@ -55,8 +55,10 @@ const textSlopProps = {
   inputLabel: { style: { fontSize: "1rem" } },
 }
 
+
 export function getFormArrayTextFieldProps({ key, field, subField, idx }: { key: string, field: any, subField: any, idx: number }) {
   return {
+    multiline: true,
     slotProps: {
       input: {
         style: { fontSize: "15px" },
@@ -75,8 +77,37 @@ export function getFormArrayTextFieldProps({ key, field, subField, idx }: { key:
     size: "small",
     variant: "standard",
     margin: "dense",
-    error: subField.state.meta.errors.length > 0 || subField.state.value == "",
-    helperText: subField.state.meta.errors.length > 0 ? subField.state.meta.errors.join(', ') : subField.state.value == "" ? "required" : ""
+  }
+}
+
+export function getFormItemPropsArrayTextFieldProps({ key, field, subField, idx }: { key: string, field: any, subField: any, idx: number }) {
+  const err = subField.state.meta.errors.length > 0 || subField.state.value == "";
+  const helpText = subField.state.meta.errors.length > 0 ? subField.state.meta.errors.join(', ') : subField.state.value == "" ? "required" : "";
+  return {
+    fullWidth: true,
+    multiline: true,
+    slotProps: {
+      ...textSlopProps,
+      input: {
+        ...textSlopProps.input,
+        endAdornment: (
+          < Icon icon="material-symbols-light:close-rounded" width="30" height="30"
+            onClick={() => field.removeValue(idx)}
+          />
+        ),
+      },
+    },
+    id: key + "-" + idx,
+    value: subField.state.value.value,
+    label: subField.state.value.key,
+
+    onChange: (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
+      subField.handleChange({ ...subField.state.value, value: e.target.value }),
+    size: "small",
+    variant: "standard",
+    margin: "dense",
+    error: err,
+    helperText: helpText,
   }
 }
 
@@ -96,21 +127,22 @@ export function getFormTextFieldProps({ key, field, }: { key: string, field: any
             onClick={() => field.handleChange("")}
           />
         )
-      },
-      id: key,
-      key,
-      value: field.state.value,
-      label: key,
-      onChange: (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value),
-      size: "small",
-      variant: "standard",
-      margin: "dense",
-      error: error,
-      helperText: helperText,
-    }
+      }
+    },
+    id: key,
+    key,
+    value: field.state.value,
+    label: key,
+    onChange: (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value),
+    size: "small",
+    variant: "standard",
+    margin: "dense",
+    error: error,
+    helperText: helperText,
   }
-
 }
+
+
 
 export function AppArrayTextField({ keyName, field, subField, i }: { keyName: string, field: any, subField: any, i: number }): ReactNode {
   return (

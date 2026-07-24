@@ -28,24 +28,3 @@ export const ZTagProperty = z.record(
   })
 );
 export type ITagProperty = z.infer<typeof ZTagProperty>;
-
-
-
-export type ITagRouteContext = {
-  breadcrumbClick: () => void,
-  breadcrumbTail: string | null,
-}
-
-export type ITagUpdateContext = {
-  title: string,
-  isPending: boolean,
-  error: Error | null,
-  form: any,
-  mutation: any,
-  beginUpdate: boolean,
-  exitUpdate: () => void,
-  validator: {
-    onChange: ({ value }: { value: any }) => string,
-    onBlur: ({ value }: { value: any }) => string
-  }
-}

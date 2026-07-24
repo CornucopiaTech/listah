@@ -19,13 +19,13 @@ export const SpaceEvenlyBox = styled(Box)(() => ({
 }));
 
 export const FlexEndBox = styled(Box)(() => ({
-  justifyContent: 'flex-end', // alignContent: 'center',
-  display: 'flex', width: '100%',
+  justifyContent: 'flex-end',
+  display: 'flex', width: '100%', // alignContent: 'center',
 }));
 
 export const FlexStartBox = styled(Box)(() => ({
-  justifyContent: 'flex-start', alignContent: 'center',
-  display: 'flex', width: '100%',
+  justifyContent: 'flex-start',
+  display: 'flex', width: '100%', // alignContent: 'center',
 }));
 
 

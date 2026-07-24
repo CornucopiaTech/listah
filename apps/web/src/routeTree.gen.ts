@@ -10,18 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TagsRouteImport } from './routes/tags'
-import { Route as ItemsRouteImport } from './routes/items'
 import { Route as FiltersRouteImport } from './routes/filters'
 import { Route as IndexRouteImport } from './routes/index'
 
 const TagsRoute = TagsRouteImport.update({
   id: '/tags',
   path: '/tags',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ItemsRoute = ItemsRouteImport.update({
-  id: '/items',
-  path: '/items',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FiltersRoute = FiltersRouteImport.update({
@@ -38,34 +32,30 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/filters': typeof FiltersRoute
-  '/items': typeof ItemsRoute
   '/tags': typeof TagsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/filters': typeof FiltersRoute
-  '/items': typeof ItemsRoute
   '/tags': typeof TagsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/filters': typeof FiltersRoute
-  '/items': typeof ItemsRoute
   '/tags': typeof TagsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/filters' | '/items' | '/tags'
+  fullPaths: '/' | '/filters' | '/tags'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/filters' | '/items' | '/tags'
-  id: '__root__' | '/' | '/filters' | '/items' | '/tags'
+  to: '/' | '/filters' | '/tags'
+  id: '__root__' | '/' | '/filters' | '/tags'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FiltersRoute: typeof FiltersRoute
-  ItemsRoute: typeof ItemsRoute
   TagsRoute: typeof TagsRoute
 }
 
@@ -76,13 +66,6 @@ declare module '@tanstack/react-router' {
       path: '/tags'
       fullPath: '/tags'
       preLoaderRoute: typeof TagsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/items': {
-      id: '/items'
-      path: '/items'
-      fullPath: '/items'
-      preLoaderRoute: typeof ItemsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/filters': {
@@ -105,7 +88,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   FiltersRoute: FiltersRoute,
-  ItemsRoute: ItemsRoute,
   TagsRoute: TagsRoute,
 }
 export const routeTree = rootRouteImport

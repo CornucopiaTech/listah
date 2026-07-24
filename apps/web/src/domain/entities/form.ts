@@ -1,6 +1,10 @@
 import type {
   ReactNode,
 } from 'react';
+import type {
+  AppError
+} from './common';
+import type { ITag } from "./tag";
 
 
 export type IFilterFormCheckedTag = {
@@ -24,12 +28,57 @@ export type IFormDataContext = {
   error: Error | null,
 }
 
-export type IFormContext = {
-  form: any,
-  mutation: any,
+export type IFormBuilder = {
+  name: string,
+  mode: string,
+  kind: string,
+  componentPropGen: () => any,
+  legend: string,
+  newValueHint: string,
+  newValue: any,
+
+}
+
+export type IFormContextWithBuilder = {
+  formBuilder: IFormBuilder[],
+  defaultValue: any,
+  formValidators: ({ value }: { value: any }) => string | undefined,
+  prepSubmission: ({ value, userId }: { value: any, userId?: string }) => void,
+  mutator: () => any,
   title: string,
-  content: ReactNode,
   actions: ReactNode,
   openDialog: boolean,
   closeDialog: () => void,
+}
+
+export type ITagFormContext = {
+  openDialog: boolean,
+  closeDialog: () => void,
+  mutation: any,
+  form: any,
+  title: string,
+}
+
+export type IItemFormContext = {
+  openDialog: boolean,
+  closeDialog: () => void,
+  mutation: any,
+  form: any,
+  title: string,
+  formData: any,
+  isPending: boolean,
+  error: Error | null | AppError,
+  tags: ITag[],
+  data: any,
+}
+
+
+export type IFormContext = {
+  title: string,
+  actions: ReactNode,
+  content: ReactNode,
+  openDialog: boolean,
+  closeDialog: () => void,
+  form: any,
+  mutation: any,
 }

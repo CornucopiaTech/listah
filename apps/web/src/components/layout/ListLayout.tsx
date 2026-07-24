@@ -39,21 +39,11 @@ import { useLists } from "@/hooks/context/lists";
 
 
 export function OuterBox({ children }: { kind?: string, children: ReactNode }): ReactNode {
-  // const sx = kind && kind == "item" ? {
-  //   ...ItemListBoxSize,          // Binds the vertical size
-  //   overflowY: 'auto',    // Enables scrolling when content overflows
-  // } : {
-  //   ...TagFilterListBoxSize,          // Binds the vertical size
-  // }
   const sx = {
-    ...ListBoxSize,          // Binds the vertical size
-    overflowY: 'auto',    // Enables scrolling when content overflows
+    ...ListBoxSize, /*Binds the vertical size */
+    overflowY: 'auto', /* Enables scrolling when content overflows*/
   }
-  return (
-    <Box key="data-content"
-      sx={sx}
-    > {children} </Box>
-  );
+  return (<Box key="data-content" sx={sx} > {children} </Box>);
 }
 
 

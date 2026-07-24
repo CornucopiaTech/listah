@@ -22,7 +22,7 @@ import Alert from '@mui/material/Alert';
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
 // import reportWebVitals from './reportWebVitals.ts'
-import NotFound from '@/components/common/NotFound';
+import NotFound from '@/components/pages/NotFound';
 import theme from '@/system/theme';
 import { GlobalShell } from '@/components/layout';
 
@@ -106,7 +106,8 @@ async function loadConfig() {
 
 function StrictModeWrapper({ children }: { children: ReactNode }) {
   if (process.env.NODE_ENV === "development") {
-    return <StrictMode>{children}</StrictMode>
+    return <>{children}</>
+    // return <StrictMode>{children}</StrictMode>
   }
   return children
 }

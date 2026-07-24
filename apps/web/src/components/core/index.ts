@@ -7,5 +7,5 @@ export * from "./AppStack";
 export * from "./AppTextField";
 export * from "./AppFormArrayTextField";
 export * from "./AppPagination";
-export * from "./AppFormActions";
+export * from "./AppTooltip";
 // export * from "./App";

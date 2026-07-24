@@ -28,8 +28,8 @@ import {
   DefaultPagination,
 } from '@/domain/entities';
 import {
-  useListTag
-} from '@/hooks/queries';
+  useTagList,
+} from '@/hooks/context/tags';
 import {
   FormDataContext
 } from './useForm';
@@ -47,7 +47,7 @@ export function ItemFormDataProvider({ children, displayTag, displayFilter }: { 
   }
   const {
     isPending, isError, data, error
-  }: UseQueryResult<ITagReadResponse> = useListTag(tagQuery);
+  }: UseQueryResult<ITagReadResponse> = useTagList();
 
 
 

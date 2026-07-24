@@ -1,44 +1,77 @@
 
 import {
   Fragment,
+  useState,
 } from "react";
 import type {
   ReactNode,
+
 } from 'react';
+import { useTheme, } from '@mui/material/styles';
 import ListItem from '@mui/material/ListItem';
+import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 import Alert from '@mui/material/Alert';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
+import EditIcon from '@mui/icons-material/Edit';
+import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Autocomplete from '@mui/material/Autocomplete';
+
+
+
 
 
 // Internal
-// import {
-//   AppItemModal
-// } from "@/components/layout/AppItemModal";
 import {
   useAppStore,
 } from '@/hooks/store/boundStore';
+import type {
+  IListContext,
+  IFormContext,
+  IItemListContext,
+  IItemFormContext,
+  ITag,
+  IItemFormProps,
+} from '@/domain/entities';
 import {
+  DefaultTag,
+} from '@/domain/entities';
+import {
+  ListItemStyling
+} from "@/helpers/defaults";
+import type { AppTheme } from '@/system/theme';
+import {
+  useListItems,
+  FormContext,
+  ListContext,
+  useUpdateItems,
+
+} from "@/hooks/context";
+import {
+  getFormTextFieldProps,
+  getFormItemPropsArrayTextFieldProps,
+  ItemFormTagBox,
   ListLayout,
   ListBox,
   OuterBox,
-} from "@/components/layout";
+  FormDialog,
+  UpdateFormActions,
+  AppTooltip,
+  FlexStartBox,
+  AlertDialog,
+} from "@/components";
 import {
-} from '@/domain/entities';
-import type {
-  IItemListContext,
-  IListContext,
-} from '@/domain/entities';
-import { ListItemStyling } from "@/helpers/defaults";
-import {
-  useListItems,
-} from "@/hooks/context/items";
-import {
-  ListContext,
-} from "@/hooks/context/lists";
+  validateItemTag,
+} from "@/domain/rules/fieldLength";
+
+
 
 
 
@@ -51,22 +84,31 @@ export function ItemList() {
     error,
     pageChange,
     pageSizeChange,
-    listItemClick,
+    editItemClick,
   } = useListItems() as unknown as IItemListContext;
   const storeItemScroll = useAppStore((state) => state.itemScroll);
+
+
   function renderRow(itemKey: number): ReactNode {
     const item = items[itemKey]
     let tc: string = item.name ? item.name : "";
     return (
       <Fragment>
-        <ListItem key={itemKey + item.id}
-          disablePadding
-          disableGutters
-          sx={ListItemStyling}
-          onClick={() => listItemClick(itemKey)}>
-          <ListItemButton >
-            <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
-          </ListItemButton>
+        <ListItem key={itemKey + item.id} component="div" disablePadding sx={{ ...ListItemStyling, }} onClick={() => editItemClick(itemKey)}>
+          <Box sx={{ width: "100%", display: 'flex', }}>
+            <Box sx={{ width: "95%" }}>
+              <FlexStartBox>
+                <ListItemButton >
+                  <ListItemText primary={<Typography variant="body2" >{tc}</Typography>} />
+                </ListItemButton>
+              </FlexStartBox>
+            </Box>
+            <Box sx={{ justifyContent: 'flex-end', display: 'flex', minWidth: "10px" }}>
+              <IconButton aria-label="edit" onClick={() => editItemClick(itemKey)}>
+                <AppTooltip title="Edit tag"><EditIcon /></AppTooltip>
+              </IconButton>
+            </Box>
+          </Box>
         </ListItem>
         <Divider key="divider" />
       </Fragment>
@@ -82,9 +124,9 @@ export function ItemList() {
     isError: isError,
     error: error,
     scrollIndex: Math.max(0, storeItemScroll),
-    pageChange: pageChange,
-    pageSizeChange: pageSizeChange,
-    clickRow: listItemClick,
+    pageChange: items.length > 0 ? pageChange : undefined,
+    pageSizeChange: items.length > 0 ? pageSizeChange : undefined,
+    clickRow: editItemClick,
     renderRow,
   } as unknown as IListContext;
 
@@ -113,4 +155,303 @@ export function ItemList() {
   return (
     <Shell><Alert severity="error">"An error occurred. Please try again"</Alert></Shell>
   )
+}
+
+
+
+export function AppItemFormTagAutocompleteField(): ReactNode {
+  const { form, formData, data } = useUpdateItems() as unknown as IItemFormContext;
+  const { knownTags } = formData;
+  const theme: AppTheme = useTheme();
+  const [tagToDelete, setTagToDelete] = useState<{ c: any, p: any } | null>(null);
+  const serverTags = data?.tags ?? [];
+
+
+
+  function addNewTagProps({ value }: any) {
+    const oldProps = form.getFieldValue('props');
+    let newPropList: string[] = [];
+    (value as ITag[]).forEach((iterTag: ITag) => {
+      const iterTagProps = iterTag?.props ?? []
+      newPropList = [...newPropList, ...iterTagProps]
+    }, []);
+    newPropList = [...new Set(newPropList)].sort()
+    let newProps: IItemFormProps[] = [];
+    newPropList.filter(i => i !== "").forEach(
+      (iterProp: string) => {
+        const inOldProp = oldProps.filter((i: IItemFormProps) => i.key == iterProp)
+        if (inOldProp.length == 0) {
+          newProps = [...newProps, { key: iterProp, value: "" }]
+        } else {
+          newProps = [...newProps, { key: iterProp, value: inOldProp[0].value || "" }]
+        }
+      }
+    )
+    newProps = newProps.sort((a: IItemFormProps, b: IItemFormProps) => b.value.localeCompare(a.value))
+    form.setFieldValue('props', newProps)
+  }
+
+  function handleTagsChange(parentF: any, childF: any, newValue: string | null) {
+    const sval = newValue ? newValue : "";
+    if (sval == "") {
+      // If the value was deleted, replace the tag object with the default tag object.
+      // @ts-ignore
+      setTagToDelete({ c: childF, p: parentF });
+    } else {
+      // If a nonzero value is added, then use the information to update the tag object.
+      handleTagAdd(parentF, childF, newValue)
+    }
+  }
+
+  function handleTagAdd(parentF: any, childF: any, newValue: string | null) {
+    const sval = newValue ? newValue : "";
+    const fField = parentF?.state?.value as unknown as ITag[] ?? [];
+
+    // If a nonzero value is added, then use the information to update the tag object.
+    const it = serverTags.filter((itt: ITag) => itt.name == sval);
+    if (it.length > 0) {
+      // If the passed value is a known name of a tag..
+      childF.handleChange(it[0]);
+      addNewTagProps({ value: [...fField, it[0]] })
+    }
+    else {
+      childF.handleChange({ ...DefaultTag, name: sval });
+    }
+  }
+
+  function handleTagDeletePostConfirm(uInput: boolean) {
+    // if (yesDelete) {
+    if (uInput) {
+      // @ts-ignore
+      const par = tagToDelete?.p;
+      // @ts-ignore
+      const chd = tagToDelete?.c;
+      const fField = par?.state?.value as unknown as ITag[] ?? [];
+      const newTagList = fField.filter(fsv => fsv.id != chd.state.value.id);
+      addNewTagProps({ value: newTagList });
+      if (newTagList.filter(itt => itt.name !== "").length >= 1) {
+        const removeIdx = par.state.value.map(
+          (iF: ITag) => iF.id
+        ).indexOf(chd.state.value.id);
+        if (removeIdx > -1) {
+          par.removeValue(removeIdx);
+        }
+      } else {
+        chd.handleChange(DefaultTag);
+      }
+    }
+    setTagToDelete(null);
+  }
+
+  const dialogTitle = tagToDelete?.c?.state.value.name ?? "";
+  const dialogContent = (
+    <Fragment>
+      <Typography variant="body2">
+        Deleting this tag might remove the following item properties:
+      </Typography>
+
+      <List>
+        {/* @ts-ignore */}
+        {tagToDelete?.c?.state.value.props.map((tp) =>
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemText
+                primary={
+                  <Typography variant="condensedBody2" >{tp}</Typography>
+                }
+              />
+            </ListItemButton>
+          </ListItem>
+        )}
+      </List>
+    </Fragment>
+  );
+
+
+  const dialogActions = (
+    <Stack direction="row" spacing={4}>
+      <Button variant="contained" onClick={() => handleTagDeletePostConfirm(false)}>Cancel</Button>
+      <Button variant="contained" color="error" onClick={() => handleTagDeletePostConfirm(true)}> Delete </Button>
+    </Stack>
+  );
+
+
+  const validator = {
+    onChange: ({ value }: { value: ITag }) => validateItemTag(value as unknown as ITag, knownTags.current),
+    onBlur: ({ value }: { value: ITag }) => validateItemTag(value as unknown as ITag, knownTags.current),
+  };
+
+  return (
+    <form.Field name="tags" mode="array" key="tag-parent" >
+      {
+        (field: any) => {
+          return <Fragment>
+            <AlertDialog
+              openDialog={tagToDelete !== null}
+              title={dialogTitle}
+              content={dialogContent}
+              actions={dialogActions}
+            />
+            {/* @ts-ignore */}
+            <ItemFormTagBox key="tags" component="fieldset">
+              <legend style={{ padding: '0 0.5rem', color: theme.palette.primary.main, fontSize: "12px" }}>tags</legend>
+              <Button variant="text" color="inherit" onClick={() => field.pushValue(DefaultTag)} >
+                Click here to add a new tag
+              </Button>
+              {
+                field.state.value && field.state.value.length > 0 &&
+                <Grid container spacing={3} sx={{ width: '100%' }}>{
+                  field.state.value && field.state.value.map((_: any, i: number) => {
+                    return (
+                      <form.Field key={i} name={`tags[${i}]`} validators={validator} >{
+                        (subField: any) => {
+                          return (
+                            <Grid
+                              key={i} //Using the tag id as the key causes the form to lose focus when adding new tags to the form, especially when the form length is longer than the maximum allowed length of the dialog.
+                              size={{ xs: 12, sm: 6, lg: 4 }}>
+                              <Autocomplete
+                                slotProps={{ listbox: { sx: { fontSize: '14px', } }, }}
+                                size="small"
+                                id={"item-tag-" + i}
+                                autoHighlight
+                                options={serverTags.map((opt: ITag) => opt.name)}
+                                value={subField.state.value.name}
+                                inputValue={subField.state.value.name}
+                                onChange={
+                                  (e: SyntheticEvent<Element, Event>, newValue: string | null) => {
+                                    // Handles ONLY changes from the provided options.
+                                    e && e.preventDefault();
+                                    e && e.stopPropagation();
+                                    handleTagsChange(field, subField, newValue);
+                                  }
+                                }
+                                onInputChange={
+                                  (e: SyntheticEvent<Element, Event>, newValue: string) => {
+                                    // Handles both handwritten and provided option value changes.
+                                    e && e.preventDefault();
+                                    e && e.stopPropagation();
+                                    handleTagsChange(field, subField, newValue);
+                                  }
+                                }
+                                renderInput={
+                                  (params) =>
+                                    <TextField
+                                      error={subField.state.meta.errors.length > 0}
+                                      helperText={subField.state.meta.errors.join(', ')}
+                                      // slotProps causes autocorrect to stop working
+                                      margin="dense"
+                                      {...params}
+                                      label=""
+                                      // label={"tag " + (i + 1)}
+                                      variant="standard"
+                                    />
+                                }
+                              />
+                            </Grid>
+                          )
+                        }
+                      }</form.Field>
+                    );
+                  })
+                }</Grid>
+              }
+            </ItemFormTagBox>
+          </Fragment>
+        }
+      }
+    </form.Field >
+  );
+
+}
+
+
+export function ItemUpdate() {
+  const {
+    openDialog,
+    closeDialog,
+    mutation,
+    form,
+    title,
+    formData,
+    isPending,
+    error,
+    tags,
+  } = useUpdateItems() as unknown as IItemFormContext;
+
+
+  type itemFields = "id" | "userId" | "name" | "note" | `props[${number}]` | "softDelete" | `tags[${number}]`
+  const fields: itemFields[] = ['name', "note"];
+
+
+  let content = undefined;
+  let actions = undefined;
+  if (isPending) {
+    content = <LinearProgress />;
+  }
+  if (error) {
+    content = (
+      <Alert severity="error"> {error?.message || "An error occurred. Please try again"}</Alert>
+    );
+  }
+  if (tags.length == 0) {
+    content = (
+      <Typography variant="h6"> No tags found </Typography>
+    );
+  }
+  if (tags.length > 0 && formData) {
+    content = (
+      <Box component="section" >
+        <Stack spacing={0} sx={{ width: '100%' }} >
+          {fields.map(
+            (fds: itemFields) => {
+              return <form.Field
+                key={fds} name={fds}
+                children={
+                  (field: any) => {
+                    const props = getFormTextFieldProps({ key: fds, field, });
+                    // @ts-ignore
+                    return < TextField {...props} />
+                  }
+                }
+              />
+            }
+          )}
+          <form.Field name="props" mode="array">
+            {
+              (field: any) => (
+                <Fragment >
+                  {
+                    field.state.value &&
+                    field.state.value.map((_: any, i: number) => {
+                      return <form.Field key={"item-prop-key-" + i} name={`props[${i}]`}>{
+                        (subField: any) => {
+                          const cprops = getFormItemPropsArrayTextFieldProps({ key: "props", field, subField, idx: i });
+                          // @ts-ignore
+                          return <TextField {...cprops} />
+                        }
+                      }</form.Field>
+                    })
+                  }
+                </Fragment>
+              )
+            }
+          </form.Field>
+          <AppItemFormTagAutocompleteField />
+        </Stack>
+      </Box>
+    );
+    actions = <UpdateFormActions />
+  }
+
+  const contextValue = {
+    title,
+    content,
+    actions,
+    openDialog,
+    closeDialog,
+    form,
+    mutation,
+  } as unknown as IFormContext;
+
+  return <FormContext.Provider value={contextValue} > <FormDialog /> </FormContext.Provider >
 }

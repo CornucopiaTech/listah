@@ -3,7 +3,6 @@ import {
   useCallback,
   useMemo,
 } from 'react';
-
 import type {
   ReactNode,
   ChangeEvent,
@@ -27,8 +26,8 @@ import {
 import type {
   ITagListContext,
   ITagReadResponse,
-  IReadQuery,
-  IPagination,
+  IReadRequest,
+  IUrlSearch,
 } from "@/domain/entities";
 import {
   DefaultReadQuery,
@@ -41,7 +40,10 @@ import {
 import {
   TagListContext
 } from './useTag';
-
+import {
+  encodeState,
+  decodeState
+} from '@/helpers/encoders';
 
 
 export function TagListProvider({ children }: { children: ReactNode }) {
@@ -50,8 +52,7 @@ export function TagListProvider({ children }: { children: ReactNode }) {
   const storeSetItemScroll = useAppStore((state) => state.setItemScroll);
   const navigate = useNavigate();
   const routeApi = getRouteApi("/tags");
-  const urlQuery = routeApi.useSearch({ select: (search) => search.query, }) as unknown as IReadQuery;
-  const urlPagination = routeApi.useSearch({ select: (search) => search.pagination, }) as unknown as IPagination;
+  const { query: urlQuery, pagination: urlPagination } = decodeState(routeApi.useSearch({ select: (search) => search.p, })) as unknown as IReadRequest;
   const opts = {
     pagination: { ...urlPagination },
     query: { ...urlQuery, userId: user?.id ?? "", },
@@ -62,28 +63,83 @@ export function TagListProvider({ children }: { children: ReactNode }) {
   const paginationObj = data?.pagination ? data.pagination : urlPagination ? urlPagination : DefaultPagination;
   const pagination = new Pagination(paginationObj);
 
+  const storeSetSuccessMsg = useAppStore((state) => state.setSuccessMsg);
+  const storeSetWarnMsg = useAppStore((state) => state.setWarnMsg);
+  const storeSetErrorMsg = useAppStore((state) => state.setErrorMsg);
+
+  const resetMsg = () => {
+    console.info("Resetting Msg from List provider")
+    storeSetSuccessMsg(undefined);
+    storeSetWarnMsg(undefined);
+    storeSetErrorMsg(undefined);
+  }
+
 
   const pageChange = useCallback((event: MouseEvent<HTMLButtonElement> | null, value: number) => {
     if (event) { event.stopPropagation() };
     pagination.changePage(value);
-    navigate({ to: ".", search: (prev) => ({ ...prev, pagination: pagination.paging }) });
+    navigate({
+      to: ".",
+      search: (prev: IUrlSearch) => {
+        const dPrev = decodeState(prev.p) as unknown as IReadRequest;
+        return { ...prev, p: encodeState({ ...dPrev, pagination: pagination.paging }) }
+      }
+    });
   }, [opts]);
   const pageSizeChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     pagination.changeSize(e.target.value);
-    navigate({ to: ".", search: (prev) => ({ ...prev, pagination: pagination.paging }) });
+    navigate({
+      to: ".",
+      search: (prev: IUrlSearch) => {
+        const dPrev = decodeState(prev.p) as unknown as IReadRequest;
+        return { ...prev, p: encodeState({ ...dPrev, pagination: pagination.paging }) }
+      }
+    });
   }, [opts]);
 
   const listItemClick = useCallback((idx: number) => {
     const it = tags[idx];
     storeSetTagScroll(idx);
     storeSetItemScroll(0);
-    const c = {
+    const c = encodeState({
       query: { ...DefaultReadQuery, userId: opts.query.userId, tags: [it.id] },
       pagination: { ...DefaultPagination, size: pagination.paging.size },
       id: it.id, name: it.name,
-    };
-    navigate({ to: ".", search: (prev) => ({ ...prev, c }) });
+    });
+    navigate({
+      to: ".", search: (prev: IUrlSearch) => { return { ...prev, c } }
+    });
   }, [opts]);
+
+  const viewItemsClick = useCallback((idx: number) => {
+    const it = tags[idx];
+    storeSetTagScroll(idx);
+    storeSetItemScroll(0);
+    const c = encodeState({
+      query: { ...DefaultReadQuery, userId: opts.query.userId, tags: [it.id] },
+      pagination: { ...DefaultPagination, size: pagination.paging.size },
+      id: it.id, name: it.name,
+    });
+    navigate({
+      to: ".", search: (prev: IUrlSearch) => { return { ...prev, c } }
+    });
+  }, [opts]);
+
+  const editTagClick = useCallback((idx: number) => {
+    const it = tags[idx];
+    storeSetTagScroll(idx);
+    storeSetItemScroll(0);
+    resetMsg();
+    navigate({
+      to: ".",
+      search: (prev: IUrlSearch) => {
+        return {
+          ...prev, e: encodeState({ obj: it, flag: true, modal: "tag" })
+        }
+      }
+    });
+  }, [opts]);
+
 
 
   const contextValue = useMemo(() => ({
@@ -95,6 +151,8 @@ export function TagListProvider({ children }: { children: ReactNode }) {
     pageChange,
     pageSizeChange,
     listItemClick,
+    viewItemsClick,
+    editTagClick,
   } as unknown as ITagListContext),
     [
       tags,
@@ -105,6 +163,8 @@ export function TagListProvider({ children }: { children: ReactNode }) {
       pageChange,
       pageSizeChange,
       listItemClick,
+      viewItemsClick,
+      editTagClick,
     ]
   );
 

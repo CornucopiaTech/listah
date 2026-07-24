@@ -21,7 +21,7 @@ import {
 } from "@/domain/rules";
 import {
   useUpdateItem
-} from "@/hooks/queries";
+} from "@/hooks/context/items";
 import {
   FormContext,
   useFormDataContext

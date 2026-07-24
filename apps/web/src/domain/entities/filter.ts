@@ -1,23 +1,6 @@
 
 
 import * as z from "zod";
-import type {
-  ChangeEvent,
-  MouseEvent,
-  ReactNode
-} from 'react';
-
-
-
-import type {
-  IReadQuery,
-} from "./query";
-import {
-  type Pagination,
-} from "./pagination";
-
-
-
 
 export const ZFilter = z.object({
   id: z.string().catch(''),
@@ -35,18 +18,4 @@ export const DefaultFilter: IFilter = {
   tags: [],
   count: 0,
   softDelete: false,
-}
-
-
-export type IFilterListContext = {
-  query: IReadQuery,
-  filters: IFilter[],
-  pagination: Pagination,
-  isPending: boolean,
-  isError: boolean,
-  isFetching: boolean,
-  error: Error | null,
-  pageChange: (event: MouseEvent<HTMLButtonElement> | null, value: number) => void,
-  pageSizeChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
-  listItemClick: (idx: number) => ReactNode,
 }

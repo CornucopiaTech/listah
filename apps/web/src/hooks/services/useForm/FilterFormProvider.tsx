@@ -17,7 +17,7 @@ import {
 } from "@/domain/rules";
 import {
   useUpdateFilter
-} from "@/hooks/queries";
+} from "@/hooks/context/filters";
 import {
   FormContext,
   useFormDataContext,

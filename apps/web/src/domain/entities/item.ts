@@ -1,25 +1,12 @@
 import * as z from "zod";
-import type {
-  ChangeEvent,
-  MouseEvent,
-  ReactNode
-} from 'react';
 
-
-import type {
-  IReadQuery,
-} from "./query";
 import {
-  type Pagination,
 } from "./pagination";
 import {
   ZTag,
-  type ITag,
 } from "@/domain/entities/tag";
 
-import {
-  type IFilter,
-} from "@/domain/entities/filter";
+
 
 
 export const ZItemFormProps = z.object({
@@ -65,23 +52,4 @@ export const DefaultItem = {
   tagObjs: [],
   propObjs: [],
   softDelete: false,
-}
-
-
-
-export type IItemListContext = {
-  query: IReadQuery,
-  reference: ITag | IFilter,
-  title: string,
-  items: IItem[],
-  pagination: Pagination,
-  isPending: boolean,
-  isError: boolean,
-  isFetching: boolean,
-  error: Error | null,
-  passedTag: ITag,
-  passedFilter: IFilter,
-  pageChange: (event: MouseEvent<HTMLButtonElement> | null, value: number) => void,
-  pageSizeChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
-  listItemClick: (idx: number) => ReactNode,
 }

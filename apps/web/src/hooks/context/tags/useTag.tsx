@@ -6,23 +6,16 @@ import {
 
 import type {
   ITagListContext,
-  ITagUpdateContext,
-  ITagRouteContext,
+  ITagFormContext,
 } from "@/domain/entities"
 
 
 export const TagListContext = createContext<ITagListContext | undefined>(undefined);
-export function useListTags() {
+export function useTagList() {
   return useContext(TagListContext);
 }
 
-export const TagRouteContext = createContext<ITagRouteContext | undefined>(undefined);
-export function useRouteTags() {
-  return useContext(TagRouteContext);
-}
-
-
-export const TagUpdateContext = createContext<ITagUpdateContext | undefined>(undefined);
+export const TagUpdateContext = createContext<ITagFormContext | undefined>(undefined);
 export function useUpdateTags() {
   return useContext(TagUpdateContext);
 }

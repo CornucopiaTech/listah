@@ -13,28 +13,20 @@ import {
 } from '@/helpers/encoders';
 import {
   DefaultReadRequest,
-  type IReadRequest,
+  DefaultEditor,
+  type IUrlSearch,
 } from "@/domain/entities";
 
 
 
 
-export const PrevRoute = createFileRoute('/tags')({
-  // Ensure correct search parameters are passed down. Adds default value if no seach parameter is passed down.
-  validateSearch: (search: Record<string, unknown>): { s: string } => {
-    const s = search && search.s ? search.s : encodeState(DefaultReadRequest);
-    return { s: s as unknown as string };
-  },
-  component: Tags,
-})
-
-
 export const Route = createFileRoute('/tags')({
   // Ensure correct search parameters are passed down. Adds default value if no seach parameter is passed down.
-  validateSearch: (search: Record<string, unknown>): IReadRequest => {
-    const s = search.query ? search as unknown as IReadRequest : DefaultReadRequest;
-    console.info({ s, search, DefaultReadRequest })
-    return { ...s };
+  validateSearch: (search: Record<string, unknown>): IUrlSearch => {
+    const p = search && search.p ? search.p : encodeState(DefaultReadRequest);
+    const c = search && search.c ? search.c : encodeState(DefaultReadRequest);
+    const e = search && search.e ? search.e : encodeState(DefaultEditor);
+    return { p: p as unknown as string, c: c as unknown as string, e: e as unknown as string };
   },
   component: Tags,
 })

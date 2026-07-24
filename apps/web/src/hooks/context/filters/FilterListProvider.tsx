@@ -1,4 +1,8 @@
 
+import {
+  useCallback,
+  useMemo,
+} from 'react';
 import type {
   ReactNode,
   ChangeEvent,
@@ -10,6 +14,7 @@ import {
 import { useUser } from '@clerk/react';
 import {
   useNavigate,
+  getRouteApi,
 } from '@tanstack/react-router';
 
 
@@ -22,6 +27,7 @@ import type {
   IFilterListContext,
   IFilterReadResponse,
   IReadRequest,
+  IUrlSearch,
 } from "@/domain/entities";
 import {
   DefaultReadQuery,
@@ -30,15 +36,13 @@ import {
 } from '@/domain/entities';
 import {
   useListFilter
-} from '@/hooks/queries';
+} from './queries';
 import {
   FilterListContext
 } from './useFilter';
 import {
-  getRouteSearch,
-} from "@/helpers/routing";
-import {
-  encodeState
+  encodeState,
+  decodeState
 } from '@/helpers/encoders';
 
 
@@ -47,72 +51,84 @@ import {
 
 export function FilterListProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
-  const storeSetItemTitle = useAppStore((state) => state.setItemTitle);
-  const storeSetDisplayFilter = useAppStore((state) => state.setDisplayFilter);
   const storeSetFilterScroll = useAppStore((state) => state.setFilterScroll);
   const storeSetItemScroll = useAppStore((state) => state.setItemScroll);
 
-
   const navigate = useNavigate();
-  const search = getRouteSearch("/filters") as unknown as IReadRequest;
+  const routeApi = getRouteApi("/filters");
+  const { query: urlQuery, pagination: urlPagination } = decodeState(routeApi.useSearch({ select: (search) => search.p, })) as unknown as IReadRequest;
   const opts = {
-    ...search,
-    query: { ...search.query, userId: user?.id ?? "", },
+    pagination: { ...urlPagination },
+    query: { ...urlQuery, userId: user?.id ?? "", },
   };
-  const { query, pagination: urlPagination } = opts;
 
-  const {
-    data, isPending, isError, error, isFetching,
-  }: UseQueryResult<IFilterReadResponse> = useListFilter(opts);
-  console.info({
-    isPending, isError, error, isFetching,
-  });
+
+  const { data, isPending, isError, error }: UseQueryResult<IFilterReadResponse> = useListFilter(opts);
   const filters = data?.filters ?? [];
   const paginationObj = data?.pagination ? data.pagination : urlPagination ? urlPagination : DefaultPagination;
   const pagination = new Pagination(paginationObj);
 
 
-  function pageChange(event: MouseEvent<HTMLButtonElement> | null, value: number) {
+  const pageChange = useCallback((event: MouseEvent<HTMLButtonElement> | null, value: number) => {
     if (event) { event.stopPropagation() };
     pagination.changePage(value);
-    const s = encodeState({ query, pagination: pagination.paging });
-    navigate({ to: ".", search: { s } });
-  };
-  function pageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    navigate({
+      to: ".",
+      search: (prev: IUrlSearch) => {
+        const dPrev = decodeState(prev.p) as unknown as IReadRequest;
+        return { ...prev, p: encodeState({ ...dPrev, pagination: pagination.paging }) }
+      }
+    });
+  }, [opts]);
+  const pageSizeChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     pagination.changeSize(e.target.value);
-    const s = encodeState({ query, pagination: pagination.paging });
-    navigate({ to: ".", search: { s } });
-  };
-  const listItemClick = (idx: number) => {
+    navigate({
+      to: ".",
+      search: (prev: IUrlSearch) => {
+        const dPrev = decodeState(prev.p) as unknown as IReadRequest;
+        return { ...prev, p: encodeState({ ...dPrev, pagination: pagination.paging }) }
+      }
+    });
+  }, [opts]);
+
+  const listItemClick = useCallback((idx: number) => {
     const it = filters[idx];
-    const pageTitle = it && it.name ? `##${it.name}` : "Items";
-    const s = encodeState({
-      query: { ...DefaultReadQuery, userId: query.userId, tags: [...it.tags] },
-      pagination: { ...DefaultPagination, size: pagination.paging.size },
-      title: pageTitle,
-      reference: { filter: it },
-    })
-    navigate({ to: "/items", search: { s }, });
-    storeSetItemTitle(pageTitle);
-    storeSetDisplayFilter(it);
     storeSetFilterScroll(idx);
     storeSetItemScroll(0);
-  }
+    const c = encodeState({
+      query: { ...DefaultReadQuery, userId: opts.query.userId, tags: [...it.tags] },
+      pagination: { ...DefaultPagination, size: pagination.paging.size },
+      id: it.id, name: it.name,
+    });
+    navigate({
+      to: ".", search: (prev: IUrlSearch) => { return { ...prev, c } }
+    });
+  }, [opts]);
 
 
 
-  const contextValue = {
-    query,
+  const contextValue = useMemo(() => ({
     filters,
     pagination,
     isPending,
-    isFetching,
     isError,
     error,
     pageChange,
     pageSizeChange,
     listItemClick,
-  } as unknown as IFilterListContext;
+  } as unknown as IFilterListContext),
+    [
+      filters,
+      pagination,
+      isPending,
+      isError,
+      error,
+      pageChange,
+      pageSizeChange,
+      listItemClick,
+    ]
+  );
+
 
   return <FilterListContext.Provider value={contextValue}>
     {children}
