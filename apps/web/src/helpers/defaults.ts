@@ -18,8 +18,7 @@ export const AppPageContentHeight = `calc(100vh - ${AppPageAllowance}px) - 10px`
 export const ListBoxSize: {
   height: string, width: string, overflowY: string
 } = {
-  height: `calc(${AppPageContentHeight} - 120px)`,
-  // height: `calc(100vh - 250px)`,
+  height: `calc(${AppPageContentHeight} - 200px)`,
   width: '100%', overflowY: 'auto',    // Enables scrolling when content overflows
 }
 

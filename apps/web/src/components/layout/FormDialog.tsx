@@ -10,6 +10,7 @@ import type {
 import {
   useStore,
 } from "@tanstack/react-form";
+import { useTheme, } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
@@ -32,6 +33,7 @@ import SpeedDialAction from '@mui/material/SpeedDialAction';
 
 
 // Internal imports
+import type { AppTheme } from '@/system/theme';
 import {
   useForms
 } from '@/hooks/context';
@@ -42,11 +44,13 @@ import {
   CloseDialogButton,
   AppBackdrop,
   ItemFormSpeedDialBox,
+  FormActionBox,
+  AppTooltip,
 } from "@/components";
 
 
-
-export function UpdateFormActions() {
+// ToDo: Change disable behaviour of action buttons.
+export function UpdateFormActionsSpeedDial() {
   const { form } = useForms() as unknown as IFormContext;
 
   const canSubmit = useStore(form.store, (state: any) => state.errors).length == 0;
@@ -98,6 +102,37 @@ export function UpdateFormActions() {
         />
       </SpeedDial>
     </ItemFormSpeedDialBox>
+  );
+}
+
+
+export function UpdateFormActions() {
+  const {
+    form,
+    closeDialog,
+  } = useForms() as unknown as IFormContext;
+  const canSubmit = useStore(form.store, (state: any) => state.errors).length == 0;
+  const isSubmitted = useStore(form.store, (state: any) => state.isSubmitted);
+  const id = useStore(form.store, (state: any) => state.values.id);
+  const canDelete = !isSubmitted && id !== "";
+  const handleDelete = () => {
+    if (canDelete) {
+      form.setFieldValue('softDelete', true);
+      form.handleSubmit();
+    }
+    closeDialog();
+  };
+  const theme: AppTheme = useTheme();
+  const altIconStyle = { color: theme.palette.primary.dark }
+
+  const dummyAction = () => undefined;
+  return (
+    <FormActionBox>
+      <AppTooltip title="Delete"><DeleteIcon style={altIconStyle} height="2rem" onClick={handleDelete} /></AppTooltip>
+      <AppTooltip title="Save"><SaveIcon style={altIconStyle} height="2rem" onClick={canSubmit ? form.handleSubmit : dummyAction} /></AppTooltip>
+
+
+    </FormActionBox>
   );
 }
 

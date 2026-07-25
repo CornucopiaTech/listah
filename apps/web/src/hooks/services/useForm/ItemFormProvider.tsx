@@ -31,7 +31,7 @@ import {
 
 
 // ToDo: Update query cache when mutation succeeeds
-export function ItemFormProvider({ children }: { children: ReactNode, }) {
+export function ItemUpdateProvider({ children }: { children: ReactNode, }) {
   const { formData } = useFormDataContext() as unknown as IFormDataContext;
   const { data, knownTags } = formData;
   const { user } = useUser();

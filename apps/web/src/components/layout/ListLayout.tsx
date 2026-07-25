@@ -87,6 +87,8 @@ export function ListBox({ children }: { children: ReactNode }): ReactNode {
             color="primary"
             //  @ts-ignore
             onChange={pageChange}
+            siblingCount={0} // Number of pages shown on each side of the current page
+            boundaryCount={1} // Number of pages shown at the start and end
           />
         </CentredBox>
       </Stack >

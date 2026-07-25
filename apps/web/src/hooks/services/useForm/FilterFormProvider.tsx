@@ -32,7 +32,7 @@ import type {
 
 
 
-export function FilterFormProvider({ children }: { children: ReactNode }) {
+export function FilterUpdateProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const mutation = useUpdateFilter();
   const { formData } = useFormDataContext() as unknown as IFormDataContext;

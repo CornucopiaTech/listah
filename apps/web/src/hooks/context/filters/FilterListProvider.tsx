@@ -53,7 +53,6 @@ export function FilterListProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const storeSetFilterScroll = useAppStore((state) => state.setFilterScroll);
   const storeSetItemScroll = useAppStore((state) => state.setItemScroll);
-
   const navigate = useNavigate();
   const routeApi = getRouteApi("/filters");
   const { query: urlQuery, pagination: urlPagination } = decodeState(routeApi.useSearch({ select: (search) => search.p, })) as unknown as IReadRequest;
@@ -62,28 +61,17 @@ export function FilterListProvider({ children }: { children: ReactNode }) {
     query: { ...urlQuery, userId: user?.id ?? "", },
   };
 
-
   const { data, isPending, isError, error }: UseQueryResult<IFilterReadResponse> = useListFilter(opts);
   const filters = data?.filters ?? [];
   const paginationObj = data?.pagination ? data.pagination : urlPagination ? urlPagination : DefaultPagination;
   const pagination = new Pagination(paginationObj);
-
 
   const pageChange = useCallback((event: MouseEvent<HTMLButtonElement> | null, value: number) => {
     if (event) { event.stopPropagation() };
     pagination.changePage(value);
     navigate({
       to: ".",
-      search: (prev: IUrlSearch) => {
-        const dPrev = decodeState(prev.p) as unknown as IReadRequest;
-        return { ...prev, p: encodeState({ ...dPrev, pagination: pagination.paging }) }
-      }
-    });
-  }, [opts]);
-  const pageSizeChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    pagination.changeSize(e.target.value);
-    navigate({
-      to: ".",
+      // @ts-ignore
       search: (prev: IUrlSearch) => {
         const dPrev = decodeState(prev.p) as unknown as IReadRequest;
         return { ...prev, p: encodeState({ ...dPrev, pagination: pagination.paging }) }
@@ -91,7 +79,19 @@ export function FilterListProvider({ children }: { children: ReactNode }) {
     });
   }, [opts]);
 
-  const listItemClick = useCallback((idx: number) => {
+  const pageSizeChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    pagination.changeSize(e.target.value);
+    navigate({
+      to: ".",
+      // @ts-ignore
+      search: (prev: IUrlSearch) => {
+        const dPrev = decodeState(prev.p) as unknown as IReadRequest;
+        return { ...prev, p: encodeState({ ...dPrev, pagination: pagination.paging }) }
+      }
+    });
+  }, [opts]);
+
+  const viewItemsClick = useCallback((idx: number) => {
     const it = filters[idx];
     storeSetFilterScroll(idx);
     storeSetItemScroll(0);
@@ -101,10 +101,25 @@ export function FilterListProvider({ children }: { children: ReactNode }) {
       id: it.id, name: it.name,
     });
     navigate({
+      // @ts-ignore
       to: ".", search: (prev: IUrlSearch) => { return { ...prev, c } }
     });
   }, [opts]);
 
+  const editFilterClick = useCallback((idx: number) => {
+    const it = filters[idx];
+    storeSetFilterScroll(idx);
+    storeSetItemScroll(0);
+    navigate({
+      to: ".",
+      // @ts-ignore
+      search: (prev: IUrlSearch) => {
+        return {
+          ...prev, e: encodeState({ obj: it, flag: true, modal: "filter" })
+        }
+      }
+    });
+  }, [opts]);
 
 
   const contextValue = useMemo(() => ({
@@ -115,19 +130,9 @@ export function FilterListProvider({ children }: { children: ReactNode }) {
     error,
     pageChange,
     pageSizeChange,
-    listItemClick,
-  } as unknown as IFilterListContext),
-    [
-      filters,
-      pagination,
-      isPending,
-      isError,
-      error,
-      pageChange,
-      pageSizeChange,
-      listItemClick,
-    ]
-  );
+    viewItemsClick,
+    editFilterClick,
+  } as unknown as IFilterListContext), [opts]);
 
 
   return <FilterListContext.Provider value={contextValue}>

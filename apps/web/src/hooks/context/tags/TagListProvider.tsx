@@ -63,23 +63,13 @@ export function TagListProvider({ children }: { children: ReactNode }) {
   const paginationObj = data?.pagination ? data.pagination : urlPagination ? urlPagination : DefaultPagination;
   const pagination = new Pagination(paginationObj);
 
-  const storeSetSuccessMsg = useAppStore((state) => state.setSuccessMsg);
-  const storeSetWarnMsg = useAppStore((state) => state.setWarnMsg);
-  const storeSetErrorMsg = useAppStore((state) => state.setErrorMsg);
-
-  const resetMsg = () => {
-    console.info("Resetting Msg from List provider")
-    storeSetSuccessMsg(undefined);
-    storeSetWarnMsg(undefined);
-    storeSetErrorMsg(undefined);
-  }
-
 
   const pageChange = useCallback((event: MouseEvent<HTMLButtonElement> | null, value: number) => {
     if (event) { event.stopPropagation() };
     pagination.changePage(value);
     navigate({
       to: ".",
+      // @ts-ignore
       search: (prev: IUrlSearch) => {
         const dPrev = decodeState(prev.p) as unknown as IReadRequest;
         return { ...prev, p: encodeState({ ...dPrev, pagination: pagination.paging }) }
@@ -90,6 +80,7 @@ export function TagListProvider({ children }: { children: ReactNode }) {
     pagination.changeSize(e.target.value);
     navigate({
       to: ".",
+      // @ts-ignore
       search: (prev: IUrlSearch) => {
         const dPrev = decodeState(prev.p) as unknown as IReadRequest;
         return { ...prev, p: encodeState({ ...dPrev, pagination: pagination.paging }) }
@@ -107,6 +98,7 @@ export function TagListProvider({ children }: { children: ReactNode }) {
       id: it.id, name: it.name,
     });
     navigate({
+      // @ts-ignore
       to: ".", search: (prev: IUrlSearch) => { return { ...prev, c } }
     });
   }, [opts]);
@@ -121,6 +113,7 @@ export function TagListProvider({ children }: { children: ReactNode }) {
       id: it.id, name: it.name,
     });
     navigate({
+      // @ts-ignore
       to: ".", search: (prev: IUrlSearch) => { return { ...prev, c } }
     });
   }, [opts]);
@@ -129,9 +122,9 @@ export function TagListProvider({ children }: { children: ReactNode }) {
     const it = tags[idx];
     storeSetTagScroll(idx);
     storeSetItemScroll(0);
-    resetMsg();
     navigate({
       to: ".",
+      // @ts-ignore
       search: (prev: IUrlSearch) => {
         return {
           ...prev, e: encodeState({ obj: it, flag: true, modal: "tag" })
@@ -153,20 +146,7 @@ export function TagListProvider({ children }: { children: ReactNode }) {
     listItemClick,
     viewItemsClick,
     editTagClick,
-  } as unknown as ITagListContext),
-    [
-      tags,
-      pagination,
-      isPending,
-      isError,
-      error,
-      pageChange,
-      pageSizeChange,
-      listItemClick,
-      viewItemsClick,
-      editTagClick,
-    ]
-  );
+  } as unknown as ITagListContext), [opts]);
 
   return <TagListContext.Provider value={contextValue}> {children} </TagListContext.Provider>
 }

@@ -5,6 +5,7 @@ import {
 } from "react";
 import type {
   ReactNode,
+  SyntheticEvent,
 
 } from 'react';
 import { useTheme, } from '@mui/material/styles';
@@ -22,6 +23,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
 
@@ -36,7 +38,7 @@ import type {
   IListContext,
   IFormContext,
   IItemListContext,
-  IItemFormContext,
+  IItemUpdateContext,
   ITag,
   IItemFormProps,
 } from '@/domain/entities';
@@ -158,13 +160,21 @@ export function ItemList() {
 }
 
 
-
-export function AppItemFormTagAutocompleteField(): ReactNode {
-  const { form, formData, data } = useUpdateItems() as unknown as IItemFormContext;
+// ToDo. Read the url and find out if a filter or tag is being looked at and then add the tags associated with the tag or filter to the create new item form
+// ToDo: Add the functionality for inheriting properties from an existing filter.
+// ToDo: create the functionality for suspending viewing/display of an existing filter.
+function AppItemFormTagAutocompleteField(): ReactNode {
+  const {
+    form,
+    formData,
+    tags,
+  } = useUpdateItems() as unknown as IItemUpdateContext;
   const { knownTags } = formData;
   const theme: AppTheme = useTheme();
   const [tagToDelete, setTagToDelete] = useState<{ c: any, p: any } | null>(null);
-  const serverTags = data?.tags ?? [];
+  const serverTags = tags;
+
+  console.info("Tag Autocomplete", { knownTags, formData, })
 
 
 
@@ -376,13 +386,10 @@ export function ItemUpdate() {
     isPending,
     error,
     tags,
-  } = useUpdateItems() as unknown as IItemFormContext;
-
+  } = useUpdateItems() as unknown as IItemUpdateContext;
 
   type itemFields = "id" | "userId" | "name" | "note" | `props[${number}]` | "softDelete" | `tags[${number}]`
   const fields: itemFields[] = ['name', "note"];
-
-
   let content = undefined;
   let actions = undefined;
   if (isPending) {
@@ -402,40 +409,42 @@ export function ItemUpdate() {
     content = (
       <Box component="section" >
         <Stack spacing={0} sx={{ width: '100%' }} >
-          {fields.map(
-            (fds: itemFields) => {
-              return <form.Field
-                key={fds} name={fds}
-                children={
-                  (field: any) => {
-                    const props = getFormTextFieldProps({ key: fds, field, });
-                    // @ts-ignore
-                    return < TextField {...props} />
+          <Grid container spacing={3}>
+            {fields.map(
+              (fds: itemFields) => {
+                return <form.Field
+                  key={fds} name={fds}
+                  children={
+                    (field: any) => {
+                      const props = getFormTextFieldProps({ key: fds, field, });
+                      // @ts-ignore
+                      return <Grid sx={{ width: "45%", minWidth: "100px" }}><TextField {...props} /> </Grid>
+                    }
                   }
-                }
-              />
-            }
-          )}
-          <form.Field name="props" mode="array">
-            {
-              (field: any) => (
-                <Fragment >
-                  {
-                    field.state.value &&
-                    field.state.value.map((_: any, i: number) => {
-                      return <form.Field key={"item-prop-key-" + i} name={`props[${i}]`}>{
-                        (subField: any) => {
-                          const cprops = getFormItemPropsArrayTextFieldProps({ key: "props", field, subField, idx: i });
-                          // @ts-ignore
-                          return <TextField {...cprops} />
-                        }
-                      }</form.Field>
-                    })
-                  }
-                </Fragment>
-              )
-            }
-          </form.Field>
+                />
+              }
+            )}
+            <form.Field name="props" mode="array">
+              {
+                (field: any) => (
+                  <Fragment >
+                    {
+                      field.state.value &&
+                      field.state.value.map((_: any, i: number) => {
+                        return <form.Field key={"item-prop-key-" + i} name={`props[${i}]`}>{
+                          (subField: any) => {
+                            const cprops = getFormItemPropsArrayTextFieldProps({ key: "props", field, subField, idx: i });
+                            // @ts-ignore
+                            return <Grid sx={{ width: "45%", minWidth: "100px" }}><TextField {...cprops} /> </Grid>
+                          }
+                        }</form.Field>
+                      })
+                    }
+                  </Fragment>
+                )
+              }
+            </form.Field>
+          </Grid>
           <AppItemFormTagAutocompleteField />
         </Stack>
       </Box>

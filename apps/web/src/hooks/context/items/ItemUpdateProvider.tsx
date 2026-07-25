@@ -29,7 +29,8 @@ import type {
   IRouteStrings,
   ITagReadResponse,
   IItemForm,
-  IItemFormContext,
+  IItemUpdateContext,
+  IItem,
 } from "@/domain/entities";
 import {
   DefaultEditor,
@@ -56,13 +57,10 @@ import {
 
 
 
-function prepFormData({ item, data, }) {
+function prepFormData({ item, data, }: { item: IItem, data: ITagReadResponse }) {
   const serverTags: ITag[] = data?.tags ?? [];
   const knownServerTagNames = useRef<Set<string>>(new Set(serverTags.map(p => p.name)));
-
-
   const serverTagPropMap = new Map<string, { value: string[] }>(Object.entries(data?.tagidPropMap ?? {}));
-
   // Use the list of all possible tags for the display object using the tags in the item iteself and the tags from the passed tag or passed filter.
   let allItemTags = item && item.tags ? [...item.tags] : [];
   let tgs = item && item.tags ? [...item.tags] : [];
@@ -108,13 +106,16 @@ function prepFormData({ item, data, }) {
     },
     knownTags: knownServerTagNames
   };
+
+  console.info("In provider", { data, formData, knownServerTagNames, serverTagPropMap, })
   return formData;
 }
 
-export function ItemFormProvider({ children, route }: { children: ReactNode, route: IRouteStrings }) {
+export function ItemUpdateProvider({ children, route }: { children: ReactNode, route: IRouteStrings }) {
   const { user } = useUser();
   const navigate = useNavigate();
   const routeApi = getRouteApi(route);
+  // @ts-ignore
   const { obj, flag, modal } = decodeState(routeApi.useSearch({ select: (search) => search.e, })) as unknown as IEditor;
 
   const tagQuery = {
@@ -123,18 +124,14 @@ export function ItemFormProvider({ children, route }: { children: ReactNode, rou
     pagination: { ...DefaultPagination, pageSize: -1, }
   }
   const {
-    isPending, isError, data, error
+    isPending, data: queryData, error
   }: UseQueryResult<ITagReadResponse> = useListTag(tagQuery);
+  const data = queryData as unknown as ITagReadResponse;
   const tags = data?.tags ?? [];
 
-
-
-
-  const item = obj ?? DefaultItem;
+  const item = (obj ?? DefaultItem) as unknown as IItem;
   const title = item.id == "" ? "Add new item" : "Update item";
-  const formData = prepFormData({ item, data, })
-
-
+  const formData = prepFormData({ item, data, });
 
   const mutation = useUpdateItem();
   const formSubmission = ({ value }: { value: IItemForm }) => {
@@ -176,6 +173,7 @@ export function ItemFormProvider({ children, route }: { children: ReactNode, rou
     mutation.reset();
     navigate({
       to: ".",
+      // @ts-ignore
       search: (prev: IUrlSearch) => { return { ...prev, e: encodeState(DefaultEditor) } }
     });
   };
@@ -191,7 +189,7 @@ export function ItemFormProvider({ children, route }: { children: ReactNode, rou
     formData,
     isPending,
     error
-  } as unknown as IItemFormContext),
+  } as unknown as IItemUpdateContext),
     [obj, flag, modal]
   );
 

@@ -51,7 +51,7 @@ export type IFormContextWithBuilder = {
   closeDialog: () => void,
 }
 
-export type ITagFormContext = {
+export type ITagUpdateContext = {
   openDialog: boolean,
   closeDialog: () => void,
   mutation: any,
@@ -59,7 +59,19 @@ export type ITagFormContext = {
   title: string,
 }
 
-export type IItemFormContext = {
+export type IFilterUpdateContext = {
+  openDialog: boolean,
+  closeDialog: () => void,
+  mutation: any,
+  form: any,
+  title: string,
+  formData: any,
+  isPending: boolean,
+  error: Error | null | AppError,
+  tags: ITag[],
+}
+
+export type IItemUpdateContext = {
   openDialog: boolean,
   closeDialog: () => void,
   mutation: any,

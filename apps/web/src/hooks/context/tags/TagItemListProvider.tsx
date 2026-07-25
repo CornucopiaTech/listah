@@ -47,8 +47,6 @@ import {
 export function TagItemListProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const storeSetItemScroll = useAppStore((state) => state.setItemScroll);
-
-
   const navigate = useNavigate();
   const routeApi = getRouteApi("/tags");
   const { query: urlQuery, pagination: urlPagination } = decodeState(routeApi.useSearch({ select: (search) => search.c, })) as unknown as IReadRequest;
@@ -69,6 +67,7 @@ export function TagItemListProvider({ children }: { children: ReactNode }) {
     pagination.changeSize(e.target.value);
     navigate({
       to: ".",
+      // @ts-ignore
       search: (prev: IUrlSearch) => {
         const dPrev = decodeState(prev.c) as unknown as IChildReadRequest;
         return { ...prev, c: encodeState({ ...dPrev, pagination: pagination.paging }) }
@@ -80,18 +79,19 @@ export function TagItemListProvider({ children }: { children: ReactNode }) {
     pagination.changePage(value);
     navigate({
       to: ".",
+      // @ts-ignore
       search: (prev: IUrlSearch) => {
         const dPrev = decodeState(prev.c) as unknown as IChildReadRequest;
         return { ...prev, c: encodeState({ ...dPrev, pagination: pagination.paging }) }
       }
     });
   }, [opts]);
-
   const editItemClick = useCallback((idx: number) => {
     storeSetItemScroll(idx);
     const it = items[idx];
     navigate({
       to: ".",
+      // @ts-ignore
       search: (prev: IUrlSearch) => {
         return {
           ...prev, e: encodeState({ obj: it, flag: true, modal: "item" })

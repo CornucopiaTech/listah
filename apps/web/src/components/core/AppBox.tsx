@@ -62,3 +62,9 @@ export const ItemFormTagBox = styled(Box)(() => ({
 export const ItemFormSpeedDialBox = styled(Box)(() => ({
   height: '50px', transform: 'translateZ(0px)', flexGrow: 1
 }));
+
+export const FormActionBox = styled(Box)(() => ({
+  height: '50px', transform: 'translateZ(0px)', flexGrow: 1,
+  justifyContent: 'space-around', alignContent: 'center',
+  display: 'flex', width: '100%',
+}));

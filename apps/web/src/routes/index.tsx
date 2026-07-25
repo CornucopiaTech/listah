@@ -20,7 +20,6 @@ export const Route = createFileRoute('/')({
     throw redirect({
       to: '/tags',
       from: '/',
-      search: { s: encodeState(DefaultReadRequest) },
       replace: true, // This option makes it a "permanent" history change
     })
   },

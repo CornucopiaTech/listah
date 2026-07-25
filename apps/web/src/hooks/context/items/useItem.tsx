@@ -6,7 +6,7 @@ import {
 
 import type {
   IItemListContext,
-  IItemFormContext,
+  IItemUpdateContext,
 } from "@/domain/entities"
 
 
@@ -15,7 +15,7 @@ export function useListItems() {
   return useContext(ItemListContext);
 }
 
-export const ItemUpdateContext = createContext<IItemFormContext | undefined>(undefined);
+export const ItemUpdateContext = createContext<IItemUpdateContext | undefined>(undefined);
 export function useUpdateItems() {
   return useContext(ItemUpdateContext);
 }

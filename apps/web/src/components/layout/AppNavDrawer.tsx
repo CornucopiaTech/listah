@@ -4,11 +4,7 @@ import type {
 import {
   Fragment,
 } from 'react';
-import { styled, useTheme, } from '@mui/material/styles';
-import type { Theme, CSSObject } from '@mui/material/styles';
-import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar, { } from '@mui/material/AppBar';
-import type { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+import { useTheme, } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
@@ -25,7 +21,6 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import LoginIcon from '@mui/icons-material/Login';
 import CategoryIcon from '@mui/icons-material/Category';
-import ListAltIcon from '@mui/icons-material/ListAlt';
 import TagIcon from '@mui/icons-material/Tag';
 import { useLocation } from '@tanstack/react-router';
 import {
@@ -42,93 +37,17 @@ import {
 import {
   AppDrawerWidth,
 } from '@/helpers/defaults';
-import { AppTooltip } from "@/components/core/AppTooltip";
 import {
+  AppTooltip,
   AppItemSearchBar,
-} from "@/components/layout/AppSearchBar";
+  AppBar,
+  Drawer,
+  DrawerHeader,
+} from "@/components/";
 
 
 
-
-const openedMixin = (theme: Theme): CSSObject => ({
-  width: AppDrawerWidth,
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  overflowX: 'hidden',
-  backgroundColor: theme.palette.primary.main,
-  color: theme.palette.primary.contrastText,
-});
-
-const closedMixin = (theme: Theme): CSSObject => ({
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: 'hidden',
-  width: `calc(${theme.spacing(7)} + 1px)`,
-  backgroundColor: theme.palette.primary.main,
-  color: theme.palette.primary.contrastText,
-});
-
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'flex-end',
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-}));
-
-interface AppBarProps extends MuiAppBarProps {
-  open?: boolean;
-}
-
-const AppBar = styled(MuiAppBar, { shouldForwardProp: (prop) => prop !== 'open', })<AppBarProps>(({ theme }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  variants: [
-    {
-      props: ({ open }) => open,
-      style: {
-        marginLeft: AppDrawerWidth,
-        width: `calc(100% - ${AppDrawerWidth}px)`,
-        transition: theme.transitions.create(['width', 'margin'], {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.enteringScreen,
-        }),
-      },
-    },
-  ],
-}));
-
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme }) => ({
-    flexShrink: 0,
-    whiteSpace: 'nowrap',
-    boxSizing: 'border-box',
-    variants: [
-      {
-        props: ({ open }) => open,
-        style: {
-          ...openedMixin(theme),
-          '& .MuiDrawer-paper': openedMixin(theme),
-        },
-      },
-      {
-        props: ({ open }) => !open,
-        style: {
-          ...closedMixin(theme),
-          '& .MuiDrawer-paper': closedMixin(theme),
-        },
-      },
-    ],
-  }),
-);
+// ToDo: Define a search or a items page that the search bar will result in.
 
 export function AppNavDrawer(): ReactNode {
   const theme: AppTheme = useTheme();
@@ -148,11 +67,6 @@ export function AppNavDrawer(): ReactNode {
       icon: <CategoryIcon sx={altIconStyle} />,
       name: "Filters",
       url: "/filters"
-    },
-    {
-      icon: <ListAltIcon sx={altIconStyle} />,
-      name: "Items",
-      url: "/items"
     },
   ];
 
@@ -229,6 +143,7 @@ export function AppNavDrawer(): ReactNode {
                 <ListItem key={t.name} disablePadding sx={iconStyling(t.url)}>
                   <ListItemButton sx={drawerButtonStyling}>
                     <ListItemIcon sx={drawerIconStyling}> {t.icon} </ListItemIcon>
+                    {/* @ts-ignore */}
                     <ListItemText primary={t.name} sx={drawerTextStyling} />
                   </ListItemButton>
                 </ListItem>
@@ -249,6 +164,7 @@ export function AppNavDrawer(): ReactNode {
                     <LoginIcon sx={altIconStyle} />
                   </SignInButton>
                 </ListItemIcon>
+                {/* @ts-ignore */}
                 <ListItemText primary="Login" sx={drawerTextStyling} />
               </ListItemButton>
             </ListItem>
@@ -257,6 +173,7 @@ export function AppNavDrawer(): ReactNode {
             <ListItem key="signed-in" disablePadding>
               <ListItemButton sx={drawerButtonStyling}>
                 <ListItemIcon sx={drawerIconStyling} > <UserButton /> </ListItemIcon>
+                {/* @ts-ignore */}
                 <ListItemText primary="Profile" sx={drawerTextStyling} />
               </ListItemButton>
             </ListItem>

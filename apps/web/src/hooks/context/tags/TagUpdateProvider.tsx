@@ -21,7 +21,7 @@ import {
 // Internal imports
 import type {
   ITag,
-  ITagFormContext,
+  ITagUpdateContext,
   IUrlSearch,
   IEditor,
 } from "@/domain/entities";
@@ -47,13 +47,11 @@ import {
 
 
 
-export function TagFormProvider({ children }: { children: ReactNode }) {
+export function TagUpdateProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const navigate = useNavigate();
   const routeApi = getRouteApi("/tags");
   const { obj, flag, modal } = decodeState(routeApi.useSearch({ select: (search) => search.e, })) as unknown as IEditor;
-
-
   const defaultValue = obj ?? DefaultTag;
   const title = defaultValue.id == "" ? "Add new tag" : "Update tag";
 
@@ -63,6 +61,7 @@ export function TagFormProvider({ children }: { children: ReactNode }) {
     mutation.reset();
     navigate({
       to: ".",
+      // @ts-ignore
       search: (prev: IUrlSearch) => { return { ...prev, e: encodeState(DefaultEditor) } }
     });
   };
@@ -98,7 +97,7 @@ export function TagFormProvider({ children }: { children: ReactNode }) {
     mutation,
     form,
     title,
-  } as unknown as ITagFormContext),
+  } as unknown as ITagUpdateContext),
     [obj, flag, modal]
   );
 

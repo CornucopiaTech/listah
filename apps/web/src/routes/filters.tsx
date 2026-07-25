@@ -13,6 +13,7 @@ import {
 } from '@/helpers/encoders';
 import {
   DefaultReadRequest,
+  DefaultEditor,
   type IUrlSearch,
 } from "@/domain/entities";
 
@@ -22,7 +23,8 @@ export const Route = createFileRoute('/filters')({
   validateSearch: (search: Record<string, unknown>): IUrlSearch => {
     const p = search && search.p ? search.p : encodeState(DefaultReadRequest);
     const c = search && search.c ? search.c : encodeState(DefaultReadRequest);
-    return { p: p as unknown as string, c: c as unknown as string };
+    const e = search && search.e ? search.e : encodeState(DefaultEditor);
+    return { p: p as unknown as string, c: c as unknown as string, e: e as unknown as string };
   },
   component: Filters,
 })

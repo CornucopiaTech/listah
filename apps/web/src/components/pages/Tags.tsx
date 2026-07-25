@@ -1,7 +1,5 @@
 
-import {
-  Fragment,
-} from "react";
+
 import type {
   ReactNode,
 } from 'react';
@@ -15,17 +13,10 @@ import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 import Alert from '@mui/material/Alert';
 import Divider from '@mui/material/Divider';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
-import SpeedDial from '@mui/material/SpeedDial';
-import SpeedDialAction from '@mui/material/SpeedDialAction';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
-import CategoryIcon from '@mui/icons-material/Category';
-import ListAltIcon from '@mui/icons-material/ListAlt';
-import TagIcon from '@mui/icons-material/Tag';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -39,10 +30,9 @@ import {
 } from '@/hooks/store/boundStore';
 import type {
   ITagListContext,
-  IBreadcrumbContext,
   IListContext,
   IFormContext,
-  ITagFormContext,
+  ITagUpdateContext,
 } from '@/domain/entities';
 import {
   ListItemStyling
@@ -50,15 +40,14 @@ import {
 import type { AppTheme } from '@/system/theme';
 import {
   useTagList,
-  useBreadcrumb,
   FormContext,
   ListContext,
   TagListProvider,
   TagItemListProvider,
-  TagFormProvider,
+  TagUpdateProvider,
   useUpdateTags,
   BreadcrumbProvider,
-  ItemFormProvider,
+  ItemUpdateProvider,
 } from "@/hooks/context";
 import {
   getFormArrayTextFieldProps,
@@ -76,6 +65,7 @@ import {
   FlexEndBox,
   FlexStartBox,
   ItemUpdate,
+  AppBreadcrumb,
 } from "@/components";
 
 
@@ -83,70 +73,24 @@ import {
 
 export function Tags() {
   const theme: AppTheme = useTheme();
-  // ToDo: change background colour of tooltip of speeddial
-  const actions = [
-    { icon: <TagIcon />, name: 'Create new tag' },
-    { icon: <CategoryIcon />, name: 'Create new filter' },
-    { icon: <ListAltIcon />, name: 'Create new item' },
-  ];
-
   return (
-    <AppContainer mw="md" >
-      <TagFormProvider> <UpdateTag /> </TagFormProvider>
-      <ItemFormProvider route="/tags"> <ItemUpdate /> </ItemFormProvider>
-      <SpeedDial
-        direction="up"
-        ariaLabel="SpeedDial basic example"
-        sx={{ position: 'absolute', bottom: 16, right: 4 }}
-        icon={<EditIcon sx={{ fontSize: "1rem" }} />}
-      >
-        {actions.map((action) => (
-          <SpeedDialAction
-            key={action.name}
-            icon={action.icon}
-            slotProps={{
-              tooltip: {
-                title: action.name,
-                sx: {
-                  // bgcolor: 'primary.main'
-                  // '& .MuiTooltip-tooltip': {
-                  //   backgroundColor: 'primary.main',
-                  // },
-                }
-              },
-            }}
-          />
-        ))}
-      </SpeedDial>
-
+    <AppContainer mw="lg" >
+      <TagUpdateProvider> <UpdateTag /> </TagUpdateProvider>
+      <ItemUpdateProvider route="/tags"> <ItemUpdate /> </ItemUpdateProvider>
+      <BreadcrumbProvider route="/tags"><AppBreadcrumb title="Tags" /></BreadcrumbProvider>
       <Grid container spacing={1}>
         <Grid key="tag" size={5} >
-          <Link underline="none" color="primary.dark" >
-            <Typography variant="h6" component="div" color="inherit" textAlign={"left"}> Tags </Typography>
-          </Link>
-
           <AppSectionPaper>
             <TagListProvider> <TagList /> </TagListProvider>
           </AppSectionPaper>
         </Grid>
         <Divider orientation="vertical" key="divider" sx={{ borderColor: theme.palette.primary.contrastText }} />
-        <Grid key="item" size={6.5} >
-          <BreadcrumbProvider route="/tags"><ListedItems /></BreadcrumbProvider>
+        <Grid key="item" size={6} >
+          <AppSectionPaper>
+            <TagItemListProvider> <ItemList /> </TagItemListProvider>
+          </AppSectionPaper>
         </Grid>
       </Grid>
-
-      {/* {
-        storeItemModal &&
-        <ItemFormDataProvider>
-          <ItemFormProvider>
-            <AppItemModal />
-          </ItemFormProvider>
-        </ItemFormDataProvider>
-      }
-      {
-        storeFilterModal &&
-        <FilterFormDataProvider> <FilterFormProvider > <AppFilterModal /> </ FilterFormProvider> </FilterFormDataProvider>
-      } */}
     </AppContainer >
   );
 }
@@ -161,7 +105,6 @@ export function TagList() {
     error,
     pageChange,
     pageSizeChange,
-    listItemClick,
     viewItemsClick,
     editTagClick,
   } = useTagList() as unknown as ITagListContext;
@@ -199,19 +142,16 @@ export function TagList() {
     scrollIndex: Math.max(0, storeTagScroll),
     pageChange: tags.length > 0 ? pageChange : undefined,
     pageSizeChange: tags.length > 0 ? pageSizeChange : undefined,
-    clickRow: listItemClick,
+    clickRow: viewItemsClick,
     renderRow,
   } as unknown as IListContext;
 
   function Shell({ children }: { children: ReactNode }) {
     return <ListContext.Provider value={contextValue}><ListBox><OuterBox>{children} </OuterBox></ListBox></ListContext.Provider>
   }
-
   if (isPending) {
     return <Shell><LinearProgress /></Shell>
   }
-
-
   if (error) {
     return <Shell><Alert severity="error">{error.message || "An error occurred. Please try again"}</Alert></Shell>
   }
@@ -220,32 +160,12 @@ export function TagList() {
       <Shell><Typography variant="h6"> No items found </Typography></Shell>
     )
   }
-
   if (tags.length > 0) {
     return (<Shell><ListLayout /></Shell>)
   }
   return (
     <Shell><Alert severity="error">"An error occurred. Please try again"</Alert></Shell>
   )
-}
-
-
-function ListedItems() {
-  const {
-    breadcrumbClick,
-    breadcrumbTail,
-  } = useBreadcrumb() as unknown as IBreadcrumbContext;
-  return (<Fragment>
-    <Breadcrumbs aria-label="breadcrumb" >
-      <Link underline="hover" color="inherit" onClick={breadcrumbClick}>
-        <Typography variant="h6" component="div" textAlign={"left"}> Tags </Typography>
-      </Link>
-      <Typography variant="h6" component="div" textAlign={"left"}> {breadcrumbTail} </Typography>
-    </Breadcrumbs>
-    <AppSectionPaper>
-      <TagItemListProvider> <ItemList /> </TagItemListProvider>
-    </AppSectionPaper>
-  </Fragment>)
 }
 
 
@@ -262,7 +182,7 @@ function UpdateTag() {
     mutation,
     form,
     title,
-  } = useUpdateTags() as unknown as ITagFormContext;
+  } = useUpdateTags() as unknown as ITagUpdateContext;
 
   const content = (
     <Box component="section" >

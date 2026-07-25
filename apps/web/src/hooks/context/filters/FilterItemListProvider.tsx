@@ -49,8 +49,6 @@ import {
 export function FilterItemListProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const storeSetItemScroll = useAppStore((state) => state.setItemScroll);
-  const storeSetItemModal = useAppStore((state) => state.setItemModal);
-
   const navigate = useNavigate();
   const routeApi = getRouteApi("/filters");
   const { query: urlQuery, pagination: urlPagination } = decodeState(routeApi.useSearch({ select: (search) => search.c, })) as unknown as IReadRequest;
@@ -71,6 +69,7 @@ export function FilterItemListProvider({ children }: { children: ReactNode }) {
     pagination.changeSize(e.target.value);
     navigate({
       to: ".",
+      // @ts-ignore
       search: (prev: IUrlSearch) => {
         const dPrev = decodeState(prev.c) as unknown as IChildReadRequest;
         return { ...prev, c: encodeState({ ...dPrev, pagination: pagination.paging }) }
@@ -82,16 +81,25 @@ export function FilterItemListProvider({ children }: { children: ReactNode }) {
     pagination.changePage(value);
     navigate({
       to: ".",
+      // @ts-ignore
       search: (prev: IUrlSearch) => {
         const dPrev = decodeState(prev.c) as unknown as IChildReadRequest;
         return { ...prev, c: encodeState({ ...dPrev, pagination: pagination.paging }) }
       }
     });
   }, [opts]);
-
-  const listItemClick = useCallback((idx: number) => {
-    storeSetItemModal(true);
+  const editItemClick = useCallback((idx: number) => {
     storeSetItemScroll(idx);
+    const it = items[idx];
+    navigate({
+      to: ".",
+      // @ts-ignore
+      search: (prev: IUrlSearch) => {
+        return {
+          ...prev, e: encodeState({ obj: it, flag: true, modal: "item" })
+        }
+      }
+    });
   }, [opts]);
 
 
@@ -103,7 +111,7 @@ export function FilterItemListProvider({ children }: { children: ReactNode }) {
     error,
     pageChange,
     pageSizeChange,
-    listItemClick,
+    editItemClick,
   } as unknown as IItemListContext),
     [
       items,
@@ -113,7 +121,7 @@ export function FilterItemListProvider({ children }: { children: ReactNode }) {
       error,
       pageChange,
       pageSizeChange,
-      listItemClick,
+      editItemClick,
     ]
   );
   return <ItemListContext.Provider value={contextValue}> {children} </ItemListContext.Provider>

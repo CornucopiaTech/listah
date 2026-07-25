@@ -64,7 +64,6 @@ export async function postTag(t: ITag) {
 
 export async function getTag(opts: IReadRequest): Promise<ITagReadResponse> {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.readTag}`;
-  console.info("ListTags", { opts });
   try {
     const token = await getToken();
     if (!token) {

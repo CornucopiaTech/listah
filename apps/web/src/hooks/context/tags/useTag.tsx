@@ -6,7 +6,7 @@ import {
 
 import type {
   ITagListContext,
-  ITagFormContext,
+  ITagUpdateContext,
 } from "@/domain/entities"
 
 
@@ -15,7 +15,7 @@ export function useTagList() {
   return useContext(TagListContext);
 }
 
-export const TagUpdateContext = createContext<ITagFormContext | undefined>(undefined);
+export const TagUpdateContext = createContext<ITagUpdateContext | undefined>(undefined);
 export function useUpdateTags() {
   return useContext(TagUpdateContext);
 }
