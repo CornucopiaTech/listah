@@ -45,6 +45,7 @@ import {
   FilterItemListProvider,
   FilterListProvider,
   ItemUpdateProvider,
+  ItemSearchProvider,
 } from "@/hooks/context";
 import {
   ListItemStyling
@@ -64,20 +65,20 @@ import {
   OuterBox,
   UpdateFormActions,
   AppBreadcrumb,
+  ItemSearchList,
 } from '@/components';
 
 
 
 
-// ToDo: Define actions for speed dial buttons.
 export function Filters(): ReactNode {
   const theme: AppTheme = useTheme();
-  // ToDo: change background colour of tooltip of speeddial
   return (
-    <AppContainer mw="md" >
+    <AppContainer>
       <FilterUpdateProvider> <UpdateFilter /> </FilterUpdateProvider>
       <ItemUpdateProvider route="/filters"> <ItemUpdate /> </ItemUpdateProvider>
       <BreadcrumbProvider route="/filters"><AppBreadcrumb title="Filters" /></BreadcrumbProvider>
+      <ItemSearchProvider route="/filters"><ItemSearchList /></ItemSearchProvider>
       <Grid container spacing={1}>
         <Grid key="tag" size={5} >
           <AppSectionPaper>
@@ -226,7 +227,7 @@ function UpdateFilter(): ReactNode {
     )
   }
 
-  let content;
+  let content = <LinearProgress />;
   let actions = undefined;
   if (isPending) {
     content = <LinearProgress />;
@@ -236,7 +237,7 @@ function UpdateFilter(): ReactNode {
       <Alert severity="error"> {error?.message || "An error occurred. Please try again"}</Alert>
     );
   }
-  if (tags.length == 0) {
+  if (!isPending && !error && tags.length == 0) {
     content = (
       <Typography variant="h6"> No tags found </Typography>
     );

@@ -482,4 +482,13 @@ export const components = {
       },
     },
   },
+  MuiTooltip: {
+    styleOverrides: {
+      tooltip: {
+        backgroundColor: lightPalette.primary.dark,
+        color: lightPalette.primary.contrastText,
+        fontSize: "1.1rem",
+      },
+    },
+  },
 }

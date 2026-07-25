@@ -1,7 +1,6 @@
 
 import {
   useMemo,
-  useRef,
 } from 'react';
 import type {
   ReactNode,
@@ -59,7 +58,6 @@ import {
 
 function prepFormData({ item, data, }: { item: IItem, data: ITagReadResponse }) {
   const serverTags: ITag[] = data?.tags ?? [];
-  const knownServerTagNames = useRef<Set<string>>(new Set(serverTags.map(p => p.name)));
   const serverTagPropMap = new Map<string, { value: string[] }>(Object.entries(data?.tagidPropMap ?? {}));
   // Use the list of all possible tags for the display object using the tags in the item iteself and the tags from the passed tag or passed filter.
   let allItemTags = item && item.tags ? [...item.tags] : [];
@@ -97,17 +95,14 @@ function prepFormData({ item, data, }: { item: IItem, data: ITagReadResponse }) 
     }
   });
 
-
   const formData = {
     data: {
       id: item.id, userId: item.userId, name: item.name,
       note: item.note, props: displayItemPropsObj, tags: tagObj,
-      softDelete: item.softDelete
+      softDelete: item.softDelete, suspension: 0,
     },
-    knownTags: knownServerTagNames
+    tagsSet: new Set(serverTags.map(p => p.name)),
   };
-
-  console.info("In provider", { data, formData, knownServerTagNames, serverTagPropMap, })
   return formData;
 }
 
@@ -117,11 +112,10 @@ export function ItemUpdateProvider({ children, route }: { children: ReactNode, r
   const routeApi = getRouteApi(route);
   // @ts-ignore
   const { obj, flag, modal } = decodeState(routeApi.useSearch({ select: (search) => search.e, })) as unknown as IEditor;
-
   const tagQuery = {
     ...DefaultReadRequest,
     query: { ...DefaultReadQuery, userId: user?.id || "" },
-    pagination: { ...DefaultPagination, pageSize: -1, }
+    pagination: { ...DefaultPagination, size: -1, }
   }
   const {
     isPending, data: queryData, error
@@ -145,7 +139,7 @@ export function ItemUpdateProvider({ children, route }: { children: ReactNode, r
       return invalidName;
     }
 
-    const invalidTag = validateItemTags(value.tags, formData.knownTags.current);
+    const invalidTag = validateItemTags(value.tags, formData.tagsSet);
     if (invalidTag) {
       return invalidTag
     }
@@ -189,9 +183,7 @@ export function ItemUpdateProvider({ children, route }: { children: ReactNode, r
     formData,
     isPending,
     error
-  } as unknown as IItemUpdateContext),
-    [obj, flag, modal]
-  );
+  } as unknown as IItemUpdateContext), [obj, flag, modal]);
 
   return <ItemUpdateContext.Provider value={contextValue}>
     {children}

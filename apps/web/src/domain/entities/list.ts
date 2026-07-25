@@ -50,6 +50,22 @@ export type IItemListContext = {
 }
 
 
+export type IItemSearchContext = {
+  route: string,
+  search: string,
+  items: IItem[],
+  pagination: Pagination,
+  isPending: boolean,
+  isError: boolean,
+  error: Error | null,
+  pageChange: (event: MouseEvent<HTMLButtonElement> | null, value: number) => void,
+  pageSizeChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
+  editItemClick: (idx: number) => void,
+  openDialog: boolean,
+  closeDialog: () => void,
+}
+
+
 export type ITagListContext = {
   tags: ITag[],
   pagination: Pagination,

@@ -52,6 +52,7 @@ func (a *item) Read(ctx context.Context, m *[]*model.Item, s *model.RepoSearch) 
 				CROSS JOIN LATERAL jsonb_each_text(it.props::JSONB) AS prop_arr
 			WHERE it.user_id = '` + s.UserId + `' ` + idFilter + `
 				AND (it.soft_delete = false OR it.soft_delete IS NULL)
+				AND (reactivate_at IS NULL OR reactivate_at IS NOT NULL AND reactivate_at::DATE <= CURRENT_DATE)
 			GROUP BY it.id, it.user_id
 		)
 	`

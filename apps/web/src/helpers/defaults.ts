@@ -13,12 +13,19 @@ export const AppBarHeight = 48;
 export const AppDrawerWidth = 240;
 export const AppBarBottom = 0;
 export const AppPageAllowance = AppBarHeight + AppBarBottom;
-export const AppPageContentHeight = `calc(100vh - ${AppPageAllowance}px) - 10px`;
+export const AppPageContentHeight = `calc(100vh - ${AppPageAllowance}px)`;
 
 export const ListBoxSize: {
   height: string, width: string, overflowY: string
 } = {
   height: `calc(${AppPageContentHeight} - 200px)`,
+  width: '100%', overflowY: 'auto',    // Enables scrolling when content overflows
+}
+
+export const ViewListBoxSize: {
+  height: string, width: string, overflowY: string
+} = {
+  height: `calc(${AppPageContentHeight} - 250px)`,
   width: '100%', overflowY: 'auto',    // Enables scrolling when content overflows
 }
 

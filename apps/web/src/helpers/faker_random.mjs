@@ -199,7 +199,7 @@ function load_db(aUrl) {
     () => {
       allUserIds.forEach(
         uId => {
-          const pl = { "userId": uId, "pagination": { "pageSize": -1, } }
+          const pl = { "userId": uId, "pagination": { "size": -1, } }
           apiCall(`${aUrl}/ReadTag`, pl).then(
             (data) => {
               // console.log('Retrieved data - ', data)

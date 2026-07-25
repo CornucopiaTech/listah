@@ -48,6 +48,7 @@ import {
   useUpdateTags,
   BreadcrumbProvider,
   ItemUpdateProvider,
+  ItemSearchProvider,
 } from "@/hooks/context";
 import {
   getFormArrayTextFieldProps,
@@ -66,6 +67,7 @@ import {
   FlexStartBox,
   ItemUpdate,
   AppBreadcrumb,
+  ItemSearchList,
 } from "@/components";
 
 
@@ -74,10 +76,11 @@ import {
 export function Tags() {
   const theme: AppTheme = useTheme();
   return (
-    <AppContainer mw="lg" >
+    <AppContainer>
       <TagUpdateProvider> <UpdateTag /> </TagUpdateProvider>
       <ItemUpdateProvider route="/tags"> <ItemUpdate /> </ItemUpdateProvider>
       <BreadcrumbProvider route="/tags"><AppBreadcrumb title="Tags" /></BreadcrumbProvider>
+      <ItemSearchProvider route="/tags"><ItemSearchList /></ItemSearchProvider>
       <Grid container spacing={1}>
         <Grid key="tag" size={5} >
           <AppSectionPaper>

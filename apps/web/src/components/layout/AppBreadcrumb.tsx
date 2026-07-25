@@ -15,6 +15,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import CategoryIcon from '@mui/icons-material/Category';
 
 
+
+
 // Internal
 import type {
   IBreadcrumbContext,
@@ -26,7 +28,6 @@ import {
 
 
 
-// ToDo: change background colour of tooltip of speeddial
 export function AppBreadcrumb({ title }: { title: string }): ReactNode {
   const {
     route,
@@ -57,9 +58,9 @@ export function AppBreadcrumb({ title }: { title: string }): ReactNode {
   ];
 
   return (<Fragment>
-    <Breadcrumbs aria-label="breadcrumb" sx={{ p: "1opx" }}>
+    <Breadcrumbs aria-label="breadcrumb" sx={{}}>
       <Link underline="hover" color="inherit" onClick={breadcrumbClick}>
-        <Typography variant="h6" component="div" textAlign={"left"} > {title} </Typography>
+        <Typography variant="h6" component="div" textAlign={"left"} sx={{}}> {title} </Typography>
       </Link>
       <Typography variant="h6" component="div" textAlign={"left"}> {breadcrumbTail} </Typography>
     </Breadcrumbs>

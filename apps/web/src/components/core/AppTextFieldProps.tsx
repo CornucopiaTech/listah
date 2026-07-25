@@ -87,7 +87,7 @@ export function getFormTextFieldProps({ key, field, }: { key: string, field: any
       }
     },
     id: key,
-    key,
+    // key,
     value: field.state.value,
     label: key,
     onChange: (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value),
@@ -96,5 +96,33 @@ export function getFormTextFieldProps({ key, field, }: { key: string, field: any
     margin: "dense",
     error: error,
     helperText: helperText,
+  }
+}
+
+export function getFormSelectTextFieldProps({ key, label, helper, options, idx, field }: { key: string, label: string, helper: string, options: { label: string, value: string }[], idx: number, field: any, subField: any }) {
+  return {
+    multiline: true,
+    fullWidth: true,
+    slotProps: {
+      input: {
+        style: { fontSize: "15px" },
+        endAdornment: (
+          < Icon icon="material-symbols-light:close-rounded" width="30" height="30"
+            onClick={() => field.removeValue(idx)}
+          />
+        )
+      },
+      inputLabel: { style: { fontSize: "15px" } },
+    },
+    id: key,
+    select: true,
+    value: field.state.value,
+    label: label,
+    defaultValue: options[0].value,
+    helperText: helper,
+    variant: "standard",
+    size: "small",
+    margin: "dense",
+    onChange: (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value),
   }
 }

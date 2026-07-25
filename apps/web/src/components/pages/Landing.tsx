@@ -11,7 +11,7 @@ import { AppContainer } from '@/components/layout/AppContainer';
 export function Landing() {
   return (
     <Fragment>
-      <AppContainer mw="md">
+      <AppContainer>
         <Paper variant="hero">
           <Typography variant="h1">Simplify your life.</Typography>
           <Typography variant="h3">One list at a time.</Typography>

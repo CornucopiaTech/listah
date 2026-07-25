@@ -130,8 +130,6 @@ export function UpdateFormActions() {
     <FormActionBox>
       <AppTooltip title="Delete"><DeleteIcon style={altIconStyle} height="2rem" onClick={handleDelete} /></AppTooltip>
       <AppTooltip title="Save"><SaveIcon style={altIconStyle} height="2rem" onClick={canSubmit ? form.handleSubmit : dummyAction} /></AppTooltip>
-
-
     </FormActionBox>
   );
 }

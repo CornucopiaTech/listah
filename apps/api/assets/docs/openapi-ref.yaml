@@ -782,6 +782,10 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.MapObj'
           title: propObjs
+        suspension:
+          type: integer
+          title: suspension
+          format: int32
         updatedBy:
           type: string
           title: updatedBy

@@ -110,17 +110,6 @@ export function TagItemListProvider({ children }: { children: ReactNode }) {
     pageChange,
     pageSizeChange,
     editItemClick,
-  } as unknown as IItemListContext),
-    [
-      items,
-      pagination,
-      isPending,
-      isError,
-      error,
-      pageChange,
-      pageSizeChange,
-      editItemClick,
-    ]
-  );
+  } as unknown as IItemListContext), [opts]);
   return <ItemListContext.Provider value={contextValue}> {children} </ItemListContext.Provider>
 }

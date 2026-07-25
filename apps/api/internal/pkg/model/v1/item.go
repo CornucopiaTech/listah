@@ -26,6 +26,7 @@ type Item struct {
 	PropObjs      []MapObj          `bun:"type:jsonb,scanonly"`
 	UpdatedBy     string
 	UpdatedAt     time.Time
+	ReactivateAt  *time.Time
 }
 
 func (v *Item) ItemModelToItemProto() *pb.Item {
@@ -148,6 +149,13 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, []string, error)
 		if v.GetSoftDelete() {
 			newItem.SoftDelete = v.GetSoftDelete()
 			check["soft_delete"] = true
+		}
+		check["reactivate_at"] = true
+		if v.GetSuspension() != 0 {
+			sus := time.Now().Add(time.Duration(v.GetSuspension()) * 24 * time.Hour)
+			newItem.ReactivateAt = &sus
+		} else {
+			newItem.ReactivateAt = nil
 		}
 		items = append(items, newItem)
 	}

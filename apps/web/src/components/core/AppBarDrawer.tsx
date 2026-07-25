@@ -15,8 +15,6 @@ import {
 
 
 
-// ToDo: Define a search or a items page that the search bar will result in.
-
 const openedMixin = (theme: Theme): CSSObject => ({
   width: AppDrawerWidth,
   transition: theme.transitions.create('width', {

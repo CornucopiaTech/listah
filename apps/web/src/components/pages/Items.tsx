@@ -6,7 +6,7 @@ import {
 import type {
   ReactNode,
   SyntheticEvent,
-
+  ChangeEvent,
 } from 'react';
 import { useTheme, } from '@mui/material/styles';
 import ListItem from '@mui/material/ListItem';
@@ -25,7 +25,7 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-
+import MenuItem from '@mui/material/MenuItem';
 
 
 
@@ -41,6 +41,7 @@ import type {
   IItemUpdateContext,
   ITag,
   IItemFormProps,
+  IItemSearchContext,
 } from '@/domain/entities';
 import {
   DefaultTag,
@@ -54,7 +55,7 @@ import {
   FormContext,
   ListContext,
   useUpdateItems,
-
+  useSearchItems,
 } from "@/hooks/context";
 import {
   getFormTextFieldProps,
@@ -63,11 +64,14 @@ import {
   ListLayout,
   ListBox,
   OuterBox,
+  ViewOuterBox,
   FormDialog,
+  ViewDialog,
   UpdateFormActions,
   AppTooltip,
   FlexStartBox,
   AlertDialog,
+  AppListPagination,
 } from "@/components";
 import {
   validateItemTag,
@@ -133,7 +137,7 @@ export function ItemList() {
   } as unknown as IListContext;
 
   function Shell({ children }: { children: ReactNode }) {
-    return <ListContext.Provider value={contextValue}><ListBox><OuterBox kind="item">{children} </OuterBox></ListBox></ListContext.Provider>
+    return <ListContext.Provider value={contextValue}><ListBox><OuterBox>{children} </OuterBox></ListBox></ListContext.Provider>
   }
 
   if (isPending) {
@@ -162,21 +166,16 @@ export function ItemList() {
 
 // ToDo. Read the url and find out if a filter or tag is being looked at and then add the tags associated with the tag or filter to the create new item form
 // ToDo: Add the functionality for inheriting properties from an existing filter.
-// ToDo: create the functionality for suspending viewing/display of an existing filter.
-// ToDo: Remove userID from query and use bearer token for auth.
 function AppItemFormTagAutocompleteField(): ReactNode {
   const {
     form,
     formData,
     tags,
   } = useUpdateItems() as unknown as IItemUpdateContext;
-  const { knownTags } = formData;
+  const { tagsSet } = formData;
   const theme: AppTheme = useTheme();
   const [tagToDelete, setTagToDelete] = useState<{ c: any, p: any } | null>(null);
   const serverTags = tags;
-
-  console.info("Tag Autocomplete", { knownTags, formData, })
-
 
 
   function addNewTagProps({ value }: any) {
@@ -288,8 +287,8 @@ function AppItemFormTagAutocompleteField(): ReactNode {
 
 
   const validator = {
-    onChange: ({ value }: { value: ITag }) => validateItemTag(value as unknown as ITag, knownTags.current),
-    onBlur: ({ value }: { value: ITag }) => validateItemTag(value as unknown as ITag, knownTags.current),
+    onChange: ({ value }: { value: ITag }) => validateItemTag(value as unknown as ITag, tagsSet),
+    onBlur: ({ value }: { value: ITag }) => validateItemTag(value as unknown as ITag, tagsSet),
   };
 
   return (
@@ -388,10 +387,7 @@ export function ItemUpdate() {
     error,
     tags,
   } = useUpdateItems() as unknown as IItemUpdateContext;
-
-  type itemFields = "id" | "userId" | "name" | "note" | `props[${number}]` | "softDelete" | `tags[${number}]`
-  const fields: itemFields[] = ['name', "note"];
-  let content = undefined;
+  let content = <LinearProgress />;
   let actions = undefined;
   if (isPending) {
     content = <LinearProgress />;
@@ -401,30 +397,81 @@ export function ItemUpdate() {
       <Alert severity="error"> {error?.message || "An error occurred. Please try again"}</Alert>
     );
   }
-  if (tags.length == 0) {
+  if (!isPending && !error && tags.length == 0) {
     content = (
       <Typography variant="h6"> No tags found </Typography>
     );
   }
   if (tags.length > 0 && formData) {
+    const suspension = [
+      {
+        value: null,
+        label: 'None',
+      },
+      {
+        value: 1,
+        label: '1 day',
+      },
+      {
+        value: 3,
+        label: '3 days',
+      },
+      {
+        value: 7,
+        label: '7 days',
+      },
+      {
+        value: 30,
+        label: '30 days',
+      },
+      {
+        value: 365,
+        label: '365 days',
+      },
+    ];
     content = (
       <Box component="section" >
         <Stack spacing={0} sx={{ width: '100%' }} >
           <Grid container spacing={3}>
-            {fields.map(
-              (fds: itemFields) => {
-                return <form.Field
-                  key={fds} name={fds}
-                  children={
-                    (field: any) => {
-                      const props = getFormTextFieldProps({ key: fds, field, });
-                      // @ts-ignore
-                      return <Grid sx={{ width: "45%", minWidth: "100px" }}><TextField {...props} /> </Grid>
-                    }
-                  }
-                />
-              }
-            )}
+            <form.Field key="name" name="name"
+              children={(field: any) => {
+                const props = getFormTextFieldProps({ key: "name", field, });
+                // @ts-ignore
+                return <Grid sx={{ width: "45%", minWidth: "100px" }}><TextField {...props} /> </Grid>
+              }}
+            />
+            <form.Field key="suspension" name="suspension"
+              children={(field: any) => {
+                return <Grid sx={{ width: "45%", minWidth: "100px" }}>
+                  <TextField
+                    id="view suspension"
+                    select
+                    label="view suspension"
+                    value={field.state.value}
+                    helperText="suspend item from view for"
+                    variant="standard"
+                    multiline
+                    size="small"
+                    margin="dense"
+                    fullWidth
+                    onChange={(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => field.handleChange(e.target.value)} >
+                    {suspension.map((option) => (
+                      <MenuItem key={option.value} value={option.value ?? ""}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+              }}
+            />
+            <form.Field key="note" name="note"
+              children={(field: any) => {
+                const props = getFormTextFieldProps({ key: "note", field, });
+                // @ts-ignore
+                return <Grid sx={{ width: "45%", minWidth: "100px" }}><TextField key="note" {...props} /> </Grid>
+              }}
+            />
+
             <form.Field name="props" mode="array">
               {
                 (field: any) => (
@@ -464,4 +511,94 @@ export function ItemUpdate() {
   } as unknown as IFormContext;
 
   return <FormContext.Provider value={contextValue} > <FormDialog /> </FormContext.Provider >
+}
+
+
+export function ItemSearchList() {
+  const {
+    search,
+    items,
+    pagination,
+    isPending,
+    isError,
+    error,
+    pageChange,
+    pageSizeChange,
+    editItemClick,
+    openDialog,
+    closeDialog,
+  } = useSearchItems() as unknown as IItemSearchContext;
+  const storeItemScroll = useAppStore((state) => state.itemScroll);
+
+  function renderRow(itemKey: number): ReactNode {
+    const item = items[itemKey]
+    let tc: string = item.name ? item.name : "";
+    return (
+      <Fragment>
+        <ListItem key={itemKey + item.id} component="div" disablePadding sx={{ ...ListItemStyling, }} onClick={() => editItemClick(itemKey)}>
+          <Box sx={{ width: "100%", display: 'flex', }}>
+            <Box sx={{ width: "95%" }}>
+              <FlexStartBox>
+                <ListItemButton >
+                  <ListItemText primary={<Typography variant="body2" >{tc}</Typography>} />
+                </ListItemButton>
+              </FlexStartBox>
+            </Box>
+            <Box sx={{ justifyContent: 'flex-end', display: 'flex', minWidth: "10px" }}>
+              <IconButton aria-label="edit" onClick={() => editItemClick(itemKey)}>
+                <AppTooltip title="Edit tag"><EditIcon /></AppTooltip>
+              </IconButton>
+            </Box>
+          </Box>
+        </ListItem>
+        <Divider key="divider" />
+      </Fragment>
+    );
+  }
+  const contextValue = {
+    data: items,
+    pagination: pagination.paging,
+    isPending: isPending,
+    isError: isError,
+    error: error,
+    scrollIndex: Math.max(0, storeItemScroll),
+    pageChange: items.length > 0 ? pageChange : undefined,
+    pageSizeChange: items.length > 0 ? pageSizeChange : undefined,
+    clickRow: editItemClick,
+    renderRow,
+  } as unknown as IListContext;
+
+  let content;
+  if (items.length > 0) {
+    content = (<ListLayout />)
+  }
+
+  if (isPending) {
+    content = <LinearProgress />
+  }
+
+  if (error) {
+    content = <Alert severity="error">{error.message || "An error occurred. Please try again"}</Alert>
+  }
+
+  if (!isPending && !error && items.length == 0) {
+    content = (
+      <Typography variant="body1" sx={{ textAlign: "center", p: 3 }}> No items found </Typography>
+    )
+  }
+
+  content = <ViewOuterBox>{content}</ViewOuterBox>
+  const actions = <AppListPagination />;
+  const title = `Items like '${search}'`;
+  const dialogVal = {
+    title,
+    content,
+    actions,
+    openDialog,
+    closeDialog,
+  } as unknown as IFormContext;
+
+  return <ListContext.Provider value={contextValue}>
+    <FormContext.Provider value={dialogVal} > <ViewDialog /> </FormContext.Provider >
+  </ListContext.Provider>
 }

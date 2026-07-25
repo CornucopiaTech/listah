@@ -58,6 +58,7 @@ message Item {
   bool softDelete = 7;
   repeated Tag tagObjs = 8;
   repeated MapObj propObjs = 9;
+  int32 suspension = 10;
   string updatedBy = 500;
   google.protobuf.Timestamp updatedAt = 501;
 }

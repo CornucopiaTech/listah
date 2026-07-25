@@ -79,7 +79,7 @@ export function FilterUpdateProvider({ children }: { children: ReactNode }) {
   const tagQuery = {
     ...DefaultReadRequest,
     query: { ...DefaultReadQuery, userId: user?.id || "" },
-    pagination: { ...DefaultPagination, pageSize: -1, }
+    pagination: { ...DefaultPagination, size: -1, }
   }
   const {
     isPending, data, error

@@ -40,9 +40,23 @@ export const ZUrlSearch = z.object({
   p: z.string(),
   c: z.string(),
   e: z.string(),
+  s: z.string(),
 });
 export type IUrlSearch = z.infer<typeof ZUrlSearch>;
 
+
+
+export const ZSearchReadRequest = z.object({
+  pagination: ZPagination,
+  query: ZReadQuery,
+  flag: z.boolean(),
+});
+export type ISearchReadRequest = z.infer<typeof ZSearchReadRequest>;
+export const DefaultSearchReadRequest = {
+  query: DefaultReadQuery,
+  pagination: DefaultPagination,
+  flag: false,
+}
 
 
 export const ZChildReadRequest = z.object({
@@ -52,6 +66,7 @@ export const ZChildReadRequest = z.object({
   name: z.nullish(z.string()),
 });
 export type IChildReadRequest = z.infer<typeof ZChildReadRequest>;
+
 
 export const ZReadRequest = z.object({
   query: ZReadQuery.catch(DefaultReadQuery),

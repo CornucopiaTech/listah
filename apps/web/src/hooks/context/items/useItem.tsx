@@ -7,6 +7,7 @@ import {
 import type {
   IItemListContext,
   IItemUpdateContext,
+  IItemSearchContext,
 } from "@/domain/entities"
 
 
@@ -18,4 +19,9 @@ export function useListItems() {
 export const ItemUpdateContext = createContext<IItemUpdateContext | undefined>(undefined);
 export function useUpdateItems() {
   return useContext(ItemUpdateContext);
+}
+
+export const ItemSearchContext = createContext<IItemSearchContext | undefined>(undefined);
+export function useSearchItems() {
+  return useContext(ItemSearchContext);
 }

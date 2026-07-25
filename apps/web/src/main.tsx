@@ -14,9 +14,7 @@ import { enableMapSet } from 'immer';
 import { ThemeProvider, } from '@mui/material/styles';
 import { useUser } from '@clerk/react';
 import LinearProgress from '@mui/material/LinearProgress';
-// import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
-// import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 // Internal imports
 // Import the generated route tree
@@ -43,23 +41,6 @@ declare global {
 
 enableMapSet();
 export const queryClient = new QueryClient();
-
-
-// const router = createRouter({
-//   routeTree,
-//   defaultPendingComponent: LinearProgress,
-//   defaultErrorComponent: ({ error }) => <Alert severity="error">{error.message}</Alert>,
-//   defaultNotFoundComponent: NotFound,
-//   Wrap: Wrapper,
-//   context: {
-//     queryClient,
-//     user: undefined,
-//   },
-//   defaultPreload: 'intent',
-//   defaultPreloadStaleTime: 0,
-//   scrollRestoration: true,
-// })
-
 
 const router = createRouter({
   routeTree,
@@ -91,7 +72,6 @@ function Wrapper({ children }: { children: ReactNode }) {
     <ThemeProvider theme={theme}>
       <QueryClientProvider client={queryClient}>
         {children}
-        {/* <ReactQueryDevtools initialIsOpen={false} position='left' /> */}
       </QueryClientProvider>
     </ThemeProvider>
   )
@@ -106,8 +86,7 @@ async function loadConfig() {
 
 function StrictModeWrapper({ children }: { children: ReactNode }) {
   if (process.env.NODE_ENV === "development") {
-    return <>{children}</>
-    // return <StrictMode>{children}</StrictMode>
+    return <StrictMode>{children}</StrictMode>
   }
   return children
 }

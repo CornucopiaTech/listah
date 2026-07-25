@@ -47,8 +47,6 @@ import {
 
 
 
-// ToDo: Define a search or a items page that the search bar will result in.
-
 export function AppNavDrawer(): ReactNode {
   const theme: AppTheme = useTheme();
   const store: TAppStore = useAppStore((state) => state);

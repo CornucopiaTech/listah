@@ -317,6 +317,7 @@ type Item struct {
 	SoftDelete    bool                   `protobuf:"varint,7,opt,name=softDelete,proto3" json:"softDelete,omitempty"`
 	TagObjs       []*Tag                 `protobuf:"bytes,8,rep,name=tagObjs,proto3" json:"tagObjs,omitempty"`
 	PropObjs      []*MapObj              `protobuf:"bytes,9,rep,name=propObjs,proto3" json:"propObjs,omitempty"`
+	Suspension    int32                  `protobuf:"varint,10,opt,name=suspension,proto3" json:"suspension,omitempty"`
 	UpdatedBy     string                 `protobuf:"bytes,500,opt,name=updatedBy,proto3" json:"updatedBy,omitempty"`
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,501,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -414,6 +415,13 @@ func (x *Item) GetPropObjs() []*MapObj {
 		return x.PropObjs
 	}
 	return nil
+}
+
+func (x *Item) GetSuspension() int32 {
+	if x != nil {
+		return x.Suspension
+	}
+	return 0
 }
 
 func (x *Item) GetUpdatedBy() string {
@@ -751,7 +759,7 @@ const file_v1_commons_proto_rawDesc = "" +
 	"\n" +
 	"ValueEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12+\n" +
-	"\x05value\x18\x02 \x01(\v2\x15.listah.v1.StringListR\x05value:\x028\x01\"\xa9\x03\n" +
+	"\x05value\x18\x02 \x01(\v2\x15.listah.v1.StringListR\x05value:\x028\x01\"\xc9\x03\n" +
 	"\x04Item\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
@@ -763,7 +771,11 @@ const file_v1_commons_proto_rawDesc = "" +
 	"softDelete\x18\a \x01(\bR\n" +
 	"softDelete\x12(\n" +
 	"\atagObjs\x18\b \x03(\v2\x0e.listah.v1.TagR\atagObjs\x12-\n" +
-	"\bpropObjs\x18\t \x03(\v2\x11.listah.v1.MapObjR\bpropObjs\x12\x1d\n" +
+	"\bpropObjs\x18\t \x03(\v2\x11.listah.v1.MapObjR\bpropObjs\x12\x1e\n" +
+	"\n" +
+	"suspension\x18\n" +
+	" \x01(\x05R\n" +
+	"suspension\x12\x1d\n" +
 	"\tupdatedBy\x18\xf4\x03 \x01(\tR\tupdatedBy\x129\n" +
 	"\tupdatedAt\x18\xf5\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x1a8\n" +
 	"\n" +

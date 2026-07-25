@@ -24,15 +24,18 @@ import {
   useAppStore,
 } from '@/hooks/store/boundStore';
 import type {
-  IItemListContext,
-  IReadRequest,
+  IItemSearchContext,
+  ISearchReadRequest,
   IChildReadRequest,
   IUrlSearch,
   IItemReadResponse,
+  IRouteStrings,
 } from "@/domain/entities";
 import {
   DefaultPagination,
   Pagination,
+  DefaultEditor,
+  DefaultSearchReadRequest,
 } from '@/domain/entities';
 import {
   encodeState,
@@ -40,18 +43,18 @@ import {
 } from '@/helpers/encoders';
 import {
   useListItem,
-  ItemListContext,
+  ItemSearchContext,
+
 } from "@/hooks/context/items";
 
 
-
-
-export function FilterItemListProvider({ children }: { children: ReactNode }) {
+export function ItemSearchProvider({ children, route }: { children: ReactNode, route: IRouteStrings }) {
   const { user } = useUser();
   const storeSetItemScroll = useAppStore((state) => state.setItemScroll);
   const navigate = useNavigate();
-  const routeApi = getRouteApi("/filters");
-  const { query: urlQuery, pagination: urlPagination } = decodeState(routeApi.useSearch({ select: (search) => search.c, })) as unknown as IReadRequest;
+  const routeApi = getRouteApi(route);
+  // @ts-ignore
+  const { query: urlQuery, pagination: urlPagination, flag } = decodeState(routeApi.useSearch({ select: (search) => search.s, })) as unknown as ISearchReadRequest;
   const opts = {
     pagination: { ...urlPagination },
     query: { ...urlQuery, userId: user?.id ?? "", },
@@ -71,11 +74,11 @@ export function FilterItemListProvider({ children }: { children: ReactNode }) {
       to: ".",
       // @ts-ignore
       search: (prev: IUrlSearch) => {
-        const dPrev = decodeState(prev.c) as unknown as IChildReadRequest;
-        return { ...prev, c: encodeState({ ...dPrev, pagination: pagination.paging }) }
+        const dPrev = decodeState(prev.s) as unknown as IChildReadRequest;
+        return { ...prev, s: encodeState({ ...dPrev, pagination: pagination.paging }) }
       }
     });
-  }, [opts]);
+  }, [opts, flag]);
   const pageChange = useCallback((event: MouseEvent<HTMLButtonElement> | null, value: number) => {
     if (event) { event.stopPropagation() };
     pagination.changePage(value);
@@ -83,11 +86,11 @@ export function FilterItemListProvider({ children }: { children: ReactNode }) {
       to: ".",
       // @ts-ignore
       search: (prev: IUrlSearch) => {
-        const dPrev = decodeState(prev.c) as unknown as IChildReadRequest;
-        return { ...prev, c: encodeState({ ...dPrev, pagination: pagination.paging }) }
+        const dPrev = decodeState(prev.s) as unknown as IChildReadRequest;
+        return { ...prev, s: encodeState({ ...dPrev, pagination: pagination.paging }) }
       }
     });
-  }, [opts]);
+  }, [opts, flag]);
   const editItemClick = useCallback((idx: number) => {
     storeSetItemScroll(idx);
     const it = items[idx];
@@ -96,14 +99,27 @@ export function FilterItemListProvider({ children }: { children: ReactNode }) {
       // @ts-ignore
       search: (prev: IUrlSearch) => {
         return {
+          // p: prev.p, c: prev.c, e: encodeState({ obj: it, flag: true, modal: "item" })
           ...prev, e: encodeState({ obj: it, flag: true, modal: "item" })
         }
       }
     });
-  }, [opts]);
+  }, [opts, flag]);
+
+  const search = opts.query.text;
+  const openDialog = flag ?? false;
+  const closeDialog = () => {
+    navigate({
+      to: ".",
+      // @ts-ignore
+      search: (prev: IUrlSearch) => { return { ...prev, e: encodeState(DefaultEditor), s: encodeState(DefaultSearchReadRequest) } }
+    });
+  };
 
 
   const contextValue = useMemo(() => ({
+    route,
+    search,
     items,
     pagination,
     isPending,
@@ -112,6 +128,8 @@ export function FilterItemListProvider({ children }: { children: ReactNode }) {
     pageChange,
     pageSizeChange,
     editItemClick,
-  } as unknown as IItemListContext), [opts]);
-  return <ItemListContext.Provider value={contextValue}> {children} </ItemListContext.Provider>
+    openDialog,
+    closeDialog,
+  } as unknown as IItemSearchContext), [opts, flag]);
+  return <ItemSearchContext.Provider value={contextValue}> {children} </ItemSearchContext.Provider>
 }

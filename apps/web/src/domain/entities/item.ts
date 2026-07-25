@@ -24,6 +24,7 @@ export const ZItemForm = z.object({
   props: z.array(ZItemFormProps).catch([]),
   tags: z.array(ZTag).catch([]),
   softDelete: z.nullish(z.boolean().catch(false)),
+  suspension: z.nullish(z.int()),
 });
 export type IItemForm = z.infer<typeof ZItemForm>;
 
@@ -39,7 +40,8 @@ export const ZItem = z.object({
   props: z.any(),
   tagObjs: z.nullish(z.array(ZTag)).catch([]),
   propObjs: z.nullish(z.array(ZItemFormProps)).catch([]),
-  softDelete: z.nullish(z.boolean().catch(false)),
+  softDelete: z.nullish(z.boolean()).catch(false),
+  suspension: z.nullish(z.int()),
 });
 export type IItem = z.infer<typeof ZItem>;
 export const DefaultItem = {
@@ -52,4 +54,5 @@ export const DefaultItem = {
   tagObjs: [],
   propObjs: [],
   softDelete: false,
+  suspension: null,
 }
