@@ -130,7 +130,6 @@ func ReadRequestToRepoSearch(msg *pb.ReadRequest) (*RepoSearch, error) {
 	pNum := DefaultPagination.Page
 	sortT := DefaultPagination.Sort
 	pg := msg.GetPagination()
-	// fmt.Printf("\npg  %+v\n", pg)
 	if pg != nil {
 		if pg.Size > 0 {
 			pSize = pg.Size
@@ -158,6 +157,5 @@ func ReadRequestToRepoSearch(msg *pb.ReadRequest) (*RepoSearch, error) {
 		Offset: offset,
 		Page:   pNum,
 	}
-	// fmt.Printf("\nRepo Search -  %+v\n", i)
 	return &i, nil
 }
