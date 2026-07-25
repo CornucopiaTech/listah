@@ -163,6 +163,7 @@ export function ItemList() {
 // ToDo. Read the url and find out if a filter or tag is being looked at and then add the tags associated with the tag or filter to the create new item form
 // ToDo: Add the functionality for inheriting properties from an existing filter.
 // ToDo: create the functionality for suspending viewing/display of an existing filter.
+// ToDo: Remove userID from query and use bearer token for auth.
 function AppItemFormTagAutocompleteField(): ReactNode {
   const {
     form,
