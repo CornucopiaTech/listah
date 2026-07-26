@@ -6,6 +6,7 @@ import {
 } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
 import type {
   ReactNode,
 } from 'react';
@@ -67,7 +68,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 }
 
 
-export function AppContainer({ children }: { children: ReactNode, }) {
+export function AppBoxContainer({ children, mw }: { children: ReactNode, mw: "md" | "sm" | "lg" | "xl" }) {
   const storeDrawerOpen = useAppStore((state) => state.drawerOpen);
   const theme: AppTheme = useTheme();
   const appbarWidth = storeDrawerOpen ? `calc(100% - ${AppDrawerWidth}px)` : `calc(100% - calc(${theme.spacing(7)} + 1px))`;
@@ -83,5 +84,25 @@ export function AppContainer({ children }: { children: ReactNode, }) {
     }}>
       <Box sx={{ width: "100%", margin: "10px" }}> {children} </Box>
     </Box>
+  );
+}
+
+
+export function AppContainer({ children, mw }: { children: ReactNode, mw: "xs" | "sm" | "md" | "lg" | "xl" }) {
+  const storeDrawerOpen = useAppStore((state) => state.drawerOpen);
+  const theme: AppTheme = useTheme();
+  const appbarWidth = storeDrawerOpen ? `calc(100% - ${AppDrawerWidth}px)` : `calc(100% - calc(${theme.spacing(7)} + 1px))`;
+  return (
+    <Container mw={mw} sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center', // Vertically centers the content inside the container
+      alignItems: 'center',     // Horizontally centers the content inside the container
+      maxHeight: AppPageContentHeight,       // Forces the container to take up the full screen height
+      minWidth: `${appbarWidth}`,
+      maxWidth: `${appbarWidth}`,
+    }}>
+      <Box sx={{ width: "100%", margin: "10px" }}> {children} </Box>
+    </Container>
   );
 }
