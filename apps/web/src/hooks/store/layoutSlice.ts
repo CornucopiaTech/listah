@@ -27,7 +27,7 @@ export const createLayoutSlice: StateCreator<
   ILayoutSlice
 > = (set) => ({
   ...layoutInitState,
-  toggleDrawer: (drawerOpen: boolean) => set(() => ({ drawerOpen })),
+  setDrawer: (drawerOpen: boolean) => set(() => ({ drawerOpen })),
   setSearchQuery: (searchQuery: undefined | string) => set(() => ({ searchQuery })),
   setErrorMsg: (errorMsg: null | undefined | string) => set(() => ({ errorMsg })),
   setWarnMsg: (warnMsg: null | undefined | string) => set(() => ({ warnMsg })),

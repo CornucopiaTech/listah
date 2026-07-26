@@ -20,7 +20,7 @@ export type ILayoutState = {
   errorMsg: string | null | undefined
 }
 export type ILayoutActions = {
-  toggleDrawer: (drawerOpen: boolean) => void
+  setDrawer: (drawerOpen: boolean) => void
   setSearchQuery: (searchQuery: undefined | string) => void
   setErrorMsg: (errorMsg: null | undefined | string) => void
   setWarnMsg: (warnMsg: null | undefined | string) => void
