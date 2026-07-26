@@ -132,7 +132,7 @@ export function ItemList() {
             </Box>
             <Box sx={{ justifyContent: 'flex-end', display: 'flex', minWidth: "10px" }}>
               <IconButton aria-label="edit" onClick={() => editItemClick(itemKey)}>
-                <AppTooltip title="Edit tag"><EditIcon /></AppTooltip>
+                <AppTooltip title="Edit item"><EditIcon /></AppTooltip>
               </IconButton>
             </Box>
           </Box>
@@ -458,12 +458,12 @@ export function ItemUpdate() {
               children={(field: any) => {
                 const props = getFormTextFieldProps({ key: "name", field, });
                 // @ts-ignore
-                return <Grid sx={{ width: "45%", minWidth: "100px" }}><TextField {...props} /> </Grid>
+                return <Grid sx={{ width: { xs: "90%", md: "45%" }, minWidth: "100px" }}><TextField {...props} /> </Grid>
               }}
             />
             <form.Field key="suspension" name="suspension"
               children={(field: any) => {
-                return <Grid sx={{ width: "45%", minWidth: "100px" }}>
+                return <Grid sx={{ width: { xs: "90%", md: "45%" }, minWidth: "100px" }}>
                   <TextField
                     id="view suspension"
                     select
@@ -489,7 +489,7 @@ export function ItemUpdate() {
               children={(field: any) => {
                 const props = getFormTextFieldProps({ key: "note", field, });
                 // @ts-ignore
-                return <Grid sx={{ width: "45%", minWidth: "100px" }}><TextField key="note" {...props} /> </Grid>
+                return <Grid sx={{ width: { xs: "90%", md: "45%" }, minWidth: "100px" }}><TextField key="note" {...props} /> </Grid>
               }}
             />
 
@@ -504,7 +504,7 @@ export function ItemUpdate() {
                           (subField: any) => {
                             const cprops = getFormItemPropsArrayTextFieldProps({ key: "props", field, subField, idx: i });
                             // @ts-ignore
-                            return <Grid sx={{ width: "45%", minWidth: "100px" }}><TextField {...cprops} /> </Grid>
+                            return <Grid sx={{ width: { xs: "90%", md: "45%" }, minWidth: "100px" }}><TextField {...cprops} /> </Grid>
                           }
                         }</form.Field>
                       })
