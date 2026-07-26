@@ -4,6 +4,10 @@ import type {
 import {
   Fragment,
 } from 'react';
+import {
+  Link as RouterLink
+} from '@tanstack/react-router';
+// import { Link as RouterLink } from 'react-router-dom';
 import { useTheme, } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
@@ -16,7 +20,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import Link from '@mui/material/Link';
+import MuiLink from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import LoginIcon from '@mui/icons-material/Login';
@@ -137,7 +141,7 @@ export function AppNavDrawer(): ReactNode {
         <List key="nav">
           {iconList.map((t) => (
             <AppTooltip key={t.name + t.url} title={t.name} placement="right-start" arrow>
-              <Link key={t.name + t.url} href={t.url} onClick={() => storeSetDrawerOpen(false)}>
+              <MuiLink component={RouterLink} key={t.name + t.url} href={t.url} onClick={() => storeSetDrawerOpen(false)}>
                 <ListItem key={t.name} disablePadding sx={iconStyling(t.url)}>
                   <ListItemButton sx={drawerButtonStyling}>
                     <ListItemIcon sx={drawerIconStyling}> {t.icon} </ListItemIcon>
@@ -145,7 +149,7 @@ export function AppNavDrawer(): ReactNode {
                     <ListItemText primary={t.name} sx={drawerTextStyling} />
                   </ListItemButton>
                 </ListItem>
-              </Link>
+              </MuiLink>
             </AppTooltip>
 
           ))}
