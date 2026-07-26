@@ -16,7 +16,6 @@ import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
@@ -116,7 +115,6 @@ export function TagList() {
             // @ts-ignore
             color={itemKey % 2 == 0 ? "inherit" : "secondary"} label={itemcount}
           />
-          <IconButton aria-label="view" onClick={() => viewItemsClick(itemKey)}> <AppTooltip title="View items in tag"><VisibilityIcon /></AppTooltip> </IconButton>
           <IconButton aria-label="edit" onClick={() => editTagClick(itemKey)}> <AppTooltip title="Edit tag"><EditIcon /></AppTooltip> </IconButton>
         </FlexEndBox>
       </ListItem>

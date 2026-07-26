@@ -13,7 +13,6 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { Virtuoso } from 'react-virtuoso';
@@ -94,27 +93,6 @@ export function FilterList(): ReactNode {
   } = useListFilters() as unknown as IFilterListContext;
   const storeFilterScroll = useAppStore((state) => state.filterScroll);
 
-  // function renderRow(itemKey: number): ReactNode {
-  //   const item = filters[itemKey];
-  //   const tc = item?.name ?? "";
-  //   const itemcount = item?.count?.toString() ?? "0";
-  //   return (
-  //     <ListItem key={itemKey + tc} component="div"
-  //       disablePadding sx={ListItemStyling}
-  //       onClick={() => listItemClick(itemKey)} >
-  //       <ListItemButton>
-  //         <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
-  //         <Chip
-  //           variant="contained"
-  //           // @ts-ignore
-  //           color={itemKey % 2 == 0 ? "inherit" : "secondary"}
-  //           label={itemcount}
-  //         />
-  //       </ListItemButton>
-  //     </ListItem>
-  //   );
-  // }
-
   function renderRow(itemKey: number): ReactNode {
     const item = filters[itemKey];
     const tc = item?.name ?? "";
@@ -131,7 +109,6 @@ export function FilterList(): ReactNode {
             // @ts-ignore
             color={itemKey % 2 == 0 ? "inherit" : "secondary"} label={itemcount}
           />
-          <IconButton aria-label="view" onClick={() => viewItemsClick(itemKey)}> <AppTooltip title="View items in filter"><VisibilityIcon /></AppTooltip> </IconButton>
           <IconButton aria-label="edit" onClick={() => editFilterClick(itemKey)}> <AppTooltip title="Edit filter"><EditIcon /></AppTooltip> </IconButton>
         </FlexEndBox>
       </ListItem>
