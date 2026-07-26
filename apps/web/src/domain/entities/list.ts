@@ -74,7 +74,6 @@ export type ITagListContext = {
   error: Error | null,
   pageChange: (event: MouseEvent<HTMLButtonElement> | null, value: number) => void,
   pageSizeChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
-  listItemClick: (idx: number) => void,
   viewItemsClick: (idx: number) => void,
   editTagClick: (idx: number) => void,
 }
@@ -88,7 +87,6 @@ export type IFilterListContext = {
   error: Error | null,
   pageChange: (event: MouseEvent<HTMLButtonElement> | null, value: number) => void,
   pageSizeChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
-  listItemClick: (idx: number) => void,
   viewItemsClick: (idx: number) => void,
   editFilterClick: (idx: number) => void,
 }

@@ -16,17 +16,17 @@ import type { IStore } from '@/domain/entities/store';
 
 
 export const useAppStore = create<IStore>()(
-  // persist(
-  devtools(
-    (...a) => ({
-      ...createTagSlice(...a),
-      ...createFilterSlice(...a),
-      ...createItemSlice(...a),
-      ...createLayoutSlice(...a),
-    }),
-  ),
-  // { name: 'listah-store' },
-  // )
+  persist(
+    devtools(
+      (...a) => ({
+        ...createTagSlice(...a),
+        ...createFilterSlice(...a),
+        ...createItemSlice(...a),
+        ...createLayoutSlice(...a),
+      }),
+    ),
+    { name: 'listah-store' },
+  )
 );
 
 

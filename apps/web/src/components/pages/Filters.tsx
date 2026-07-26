@@ -2,13 +2,10 @@
 import type {
   ReactNode,
 } from 'react';
-import { useTheme, } from '@mui/material/styles';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Divider from '@mui/material/Divider';
 import EditIcon from '@mui/icons-material/Edit';
-import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import LinearProgress from '@mui/material/LinearProgress';
 import ListItem from '@mui/material/ListItem';
@@ -25,7 +22,6 @@ import { Virtuoso } from 'react-virtuoso';
 
 
 // Internal
-import type { AppTheme } from '@/system/theme';
 import {
   useAppStore,
 } from '@/hooks/store/boundStore';
@@ -42,10 +38,9 @@ import {
   ListContext,
   FilterUpdateProvider,
   BreadcrumbProvider,
-  FilterItemListProvider,
   FilterListProvider,
-  ItemUpdateProvider,
   ItemSearchProvider,
+  ItemUpdateProvider,
 } from "@/hooks/context";
 import {
   ListItemStyling
@@ -58,40 +53,28 @@ import {
   FlexStartBox,
   FormDialog,
   getFormTextFieldProps,
-  ItemList,
-  ItemUpdate,
   ListBox,
   ListLayout,
   OuterBox,
   UpdateFormActions,
   AppBreadcrumb,
   ItemSearchList,
+  ItemUpdate,
 } from '@/components';
 
 
 
 
 export function Filters(): ReactNode {
-  const theme: AppTheme = useTheme();
   return (
-    <AppContainer>
+    <AppContainer mw="md">
       <FilterUpdateProvider> <UpdateFilter /> </FilterUpdateProvider>
       <ItemUpdateProvider route="/filters"> <ItemUpdate /> </ItemUpdateProvider>
-      <BreadcrumbProvider route="/filters"><AppBreadcrumb title="Filters" /></BreadcrumbProvider>
+      <BreadcrumbProvider route="/filters"><AppBreadcrumb /></BreadcrumbProvider>
       <ItemSearchProvider route="/filters"><ItemSearchList /></ItemSearchProvider>
-      <Grid container spacing={1}>
-        <Grid key="tag" size={5} >
-          <AppSectionPaper>
-            <FilterListProvider> <FilterList /> </FilterListProvider>
-          </AppSectionPaper>
-        </Grid>
-        <Divider orientation="vertical" key="divider" sx={{ borderColor: theme.palette.primary.contrastText }} />
-        <Grid key="item" size={6} >
-          <AppSectionPaper>
-            <FilterItemListProvider> <ItemList /> </FilterItemListProvider>
-          </AppSectionPaper>
-        </Grid>
-      </Grid>
+      <AppSectionPaper>
+        <FilterListProvider> <FilterList /> </FilterListProvider>
+      </AppSectionPaper>
     </AppContainer >
   );
 }

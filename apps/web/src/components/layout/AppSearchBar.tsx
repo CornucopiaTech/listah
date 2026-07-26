@@ -27,7 +27,6 @@ import { useAppStore } from '@/hooks/store/boundStore';
 
 
 export function AppItemSearchBar(): ReactNode {
-  // const store: TAppStore = useAppStore((state) => state);
   const storeSearchQuery = useAppStore((state) => state.searchQuery);
   const storeSetSearchQuery = useAppStore((state) => state.setSearchQuery);
   const { user } = useUser();

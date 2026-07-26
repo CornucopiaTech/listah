@@ -106,10 +106,12 @@ function prepFormData({ item, data, }: { item: IItem, data: ITagReadResponse }) 
   return formData;
 }
 
-export function ItemUpdateProvider({ children, route }: { children: ReactNode, route: IRouteStrings }) {
+export function ItemUpdateProvider({ children, route }: { children: ReactNode, route?: IRouteStrings }) {
   const { user } = useUser();
   const navigate = useNavigate();
-  const routeApi = getRouteApi(route);
+  const proute = route ?? "/items";
+  // @ts-ignore
+  const routeApi = getRouteApi(proute);
   // @ts-ignore
   const { obj, flag, modal } = decodeState(routeApi.useSearch({ select: (search) => search.e, })) as unknown as IEditor;
   const tagQuery = {
@@ -183,7 +185,7 @@ export function ItemUpdateProvider({ children, route }: { children: ReactNode, r
     formData,
     isPending,
     error
-  } as unknown as IItemUpdateContext), [obj, flag, modal]);
+  } as unknown as IItemUpdateContext), [obj, flag, modal, proute]);
 
   return <ItemUpdateContext.Provider value={contextValue}>
     {children}

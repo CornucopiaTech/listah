@@ -12,7 +12,6 @@ import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 import Alert from '@mui/material/Alert';
-import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
@@ -20,6 +19,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+
 
 
 
@@ -43,12 +43,11 @@ import {
   FormContext,
   ListContext,
   TagListProvider,
-  TagItemListProvider,
   TagUpdateProvider,
   useUpdateTags,
   BreadcrumbProvider,
-  ItemUpdateProvider,
   ItemSearchProvider,
+  ItemUpdateProvider,
 } from "@/hooks/context";
 import {
   getFormArrayTextFieldProps,
@@ -59,32 +58,29 @@ import {
   ListLayout,
   ListBox,
   OuterBox,
-  ItemList,
   FormDialog,
   UpdateFormActions,
   AppTooltip,
   FlexEndBox,
   FlexStartBox,
-  ItemUpdate,
   AppBreadcrumb,
   ItemSearchList,
+  ItemUpdate,
 } from "@/components";
 
 
 
 
 export function Tags() {
-  const theme: AppTheme = useTheme();
   return (
     <AppContainer mw="md">
       <TagUpdateProvider> <UpdateTag /> </TagUpdateProvider>
       <ItemUpdateProvider route="/tags"> <ItemUpdate /> </ItemUpdateProvider>
-      <BreadcrumbProvider route="/tags"><AppBreadcrumb title="Tags" /></BreadcrumbProvider>
+      <BreadcrumbProvider route="/tags"><AppBreadcrumb /></BreadcrumbProvider>
       <ItemSearchProvider route="/tags"><ItemSearchList /></ItemSearchProvider>
       <AppSectionPaper>
         <TagListProvider> <TagList /> </TagListProvider>
       </AppSectionPaper>
-
     </AppContainer >
   );
 }

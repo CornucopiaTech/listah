@@ -28,26 +28,28 @@ import {
 
 
 
-export function AppBreadcrumb({ title }: { title: string }): ReactNode {
+export function AppBreadcrumb(): ReactNode {
   const {
     route,
+    parent,
     breadcrumbClick,
     breadcrumbTail,
     addNewItemClick,
     addNewFilterClick,
     addNewTagClick,
   } = useBreadcrumb() as unknown as IBreadcrumbContext;
+  const title = (parent == "/tags" || route == "/tags") ? "Tags" : (parent == "/filters" || route == "/filters") ? "Filters" : "Items";
   const actions = [
+    {
+      icon: <ListAltIcon sx={{ fontSize: "2rem" }} />,
+      name: 'Create new item',
+      onClick: addNewItemClick,
+    },
     {
       icon: <TagIcon sx={{ fontSize: "2rem" }} />,
       name: 'Create new tag',
       onClick: addNewTagClick,
       display: route == "/tags" ? undefined : "none"
-    },
-    {
-      icon: <ListAltIcon sx={{ fontSize: "2rem" }} />,
-      name: 'Create new item',
-      onClick: addNewItemClick,
     },
     {
       icon: <CategoryIcon sx={{ fontSize: "2rem" }} />,

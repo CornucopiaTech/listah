@@ -62,10 +62,18 @@ export const DefaultSearchReadRequest = {
 export const ZChildReadRequest = z.object({
   pagination: ZPagination,
   query: ZReadQuery,
-  id: z.nullish(z.string()),
-  name: z.nullish(z.string()),
+  name: z.string(),
+  parent: z.string(),
+  flag: z.boolean(),
 });
 export type IChildReadRequest = z.infer<typeof ZChildReadRequest>;
+export const DefaultChildReadRequest: IChildReadRequest = {
+  query: DefaultReadQuery,
+  pagination: DefaultPagination,
+  name: "",
+  parent: "",
+  flag: false,
+}
 
 
 export const ZReadRequest = z.object({

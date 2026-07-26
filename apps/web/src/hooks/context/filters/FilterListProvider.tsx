@@ -98,11 +98,11 @@ export function FilterListProvider({ children }: { children: ReactNode }) {
     const c = encodeState({
       query: { ...DefaultReadQuery, userId: opts.query.userId, tags: [...it.tags] },
       pagination: { ...DefaultPagination, size: pagination.paging.size },
-      id: it.id, name: it.name,
+      name: it.name, parent: "/filters", flag: true,
     });
     navigate({
       // @ts-ignore
-      to: ".", search: (prev: IUrlSearch) => { return { ...prev, c } }
+      to: "/items", search: (prev: IUrlSearch) => { return { ...prev, c } }
     });
   }, [opts]);
 

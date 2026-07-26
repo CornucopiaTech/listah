@@ -32,7 +32,6 @@ import {
 import type { AppTheme } from '@/system/theme';
 import {
   useAppStore,
-  type TAppStore
 } from '@/hooks/store/boundStore';
 import {
   AppDrawerWidth,

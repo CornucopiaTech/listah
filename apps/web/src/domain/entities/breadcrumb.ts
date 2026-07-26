@@ -1,5 +1,5 @@
 
-export type IRouteStrings = "/" | "/tags" | "__root__" | "/filters";
+export type IRouteStrings = "/" | "__root__" | "/tags" | "/filters" | "/items";
 
 export type IBreadcrumbContext = {
   addNewItemClick: () => void,
@@ -8,4 +8,5 @@ export type IBreadcrumbContext = {
   breadcrumbClick: () => void,
   breadcrumbTail: string | null,
   route: string,
+  parent: string,
 }

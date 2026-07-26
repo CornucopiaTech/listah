@@ -43,8 +43,6 @@ import type {
   ITag,
   IItemFormProps,
   IItemSearchContext,
-  ITagListContext,
-  ITagUpdateContext,
 } from '@/domain/entities';
 import {
   DefaultTag,
@@ -56,20 +54,15 @@ import {
   useListItems,
   useUpdateItems,
   useSearchItems,
-  useTagList,
   FormContext,
   ListContext,
-  TagListProvider,
   ItemListProvider,
-  TagUpdateProvider,
-  useUpdateTags,
   BreadcrumbProvider,
   ItemUpdateProvider,
   ItemSearchProvider,
 } from "@/hooks/context";
 import {
   getFormItemPropsArrayTextFieldProps,
-  getFormArrayTextFieldProps,
   getFormTextFieldProps,
   ItemFormTagBox,
   AppSectionPaper,
@@ -80,7 +73,6 @@ import {
   FormDialog,
   UpdateFormActions,
   AppTooltip,
-  FlexEndBox,
   FlexStartBox,
   AppBreadcrumb,
   ViewOuterBox,
@@ -97,10 +89,10 @@ import {
 
 export function Items() {
   return (
-    <AppContainer>
-      <ItemUpdateProvider route="/tags"> <ItemUpdate /> </ItemUpdateProvider>
-      <BreadcrumbProvider route="/tags"><AppBreadcrumb title="Tags" /></BreadcrumbProvider>
-      <ItemSearchProvider route="/tags"><ItemSearchList /></ItemSearchProvider>
+    <AppContainer mw="md">
+      <ItemUpdateProvider> <ItemUpdate /> </ItemUpdateProvider>
+      <BreadcrumbProvider route="/items"><AppBreadcrumb /></BreadcrumbProvider>
+      <ItemSearchProvider route="/items"><ItemSearchList /></ItemSearchProvider>
       <AppSectionPaper>
         <ItemListProvider> <ItemList /> </ItemListProvider>
       </AppSectionPaper>

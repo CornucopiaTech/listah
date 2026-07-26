@@ -37,12 +37,13 @@ import {
 
 export function BreadcrumbProvider({ children, route, }: { children: ReactNode, route: IRouteStrings }) {
   const navigate = useNavigate();
+  // @ts-ignore
   const routeApi = getRouteApi(route);
   const csearch = decodeState(routeApi.useSearch({ select: (search: any) => search.c as unknown as string })) as unknown as IChildReadRequest;
 
   const breadcrumbClick = () => {
     // @ts-ignore
-    navigate({ to: ".", search: (prev: IUrlSearch) => ({ s: prev.p }) });
+    navigate({ to: csearch?.parent ?? ".", search: (prev: IUrlSearch) => ({ p: prev.p }) });
   }
 
   const addNewItemClick = () => {
@@ -81,9 +82,11 @@ export function BreadcrumbProvider({ children, route, }: { children: ReactNode, 
     });
   }
   const breadcrumbTail = csearch?.name ?? "";
+  const parent = csearch?.parent ?? "";
 
   const contextValue = useMemo(() => ({
     route,
+    parent,
     breadcrumbClick,
     breadcrumbTail,
     addNewItemClick,

@@ -13,6 +13,7 @@ import {
 } from '@/helpers/encoders';
 import {
   DefaultReadRequest,
+  DefaultChildReadRequest,
   DefaultEditor,
   DefaultSearchReadRequest,
   type IUrlSearch,
@@ -25,7 +26,7 @@ export const Route = createFileRoute('/tags')({
   // Ensure correct search parameters are passed down. Adds default value if no seach parameter is passed down.
   validateSearch: (search: Record<string, unknown>): IUrlSearch => {
     const p = search && search.p ? search.p : encodeState(DefaultReadRequest);
-    const c = search && search.c ? search.c : encodeState(DefaultReadRequest);
+    const c = search && search.c ? search.c : encodeState(DefaultChildReadRequest);
     const e = search && search.e ? search.e : encodeState(DefaultEditor);
     const s = search && search.s ? search.s : encodeState(DefaultSearchReadRequest);
     return {

@@ -25,7 +25,6 @@ import {
 } from '@/hooks/store/boundStore';
 import type {
   IItemListContext,
-  IReadRequest,
   IChildReadRequest,
   IUrlSearch,
   IItemReadResponse,
@@ -48,8 +47,10 @@ export function ItemListProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const storeSetItemScroll = useAppStore((state) => state.setItemScroll);
   const navigate = useNavigate();
+  // @ts-ignore
   const routeApi = getRouteApi("/items");
-  const { query: urlQuery, pagination: urlPagination } = decodeState(routeApi.useSearch({ select: (search) => search.c, })) as unknown as IReadRequest;
+  // @ts-ignore
+  const { query: urlQuery, pagination: urlPagination } = decodeState(routeApi.useSearch({ select: (search) => search.c, })) as unknown as IChildReadRequest;
   const opts = {
     pagination: { ...urlPagination },
     query: { ...urlQuery, userId: user?.id ?? "", },

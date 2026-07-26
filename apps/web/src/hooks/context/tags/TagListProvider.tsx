@@ -76,6 +76,7 @@ export function TagListProvider({ children }: { children: ReactNode }) {
       }
     });
   }, [opts]);
+
   const pageSizeChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     pagination.changeSize(e.target.value);
     navigate({
@@ -88,21 +89,6 @@ export function TagListProvider({ children }: { children: ReactNode }) {
     });
   }, [opts]);
 
-  const listItemClick = useCallback((idx: number) => {
-    const it = tags[idx];
-    storeSetTagScroll(idx);
-    storeSetItemScroll(0);
-    const c = encodeState({
-      query: { ...DefaultReadQuery, userId: opts.query.userId, tags: [it.id] },
-      pagination: { ...DefaultPagination, size: pagination.paging.size },
-      id: it.id, name: it.name,
-    });
-    navigate({
-      // @ts-ignore
-      to: ".", search: (prev: IUrlSearch) => { return { ...prev, c } }
-    });
-  }, [opts]);
-
   const viewItemsClick = useCallback((idx: number) => {
     const it = tags[idx];
     storeSetTagScroll(idx);
@@ -110,11 +96,11 @@ export function TagListProvider({ children }: { children: ReactNode }) {
     const c = encodeState({
       query: { ...DefaultReadQuery, userId: opts.query.userId, tags: [it.id] },
       pagination: { ...DefaultPagination, size: pagination.paging.size },
-      id: it.id, name: it.name,
+      name: it.name, parent: "/tags", flag: true,
     });
     navigate({
       // @ts-ignore
-      to: ".", search: (prev: IUrlSearch) => { return { ...prev, c } }
+      to: "/items", search: (prev: IUrlSearch) => { return { ...prev, c } }
     });
   }, [opts]);
 
@@ -143,7 +129,6 @@ export function TagListProvider({ children }: { children: ReactNode }) {
     error,
     pageChange,
     pageSizeChange,
-    listItemClick,
     viewItemsClick,
     editTagClick,
   } as unknown as ITagListContext), [opts]);
