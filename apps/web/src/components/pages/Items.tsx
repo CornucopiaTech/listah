@@ -31,6 +31,7 @@ import MenuItem from '@mui/material/MenuItem';
 
 
 // Internal
+import type { AppTheme } from '@/system/theme';
 import {
   useAppStore,
 } from '@/hooks/store/boundStore';
@@ -42,6 +43,8 @@ import type {
   ITag,
   IItemFormProps,
   IItemSearchContext,
+  ITagListContext,
+  ITagUpdateContext,
 } from '@/domain/entities';
 import {
   DefaultTag,
@@ -49,27 +52,39 @@ import {
 import {
   ListItemStyling
 } from "@/helpers/defaults";
-import type { AppTheme } from '@/system/theme';
 import {
   useListItems,
-  FormContext,
-  ListContext,
   useUpdateItems,
   useSearchItems,
+  useTagList,
+  FormContext,
+  ListContext,
+  TagListProvider,
+  ItemListProvider,
+  TagUpdateProvider,
+  useUpdateTags,
+  BreadcrumbProvider,
+  ItemUpdateProvider,
+  ItemSearchProvider,
 } from "@/hooks/context";
 import {
-  getFormTextFieldProps,
   getFormItemPropsArrayTextFieldProps,
+  getFormArrayTextFieldProps,
+  getFormTextFieldProps,
   ItemFormTagBox,
+  AppSectionPaper,
+  AppContainer,
   ListLayout,
   ListBox,
   OuterBox,
-  ViewOuterBox,
   FormDialog,
-  ViewDialog,
   UpdateFormActions,
   AppTooltip,
+  FlexEndBox,
   FlexStartBox,
+  AppBreadcrumb,
+  ViewOuterBox,
+  ViewDialog,
   AlertDialog,
   AppListPagination,
 } from "@/components";
@@ -78,6 +93,20 @@ import {
 } from "@/domain/rules/fieldLength";
 
 
+
+
+export function Items() {
+  return (
+    <AppContainer>
+      <ItemUpdateProvider route="/tags"> <ItemUpdate /> </ItemUpdateProvider>
+      <BreadcrumbProvider route="/tags"><AppBreadcrumb title="Tags" /></BreadcrumbProvider>
+      <ItemSearchProvider route="/tags"><ItemSearchList /></ItemSearchProvider>
+      <AppSectionPaper>
+        <ItemListProvider> <ItemList /> </ItemListProvider>
+      </AppSectionPaper>
+    </AppContainer >
+  );
+}
 
 
 

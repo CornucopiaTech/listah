@@ -9,17 +9,14 @@ import Box from '@mui/material/Box';
 import type {
   ReactNode,
 } from 'react';
-import { styled, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
+
 
 
 
 // Internal
 import type { AppTheme } from '@/system/theme';
-import {
-  AppNavDrawer,
-  DrawerHeader,
-
-} from "@/components/layout/AppNavDrawer";
+import { AppNavDrawer } from "@/components/layout/AppNavDrawer";
 import {
   AppPageContentHeight,
 } from '@/helpers/defaults';
@@ -47,14 +44,9 @@ export function GlobalShell({ children }: { children: ReactNode }) {
   );
 }
 
-
 export function AppShell({ children }: { children: ReactNode }) {
-  // const theme: AppTheme = useTheme();
-  const storeDrawerOpen = useAppStore((state) => state.drawerOpen);
-  // const appbarAllowance = storeDrawerOpen ? AppDrawerWidth : 0;
-  // const appbarAllowance = storeDrawerOpen ? 0 : -AppDrawerWidth;
-  const appbarAllowance = 0;
-  const minWidth = `calc(100vw - ${appbarAllowance})`;
+  const theme: AppTheme = useTheme();
+  const appbarAllowance = `calc(${theme.spacing(7)} + 1px)`;
   return (
     <Fragment>
       <AppNavDrawer />
@@ -67,7 +59,6 @@ export function AppShell({ children }: { children: ReactNode }) {
           justifyContent: "center", // horizontal centering
           alignItems: 'center',     // Horizontally centers the content inside the container
           minHeight: AppPageContentHeight,
-          minWidth,
         }}>
         {children}
       </Box>
