@@ -14,16 +14,16 @@ import { enableMapSet } from 'immer';
 import { ThemeProvider, } from '@mui/material/styles';
 import { useUser } from '@clerk/react';
 import LinearProgress from '@mui/material/LinearProgress';
-import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
-// import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 // Internal imports
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
 // import reportWebVitals from './reportWebVitals.ts'
-import NotFound from '@/components/common/NotFound';
+import NotFound from '@/components/pages/NotFound';
 import theme from '@/system/theme';
+import { GlobalShell } from '@/components/layout';
+
 
 
 declare global {
@@ -41,7 +41,6 @@ declare global {
 
 enableMapSet();
 export const queryClient = new QueryClient();
-
 
 const router = createRouter({
   routeTree,
@@ -73,7 +72,6 @@ function Wrapper({ children }: { children: ReactNode }) {
     <ThemeProvider theme={theme}>
       <QueryClientProvider client={queryClient}>
         {children}
-        {/* <ReactQueryDevtools initialIsOpen={false} position='left' /> */}
       </QueryClientProvider>
     </ThemeProvider>
   )
@@ -141,9 +139,7 @@ loadConfig().then(
         <ClerkProvider publishableKey={aKey} appearance={{
           theme: 'simple',
         }}>
-          <Box sx={{ overflowX: "hidden" }}>
-            <App />
-          </Box>
+          <GlobalShell> <App /> </GlobalShell>
         </ClerkProvider>
 
       )

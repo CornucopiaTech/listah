@@ -1,79 +1,67 @@
 package v1
 
 import (
-	pb "cornucopia/listah/internal/pkg/proto/v1"
-	"fmt"
-	"strings"
+	"github.com/google/uuid"
+	"github.com/uptrace/bun"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 
-	"github.com/google/uuid"
-	"google.golang.org/protobuf/types/known/timestamppb"
+	pb "cornucopia/listah/internal/pkg/proto/v1"
 )
 
 var ItemConflictFields = []string{
 	"id", "user_id",
 }
-var defaultPagination = Pagination{
-	Page: 1,
-	Size:   200,
-	Sort:       "name ASC",
+
+type Item struct {
+	bun.BaseModel `bun:"table:apps.items,alias:it"`
+	Id            string `bun:",pk"`
+	UserId        string
+	Name          string
+	Note          string
+	Tags          []string          `bun:"type:jsonb"`
+	Props         map[string]string `bun:"type:jsonb"`
+	SoftDelete    bool              `bun:",nullzero,default:false"`
+	TagObjs       []Tag             `bun:"type:jsonb,scanonly"`
+	PropObjs      []MapObj          `bun:"type:jsonb,scanonly"`
+	UpdatedBy     string
+	UpdatedAt     time.Time
+	ReactivateAt  *time.Time
 }
 
-func ReadItemRequestToRepoRepoSearch(msg *pb.ItemServiceReadItemRequest) (*RepoSearch, error) {
-	if msg.GetQuery() == nil {
-		return nil, MissingQuery
+func (v *Item) ItemModelToItemProto() *pb.Item {
+	to := []*pb.Tag{}
+	for _, iv := range v.TagObjs {
+		to = append(to, &pb.Tag{
+			Id:     iv.Id,
+			UserId: iv.UserId,
+			Name:   iv.Name,
+			Props:  iv.Props,
+		})
 	}
-	q := msg.GetQuery()
-	if q.UserId == "" {
-		return nil, MissingUserId
+	mo := []*pb.MapObj{}
+	for _, iv := range v.PropObjs {
+		mo = append(mo, &pb.MapObj{
+			Key:   iv.Key,
+			Value: iv.Value,
+		})
 	}
-	t := []string{}
-	if q.Tags != nil {
-		for _, v := range msg.GetQuery().Tags {
-			t = append(t, fmt.Sprintf(`'%v'`, v))
-		}
+	return &pb.Item{
+		Id:         v.Id,
+		UserId:     v.UserId,
+		Name:       v.Name,
+		Note:       v.Note,
+		Tags:       v.Tags,
+		Props:      v.Props,
+		SoftDelete: v.SoftDelete,
+		TagObjs:    to,
+		PropObjs:   mo,
+		UpdatedAt:  timestamppb.New(v.UpdatedAt),
+		UpdatedBy:  v.UpdatedBy,
 	}
-
-
-	pSize := defaultPagination.Size
-	pNum := defaultPagination.Page
-	sortT := defaultPagination.Sort
-	pg := msg.GetPagination()
-	// fmt.Printf("\npg  %+v\n", pg)
-	if pg != nil {
-		if pg.Size > 0 {
-			pSize = pg.Size
-		}
-		if pg.Page != pNum {
-			pNum = pg.Page
-		}
-		if pg.Sort != sortT {
-			sortT = pg.Sort
-		}
-
-	}
-	offset := int64(0)
-	if pSize > 0 && pNum > 0 {
-		offset = pSize * (pNum - 1)
-	}
-
-
-
-
-	i := RepoSearch{
-		UserId:      q.UserId,
-		Tags:        strings.Join(t, ", "),
-		Text: q.Text,
-		Sort:   sortT,
-		Limit:       pSize,
-		Offset:      offset,
-		Page:  pNum,
-	}
-	// fmt.Printf("\nRepo Search -  %+v\n", i)
-	return &i, nil
 }
 
-func ItemModelToItemProto(m []*Item) ([]*pb.Item, error) {
+func ItemModelListToItemProtoList(m []*Item) ([]*pb.Item, error) {
 	items := []*pb.Item{}
 	for _, v := range m {
 		to := []*pb.Tag{}
@@ -161,6 +149,13 @@ func ItemProtoToItemModel(msg []*pb.Item, genId bool) ([]*Item, []string, error)
 		if v.GetSoftDelete() {
 			newItem.SoftDelete = v.GetSoftDelete()
 			check["soft_delete"] = true
+		}
+		check["reactivate_at"] = true
+		if v.GetSuspension() != 0 {
+			sus := time.Now().Add(time.Duration(v.GetSuspension()) * 24 * time.Hour)
+			newItem.ReactivateAt = &sus
+		} else {
+			newItem.ReactivateAt = nil
 		}
 		items = append(items, newItem)
 	}

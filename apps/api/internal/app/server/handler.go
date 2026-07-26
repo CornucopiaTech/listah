@@ -34,7 +34,6 @@ func handle(i *bootstrap.Infra) http.Handler {
 	mux.Use(chimiddleware.Logger)
 	mux.Use(chimiddleware.Recoverer)
 	mux.Use(chimiddleware.Timeout(60 * 60 * 1e9)) // 1 hour
-
 	fmt.Printf("Allowed Origins are: %v\n", allowedOrigins)
 
 	// Get gRPC interceptors chain
@@ -47,7 +46,6 @@ func handle(i *bootstrap.Infra) http.Handler {
 
 	handleDoc := func(w http.ResponseWriter, r *http.Request) {
 		p := path.Join(i.Config.ProjectRoot, "public", "index.html")
-		fmt.Printf("Path to index file: %v\n", p)
 		http.ServeFile(w, r, p)
 	}
 	mux.Mount("/", http.HandlerFunc(handleDoc))

@@ -1,0 +1,83 @@
+import {
+  queryOptions,
+  useQueryClient,
+  useMutation,
+  useQuery,
+  keepPreviousData,
+} from '@tanstack/react-query';
+import type {
+  UseQueryResult,
+} from '@tanstack/react-query';
+
+
+// Internal
+import {
+  ZTag,
+} from "@/domain/entities";
+import type {
+  ITag,
+  IReadRequest,
+  ITagReadResponse,
+  ITagPropertyReadResponse,
+} from '@/domain/entities';
+import {
+  getTag,
+  getTagProperty,
+  postTag,
+} from '@/infra/api';
+import {
+  QueryStaleTime,
+} from '@/helpers/defaults';
+
+
+
+export function tagGroupOptions(opts: IReadRequest) {
+  return queryOptions({
+    queryKey: ["tag", opts],
+    queryFn: () => getTag(opts),
+    staleTime: QueryStaleTime,
+    enabled: !!opts?.query?.userId,
+    placeholderData: keepPreviousData,
+  })
+}
+
+export function useListTag(opts: IReadRequest): UseQueryResult<ITagReadResponse> {
+  return useQuery(tagGroupOptions(opts))
+}
+
+
+
+export function tagPropertyGroupOptions(opts: IReadRequest) {
+  return queryOptions({
+    queryKey: ["tagProperty", opts],
+    queryFn: () => getTagProperty(opts),
+    staleTime: QueryStaleTime,
+    enabled: !!opts?.query?.userId,
+    placeholderData: keepPreviousData,
+  })
+}
+
+export function useListTagProperty(opts: IReadRequest): UseQueryResult<ITagPropertyReadResponse> {
+  return useQuery(tagPropertyGroupOptions(opts))
+}
+
+export function useUpdateTag() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (mutateTag: ITag) => {
+      const mi = ZTag.parse(mutateTag);
+      return postTag(mi);
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["tag"], refetchType: 'all', }),
+        queryClient.invalidateQueries({ queryKey: ["item"], refetchType: 'all', }),
+      ])
+    },
+    onError: (error) => {
+      if (window.runtimeConfig && window.runtimeConfig.debug && window.runtimeConfig.debug == "true") {
+        console.log(error);
+      }
+    },
+  });
+}

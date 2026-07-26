@@ -2,8 +2,6 @@
 
 import type {
   ReactNode,
-  ChangeEvent,
-  MouseEvent,
 } from 'react';
 import {
   Fragment,
@@ -16,59 +14,62 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Divider from '@mui/material/Divider';
 import Select from '@mui/material/Select';
-import Typography from '@mui/material/Typography';
-import LinearProgress from '@mui/material/LinearProgress';
-import Alert from '@mui/material/Alert';
 
 
 
 
+import {
+  PaginationMenu,
+} from '@/domain/entities';
 import type {
-  IPagination,
+  IListContext,
 } from '@/domain/entities';
 import {
   ListBoxSize,
-} from '@/utils/defaults';
+  ViewListBoxSize,
+} from '@/helpers/defaults';
 import {
   CentredBox,
 } from '@/components/core/AppBox';
 import {
   AppCentredPagination,
 } from "@/components/core";
-
-
-
+import { useLists } from "@/hooks/context/lists";
 
 
 
 
 export function OuterBox({ children }: { children: ReactNode }): ReactNode {
-  return (
-    <Fragment>
-      <Box key="data-content" sx={ListBoxSize}>
-        {children}
-      </Box>
-    </Fragment>
-  );
+  const sx = {
+    ...ListBoxSize, /*Binds the vertical size */
+    overflowY: 'auto', /* Enables scrolling when content overflows*/
+  }
+  return (<Box key="data-content" sx={sx} > {children} </Box>);
 }
 
-export function ListBox({
-  children, pagination, pageSizeChange, pageChange
-}: {
-  children: ReactNode,
-  pagination: IPagination,
-  pageSizeChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
-  pageChange?: (event: MouseEvent<HTMLButtonElement> | null,
-    value: number) => void
 
-}): ReactNode {
+export function ViewOuterBox({ children }: { children: ReactNode }): ReactNode {
+  const sx = {
+    ...ViewListBoxSize, /*Binds the vertical size */
+    overflowY: 'auto', /* Enables scrolling when content overflows*/
+  }
+  return (<Box key="data-content" sx={sx} > {children} </Box>);
+}
+
+
+export function PrevListBox({ children }: { children: ReactNode }): ReactNode {
+  const {
+    pagination,
+    pageChange,
+    pageSizeChange,
+  } = useLists() as unknown as IListContext;
   const totalPages = Math.max(1, Math.ceil(pagination.volume / pagination.size));
   return (
     <Fragment>
       <Stack spacing={0}>
         {children}
         <Divider />
-        <CentredBox sx={{ height: "80px" }}>
+        <CentredBox sx={{ height: "100px" }}>
           <CentredBox sx={{ maxWidth: 100, marginRight: 0 }}>
             <FormControl sx={{ width: '100%' }}>
               <InputLabel id="demo-simple-select-label">Rows</InputLabel>
@@ -80,25 +81,25 @@ export function ListBox({
                 //  @ts-ignore
                 onChange={pageSizeChange}
                 sx={{
-                  height: 48,                     // overall component height
+                  height: 36,                     // overall component height
                   '& .MuiSelect-select': {
                     paddingY: 1.2,                // vertical padding
                   },
                 }}
               >
-                <MenuItem value={128}>128</MenuItem>
-                <MenuItem value={512}>512</MenuItem>
-                <MenuItem value={2048}>2048</MenuItem>
-                <MenuItem value={-1}>All</MenuItem>
+                {PaginationMenu.map((i, _) => <MenuItem value={i.value}>{i.label}</MenuItem>)}
               </Select>
             </FormControl>
           </CentredBox>
           <AppCentredPagination
+            sx={{ height: "fit-content", padding: 1 }}
             page={pagination.page}
             count={totalPages}
             color="primary"
             //  @ts-ignore
             onChange={pageChange}
+            siblingCount={0} // Number of pages shown on each side of the current page
+            boundaryCount={1} // Number of pages shown at the start and end
           />
         </CentredBox>
       </Stack >
@@ -106,71 +107,77 @@ export function ListBox({
   );
 }
 
-// ToDo: Get data from context and do not pass it as props
-export function ListLayout(
-  {
-    data, isPending, isFetching, error, scrollIndex, pagination,
-    renderItem, pageSizeChange, pageChange,
-  }: {
-    data: any[],
-    isPending: boolean,
-    isFetching: boolean,
-    isError: boolean,
-    error: Error | null,
-    scrollIndex: number,
-    pagination: IPagination,
-    renderItem: (i: number) => ReactNode,
-    pageSizeChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
-    pageChange?: (event: MouseEvent<HTMLButtonElement> | null,
-      value: number) => void
-  }
-): ReactNode {
-
-  if (isPending || isFetching) {
-    return (
-      <ListBox pagination={pagination} >
-        <OuterBox><LinearProgress /></OuterBox>
-      </ListBox>
-    )
-  }
-
-  if (error) {
-    return (
-      <ListBox pagination={pagination} >
-        <OuterBox><Alert severity="error">{error.message || "An error occurred. Please try again"}</Alert> </OuterBox>
-      </ListBox>
-    )
-  }
-
-  if (data.length == 0) {
-    return (
-      <ListBox pagination={pagination} >
-        <OuterBox>
-          <Typography variant="h6"> No items found </Typography>
-        </OuterBox>
-      </ListBox>
-    )
-  }
+export function ListBox({ children }: { children: ReactNode }): ReactNode {
+  return (
+    <Fragment>
+      <Stack spacing={0}>
+        {children}
+        <Divider />
+        <AppListPagination />
+      </Stack >
+    </Fragment >
+  );
+}
 
 
-  if (data.length > 0) {
-    return (
-      <ListBox pagination={pagination} pageChange={pageChange} pageSizeChange={pageSizeChange}>
-        <Virtuoso
-          key="data-content"
-          style={ListBoxSize}
-          initialTopMostItemIndex={scrollIndex}
-          totalCount={data.length}
-          itemContent={(i) => renderItem(i)}
-        />
-      </ListBox>
-    )
-  }
+export function AppListPagination(): ReactNode {
+  const {
+    pagination,
+    pageChange,
+    pageSizeChange,
+  } = useLists() as unknown as IListContext;
+  const totalPages = Math.max(1, Math.ceil(pagination.volume / pagination.size));
+  return (
+    <CentredBox sx={{ height: "80px" }}>
+      <CentredBox sx={{ maxWidth: 100, marginRight: 0 }}>
+        <FormControl sx={{ width: '100%' }}>
+          <InputLabel id="demo-simple-select-label">Rows</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={pagination.size}
+            label="rows-per-page"
+            //  @ts-ignore
+            onChange={pageSizeChange}
+            sx={{
+              height: 36,                     // overall component height
+              '& .MuiSelect-select': {
+                paddingY: 1.2,                // vertical padding
+              },
+            }}
+          >
+            {PaginationMenu.map((i, _) => <MenuItem value={i.value}>{i.label}</MenuItem>)}
+          </Select>
+        </FormControl>
+      </CentredBox>
+      <AppCentredPagination
+        sx={{ height: "fit-content", padding: 1 }}
+        page={pagination.page}
+        count={totalPages}
+        color="primary"
+        //  @ts-ignore
+        onChange={pageChange}
+        siblingCount={0} // Number of pages shown on each side of the current page
+        boundaryCount={1} // Number of pages shown at the start and end
+      />
+    </CentredBox>
+  );
+}
 
+export function ListLayout(): ReactNode {
+  const {
+    data,
+    // scrollIndex,
+    renderRow,
+  } = useLists() as unknown as IListContext;
 
   return (
-    <ListBox pagination={pagination}>
-      <OuterBox><Alert severity="error">"An error occurred. Please try again"</Alert> </OuterBox>
-    </ListBox>
+    <Virtuoso
+      // useWindowScroll // style={ListBoxSize}
+      key="data-content"
+      // initialTopMostItemIndex={scrollIndex ?? 0}
+      data={data}
+      itemContent={(i) => renderRow(i)}
+    />
   )
 }

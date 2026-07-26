@@ -4,24 +4,30 @@ import { styled } from '@mui/material/styles';
 
 
 export const SpaceBetweenBox = styled(Box)(() => ({
-  justifyContent: 'space-between', alignContent: 'center',
+  justifyContent: 'space-between', //alignContent: 'center',
   display: 'flex',
-}));
-
-export const FlexEndBox = styled(Box)(() => ({
-  justifyContent: 'flex-end', alignContent: 'center',
-  display: 'flex', width: '100%',
-}));
-
-export const FlexStartBox = styled(Box)(() => ({
-  justifyContent: 'flex-start', alignContent: 'center',
-  display: 'flex', width: '100%',
 }));
 
 export const SpaceAroundBox = styled(Box)(() => ({
   justifyContent: 'space-around', alignContent: 'center',
   display: 'flex',
 }));
+
+export const SpaceEvenlyBox = styled(Box)(() => ({
+  justifyContent: 'space-evenly', //alignContent: 'center',
+  display: 'flex',
+}));
+
+export const FlexEndBox = styled(Box)(() => ({
+  justifyContent: 'flex-end',
+  display: 'flex', width: '100%', // alignContent: 'center',
+}));
+
+export const FlexStartBox = styled(Box)(() => ({
+  justifyContent: 'flex-start',
+  display: 'flex', width: '100%', // alignContent: 'center',
+}));
+
 
 
 export const CentredBox = styled(Box)(() => ({
@@ -55,4 +61,10 @@ export const ItemFormTagBox = styled(Box)(() => ({
 
 export const ItemFormSpeedDialBox = styled(Box)(() => ({
   height: '50px', transform: 'translateZ(0px)', flexGrow: 1
+}));
+
+export const FormActionBox = styled(Box)(() => ({
+  height: '50px', transform: 'translateZ(0px)', flexGrow: 1,
+  justifyContent: 'space-around', alignContent: 'center',
+  display: 'flex', width: '100%',
 }));

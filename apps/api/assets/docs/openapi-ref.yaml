@@ -650,13 +650,6 @@ components:
          the Joda Time's [`ISODateTimeFormat.dateTime()`](
          http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
          ) to obtain a formatter capable of generating timestamps in this format.
-    listah.v1.AuditUpdaterEnum:
-      type: string
-      title: AuditUpdaterEnum
-      enum:
-        - AUDIT_UPDATER_ENUM_UNSPECIFIED
-        - AUDIT_UPDATER_ENUM_FRONTEND
-        - AUDIT_UPDATER_ENUM_SYSOPS
     listah.v1.BadRequestDetails:
       type: object
       properties:
@@ -789,6 +782,10 @@ components:
           items:
             $ref: '#/components/schemas/listah.v1.MapObj'
           title: propObjs
+        suspension:
+          type: integer
+          title: suspension
+          format: int32
         updatedBy:
           type: string
           title: updatedBy
@@ -817,12 +814,6 @@ components:
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
-        reference:
-          title: reference
-          $ref: '#/components/schemas/listah.v1.ReadReference'
-        title:
-          type: string
-          title: title
       title: ItemServiceReadFilterRequest
       additionalProperties: false
       description: Filter Messages
@@ -840,12 +831,6 @@ components:
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
-        reference:
-          title: reference
-          $ref: '#/components/schemas/listah.v1.ReadReference'
-        title:
-          type: string
-          title: title
       title: ItemServiceReadFilterResponse
       additionalProperties: false
     listah.v1.ItemServiceReadItemRequest:
@@ -857,12 +842,6 @@ components:
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
-        reference:
-          title: reference
-          $ref: '#/components/schemas/listah.v1.ReadReference'
-        title:
-          type: string
-          title: title
       title: ItemServiceReadItemRequest
       additionalProperties: false
       description: Item Messages
@@ -880,12 +859,6 @@ components:
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
-        reference:
-          title: reference
-          $ref: '#/components/schemas/listah.v1.ReadReference'
-        title:
-          type: string
-          title: title
       title: ItemServiceReadItemResponse
       additionalProperties: false
     listah.v1.ItemServiceReadTagPropertyRequest:
@@ -897,12 +870,6 @@ components:
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
-        reference:
-          title: reference
-          $ref: '#/components/schemas/listah.v1.ReadReference'
-        title:
-          type: string
-          title: title
       title: ItemServiceReadTagPropertyRequest
       additionalProperties: false
       description: Tag Property Messages
@@ -921,12 +888,6 @@ components:
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
-        reference:
-          title: reference
-          $ref: '#/components/schemas/listah.v1.ReadReference'
-        title:
-          type: string
-          title: title
       title: ItemServiceReadTagPropertyResponse
       additionalProperties: false
     listah.v1.ItemServiceReadTagPropertyResponse.PropsEntry:
@@ -949,12 +910,6 @@ components:
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
-        reference:
-          title: reference
-          $ref: '#/components/schemas/listah.v1.ReadReference'
-        title:
-          type: string
-          title: title
       title: ItemServiceReadTagRequest
       additionalProperties: false
       description: Tag Messages
@@ -978,12 +933,6 @@ components:
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
-        reference:
-          title: reference
-          $ref: '#/components/schemas/listah.v1.ReadReference'
-        title:
-          type: string
-          title: title
       title: ItemServiceReadTagResponse
       additionalProperties: false
     listah.v1.ItemServiceReadTagResponse.TagidPropMapEntry:
@@ -1100,6 +1049,9 @@ components:
         userId:
           type: string
           title: userId
+        id:
+          type: string
+          title: id
         tags:
           type: array
           items:
@@ -1110,17 +1062,6 @@ components:
           title: text
       title: ReadQuery
       additionalProperties: false
-    listah.v1.ReadReference:
-      type: object
-      properties:
-        tag:
-          title: tag
-          $ref: '#/components/schemas/listah.v1.Tag'
-        filter:
-          title: filter
-          $ref: '#/components/schemas/listah.v1.Filter'
-      title: ReadReference
-      additionalProperties: false
     listah.v1.ReadRequest:
       type: object
       properties:
@@ -1130,31 +1071,7 @@ components:
         pagination:
           title: pagination
           $ref: '#/components/schemas/listah.v1.Pagination'
-        reference:
-          title: reference
-          $ref: '#/components/schemas/listah.v1.ReadReference'
-        title:
-          type: string
-          title: title
       title: ReadRequest
-      additionalProperties: false
-    listah.v1.Search:
-      type: object
-      properties:
-        text:
-          type: string
-          title: text
-        tags:
-          type: array
-          items:
-            type: string
-          title: tags
-        filters:
-          type: array
-          items:
-            type: string
-          title: filters
-      title: Search
       additionalProperties: false
     listah.v1.StringList:
       type: object
@@ -1210,22 +1127,6 @@ components:
           title: updatedAt
           $ref: '#/components/schemas/google.protobuf.Timestamp'
       title: Tag
-      additionalProperties: false
-    listah.v1.TagProperty1:
-      type: object
-      properties:
-        userId:
-          type: string
-          title: userId
-        name:
-          type: string
-          title: name
-        tagObjs:
-          type: array
-          items:
-            $ref: '#/components/schemas/listah.v1.Tag'
-          title: tagObjs
-      title: TagProperty1
       additionalProperties: false
     listah.v1.TagPropertyMap:
       type: object

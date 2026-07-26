@@ -1,163 +1,240 @@
-import {
-  Fragment,
-  useRef,
-} from "react";
+
+
 import type {
   ReactNode,
-  ChangeEvent,
-  MouseEvent,
 } from 'react';
-import {
-  useNavigate,
-} from '@tanstack/react-router';
-import type {
-  UseSuspenseQueryResult,
-} from '@tanstack/react-query';
+import { useTheme, } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
-import Chip from '@mui/material/Chip';
+import LinearProgress from '@mui/material/LinearProgress';
+import Alert from '@mui/material/Alert';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import IconButton from '@mui/material/IconButton';
+import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+
+
+
 
 
 // Internal
 import {
   useAppStore,
-  type TAppStore
 } from '@/hooks/store/boundStore';
-import {
-  AppTagModal
-} from "@/components/layout/AppTagModal";
-import {
-  AppFilterModal
-} from "@/components/layout/AppFilterModal";
-import { AppContainer } from '@/components/layout/AppContainer';
-import {
-  MenuItem,
-} from '@/components/base/Menubar';
-import {
-  useListTag,
-} from '@/hooks/queries/tag';
-import {
-  ListLayout
-} from '@/components/layout/ListLayout';
 import type {
-  ITag,
-  IReadQuery,
-  ITagReadResponse,
+  ITagListContext,
+  IListContext,
+  IFormContext,
+  ITagUpdateContext,
 } from '@/domain/entities';
 import {
-  encodeState
-} from '@/utils/encoders';
+  ListItemStyling
+} from "@/helpers/defaults";
+import type { AppTheme } from '@/system/theme';
 import {
-  getRouteContext,
-} from "@/utils/routing";
+  useTagList,
+  FormContext,
+  ListContext,
+  TagListProvider,
+  TagUpdateProvider,
+  useUpdateTags,
+  BreadcrumbProvider,
+  ItemSearchProvider,
+  ItemUpdateProvider,
+} from "@/hooks/context";
 import {
-  DefaultReadQuery,
-  Pagination,
-} from "@/domain/entities";
-import {
-  TagFormDataProvider,
-  TagFormProvider,
-  FilterFormDataProvider,
-  FilterFormProvider,
-} from '@/hooks/services/useForm';
+  getFormArrayTextFieldProps,
+  getFormTextFieldProps,
+  ItemFormTagBox,
+  AppSectionPaper,
+  AppContainer,
+  ListLayout,
+  ListBox,
+  OuterBox,
+  FormDialog,
+  UpdateFormActions,
+  AppTooltip,
+  FlexEndBox,
+  FlexStartBox,
+  AppBreadcrumb,
+  ItemSearchList,
+  ItemUpdate,
+} from "@/components";
+
 
 
 
 export function Tags() {
-  const store: TAppStore = useAppStore((state) => state);
-  const navigate = useNavigate();
-  const { query, pagination, } = getRouteContext("/tags");
+  return (
+    <AppContainer mw="md">
+      <TagUpdateProvider> <UpdateTag /> </TagUpdateProvider>
+      <ItemUpdateProvider route="/tags"> <ItemUpdate /> </ItemUpdateProvider>
+      <BreadcrumbProvider route="/tags"><AppBreadcrumb /></BreadcrumbProvider>
+      <ItemSearchProvider route="/tags"><ItemSearchList /></ItemSearchProvider>
+      <AppSectionPaper>
+        <TagListProvider> <TagList /> </TagListProvider>
+      </AppSectionPaper>
+    </AppContainer >
+  );
+}
+
+
+export function TagList() {
   const {
-    data, isPending, isFetching, isError, error
-  }: UseSuspenseQueryResult<ITagReadResponse> = useListTag({ query, pagination, });
+    tags,
+    pagination,
+    isPending,
+    isError,
+    error,
+    pageChange,
+    pageSizeChange,
+    viewItemsClick,
+    editTagClick,
+  } = useTagList() as unknown as ITagListContext;
+  const storeTagScroll = useAppStore((state) => state.tagScroll);
 
-  // Pagination Details
-  const initialPagination = new Pagination(pagination);
-  let pageInfo = useRef<Pagination>(initialPagination);
-  if (data) {
-    pageInfo.current.updatePaging(data.pagination, pagination);
-  }
-  function pageChange(event: MouseEvent<HTMLButtonElement> | null, value: number) {
-    event && event.stopPropagation();
-    pageInfo.current.changePage(value);
-    const encoded = encodeState({ query, pagination: pageInfo.current.paging });
-    navigate({ to: ".", search: { s: encoded } });
-  };
-  function pageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    pageInfo.current.changeSize(e.target.value);
-    const encoded = encodeState({ query, pagination: pageInfo.current.paging });
-    navigate({ to: ".", search: { s: encoded } });
-  };
-
-  const listItemClick = (idx: number, it: ITag) => {
-    const pageTitle = it && it.name ? `#${it.name}` : "Tags";
-    const q: IReadQuery = { ...DefaultReadQuery, userId: query.userId, tags: [it.id] };
-    const s = { query: q, pagination, title: pageTitle, reference: { tag: it }, }
-    const encoded = encodeState(s);
-
-    navigate({ to: "/items", search: { s: encoded }, });
-    store.setItemTitle(pageTitle);
-    store.setDisplayTag(it);
-    store.setTagScroll(idx);
-  }
-  function renderItem(itemKey: number): ReactNode {
-    const tags = data?.tags ?? [];
+  function renderRow(itemKey: number): ReactNode {
     const item = tags[itemKey];
-    const tc = item && item.name ? item.name : "";
+    const tc = item?.name ?? "";
+    const itemcount = item?.count?.toString() ?? "0";
     return (
-      <ListItem key={itemKey + tc} component="div" disablePadding onClick={() => listItemClick(itemKey, item)} >
-        <ListItemButton>
-          <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
-          <Chip
-            variant="contained"
+      <ListItem key={itemKey + tc} component="div" disablePadding sx={ListItemStyling} >
+        <FlexStartBox >
+          <ListItemButton onClick={() => viewItemsClick(itemKey)}>
+            <ListItemText primary={<Typography variant="body2" >{tc}</Typography>} />
+          </ListItemButton>
+        </FlexStartBox>
+        <FlexEndBox >
+          <Chip variant="contained" sx={{ marginX: "10px", marginY: 0, }}
             // @ts-ignore
-            color={itemKey % 2 == 0 ? "inherit" : "secondary"}
-            label={item.count ? item.count.toString() : "0"}
+            color={itemKey % 2 == 0 ? "inherit" : "secondary"} label={itemcount}
           />
-        </ListItemButton>
+          <IconButton aria-label="view" onClick={() => viewItemsClick(itemKey)}> <AppTooltip title="View items in tag"><VisibilityIcon /></AppTooltip> </IconButton>
+          <IconButton aria-label="edit" onClick={() => editTagClick(itemKey)}> <AppTooltip title="Edit tag"><EditIcon /></AppTooltip> </IconButton>
+        </FlexEndBox>
       </ListItem>
     );
   }
 
-  const props = {
-    data: data?.tags ?? [],
-    isPending, isFetching, isError, error,
-    scrollIndex: Math.max(0, store.tagScroll),
-    pagination: pageInfo.current.paging,
-    renderItem,
-    pageSizeChange,
-    pageChange,
-  }
-  const mItems = <Fragment>
-    <MenuItem key="tag" onClick={() => store.setTagModal(true)}>
-      <Typography variant="body1">Create new tag </Typography>
-    </MenuItem>
-    <MenuItem key="filter" onClick={() => store.setFilterModal(true)}>
-      <Typography variant="body1">Create new filter </Typography>
-    </MenuItem>
-  </Fragment >
+  const contextValue = {
+    data: tags,
+    pagination: pagination.paging,
+    isPending,
+    isError,
+    error,
+    scrollIndex: Math.max(0, storeTagScroll),
+    pageChange: tags.length > 0 ? pageChange : undefined,
+    pageSizeChange: tags.length > 0 ? pageSizeChange : undefined,
+    clickRow: viewItemsClick,
+    renderRow,
+  } as unknown as IListContext;
 
+  function Shell({ children }: { children: ReactNode }) {
+    return <ListContext.Provider value={contextValue}><ListBox><OuterBox>{children} </OuterBox></ListBox></ListContext.Provider>
+  }
+  if (isPending) {
+    return <Shell><LinearProgress /></Shell>
+  }
+  if (error) {
+    return <Shell><Alert severity="error">{error.message || "An error occurred. Please try again"}</Alert></Shell>
+  }
+  if (tags.length == 0) {
+    return (
+      <Shell><Typography variant="h6"> No items found </Typography></Shell>
+    )
+  }
+  if (tags.length > 0) {
+    return (<Shell><ListLayout /></Shell>)
+  }
   return (
-    <AppContainer mw="md" menuItems={mItems} title="Tags" displayPage={true}>
-      {
-        store.tagModal &&
-        <TagFormDataProvider>
-          <TagFormProvider>
-            <AppTagModal />
-          </TagFormProvider>
-        </TagFormDataProvider>
-      }
-      {
-        store.filterModal &&
-        <FilterFormDataProvider>
-          <FilterFormProvider >
-            <AppFilterModal />
-          </ FilterFormProvider>
-        </FilterFormDataProvider>
-      }
-      <ListLayout {...props} />
-    </AppContainer >
-  );
+    <Shell><Alert severity="error">"An error occurred. Please try again"</Alert></Shell>
+  )
+}
+
+
+function UpdateTag() {
+  const theme: AppTheme = useTheme();
+  const legendStyle = {
+    padding: '0 0.5rem',
+    color: theme.palette.primary.main,
+    fontSize: "12px"
+  }
+  const {
+    openDialog,
+    closeDialog,
+    mutation,
+    form,
+    title,
+  } = useUpdateTags() as unknown as ITagUpdateContext;
+
+  const content = (
+    <Box component="section" >
+      <Stack spacing={0} sx={{ width: '100%' }} >
+        <form.Field
+          key="name"
+          name="name"
+          // validators={validator}
+          children={
+            (field: any) => {
+              const props = getFormTextFieldProps({ key: "name", field, });
+              // @ts-ignore
+              return < TextField {...props} />
+            }
+          }
+        />
+        <form.Field key="props" name="props" mode="array" >
+          {(field: any) => (
+            // @ts-ignore
+            <ItemFormTagBox component="fieldset">
+              <legend style={legendStyle}>properties</legend>
+              <Button variant="text" color="inherit" onClick={() => field.pushValue("")} >
+                Click here to add a new property
+              </Button>
+              {
+                field.state.value && field.state.value.length > 0 &&
+                <Grid container spacing={3} sx={{ width: '100%' }}>{
+                  field.state.value && field.state.value.map((_: any, i: number) => {
+                    const childKeyName = "props" + `[${i}]`;
+                    return <form.Field key={i} name={childKeyName}
+                    // validators={validator}
+                    >
+                      {(subField: any) => {
+                        const cprops = getFormArrayTextFieldProps({ key: "props", field, subField, idx: i });
+
+                        return (
+                          <Grid size="auto" key={i} /*Using the tag id as the key causes the form to lose focus when adding new tags to the form, especially when the form length is longer than the maximum allowed length of the dialog. */ >
+                            {/* @ts-ignore */}
+                            <TextField {...cprops} />
+                          </Grid>
+                        )
+                      }}
+                    </form.Field>
+                  })
+                }</Grid>
+              }
+            </ItemFormTagBox>
+          )}
+        </form.Field>
+      </Stack>
+    </Box>
+  )
+
+  const contextValue = {
+    title,
+    content,
+    actions: <UpdateFormActions />,
+    openDialog,
+    closeDialog,
+    form,
+    mutation,
+  } as unknown as IFormContext;
+
+  return <FormContext.Provider value={contextValue} > <FormDialog /> </FormContext.Provider >
 }

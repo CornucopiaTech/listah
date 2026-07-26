@@ -1,3 +1,4 @@
+
 import type {
   ReactNode,
 } from 'react';
@@ -16,32 +17,31 @@ import type {
   IReadQuery,
 } from "@/domain/entities";
 import {
-  DefaultReadRequest,
+  DefaultSearchReadRequest,
   DefaultReadQuery,
 } from "@/domain/entities";
-import { encodeState } from '@/utils/encoders';
+import { encodeState } from '@/helpers/encoders';
 import { AppSearchPaper } from '@/components/core/AppPaper';
-import { useAppStore, type TAppStore } from '@/hooks/store/boundStore';
+import { useAppStore } from '@/hooks/store/boundStore';
 
 
 
 export function AppItemSearchBar(): ReactNode {
-  const store: TAppStore = useAppStore((state) => state);
+  const storeSearchQuery = useAppStore((state) => state.searchQuery);
+  const storeSetSearchQuery = useAppStore((state) => state.setSearchQuery);
   const { user } = useUser();
   const navigate = useNavigate();
-  const textValue = store.searchQuery ? store.searchQuery : "";
+  const textValue = storeSearchQuery ? storeSearchQuery : "";
   const placeholderText = "Search for item";
 
   function handleSearchSubmit() {
+    storeSetSearchQuery("");
     const q: IReadQuery = { ...DefaultReadQuery, userId: user?.id || "", text: textValue };
-    const s = { ...DefaultReadRequest, query: q, title: `Items like '${textValue}'` }
-    const encoded = encodeState(s);
-
-    navigate({ to: "/items", from: "/", search: { s: encoded }, });
-    store.setItemTitle(`Items like '${textValue}'`);
-    store.setItemReference(undefined);
-    store.setDisplayFilter(undefined);
-    store.setDisplayTag(undefined);
+    const s = encodeState({
+      ...DefaultSearchReadRequest, query: q, flag: true,
+    });
+    // @ts-ignore
+    navigate({ to: ".", search: (prev: IUrlSearch) => { return { ...prev, s } } });
   }
 
   return (
@@ -54,9 +54,7 @@ export function AppItemSearchBar(): ReactNode {
             placeholder={placeholderText}
             inputProps={{ 'aria-label': 'search google maps' }}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              if (event.target.value != placeholderText) {
-                store.setSearchQuery(event.target.value);
-              }
+              if (event.target.value != placeholderText) { storeSetSearchQuery(event.target.value); }
             }}
             value={textValue}
           />

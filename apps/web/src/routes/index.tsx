@@ -7,9 +7,11 @@ import { LinearProgress } from '@mui/material';
 
 import {
   encodeState
-} from '@/utils/encoders';
+} from '@/helpers/encoders';
 import {
   DefaultReadRequest,
+  DefaultEditor,
+  DefaultSearchReadRequest,
 } from "@/domain/entities";
 
 
@@ -17,10 +19,18 @@ import {
 export const Route = createFileRoute('/')({
   pendingComponent: LinearProgress,
   beforeLoad: () => {
+    const p = encodeState(DefaultReadRequest);
+    const c = encodeState(DefaultReadRequest);
+    const e = encodeState(DefaultEditor);
+    const s = encodeState(DefaultSearchReadRequest);
     throw redirect({
       to: '/tags',
-      from: '/',
-      search: { s: encodeState(DefaultReadRequest) },
+      search: {
+        p: p as unknown as string,
+        c: c as unknown as string,
+        e: e as unknown as string,
+        s: s as unknown as string,
+      },
       replace: true, // This option makes it a "permanent" history change
     })
   },

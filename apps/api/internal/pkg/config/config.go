@@ -95,7 +95,6 @@ func loadEnv() string {
 	} else {
 		env = "PROD"
 	}
-	fmt.Printf("Environment is: %v\n", env)
 	return env
 }
 

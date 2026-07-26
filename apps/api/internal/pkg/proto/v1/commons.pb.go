@@ -22,55 +22,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type AuditUpdaterEnum int32
-
-const (
-	AuditUpdaterEnum_AUDIT_UPDATER_ENUM_UNSPECIFIED AuditUpdaterEnum = 0
-	AuditUpdaterEnum_AUDIT_UPDATER_ENUM_FRONTEND    AuditUpdaterEnum = 1
-	AuditUpdaterEnum_AUDIT_UPDATER_ENUM_SYSOPS      AuditUpdaterEnum = 2
-)
-
-// Enum value maps for AuditUpdaterEnum.
-var (
-	AuditUpdaterEnum_name = map[int32]string{
-		0: "AUDIT_UPDATER_ENUM_UNSPECIFIED",
-		1: "AUDIT_UPDATER_ENUM_FRONTEND",
-		2: "AUDIT_UPDATER_ENUM_SYSOPS",
-	}
-	AuditUpdaterEnum_value = map[string]int32{
-		"AUDIT_UPDATER_ENUM_UNSPECIFIED": 0,
-		"AUDIT_UPDATER_ENUM_FRONTEND":    1,
-		"AUDIT_UPDATER_ENUM_SYSOPS":      2,
-	}
-)
-
-func (x AuditUpdaterEnum) Enum() *AuditUpdaterEnum {
-	p := new(AuditUpdaterEnum)
-	*p = x
-	return p
-}
-
-func (x AuditUpdaterEnum) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (AuditUpdaterEnum) Descriptor() protoreflect.EnumDescriptor {
-	return file_v1_commons_proto_enumTypes[0].Descriptor()
-}
-
-func (AuditUpdaterEnum) Type() protoreflect.EnumType {
-	return &file_v1_commons_proto_enumTypes[0]
-}
-
-func (x AuditUpdaterEnum) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use AuditUpdaterEnum.Descriptor instead.
-func (AuditUpdaterEnum) EnumDescriptor() ([]byte, []int) {
-	return file_v1_commons_proto_rawDescGZIP(), []int{0}
-}
-
 type Tag struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -171,66 +122,6 @@ func (x *Tag) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-type TagProperty1 struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        string                 `protobuf:"bytes,1,opt,name=userId,proto3" json:"userId,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	TagObjs       []*Tag                 `protobuf:"bytes,3,rep,name=tagObjs,proto3" json:"tagObjs,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *TagProperty1) Reset() {
-	*x = TagProperty1{}
-	mi := &file_v1_commons_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TagProperty1) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TagProperty1) ProtoMessage() {}
-
-func (x *TagProperty1) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_commons_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TagProperty1.ProtoReflect.Descriptor instead.
-func (*TagProperty1) Descriptor() ([]byte, []int) {
-	return file_v1_commons_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *TagProperty1) GetUserId() string {
-	if x != nil {
-		return x.UserId
-	}
-	return ""
-}
-
-func (x *TagProperty1) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *TagProperty1) GetTagObjs() []*Tag {
-	if x != nil {
-		return x.TagObjs
-	}
-	return nil
-}
-
 type InnerPropTagMap struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Value         map[string]*Tag        `protobuf:"bytes,1,rep,name=value,proto3" json:"value,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
@@ -240,7 +131,7 @@ type InnerPropTagMap struct {
 
 func (x *InnerPropTagMap) Reset() {
 	*x = InnerPropTagMap{}
-	mi := &file_v1_commons_proto_msgTypes[2]
+	mi := &file_v1_commons_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -252,7 +143,7 @@ func (x *InnerPropTagMap) String() string {
 func (*InnerPropTagMap) ProtoMessage() {}
 
 func (x *InnerPropTagMap) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_commons_proto_msgTypes[2]
+	mi := &file_v1_commons_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -265,7 +156,7 @@ func (x *InnerPropTagMap) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InnerPropTagMap.ProtoReflect.Descriptor instead.
 func (*InnerPropTagMap) Descriptor() ([]byte, []int) {
-	return file_v1_commons_proto_rawDescGZIP(), []int{2}
+	return file_v1_commons_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *InnerPropTagMap) GetValue() map[string]*Tag {
@@ -285,7 +176,7 @@ type MapObj struct {
 
 func (x *MapObj) Reset() {
 	*x = MapObj{}
-	mi := &file_v1_commons_proto_msgTypes[3]
+	mi := &file_v1_commons_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -297,7 +188,7 @@ func (x *MapObj) String() string {
 func (*MapObj) ProtoMessage() {}
 
 func (x *MapObj) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_commons_proto_msgTypes[3]
+	mi := &file_v1_commons_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -310,7 +201,7 @@ func (x *MapObj) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MapObj.ProtoReflect.Descriptor instead.
 func (*MapObj) Descriptor() ([]byte, []int) {
-	return file_v1_commons_proto_rawDescGZIP(), []int{3}
+	return file_v1_commons_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *MapObj) GetKey() string {
@@ -336,7 +227,7 @@ type StringList struct {
 
 func (x *StringList) Reset() {
 	*x = StringList{}
-	mi := &file_v1_commons_proto_msgTypes[4]
+	mi := &file_v1_commons_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -348,7 +239,7 @@ func (x *StringList) String() string {
 func (*StringList) ProtoMessage() {}
 
 func (x *StringList) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_commons_proto_msgTypes[4]
+	mi := &file_v1_commons_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -361,7 +252,7 @@ func (x *StringList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StringList.ProtoReflect.Descriptor instead.
 func (*StringList) Descriptor() ([]byte, []int) {
-	return file_v1_commons_proto_rawDescGZIP(), []int{4}
+	return file_v1_commons_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *StringList) GetValue() []string {
@@ -380,7 +271,7 @@ type TagPropertyMap struct {
 
 func (x *TagPropertyMap) Reset() {
 	*x = TagPropertyMap{}
-	mi := &file_v1_commons_proto_msgTypes[5]
+	mi := &file_v1_commons_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -392,7 +283,7 @@ func (x *TagPropertyMap) String() string {
 func (*TagPropertyMap) ProtoMessage() {}
 
 func (x *TagPropertyMap) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_commons_proto_msgTypes[5]
+	mi := &file_v1_commons_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -405,7 +296,7 @@ func (x *TagPropertyMap) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TagPropertyMap.ProtoReflect.Descriptor instead.
 func (*TagPropertyMap) Descriptor() ([]byte, []int) {
-	return file_v1_commons_proto_rawDescGZIP(), []int{5}
+	return file_v1_commons_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *TagPropertyMap) GetValue() map[string]*StringList {
@@ -426,6 +317,7 @@ type Item struct {
 	SoftDelete    bool                   `protobuf:"varint,7,opt,name=softDelete,proto3" json:"softDelete,omitempty"`
 	TagObjs       []*Tag                 `protobuf:"bytes,8,rep,name=tagObjs,proto3" json:"tagObjs,omitempty"`
 	PropObjs      []*MapObj              `protobuf:"bytes,9,rep,name=propObjs,proto3" json:"propObjs,omitempty"`
+	Suspension    int32                  `protobuf:"varint,10,opt,name=suspension,proto3" json:"suspension,omitempty"`
 	UpdatedBy     string                 `protobuf:"bytes,500,opt,name=updatedBy,proto3" json:"updatedBy,omitempty"`
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,501,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -434,7 +326,7 @@ type Item struct {
 
 func (x *Item) Reset() {
 	*x = Item{}
-	mi := &file_v1_commons_proto_msgTypes[6]
+	mi := &file_v1_commons_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -446,7 +338,7 @@ func (x *Item) String() string {
 func (*Item) ProtoMessage() {}
 
 func (x *Item) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_commons_proto_msgTypes[6]
+	mi := &file_v1_commons_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -459,7 +351,7 @@ func (x *Item) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Item.ProtoReflect.Descriptor instead.
 func (*Item) Descriptor() ([]byte, []int) {
-	return file_v1_commons_proto_rawDescGZIP(), []int{6}
+	return file_v1_commons_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *Item) GetId() string {
@@ -525,6 +417,13 @@ func (x *Item) GetPropObjs() []*MapObj {
 	return nil
 }
 
+func (x *Item) GetSuspension() int32 {
+	if x != nil {
+		return x.Suspension
+	}
+	return 0
+}
+
 func (x *Item) GetUpdatedBy() string {
 	if x != nil {
 		return x.UpdatedBy
@@ -555,7 +454,7 @@ type Filter struct {
 
 func (x *Filter) Reset() {
 	*x = Filter{}
-	mi := &file_v1_commons_proto_msgTypes[7]
+	mi := &file_v1_commons_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -567,7 +466,7 @@ func (x *Filter) String() string {
 func (*Filter) ProtoMessage() {}
 
 func (x *Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_commons_proto_msgTypes[7]
+	mi := &file_v1_commons_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -580,7 +479,7 @@ func (x *Filter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Filter.ProtoReflect.Descriptor instead.
 func (*Filter) Descriptor() ([]byte, []int) {
-	return file_v1_commons_proto_rawDescGZIP(), []int{7}
+	return file_v1_commons_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *Filter) GetId() string {
@@ -639,66 +538,6 @@ func (x *Filter) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-type Search struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Text          string                 `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
-	Tags          []string               `protobuf:"bytes,2,rep,name=tags,proto3" json:"tags,omitempty"`
-	Filters       []string               `protobuf:"bytes,3,rep,name=filters,proto3" json:"filters,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Search) Reset() {
-	*x = Search{}
-	mi := &file_v1_commons_proto_msgTypes[8]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Search) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Search) ProtoMessage() {}
-
-func (x *Search) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_commons_proto_msgTypes[8]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Search.ProtoReflect.Descriptor instead.
-func (*Search) Descriptor() ([]byte, []int) {
-	return file_v1_commons_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *Search) GetText() string {
-	if x != nil {
-		return x.Text
-	}
-	return ""
-}
-
-func (x *Search) GetTags() []string {
-	if x != nil {
-		return x.Tags
-	}
-	return nil
-}
-
-func (x *Search) GetFilters() []string {
-	if x != nil {
-		return x.Filters
-	}
-	return nil
-}
-
 type Pagination struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Size          int64                  `protobuf:"varint,1,opt,name=size,proto3" json:"size,omitempty"`
@@ -711,7 +550,7 @@ type Pagination struct {
 
 func (x *Pagination) Reset() {
 	*x = Pagination{}
-	mi := &file_v1_commons_proto_msgTypes[9]
+	mi := &file_v1_commons_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -723,7 +562,7 @@ func (x *Pagination) String() string {
 func (*Pagination) ProtoMessage() {}
 
 func (x *Pagination) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_commons_proto_msgTypes[9]
+	mi := &file_v1_commons_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -736,7 +575,7 @@ func (x *Pagination) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Pagination.ProtoReflect.Descriptor instead.
 func (*Pagination) Descriptor() ([]byte, []int) {
-	return file_v1_commons_proto_rawDescGZIP(), []int{9}
+	return file_v1_commons_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *Pagination) GetSize() int64 {
@@ -770,15 +609,16 @@ func (x *Pagination) GetVolume() int64 {
 type ReadQuery struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        string                 `protobuf:"bytes,1,opt,name=userId,proto3" json:"userId,omitempty"`
-	Tags          []string               `protobuf:"bytes,2,rep,name=tags,proto3" json:"tags,omitempty"`
-	Text          string                 `protobuf:"bytes,3,opt,name=text,proto3" json:"text,omitempty"`
+	Id            string                 `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	Tags          []string               `protobuf:"bytes,3,rep,name=tags,proto3" json:"tags,omitempty"`
+	Text          string                 `protobuf:"bytes,4,opt,name=text,proto3" json:"text,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ReadQuery) Reset() {
 	*x = ReadQuery{}
-	mi := &file_v1_commons_proto_msgTypes[10]
+	mi := &file_v1_commons_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -790,7 +630,7 @@ func (x *ReadQuery) String() string {
 func (*ReadQuery) ProtoMessage() {}
 
 func (x *ReadQuery) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_commons_proto_msgTypes[10]
+	mi := &file_v1_commons_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -803,12 +643,19 @@ func (x *ReadQuery) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReadQuery.ProtoReflect.Descriptor instead.
 func (*ReadQuery) Descriptor() ([]byte, []int) {
-	return file_v1_commons_proto_rawDescGZIP(), []int{10}
+	return file_v1_commons_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ReadQuery) GetUserId() string {
 	if x != nil {
 		return x.UserId
+	}
+	return ""
+}
+
+func (x *ReadQuery) GetId() string {
+	if x != nil {
+		return x.Id
 	}
 	return ""
 }
@@ -827,71 +674,17 @@ func (x *ReadQuery) GetText() string {
 	return ""
 }
 
-type ReadReference struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Tag           *Tag                   `protobuf:"bytes,1,opt,name=tag,proto3" json:"tag,omitempty"`
-	Filter        *Filter                `protobuf:"bytes,2,opt,name=filter,proto3" json:"filter,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ReadReference) Reset() {
-	*x = ReadReference{}
-	mi := &file_v1_commons_proto_msgTypes[11]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ReadReference) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ReadReference) ProtoMessage() {}
-
-func (x *ReadReference) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_commons_proto_msgTypes[11]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ReadReference.ProtoReflect.Descriptor instead.
-func (*ReadReference) Descriptor() ([]byte, []int) {
-	return file_v1_commons_proto_rawDescGZIP(), []int{11}
-}
-
-func (x *ReadReference) GetTag() *Tag {
-	if x != nil {
-		return x.Tag
-	}
-	return nil
-}
-
-func (x *ReadReference) GetFilter() *Filter {
-	if x != nil {
-		return x.Filter
-	}
-	return nil
-}
-
 type ReadRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Query         *ReadQuery             `protobuf:"bytes,500,opt,name=query,proto3" json:"query,omitempty"`
 	Pagination    *Pagination            `protobuf:"bytes,501,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Reference     *ReadReference         `protobuf:"bytes,502,opt,name=reference,proto3" json:"reference,omitempty"`
-	Title         string                 `protobuf:"bytes,503,opt,name=title,proto3" json:"title,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ReadRequest) Reset() {
 	*x = ReadRequest{}
-	mi := &file_v1_commons_proto_msgTypes[12]
+	mi := &file_v1_commons_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -903,7 +696,7 @@ func (x *ReadRequest) String() string {
 func (*ReadRequest) ProtoMessage() {}
 
 func (x *ReadRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_commons_proto_msgTypes[12]
+	mi := &file_v1_commons_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -916,7 +709,7 @@ func (x *ReadRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReadRequest.ProtoReflect.Descriptor instead.
 func (*ReadRequest) Descriptor() ([]byte, []int) {
-	return file_v1_commons_proto_rawDescGZIP(), []int{12}
+	return file_v1_commons_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ReadRequest) GetQuery() *ReadQuery {
@@ -931,20 +724,6 @@ func (x *ReadRequest) GetPagination() *Pagination {
 		return x.Pagination
 	}
 	return nil
-}
-
-func (x *ReadRequest) GetReference() *ReadReference {
-	if x != nil {
-		return x.Reference
-	}
-	return nil
-}
-
-func (x *ReadRequest) GetTitle() string {
-	if x != nil {
-		return x.Title
-	}
-	return ""
 }
 
 var File_v1_commons_proto protoreflect.FileDescriptor
@@ -962,11 +741,7 @@ const file_v1_commons_proto_rawDesc = "" +
 	"softDelete\x18\a \x01(\bR\n" +
 	"softDelete\x12\x1d\n" +
 	"\tupdatedBy\x18\xf4\x03 \x01(\tR\tupdatedBy\x129\n" +
-	"\tupdatedAt\x18\xf5\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"d\n" +
-	"\fTagProperty1\x12\x16\n" +
-	"\x06userId\x18\x01 \x01(\tR\x06userId\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12(\n" +
-	"\atagObjs\x18\x03 \x03(\v2\x0e.listah.v1.TagR\atagObjs\"\x98\x01\n" +
+	"\tupdatedAt\x18\xf5\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x98\x01\n" +
 	"\x0fInnerPropTagMap\x12;\n" +
 	"\x05value\x18\x01 \x03(\v2%.listah.v1.InnerPropTagMap.ValueEntryR\x05value\x1aH\n" +
 	"\n" +
@@ -984,7 +759,7 @@ const file_v1_commons_proto_rawDesc = "" +
 	"\n" +
 	"ValueEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12+\n" +
-	"\x05value\x18\x02 \x01(\v2\x15.listah.v1.StringListR\x05value:\x028\x01\"\xa9\x03\n" +
+	"\x05value\x18\x02 \x01(\v2\x15.listah.v1.StringListR\x05value:\x028\x01\"\xc9\x03\n" +
 	"\x04Item\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
@@ -996,7 +771,11 @@ const file_v1_commons_proto_rawDesc = "" +
 	"softDelete\x18\a \x01(\bR\n" +
 	"softDelete\x12(\n" +
 	"\atagObjs\x18\b \x03(\v2\x0e.listah.v1.TagR\atagObjs\x12-\n" +
-	"\bpropObjs\x18\t \x03(\v2\x11.listah.v1.MapObjR\bpropObjs\x12\x1d\n" +
+	"\bpropObjs\x18\t \x03(\v2\x11.listah.v1.MapObjR\bpropObjs\x12\x1e\n" +
+	"\n" +
+	"suspension\x18\n" +
+	" \x01(\x05R\n" +
+	"suspension\x12\x1d\n" +
 	"\tupdatedBy\x18\xf4\x03 \x01(\tR\tupdatedBy\x129\n" +
 	"\tupdatedAt\x18\xf5\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x1a8\n" +
 	"\n" +
@@ -1013,35 +792,23 @@ const file_v1_commons_proto_rawDesc = "" +
 	"softDelete\x18\a \x01(\bR\n" +
 	"softDelete\x12\x1d\n" +
 	"\tupdatedBy\x18\xf4\x03 \x01(\tR\tupdatedBy\x129\n" +
-	"\tupdatedAt\x18\xf5\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"J\n" +
-	"\x06Search\x12\x12\n" +
-	"\x04text\x18\x01 \x01(\tR\x04text\x12\x12\n" +
-	"\x04tags\x18\x02 \x03(\tR\x04tags\x12\x18\n" +
-	"\afilters\x18\x03 \x03(\tR\afilters\"`\n" +
+	"\tupdatedAt\x18\xf5\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"`\n" +
 	"\n" +
 	"Pagination\x12\x12\n" +
 	"\x04size\x18\x01 \x01(\x03R\x04size\x12\x12\n" +
 	"\x04page\x18\x02 \x01(\x03R\x04page\x12\x12\n" +
 	"\x04sort\x18\x03 \x01(\tR\x04sort\x12\x16\n" +
-	"\x06volume\x18\x04 \x01(\x03R\x06volume\"K\n" +
+	"\x06volume\x18\x04 \x01(\x03R\x06volume\"[\n" +
 	"\tReadQuery\x12\x16\n" +
-	"\x06userId\x18\x01 \x01(\tR\x06userId\x12\x12\n" +
-	"\x04tags\x18\x02 \x03(\tR\x04tags\x12\x12\n" +
-	"\x04text\x18\x03 \x01(\tR\x04text\"\\\n" +
-	"\rReadReference\x12 \n" +
-	"\x03tag\x18\x01 \x01(\v2\x0e.listah.v1.TagR\x03tag\x12)\n" +
-	"\x06filter\x18\x02 \x01(\v2\x11.listah.v1.FilterR\x06filter\"\xc2\x01\n" +
+	"\x06userId\x18\x01 \x01(\tR\x06userId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\tR\x02id\x12\x12\n" +
+	"\x04tags\x18\x03 \x03(\tR\x04tags\x12\x12\n" +
+	"\x04text\x18\x04 \x01(\tR\x04text\"r\n" +
 	"\vReadRequest\x12+\n" +
 	"\x05query\x18\xf4\x03 \x01(\v2\x14.listah.v1.ReadQueryR\x05query\x126\n" +
 	"\n" +
 	"pagination\x18\xf5\x03 \x01(\v2\x15.listah.v1.PaginationR\n" +
-	"pagination\x127\n" +
-	"\treference\x18\xf6\x03 \x01(\v2\x18.listah.v1.ReadReferenceR\treference\x12\x15\n" +
-	"\x05title\x18\xf7\x03 \x01(\tR\x05title*v\n" +
-	"\x10AuditUpdaterEnum\x12\"\n" +
-	"\x1eAUDIT_UPDATER_ENUM_UNSPECIFIED\x10\x00\x12\x1f\n" +
-	"\x1bAUDIT_UPDATER_ENUM_FRONTEND\x10\x01\x12\x1d\n" +
-	"\x19AUDIT_UPDATER_ENUM_SYSOPS\x10\x02B)Z'cornucopia/listah/internal/pkg/proto/v1b\x06proto3"
+	"paginationB)Z'cornucopia/listah/internal/pkg/proto/v1b\x06proto3"
 
 var (
 	file_v1_commons_proto_rawDescOnce sync.Once
@@ -1055,50 +822,41 @@ func file_v1_commons_proto_rawDescGZIP() []byte {
 	return file_v1_commons_proto_rawDescData
 }
 
-var file_v1_commons_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_v1_commons_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_v1_commons_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_v1_commons_proto_goTypes = []any{
-	(AuditUpdaterEnum)(0),         // 0: listah.v1.AuditUpdaterEnum
-	(*Tag)(nil),                   // 1: listah.v1.Tag
-	(*TagProperty1)(nil),          // 2: listah.v1.TagProperty1
-	(*InnerPropTagMap)(nil),       // 3: listah.v1.InnerPropTagMap
-	(*MapObj)(nil),                // 4: listah.v1.MapObj
-	(*StringList)(nil),            // 5: listah.v1.StringList
-	(*TagPropertyMap)(nil),        // 6: listah.v1.TagPropertyMap
-	(*Item)(nil),                  // 7: listah.v1.Item
-	(*Filter)(nil),                // 8: listah.v1.Filter
-	(*Search)(nil),                // 9: listah.v1.Search
-	(*Pagination)(nil),            // 10: listah.v1.Pagination
-	(*ReadQuery)(nil),             // 11: listah.v1.ReadQuery
-	(*ReadReference)(nil),         // 12: listah.v1.ReadReference
-	(*ReadRequest)(nil),           // 13: listah.v1.ReadRequest
-	nil,                           // 14: listah.v1.InnerPropTagMap.ValueEntry
-	nil,                           // 15: listah.v1.TagPropertyMap.ValueEntry
-	nil,                           // 16: listah.v1.Item.PropsEntry
-	(*timestamppb.Timestamp)(nil), // 17: google.protobuf.Timestamp
+	(*Tag)(nil),                   // 0: listah.v1.Tag
+	(*InnerPropTagMap)(nil),       // 1: listah.v1.InnerPropTagMap
+	(*MapObj)(nil),                // 2: listah.v1.MapObj
+	(*StringList)(nil),            // 3: listah.v1.StringList
+	(*TagPropertyMap)(nil),        // 4: listah.v1.TagPropertyMap
+	(*Item)(nil),                  // 5: listah.v1.Item
+	(*Filter)(nil),                // 6: listah.v1.Filter
+	(*Pagination)(nil),            // 7: listah.v1.Pagination
+	(*ReadQuery)(nil),             // 8: listah.v1.ReadQuery
+	(*ReadRequest)(nil),           // 9: listah.v1.ReadRequest
+	nil,                           // 10: listah.v1.InnerPropTagMap.ValueEntry
+	nil,                           // 11: listah.v1.TagPropertyMap.ValueEntry
+	nil,                           // 12: listah.v1.Item.PropsEntry
+	(*timestamppb.Timestamp)(nil), // 13: google.protobuf.Timestamp
 }
 var file_v1_commons_proto_depIdxs = []int32{
-	17, // 0: listah.v1.Tag.updatedAt:type_name -> google.protobuf.Timestamp
-	1,  // 1: listah.v1.TagProperty1.tagObjs:type_name -> listah.v1.Tag
-	14, // 2: listah.v1.InnerPropTagMap.value:type_name -> listah.v1.InnerPropTagMap.ValueEntry
-	15, // 3: listah.v1.TagPropertyMap.value:type_name -> listah.v1.TagPropertyMap.ValueEntry
-	16, // 4: listah.v1.Item.props:type_name -> listah.v1.Item.PropsEntry
-	1,  // 5: listah.v1.Item.tagObjs:type_name -> listah.v1.Tag
-	4,  // 6: listah.v1.Item.propObjs:type_name -> listah.v1.MapObj
-	17, // 7: listah.v1.Item.updatedAt:type_name -> google.protobuf.Timestamp
-	17, // 8: listah.v1.Filter.updatedAt:type_name -> google.protobuf.Timestamp
-	1,  // 9: listah.v1.ReadReference.tag:type_name -> listah.v1.Tag
-	8,  // 10: listah.v1.ReadReference.filter:type_name -> listah.v1.Filter
-	11, // 11: listah.v1.ReadRequest.query:type_name -> listah.v1.ReadQuery
-	10, // 12: listah.v1.ReadRequest.pagination:type_name -> listah.v1.Pagination
-	12, // 13: listah.v1.ReadRequest.reference:type_name -> listah.v1.ReadReference
-	1,  // 14: listah.v1.InnerPropTagMap.ValueEntry.value:type_name -> listah.v1.Tag
-	5,  // 15: listah.v1.TagPropertyMap.ValueEntry.value:type_name -> listah.v1.StringList
-	16, // [16:16] is the sub-list for method output_type
-	16, // [16:16] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	13, // 0: listah.v1.Tag.updatedAt:type_name -> google.protobuf.Timestamp
+	10, // 1: listah.v1.InnerPropTagMap.value:type_name -> listah.v1.InnerPropTagMap.ValueEntry
+	11, // 2: listah.v1.TagPropertyMap.value:type_name -> listah.v1.TagPropertyMap.ValueEntry
+	12, // 3: listah.v1.Item.props:type_name -> listah.v1.Item.PropsEntry
+	0,  // 4: listah.v1.Item.tagObjs:type_name -> listah.v1.Tag
+	2,  // 5: listah.v1.Item.propObjs:type_name -> listah.v1.MapObj
+	13, // 6: listah.v1.Item.updatedAt:type_name -> google.protobuf.Timestamp
+	13, // 7: listah.v1.Filter.updatedAt:type_name -> google.protobuf.Timestamp
+	8,  // 8: listah.v1.ReadRequest.query:type_name -> listah.v1.ReadQuery
+	7,  // 9: listah.v1.ReadRequest.pagination:type_name -> listah.v1.Pagination
+	0,  // 10: listah.v1.InnerPropTagMap.ValueEntry.value:type_name -> listah.v1.Tag
+	3,  // 11: listah.v1.TagPropertyMap.ValueEntry.value:type_name -> listah.v1.StringList
+	12, // [12:12] is the sub-list for method output_type
+	12, // [12:12] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_v1_commons_proto_init() }
@@ -1111,14 +869,13 @@ func file_v1_commons_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_commons_proto_rawDesc), len(file_v1_commons_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   16,
+			NumEnums:      0,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_v1_commons_proto_goTypes,
 		DependencyIndexes: file_v1_commons_proto_depIdxs,
-		EnumInfos:         file_v1_commons_proto_enumTypes,
 		MessageInfos:      file_v1_commons_proto_msgTypes,
 	}.Build()
 	File_v1_commons_proto = out.File

@@ -15,10 +15,16 @@ import type {
 export type ILayoutState = {
   drawerOpen: boolean
   searchQuery: undefined | string
+  successMsg: string | null | undefined
+  warnMsg: string | null | undefined
+  errorMsg: string | null | undefined
 }
 export type ILayoutActions = {
-  toggleDrawer: (drawerOpen: boolean) => void
+  setDrawer: (drawerOpen: boolean) => void
   setSearchQuery: (searchQuery: undefined | string) => void
+  setErrorMsg: (errorMsg: null | undefined | string) => void
+  setWarnMsg: (warnMsg: null | undefined | string) => void
+  setSuccessMsg: (successMsg: null | undefined | string) => void
   reset: () => void
 }
 export type ILayoutSlice = ILayoutState & ILayoutActions;
@@ -29,11 +35,15 @@ export type ITagState = {
   tagModal: boolean
   displayTag: undefined | ITag
   tagScroll: number
+  tagAlertMsg: string | null | undefined
+  alertMsg: string | null | undefined
 }
 export type ITagActions = {
   setTagModal: (tagModal: boolean) => void
   setDisplayTag: (displayTag: undefined | ITag) => void
   setTagScroll: (tagScroll: number) => void
+  setTagAlertMsg: (tagAlertMsg: undefined | string) => void
+  setAlertMsg: (tagAlertMsg: undefined | string) => void
   reset: () => void
 }
 export type ITagSlice = ITagState & ITagActions;

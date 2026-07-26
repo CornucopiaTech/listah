@@ -25,7 +25,6 @@ func CheckAuth(infra *bootstrap.Infra) connect.UnaryInterceptorFunc {
 			ctx context.Context,
 			req connect.AnyRequest,
 		) (connect.AnyResponse, error) {
-			fmt.Printf("\n\n\n\n")
 
 			tkn := extractAuth(req.Header().Get("Authorization"))
 			ptkn, err := parseJWT(ctx, tkn, infra.Config.AuthDomain)
@@ -37,7 +36,6 @@ func CheckAuth(infra *bootstrap.Infra) connect.UnaryInterceptorFunc {
 				e := utils.HandleError(infra, ctx, req, err)
 				return nil, e
 			}
-			fmt.Printf("\n\n\n\n")
 			return next(ctx, req)
 		})
 		// Return newly created handler

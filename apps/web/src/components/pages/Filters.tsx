@@ -1,23 +1,22 @@
-import {
-  Fragment,
-  useRef,
-} from "react";
+
 import type {
   ReactNode,
-  ChangeEvent,
-  MouseEvent,
 } from 'react';
-import {
-  useNavigate,
-} from '@tanstack/react-router';
-import type {
-  UseSuspenseQueryResult,
-} from '@tanstack/react-query';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import EditIcon from '@mui/icons-material/Edit';
+import IconButton from '@mui/material/IconButton';
+import LinearProgress from '@mui/material/LinearProgress';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import Chip from '@mui/material/Chip';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import { Virtuoso } from 'react-virtuoso';
 
 
 
@@ -25,152 +24,245 @@ import Chip from '@mui/material/Chip';
 // Internal
 import {
   useAppStore,
-  type TAppStore
 } from '@/hooks/store/boundStore';
-import {
-  AppTagModal,
-} from "@/components/layout/AppTagModal";
-import {
-  AppFilterModal,
-} from "@/components/layout/AppFilterModal";
-import { AppContainer } from '@/components/layout/AppContainer';
-import {
-  MenuItem,
-} from '@/components/base/Menubar';
-import {
-  useListFilter,
-} from '@/hooks/queries/filter';
-import {
-  ListLayout
-} from '@/components/layout/ListLayout';
-import {
-} from "@/domain/rules";
 import type {
-  IFilter,
-  IReadQuery,
-  IFilterReadResponse,
+  IFilterListContext,
+  IListContext,
+  IFilterUpdateContext,
+  IFormContext,
 } from "@/domain/entities";
 import {
-  DefaultReadQuery,
-  Pagination,
-} from "@/domain/entities";
+  useListFilters,
+  useUpdateFilters,
+  FormContext,
+  ListContext,
+  FilterUpdateProvider,
+  BreadcrumbProvider,
+  FilterListProvider,
+  ItemSearchProvider,
+  ItemUpdateProvider,
+} from "@/hooks/context";
 import {
-  encodeState
-} from '@/utils/encoders';
+  ListItemStyling
+} from "@/helpers/defaults";
 import {
-  getRouteContext,
-} from "@/utils/routing";
-import {
-  TagFormDataProvider,
-  TagFormProvider,
-  FilterFormDataProvider,
-  FilterFormProvider,
-} from '@/hooks/services/useForm';
+  AppContainer,
+  AppSectionPaper,
+  AppTooltip,
+  FlexEndBox,
+  FlexStartBox,
+  FormDialog,
+  getFormTextFieldProps,
+  ListBox,
+  ListLayout,
+  OuterBox,
+  UpdateFormActions,
+  AppBreadcrumb,
+  ItemSearchList,
+  ItemUpdate,
+} from '@/components';
 
 
 
-export function Filters() {
-  const store: TAppStore = useAppStore((state) => state);
-  const navigate = useNavigate();
-  const { query, pagination, } = getRouteContext("/filters");
+
+export function Filters(): ReactNode {
+  return (
+    <AppContainer mw="md">
+      <FilterUpdateProvider> <UpdateFilter /> </FilterUpdateProvider>
+      <ItemUpdateProvider route="/filters"> <ItemUpdate /> </ItemUpdateProvider>
+      <BreadcrumbProvider route="/filters"><AppBreadcrumb /></BreadcrumbProvider>
+      <ItemSearchProvider route="/filters"><ItemSearchList /></ItemSearchProvider>
+      <AppSectionPaper>
+        <FilterListProvider> <FilterList /> </FilterListProvider>
+      </AppSectionPaper>
+    </AppContainer >
+  );
+}
+
+
+export function FilterList(): ReactNode {
   const {
-    data, isPending, isFetching, isError, error
-  }: UseSuspenseQueryResult<IFilterReadResponse> = useListFilter({ query, pagination, });
+    filters,
+    pagination,
+    isPending,
+    isError,
+    error,
+    pageChange,
+    pageSizeChange,
+    viewItemsClick,
+    editFilterClick,
+  } = useListFilters() as unknown as IFilterListContext;
+  const storeFilterScroll = useAppStore((state) => state.filterScroll);
 
-  // Pagination Details
-  const initialPagination = new Pagination(pagination);
-  let pageInfo = useRef<Pagination>(initialPagination);
-  if (data) {
-    pageInfo.current.updatePaging(data.pagination, pagination);
-  }
-  function pageChange(event: MouseEvent<HTMLButtonElement> | null, value: number) {
-    event && event.stopPropagation();
-    pageInfo.current.changePage(value);
-    const encoded = encodeState({ query, pagination: pageInfo.current.paging });
-    navigate({ to: ".", search: { s: encoded } });
-  };
-  function pageSizeChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    pageInfo.current.changeSize(e.target.value);
-    const encoded = encodeState({ query, pagination: pageInfo.current.paging });
-    navigate({ to: ".", search: { s: encoded } });
-  };
+  // function renderRow(itemKey: number): ReactNode {
+  //   const item = filters[itemKey];
+  //   const tc = item?.name ?? "";
+  //   const itemcount = item?.count?.toString() ?? "0";
+  //   return (
+  //     <ListItem key={itemKey + tc} component="div"
+  //       disablePadding sx={ListItemStyling}
+  //       onClick={() => listItemClick(itemKey)} >
+  //       <ListItemButton>
+  //         <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
+  //         <Chip
+  //           variant="contained"
+  //           // @ts-ignore
+  //           color={itemKey % 2 == 0 ? "inherit" : "secondary"}
+  //           label={itemcount}
+  //         />
+  //       </ListItemButton>
+  //     </ListItem>
+  //   );
+  // }
 
-
-
-  const listItemClick = (idx: number, it: IFilter) => {
-    const pageTitle = it && it.name ? `##${it.name}` : "Filters";
-    const q: IReadQuery = { ...DefaultReadQuery, userId: query.userId, tags: it.tags };
-    const s = { query: q, pagination, title: pageTitle, reference: { filter: it }, }
-    const encoded = encodeState(s);
-    navigate({ to: "/items", search: { s: encoded }, });
-    store.setItemTitle(pageTitle);
-    store.setDisplayFilter(it);
-    store.setFilterScroll(idx);
-  }
-
-  function renderItem(itemKey: number): ReactNode {
-    const filters = data?.filters ?? [];
-    const item: IFilter = filters[itemKey];
-    const tc = item && item.name ? item.name : "";
+  function renderRow(itemKey: number): ReactNode {
+    const item = filters[itemKey];
+    const tc = item?.name ?? "";
+    const itemcount = item?.count?.toString() ?? "0";
     return (
-      <ListItem
-        key={itemKey + tc}
-        component="div" disablePadding
-        onClick={() => listItemClick(itemKey, item)}
-      >
-        <ListItemButton>
-          <ListItemText primary={<Typography variant="body2">{tc}</Typography>} />
-          <Chip
-            variant="contained"
+      <ListItem key={itemKey + tc} component="div" disablePadding sx={ListItemStyling} >
+        <FlexStartBox >
+          <ListItemButton onClick={() => viewItemsClick(itemKey)}>
+            <ListItemText primary={<Typography variant="body2" >{tc}</Typography>} />
+          </ListItemButton>
+        </FlexStartBox>
+        <FlexEndBox >
+          <Chip variant="contained" sx={{ marginX: "10px", marginY: 0, }}
             // @ts-ignore
-            color={itemKey % 2 == 0 ? "inherit" : "secondary"}
-            label={item.count ? item.count.toString() : "0"}
+            color={itemKey % 2 == 0 ? "inherit" : "secondary"} label={itemcount}
           />
-        </ListItemButton>
+          <IconButton aria-label="view" onClick={() => viewItemsClick(itemKey)}> <AppTooltip title="View items in filter"><VisibilityIcon /></AppTooltip> </IconButton>
+          <IconButton aria-label="edit" onClick={() => editFilterClick(itemKey)}> <AppTooltip title="Edit filter"><EditIcon /></AppTooltip> </IconButton>
+        </FlexEndBox>
       </ListItem>
     );
   }
 
-  const props = {
-    data: data?.filters ?? [],
-    isPending, isFetching, isError, error,
-    scrollIndex: Math.max(0, store.filterScroll),
-    pagination: pageInfo.current.paging,
-    renderItem,
-    pageSizeChange,
-    pageChange,
+
+  const contextValue = {
+    data: filters,
+    pagination: pagination.paging,
+    isPending,
+    isError,
+    error,
+    scrollIndex: Math.max(0, storeFilterScroll),
+    pageChange: filters.length > 0 ? pageChange : undefined,
+    pageSizeChange: filters.length > 0 ? pageSizeChange : undefined,
+    clickRow: viewItemsClick,
+    renderRow,
+  } as unknown as IListContext;
+
+  function Shell({ children }: { children: ReactNode }) {
+    return <ListContext.Provider value={contextValue}><ListBox><OuterBox>{children} </OuterBox></ListBox></ListContext.Provider>
+  }
+  if (isPending) {
+    return <Shell><LinearProgress /></Shell>
+  }
+  if (error) {
+    return <Shell><Alert severity="error">{error.message || "An error occurred. Please try again"}</Alert></Shell>
+  }
+  if (filters.length == 0) {
+    return (
+      <Shell><Typography variant="h6"> No items found </Typography></Shell>
+    )
+  }
+  if (filters.length > 0) {
+    return (<Shell><ListLayout /></Shell>)
+  }
+  return (
+    <Shell><Alert severity="error">"An error occurred. Please try again"</Alert></Shell>
+  )
+}
+
+function UpdateFilter(): ReactNode {
+  const {
+    openDialog,
+    closeDialog,
+    mutation,
+    form,
+    title,
+    isPending,
+    error,
+    tags,
+    formData,
+  } = useUpdateFilters() as unknown as IFilterUpdateContext;
+
+  function renderCell(idx: number): ReactNode {
+    return (
+      <form.Field name={`tags[${idx}]`}
+        children={(field: any) => {
+          const lbl = !field.state.value ? "" : field.state.value.name
+          return (
+            <FormControlLabel control={
+              <Checkbox
+                checked={field.state.value?.checked}
+                onChange={() => {
+                  field.handleChange({ ...field.state.value, checked: !field.state.value.checked })
+                }}
+                slotProps={{
+                  input: { 'aria-label': 'controlled' },
+                }}
+              />
+            } label={lbl} />
+          );
+        }}
+      />
+    )
   }
 
-  const menuItems = <Fragment>
-    <MenuItem key="tag" onClick={() => store.setTagModal(true)}>
-      <Typography variant="body2">Create new tag </Typography>
-    </MenuItem>
-    <MenuItem key="filter" onClick={() => store.setFilterModal(true)}>
-      <Typography variant="body2">Create new filter </Typography>
-    </MenuItem>
-  </Fragment>
+  let content = <LinearProgress />;
+  let actions = undefined;
+  if (isPending) {
+    content = <LinearProgress />;
+  }
+  if (error) {
+    content = (
+      <Alert severity="error"> {error?.message || "An error occurred. Please try again"}</Alert>
+    );
+  }
+  if (!isPending && !error && tags.length == 0) {
+    content = (
+      <Typography variant="h6"> No tags found </Typography>
+    );
+  }
+  if (tags.length > 0 && formData) {
+    content = (
+      <Box component="section" >
+        <form.Field
+          key="name"
+          name="name"
+          children={
+            (field: any) => {
+              const props = getFormTextFieldProps({ key: "name", field, });
+              // @ts-ignore
+              return < TextField {...props} />
+            }
+          }
+        />
+        <Virtuoso
+          key="data-content"
+          style={{ height: "40vh" }}
+          initialTopMostItemIndex={0}
+          totalCount={tags.length}
+          itemContent={(i) => renderCell(i)}
+        />
+      </Box>
+    );
+    actions = <UpdateFormActions />
+  }
 
 
-  return (
-    <AppContainer {...{ menuItems, title: "Filters", displayPage: true }}>
-      {
-        store.tagModal &&
-        <TagFormDataProvider>
-          <TagFormProvider>
-            <AppTagModal />
-          </TagFormProvider>
-        </TagFormDataProvider>
-      }
-      {
-        store.filterModal &&
-        <FilterFormDataProvider>
-          <FilterFormProvider >
-            <AppFilterModal />
-          </ FilterFormProvider>
-        </FilterFormDataProvider>
-      }
-      <ListLayout {...props} />
-    </AppContainer>
-  )
 
+
+  const contextValue = {
+    title,
+    content,
+    actions,
+    openDialog,
+    closeDialog,
+    form,
+    mutation,
+  } as unknown as IFormContext;
+
+  return <FormContext.Provider value={contextValue} > <FormDialog /> </FormContext.Provider >
 }

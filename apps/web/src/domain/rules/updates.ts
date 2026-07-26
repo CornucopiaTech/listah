@@ -70,6 +70,7 @@ export function prepItemUpdate({ value, userId }: { value: IItemForm, userId: st
     tagObjs: undefined,
     propObjList: undefined,
     softDelete: value.softDelete,
+    suspension: value.suspension,
   }
 
   return submitValue;

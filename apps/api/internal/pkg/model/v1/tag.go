@@ -1,28 +1,45 @@
 package v1
 
 import (
-	pb "cornucopia/listah/internal/pkg/proto/v1"
+	"github.com/google/uuid"
+	"github.com/uptrace/bun"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 
-	"github.com/google/uuid"
-	"google.golang.org/protobuf/types/known/timestamppb"
+	pb "cornucopia/listah/internal/pkg/proto/v1"
 )
 
-func TagModelToTagProto(m []*Tag) ([]*pb.Tag, error) {
+type Tag struct {
+	bun.BaseModel `bun:"table:apps.tags,alias:t"`
+	Id            string `bun:",pk"`
+	UserId        string
+	Name          string
+	Props         []string
+	Count         int32 `bun:",scanonly"`
+	SoftDelete    bool
+	UpdatedBy     string
+	UpdatedAt     time.Time
+}
+
+func (v *Tag) ToTagProto() *pb.Tag {
+	return &pb.Tag{
+		Id:         v.Id,
+		UserId:     v.UserId,
+		Name:       v.Name,
+		Props:      v.Props,
+		Count:      int32(v.Count),
+		SoftDelete: v.SoftDelete,
+		UpdatedAt:  timestamppb.New(v.UpdatedAt),
+		UpdatedBy:  v.UpdatedBy,
+	}
+}
+
+func TagModelListToTagProtoList(m []*Tag) []*pb.Tag {
 	c := []*pb.Tag{}
 	for _, v := range m {
-		c = append(c, &pb.Tag{
-			Id:         v.Id,
-			UserId:     v.UserId,
-			Name:       v.Name,
-			Props:      v.Props,
-			Count:      int32(v.Count),
-			SoftDelete: v.SoftDelete,
-			UpdatedAt:  timestamppb.New(v.UpdatedAt),
-			UpdatedBy:  v.UpdatedBy,
-		})
+		c = append(c, v.ToTagProto())
 	}
-	return c, nil
+	return c
 }
 
 func TagProtoToTagModel(msg []*pb.Tag, genId bool) ([]*Tag, []string, error) {
@@ -81,17 +98,17 @@ func TagProtoToTagModel(msg []*pb.Tag, genId bool) ([]*Tag, []string, error) {
 	return items, res, nil
 }
 
-func TagPropertyModelToTagPropertyMapProto(m []TagPropertyMapModel) (map[string]*pb.StringList, error) {
+func TagPropertyModelToTagPropertyMapProto(m []TagPropertyMapModel) map[string]*pb.StringList {
 	r := map[string]*pb.StringList{}
 	for _, v0 := range m {
 		for k, v1 := range v0.Props {
 			r[k] = &pb.StringList{Value: v1}
 		}
 	}
-	return r, nil
+	return r
 }
 
-func MapModelToTagPropertyMapProto(m []TagPropertyMapModel) (map[string]*pb.StringList, error) {
+func MapModelToTagPropertyMapProto(m []TagPropertyMapModel) map[string]*pb.StringList {
 	r := map[string]*pb.StringList{}
 
 	for _, v0 := range m {
@@ -100,5 +117,5 @@ func MapModelToTagPropertyMapProto(m []TagPropertyMapModel) (map[string]*pb.Stri
 		}
 	}
 
-	return r, nil
+	return r
 }
