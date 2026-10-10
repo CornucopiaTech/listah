@@ -85,6 +85,10 @@ az ad app federated-credential create \
   --id $AZ_GHA_APP_OBJECT_ID \
   --parameters "{\"name\":\"${AZ_GHA_NONPROD_ENV_NAME}\",\"issuer\":\"https://token.actions.githubusercontent.com\",\"subject\":\"repo:${GIT_ORG}@${GIT_ORG_ID}/${GIT_REPO}@${GIT_REPO_ID}:environment:dev\",\"description\":\"Nonprod repo access\",\"audiences\":[\"api://AzureADTokenExchange\"]}"
 
+az ad app federated-credential create \
+  --id $AZ_GHA_APP_OBJECT_ID \
+  --parameters "{\"name\":\"${AZ_GHA_NONPROD_ENV_NAME}-no-id\",\"issuer\":\"https://token.actions.githubusercontent.com\",\"subject\":\"repo:${GIT_ORG}/${GIT_REPO}:environment:dev\",\"description\":\"Nonprod repo access\",\"audiences\":[\"api://AzureADTokenExchange\"]}"
+
 
 4.1
 # Add Federated prod credentials to App for Repo
@@ -92,6 +96,9 @@ az ad app federated-credential create \
   --id $AZ_GHA_APP_OBJECT_ID \
   --parameters "{\"name\":\"${AZ_GHA_PROD_ENV_NAME}\",\"issuer\":\"https://token.actions.githubusercontent.com\",\"subject\":\"repo:${GIT_ORG}@${GIT_ORG_ID}/${GIT_REPO}@${GIT_REPO_ID}:environment:prod\",\"description\":\"Prod repo access\",\"audiences\":[\"api://AzureADTokenExchange\"]}"
 
+az ad app federated-credential create \
+  --id $AZ_GHA_APP_OBJECT_ID \
+  --parameters "{\"name\":\"${AZ_GHA_PROD_ENV_NAME}-no-id\",\"issuer\":\"https://token.actions.githubusercontent.com\",\"subject\":\"repo:${GIT_ORG}/${GIT_REPO}:environment:prod\",\"description\":\"Prod repo access\",\"audiences\":[\"api://AzureADTokenExchange\"]}"
 
 5.0
 # Get Service principal id using display name

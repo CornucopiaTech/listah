@@ -32,7 +32,7 @@ resource "random_string" "db_superuser_password" {
 
 resource "azurerm_key_vault_secret" "db_user_username" {
   name         = "${local.default_tags.app_name}-pgdb-username-${local.default_tags.environment}"
-  value        = random_string.db_username.result
+  value        = random_string.db_user_username.result
   key_vault_id = azurerm_key_vault.app_vault.id
   tags = {
     for k in sort(concat(keys(azurerm_resource_group.app_rg.tags), ["res_purpose"])) :
@@ -45,7 +45,7 @@ resource "azurerm_key_vault_secret" "db_user_username" {
 
 resource "azurerm_key_vault_secret" "db_user_password" {
   name         = "${local.default_tags.app_name}-pgdb-password-${local.default_tags.environment}"
-  value        = random_string.db_password.result
+  value        = random_string.db_user_password.result
   key_vault_id = azurerm_key_vault.app_vault.id
   tags = {
     for k in sort(concat(keys(azurerm_resource_group.app_rg.tags), ["res_purpose"])) :
