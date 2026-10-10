@@ -66,17 +66,17 @@ jobs:
         with:
           terraform_version: "1.16.5"
 
-      - name: Terraform Init, Set Env Vars
-        run: |
-          terraform init \
-            -backend-config="resource_group_name=${{ vars.AZ_RESOURCE_GROUP_NAME }}" \
-            -backend-config="storage_account_name=${{ vars.AZ_STORAGE_ACCT_NAME }}" \
-            -backend-config="container_name=${{ vars.AZ_STATE_MGT_CONTAINER_NAME }}" \
-            -backend-config="key=azure/${{ inputs.environment }}/${{ vars.APP_NAME }}/terraform.tfstate" \
-            -var-file="${{ inputs.environment }}.tfvars" \
+      # - name: Terraform Init, Set Env Vars
+      #   run: |
+      #     terraform init \
+      #       -backend-config="resource_group_name=${{ vars.AZ_RESOURCE_GROUP_NAME }}" \
+      #       -backend-config="storage_account_name=${{ vars.AZ_STORAGE_ACCT_NAME }}" \
+      #       -backend-config="container_name=${{ vars.AZ_STATE_MGT_CONTAINER_NAME }}" \
+      #       -backend-config="key=azure/${{ inputs.environment }}/${{ vars.APP_NAME }}/terraform.tfstate" \
+      #       -var-file="${{ inputs.environment }}.tfvars" \
 
-          echo "K8_MANAGED_IDENTITY_CLIENT_ID="$(terraform output -json app_identity | jq -r '.client_id')"" >> ${GITHUB_ENV}
-          echo "AZ_VAULT_URI="$(terraform output -json app_vault | jq -r '.vault_uri')"" >> ${GITHUB_ENV}
+      #     echo "K8_MANAGED_IDENTITY_CLIENT_ID="$(terraform output -json app_identity | jq -r '.client_id')"" >> ${GITHUB_ENV}
+      #     echo "AZ_VAULT_URI="$(terraform output -json app_vault | jq -r '.vault_uri')"" >> ${GITHUB_ENV}
 
       - name: Install Bootstrap K8
         run: |
