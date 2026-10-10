@@ -78,13 +78,22 @@ jobs:
           echo "K8_MANAGED_IDENTITY_CLIENT_ID="$(terraform output -json app_identity | jq -r '.client_id')"" >> ${GITHUB_ENV}
           echo "AZ_VAULT_URI="$(terraform output -json app_vault | jq -r '.vault_uri')"" >> ${GITHUB_ENV}
 
-      - name: Define Persistent Storage Class
+      - name: Install Bootstrap K8
         run: |
           echo "In file path: $(pwd)"
 
           cd "${{ github.workspace }}/deploy/gitops/bootstrap"
 
           echo "In file path: $(pwd)"
-          echo "Expecting to be in : "${{ github.workspace }}/gitops/root""
 
           bash bootstrap.bash
+
+      - name: Install K8 Apps
+        run: |
+          echo "In file path: $(pwd)"
+
+          cd "${{ github.workspace }}/deploy/gitops/apps"
+
+          echo "In file path: $(pwd)"
+
+          bash appsp.bash
