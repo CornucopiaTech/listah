@@ -86,14 +86,11 @@ jobs:
 
           echo "In file path: $(pwd)"
 
-          bash bootstrap.bash
+          # bash bootstrap.bash
 
-      - name: Install K8 Apps
-        run: |
-          echo "In file path: $(pwd)"
-
+          # Install Apps
           cd "${{ github.workspace }}/deploy/gitops/apps"
 
           echo "In file path: $(pwd)"
 
-          bash appsp.bash
+          bash apps.bash
