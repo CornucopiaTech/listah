@@ -4,7 +4,8 @@
 # .tfstate files
 **/*.tfstate
 **/*.tfstate.*
-
+*.tfvars
+*.tfvars.json
 
 
 lint_issues*.txt
