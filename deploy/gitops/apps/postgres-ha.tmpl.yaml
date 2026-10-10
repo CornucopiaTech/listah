@@ -7,14 +7,38 @@ spec:
   instances: 2 # 1 primary + 1 streaming replicas
   imageName: ghcr.io/cloudnative-pg/postgresql:18.0-system-trixie
   enableSuperuserAccess: true
-  superuserSecret: ${K8_NAMESPACE}-pg-superuser
+  superuserSecret:
+    name: ${K8_NAMESPACE}-pg-superuser
 
   bootstrap:
     initdb:
-      database: ${K8_NAMESPACE}-pgdb
-      owner: ${K8_NAMESPACE}-pgdb
+      database: app
+      owner: app
       secret:
         name: ${K8_NAMESPACE}-pg-user
+
+  # managed:
+  #   roles:
+  #     - name: app
+  #       createdb: true
+  #       login: true
+  #     - name: dante
+  #       ensure: present
+  #       comment: my database-side comment
+  #       login: true
+  #       superuser: false
+  #       createdb: true
+  #       createrole: false
+  #       inherit: false
+  #       replication: false
+  #       bypassrls: false
+  #       connectionLimit: 4
+  #       validUntil: "2053-04-12T15:04:05Z"
+  #       inRoles:
+  #         - pg_monitor
+  #         - pg_signal_backend
+  #       passwordSecret:
+  #         name: cluster-example-dante
 
   storage:
     size: 20Gi
