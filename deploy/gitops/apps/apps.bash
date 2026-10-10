@@ -2,7 +2,7 @@
 
 
 # 1. Create an array of strings
-setupfiles=("postgres-standalone")
+setupfiles=("postgres-ha")
 
 # 2. Perform the for loop
 for kfilename in "${setupfiles[@]}"; do
