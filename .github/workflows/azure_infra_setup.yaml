@@ -8,7 +8,7 @@ on:
         type: string
 
 jobs:
-  admin-cluster:
+  deploy-infra:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     defaults:

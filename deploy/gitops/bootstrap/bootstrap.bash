@@ -1,17 +1,8 @@
 #!/bin/sh
 
 
-echo "Before: In file path: $(pwd)"
-
-cd "${{ github.workspace }}/deploy/gitops/bootstrap"
-
-echo "After:, In file path: $(pwd)"
-
-
-
-
 # 1. Create an array of strings
-setupfiles=("namespaces" "service-account" "cluster-secret-store" "pg-secrets" "postgres-standalone")
+setupfiles=("namespaces" "service-account" "cluster-secret-store" "pg-secrets")
 
 # 2. Perform the for loop
 for kfilename in "${setupfiles[@]}"; do
