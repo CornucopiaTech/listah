@@ -1,0 +1,30 @@
+name: Azure Selective CICD Pipeline
+run-name: Azure Selective CICD Pipeline for ${{ vars.APP_NAME }} by @${{ github.actor }}
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  # STAGE 2.1: Build Networking Infra
+  deploy_infra:
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    uses: "./.github/workflows/azure_infra_setup.yaml"
+    with:
+      environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit
+
+  # STAGE 2.1: Build Networking Infra
+  k8_admin_001:
+    needs: [deploy_infra]
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation
+    uses: "./.github/workflows/azure_k8_admin_001.yaml"
+    with:
+      environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    secrets: inherit

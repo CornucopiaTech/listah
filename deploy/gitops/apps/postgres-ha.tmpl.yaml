@@ -1,0 +1,41 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: ${K8_NAMESPACE}-pg
+  namespace: ${K8_NAMESPACE}
+spec:
+  instances: 2 # 1 primary + 1 streaming replicas
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.0-system-trixie
+  enableSuperuserAccess: true
+  superuserSecret: ${K8_NAMESPACE}-pg-superuser
+
+  bootstrap:
+    initdb:
+      database: ${K8_NAMESPACE}-pgdb
+      owner: ${K8_NAMESPACE}-pgdb
+      secret:
+        name: ${K8_NAMESPACE}-pg-user
+
+  storage:
+    size: 20Gi
+    storageClass: ${K8_STORAGE_CLASS}
+    pvcTemplate:
+      accessModes:
+        - ReadWriteOnce
+  resources:
+    requests:
+      cpu: "1"
+      memory: 2Gi
+    limits:
+      memory: 2Gi
+
+  # Spread the pods across zones so one outage can't take them all
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: topology.kubernetes.io/zone
+    podAntiAffinityType: preferred
+
+  postgresql:
+    parameters:
+      max_connections: "200"
+      shared_buffers: "512MB"
