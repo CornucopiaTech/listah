@@ -17,28 +17,56 @@ spec:
       secret:
         name: ${K8_NAMESPACE}-pg-user
 
-  # managed:
-  #   roles:
-  #     - name: app
-  #       createdb: true
-  #       login: true
-  #     - name: dante
-  #       ensure: present
-  #       comment: my database-side comment
-  #       login: true
-  #       superuser: false
-  #       createdb: true
-  #       createrole: false
-  #       inherit: false
-  #       replication: false
-  #       bypassrls: false
-  #       connectionLimit: 4
-  #       validUntil: "2053-04-12T15:04:05Z"
-  #       inRoles:
-  #         - pg_monitor
-  #         - pg_signal_backend
-  #       passwordSecret:
-  #         name: cluster-example-dante
+  managed:
+    roles:
+      - name: app
+        createdb: true
+        login: true
+      - name: ${K8_NAMESPACE}-pgdb-rw-role
+        ensure: present
+        comment: my database-side comment
+        login: true
+        superuser: false
+        createdb: true
+        createrole: false
+        inherit: true
+        replication: false
+        bypassrls: false
+        connectionLimit: 50
+        validUntil: "2099-04-12T15:04:05Z"
+        passwordSecret:
+          name: ${K8_NAMESPACE}-pg-rw-role
+      - name: ${K8_NAMESPACE}-pgdb-ro-role
+        ensure: present
+        comment: my database-side comment
+        login: true
+        superuser: false
+        createdb: false
+        createrole: false
+        inherit: true
+        replication: false
+        bypassrls: false
+        connectionLimit: 50
+        validUntil: "2099-04-12T15:04:05Z"
+        passwordSecret:
+          name: ${K8_NAMESPACE}-pg-ro-role
+      - name: ${K8_NAMESPACE}-pgdb-admin-role
+        ensure: present
+        comment: my database-side comment
+        login: true
+        superuser: true
+        createdb: true
+        createrole: true
+        inherit: true
+        replication: true
+        bypassrls: false
+        connectionLimit: 50
+        validUntil: "2099-04-12T15:04:05Z"
+        inRoles:
+          - pg_monitor
+          - pg_signal_backend
+        passwordSecret:
+          name: ${K8_NAMESPACE}-pg-admin-role
 
   storage:
     size: 20Gi
