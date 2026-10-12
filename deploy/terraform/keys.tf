@@ -159,3 +159,20 @@ resource "azurerm_key_vault_secret" "db_superuser_password" {
     try(azurerm_resource_group.app_rg.tags[k], null)
   }
 }
+
+
+resource "azurerm_key_vault_secret" "app_auth_secrets" {
+  name = "${local.default_tags.app_name}-api-auth-secrets-${local.default_tags.environment}"
+  value = jsonencode({
+    domain       = var.app_auth_domain
+    auth_api_key = var.app_auth_api_key
+    }
+  )
+  key_vault_id = azurerm_key_vault.app_vault.id
+  tags = {
+    for k in sort(concat(keys(azurerm_resource_group.app_rg.tags), ["res_purpose"])) :
+    k =>
+    k == "res_purpose" ? "app auth secrets" :
+    try(azurerm_resource_group.app_rg.tags[k], null)
+  }
+}

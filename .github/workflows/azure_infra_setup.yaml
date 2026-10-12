@@ -39,6 +39,8 @@ jobs:
       TF_VAR_vnet_name: "${{ vars.ROOT_NAME }}-vnet-${{ inputs.environment }}-${{ vars.AZ_LOCATION }}"
       TF_VAR_vnet_rg: "${{ vars.ROOT_NAME }}-k8-user-admin-rg-${{ inputs.environment }}-${{ vars.AZ_LOCATION }}"
       TF_VAR_subnet_name: "${{ vars.ROOT_NAME }}-k8-node-subnet-${{ inputs.environment }}-${{ vars.AZ_LOCATION }}"
+      TF_VAR_container_registry_name: "${{ vars.ROOT_NAME }}Acr${{ inputs.environment^ }}${{ vars.AZ_LOCATION^ }}"
+      TF_VAR_container_registry_rg: "${{ vars.ROOT_NAME }}-k8-user-admin-rg-${{ inputs.environment }}-${{ vars.AZ_LOCATION }}"
       TF_LOG: INFO
       K8_STORAGE_CLASS: azure-storage-retained
     steps:

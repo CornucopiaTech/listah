@@ -87,3 +87,26 @@ variable "subnet_name" {
   type        = string
   description = "Name of subnet"
 }
+
+variable "container_registry_name" {
+  type        = string
+  description = "Name of container registry"
+}
+
+variable "container_registry_rg" {
+  type        = string
+  description = "Name of container registry resource group"
+}
+
+
+variable "app_auth_domain" {
+  sensitive   = true
+  type        = string
+  description = "Auth domain for app"
+}
+
+variable "app_auth_api_key" {
+  sensitive   = true
+  type        = string
+  description = "Auth key for app"
+}

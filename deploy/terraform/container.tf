@@ -14,3 +14,8 @@
 #     try(azurerm_resource_group.app_rg.tags[k], null)
 #   }
 # }
+
+data "azurerm_container_registry" "app_container_registry" {
+  name                = var.container_registry_name
+  resource_group_name = var.container_registry_rg
+}
