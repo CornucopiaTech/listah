@@ -3,6 +3,13 @@ kind: Cluster
 metadata:
   name: ${K8_NAMESPACE}-pg
   namespace: ${K8_NAMESPACE}
+  labels:
+    app.kubernetes.io/name: postgres-ha
+    app.kubernetes.io/version: "18.0"
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: ${K8_NAMESPACE}
+    # app.kubernetes.io/managed-by: Helm
+    gateway-access: shared
 spec:
   instances: 2 # 1 primary + 1 streaming replicas
   imageName: ghcr.io/cloudnative-pg/postgresql:18.0-system-trixie
@@ -24,7 +31,6 @@ spec:
         login: true
       - name: ${K8_NAMESPACE}-pgdb-rw-role
         ensure: present
-        comment: my database-side comment
         login: true
         superuser: false
         createdb: true
@@ -38,7 +44,6 @@ spec:
           name: ${K8_NAMESPACE}-pg-rw-role
       - name: ${K8_NAMESPACE}-pgdb-ro-role
         ensure: present
-        comment: my database-side comment
         login: true
         superuser: false
         createdb: false
@@ -52,7 +57,6 @@ spec:
           name: ${K8_NAMESPACE}-pg-ro-role
       - name: ${K8_NAMESPACE}-pgdb-admin-role
         ensure: present
-        comment: my database-side comment
         login: true
         superuser: true
         createdb: true

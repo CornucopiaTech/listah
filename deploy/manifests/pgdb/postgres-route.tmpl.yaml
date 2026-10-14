@@ -1,0 +1,14 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: TCPRoute
+metadata:
+  name: "${K8_NAMESPACE}-pgdb-tcp-route"
+  namespace: ${K8_NAMESPACE}
+spec:
+  parentRefs:
+    - name: ${SHARED_GATEWAY_NAME}
+      namespace: ${SHARED_GATEWAY_NAMESPACE}
+      sectionName: postgres
+  rules:
+    - backendRefs:
+        - name: ${K8_NAMESPACE}-pg
+          port: 5432
