@@ -14,6 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Divider from '@mui/material/Divider';
 import Select from '@mui/material/Select';
+import Pagination from '@mui/material/Pagination';
 
 
 
@@ -99,7 +100,7 @@ export function PrevListBox({ children }: { children: ReactNode }): ReactNode {
             //  @ts-ignore
             onChange={pageChange}
             siblingCount={0} // Number of pages shown on each side of the current page
-            boundaryCount={1} // Number of pages shown at the start and end
+            boundaryCount={0} // Number of pages shown at the start and end
           />
         </CentredBox>
       </Stack >
@@ -158,7 +159,17 @@ export function AppListPagination(): ReactNode {
         //  @ts-ignore
         onChange={pageChange}
         siblingCount={0} // Number of pages shown on each side of the current page
-        boundaryCount={1} // Number of pages shown at the start and end
+      // boundaryCount={1} // Number of pages shown at the start and end
+      />
+      <Pagination
+        sx={{ height: "fit-content", padding: 1 }}
+        page={pagination.page}
+        count={totalPages}
+        color="primary"
+        //  @ts-ignore
+        onChange={pageChange}
+        siblingCount={0} // Number of pages shown on each side of the current page
+      // boundaryCount={1} // Number of pages shown at the start and end
       />
     </CentredBox>
   );
