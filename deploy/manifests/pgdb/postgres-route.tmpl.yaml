@@ -10,5 +10,5 @@ spec:
       sectionName: postgres
   rules:
     - backendRefs:
-        - name: ${K8_NAMESPACE}-pg
+        - name: ${K8_NAMESPACE}-pgdb
           port: 5432

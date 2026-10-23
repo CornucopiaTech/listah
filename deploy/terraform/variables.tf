@@ -63,6 +63,16 @@ variable "k8_cluster_rg" {
   description = "Resource group name of K8 cluster"
 }
 
+variable "k8_control_plane_identity_name" {
+  type        = string
+  description = "Name of K8 control plane identity"
+}
+
+variable "k8_control_plane_identity_rg" {
+  type        = string
+  description = "Resource group name of control plane identity"
+}
+
 variable "k8_service_account_name" {
   type        = string
   description = "Name of K8 cluster service account that pods will use to interact with cloud services"
@@ -98,6 +108,16 @@ variable "container_registry_rg" {
   description = "Name of container registry resource group"
 }
 
+variable "app_dns_name" {
+  type        = string
+  description = "Name of public dns"
+}
+
+variable "app_dns_rg" {
+  type        = string
+  description = "Name of public dns resource group"
+}
+
 
 variable "app_auth_domain" {
   sensitive   = true
@@ -110,3 +130,9 @@ variable "app_auth_api_key" {
   type        = string
   description = "Auth key for app"
 }
+
+# variable "root" {
+#   sensitive   = true
+#   type        = string
+#   description = "Auth key for app"
+# }

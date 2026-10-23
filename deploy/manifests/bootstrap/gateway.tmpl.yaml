@@ -1,0 +1,40 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: "${K8_NAMESPACE}-gateway"
+  namespace: "${K8_NAMESPACE}"
+spec:
+  gatewayClassName: approuting-istio
+  listeners:
+    - name: postgres
+      port: 5432
+      protocol: TCP
+      allowedRoutes:
+        namespaces:
+          from: Same
+    - name: tls-path
+      hostname: "${K8_NAMESPACE}.${ROOT_ZONE_NAME}"
+      port: 443
+      protocol: HTTPS
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            group: ""
+            name: "${K8_NAMESPACE}-${APP_ENV}-tls"
+      allowedRoutes:
+        namespaces:
+          from: Same
+    - name: tls-sub
+      hostname: "*.${K8_NAMESPACE}.${ROOT_ZONE_NAME}"
+      port: 443
+      protocol: HTTPS
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            group: ""
+            name: "${K8_NAMESPACE}-${APP_ENV}-tls"
+      allowedRoutes:
+        namespaces:
+          from: Same

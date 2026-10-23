@@ -8,6 +8,11 @@ spec:
   selector:
     app: ${K8_NAMESPACE}-api # Must match the Deployment's matchLabels
   ports:
-    - protocol: TCP
-      port: 9090 # The port the service exposes inside the cluster
-      targetPort: ${APP_PORT} # The port the container is listening on
+    - name: http
+      # protocol: TCP
+      port: 80 # The port the service exposes inside the cluster
+      targetPort: http # The port the container is listening on
+    - name: https
+      # protocol: TCP
+      port: 443 # The port the service exposes inside the cluster
+      targetPort: https # The port the container is listening on

@@ -1,0 +1,25 @@
+# certificate.yaml
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: "${K8_NAMESPACE}-${APP_ENV}-tls"
+  namespace: "${K8_NAMESPACE}"
+spec:
+  secretName: "${K8_NAMESPACE}-${APP_ENV}-tls"
+  privateKey:
+    rotationPolicy: Always
+  commonName: ${K8_NAMESPACE}.${ROOT_ZONE_NAME}
+  dnsNames:
+    - www.${K8_NAMESPACE}.${ROOT_ZONE_NAME}
+    - www.api.${K8_NAMESPACE}.${ROOT_ZONE_NAME}
+    - www.web.${K8_NAMESPACE}.${ROOT_ZONE_NAME}
+    - ${K8_NAMESPACE}.${ROOT_ZONE_NAME}
+    - api.${K8_NAMESPACE}.${ROOT_ZONE_NAME}
+    - web.${K8_NAMESPACE}.${ROOT_ZONE_NAME}
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+  issuerRef:
+    name: "${K8_ROOT_NAMESPACE}-${APP_ENV}-letsencrypt"
+    kind: ClusterIssuer

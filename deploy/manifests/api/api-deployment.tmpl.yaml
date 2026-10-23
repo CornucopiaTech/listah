@@ -19,20 +19,35 @@ spec:
         - name: ${K8_NAMESPACE}-api-container
           image: "${API_IMAGE_URL}" # Your Docker image
           ports:
-            - containerPort: ${APP_PORT} # The port your app listens on
+            - name: http
+              containerPort: 80
+            - name: https
+              containerPort: 443
+          volumeMounts:
+            - name: tls
+              mountPath: /etc/tls
+              readOnly: true
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: 443
           envFrom:
             - configMapRef:
                 name: ${K8_NAMESPACE}-api-configmap
           env:
+            - name: TLS_CERT
+              value: /etc/tls/tls.crt
+            - name: TLS_KEY
+              value: /etc/tls/tls.key
             - name: DATABASE_USER
               valueFrom:
                 secretKeyRef:
-                  name: ${K8_NAMESPACE}-pg-rw-role
+                  name: ${K8_NAMESPACE}-pgdb-rw-role
                   key: username
             - name: DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: ${K8_NAMESPACE}-pg-rw-role
+                  name: ${K8_NAMESPACE}-pgdb-rw-role
                   key: password
             - name: AUTH_KEY
               valueFrom:
@@ -44,3 +59,7 @@ spec:
                 secretKeyRef:
                   name: ${K8_NAMESPACE}-api-auth
                   key: domain
+      volumes:
+        - name: tls
+          secret:
+            secretName: "${K8_NAMESPACE}-${APP_ENV}-tls"
