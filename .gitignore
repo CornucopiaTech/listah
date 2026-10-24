@@ -1,4 +1,13 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
+# Local .terraform directories
+**/.terraform/
+# .tfstate files
+**/*.tfstate
+**/*.tfstate.*
+**/*.tfvars
+**/*.tfvars.json
+**/tfplan
+
 
 lint_issues*.txt
 local-infra/*.jar

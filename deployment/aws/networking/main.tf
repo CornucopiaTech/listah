@@ -10,5 +10,4 @@ locals {
 module "aws_vpc" {
   source = "./modules/aws_networking"
   tags   = local.default_aws_tags
-
 }

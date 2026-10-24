@@ -1,0 +1,97 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: ${K8_NAMESPACE}-pgdb
+  namespace: ${K8_NAMESPACE}
+  labels:
+    app.kubernetes.io/name: postgres-ha
+    app.kubernetes.io/version: "18.0"
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: ${K8_NAMESPACE}
+    # app.kubernetes.io/managed-by: Helm
+spec:
+  instances: 2 # 1 primary + 1 streaming replicas
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.0-system-trixie
+  enableSuperuserAccess: true
+  superuserSecret:
+    name: ${K8_NAMESPACE}-pgdb-superuser
+
+  bootstrap:
+    initdb:
+      database: app
+      owner: app
+      secret:
+        name: ${K8_NAMESPACE}-pgdb-user
+
+  managed:
+    roles:
+      - name: app
+        createdb: true
+        login: true
+      - name: ${K8_NAMESPACE}-pgdb-rw-role
+        ensure: present
+        login: true
+        superuser: false
+        createdb: true
+        createrole: false
+        inherit: true
+        replication: false
+        bypassrls: false
+        connectionLimit: 50
+        validUntil: "2099-04-12T15:04:05Z"
+        passwordSecret:
+          name: ${K8_NAMESPACE}-pgdb-rw-role
+      - name: ${K8_NAMESPACE}-pgdb-ro-role
+        ensure: present
+        login: true
+        superuser: false
+        createdb: false
+        createrole: false
+        inherit: true
+        replication: false
+        bypassrls: false
+        connectionLimit: 50
+        validUntil: "2099-04-12T15:04:05Z"
+        passwordSecret:
+          name: ${K8_NAMESPACE}-pgdb-ro-role
+      - name: ${K8_NAMESPACE}-pgdb-admin-role
+        ensure: present
+        login: true
+        superuser: true
+        createdb: true
+        createrole: true
+        inherit: true
+        replication: true
+        bypassrls: false
+        connectionLimit: 50
+        validUntil: "2099-04-12T15:04:05Z"
+        inRoles:
+          - pg_monitor
+          - pg_signal_backend
+        passwordSecret:
+          name: ${K8_NAMESPACE}-pgdb-admin-role
+
+  storage:
+    size: 20Gi
+    storageClass: ${K8_ROOT_STORAGE_CLASS}
+    pvcTemplate:
+      accessModes:
+        - ReadWriteOnce
+  resources:
+    requests:
+      cpu: "0.1"
+      memory: 0.5Gi
+    limits:
+      cpu: "0.2"
+      memory: 0.8Gi
+
+  # Spread the pods across zones so one outage can't take them all
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: topology.kubernetes.io/zone
+    podAntiAffinityType: preferred
+
+  postgresql:
+    parameters:
+      max_connections: "200"
+      shared_buffers: "512MB"
