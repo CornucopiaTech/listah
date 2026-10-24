@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ${K8_NAMESPACE}-api-configmap
+  namespace: ${K8_NAMESPACE}
+data:
+  LOG_LEVEL: "INFO"
+  ENV: "${APP_ENV}"
+  # PORT: "443"
+  # APP_PORT: "443"
+  PORT: "80"
+  APP_PORT: "80"
+  APP_NAME: "${K8_NAMESPACE}"
+  ALLOWED_ORIGINS: "1,2"
+  DATABASE_DB: "app"
+  DATABASE_HOST: "${K8_NAMESPACE}-pgdb-rw.${K8_NAMESPACE}.svc"
+  DATABASE_PORT: "5432"
+  DATABASE_USE_TLS: "false"
+  OTEL_EXPORTER_OTLP_ENDPOINT: "DEBUG"
+  OLTP_EXPORTER_TYPE: "otlp"
+  METRIC_FREQ_SEC: "60"
+  TRACE_FREQ_SEC: "1"
