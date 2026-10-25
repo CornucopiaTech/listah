@@ -5,9 +5,10 @@ metadata:
   namespace: ${K8_NAMESPACE}
 spec:
   parentRefs:
-    - name: ${SHARED_GATEWAY_NAME}
-      namespace: ${SHARED_GATEWAY_NAMESPACE}
-      sectionName: postgres
+    - name: "${K8_NAMESPACE}-gateway"
+      namespace: ${K8_NAMESPACE}
+  hostnames:
+    - "db.${K8_NAMESPACE}.${ROOT_ZONE_NAME}"
   rules:
     - backendRefs:
         - name: ${K8_NAMESPACE}-pgdb

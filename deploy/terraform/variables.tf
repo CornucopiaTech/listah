@@ -122,13 +122,18 @@ variable "app_dns_rg" {
 variable "app_auth_domain" {
   sensitive   = true
   type        = string
-  description = "Auth domain for app"
+  description = "Auth domain for API"
 }
 
 variable "app_auth_api_key" {
   sensitive   = true
   type        = string
-  description = "Auth key for app"
+  description = "Auth key for API"
+}
+variable "app_auth_web_key" {
+  sensitive   = true
+  type        = string
+  description = "Auth key for web"
 }
 
 # variable "root" {
