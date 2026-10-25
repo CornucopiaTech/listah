@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ${K8_NAMESPACE}-pgdb-db-schema-mutation
+  namespace: ${K8_NAMESPACE}
+spec:
+  template:
+    spec:
+      containers:
+        - name: ${K8_NAMESPACE}-pgdb-db-schema-mutation
+          image: "${DB_IMAGE_URL}"
+          env:
+            - name: LIQUIBASE_COMMAND_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: ${K8_NAMESPACE}-pgdb-admin-role
+                  key: username
+            - name: LIQUIBASE_COMMAND_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ${K8_NAMESPACE}-pgdb-admin-role
+                  key: password
+            - name: DATABASE_DIALECT
+              value: postgresql
+            - name: DATABASE_NAME
+              value: ${K8_NAMESPACE}-pgdb-instance
+            - name: DATABASE_PORT
+              value: "5432"
+            - name: DATABASE_HOST
+              value: ${K8_NAMESPACE}-pgdb-cluster-rw
+            - name: LIQUIBASE_COMMAND_URL
+              value: jdbc:$(DATABASE_DIALECT)://$(DATABASE_HOST):$(DATABASE_PORT)/$(DATABASE_NAME)
+      restartPolicy: Never
+      # restartPolicy: OnFailure
+  backoffLimit: 4

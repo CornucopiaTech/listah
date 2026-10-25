@@ -1,7 +1,5 @@
 
-
-
-
+# DB Super user credentials
 resource "azurerm_key_vault_secret" "db_superuser_username" {
   name = "${local.default_tags.app_name}-pgdb-superuser-username-${local.default_tags.environment}"
   # value        = random_string.db_superuser_username.result
@@ -33,9 +31,7 @@ resource "azurerm_key_vault_secret" "db_superuser_password" {
 }
 
 
-
-
-
+# DB user credentials
 resource "azurerm_key_vault_secret" "db_user_username" {
   name = "${local.default_tags.app_name}-pgdb-user-username-${local.default_tags.environment}"
   # value        = random_string.db_user_username.result
@@ -67,7 +63,7 @@ resource "azurerm_key_vault_secret" "db_user_password" {
 }
 
 
-
+# DB rw role credentials
 resource "azurerm_key_vault_secret" "db_rw_role_username" {
   name         = "${local.default_tags.app_name}-pgdb-rw-role-username-${local.default_tags.environment}"
   value        = "${local.default_tags.app_name}-pgdb-rw-role"
@@ -98,8 +94,7 @@ resource "azurerm_key_vault_secret" "db_rw_role_password" {
 }
 
 
-
-
+# DB ro role credentials
 resource "azurerm_key_vault_secret" "db_ro_role_username" {
   name         = "${local.default_tags.app_name}-pgdb-ro-role-username-${local.default_tags.environment}"
   value        = "${local.default_tags.app_name}-pgdb-ro-role"
@@ -130,8 +125,7 @@ resource "azurerm_key_vault_secret" "db_ro_role_password" {
 }
 
 
-
-
+# DB admin role credentials
 resource "azurerm_key_vault_secret" "db_admin_role_username" {
   name         = "${local.default_tags.app_name}-pgdb-admin-role-username-${local.default_tags.environment}"
   value        = "${local.default_tags.app_name}-pgdb-admin-role"
@@ -162,12 +156,8 @@ resource "azurerm_key_vault_secret" "db_admin_role_password" {
 }
 
 
-
-
-
-
-
-resource "azurerm_key_vault_secret" "app_auth_secrets" {
+# API auth key
+resource "azurerm_key_vault_secret" "app_auth_secrets_api" {
   name = "${local.default_tags.app_name}-api-auth-secrets-${local.default_tags.environment}"
   value = jsonencode({
     domain       = var.app_auth_domain
@@ -178,7 +168,24 @@ resource "azurerm_key_vault_secret" "app_auth_secrets" {
   tags = {
     for k in sort(concat(keys(azurerm_resource_group.app_rg.tags), ["res_purpose"])) :
     k =>
-    k == "res_purpose" ? "app auth secrets" :
+    k == "res_purpose" ? "app api auth secrets" :
+    try(azurerm_resource_group.app_rg.tags[k], null)
+  }
+}
+
+
+# Web auth key
+resource "azurerm_key_vault_secret" "app_auth_secrets_web" {
+  name = "${local.default_tags.app_name}-web-auth-secrets-${local.default_tags.environment}"
+  value = jsonencode({
+    auth_web_key = var.app_auth_web_key
+    }
+  )
+  key_vault_id = azurerm_key_vault.app_vault.id
+  tags = {
+    for k in sort(concat(keys(azurerm_resource_group.app_rg.tags), ["res_purpose"])) :
+    k =>
+    k == "res_purpose" ? "app web auth secrets" :
     try(azurerm_resource_group.app_rg.tags[k], null)
   }
 }

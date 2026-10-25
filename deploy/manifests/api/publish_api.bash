@@ -16,7 +16,7 @@ echo "Current working directory: $(pwd)"
 
 RANDOM_TEXT="$( tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 10; echo ""
 )"
-API_IMAGE_NAME_TAG="${APP_NAME}-api:${RANDOM_TEXT}"
+API_IMAGE_NAME_TAG="${API_IMAGE_NAME}:${RANDOM_TEXT}"
 API_IMAGE_FULL_NAME="${CONTAINER_REGISTRY_URL}/${API_IMAGE_NAME_TAG}"
 
 
