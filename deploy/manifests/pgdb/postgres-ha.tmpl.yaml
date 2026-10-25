@@ -1,13 +1,14 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: ${K8_NAMESPACE}-pgdb
+  name: ${K8_NAMESPACE}-pgdb-cluster
   namespace: ${K8_NAMESPACE}
   labels:
-    app.kubernetes.io/name: postgres-ha
+    app.kubernetes.io/name: ${K8_NAMESPACE}-pgdb-cluster
     app.kubernetes.io/version: "18.0"
-    app.kubernetes.io/component: database
+    app.kubernetes.io/component: database-cluster
     app.kubernetes.io/part-of: ${K8_NAMESPACE}
+    app.kubernetes.io/layer: data
     # app.kubernetes.io/managed-by: Helm
 spec:
   instances: 2 # 1 primary + 1 streaming replicas

@@ -1,0 +1,35 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: "${K8_NAMESPACE}-web-http-route"
+  namespace: ${K8_NAMESPACE}
+spec:
+  parentRefs:
+    - name: "${K8_NAMESPACE}-gateway"
+      namespace: ${K8_NAMESPACE}
+  hostnames:
+    - "${K8_NAMESPACE}.${ROOT_ZONE_NAME}"
+  rules:
+    - matches:
+        - path: { type: PathPrefix, value: /web }
+      backendRefs:
+        - name: ${K8_NAMESPACE}-web-svc
+          port: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: "${K8_NAMESPACE}-web-sub-http-route"
+  namespace: ${K8_NAMESPACE}
+spec:
+  parentRefs:
+    - name: "${K8_NAMESPACE}-gateway"
+      namespace: ${K8_NAMESPACE}
+  hostnames: ["web.${K8_NAMESPACE}.${ROOT_ZONE_NAME}"]
+  rules:
+    - matches:
+        - path: { type: PathPrefix, value: / }
+      backendRefs:
+        - name: ${K8_NAMESPACE}-web-svc
+          port: 80
+---

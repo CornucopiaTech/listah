@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${K8_NAMESPACE}-web-deployment
+  namespace: ${K8_NAMESPACE}
+  labels:
+    app: ${K8_NAMESPACE}-web
+spec:
+  replicas: 2 # Number of identical containers to run
+  selector:
+    matchLabels:
+      app: ${K8_NAMESPACE}-web
+  template:
+    metadata:
+      labels:
+        app: ${K8_NAMESPACE}-web
+    spec:
+      containers:
+        - name: ${K8_NAMESPACE}-web-container
+          image: "${WEB_IMAGE_URL}" # Your Docker image
+          ports:
+            - name: http
+              containerPort: 80
+            - name: https
+              containerPort: 443
+          volumeMounts:
+            - name: tls
+              mountPath: /etc/tls
+              readOnly: true
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: 443
+          envFrom:
+            - configMapRef:
+                name: ${K8_NAMESPACE}-web-configmap
+          env:
+            - name: TLS_CERT
+              value: /etc/tls/tls.crt
+            - name: TLS_KEY
+              value: /etc/tls/tls.key
+            - name: AUTH_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ${K8_NAMESPACE}-web-auth
+                  key: auth_web_key
+      volumes:
+        - name: tls
+          secret:
+            secretName: "${K8_NAMESPACE}-${APP_ENV}-tls"

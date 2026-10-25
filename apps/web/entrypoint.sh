@@ -13,9 +13,9 @@ sed -i "s|__DEBUG__|${DEBUG}|g" $CONFIG_FILE
 sed -i "s|__DUMMY_USER__|${DUMMY_USER}|g" $CONFIG_FILE
 
 echo "$(cat $CONFIG_FILE)"
-echo "${API_URL}"
-echo "${AUTH_KEY}"
-echo "${DEBUG}"
-echo "${DUMMY_USER}"
+echo "API_URL:             ${API_URL}"
+echo "AUTH_KEY:            ${AUTH_KEY}"
+echo "DEBUG:               ${DEBUG}"
+echo "DUMMY_USER:          ${DUMMY_USER}"
 
 exec nginx -g "daemon off;"
