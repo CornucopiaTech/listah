@@ -78,7 +78,7 @@ function Wrapper({ children }: { children: ReactNode }) {
 };
 
 async function loadConfig() {
-  const res = await fetch('/config.json');
+  const res = await fetch('./config.json');
   const config = await res.json();
   window.runtimeConfig = config;
 }

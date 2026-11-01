@@ -45,7 +45,14 @@ import {
   AppBar,
   Drawer,
   DrawerHeader,
-} from "@/components/";
+  AppBreadcrumb,
+} from "@/components";
+import {
+  BreadcrumbProvider,
+} from "@/hooks/context";
+import type {
+  IRouteStrings,
+} from '@/domain/entities';
 
 
 
@@ -87,6 +94,14 @@ export function AppNavDrawer(): ReactNode {
     }
   }
 
+  const route = (
+    pathname.includes("/tags") ? "/tags" :
+      pathname.includes("/items") ? "/items" :
+        pathname.includes("/filters") ? "/filters" :
+          ""
+  )
+
+
   const drawerIconStyling = [
     { minWidth: 0, justifyContent: 'center', },
     storeDrawerOpen ? { mr: 3, } : { mr: 'auto', },
@@ -108,9 +123,7 @@ export function AppNavDrawer(): ReactNode {
         }}>
         <Toolbar variant="dense" sx={{ minWidth: "100%", justifyContent: 'space-between' }}>
           <Box>
-            <Typography variant="h6" color="primary" noWrap >
-              Listah
-            </Typography>
+            <BreadcrumbProvider route={route as IRouteStrings}><AppBreadcrumb /></BreadcrumbProvider>
           </Box>
           <Box sx={{ flexGrow: 1 }}></Box>
           <Stack direction="row" spacing={2}>

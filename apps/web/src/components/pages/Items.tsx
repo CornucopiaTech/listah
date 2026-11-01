@@ -57,7 +57,6 @@ import {
   FormContext,
   ListContext,
   ItemListProvider,
-  BreadcrumbProvider,
   ItemUpdateProvider,
   ItemSearchProvider,
 } from "@/hooks/context";
@@ -74,7 +73,6 @@ import {
   UpdateFormActions,
   AppTooltip,
   FlexStartBox,
-  AppBreadcrumb,
   ViewOuterBox,
   ViewDialog,
   AlertDialog,
@@ -89,9 +87,8 @@ import {
 
 export function Items() {
   return (
-    <AppContainer mw="md">
+    <AppContainer mw="xl">
       <ItemUpdateProvider> <ItemUpdate /> </ItemUpdateProvider>
-      <BreadcrumbProvider route="/items"><AppBreadcrumb /></BreadcrumbProvider>
       <ItemSearchProvider route="/items"><ItemSearchList /></ItemSearchProvider>
       <AppSectionPaper>
         <ItemListProvider> <ItemList /> </ItemListProvider>
