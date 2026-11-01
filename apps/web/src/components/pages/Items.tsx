@@ -8,7 +8,7 @@ import type {
   SyntheticEvent,
   ChangeEvent,
 } from 'react';
-import { useTheme, } from '@mui/material/styles';
+import { useTheme, useMediaQuery } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -59,6 +59,7 @@ import {
   ItemListProvider,
   ItemUpdateProvider,
   ItemSearchProvider,
+  BreadcrumbProvider,
 } from "@/hooks/context";
 import {
   getFormItemPropsArrayTextFieldProps,
@@ -77,6 +78,7 @@ import {
   ViewDialog,
   AlertDialog,
   AppListPagination,
+  AppBreadcrumb,
 } from "@/components";
 import {
   validateItemTag,
@@ -86,10 +88,14 @@ import {
 
 
 export function Items() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <AppContainer mw="xl">
       <ItemUpdateProvider> <ItemUpdate /> </ItemUpdateProvider>
       <ItemSearchProvider route="/items"><ItemSearchList /></ItemSearchProvider>
+
+      <BreadcrumbProvider route="/items"><AppBreadcrumb sx={{ display: isMobile ? "block" : "none" }} /></BreadcrumbProvider>
       <AppSectionPaper>
         <ItemListProvider> <ItemList /> </ItemListProvider>
       </AppSectionPaper>
@@ -111,7 +117,8 @@ export function ItemList() {
     editItemClick,
   } = useListItems() as unknown as IItemListContext;
   const storeItemScroll = useAppStore((state) => state.itemScroll);
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   function renderRow(itemKey: number): ReactNode {
     const item = items[itemKey]
@@ -123,13 +130,13 @@ export function ItemList() {
             <Box sx={{ width: "95%" }}>
               <FlexStartBox>
                 <ListItemButton >
-                  <ListItemText primary={<Typography variant="body2" >{tc}</Typography>} />
+                  <ListItemText primary={<Typography variant={isMobile ? "body2m" : "body2"}  >{tc}</Typography>} />
                 </ListItemButton>
               </FlexStartBox>
             </Box>
             <Box sx={{ justifyContent: 'flex-end', display: 'flex', minWidth: "10px" }}>
               <IconButton aria-label="edit" onClick={() => editItemClick(itemKey)}>
-                <AppTooltip title="Edit item"><EditIcon /></AppTooltip>
+                <AppTooltip title="Edit item"><EditIcon sx={{ fontSize: isMobile ? "1.1rem" : "1.5rem" }} /></AppTooltip>
               </IconButton>
             </Box>
           </Box>

@@ -11,7 +11,7 @@ import type {
 
 export const AppBarHeight = 48;
 export const AppDrawerWidth = 240;
-export const AppBarBottom = 10;
+export const AppBarBottom = 0;
 export const AppPageAllowance = AppBarHeight + AppBarBottom;
 export const AppPageContentHeight = `calc(100dvh - ${AppPageAllowance}px)`;
 

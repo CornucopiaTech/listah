@@ -7,7 +7,7 @@ import {
 import {
   Link as RouterLink
 } from '@tanstack/react-router';
-import { useTheme, } from '@mui/material/styles';
+import { useTheme, useMediaQuery } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
@@ -64,6 +64,7 @@ export function AppNavDrawer(): ReactNode {
   const handleDrawerClose = () => storeSetDrawerOpen(false);
   const altIconStyle = { color: theme.palette.primary.contrastText }
   const appbarWidth = storeDrawerOpen ? `calc(100% - ${AppDrawerWidth}px)` : `calc(100% - calc(${theme.spacing(7)} + 1px))`;
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const iconList = [
     {
@@ -123,7 +124,9 @@ export function AppNavDrawer(): ReactNode {
         }}>
         <Toolbar variant="dense" sx={{ minWidth: "100%", justifyContent: 'space-between' }}>
           <Box>
-            <BreadcrumbProvider route={route as IRouteStrings}><AppBreadcrumb /></BreadcrumbProvider>
+            <BreadcrumbProvider route={route as IRouteStrings}>
+              <AppBreadcrumb sx={{ display: isMobile ? "none" : "block" }} />
+            </BreadcrumbProvider>
           </Box>
           <Box sx={{ flexGrow: 1 }}></Box>
           <Stack direction="row" spacing={2}>

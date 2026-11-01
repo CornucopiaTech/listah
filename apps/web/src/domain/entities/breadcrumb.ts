@@ -10,3 +10,9 @@ export type IBreadcrumbContext = {
   route: string,
   parent: string,
 }
+
+export type IMutatorContext = {
+  addNewItemClick: () => void,
+  addNewFilterClick: () => void,
+  addNewTagClick: () => void,
+}

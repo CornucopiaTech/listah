@@ -3,7 +3,7 @@
 import type {
   ReactNode,
 } from 'react';
-import { useTheme, } from '@mui/material/styles';
+import { useTheme, useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import ListItem from '@mui/material/ListItem';
@@ -15,10 +15,10 @@ import Alert from '@mui/material/Alert';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
-import EditIcon from '@mui/icons-material/Edit';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-
+import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
 
 
 
@@ -32,6 +32,7 @@ import type {
   IListContext,
   IFormContext,
   ITagUpdateContext,
+  IMutatorContext,
 } from '@/domain/entities';
 import {
   ListItemStyling
@@ -46,6 +47,9 @@ import {
   useUpdateTags,
   ItemSearchProvider,
   ItemUpdateProvider,
+  MutatorProvider,
+  useMutator,
+  BreadcrumbProvider,
 } from "@/hooks/context";
 import {
   getFormArrayTextFieldProps,
@@ -63,20 +67,33 @@ import {
   FlexStartBox,
   ItemSearchList,
   ItemUpdate,
+  AppBreadcrumb,
 } from "@/components";
 
 
 
 
+
+
 export function Tags() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <AppContainer mw="xl">
+      {/* Update Tag Modal. Rendered on Update Tag Click */}
       <TagUpdateProvider> <UpdateTag /> </TagUpdateProvider>
+
+      {/* Update Item Modal. Rendered on Update Item Click */}
       <ItemUpdateProvider route="/tags"> <ItemUpdate /> </ItemUpdateProvider>
+
+      {/* Item Search Result Modal. Rendered when Item is searched.*/}
       <ItemSearchProvider route="/tags"><ItemSearchList /></ItemSearchProvider>
-      <AppSectionPaper>
+
+      {/* Main Page Content */}
+      <BreadcrumbProvider route="/tags"><AppBreadcrumb sx={{ display: isMobile ? "block" : "none" }} /></BreadcrumbProvider>
+      <MutatorProvider>
         <TagListProvider> <TagList /> </TagListProvider>
-      </AppSectionPaper>
+      </MutatorProvider>
     </AppContainer >
   );
 }
@@ -94,9 +111,16 @@ export function TagList() {
     viewItemsClick,
     editTagClick,
   } = useTagList() as unknown as ITagListContext;
+  const {
+    addNewItemClick,
+    addNewTagClick,
+  } = useMutator() as unknown as IMutatorContext;
   const storeTagScroll = useAppStore((state) => state.tagScroll);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  function renderRow(itemKey: number): ReactNode {
+
+  function prevRenderRow(itemKey: number): ReactNode {
     const item = tags[itemKey];
     const tc = item?.name ?? "";
     const itemcount = item?.count?.toString() ?? "0";
@@ -108,7 +132,10 @@ export function TagList() {
           </ListItemButton>
         </FlexStartBox>
         <FlexEndBox >
-          <Chip variant="contained" sx={{ marginX: "10px", marginY: 0, }}
+          <Chip variant="contained" sx={{
+            marginX: "1rem", marginY: 0,
+            display: isMobile ? "none" : "block"
+          }}
             // @ts-ignore
             color={itemKey % 2 == 0 ? "inherit" : "secondary"} label={itemcount}
           />
@@ -117,6 +144,35 @@ export function TagList() {
       </ListItem>
     );
   }
+
+
+  function renderRow(itemKey: number): ReactNode {
+    const item = tags[itemKey];
+    const tc = item?.name ?? "";
+    const itemcount = item?.count?.toString() ?? "0";
+    return (
+      <ListItem key={itemKey + tc} component="div" disablePadding sx={ListItemStyling} >
+        <ListItemButton onClick={() => viewItemsClick(itemKey)}>
+          <ListItemText primary={
+            <Typography variant={isMobile ? "body2m" : "body2"}  >{tc}</Typography>
+          } />
+        </ListItemButton>
+        <Chip variant="contained"
+          sx={{
+            marginX: "0.3rem", marginY: 0,
+            fontSize: isMobile ? '0.65rem' : "1rem",
+          }}
+          // @ts-ignore
+          color={itemKey % 2 == 0 ? "inherit" : "secondary"} label={itemcount}
+          size={isMobile ? "small" : "medium"}
+        />
+        <IconButton aria-label="edit" onClick={() => editTagClick(itemKey)}> <AppTooltip title="Edit filter">
+          <EditIcon sx={{ fontSize: isMobile ? "1.1rem" : "1.5rem" }} />
+        </AppTooltip> </IconButton>
+      </ListItem>
+    );
+  }
+
 
   const contextValue = {
     data: tags,
@@ -132,7 +188,28 @@ export function TagList() {
   } as unknown as IListContext;
 
   function Shell({ children }: { children: ReactNode }) {
-    return <ListContext.Provider value={contextValue}><ListBox><OuterBox>{children} </OuterBox></ListBox></ListContext.Provider>
+    return (
+      <Stack>
+        {/* Add new item, add new tag, add new filter buttons*/}
+        <Stack direction="row" spacing={1}>
+          <Button variant="contained" onClick={addNewTagClick}>
+            <AddIcon />
+            Create tag
+          </Button>
+          <Button variant="contained" onClick={addNewItemClick}>
+            <AddIcon />
+            Create item
+          </Button>
+        </Stack>
+        <AppSectionPaper>
+          <ListContext.Provider value={contextValue}>
+            <ListBox>
+              <OuterBox>{children} </OuterBox>
+            </ListBox>
+          </ListContext.Provider>
+        </AppSectionPaper>
+      </Stack >
+    )
   }
   if (isPending) {
     return <Shell><LinearProgress /></Shell>

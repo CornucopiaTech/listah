@@ -80,10 +80,10 @@ export function AppContainer({ children, mw }: { children: ReactNode, mw: "xs" |
       alignItems: 'center',     // Horizontally centers the content inside the container
       maxHeight: AppPageContentHeight,       // Forces the container to take up the full screen height
       height: AppPageContentHeight,       // Forces the container to take up the full screen height
-      minWidth: `${appbarWidth}`,
-      maxWidth: `${appbarWidth}`,
+      // minWidth: `${appbarWidth}`,
+      // maxWidth: `${appbarWidth}`,
     }}>
-      <Box sx={{ width: "100%", marginTop: "5rem" }}> {children} </Box>
+      <Box sx={{ width: "100%", marginTop: "2rem" }}> {children} </Box>
     </Container>
   );
 }
