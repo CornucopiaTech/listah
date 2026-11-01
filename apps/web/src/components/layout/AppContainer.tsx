@@ -79,10 +79,11 @@ export function AppContainer({ children, mw }: { children: ReactNode, mw: "xs" |
       justifyContent: 'center', // Vertically centers the content inside the container
       alignItems: 'center',     // Horizontally centers the content inside the container
       maxHeight: AppPageContentHeight,       // Forces the container to take up the full screen height
+      height: AppPageContentHeight,       // Forces the container to take up the full screen height
       minWidth: `${appbarWidth}`,
       maxWidth: `${appbarWidth}`,
     }}>
-      <Box sx={{ width: "100%", margin: "10px" }}> {children} </Box>
+      <Box sx={{ width: "100%", marginTop: "5rem" }}> {children} </Box>
     </Container>
   );
 }

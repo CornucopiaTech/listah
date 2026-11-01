@@ -4,7 +4,7 @@ import {
 } from "@mui/material/styles";
 import { lightPalette } from "@/system/theme/palette";
 import { typography } from "@/system/tokens/typography";
-import { components } from "@/system/theme//components";
+import { components } from "@/system/theme/components";
 
 
 const theme = responsiveFontSizes(createTheme(

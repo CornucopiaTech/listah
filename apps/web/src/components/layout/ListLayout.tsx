@@ -15,7 +15,7 @@ import FormControl from '@mui/material/FormControl';
 import Divider from '@mui/material/Divider';
 import Select from '@mui/material/Select';
 import Pagination from '@mui/material/Pagination';
-
+import { useTheme, useMediaQuery } from '@mui/material';
 
 
 
@@ -128,6 +128,8 @@ export function AppListPagination(): ReactNode {
     pageSizeChange,
   } = useLists() as unknown as IListContext;
   const totalPages = Math.max(1, Math.ceil(pagination.volume / pagination.size));
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <CentredBox sx={{ height: "80px" }}>
       <CentredBox sx={{ maxWidth: 100, marginRight: 0 }}>
@@ -141,7 +143,8 @@ export function AppListPagination(): ReactNode {
             //  @ts-ignore
             onChange={pageSizeChange}
             sx={{
-              height: 36,                     // overall component height
+              // height: 36,                     // overall component height
+              height: "fit-content",                     // overall component height
               '& .MuiSelect-select': {
                 paddingY: 1.2,                // vertical padding
               },
@@ -151,16 +154,6 @@ export function AppListPagination(): ReactNode {
           </Select>
         </FormControl>
       </CentredBox>
-      <AppCentredPagination
-        sx={{ height: "fit-content", padding: 1 }}
-        page={pagination.page}
-        count={totalPages}
-        color="primary"
-        //  @ts-ignore
-        onChange={pageChange}
-        siblingCount={0} // Number of pages shown on each side of the current page
-      // boundaryCount={1} // Number of pages shown at the start and end
-      />
       <Pagination
         sx={{ height: "fit-content", padding: 1 }}
         page={pagination.page}
@@ -168,8 +161,9 @@ export function AppListPagination(): ReactNode {
         color="primary"
         //  @ts-ignore
         onChange={pageChange}
-        siblingCount={0} // Number of pages shown on each side of the current page
-      // boundaryCount={1} // Number of pages shown at the start and end
+        boundaryCount={isMobile ? 0 : 1} // Recommended: adjust sibling count or size dynamically as well
+        siblingCount={isMobile ? 0 : 1}
+        size={isMobile ? 'small' : 'medium'}
       />
     </CentredBox>
   );

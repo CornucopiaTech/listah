@@ -1,6 +1,26 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
+  name: "${K8_NAMESPACE}-api-sub-http-route"
+  namespace: ${K8_NAMESPACE}
+spec:
+  parentRefs:
+    - name: "${K8_NAMESPACE}-gateway"
+      namespace: ${K8_NAMESPACE}
+  hostnames:
+    - "api.${K8_NAMESPACE}.${ROOT_ZONE_NAME}"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: ${K8_NAMESPACE}-api-svc
+          port: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
   name: "${K8_NAMESPACE}-api-http-route"
   namespace: ${K8_NAMESPACE}
 spec:
@@ -11,24 +31,15 @@ spec:
     - "${K8_NAMESPACE}.${ROOT_ZONE_NAME}"
   rules:
     - matches:
-        - path: { type: PathPrefix, value: /api }
-      backendRefs:
-        - name: ${K8_NAMESPACE}-api-svc
-          port: 80
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: "${K8_NAMESPACE}-api-sub-http-route"
-  namespace: ${K8_NAMESPACE}
-spec:
-  parentRefs:
-    - name: "${K8_NAMESPACE}-gateway"
-      namespace: ${K8_NAMESPACE}
-  hostnames: ["api.${K8_NAMESPACE}.${ROOT_ZONE_NAME}"]
-  rules:
-    - matches:
-        - path: { type: PathPrefix, value: / }
+        - path:
+            type: PathPrefix
+            value: /api
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
       backendRefs:
         - name: ${K8_NAMESPACE}-api-svc
           port: 80

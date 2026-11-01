@@ -27,18 +27,9 @@ export PUBLIC_ZONE_ID=$(
 
 
 
-# Enable gateway api and app-routing istio
-az aks update \
-  --resource-group "${K8_ROOT_RG_NAME}" \
-  --name "${K8_CLUSTER_NAME}" \
-  --enable-gateway-api \
-  --enable-app-routing-istio
-
-
-
 # 2a. Create an array of strings
-# setupfiles=( "namespaces" "service-account" "cluster-secret-store" "gateway" "external-dns" "certificate")
-setupfiles=( "gateway" )
+# setupfiles=( "namespaces" "service-account" "cluster-secret-store" "gateway" "external-dns" "certificate"  )
+setupfiles=(  )
 
 # 2b. Perform installation for loop
 for kfilename in "${setupfiles[@]}"; do

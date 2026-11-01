@@ -4,6 +4,9 @@ import {
 import type {
   ReactNode,
 } from 'react';
+import {
+  useNavigate,
+} from '@tanstack/react-router';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
@@ -58,9 +61,13 @@ export function AppBreadcrumb(): ReactNode {
       display: route == "/filters" ? undefined : "none"
     },
   ];
+  const navigate = useNavigate();
 
   return (<Fragment>
     <Breadcrumbs aria-label="breadcrumb" sx={{}}>
+      <Link underline="hover" color="inherit" onClick={() => navigate({ to: "/" })}>
+        <Typography variant="h6" component="div" textAlign={"left"} sx={{}}> Home </Typography>
+      </Link>
       <Link underline="hover" color="inherit" onClick={breadcrumbClick}>
         <Typography variant="h6" component="div" textAlign={"left"} sx={{}}> {title} </Typography>
       </Link>

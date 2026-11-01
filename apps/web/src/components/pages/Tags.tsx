@@ -44,7 +44,6 @@ import {
   TagListProvider,
   TagUpdateProvider,
   useUpdateTags,
-  BreadcrumbProvider,
   ItemSearchProvider,
   ItemUpdateProvider,
 } from "@/hooks/context";
@@ -62,7 +61,6 @@ import {
   AppTooltip,
   FlexEndBox,
   FlexStartBox,
-  AppBreadcrumb,
   ItemSearchList,
   ItemUpdate,
 } from "@/components";
@@ -72,10 +70,9 @@ import {
 
 export function Tags() {
   return (
-    <AppContainer mw="md">
+    <AppContainer mw="xl">
       <TagUpdateProvider> <UpdateTag /> </TagUpdateProvider>
       <ItemUpdateProvider route="/tags"> <ItemUpdate /> </ItemUpdateProvider>
-      <BreadcrumbProvider route="/tags"><AppBreadcrumb /></BreadcrumbProvider>
       <ItemSearchProvider route="/tags"><ItemSearchList /></ItemSearchProvider>
       <AppSectionPaper>
         <TagListProvider> <TagList /> </TagListProvider>

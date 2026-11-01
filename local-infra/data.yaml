@@ -24,17 +24,41 @@ services:
         condition: service_healthy
         restart: true
     volumes:
-      - ../liquibase/changelog/:/liquibase/changelog/
+      - ../apps/db/liquibase/changelog/:/liquibase/changelog/
       - ./postgresql-42.7.10.jar:/liquibase/lib/postgresql-42.7.10.jar
     env_file: .env
     environment:
-      LIQUIBASE_COMMAND_URL: ${LIQUIBASE_CONNECTION_URL} # //Automatically Read from .env file
+      LIQUIBASE_COMMAND_URL: ${LQB_CONNECTION_URL} # //Automatically Read from .env file
       LIQUIBASE_COMMAND_USERNAME: ${POSTGRES_USER}
       LIQUIBASE_COMMAND_PASSWORD: ${POSTGRES_PASSWORD}
       LIQUIBASE_COMMAND_CHANGELOG_FILE: changelog.yaml
       LIQUIBASE_LOG_LEVEL: INFO
       LIQUIBASE_COMMAND_DRIVER: org.postgresql.Driver
       LIQUIBASE_CLASSPATH: /liquibase/lib/postgresql-42.7.10.jar
+    command: "update "
+
+  liquibase-listah-file:
+    container_name: liquibase-listah
+    build:
+      context: ../apps/db/
+      dockerfile: Dockerfile
+    depends_on:
+      db-listah:
+        condition: service_healthy
+        restart: true
+    # volumes:
+    #   - ../liquibase/changelog/:/liquibase/changelog/
+    #   - ./postgresql-42.7.10.jar:/liquibase/lib/postgresql-42.7.10.jar
+    env_file:
+      - ./.env
+    environment:
+      LIQUIBASE_COMMAND_URL: ${LQB_CONNECTION_URL} # //Automatically Read from .env file
+      LIQUIBASE_COMMAND_USERNAME: ${POSTGRES_USER}
+      LIQUIBASE_COMMAND_PASSWORD: ${POSTGRES_PASSWORD}
+      # LIQUIBASE_COMMAND_CHANGELOG_FILE: changelog.yaml
+      # LIQUIBASE_LOG_LEVEL: INFO
+      # LIQUIBASE_COMMAND_DRIVER: org.postgresql.Driver
+      # LIQUIBASE_CLASSPATH: /liquibase/lib/postgresql-42.7.10.jar
     command: "update "
 
   redis-server-listah:

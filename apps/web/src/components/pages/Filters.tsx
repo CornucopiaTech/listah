@@ -36,7 +36,6 @@ import {
   FormContext,
   ListContext,
   FilterUpdateProvider,
-  BreadcrumbProvider,
   FilterListProvider,
   ItemSearchProvider,
   ItemUpdateProvider,
@@ -56,7 +55,6 @@ import {
   ListLayout,
   OuterBox,
   UpdateFormActions,
-  AppBreadcrumb,
   ItemSearchList,
   ItemUpdate,
 } from '@/components';
@@ -66,10 +64,9 @@ import {
 
 export function Filters(): ReactNode {
   return (
-    <AppContainer mw="md">
+    <AppContainer mw="xl">
       <FilterUpdateProvider> <UpdateFilter /> </FilterUpdateProvider>
       <ItemUpdateProvider route="/filters"> <ItemUpdate /> </ItemUpdateProvider>
-      <BreadcrumbProvider route="/filters"><AppBreadcrumb /></BreadcrumbProvider>
       <ItemSearchProvider route="/filters"><ItemSearchList /></ItemSearchProvider>
       <AppSectionPaper>
         <FilterListProvider> <FilterList /> </FilterListProvider>

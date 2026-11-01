@@ -14,9 +14,7 @@ export function Landing() {
       <AppContainer mw="md">
         <Paper variant="hero">
           <Typography variant="h1">Simplify your life.</Typography>
-          <Typography variant="h3">One list at a time.</Typography>
-          <Typography variant="h5"> Manage task, shopping, and project lists. </Typography>
-          <Typography variant="h5"> All in one place.</Typography>
+          <Typography variant="h5"> Manage different kinds of lists all in one place.</Typography>
           <SignInButton mode="modal">
             {/* @ts-ignore */}
             <Button variant='heroContained' color="inherit">
