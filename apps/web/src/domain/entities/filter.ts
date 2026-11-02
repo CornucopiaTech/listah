@@ -9,6 +9,7 @@ export const ZFilter = z.object({
   tags: z.array(z.string()).catch([]),
   count: z.nullish(z.number()).catch(0),
   softDelete: z.nullish(z.boolean().catch(false)),
+  updatedAt: z.nullish(z.string().catch('')),
 });
 export type IFilter = z.infer<typeof ZFilter>;
 export const DefaultFilter: IFilter = {
@@ -18,4 +19,5 @@ export const DefaultFilter: IFilter = {
   tags: [],
   count: 0,
   softDelete: false,
+  updatedAt: "",
 }

@@ -17,10 +17,17 @@ export const typography = {
   h4: { fontSize: "2.5rem", fontWeight: 700, textAlign: "center" },
   h5: { fontSize: "2rem", fontWeight: 700, textAlign: "center" },
   h6: { fontSize: "1.5rem", fontWeight: 700, textAlign: "center", },
+  h6m: { fontSize: "1.0rem", fontWeight: 700, textAlign: "center", },
+  h7: { fontSize: "1.2rem", fontWeight: 700, textAlign: "center", },
+  h7m: { fontSize: "0.9rem", fontWeight: 700, textAlign: "center", },
   body1: { fontSize: "1.2rem", fontWeight: 500 },
   body2: { fontSize: "1rem", fontWeight: 500 },
+  body2m: {
+    fontSize: "0.9rem", fontWeight: 500, padding: -1,
+    margin: -1, lineHeight: 0.8,
+  },
   condensedBody2: {
-    fontSize: "1rem", fontWeight: 500, padding: -1.5,
+    fontSize: "0.9rem", fontWeight: 500, padding: -1.5,
     margin: -1.5, lineHeight: 0.8,
   },
 }

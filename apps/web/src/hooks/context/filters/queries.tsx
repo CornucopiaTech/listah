@@ -36,12 +36,12 @@ export function filterGroupOptions(opts: IReadRequest) {
     enabled: !!opts?.query?.userId,
   })
 }
-export function useListFilter(opts: IReadRequest): UseQueryResult<IFilterReadResponse> {
+export function useViewFilterQuery(opts: IReadRequest): UseQueryResult<IFilterReadResponse> {
   return useQuery(filterGroupOptions(opts))
 }
 
 
-export function useUpdateFilter() {
+export function useUpdateFilterQuery() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (mutateItem: IFilter) => {

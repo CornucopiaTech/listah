@@ -33,12 +33,13 @@ export type IListContext = {
   scrollIndex: number,
   pageChange: (event: MouseEvent<HTMLButtonElement> | null, value: number) => void,
   pageSizeChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
+  pageSortChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
   renderRow: (idx: number) => ReactNode,
   clickRow: (idx: number) => void,
 }
 
 
-export type IItemListContext = {
+export type IViewItemsContext = {
   items: IItem[],
   pagination: Pagination,
   isPending: boolean,
@@ -46,11 +47,12 @@ export type IItemListContext = {
   error: Error | null,
   pageChange: (event: MouseEvent<HTMLButtonElement> | null, value: number) => void,
   pageSizeChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
+  pageSortChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
   editItemClick: (idx: number) => void,
 }
 
 
-export type IItemSearchContext = {
+export type ISearchItemsContext = {
   route: string,
   search: string,
   items: IItem[],
@@ -60,13 +62,14 @@ export type IItemSearchContext = {
   error: Error | null,
   pageChange: (event: MouseEvent<HTMLButtonElement> | null, value: number) => void,
   pageSizeChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
+  pageSortChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
   editItemClick: (idx: number) => void,
   openDialog: boolean,
   closeDialog: () => void,
 }
 
 
-export type ITagListContext = {
+export type IViewTagsContext = {
   tags: ITag[],
   pagination: Pagination,
   isPending: boolean,
@@ -74,12 +77,13 @@ export type ITagListContext = {
   error: Error | null,
   pageChange: (event: MouseEvent<HTMLButtonElement> | null, value: number) => void,
   pageSizeChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
+  pageSortChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
   viewItemsClick: (idx: number) => void,
   editTagClick: (idx: number) => void,
 }
 
 
-export type IFilterListContext = {
+export type IViewFiltersContext = {
   filters: IFilter[],
   pagination: Pagination,
   isPending: boolean,
@@ -87,6 +91,7 @@ export type IFilterListContext = {
   error: Error | null,
   pageChange: (event: MouseEvent<HTMLButtonElement> | null, value: number) => void,
   pageSizeChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
+  pageSortChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
   viewItemsClick: (idx: number) => void,
   editFilterClick: (idx: number) => void,
 }

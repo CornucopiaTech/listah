@@ -5,7 +5,8 @@ import {
 } from "react";
 
 import type {
-  IListContext
+  IListContext,
+  ITableContext,
 } from "@/domain/entities"
 
 
@@ -13,4 +14,9 @@ import type {
 export const ListContext = createContext<IListContext | undefined>(undefined);
 export function useLists() {
   return useContext(ListContext);
+}
+
+export const TableContext = createContext<ITableContext | undefined>(undefined);
+export function useTables() {
+  return useContext(TableContext);
 }

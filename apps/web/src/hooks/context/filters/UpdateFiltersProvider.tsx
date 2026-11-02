@@ -23,7 +23,7 @@ import {
 // Internal imports
 import type {
   IFilter,
-  IFilterUpdateContext,
+  IUpdateFiltersContext,
   IUrlSearch,
   IEditor,
   IFilterForm,
@@ -38,10 +38,10 @@ import {
   DefaultPagination,
 } from '@/domain/entities';
 import {
-  useUpdateFilter,
+  useUpdateFilterQuery,
 } from './queries';
 import {
-  FilterUpdateContext
+  UpdateFiltersContext
 } from './useFilter';
 import {
   prepFilterUpdate,
@@ -52,13 +52,13 @@ import {
   decodeState
 } from '@/helpers/encoders';
 import {
-  useListTag,
+  useViewTagsQuery,
 } from "@/hooks/context";
 
 
 
 
-export function FilterUpdateProvider({ children }: { children: ReactNode }) {
+export function UpdateFiltersProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const navigate = useNavigate();
   const routeApi = getRouteApi("/filters");
@@ -83,7 +83,7 @@ export function FilterUpdateProvider({ children }: { children: ReactNode }) {
   }
   const {
     isPending, data, error
-  }: UseQueryResult<ITagReadResponse> = useListTag(tagQuery);
+  }: UseQueryResult<ITagReadResponse> = useViewTagsQuery(tagQuery);
   const tags = data?.tags ?? [];
 
   const existingTags = formFilter ? new Set([...formFilter.tags]) : new Set([]);
@@ -106,7 +106,7 @@ export function FilterUpdateProvider({ children }: { children: ReactNode }) {
 
   formData.tags = formData.tags.sort((a, b) => +b.checked - +a.checked);
 
-  const mutation = useUpdateFilter();
+  const mutation = useUpdateFilterQuery();
   function formSubmission({ value }: { value: IFilterForm }): void {
     const submitValue = prepFilterUpdate({ value, userId: user?.id || "" });
     mutation.mutate(submitValue);
@@ -138,11 +138,11 @@ export function FilterUpdateProvider({ children }: { children: ReactNode }) {
     isPending,
     error,
     tags,
-  } as unknown as IFilterUpdateContext),
+  } as unknown as IUpdateFiltersContext),
     [obj, flag, modal]
   );
 
-  return <FilterUpdateContext.Provider value={contextValue}>
+  return <UpdateFiltersContext.Provider value={contextValue}>
     {children}
-  </FilterUpdateContext.Provider>
+  </UpdateFiltersContext.Provider>
 }

@@ -2,13 +2,14 @@
 import {
   Fragment,
   useState,
+  forwardRef,
 } from "react";
 import type {
   ReactNode,
   SyntheticEvent,
   ChangeEvent,
 } from 'react';
-import { useTheme, } from '@mui/material/styles';
+import { useTheme, useMediaQuery } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -20,14 +21,25 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import type { TableComponents } from 'react-virtuoso';
+import Select from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-
-
+import FormControl from '@mui/material/FormControl';
 
 
 // Internal
@@ -38,11 +50,15 @@ import {
 import type {
   IListContext,
   IFormContext,
-  IItemListContext,
-  IItemUpdateContext,
+  ITableContext,
+  IViewItemsContext,
+  IUpdateItemsContext,
+  IPagingContext,
   ITag,
+  IItem,
   IItemFormProps,
-  IItemSearchContext,
+  ISearchItemsContext,
+  ICreateContext,
 } from '@/domain/entities';
 import {
   DefaultTag,
@@ -51,14 +67,19 @@ import {
   ListItemStyling
 } from "@/helpers/defaults";
 import {
-  useListItems,
+  useViewItems,
   useUpdateItems,
   useSearchItems,
   FormContext,
+  PagingContext,
+  TableContext,
   ListContext,
-  ItemListProvider,
-  ItemUpdateProvider,
-  ItemSearchProvider,
+  ViewItemsProvider,
+  UpdateItemsProvider,
+  SearchItemsProvider,
+  BreadcrumbProvider,
+  useMutator,
+  CreateProvider,
 } from "@/hooks/context";
 import {
   getFormItemPropsArrayTextFieldProps,
@@ -67,6 +88,7 @@ import {
   AppSectionPaper,
   AppContainer,
   ListLayout,
+  TableLayout,
   ListBox,
   OuterBox,
   FormDialog,
@@ -77,6 +99,7 @@ import {
   ViewDialog,
   AlertDialog,
   AppListPagination,
+  AppBreadcrumb,
 } from "@/components";
 import {
   validateItemTag,
@@ -84,19 +107,40 @@ import {
 
 
 
+// ToDo: Add bulk deletion
+// ToDo. Read the url and find out if a filter or tag is being looked at and then add the tags associated with the tag or filter to the create new item form
+// ToDo: Add the functionality for inheriting properties from an existing filter.
+const VirtuosoTableComponents: TableComponents<IItem> = {
+  Scroller: forwardRef<HTMLDivElement>((props, ref) => (
+    <TableContainer component={Paper} {...props} ref={ref} />
+  )),
+  Table: (props) => (
+    <Table {...props} sx={{ borderCollapse: 'separate', tableLayout: 'fixed' }} />
+  ),
+  TableHead: forwardRef<HTMLTableSectionElement>((props, ref) => (
+    <TableHead {...props} ref={ref} />
+  )),
+  TableRow,
+  TableBody: forwardRef<HTMLTableSectionElement>((props, ref) => (
+    <TableBody {...props} ref={ref} />
+  )),
+};
 
 export function Items() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <AppContainer mw="xl">
-      <ItemUpdateProvider> <ItemUpdate /> </ItemUpdateProvider>
-      <ItemSearchProvider route="/items"><ItemSearchList /></ItemSearchProvider>
-      <AppSectionPaper>
-        <ItemListProvider> <ItemList /> </ItemListProvider>
-      </AppSectionPaper>
+      <UpdateItemsProvider> <ItemUpdate /> </UpdateItemsProvider>
+      <SearchItemsProvider route="/items"><ItemSearchList /></SearchItemsProvider>
+
+      <BreadcrumbProvider route="/items"><AppBreadcrumb sx={{ display: isMobile ? "block" : "none" }} /></BreadcrumbProvider>
+      <CreateProvider>
+        <ViewItemsProvider> <ItemList /> </ViewItemsProvider>
+      </CreateProvider>
     </AppContainer >
   );
 }
-
 
 
 export function ItemList() {
@@ -108,54 +152,184 @@ export function ItemList() {
     error,
     pageChange,
     pageSizeChange,
+    pageSortChange,
     editItemClick,
-  } = useListItems() as unknown as IItemListContext;
+  } = useViewItems() as unknown as IViewItemsContext;
+
   const storeItemScroll = useAppStore((state) => state.itemScroll);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
+  const {
+    addNewItemClick,
+  } = useMutator() as unknown as ICreateContext;
 
-  function renderRow(itemKey: number): ReactNode {
-    const item = items[itemKey]
-    let tc: string = item.name ? item.name : "";
+  function renderCell(itemKey: number): ReactNode {
+    const item = items[itemKey];
+    const tc = item?.name ?? "";
+    const fontSize = isMobile ? "0.9rem" : '1rem';
+    const iconFontSize = isMobile ? "1.1rem" : "1.5rem";
     return (
       <Fragment>
-        <ListItem key={itemKey + item.id} component="div" disablePadding sx={{ ...ListItemStyling, }} onClick={() => editItemClick(itemKey)}>
-          <Box sx={{ width: "100%", display: 'flex', }}>
-            <Box sx={{ width: "95%" }}>
-              <FlexStartBox>
-                <ListItemButton >
-                  <ListItemText primary={<Typography variant="body2" >{tc}</Typography>} />
-                </ListItemButton>
-              </FlexStartBox>
-            </Box>
-            <Box sx={{ justifyContent: 'flex-end', display: 'flex', minWidth: "10px" }}>
-              <IconButton aria-label="edit" onClick={() => editItemClick(itemKey)}>
-                <AppTooltip title="Edit item"><EditIcon /></AppTooltip>
-              </IconButton>
-            </Box>
-          </Box>
-        </ListItem>
-        <Divider key="divider" />
+        <TableCell
+          key="name"
+          component='th'
+          scope='row'
+          align='left'
+          sx={{
+            fontSize: fontSize,
+          }}>
+          <Typography variant={isMobile ? "body2m" : "body1"}  >{tc}</Typography>
+        </TableCell>
+        <TableCell
+          key="updatedAt"
+          component='td'
+          scope={undefined}
+          align='right'
+          sx={{
+            fontSize: fontSize,
+            display: isMobile ? "none" : undefined
+          }}>
+          <Typography variant={isMobile ? "body2m" : "body1"}  >{item.updatedAt ?? ""}</Typography>
+        </TableCell>
+        <TableCell
+          key="actions"
+          component='td'
+          scope={undefined}
+          align='right'
+          sx={{
+            fontSize: fontSize,
+          }}>
+          <IconButton aria-label="edit" onClick={() => editItemClick(itemKey)}>
+            <AppTooltip title="Edit filter">
+              <EditIcon sx={{ fontSize: iconFontSize }} />
+            </AppTooltip>
+          </IconButton>
+          <IconButton aria-label="edit" onClick={() => editItemClick(itemKey)}>
+            <AppTooltip title="Delete filter">
+              <DeleteIcon sx={{ fontSize: iconFontSize, color: "red" }} />
+            </AppTooltip>
+          </IconButton>
+        </TableCell>
       </Fragment>
     );
   }
 
+  function headerContent() {
+    const headerFontSize = isMobile ? "1rem" : '1.4rem';
+    return (
+      <TableRow>
+        <TableCell
+          key="name"
+          variant="head"
+          align='left'
+          style={{ width: isMobile ? 80 : 100 }}
+          sx={{
+            backgroundColor: 'background.paper',
+            fontSize: headerFontSize,
+            fontWeight: 'bold',
+          }} >
+          Name
+        </TableCell>
+        <TableCell
+          key="updatedAt"
+          variant="head"
+          align='right'
+          style={{ width: 100 }}
+          sx={{
+            backgroundColor: 'background.paper',
+            fontSize: headerFontSize,
+            fontWeight: 'bold',
+            display: isMobile ? "none" : undefined
+          }} >
+          Updated At
+        </TableCell>
+        <TableCell
+          key="actions"
+          variant="head"
+          align='right'
+          style={{ width: 50 }}
+          sx={{
+            backgroundColor: 'background.paper',
+            fontSize: headerFontSize,
+            fontWeight: 'bold'
+          }} >
+          Actions
+        </TableCell>
+      </TableRow>
+    );
+  }
 
 
-  const contextValue = {
+  const tableContextValue = {
     data: items,
-    pagination: pagination.paging,
-    isPending: isPending,
-    isError: isError,
-    error: error,
+    isPending,
+    isError,
+    error,
     scrollIndex: Math.max(0, storeItemScroll),
+    renderCell,
+    headerContent,
+    components: VirtuosoTableComponents,
+  } as unknown as ITableContext;
+
+  const pagingContextValue = {
+    pagination: pagination.paging,
     pageChange: items.length > 0 ? pageChange : undefined,
     pageSizeChange: items.length > 0 ? pageSizeChange : undefined,
-    clickRow: editItemClick,
-    renderRow,
-  } as unknown as IListContext;
+  } as unknown as IPagingContext;
 
   function Shell({ children }: { children: ReactNode }) {
-    return <ListContext.Provider value={contextValue}><ListBox><OuterBox>{children} </OuterBox></ListBox></ListContext.Provider>
+    return (
+      <Stack sx={{ marginTop: "1rem" }}>
+        {/* Add new item, add new tag, add new filter buttons*/}
+        <Stack direction="row" spacing={1}
+          sx={{
+            justifyContent: 'flex-end', alignContent: 'center',
+            display: 'flex', width: '100%', flexWrap: 'wrap',
+            alignItems: 'center'
+          }}>
+          <FormControl sx={{}}>
+            <InputLabel id="sortinput">Sort by</InputLabel>
+            <Select
+              labelId="sortinput"
+              id="sortselect"
+              value={pagination.paging.sort}
+              label="rows-per-page"
+              //  @ts-ignore
+              onChange={pageSortChange}
+              sx={{
+                // height: 36,                     // overall component height
+                height: "fit-content",                     // overall component height
+                '& .MuiSelect-select': {
+                  paddingY: 1.2,                // vertical padding
+                },
+              }} >
+              {pagination.sortOptions.map((i, _) =>
+                <MenuItem value={i.value}> <Typography variant={isMobile ? "condensedBody2" : "body2"} component="div" textAlign={"left"} sx={{}}> {i.label} </Typography>  </MenuItem>
+              )}
+            </Select>
+          </FormControl>
+          <Button size={isMobile ? "small" : "medium"}
+            sx={{ fontSize: isMobile ? "0.6rem" : "1rem", p: 1, }}
+            variant="contained" onClick={addNewItemClick}>
+            <AddIcon sx={{
+              // display: isMobile ? "none" : undefined,
+              fontSize: isMobile ? "1rem" : "1.5rem"
+            }} />
+            <Typography variant={isMobile ? "h7m" : "h7"} component="div" textAlign={"left"} sx={{}}> {isMobile ? "" : "create new "} item </Typography>
+          </Button>
+        </Stack>
+        <AppSectionPaper>
+          <PagingContext.Provider value={pagingContextValue}>
+            <TableContext.Provider value={tableContextValue}>
+              <ListBox>
+                <OuterBox>{children} </OuterBox>
+              </ListBox>
+            </TableContext.Provider>
+          </PagingContext.Provider>
+        </AppSectionPaper>
+      </Stack >
+    );
   }
 
   if (isPending) {
@@ -174,22 +348,19 @@ export function ItemList() {
   }
 
   if (items.length > 0) {
-    return (<Shell><ListLayout /></Shell>)
+    return (<Shell><TableLayout /></Shell>)
   }
   return (
     <Shell><Alert severity="error">"An error occurred. Please try again"</Alert></Shell>
   )
 }
 
-
-// ToDo. Read the url and find out if a filter or tag is being looked at and then add the tags associated with the tag or filter to the create new item form
-// ToDo: Add the functionality for inheriting properties from an existing filter.
 function AppItemFormTagAutocompleteField(): ReactNode {
   const {
     form,
     formData,
     tags,
-  } = useUpdateItems() as unknown as IItemUpdateContext;
+  } = useUpdateItems() as unknown as IUpdateItemsContext;
   const { tagsSet } = formData;
   const theme: AppTheme = useTheme();
   const [tagToDelete, setTagToDelete] = useState<{ c: any, p: any } | null>(null);
@@ -404,7 +575,7 @@ export function ItemUpdate() {
     isPending,
     error,
     tags,
-  } = useUpdateItems() as unknown as IItemUpdateContext;
+  } = useUpdateItems() as unknown as IUpdateItemsContext;
   let content = <LinearProgress />;
   let actions = undefined;
   if (isPending) {
@@ -545,7 +716,7 @@ export function ItemSearchList() {
     editItemClick,
     openDialog,
     closeDialog,
-  } = useSearchItems() as unknown as IItemSearchContext;
+  } = useSearchItems() as unknown as ISearchItemsContext;
   const storeItemScroll = useAppStore((state) => state.itemScroll);
 
   function renderRow(itemKey: number): ReactNode {

@@ -4,3 +4,4 @@ export * from "./items";
 export * from "./forms";
 export * from "./filters";
 export * from "./breadcrumb";
+export * from "./paging";

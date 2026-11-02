@@ -41,7 +41,7 @@ export function tagGroupOptions(opts: IReadRequest) {
   })
 }
 
-export function useListTag(opts: IReadRequest): UseQueryResult<ITagReadResponse> {
+export function useViewTagsQuery(opts: IReadRequest): UseQueryResult<ITagReadResponse> {
   return useQuery(tagGroupOptions(opts))
 }
 
@@ -57,11 +57,11 @@ export function tagPropertyGroupOptions(opts: IReadRequest) {
   })
 }
 
-export function useListTagProperty(opts: IReadRequest): UseQueryResult<ITagPropertyReadResponse> {
+export function useViewTagsPropertyQuery(opts: IReadRequest): UseQueryResult<ITagPropertyReadResponse> {
   return useQuery(tagPropertyGroupOptions(opts))
 }
 
-export function useUpdateTag() {
+export function useUpdateTagsQuery() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (mutateTag: ITag) => {

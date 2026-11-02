@@ -24,7 +24,7 @@ import {
   useAppStore,
 } from '@/hooks/store/boundStore';
 import type {
-  IItemSearchContext,
+  ISearchItemsContext,
   ISearchReadRequest,
   IChildReadRequest,
   IUrlSearch,
@@ -42,13 +42,13 @@ import {
   decodeState,
 } from '@/helpers/encoders';
 import {
-  useListItem,
-  ItemSearchContext,
+  useViewItemQuery,
+  SearchItemsContext,
 
 } from "@/hooks/context/items";
 
 
-export function ItemSearchProvider({ children, route }: { children: ReactNode, route: IRouteStrings }) {
+export function SearchItemsProvider({ children, route }: { children: ReactNode, route: IRouteStrings }) {
   const { user } = useUser();
   const storeSetItemScroll = useAppStore((state) => state.setItemScroll);
   const navigate = useNavigate();
@@ -61,7 +61,7 @@ export function ItemSearchProvider({ children, route }: { children: ReactNode, r
   };
   const {
     data, isPending, isError, error
-  }: UseQueryResult<IItemReadResponse> = useListItem(opts);
+  }: UseQueryResult<IItemReadResponse> = useViewItemQuery(opts);
 
   const items = data?.items ?? [];
   const paginationObj = data?.pagination ? data.pagination : opts?.pagination ? opts.pagination : DefaultPagination;
@@ -79,6 +79,22 @@ export function ItemSearchProvider({ children, route }: { children: ReactNode, r
       }
     });
   }, [opts, flag]);
+
+
+  const pageSortChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    e.stopPropagation()
+    pagination.changeSort(e.target.value);
+    navigate({
+      to: ".",
+      // @ts-ignore
+      search: (prev: IUrlSearch) => {
+        const dPrev = decodeState(prev.s) as unknown as IChildReadRequest;
+        return { ...prev, s: encodeState({ ...dPrev, pagination: pagination.paging }) }
+      }
+    });
+  }, [opts, flag]);
+
+
   const pageChange = useCallback((event: MouseEvent<HTMLButtonElement> | null, value: number) => {
     if (event) { event.stopPropagation() };
     pagination.changePage(value);
@@ -127,9 +143,10 @@ export function ItemSearchProvider({ children, route }: { children: ReactNode, r
     error,
     pageChange,
     pageSizeChange,
+    pageSortChange,
     editItemClick,
     openDialog,
     closeDialog,
-  } as unknown as IItemSearchContext), [opts, flag]);
-  return <ItemSearchContext.Provider value={contextValue}> {children} </ItemSearchContext.Provider>
+  } as unknown as ISearchItemsContext), [opts, flag]);
+  return <SearchItemsContext.Provider value={contextValue}> {children} </SearchItemsContext.Provider>
 }

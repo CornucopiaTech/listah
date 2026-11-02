@@ -24,8 +24,8 @@ import {
   useAppStore,
 } from '@/hooks/store/boundStore';
 import type {
-  ITagListContext,
-  ITagReadResponse,
+  IViewFiltersContext,
+  IFilterReadResponse,
   IReadRequest,
   IUrlSearch,
 } from "@/domain/entities";
@@ -35,34 +35,36 @@ import {
   Pagination,
 } from '@/domain/entities';
 import {
-  useListTag
+  useViewFilterQuery
 } from './queries';
 import {
-  TagListContext
-} from './useTag';
+  ViewFiltersContext
+} from './useFilter';
 import {
   encodeState,
   decodeState
 } from '@/helpers/encoders';
 
 
-export function TagListProvider({ children }: { children: ReactNode }) {
+
+
+
+export function ViewFiltersProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
-  const storeSetTagScroll = useAppStore((state) => state.setTagScroll);
+  const storeSetFilterScroll = useAppStore((state) => state.setFilterScroll);
   const storeSetItemScroll = useAppStore((state) => state.setItemScroll);
   const navigate = useNavigate();
-  const routeApi = getRouteApi("/tags");
+  const routeApi = getRouteApi("/filters");
   const { query: urlQuery, pagination: urlPagination } = decodeState(routeApi.useSearch({ select: (search) => search.p, })) as unknown as IReadRequest;
   const opts = {
     pagination: { ...urlPagination },
     query: { ...urlQuery, userId: user?.id ?? "", },
   };
 
-  const { data, isPending, isError, error, }: UseQueryResult<ITagReadResponse> = useListTag(opts);
-  const tags = data?.tags ?? [];
+  const { data, isPending, isError, error }: UseQueryResult<IFilterReadResponse> = useViewFilterQuery(opts);
+  const filters = data?.filters ?? [];
   const paginationObj = data?.pagination ? data.pagination : urlPagination ? urlPagination : DefaultPagination;
   const pagination = new Pagination(paginationObj);
-
 
   const pageChange = useCallback((event: MouseEvent<HTMLButtonElement> | null, value: number) => {
     if (event) { event.stopPropagation() };
@@ -89,14 +91,26 @@ export function TagListProvider({ children }: { children: ReactNode }) {
     });
   }, [opts]);
 
+  const pageSortChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    pagination.changeSort(e.target.value);
+    navigate({
+      to: ".",
+      // @ts-ignore
+      search: (prev: IUrlSearch) => {
+        const dPrev = decodeState(prev.p) as unknown as IReadRequest;
+        return { ...prev, p: encodeState({ ...dPrev, pagination: pagination.paging }) }
+      }
+    });
+  }, [opts]);
+
   const viewItemsClick = useCallback((idx: number) => {
-    const it = tags[idx];
-    storeSetTagScroll(idx);
+    const it = filters[idx];
+    storeSetFilterScroll(idx);
     storeSetItemScroll(0);
     const c = encodeState({
-      query: { ...DefaultReadQuery, userId: opts.query.userId, tags: [it.id] },
+      query: { ...DefaultReadQuery, userId: opts.query.userId, tags: [...it.tags] },
       pagination: { ...DefaultPagination, size: pagination.paging.size },
-      name: it.name, parent: "/tags", flag: true,
+      name: it.name, parent: "/filters", flag: true,
     });
     navigate({
       // @ts-ignore
@@ -104,34 +118,37 @@ export function TagListProvider({ children }: { children: ReactNode }) {
     });
   }, [opts]);
 
-  const editTagClick = useCallback((idx: number) => {
-    const it = tags[idx];
-    storeSetTagScroll(idx);
+  const editFilterClick = useCallback((idx: number) => {
+    const it = filters[idx];
+    storeSetFilterScroll(idx);
     storeSetItemScroll(0);
     navigate({
       to: ".",
       // @ts-ignore
       search: (prev: IUrlSearch) => {
         return {
-          ...prev, e: encodeState({ obj: it, flag: true, modal: "tag" })
+          ...prev, e: encodeState({ obj: it, flag: true, modal: "filter" })
         }
       }
     });
   }, [opts]);
 
 
-
   const contextValue = useMemo(() => ({
-    tags,
+    filters,
     pagination,
     isPending,
     isError,
     error,
     pageChange,
     pageSizeChange,
+    pageSortChange,
     viewItemsClick,
-    editTagClick,
-  } as unknown as ITagListContext), [opts]);
+    editFilterClick,
+  } as unknown as IViewFiltersContext), [opts]);
 
-  return <TagListContext.Provider value={contextValue}> {children} </TagListContext.Provider>
+
+  return <ViewFiltersContext.Provider value={contextValue}>
+    {children}
+  </ViewFiltersContext.Provider>
 }

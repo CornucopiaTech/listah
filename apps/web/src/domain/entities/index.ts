@@ -12,3 +12,5 @@ export * from "./form";
 export * from "./query";
 export * from "./list";
 export * from "./breadcrumb";
+export * from "./table";
+export * from "./listPage";

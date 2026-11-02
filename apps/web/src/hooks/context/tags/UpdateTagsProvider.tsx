@@ -21,7 +21,7 @@ import {
 // Internal imports
 import type {
   ITag,
-  ITagUpdateContext,
+  IUpdateTagsContext,
   IUrlSearch,
   IEditor,
 } from "@/domain/entities";
@@ -30,10 +30,10 @@ import {
   DefaultEditor,
 } from '@/domain/entities';
 import {
-  useUpdateTag,
+  useUpdateTagsQuery,
 } from './queries';
 import {
-  TagUpdateContext
+  UpdateTagsContext
 } from './useTag';
 import {
   prepTagUpdate,
@@ -47,7 +47,7 @@ import {
 
 
 
-export function TagUpdateProvider({ children }: { children: ReactNode }) {
+export function UpdateTagsProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const navigate = useNavigate();
   const routeApi = getRouteApi("/tags");
@@ -66,7 +66,7 @@ export function TagUpdateProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const mutation = useUpdateTag();
+  const mutation = useUpdateTagsQuery();
   const formSubmission = ({ value }: { value: any }) => {
     const submitValue = prepTagUpdate({ value, userId: user?.id || "" });
     mutation.mutate(submitValue);
@@ -97,11 +97,11 @@ export function TagUpdateProvider({ children }: { children: ReactNode }) {
     mutation,
     form,
     title,
-  } as unknown as ITagUpdateContext),
+  } as unknown as IUpdateTagsContext),
     [obj, flag, modal]
   );
 
-  return <TagUpdateContext.Provider value={contextValue}>
+  return <UpdateTagsContext.Provider value={contextValue}>
     {children}
-  </TagUpdateContext.Provider>
+  </UpdateTagsContext.Provider>
 }
