@@ -11,6 +11,15 @@ export const PaginationMenu = [
   { label: "All", value: -1, },
 ]
 
+export type ISortOptions = { value: string, label: string };
+
+export const DefaultSortOptions = [
+  { value: "name asc", label: "Name Asc" },
+  { value: "name desc", label: "Name Desc" },
+  { value: "updatedAt asc", label: "Last Updated Asc" },
+  { value: "updatedAt desc", label: "Last Updated  Desc" },
+];
+
 export const ZPagination = z.object({
   size: z.number().catch(DefaultPageSize),
   page: z.number().catch(DefaultPage),
@@ -28,6 +37,7 @@ export const DefaultPagination: IPagination = {
 
 export class Pagination {
   public paging: IPagination;
+  public sortOptions: ISortOptions[];
 
   constructor(p: IPagination) {
     this.paging = {
@@ -36,6 +46,7 @@ export class Pagination {
       size: this.parseStringInt(p?.size) ?? DefaultPageSize,
       volume: this.parseStringInt(p?.volume) ?? DefaultVolume,
     }
+    this.sortOptions = DefaultSortOptions;
   }
 
   resetPaging() {

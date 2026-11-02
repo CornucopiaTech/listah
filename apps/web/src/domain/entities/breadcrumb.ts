@@ -10,3 +10,9 @@ export type IBreadcrumbContext = {
   route: string,
   parent: string,
 }
+
+export type ICreateContext = {
+  addNewItemClick: () => void,
+  addNewFilterClick: () => void,
+  addNewTagClick: () => void,
+}

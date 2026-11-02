@@ -3,49 +3,66 @@
 import type {
   ReactNode,
 } from 'react';
-import { useTheme, } from '@mui/material/styles';
+import {
+  forwardRef,
+  Fragment
+} from 'react';
+import { useTheme, useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 import Alert from '@mui/material/Alert';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
-import EditIcon from '@mui/icons-material/Edit';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import type { TableComponents } from 'react-virtuoso';
+import Select from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
 
 
-
-
+"sortinput"
 
 // Internal
 import {
   useAppStore,
 } from '@/hooks/store/boundStore';
 import type {
-  ITagListContext,
-  IListContext,
+  IViewTagsContext,
   IFormContext,
-  ITagUpdateContext,
+  ITableContext,
+  IUpdateTagsContext,
+  ICreateContext,
+  IPagingContext,
+  ITag,
 } from '@/domain/entities';
-import {
-  ListItemStyling
-} from "@/helpers/defaults";
 import type { AppTheme } from '@/system/theme';
 import {
-  useTagList,
+  useViewTags,
   FormContext,
-  ListContext,
-  TagListProvider,
-  TagUpdateProvider,
+  PagingContext,
+  TableContext,
+  ViewTagsProvider,
+  UpdateTagsProvider,
   useUpdateTags,
-  ItemSearchProvider,
-  ItemUpdateProvider,
+  SearchItemsProvider,
+  UpdateItemsProvider,
+  CreateProvider,
+  useMutator,
+  BreadcrumbProvider,
 } from "@/hooks/context";
 import {
   getFormArrayTextFieldProps,
@@ -53,36 +70,60 @@ import {
   ItemFormTagBox,
   AppSectionPaper,
   AppContainer,
-  ListLayout,
+  TableLayout,
   ListBox,
   OuterBox,
   FormDialog,
   UpdateFormActions,
   AppTooltip,
-  FlexEndBox,
-  FlexStartBox,
   ItemSearchList,
   ItemUpdate,
+  AppBreadcrumb,
 } from "@/components";
 
 
 
 
+const VirtuosoTableComponents: TableComponents<ITag> = {
+  Scroller: forwardRef<HTMLDivElement>((props, ref) => (
+    <TableContainer component={Paper} {...props} ref={ref} />
+  )),
+  Table: (props) => (
+    <Table {...props} sx={{ borderCollapse: 'separate', tableLayout: 'fixed' }} />
+  ),
+  TableHead: forwardRef<HTMLTableSectionElement>((props, ref) => (
+    <TableHead {...props} ref={ref} />
+  )),
+  TableRow,
+  TableBody: forwardRef<HTMLTableSectionElement>((props, ref) => (
+    <TableBody {...props} ref={ref} />
+  )),
+};
+
 export function Tags() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <AppContainer mw="xl">
-      <TagUpdateProvider> <UpdateTag /> </TagUpdateProvider>
-      <ItemUpdateProvider route="/tags"> <ItemUpdate /> </ItemUpdateProvider>
-      <ItemSearchProvider route="/tags"><ItemSearchList /></ItemSearchProvider>
-      <AppSectionPaper>
-        <TagListProvider> <TagList /> </TagListProvider>
-      </AppSectionPaper>
+      {/* Update Tag Modal. Rendered on Update Tag Click */}
+      <UpdateTagsProvider> <UpdateTag /> </UpdateTagsProvider>
+
+      {/* Update Item Modal. Rendered on Update Item Click */}
+      <UpdateItemsProvider route="/tags"> <ItemUpdate /> </UpdateItemsProvider>
+
+      {/* Item Search Result Modal. Rendered when Item is searched.*/}
+      <SearchItemsProvider route="/tags"><ItemSearchList /></SearchItemsProvider>
+
+      {/* Main Page Content */}
+      <BreadcrumbProvider route="/tags"><AppBreadcrumb sx={{ display: isMobile ? "block" : "none" }} /></BreadcrumbProvider>
+      <CreateProvider>
+        <ViewTagsProvider> <ViewTag /> </ViewTagsProvider>
+      </CreateProvider>
     </AppContainer >
   );
 }
 
-
-export function TagList() {
+export function ViewTag() {
   const {
     tags,
     pagination,
@@ -91,48 +132,219 @@ export function TagList() {
     error,
     pageChange,
     pageSizeChange,
+    pageSortChange,
     viewItemsClick,
     editTagClick,
-  } = useTagList() as unknown as ITagListContext;
+  } = useViewTags() as unknown as IViewTagsContext;
+  const {
+    addNewItemClick,
+    addNewTagClick,
+  } = useMutator() as unknown as ICreateContext;
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const storeTagScroll = useAppStore((state) => state.tagScroll);
 
-  function renderRow(itemKey: number): ReactNode {
+  function renderCell(itemKey: number): ReactNode {
     const item = tags[itemKey];
     const tc = item?.name ?? "";
     const itemcount = item?.count?.toString() ?? "0";
+    const fontSize = isMobile ? "0.9rem" : '1rem';
+    const iconFontSize = isMobile ? "1.1rem" : "1.5rem";
     return (
-      <ListItem key={itemKey + tc} component="div" disablePadding sx={ListItemStyling} >
-        <FlexStartBox >
-          <ListItemButton onClick={() => viewItemsClick(itemKey)}>
-            <ListItemText primary={<Typography variant="body2" >{tc}</Typography>} />
-          </ListItemButton>
-        </FlexStartBox>
-        <FlexEndBox >
-          <Chip variant="contained" sx={{ marginX: "10px", marginY: 0, }}
-            // @ts-ignore
-            color={itemKey % 2 == 0 ? "inherit" : "secondary"} label={itemcount}
-          />
-          <IconButton aria-label="edit" onClick={() => editTagClick(itemKey)}> <AppTooltip title="Edit tag"><EditIcon /></AppTooltip> </IconButton>
-        </FlexEndBox>
-      </ListItem>
+      <Fragment>
+        <TableCell
+          key="name"
+          component='th'
+          scope='row'
+          align='left'
+          onClick={() => viewItemsClick(itemKey)}
+          sx={{
+            fontSize: fontSize,
+          }}>
+          <Typography variant={isMobile ? "body2m" : "body1"}  >{tc}</Typography>
+        </TableCell>
+        <TableCell
+          key="count"
+          component='td'
+          scope={undefined}
+          align='right'
+          sx={{
+            fontSize: fontSize,
+            display: isMobile ? "none" : undefined
+          }}>
+          <Typography variant={isMobile ? "body2m" : "body1"}  >{itemcount}</Typography>
+        </TableCell>
+        <TableCell
+          key="updatedAt"
+          component='td'
+          scope={undefined}
+          align='right'
+          sx={{
+            fontSize: fontSize,
+            display: isMobile ? "none" : undefined
+          }}>
+          <Typography variant={isMobile ? "body2m" : "body1"}  >{item.updatedAt ?? ""}</Typography>
+        </TableCell>
+        <TableCell
+          key="actions"
+          component='td'
+          scope={undefined}
+          align='right'
+          sx={{
+            fontSize: fontSize,
+          }}>
+          <IconButton aria-label="edit" onClick={() => editTagClick(itemKey)}>
+            <AppTooltip title="Edit filter">
+              <EditIcon sx={{ fontSize: iconFontSize }} />
+            </AppTooltip>
+          </IconButton>
+          <IconButton aria-label="edit" onClick={() => editTagClick(itemKey)}>
+            <AppTooltip title="Delete filter">
+              <DeleteIcon sx={{ fontSize: iconFontSize, color: "red" }} />
+            </AppTooltip>
+          </IconButton>
+        </TableCell>
+      </Fragment>
     );
   }
 
-  const contextValue = {
+  function headerContent() {
+    const headerFontSize = isMobile ? "1rem" : '1.4rem';
+    return (
+      <TableRow>
+        <TableCell
+          key="name"
+          variant="head"
+          align='left'
+          style={{ width: isMobile ? 80 : 100 }}
+          sx={{
+            backgroundColor: 'background.paper',
+            fontSize: headerFontSize,
+            fontWeight: 'bold',
+          }} >
+          Name
+        </TableCell>
+        <TableCell
+          key="count"
+          variant="head"
+          align='right'
+          style={{ width: 50 }}
+          sx={{
+            backgroundColor: 'background.paper',
+            fontSize: headerFontSize,
+            fontWeight: 'bold',
+            display: isMobile ? "none" : undefined
+          }} >
+          Usage
+        </TableCell>
+        <TableCell
+          key="updatedAt"
+          variant="head"
+          align='right'
+          style={{ width: 100 }}
+          sx={{
+            backgroundColor: 'background.paper',
+            fontSize: headerFontSize,
+            fontWeight: 'bold',
+            display: isMobile ? "none" : undefined
+          }} >
+          Updated At
+        </TableCell>
+        <TableCell
+          key="actions"
+          variant="head"
+          align='right'
+          style={{ width: 50 }}
+          sx={{
+            backgroundColor: 'background.paper',
+            fontSize: headerFontSize,
+            fontWeight: 'bold'
+          }} >
+          Actions
+        </TableCell>
+      </TableRow>
+    );
+  }
+
+  const tableContextValue = {
     data: tags,
-    pagination: pagination.paging,
     isPending,
     isError,
     error,
     scrollIndex: Math.max(0, storeTagScroll),
+    clickRow: viewItemsClick,
+    renderCell,
+    headerContent,
+    components: VirtuosoTableComponents,
+  } as unknown as ITableContext;
+
+  const pagingContextValue = {
+    pagination: pagination.paging,
     pageChange: tags.length > 0 ? pageChange : undefined,
     pageSizeChange: tags.length > 0 ? pageSizeChange : undefined,
-    clickRow: viewItemsClick,
-    renderRow,
-  } as unknown as IListContext;
+  } as unknown as IPagingContext;
 
   function Shell({ children }: { children: ReactNode }) {
-    return <ListContext.Provider value={contextValue}><ListBox><OuterBox>{children} </OuterBox></ListBox></ListContext.Provider>
+    return (
+      <Stack sx={{ marginTop: "1rem" }}>
+        {/* Add new item, add new tag, add new filter buttons*/}
+        <Stack direction="row" spacing={1}
+          sx={{
+            justifyContent: 'flex-end', alignContent: 'center',
+            display: 'flex', width: '100%', flexWrap: 'wrap',
+            alignItems: 'center'
+          }}>
+          <FormControl sx={{}}>
+            <InputLabel id="sortinput">Sort by</InputLabel>
+            <Select
+              labelId="sortinput"
+              id="sortselect"
+              value={pagination.paging.sort}
+              label="rows-per-page"
+              //  @ts-ignore
+              onChange={pageSortChange}
+              sx={{
+                // height: 36,                     // overall component height
+                height: "fit-content",                     // overall component height
+                '& .MuiSelect-select': {
+                  paddingY: 1.2,                // vertical padding
+                },
+              }} >
+              {pagination.sortOptions.map((i, _) =>
+                <MenuItem value={i.value}> <Typography variant={isMobile ? "condensedBody2" : "body2"} component="div" textAlign={"left"} sx={{}}> {i.label} </Typography>  </MenuItem>
+              )}
+            </Select>
+          </FormControl>
+          <Button size={isMobile ? "small" : "medium"} variant="contained" onClick={addNewTagClick}
+            sx={{ fontSize: isMobile ? "0.6rem" : "1rem", p: 1, }}>
+            <AddIcon sx={{
+              // display: isMobile ? "none" : undefined,
+              fontSize: isMobile ? "1rem" : "1.5rem"
+            }} />
+            <Typography variant={isMobile ? "h7m" : "h7"} component="div" textAlign={"left"} sx={{}}> {isMobile ? "" : "create new "} filter </Typography>
+
+          </Button>
+          <Button size={isMobile ? "small" : "medium"}
+            sx={{ fontSize: isMobile ? "0.6rem" : "1rem", p: 1, }}
+            variant="contained" onClick={addNewItemClick}>
+            <AddIcon sx={{
+              // display: isMobile ? "none" : undefined,
+              fontSize: isMobile ? "1rem" : "1.5rem"
+            }} />
+            <Typography variant={isMobile ? "h7m" : "h7"} component="div" textAlign={"left"} sx={{}}> {isMobile ? "" : "create new "} item </Typography>
+          </Button>
+        </Stack>
+        <AppSectionPaper>
+          <PagingContext.Provider value={pagingContextValue}>
+            <TableContext.Provider value={tableContextValue}>
+              <ListBox>
+                <OuterBox>{children} </OuterBox>
+              </ListBox>
+            </TableContext.Provider>
+          </PagingContext.Provider>
+        </AppSectionPaper>
+      </Stack >
+    );
   }
   if (isPending) {
     return <Shell><LinearProgress /></Shell>
@@ -146,13 +358,12 @@ export function TagList() {
     )
   }
   if (tags.length > 0) {
-    return (<Shell><ListLayout /></Shell>)
+    return (<Shell><TableLayout /></Shell>)
   }
   return (
     <Shell><Alert severity="error">"An error occurred. Please try again"</Alert></Shell>
   )
 }
-
 
 function UpdateTag() {
   const theme: AppTheme = useTheme();
@@ -167,7 +378,7 @@ function UpdateTag() {
     mutation,
     form,
     title,
-  } = useUpdateTags() as unknown as ITagUpdateContext;
+  } = useUpdateTags() as unknown as IUpdateTagsContext;
 
   const content = (
     <Box component="section" >

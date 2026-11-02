@@ -42,6 +42,7 @@ export const ZItem = z.object({
   propObjs: z.nullish(z.array(ZItemFormProps)).catch([]),
   softDelete: z.nullish(z.boolean()).catch(false),
   suspension: z.nullish(z.int()),
+  updatedAt: z.nullish(z.string().catch('')),
 });
 export type IItem = z.infer<typeof ZItem>;
 export const DefaultItem = {
@@ -55,4 +56,5 @@ export const DefaultItem = {
   propObjs: [],
   softDelete: false,
   suspension: null,
+  updatedAt: "",
 }

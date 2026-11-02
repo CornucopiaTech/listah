@@ -51,7 +51,7 @@ export type IFormContextWithBuilder = {
   closeDialog: () => void,
 }
 
-export type ITagUpdateContext = {
+export type IUpdateTagsContext = {
   openDialog: boolean,
   closeDialog: () => void,
   mutation: any,
@@ -59,7 +59,7 @@ export type ITagUpdateContext = {
   title: string,
 }
 
-export type IFilterUpdateContext = {
+export type IUpdateFiltersContext = {
   openDialog: boolean,
   closeDialog: () => void,
   mutation: any,
@@ -71,7 +71,7 @@ export type IFilterUpdateContext = {
   tags: ITag[],
 }
 
-export type IItemUpdateContext = {
+export type IUpdateItemsContext = {
   openDialog: boolean,
   closeDialog: () => void,
   mutation: any,

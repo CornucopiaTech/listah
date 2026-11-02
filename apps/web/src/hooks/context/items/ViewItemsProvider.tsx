@@ -24,7 +24,7 @@ import {
   useAppStore,
 } from '@/hooks/store/boundStore';
 import type {
-  IItemListContext,
+  IViewItemsContext,
   IChildReadRequest,
   IUrlSearch,
   IItemReadResponse,
@@ -38,12 +38,12 @@ import {
   decodeState,
 } from '@/helpers/encoders';
 import {
-  useListItem,
-  ItemListContext,
+  useViewItemQuery,
+  ViewItemsContext,
 } from "@/hooks/context/items";
 
 
-export function ItemListProvider({ children }: { children: ReactNode }) {
+export function ViewItemsProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const storeSetItemScroll = useAppStore((state) => state.setItemScroll);
   const navigate = useNavigate();
@@ -57,7 +57,7 @@ export function ItemListProvider({ children }: { children: ReactNode }) {
   };
   const {
     data, isPending, isError, error
-  }: UseQueryResult<IItemReadResponse> = useListItem(opts);
+  }: UseQueryResult<IItemReadResponse> = useViewItemQuery(opts);
 
   const items = data?.items ?? [];
   const paginationObj = data?.pagination ? data.pagination : opts?.pagination ? opts.pagination : DefaultPagination;
@@ -75,6 +75,20 @@ export function ItemListProvider({ children }: { children: ReactNode }) {
       }
     });
   }, [opts]);
+
+  const pageSortChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    e.stopPropagation()
+    pagination.changeSort(e.target.value);
+    navigate({
+      to: ".",
+      // @ts-ignore
+      search: (prev: IUrlSearch) => {
+        const dPrev = decodeState(prev.c) as unknown as IChildReadRequest;
+        return { ...prev, c: encodeState({ ...dPrev, pagination: pagination.paging }) }
+      }
+    });
+  }, [opts]);
+
   const pageChange = useCallback((event: MouseEvent<HTMLButtonElement> | null, value: number) => {
     if (event) { event.stopPropagation() };
     pagination.changePage(value);
@@ -87,6 +101,8 @@ export function ItemListProvider({ children }: { children: ReactNode }) {
       }
     });
   }, [opts]);
+
+
   const editItemClick = useCallback((idx: number) => {
     storeSetItemScroll(idx);
     const it = items[idx];
@@ -110,7 +126,8 @@ export function ItemListProvider({ children }: { children: ReactNode }) {
     error,
     pageChange,
     pageSizeChange,
+    pageSortChange,
     editItemClick,
-  } as unknown as IItemListContext), [opts]);
-  return <ItemListContext.Provider value={contextValue}> {children} </ItemListContext.Provider>
+  } as unknown as IViewItemsContext), [opts]);
+  return <ViewItemsContext.Provider value={contextValue}> {children} </ViewItemsContext.Provider>
 }

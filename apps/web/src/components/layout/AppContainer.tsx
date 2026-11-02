@@ -21,12 +21,7 @@ import { AppNavDrawer } from "@/components/layout/AppNavDrawer";
 import {
   AppPageContentHeight,
 } from '@/helpers/defaults';
-import {
-  AppDrawerWidth,
-} from '@/helpers/defaults';
-import {
-  useAppStore,
-} from '@/hooks/store/boundStore';
+
 
 
 export function GlobalShell({ children }: { children: ReactNode }) {
@@ -69,9 +64,6 @@ export function AppShell({ children }: { children: ReactNode }) {
 
 
 export function AppContainer({ children, mw }: { children: ReactNode, mw: "xs" | "sm" | "md" | "lg" | "xl" }) {
-  const storeDrawerOpen = useAppStore((state) => state.drawerOpen);
-  const theme: AppTheme = useTheme();
-  const appbarWidth = storeDrawerOpen ? `calc(100% - ${AppDrawerWidth}px)` : `calc(100% - calc(${theme.spacing(7)} + 1px))`;
   return (
     <Container maxWidth={mw} sx={{
       display: 'flex',
@@ -80,10 +72,8 @@ export function AppContainer({ children, mw }: { children: ReactNode, mw: "xs" |
       alignItems: 'center',     // Horizontally centers the content inside the container
       maxHeight: AppPageContentHeight,       // Forces the container to take up the full screen height
       height: AppPageContentHeight,       // Forces the container to take up the full screen height
-      minWidth: `${appbarWidth}`,
-      maxWidth: `${appbarWidth}`,
     }}>
-      <Box sx={{ width: "100%", marginTop: "5rem" }}> {children} </Box>
+      <Box sx={{ width: "100%", marginTop: "2rem" }}> {children} </Box>
     </Container>
   );
 }
