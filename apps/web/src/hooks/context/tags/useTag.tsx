@@ -5,17 +5,17 @@ import {
 } from "react";
 
 import type {
-  ITagListContext,
-  ITagUpdateContext,
+  IViewTagsContext,
+  IUpdateTagsContext,
 } from "@/domain/entities"
 
 
-export const TagListContext = createContext<ITagListContext | undefined>(undefined);
-export function useTagList() {
-  return useContext(TagListContext);
+export const ViewTagsContext = createContext<IViewTagsContext | undefined>(undefined);
+export function useViewTags() {
+  return useContext(ViewTagsContext);
 }
 
-export const TagUpdateContext = createContext<ITagUpdateContext | undefined>(undefined);
+export const UpdateTagsContext = createContext<IUpdateTagsContext | undefined>(undefined);
 export function useUpdateTags() {
-  return useContext(TagUpdateContext);
+  return useContext(UpdateTagsContext);
 }

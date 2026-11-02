@@ -28,7 +28,7 @@ import type {
   IRouteStrings,
   ITagReadResponse,
   IItemForm,
-  IItemUpdateContext,
+  IUpdateItemsContext,
   IItem,
 } from "@/domain/entities";
 import {
@@ -48,9 +48,9 @@ import {
   validateName,
 } from "@/domain/rules";
 import {
-  useUpdateItem,
-  useListTag,
-  ItemUpdateContext,
+  useUpdateItemQuery,
+  useViewTagsQuery,
+  UpdateItemsContext,
 } from "@/hooks/context";
 
 
@@ -106,7 +106,7 @@ function prepFormData({ item, data, }: { item: IItem, data: ITagReadResponse }) 
   return formData;
 }
 
-export function ItemUpdateProvider({ children, route }: { children: ReactNode, route?: IRouteStrings }) {
+export function UpdateItemsProvider({ children, route }: { children: ReactNode, route?: IRouteStrings }) {
   const { user } = useUser();
   const navigate = useNavigate();
   const proute = route ?? "/items";
@@ -121,7 +121,7 @@ export function ItemUpdateProvider({ children, route }: { children: ReactNode, r
   }
   const {
     isPending, data: queryData, error
-  }: UseQueryResult<ITagReadResponse> = useListTag(tagQuery);
+  }: UseQueryResult<ITagReadResponse> = useViewTagsQuery(tagQuery);
   const data = queryData as unknown as ITagReadResponse;
   const tags = data?.tags ?? [];
 
@@ -129,7 +129,7 @@ export function ItemUpdateProvider({ children, route }: { children: ReactNode, r
   const title = item.id == "" ? "Add new item" : "Update item";
   const formData = prepFormData({ item, data, });
 
-  const mutation = useUpdateItem();
+  const mutation = useUpdateItemQuery();
   const formSubmission = ({ value }: { value: IItemForm }) => {
     const submitValue = prepItemUpdate({ value, userId: user?.id || "" });
     mutation.mutate(submitValue);
@@ -185,9 +185,9 @@ export function ItemUpdateProvider({ children, route }: { children: ReactNode, r
     formData,
     isPending,
     error
-  } as unknown as IItemUpdateContext), [obj, flag, modal, proute]);
+  } as unknown as IUpdateItemsContext), [obj, flag, modal, proute]);
 
-  return <ItemUpdateContext.Provider value={contextValue}>
+  return <UpdateItemsContext.Provider value={contextValue}>
     {children}
-  </ItemUpdateContext.Provider>
+  </UpdateItemsContext.Provider>
 }

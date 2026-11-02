@@ -5,23 +5,23 @@ import {
 } from "react";
 
 import type {
-  IItemListContext,
-  IItemUpdateContext,
-  IItemSearchContext,
+  IViewItemsContext,
+  IUpdateItemsContext,
+  ISearchItemsContext,
 } from "@/domain/entities"
 
 
-export const ItemListContext = createContext<IItemListContext | undefined>(undefined);
-export function useListItems() {
-  return useContext(ItemListContext);
+export const ViewItemsContext = createContext<IViewItemsContext | undefined>(undefined);
+export function useViewItems() {
+  return useContext(ViewItemsContext);
 }
 
-export const ItemUpdateContext = createContext<IItemUpdateContext | undefined>(undefined);
+export const UpdateItemsContext = createContext<IUpdateItemsContext | undefined>(undefined);
 export function useUpdateItems() {
-  return useContext(ItemUpdateContext);
+  return useContext(UpdateItemsContext);
 }
 
-export const ItemSearchContext = createContext<IItemSearchContext | undefined>(undefined);
+export const SearchItemsContext = createContext<ISearchItemsContext | undefined>(undefined);
 export function useSearchItems() {
-  return useContext(ItemSearchContext);
+  return useContext(SearchItemsContext);
 }

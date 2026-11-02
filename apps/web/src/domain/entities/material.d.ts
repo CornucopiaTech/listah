@@ -18,11 +18,19 @@ declare module '@mui/material/styles' {
 
   interface TypographyVariants {
     condensedBody2: React.CSSProperties;
+    h6m: React.CSSProperties;
+    h7: React.CSSProperties;
+    h7m: React.CSSProperties;
+    body2m: React.CSSProperties;
   }
 
   // Allows configuration inside createTheme()
   interface TypographyVariantsOptions {
     condensedBody2?: React.CSSProperties;
+    h6m?: React.CSSProperties;
+    h7?: React.CSSProperties;
+    h7m?: React.CSSProperties;
+    body2m?: React.CSSProperties;
   }
 
   interface ButtonPropsVariantOverrides {
@@ -41,6 +49,10 @@ declare module '@mui/material/styles' {
 declare module '@mui/material/Typography' {
   interface TypographyPropsVariantOverrides {
     condensedBody2: true;
+    h6m: true;
+    h7: true;
+    h7m: true;
+    body2m: true;
   }
 }
 
@@ -55,7 +67,6 @@ declare module '@mui/material/Paper' {
 }
 
 
-
 declare module '@mui/material/Chip' {
   interface ChipPropsVariantOverrides {
     contained: true;
@@ -65,7 +76,6 @@ declare module '@mui/material/Chip' {
     color?: 'success' | 'info' | 'warning' | 'inherit' | 'secondary' | 'primary';
   }
 }
-
 
 
 declare module '@mui/material/DialogContent' {

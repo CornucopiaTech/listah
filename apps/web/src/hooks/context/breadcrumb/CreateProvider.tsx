@@ -14,12 +14,12 @@ import {
 
 // Internal imports
 import type {
-  IMutatorContext,
+  ICreateContext,
   IUrlSearch,
 } from "@/domain/entities";
 import {
-  MutatorContext
-} from './useMutators';
+  CreateContext
+} from './useCreate';
 import {
   encodeState,
 } from '@/helpers/encoders';
@@ -31,7 +31,7 @@ import {
 
 
 
-export function MutatorProvider({ children }: { children: ReactNode }) {
+export function CreateProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
 
 
@@ -75,8 +75,8 @@ export function MutatorProvider({ children }: { children: ReactNode }) {
     addNewItemClick,
     addNewFilterClick,
     addNewTagClick,
-  } as unknown as IMutatorContext), []);
+  } as unknown as ICreateContext), []);
 
 
-  return <MutatorContext.Provider value={contextValue}> {children} </MutatorContext.Provider>
+  return <CreateContext.Provider value={contextValue}> {children} </CreateContext.Provider>
 }

@@ -10,7 +10,7 @@ import {
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-
+import { useTheme, useMediaQuery } from '@mui/material';
 
 
 
@@ -22,7 +22,6 @@ import type {
 import {
   useBreadcrumb,
 } from "@/hooks/context";
-
 
 
 
@@ -39,17 +38,18 @@ export function AppBreadcrumb({ sx }: { sx?: any }): ReactNode {
   const titlePlus = title?.length >= maxPrint ? "..." : "";
   const tail = breadcrumbTail || "";
   const tailPlus = tail.length >= maxPrint ? "..." : "";
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   return (<Fragment>
     <Breadcrumbs aria-label="breadcrumb" sx={sx}>
       <Link underline="hover" color="inherit" onClick={() => navigate({ to: "/" })}>
-        <Typography variant="h6" component="div" textAlign={"left"} sx={{}}> Home </Typography>
+        <Typography variant={isMobile ? "h6m" : "h6"} component="div" textAlign={"left"} sx={{}}> Home </Typography>
       </Link>
       <Link underline="hover" color="inherit" onClick={breadcrumbClick}>
-        <Typography variant="h6" component="div" textAlign={"left"} sx={{}}> {title.substring(0, maxPrint) + titlePlus} </Typography>
+        <Typography variant={isMobile ? "h6m" : "h6"} component="div" textAlign={"left"} sx={{}}> {title.substring(0, maxPrint) + titlePlus} </Typography>
       </Link>
-      <Typography variant="h6" component="div" textAlign={"left"}> {tail?.substring(0, maxPrint) + tailPlus} </Typography>
+      <Typography variant={isMobile ? "h6m" : "h6"} component="div" textAlign={"left"}> {tail?.substring(0, maxPrint) + tailPlus} </Typography>
     </Breadcrumbs>
   </Fragment>)
 }

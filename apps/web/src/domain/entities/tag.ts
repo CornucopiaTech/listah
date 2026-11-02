@@ -8,6 +8,7 @@ export const ZTag = z.object({
   props: z.array(z.string()).catch([]),
   count: z.nullish(z.number()).catch(0),
   softDelete: z.nullish(z.boolean().catch(false)),
+  updatedAt: z.nullish(z.string().catch('')),
 });
 export type ITag = z.infer<typeof ZTag>;
 
@@ -18,6 +19,7 @@ export const DefaultTag: ITag = {
   props: [],
   count: 0,
   softDelete: false,
+  updatedAt: "",
 }
 
 

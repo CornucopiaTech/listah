@@ -44,12 +44,12 @@ export function itemGroupOptions(opts: IReadRequest) {
 }
 
 
-export function useListItem(opts: IReadRequest): UseQueryResult<IItemReadResponse> {
+export function useViewItemQuery(opts: IReadRequest): UseQueryResult<IItemReadResponse> {
   return useQuery(itemGroupOptions(opts))
 }
 
 
-export function useUpdateItem() {
+export function useUpdateItemQuery() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (mutateItem: IItem) => {

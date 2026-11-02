@@ -5,18 +5,18 @@ import {
 } from "react";
 
 import type {
-  IFilterListContext,
-  IFilterUpdateContext,
+  IViewFiltersContext,
+  IUpdateFiltersContext,
 } from "@/domain/entities"
 
 
-export const FilterListContext = createContext<IFilterListContext | undefined>(undefined);
-export function useListFilters() {
-  return useContext(FilterListContext);
+export const ViewFiltersContext = createContext<IViewFiltersContext | undefined>(undefined);
+export function useViewFilters() {
+  return useContext(ViewFiltersContext);
 }
 
 
-export const FilterUpdateContext = createContext<IFilterUpdateContext | undefined>(undefined);
+export const UpdateFiltersContext = createContext<IUpdateFiltersContext | undefined>(undefined);
 export function useUpdateFilters() {
-  return useContext(FilterUpdateContext);
+  return useContext(UpdateFiltersContext);
 }

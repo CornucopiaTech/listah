@@ -11,7 +11,7 @@ export type IBreadcrumbContext = {
   parent: string,
 }
 
-export type IMutatorContext = {
+export type ICreateContext = {
   addNewItemClick: () => void,
   addNewFilterClick: () => void,
   addNewTagClick: () => void,
