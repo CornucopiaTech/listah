@@ -66,16 +66,6 @@ export function UpdateFiltersProvider({ children }: { children: ReactNode }) {
   const formFilter = obj ? obj as unknown as IFilter : DefaultFilter;
   const title = formFilter.id == "" ? "Add new filter" : "Update filter";
 
-  const openDialog = flag && modal && modal == "filter" ? flag : false;
-  const closeDialog = () => {
-    form.reset();
-    mutation.reset();
-    navigate({
-      to: ".",
-      // @ts-ignore
-      search: (prev: IUrlSearch) => { return { ...prev, e: encodeState(DefaultEditor) } }
-    });
-  };
   const tagQuery = {
     ...DefaultReadRequest,
     query: { ...DefaultReadQuery, userId: user?.id || "" },
@@ -107,6 +97,16 @@ export function UpdateFiltersProvider({ children }: { children: ReactNode }) {
   formData.tags = formData.tags.sort((a, b) => +b.checked - +a.checked);
 
   const mutation = useUpdateFilterQuery();
+  const openDialog = flag && modal && modal == "filter" ? flag : false;
+  const closeDialog = () => {
+    form.reset();
+    mutation.reset();
+    navigate({
+      to: ".",
+      // @ts-ignore
+      search: (prev: IUrlSearch) => { return { ...prev, e: encodeState(DefaultEditor) } }
+    });
+  };
   function formSubmission({ value }: { value: IFilterForm }): void {
     const submitValue = prepFilterUpdate({ value, userId: user?.id || "" });
     mutation.mutate(submitValue);

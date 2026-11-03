@@ -2,6 +2,7 @@
 import {
   useCallback,
   useMemo,
+  useRef,
 } from 'react';
 import type {
   ReactNode,
@@ -28,6 +29,7 @@ import type {
   ITagReadResponse,
   IReadRequest,
   IUrlSearch,
+  ITag,
 } from "@/domain/entities";
 import {
   DefaultReadQuery,
@@ -44,12 +46,21 @@ import {
   encodeState,
   decodeState
 } from '@/helpers/encoders';
+import {
+  useUpdateTagsQuery,
+} from './queries';
+
 
 
 export function ViewTagsProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const storeSetTagScroll = useAppStore((state) => state.setTagScroll);
   const storeSetItemScroll = useAppStore((state) => state.setItemScroll);
+  const tagsChecked = useAppStore((state) => state.tagsChecked);
+  const setTagsChecked = useAppStore((state) => state.setTagsChecked);
+  const checkedTagSet = useRef<Set<string>>(new Set());
+
+
   const navigate = useNavigate();
   const routeApi = getRouteApi("/tags");
   const { query: urlQuery, pagination: urlPagination } = decodeState(routeApi.useSearch({ select: (search) => search.p, })) as unknown as IReadRequest;
@@ -131,6 +142,39 @@ export function ViewTagsProvider({ children }: { children: ReactNode }) {
     });
   }, [opts]);
 
+  const tagCheck = useCallback((checkedTagId: string) => {
+    // If tag is already checked, uncheck it. Otherwise, check it.
+    const newCheckedTags = tagsChecked.has(checkedTagId) ?
+      tagsChecked.difference(new Set([checkedTagId])) :
+      tagsChecked.union(new Set([checkedTagId]))
+    setTagsChecked(newCheckedTags);
+
+    // const newCheckedTags = checkedTagSet.current.has(checkedTag.id) ?
+    //   checkedTagSet.current.difference(new Set([checkedTag.id])) :
+    //   checkedTagSet.current.union(new Set([checkedTag.id]))
+    // checkedTagSet.current = newCheckedTags;
+  }, []);
+
+  const bulkDelete = useCallback(() => {
+    const mutation = useUpdateTagsQuery();
+
+    let deleted = tags.filter(
+      (val: ITag) => tagsChecked.has(val.id)
+    ).map(
+      (val: ITag) => ({ ...val, softDelete: true })
+    );
+
+    mutation.mutate(deleted);
+    if (mutation.isSuccess) {
+      navigate({
+        to: ".",
+        // @ts-ignore
+        search: (prev: IUrlSearch) => prev
+      });
+      setTagsChecked(new Set());
+      // checkedTagSet.current = new Set();
+    }
+  }, [opts]);
 
 
   const contextValue = useMemo(() => ({
@@ -144,6 +188,9 @@ export function ViewTagsProvider({ children }: { children: ReactNode }) {
     pageSortChange,
     viewItemsClick,
     editTagClick,
+    bulkDelete,
+    tagCheck,
+    checkedTagSet,
   } as unknown as IViewTagsContext), [opts]);
 
   return <ViewTagsContext.Provider value={contextValue}> {children} </ViewTagsContext.Provider>

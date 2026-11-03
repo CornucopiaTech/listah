@@ -2,6 +2,7 @@ import type {
   ChangeEvent,
   MouseEvent,
   ReactNode,
+  RefObject,
 } from 'react';
 
 
@@ -80,6 +81,9 @@ export type IViewTagsContext = {
   pageSortChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
   viewItemsClick: (idx: number) => void,
   editTagClick: (idx: number) => void,
+  bulkDelete: () => void,
+  tagCheck: (checkedTagId: string) => void,
+  checkedTagSet: RefObject<Set<string>>
 }
 
 

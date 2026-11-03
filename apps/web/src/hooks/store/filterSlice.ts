@@ -14,6 +14,7 @@ export const filterInitState: IFilterState = {
   filterModal: false,
   displayFilter: undefined,
   filterScroll: 0,
+  filtersChecked: new Set([]),
 }
 
 

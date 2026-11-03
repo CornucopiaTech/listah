@@ -37,11 +37,13 @@ export type ITagState = {
   tagScroll: number
   tagAlertMsg: string | null | undefined
   alertMsg: string | null | undefined
+  tagsChecked: Set<string>
 }
 export type ITagActions = {
   setTagModal: (tagModal: boolean) => void
   setDisplayTag: (displayTag: undefined | ITag) => void
   setTagScroll: (tagScroll: number) => void
+  setTagsChecked: (tagsChecked: Set<string>) => void
   setTagAlertMsg: (tagAlertMsg: undefined | string) => void
   setAlertMsg: (tagAlertMsg: undefined | string) => void
   reset: () => void
@@ -54,6 +56,7 @@ export type IFilterState = {
   filterModal: boolean
   displayFilter: undefined | IFilter
   filterScroll: number
+  filtersChecked: Set<string>
 }
 export type IFilterActions = {
   setFilterModal: (filterModal: boolean) => void
@@ -74,6 +77,7 @@ export type IItemState = {
   itemTitle: undefined | string
   itemReference: undefined | ITag | IFilter
   itemScroll: number
+  itemsChecked: Set<string>
 }
 export type IItemActions = {
   setMessage: (message: string) => void

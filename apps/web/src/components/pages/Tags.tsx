@@ -5,7 +5,8 @@ import type {
 } from 'react';
 import {
   forwardRef,
-  Fragment
+  Fragment,
+  memo,
 } from 'react';
 import { useTheme, useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
@@ -32,9 +33,9 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import Checkbox from '@mui/material/Checkbox';
+import { TableVirtuoso, } from 'react-virtuoso';
 
-
-"sortinput"
 
 // Internal
 import {
@@ -135,6 +136,9 @@ export function ViewTag() {
     pageSortChange,
     viewItemsClick,
     editTagClick,
+    bulkDelete,
+    tagCheck,
+    checkedTagSet,
   } = useViewTags() as unknown as IViewTagsContext;
   const {
     addNewItemClick,
@@ -143,21 +147,54 @@ export function ViewTag() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const storeTagScroll = useAppStore((state) => state.tagScroll);
+  const tagsChecked = useAppStore((state) => state.tagsChecked);
+  const fontSize = isMobile ? "0.9rem" : '1rem';
+  const iconFontSize = isMobile ? "1.1rem" : "1.5rem";
 
-  function renderCell(itemKey: number): ReactNode {
+  const handleTagCheck = tagCheck
+  const handleItemsClick = viewItemsClick
+  const handleEditClick = editTagClick
+
+  const MemoizedRow = memo((
+    { itemKey, isChecked,
+      // handleTagCheck,
+      // handleItemsClick,
+      // handleEditClick,
+
+    }: {
+      itemKey: number, isChecked: boolean,
+      // handleTagCheck: (i: string) => void,
+      // handleItemsClick: (i: number) => void,
+      // handleEditClick: (i: number) => void,
+    }) => {
     const item = tags[itemKey];
     const tc = item?.name ?? "";
     const itemcount = item?.count?.toString() ?? "0";
-    const fontSize = isMobile ? "0.9rem" : '1rem';
-    const iconFontSize = isMobile ? "1.1rem" : "1.5rem";
+
     return (
       <Fragment>
+        <TableCell
+          key="select"
+          component='th'
+          scope='row'
+          align='left'
+          sx={{
+            fontSize: fontSize,
+          }}>
+          <Checkbox
+            checked={isChecked}
+            onChange={() => handleTagCheck(item.id)}
+            slotProps={{
+              input: { 'aria-label': 'controlled' },
+            }}
+          />
+        </TableCell>
         <TableCell
           key="name"
           component='th'
           scope='row'
           align='left'
-          onClick={() => viewItemsClick(itemKey)}
+          onClick={() => handleItemsClick(itemKey)}
           sx={{
             fontSize: fontSize,
           }}>
@@ -193,12 +230,12 @@ export function ViewTag() {
           sx={{
             fontSize: fontSize,
           }}>
-          <IconButton aria-label="edit" onClick={() => editTagClick(itemKey)}>
+          <IconButton aria-label="edit" onClick={() => handleEditClick(itemKey)}>
             <AppTooltip title="Edit filter">
               <EditIcon sx={{ fontSize: iconFontSize }} />
             </AppTooltip>
           </IconButton>
-          <IconButton aria-label="edit" onClick={() => editTagClick(itemKey)}>
+          <IconButton aria-label="edit" onClick={() => handleEditClick(itemKey)}>
             <AppTooltip title="Delete filter">
               <DeleteIcon sx={{ fontSize: iconFontSize, color: "red" }} />
             </AppTooltip>
@@ -206,12 +243,33 @@ export function ViewTag() {
         </TableCell>
       </Fragment>
     );
-  }
+  }, (prevProps, nextProps) => {
+    // Only re-render if the checked state or name explicitly changes
+    return (
+      prevProps.itemKey === nextProps.itemKey &&
+      prevProps.isChecked === nextProps.isChecked //&&
+      // prevProps.handleTagCheck === nextProps.handleTagCheck &&
+      // prevProps.handleItemsClick === nextProps.handleItemsClick &&
+      // prevProps.handleEditClick === nextProps.handleEditClick
+    );
+  });
 
   function headerContent() {
     const headerFontSize = isMobile ? "1rem" : '1.4rem';
     return (
       <TableRow>
+        <TableCell
+          key="select"
+          variant="head"
+          align='left'
+          style={{ width: 20 }}
+          sx={{
+            backgroundColor: 'background.paper',
+            fontSize: headerFontSize,
+            fontWeight: 'bold',
+          }} >
+          Select
+        </TableCell>
         <TableCell
           key="name"
           variant="head"
@@ -265,18 +323,6 @@ export function ViewTag() {
       </TableRow>
     );
   }
-
-  const tableContextValue = {
-    data: tags,
-    isPending,
-    isError,
-    error,
-    scrollIndex: Math.max(0, storeTagScroll),
-    clickRow: viewItemsClick,
-    renderCell,
-    headerContent,
-    components: VirtuosoTableComponents,
-  } as unknown as ITableContext;
 
   const pagingContextValue = {
     pagination: pagination.paging,
@@ -336,11 +382,9 @@ export function ViewTag() {
         </Stack>
         <AppSectionPaper>
           <PagingContext.Provider value={pagingContextValue}>
-            <TableContext.Provider value={tableContextValue}>
-              <ListBox>
-                <OuterBox>{children} </OuterBox>
-              </ListBox>
-            </TableContext.Provider>
+            <ListBox>
+              <OuterBox>{children} </OuterBox>
+            </ListBox>
           </PagingContext.Provider>
         </AppSectionPaper>
       </Stack >
@@ -358,7 +402,22 @@ export function ViewTag() {
     )
   }
   if (tags.length > 0) {
-    return (<Shell><TableLayout /></Shell>)
+    return (<Shell>
+      <TableVirtuoso
+        data={tags}
+        components={VirtuosoTableComponents}
+        fixedHeaderContent={headerContent}
+        itemContent={(index, item) => (
+          <MemoizedRow
+            itemKey={index}
+            isChecked={tagsChecked.has(item.id)}
+          // handleTagCheck={tagCheck}
+          // handleItemsClick={viewItemsClick}
+          // handleEditClick={editTagClick}
+          />
+        )}
+      />
+    </Shell>)
   }
   return (
     <Shell><Alert severity="error">"An error occurred. Please try again"</Alert></Shell>

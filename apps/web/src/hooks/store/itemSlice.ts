@@ -25,6 +25,7 @@ export const itemInitState: IItemState = {
   itemTitle: undefined,
   itemReference: undefined,
   itemScroll: 0,
+  itemsChecked: new Set([]),
 }
 
 export const createItemSlice: StateCreator<

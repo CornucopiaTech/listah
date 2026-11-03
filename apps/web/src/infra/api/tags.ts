@@ -24,7 +24,7 @@ import {
 
 
 
-export async function postTag(t: ITag) {
+export async function postTag(t: ITag[]) {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.updateTag}`;
   try {
     const token = await getToken();
@@ -33,7 +33,7 @@ export async function postTag(t: ITag) {
     }
     const req = new Request(url, {
       method: "POST",
-      body: JSON.stringify({ tags: [t] }),
+      body: JSON.stringify({ tags: t }),
       headers: {
         "Content-Type": "application/json",
         "Accept": "*/*",

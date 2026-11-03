@@ -12,10 +12,10 @@ import type {
 
 // Internal
 import {
-  ZTag,
+  ZTags,
 } from "@/domain/entities";
 import type {
-  ITag,
+  ITags,
   IReadRequest,
   ITagReadResponse,
   ITagPropertyReadResponse,
@@ -64,8 +64,8 @@ export function useViewTagsPropertyQuery(opts: IReadRequest): UseQueryResult<ITa
 export function useUpdateTagsQuery() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (mutateTag: ITag) => {
-      const mi = ZTag.parse(mutateTag);
+    mutationFn: async (mutateTag: ITags) => {
+      const mi = ZTags.parse(mutateTag);
       return postTag(mi);
     },
     onSuccess: async () => {

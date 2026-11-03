@@ -12,6 +12,10 @@ export const ZTag = z.object({
 });
 export type ITag = z.infer<typeof ZTag>;
 
+
+export const ZTags = z.array(ZTag);
+export type ITags = z.infer<typeof ZTags>;
+
 export const DefaultTag: ITag = {
   id: "",
   userId: "",
