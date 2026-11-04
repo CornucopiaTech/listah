@@ -58,7 +58,8 @@ export function ViewTagsProvider({ children }: { children: ReactNode }) {
   const storeSetItemScroll = useAppStore((state) => state.setItemScroll);
   const tagsChecked = useAppStore((state) => state.tagsChecked);
   const setTagsChecked = useAppStore((state) => state.setTagsChecked);
-  const checkedTagSet = useRef<Set<string>>(new Set());
+  const setAllTagsChecked = useAppStore((state) => state.setAllTagsChecked);
+  const allTagsChecked = useAppStore((state) => state.allTagsChecked);
 
 
   const navigate = useNavigate();
@@ -101,7 +102,9 @@ export function ViewTagsProvider({ children }: { children: ReactNode }) {
   }, [opts]);
 
   const pageSortChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    pagination.changeSort(e.target.value);
+    const targetValue = e?.target?.value || "";
+
+    pagination.changeSort(targetValue);
     navigate({
       to: ".",
       // @ts-ignore
@@ -153,7 +156,11 @@ export function ViewTagsProvider({ children }: { children: ReactNode }) {
     //   checkedTagSet.current.difference(new Set([checkedTag.id])) :
     //   checkedTagSet.current.union(new Set([checkedTag.id]))
     // checkedTagSet.current = newCheckedTags;
-  }, []);
+  }, [opts]);
+
+  const toggleSelectAllTags = useCallback(() => {
+    setAllTagsChecked(!allTagsChecked);
+  }, [opts]);
 
   const bulkDelete = useCallback(() => {
     const mutation = useUpdateTagsQuery();
@@ -190,7 +197,7 @@ export function ViewTagsProvider({ children }: { children: ReactNode }) {
     editTagClick,
     bulkDelete,
     tagCheck,
-    checkedTagSet,
+    toggleSelectAllTags,
   } as unknown as IViewTagsContext), [opts]);
 
   return <ViewTagsContext.Provider value={contextValue}> {children} </ViewTagsContext.Provider>

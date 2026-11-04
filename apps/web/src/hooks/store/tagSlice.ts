@@ -18,6 +18,7 @@ export const tagInitState: ITagState = {
   tagScroll: 0,
   tagAlertMsg: undefined,
   tagsChecked: new Set(),
+  allTagsChecked: false,
   alertMsg: undefined,
 }
 
@@ -32,6 +33,7 @@ export const createTagSlice: StateCreator<
   setDisplayTag: (displayTag: undefined | ITag) => set(() => ({ displayTag })),
   setTagScroll: (tagScroll: undefined | number) => set(() => ({ tagScroll })),
   setTagsChecked: (tagsChecked: Set<string>) => set(() => ({ tagsChecked })),
+  setAllTagsChecked: (allTagsChecked: boolean) => set(() => ({ allTagsChecked })),
   setTagAlertMsg: (tagAlertMsg: undefined | string) => set(() => ({ tagAlertMsg })),
   setAlertMsg: (alertMsg: undefined | string) => set(() => ({ alertMsg })),
   reset: () => set(tagInitState),

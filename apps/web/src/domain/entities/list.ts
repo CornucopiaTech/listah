@@ -82,8 +82,9 @@ export type IViewTagsContext = {
   viewItemsClick: (idx: number) => void,
   editTagClick: (idx: number) => void,
   bulkDelete: () => void,
+  selectAll: () => void,
   tagCheck: (checkedTagId: string) => void,
-  checkedTagSet: RefObject<Set<string>>
+  toggleSelectAllTags: () => void,
 }
 
 

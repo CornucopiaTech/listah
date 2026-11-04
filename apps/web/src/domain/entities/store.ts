@@ -38,12 +38,14 @@ export type ITagState = {
   tagAlertMsg: string | null | undefined
   alertMsg: string | null | undefined
   tagsChecked: Set<string>
+  allTagsChecked: boolean
 }
 export type ITagActions = {
   setTagModal: (tagModal: boolean) => void
   setDisplayTag: (displayTag: undefined | ITag) => void
   setTagScroll: (tagScroll: number) => void
   setTagsChecked: (tagsChecked: Set<string>) => void
+  setAllTagsChecked: (allTagsChecked: boolean) => void
   setTagAlertMsg: (tagAlertMsg: undefined | string) => void
   setAlertMsg: (tagAlertMsg: undefined | string) => void
   reset: () => void

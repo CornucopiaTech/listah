@@ -7,6 +7,9 @@ import {
   forwardRef,
   Fragment,
   memo,
+  useMemo,
+  useEffect,
+  useRef,
 } from 'react';
 import { useTheme, useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
@@ -35,7 +38,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Checkbox from '@mui/material/Checkbox';
 import { TableVirtuoso, } from 'react-virtuoso';
-
+import ButtonGroup from '@mui/material/ButtonGroup';
 
 // Internal
 import {
@@ -44,7 +47,6 @@ import {
 import type {
   IViewTagsContext,
   IFormContext,
-  ITableContext,
   IUpdateTagsContext,
   ICreateContext,
   IPagingContext,
@@ -55,7 +57,6 @@ import {
   useViewTags,
   FormContext,
   PagingContext,
-  TableContext,
   ViewTagsProvider,
   UpdateTagsProvider,
   useUpdateTags,
@@ -71,7 +72,6 @@ import {
   ItemFormTagBox,
   AppSectionPaper,
   AppContainer,
-  TableLayout,
   ListBox,
   OuterBox,
   FormDialog,
@@ -90,7 +90,11 @@ const VirtuosoTableComponents: TableComponents<ITag> = {
     <TableContainer component={Paper} {...props} ref={ref} />
   )),
   Table: (props) => (
-    <Table {...props} sx={{ borderCollapse: 'separate', tableLayout: 'fixed' }} />
+    <Table {...props} size="small" sx={{
+      borderCollapse: 'separate',
+
+      // , tableLayout: 'fixed'
+    }} />
   ),
   TableHead: forwardRef<HTMLTableSectionElement>((props, ref) => (
     <TableHead {...props} ref={ref} />
@@ -118,27 +122,192 @@ export function Tags() {
       {/* Main Page Content */}
       <BreadcrumbProvider route="/tags"><AppBreadcrumb sx={{ display: isMobile ? "block" : "none" }} /></BreadcrumbProvider>
       <CreateProvider>
-        <ViewTagsProvider> <ViewTag /> </ViewTagsProvider>
+        <ViewTagsProvider> <ViewTagShell><ViewTag /></ViewTagShell> </ViewTagsProvider>
       </CreateProvider>
     </AppContainer >
   );
 }
 
-export function ViewTag() {
+const RowContent = memo(function RowContent(
+  {
+    item, index, checked, isMobile, allChecked,
+    handleCheck, handleEdit, handleViewUsage
+  }: {
+    item: ITag, index: number, checked: boolean,
+    isMobile: boolean, allChecked: boolean,
+    handleCheck: (i: string) => void,
+    handleEdit: (i: number) => void,
+    handleViewUsage: (i: number) => void
+  }) {
+  const tc = item?.name ?? "";
+  const itemcount = item?.count?.toString() ?? "0";
+  const fontSize = isMobile ? "0.9rem" : '1rem';
+  const iconFontSize = isMobile ? "1.1rem" : "1.5rem";
+
+  return (
+    <Fragment>
+      <TableCell
+        key="select"
+        component='td'
+        scope={undefined}
+        align='left'
+        sx={{
+          fontSize: fontSize,
+        }}>
+        <Checkbox disableRipple
+          checked={checked || allChecked}
+          onChange={() => handleCheck(item.id)}
+          slotProps={{
+            input: { 'aria-label': 'controlled' },
+          }}
+        />
+      </TableCell>
+      <TableCell
+        key="name"
+        component='th'
+        scope='row'
+        align='left'
+        onClick={() => handleViewUsage(index)}
+        sx={{
+          fontSize: fontSize,
+        }}>
+        <Typography variant={isMobile ? "body2m" : "body1"}  >{tc}</Typography>
+      </TableCell>
+      <TableCell
+        key="count"
+        component='td'
+        scope={undefined}
+        align='right'
+        sx={{
+          fontSize: fontSize,
+          display: isMobile ? "none" : undefined
+        }}>
+        <Typography variant={isMobile ? "body2m" : "body1"}  >{itemcount}</Typography>
+      </TableCell>
+      <TableCell
+        key="updatedAt"
+        component='td'
+        scope={undefined}
+        align='right'
+        sx={{
+          fontSize: fontSize,
+          display: isMobile ? "none" : undefined
+        }}>
+        <Typography variant={isMobile ? "body2m" : "body1"}  >{item.updatedAt ?? ""}</Typography>
+      </TableCell>
+      <TableCell
+        key="actions"
+        component='td'
+        scope={undefined}
+        align='right'
+        sx={{
+          fontSize: fontSize,
+        }}>
+        <IconButton aria-label="edit" onClick={() => handleEdit(index)}>
+          <AppTooltip title="Edit filter">
+            <EditIcon sx={{ fontSize: iconFontSize }} />
+          </AppTooltip>
+        </IconButton>
+        <IconButton aria-label="edit" onClick={() => handleEdit(index)}>
+          <AppTooltip title="Delete filter">
+            <DeleteIcon sx={{ fontSize: iconFontSize, color: "red" }} />
+          </AppTooltip>
+        </IconButton>
+      </TableCell>
+    </Fragment>
+  );
+});
+
+
+function HeaderContent({ isMobile }: { isMobile: boolean }) {
+  const {
+    toggleSelectAllTags,
+  } = useViewTags() as unknown as IViewTagsContext;
+  const allTagsChecked = useAppStore((state) => state.allTagsChecked);
+  const headerFontSize = isMobile ? "1rem" : '1.4rem';
+
+
+  return (
+    <TableRow sx={{
+    }}>
+      <TableCell
+        key="select"
+        variant="head"
+        align='left'
+        style={{ width: 20 }}
+        sx={{
+          // backgroundColor: 'background.paper',
+          fontSize: headerFontSize,
+          fontWeight: 'bold',
+        }} >
+        <Checkbox disableRipple
+          checked={allTagsChecked}
+          onChange={toggleSelectAllTags}
+          slotProps={{
+            input: { 'aria-label': 'controlled' },
+          }}
+        />
+        Select
+      </TableCell>
+      <TableCell
+        key="name"
+        variant="head"
+        align='left'
+        style={{ width: isMobile ? 80 : 100 }}
+        sx={{
+          fontSize: headerFontSize,
+          fontWeight: 'bold',
+        }} >
+        Name
+      </TableCell>
+      <TableCell
+        key="count"
+        variant="head"
+        align='right'
+        style={{ width: 50 }}
+        sx={{
+          fontSize: headerFontSize,
+          fontWeight: 'bold',
+          display: isMobile ? "none" : undefined
+        }} >
+        Usage
+      </TableCell>
+      <TableCell
+        key="updatedAt"
+        variant="head"
+        align='right'
+        style={{ width: 100 }}
+        sx={{
+          fontSize: headerFontSize,
+          fontWeight: 'bold',
+          display: isMobile ? "none" : undefined
+        }} >
+        Updated At
+      </TableCell>
+      <TableCell
+        key="actions"
+        variant="head"
+        align='right'
+        style={{ width: 50 }}
+        sx={{
+          // backgroundColor: 'background.paper',
+          fontSize: headerFontSize,
+          fontWeight: 'bold'
+        }} >
+        Actions
+      </TableCell>
+    </TableRow >
+  );
+}
+
+export function ViewTagShell({ children }: { children: ReactNode }) {
   const {
     tags,
     pagination,
-    isPending,
-    isError,
-    error,
     pageChange,
     pageSizeChange,
     pageSortChange,
-    viewItemsClick,
-    editTagClick,
     bulkDelete,
-    tagCheck,
-    checkedTagSet,
   } = useViewTags() as unknown as IViewTagsContext;
   const {
     addNewItemClick,
@@ -146,202 +315,25 @@ export function ViewTag() {
   } = useMutator() as unknown as ICreateContext;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const storeTagScroll = useAppStore((state) => state.tagScroll);
   const tagsChecked = useAppStore((state) => state.tagsChecked);
-  const fontSize = isMobile ? "0.9rem" : '1rem';
-  const iconFontSize = isMobile ? "1.1rem" : "1.5rem";
+  const allTagsChecked = useAppStore((state) => state.allTagsChecked);
 
-  const handleTagCheck = tagCheck
-  const handleItemsClick = viewItemsClick
-  const handleEditClick = editTagClick
-
-  const MemoizedRow = memo((
-    { itemKey, isChecked,
-      // handleTagCheck,
-      // handleItemsClick,
-      // handleEditClick,
-
-    }: {
-      itemKey: number, isChecked: boolean,
-      // handleTagCheck: (i: string) => void,
-      // handleItemsClick: (i: number) => void,
-      // handleEditClick: (i: number) => void,
-    }) => {
-    const item = tags[itemKey];
-    const tc = item?.name ?? "";
-    const itemcount = item?.count?.toString() ?? "0";
-
-    return (
-      <Fragment>
-        <TableCell
-          key="select"
-          component='th'
-          scope='row'
-          align='left'
-          sx={{
-            fontSize: fontSize,
-          }}>
-          <Checkbox
-            checked={isChecked}
-            onChange={() => handleTagCheck(item.id)}
-            slotProps={{
-              input: { 'aria-label': 'controlled' },
-            }}
-          />
-        </TableCell>
-        <TableCell
-          key="name"
-          component='th'
-          scope='row'
-          align='left'
-          onClick={() => handleItemsClick(itemKey)}
-          sx={{
-            fontSize: fontSize,
-          }}>
-          <Typography variant={isMobile ? "body2m" : "body1"}  >{tc}</Typography>
-        </TableCell>
-        <TableCell
-          key="count"
-          component='td'
-          scope={undefined}
-          align='right'
-          sx={{
-            fontSize: fontSize,
-            display: isMobile ? "none" : undefined
-          }}>
-          <Typography variant={isMobile ? "body2m" : "body1"}  >{itemcount}</Typography>
-        </TableCell>
-        <TableCell
-          key="updatedAt"
-          component='td'
-          scope={undefined}
-          align='right'
-          sx={{
-            fontSize: fontSize,
-            display: isMobile ? "none" : undefined
-          }}>
-          <Typography variant={isMobile ? "body2m" : "body1"}  >{item.updatedAt ?? ""}</Typography>
-        </TableCell>
-        <TableCell
-          key="actions"
-          component='td'
-          scope={undefined}
-          align='right'
-          sx={{
-            fontSize: fontSize,
-          }}>
-          <IconButton aria-label="edit" onClick={() => handleEditClick(itemKey)}>
-            <AppTooltip title="Edit filter">
-              <EditIcon sx={{ fontSize: iconFontSize }} />
-            </AppTooltip>
-          </IconButton>
-          <IconButton aria-label="edit" onClick={() => handleEditClick(itemKey)}>
-            <AppTooltip title="Delete filter">
-              <DeleteIcon sx={{ fontSize: iconFontSize, color: "red" }} />
-            </AppTooltip>
-          </IconButton>
-        </TableCell>
-      </Fragment>
-    );
-  }, (prevProps, nextProps) => {
-    // Only re-render if the checked state or name explicitly changes
-    return (
-      prevProps.itemKey === nextProps.itemKey &&
-      prevProps.isChecked === nextProps.isChecked //&&
-      // prevProps.handleTagCheck === nextProps.handleTagCheck &&
-      // prevProps.handleItemsClick === nextProps.handleItemsClick &&
-      // prevProps.handleEditClick === nextProps.handleEditClick
-    );
-  });
-
-  function headerContent() {
-    const headerFontSize = isMobile ? "1rem" : '1.4rem';
-    return (
-      <TableRow>
-        <TableCell
-          key="select"
-          variant="head"
-          align='left'
-          style={{ width: 20 }}
-          sx={{
-            backgroundColor: 'background.paper',
-            fontSize: headerFontSize,
-            fontWeight: 'bold',
-          }} >
-          Select
-        </TableCell>
-        <TableCell
-          key="name"
-          variant="head"
-          align='left'
-          style={{ width: isMobile ? 80 : 100 }}
-          sx={{
-            backgroundColor: 'background.paper',
-            fontSize: headerFontSize,
-            fontWeight: 'bold',
-          }} >
-          Name
-        </TableCell>
-        <TableCell
-          key="count"
-          variant="head"
-          align='right'
-          style={{ width: 50 }}
-          sx={{
-            backgroundColor: 'background.paper',
-            fontSize: headerFontSize,
-            fontWeight: 'bold',
-            display: isMobile ? "none" : undefined
-          }} >
-          Usage
-        </TableCell>
-        <TableCell
-          key="updatedAt"
-          variant="head"
-          align='right'
-          style={{ width: 100 }}
-          sx={{
-            backgroundColor: 'background.paper',
-            fontSize: headerFontSize,
-            fontWeight: 'bold',
-            display: isMobile ? "none" : undefined
-          }} >
-          Updated At
-        </TableCell>
-        <TableCell
-          key="actions"
-          variant="head"
-          align='right'
-          style={{ width: 50 }}
-          sx={{
-            backgroundColor: 'background.paper',
-            fontSize: headerFontSize,
-            fontWeight: 'bold'
-          }} >
-          Actions
-        </TableCell>
-      </TableRow>
-    );
-  }
+  const canBulkDelete = allTagsChecked || tagsChecked.size > 0;
+  const deleteButtonAction = canBulkDelete ? bulkDelete : () => undefined;
 
   const pagingContextValue = {
     pagination: pagination.paging,
     pageChange: tags.length > 0 ? pageChange : undefined,
     pageSizeChange: tags.length > 0 ? pageSizeChange : undefined,
   } as unknown as IPagingContext;
+  return (
+    <Stack sx={{ marginTop: "1rem" }}>
 
-  function Shell({ children }: { children: ReactNode }) {
-    return (
-      <Stack sx={{ marginTop: "1rem" }}>
-        {/* Add new item, add new tag, add new filter buttons*/}
-        <Stack direction="row" spacing={1}
-          sx={{
-            justifyContent: 'flex-end', alignContent: 'center',
-            display: 'flex', width: '100%', flexWrap: 'wrap',
-            alignItems: 'center'
-          }}>
+      {/* Add new item, add new tag, add new filter buttons*/}
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, md: 3, lg: 3 }} >
           <FormControl sx={{}}>
-            <InputLabel id="sortinput">Sort by</InputLabel>
+            <InputLabel id="sortinput">Sort</InputLabel>
             <Select
               labelId="sortinput"
               id="sortselect"
@@ -353,7 +345,7 @@ export function ViewTag() {
                 // height: 36,                     // overall component height
                 height: "fit-content",                     // overall component height
                 '& .MuiSelect-select': {
-                  paddingY: 1.2,                // vertical padding
+                  paddingY: 1,                // vertical padding
                 },
               }} >
               {pagination.sortOptions.map((i, _) =>
@@ -361,66 +353,117 @@ export function ViewTag() {
               )}
             </Select>
           </FormControl>
-          <Button size={isMobile ? "small" : "medium"} variant="contained" onClick={addNewTagClick}
-            sx={{ fontSize: isMobile ? "0.6rem" : "1rem", p: 1, }}>
-            <AddIcon sx={{
-              // display: isMobile ? "none" : undefined,
-              fontSize: isMobile ? "1rem" : "1.5rem"
-            }} />
-            <Typography variant={isMobile ? "h7m" : "h7"} component="div" textAlign={"left"} sx={{}}> {isMobile ? "" : "create new "} filter </Typography>
+        </Grid>
+        <Grid size={{ xs: 3, md: 3, lg: 3 }}
+          sx={{
+            justifyContent: 'space-between',
+            display: 'flex',
+          }}>
+          <ButtonGroup variant="contained" aria-label="Basic button group" sx={{ mx: 1 }}>
+            <Button variant="contained" onClick={deleteButtonAction} startIcon={<DeleteIcon sx={{ fontSize: isMobile ? "1rem" : "1.5rem" }} />}>
+              <Typography variant={isMobile ? "h7m" : "h7"} component="div" textAlign={"left"} sx={{}}> delete {isMobile ? "" : " selected "} </Typography>
+            </Button>
+          </ButtonGroup>
+        </Grid>
+        <Grid size={{ xs: 3, md: 3, lg: 3 }}
+          sx={{
+            justifyContent: 'space-between',
+            display: 'flex',
+          }}>
+          <ButtonGroup variant="contained" aria-label="Basic button group" sx={{ mx: 1 }}>
+            <Button
+              variant="contained"
+              onClick={addNewTagClick}
+              startIcon={<AddIcon sx={{ fontSize: isMobile ? "1rem" : "1.5rem" }} />}>
+              <Typography variant={isMobile ? "h7m" : "h7"} component="div" textAlign={"left"} sx={{}}> {isMobile ? "" : "create new "} tag </Typography>
+            </Button>
+          </ButtonGroup>
+        </Grid>
+        <Grid size={{ xs: 3, md: 3, lg: 3 }}
+          sx={{
+            justifyContent: 'space-between',
+            display: 'flex',
+          }}>
+          <ButtonGroup variant="contained" aria-label="Basic button group" sx={{ mx: 1 }}>
+            <Button variant="contained" onClick={addNewItemClick} startIcon={<AddIcon sx={{ fontSize: isMobile ? "1rem" : "1.5rem" }} />}>
+              <Typography variant={isMobile ? "h7m" : "h7"} component="div" textAlign={"left"} sx={{}}> {isMobile ? "" : "create new "} item </Typography>
+            </Button>
+          </ButtonGroup>
+        </Grid>
+      </Grid>
 
-          </Button>
-          <Button size={isMobile ? "small" : "medium"}
-            sx={{ fontSize: isMobile ? "0.6rem" : "1rem", p: 1, }}
-            variant="contained" onClick={addNewItemClick}>
-            <AddIcon sx={{
-              // display: isMobile ? "none" : undefined,
-              fontSize: isMobile ? "1rem" : "1.5rem"
-            }} />
-            <Typography variant={isMobile ? "h7m" : "h7"} component="div" textAlign={"left"} sx={{}}> {isMobile ? "" : "create new "} item </Typography>
-          </Button>
-        </Stack>
-        <AppSectionPaper>
-          <PagingContext.Provider value={pagingContextValue}>
-            <ListBox>
-              <OuterBox>{children} </OuterBox>
-            </ListBox>
-          </PagingContext.Provider>
-        </AppSectionPaper>
-      </Stack >
-    );
-  }
+      <AppSectionPaper>
+        <PagingContext.Provider value={pagingContextValue}>
+          <ListBox>
+            <OuterBox>{children} </OuterBox>
+          </ListBox>
+        </PagingContext.Provider>
+      </AppSectionPaper>
+    </Stack >
+  );
+}
+
+export function ViewTag() {
+  const {
+    tags,
+    isPending,
+    error,
+    viewItemsClick,
+    editTagClick,
+    tagCheck,
+  } = useViewTags() as unknown as IViewTagsContext;
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const tagsChecked = useAppStore((state) => state.tagsChecked);
+  const allTagsChecked = useAppStore((state) => state.allTagsChecked);
+
+  const context = useMemo(
+    () => ({
+      isMobile,
+      selected: tagsChecked,
+      allSelected: allTagsChecked,
+      handleSelected: tagCheck,
+      handleViewUsage: viewItemsClick,
+      handleEdit: editTagClick
+    }),
+    [tagsChecked, tagCheck, editTagClick, viewItemsClick]
+  );
+
   if (isPending) {
-    return <Shell><LinearProgress /></Shell>
+    return <LinearProgress />
   }
   if (error) {
-    return <Shell><Alert severity="error">{error.message || "An error occurred. Please try again"}</Alert></Shell>
+    return <Alert severity="error">{error.message || "An error occurred. Please try again"}</Alert>
   }
   if (tags.length == 0) {
     return (
-      <Shell><Typography variant="h6"> No items found </Typography></Shell>
+      <Typography variant="h6"> No items found </Typography>
     )
   }
   if (tags.length > 0) {
-    return (<Shell>
+    return (<Fragment>
       <TableVirtuoso
         data={tags}
+        context={context}
+        computeItemKey={(_, row) => row.id}
         components={VirtuosoTableComponents}
-        fixedHeaderContent={headerContent}
-        itemContent={(index, item) => (
-          <MemoizedRow
-            itemKey={index}
-            isChecked={tagsChecked.has(item.id)}
-          // handleTagCheck={tagCheck}
-          // handleItemsClick={viewItemsClick}
-          // handleEditClick={editTagClick}
+        fixedHeaderContent={() => <HeaderContent isMobile={isMobile} />}
+        itemContent={
+          (i, row, ctx) => <RowContent
+            isMobile={ctx.isMobile}
+            item={row} index={i}
+            checked={ctx.selected.has(row.id)}
+            allChecked={ctx.allSelected}
+            handleCheck={ctx.handleSelected}
+            handleEdit={ctx.handleEdit}
+            handleViewUsage={ctx.handleViewUsage}
           />
-        )}
+        }
       />
-    </Shell>)
+    </Fragment>)
   }
   return (
-    <Shell><Alert severity="error">"An error occurred. Please try again"</Alert></Shell>
+    <Alert severity="error">"An error occurred. Please try again"</Alert>
   )
 }
 
