@@ -6,7 +6,7 @@ import {
 
 import type {
   IBreadcrumbContext,
-} from "@/domain/entities"
+} from "@/app-types"
 
 
 

@@ -19,7 +19,7 @@ import {
 } from '@/hooks/context';
 import type {
   IFormContext,
-} from "@/domain/entities";
+} from "@/app-types";
 import {
   CloseDialogButton,
 } from "@/components";

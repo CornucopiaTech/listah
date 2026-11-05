@@ -10,7 +10,7 @@ import { Virtuoso } from 'react-virtuoso';
 
 import type {
   IListContext,
-} from '@/domain/entities';
+} from '@/app-types';
 import { useLists } from "@/hooks/context/lists";
 
 

@@ -30,13 +30,13 @@ import type {
   IUrlSearch,
   IItemReadResponse,
   IRouteStrings,
-} from "@/domain/entities";
+} from "@/app-types";
 import {
   DefaultPagination,
   Pagination,
   DefaultEditor,
   DefaultSearchReadRequest,
-} from '@/domain/entities';
+} from '@/app-types';
 import {
   encodeState,
   decodeState,

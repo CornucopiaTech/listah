@@ -15,11 +15,11 @@ import { useUser } from '@clerk/react';
 
 import type {
   IReadQuery,
-} from "@/domain/entities";
+} from "@/app-types";
 import {
   DefaultSearchReadRequest,
   DefaultReadQuery,
-} from "@/domain/entities";
+} from "@/app-types";
 import { encodeState } from '@/helpers/encoders';
 import { AppSearchPaper } from '@/components/core/AppPaper';
 import { useAppStore } from '@/hooks/store/boundStore';

@@ -6,7 +6,7 @@ import {
 
 import type {
   ICreateContext,
-} from "@/domain/entities"
+} from "@/app-types"
 
 
 

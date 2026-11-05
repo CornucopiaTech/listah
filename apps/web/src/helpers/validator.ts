@@ -3,7 +3,7 @@ import { decodeState, } from '@/helpers/encoders';
 import {
   type IReadRequest,
   DefaultReadRequest,
-} from '@/domain/entities';
+} from '@/app-types';
 
 
 export function setItemsUrlSearch(params: any): IReadRequest { // eslint-disable-line @typescript-eslint/no-explicit-any

@@ -2,7 +2,6 @@
 import {
   useCallback,
   useMemo,
-  useRef,
 } from 'react';
 import type {
   ReactNode,
@@ -30,12 +29,12 @@ import type {
   IReadRequest,
   IUrlSearch,
   ITag,
-} from "@/domain/entities";
+} from "@/app-types";
 import {
   DefaultReadQuery,
   DefaultPagination,
   Pagination,
-} from '@/domain/entities';
+} from '@/app-types';
 import {
   useViewTagsQuery
 } from './queries';
@@ -60,6 +59,7 @@ export function ViewTagsProvider({ children }: { children: ReactNode }) {
   const setTagsChecked = useAppStore((state) => state.setTagsChecked);
   const setAllTagsChecked = useAppStore((state) => state.setAllTagsChecked);
   const allTagsChecked = useAppStore((state) => state.allTagsChecked);
+  const mutation = useUpdateTagsQuery();
 
 
   const navigate = useNavigate();
@@ -71,7 +71,15 @@ export function ViewTagsProvider({ children }: { children: ReactNode }) {
   };
 
   const { data, isPending, isError, error, }: UseQueryResult<ITagReadResponse> = useViewTagsQuery(opts);
-  const tags = data?.tags ?? [];
+  const servertags = data?.tags ?? []
+  const tags = servertags.map(
+    (v: ITag) => ({ ...v, tempUpdatedAt: new Date(v.updatedAt) })
+  ).map(
+    (v: ITag) => ({
+      ...v,
+      updatedAt: `${v.tempUpdatedAt?.getFullYear()}-${String(v.tempUpdatedAt?.getMonth()).padStart(2, '0')}-${String(v.tempUpdatedAt?.getDay()).padStart(2, '0')}`
+    })
+  );
   const paginationObj = data?.pagination ? data.pagination : urlPagination ? urlPagination : DefaultPagination;
   const pagination = new Pagination(paginationObj);
 
@@ -79,6 +87,7 @@ export function ViewTagsProvider({ children }: { children: ReactNode }) {
   const pageChange = useCallback((event: MouseEvent<HTMLButtonElement> | null, value: number) => {
     if (event) { event.stopPropagation() };
     pagination.changePage(value);
+    setAllTagsChecked(false);
     navigate({
       to: ".",
       // @ts-ignore
@@ -91,6 +100,7 @@ export function ViewTagsProvider({ children }: { children: ReactNode }) {
 
   const pageSizeChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     pagination.changeSize(e.target.value);
+    setAllTagsChecked(false);
     navigate({
       to: ".",
       // @ts-ignore
@@ -102,9 +112,8 @@ export function ViewTagsProvider({ children }: { children: ReactNode }) {
   }, [opts]);
 
   const pageSortChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const targetValue = e?.target?.value || "";
-
-    pagination.changeSort(targetValue);
+    pagination.changeSort(e.target.value);
+    setAllTagsChecked(false);
     navigate({
       to: ".",
       // @ts-ignore
@@ -145,42 +154,41 @@ export function ViewTagsProvider({ children }: { children: ReactNode }) {
     });
   }, [opts]);
 
-  const tagCheck = useCallback((checkedTagId: string) => {
-    // If tag is already checked, uncheck it. Otherwise, check it.
-    const newCheckedTags = tagsChecked.has(checkedTagId) ?
-      tagsChecked.difference(new Set([checkedTagId])) :
-      tagsChecked.union(new Set([checkedTagId]))
-    setTagsChecked(newCheckedTags);
-
-    // const newCheckedTags = checkedTagSet.current.has(checkedTag.id) ?
-    //   checkedTagSet.current.difference(new Set([checkedTag.id])) :
-    //   checkedTagSet.current.union(new Set([checkedTag.id]))
-    // checkedTagSet.current = newCheckedTags;
+  const check = useCallback((checkedId: string) => {
+    // If id is already checked, uncheck it. Otherwise, check it.
+    const newChecked = tagsChecked.has(checkedId) ?
+      tagsChecked.difference(new Set([checkedId])) :
+      tagsChecked.union(new Set([checkedId]))
+    setTagsChecked(newChecked);
   }, [opts]);
 
-  const toggleSelectAllTags = useCallback(() => {
+  const toggleSelectAll = useCallback(() => {
     setAllTagsChecked(!allTagsChecked);
   }, [opts]);
 
   const bulkDelete = useCallback(() => {
-    const mutation = useUpdateTagsQuery();
-
     let deleted = tags.filter(
-      (val: ITag) => tagsChecked.has(val.id)
+      (val: ITag) => allTagsChecked ? true : tagsChecked.has(val.id)
     ).map(
-      (val: ITag) => ({ ...val, softDelete: true })
+      (val: ITag) => ({ ...val, softDelete: true, updatedAt: val.tempUpdatedAt?.toJSON() || "" })
     );
 
-    mutation.mutate(deleted);
-    if (mutation.isSuccess) {
-      navigate({
-        to: ".",
-        // @ts-ignore
-        search: (prev: IUrlSearch) => prev
-      });
-      setTagsChecked(new Set());
-      // checkedTagSet.current = new Set();
-    }
+    mutation.mutate(deleted, {
+      onSuccess: () => {
+        pagination.resetPaging();
+        console.info({ pagination: pagination.paging });
+        setTagsChecked(new Set());
+        setAllTagsChecked(false);
+        navigate({
+          to: ".",
+          // @ts-ignore
+          search: (prev: IUrlSearch) => {
+            const dPrev = decodeState(prev.p) as unknown as IReadRequest;
+            return { ...prev, p: encodeState({ ...dPrev, pagination: pagination.paging }) }
+          }
+        });
+      }
+    });
   }, [opts]);
 
 
@@ -196,8 +204,8 @@ export function ViewTagsProvider({ children }: { children: ReactNode }) {
     viewItemsClick,
     editTagClick,
     bulkDelete,
-    tagCheck,
-    toggleSelectAllTags,
+    check,
+    toggleSelectAll,
   } as unknown as IViewTagsContext), [opts]);
 
   return <ViewTagsContext.Provider value={contextValue}> {children} </ViewTagsContext.Provider>

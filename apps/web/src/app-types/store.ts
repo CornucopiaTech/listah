@@ -1,13 +1,13 @@
 
 import type {
   IItem,
-} from "@/domain/entities/item";
+} from "@/app-types/item";
 import type {
   ITag,
-} from "@/domain/entities/tag";
+} from "@/app-types/tag";
 import type {
   IFilter,
-} from "@/domain/entities/filter";
+} from "@/app-types/filter";
 
 
 
@@ -59,11 +59,14 @@ export type IFilterState = {
   displayFilter: undefined | IFilter
   filterScroll: number
   filtersChecked: Set<string>
+  allFiltersChecked: boolean
 }
 export type IFilterActions = {
   setFilterModal: (filterModal: boolean) => void
   setDisplayFilter: (displayFilter: undefined | IFilter) => void
   setFilterScroll: (filterScroll: number) => void
+  setFiltersChecked: (filtersChecked: Set<string>) => void
+  setAllFiltersChecked: (allFiltersChecked: boolean) => void
   reset: () => void
 }
 export type IFilterSlice = IFilterState & IFilterActions;
@@ -80,6 +83,7 @@ export type IItemState = {
   itemReference: undefined | ITag | IFilter
   itemScroll: number
   itemsChecked: Set<string>
+  allItemsChecked: boolean
 }
 export type IItemActions = {
   setMessage: (message: string) => void
@@ -89,6 +93,8 @@ export type IItemActions = {
   setItemTitle: (itemTitle: string) => void
   setItemReference: (itemReference: undefined | ITag | IFilter) => void
   setItemScroll: (itemScroll: number) => void
+  setItemsChecked: (itemsChecked: Set<string>) => void
+  setAllItemsChecked: (allItemsChecked: boolean) => void
   reset: () => void
 }
 export type IItemSlice = IItemState & IItemActions;

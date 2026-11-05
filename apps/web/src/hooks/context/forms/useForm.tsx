@@ -6,7 +6,7 @@ import {
 
 import type {
   IFormContext
-} from "@/domain/entities"
+} from "@/app-types"
 
 
 

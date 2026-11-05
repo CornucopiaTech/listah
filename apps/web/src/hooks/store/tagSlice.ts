@@ -7,7 +7,7 @@ import type {
   ITagSlice,
   IStore,
   ITag,
-} from "@/domain/entities";
+} from "@/app-types";
 
 
 

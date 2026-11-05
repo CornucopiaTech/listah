@@ -14,17 +14,17 @@ import type {
   IReadRequest,
   IFilterReadResponse,
   IFilter,
-} from '@/domain/entities';
+} from '@/app-types';
 import {
   getFilter,
   postFilter,
-} from '@/infra/api/filters';
+} from '@/api/filters';
 import {
   QueryStaleTime,
 } from '@/helpers/defaults';
 import {
-  ZFilter,
-} from "@/domain/entities/filter";
+  ZFilters,
+} from "@/app-types/filter";
 
 
 
@@ -41,11 +41,11 @@ export function useViewFilterQuery(opts: IReadRequest): UseQueryResult<IFilterRe
 }
 
 
-export function useUpdateFilterQuery() {
+export function useUpdateFiltersQuery() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (mutateItem: IFilter) => {
-      const mi = ZFilter.parse(mutateItem);
+    mutationFn: (mutateItem: IFilter[]) => {
+      const mi = ZFilters.parse(mutateItem);
       return postFilter(mi);
     },
     onSuccess: async () => {

@@ -86,8 +86,7 @@ async function loadConfig() {
 
 function StrictModeWrapper({ children }: { children: ReactNode }) {
   if (process.env.NODE_ENV === "development") {
-    // return <StrictMode>{children}</StrictMode>
-    return children
+    return <StrictMode>{children}</StrictMode>
   }
   return children
 }

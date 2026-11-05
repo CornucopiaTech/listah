@@ -2,7 +2,7 @@
 import type {
   IFilterFormCheckedTag,
   ITag,
-} from '@/domain/entities';
+} from '@/app-types';
 
 
 export function validateName(fname: string) {

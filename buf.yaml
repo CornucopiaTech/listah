@@ -1,6 +1,6 @@
 version: v2
 deps:
-  - buf.build/bufbuild/protovalidate
+  # - buf.build/bufbuild/protovalidate
   - buf.build/gnostic/gnostic
   - buf.build/protocolbuffers/wellknowntypes
 lint:

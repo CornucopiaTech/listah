@@ -6,29 +6,34 @@ import type {
   IReadRequest,
   IItemReadResponse,
   BackendErrorPayload
-} from '@/domain/entities';
+} from '@/app-types';
 import {
   AppError,
   ApiEndpoints
-} from "@/domain/entities";
+} from "@/app-types";
 import {
   getToken,
   GenericCode,
   GenericError
-} from '@/infra/api/auth';
+} from '@/api/auth';
+import {
+  adaptItems,
+  adaptReadRequest,
+} from "@/api/adapter";
 
 
 
-export async function postItem(item: IItem) {
+export async function postItem(item: IItem[]) {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.updateItem}`;
   try {
     const token = await getToken();
     if (!token) {
       throw new AppError(GenericError, 500);
     }
+    const adapted = adaptItems(item);
     const req = new Request(url, {
       method: "POST",
-      body: JSON.stringify({ items: [item] }),
+      body: JSON.stringify({ items: adapted }),
       headers: {
         "Content-Type": "application/json",
         "Accept": "*/*",
@@ -65,9 +70,10 @@ export async function getItem(opts: IReadRequest): Promise<IItemReadResponse> {
     if (!token) {
       throw new AppError(GenericError, 500);
     }
+    const adapted = adaptReadRequest(opts);
     const req = new Request(url, {
       method: "POST",
-      body: JSON.stringify(opts),
+      body: JSON.stringify(adapted),
       headers: {
         "Content-Type": "application/json",
         "Accept": "*/*",

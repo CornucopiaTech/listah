@@ -20,7 +20,7 @@ import { useTheme, useMediaQuery, Typography } from '@mui/material';
 
 import {
   PaginationMenu,
-} from '@/domain/entities';
+} from '@/app-types';
 import {
   ListBoxSize,
   ViewListBoxSize,
@@ -34,7 +34,7 @@ import {
 } from "@/hooks/context";
 import type {
   IPagingContext,
-} from "@/domain/entities"
+} from "@/app-types"
 
 
 
@@ -110,7 +110,7 @@ export function PrevListBox({ children }: { children: ReactNode }): ReactNode {
 export function ListBox({ children }: { children: ReactNode }): ReactNode {
   return (
     <Fragment>
-      <Stack spacing={0}>
+      <Stack spacing={0} sx={{ marginTop: "1rem" }}>
         {children}
         <Divider />
         <AppListPagination />

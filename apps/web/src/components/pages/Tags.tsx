@@ -8,8 +8,6 @@ import {
   Fragment,
   memo,
   useMemo,
-  useEffect,
-  useRef,
 } from 'react';
 import { useTheme, useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
@@ -18,7 +16,6 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Alert from '@mui/material/Alert';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
-import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import EditIcon from '@mui/icons-material/Edit';
@@ -38,9 +35,12 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Checkbox from '@mui/material/Checkbox';
 import { TableVirtuoso, } from 'react-virtuoso';
-import ButtonGroup from '@mui/material/ButtonGroup';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+
+
 
 // Internal
+import type { AppTheme } from '@/system/theme';
 import {
   useAppStore,
 } from '@/hooks/store/boundStore';
@@ -51,8 +51,10 @@ import type {
   ICreateContext,
   IPagingContext,
   ITag,
-} from '@/domain/entities';
-import type { AppTheme } from '@/system/theme';
+  IVirtuosoTableContext,
+} from '@/app-types';
+import type {
+} from '@/system/theme';
 import {
   useViewTags,
   FormContext,
@@ -76,7 +78,6 @@ import {
   OuterBox,
   FormDialog,
   UpdateFormActions,
-  AppTooltip,
   ItemSearchList,
   ItemUpdate,
   AppBreadcrumb,
@@ -84,26 +85,6 @@ import {
 
 
 
-
-const VirtuosoTableComponents: TableComponents<ITag> = {
-  Scroller: forwardRef<HTMLDivElement>((props, ref) => (
-    <TableContainer component={Paper} {...props} ref={ref} />
-  )),
-  Table: (props) => (
-    <Table {...props} size="small" sx={{
-      borderCollapse: 'separate',
-
-      // , tableLayout: 'fixed'
-    }} />
-  ),
-  TableHead: forwardRef<HTMLTableSectionElement>((props, ref) => (
-    <TableHead {...props} ref={ref} />
-  )),
-  TableRow,
-  TableBody: forwardRef<HTMLTableSectionElement>((props, ref) => (
-    <TableBody {...props} ref={ref} />
-  )),
-};
 
 export function Tags() {
   const theme = useTheme();
@@ -122,11 +103,34 @@ export function Tags() {
       {/* Main Page Content */}
       <BreadcrumbProvider route="/tags"><AppBreadcrumb sx={{ display: isMobile ? "block" : "none" }} /></BreadcrumbProvider>
       <CreateProvider>
-        <ViewTagsProvider> <ViewTagShell><ViewTag /></ViewTagShell> </ViewTagsProvider>
+        <ViewTagsProvider>
+          <ViewTagShell>
+            <ViewTag />
+          </ViewTagShell>
+        </ViewTagsProvider>
       </CreateProvider>
     </AppContainer >
   );
 }
+
+const VirtuosoTableComponents: TableComponents<ITag> = {
+  Scroller: forwardRef<HTMLDivElement>((props, ref) => (
+    <TableContainer component={Paper} {...props} ref={ref} />
+  )),
+  Table: (props) => (
+    <Table {...props} size="small"
+      sx={{
+        borderCollapse: 'separate', tableLayout: 'fixed'
+      }} />
+  ),
+  TableHead: forwardRef<HTMLTableSectionElement>((props, ref) => (
+    <TableHead {...props} ref={ref} />
+  )),
+  TableRow,
+  TableBody: forwardRef<HTMLTableSectionElement>((props, ref) => (
+    <TableBody {...props} ref={ref} />
+  )),
+};
 
 const RowContent = memo(function RowContent(
   {
@@ -142,7 +146,8 @@ const RowContent = memo(function RowContent(
   const tc = item?.name ?? "";
   const itemcount = item?.count?.toString() ?? "0";
   const fontSize = isMobile ? "0.9rem" : '1rem';
-  const iconFontSize = isMobile ? "1.1rem" : "1.5rem";
+  const buttonFontSize = isMobile ? "0.9rem" : '1.1rem';
+  const iconFontSize = isMobile ? "1.0rem" : "1.5rem";
 
   return (
     <Fragment>
@@ -177,7 +182,7 @@ const RowContent = memo(function RowContent(
         key="count"
         component='td'
         scope={undefined}
-        align='right'
+        align='left'
         sx={{
           fontSize: fontSize,
           display: isMobile ? "none" : undefined
@@ -188,111 +193,158 @@ const RowContent = memo(function RowContent(
         key="updatedAt"
         component='td'
         scope={undefined}
-        align='right'
+        align='left'
         sx={{
           fontSize: fontSize,
           display: isMobile ? "none" : undefined
         }}>
-        <Typography variant={isMobile ? "body2m" : "body1"}  >{item.updatedAt ?? ""}</Typography>
+        <Typography variant={isMobile ? "body2m" : "body1"}  >{item.updatedAt}</Typography>
       </TableCell>
       <TableCell
         key="actions"
         component='td'
         scope={undefined}
-        align='right'
+        align='left'
         sx={{
           fontSize: fontSize,
         }}>
-        <IconButton aria-label="edit" onClick={() => handleEdit(index)}>
-          <AppTooltip title="Edit filter">
-            <EditIcon sx={{ fontSize: iconFontSize }} />
-          </AppTooltip>
-        </IconButton>
-        <IconButton aria-label="edit" onClick={() => handleEdit(index)}>
-          <AppTooltip title="Delete filter">
-            <DeleteIcon sx={{ fontSize: iconFontSize, color: "red" }} />
-          </AppTooltip>
-        </IconButton>
+        <Button
+          variant="text" color="inherit"
+          onClick={() => handleEdit(index)}
+          sx={{
+            '&:hover': {
+              boxShadow: 2,
+            },
+            fontSize: buttonFontSize,
+            fontWeight: "500",
+            p: 0.5, width: "100%",
+            justifyContent: 'flex-start', display: 'flex',
+          }}
+          startIcon={<EditIcon sx={{ fontSize: iconFontSize }} />}>
+          <Typography variant={isMobile ? "body2" : "body1"}>Edit tag</Typography>
+        </Button>
+
+        <Button
+          variant="text" color="inherit"
+          onClick={() => handleViewUsage(index)}
+          sx={{
+            '&:hover': {
+              boxShadow: 2,
+            },
+            fontSize: buttonFontSize,
+            fontWeight: "500",
+            p: 0.5, width: "100%",
+            justifyContent: 'flex-start', display: 'flex',
+          }}
+          startIcon={<VisibilityIcon sx={{ fontSize: iconFontSize }} />}>
+
+          <Typography variant={isMobile ? "body2" : "body1"}>View items</Typography>
+        </Button>
       </TableCell>
     </Fragment>
   );
 });
 
-
 function HeaderContent({ isMobile }: { isMobile: boolean }) {
   const {
-    toggleSelectAllTags,
+    toggleSelectAll,
   } = useViewTags() as unknown as IViewTagsContext;
   const allTagsChecked = useAppStore((state) => state.allTagsChecked);
-  const headerFontSize = isMobile ? "1rem" : '1.4rem';
+  const headerFontSize = isMobile ? "1rem" : '1.2rem';
 
 
   return (
-    <TableRow sx={{
-    }}>
+    <TableRow sx={{}}>
       <TableCell
         key="select"
         variant="head"
         align='left'
         style={{ width: 20 }}
         sx={{
-          // backgroundColor: 'background.paper',
           fontSize: headerFontSize,
           fontWeight: 'bold',
+          backgroundColor: "primary.dark",
+          color: "primary.contrastText",
+          '& .MuiTableCell-root': {
+            color: "primary.contrastText",
+          },
         }} >
         <Checkbox disableRipple
           checked={allTagsChecked}
-          onChange={toggleSelectAllTags}
+          onChange={toggleSelectAll}
           slotProps={{
             input: { 'aria-label': 'controlled' },
           }}
+          sx={{
+            color: "primary.contrastText",
+            '&.Mui-checked': {
+              color: "primary.contrastText",
+            },
+          }}
         />
-        Select
       </TableCell>
       <TableCell
         key="name"
         variant="head"
         align='left'
-        style={{ width: isMobile ? 80 : 100 }}
+        style={{ width: isMobile ? 80 : 120 }}
         sx={{
-          fontSize: headerFontSize,
-          fontWeight: 'bold',
+          fontSize: headerFontSize, fontWeight: 'bold',
+          backgroundColor: "primary.dark",
+          color: "primary.contrastText",
+          '& .MuiTableCell-root': {
+            color: "primary.contrastText",
+          },
         }} >
         Name
       </TableCell>
       <TableCell
         key="count"
         variant="head"
-        align='right'
-        style={{ width: 50 }}
+        align='left'
+        style={{ width: 30 }}
         sx={{
           fontSize: headerFontSize,
           fontWeight: 'bold',
-          display: isMobile ? "none" : undefined
+          display: isMobile ? "none" : undefined,
+          backgroundColor: "primary.dark",
+          color: "primary.contrastText",
+          '& .MuiTableCell-root': {
+            color: "primary.contrastText",
+          },
         }} >
         Usage
       </TableCell>
       <TableCell
         key="updatedAt"
         variant="head"
-        align='right'
-        style={{ width: 100 }}
+        align='left'
+        style={{ width: 80 }}
         sx={{
           fontSize: headerFontSize,
           fontWeight: 'bold',
-          display: isMobile ? "none" : undefined
+          display: isMobile ? "none" : undefined,
+          backgroundColor: "primary.dark",
+          color: "primary.contrastText",
+          '& .MuiTableCell-root': {
+            color: "primary.contrastText",
+          },
         }} >
-        Updated At
+        Last Update
       </TableCell>
       <TableCell
         key="actions"
         variant="head"
-        align='right'
-        style={{ width: 50 }}
+        align='left'
+        style={{ width: isMobile ? 80 : 100 }}
         sx={{
-          // backgroundColor: 'background.paper',
           fontSize: headerFontSize,
-          fontWeight: 'bold'
+          fontWeight: 'bold',
+          backgroundColor: "primary.dark",
+          color: "primary.contrastText",
+          '& .MuiTableCell-root': {
+            color: "primary.contrastText",
+          },
         }} >
         Actions
       </TableCell>
@@ -327,71 +379,53 @@ export function ViewTagShell({ children }: { children: ReactNode }) {
     pageSizeChange: tags.length > 0 ? pageSizeChange : undefined,
   } as unknown as IPagingContext;
   return (
-    <Stack sx={{ marginTop: "1rem" }}>
-
-      {/* Add new item, add new tag, add new filter buttons*/}
-      <Grid container spacing={2}>
-        <Grid size={{ xs: 12, md: 3, lg: 3 }} >
-          <FormControl sx={{}}>
-            <InputLabel id="sortinput">Sort</InputLabel>
-            <Select
-              labelId="sortinput"
-              id="sortselect"
-              value={pagination.paging.sort}
-              label="rows-per-page"
-              //  @ts-ignore
-              onChange={pageSortChange}
+    <Stack sx={{ marginTop: "2rem", }}>
+      <Box sx={{ flexGrow: 1 }}>
+        {/* Add new item, add new tag, add new filter buttons*/}
+        <Grid container spacing={1}>
+          <Grid size={{ xs: 12, sm: 12, md: 3, lg: 3, xl: 3, }} >
+            <FormControl sx={{}}>
+              <InputLabel id="sortinput">Sort</InputLabel>
+              <Select
+                labelId="sortinput"
+                id="sortselect"
+                value={pagination.paging.sort}
+                label="rows-per-page"
+                //  @ts-ignore
+                onChange={pageSortChange}
+                sx={{
+                  height: "fit-content",                     // overall component height
+                  '& .MuiSelect-select': {
+                    paddingY: 1,                // vertical padding
+                  },
+                }} >
+                {pagination.sortOptions.map((i, _) =>
+                  <MenuItem value={i.value}> <Typography variant={isMobile ? "condensedBody2" : "body2"} component="div" textAlign={"left"} sx={{}}> {i.label} </Typography>  </MenuItem>
+                )}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 12, md: 9, lg: 9, xl: 9, }} >
+            <Stack spacing={2} direction="row"
               sx={{
-                // height: 36,                     // overall component height
-                height: "fit-content",                     // overall component height
-                '& .MuiSelect-select': {
-                  paddingY: 1,                // vertical padding
-                },
-              }} >
-              {pagination.sortOptions.map((i, _) =>
-                <MenuItem value={i.value}> <Typography variant={isMobile ? "condensedBody2" : "body2"} component="div" textAlign={"left"} sx={{}}> {i.label} </Typography>  </MenuItem>
-              )}
-            </Select>
-          </FormControl>
+                justifyContent: isMobile ? 'flex-start' : 'flex-end', display: 'flex'
+              }}>
+              <Button variant="contained" onClick={deleteButtonAction} startIcon={<DeleteIcon sx={{ fontSize: isMobile ? "1rem" : "1.5rem", width: "100%" }} />}>
+                <Typography variant={isMobile ? "h7m" : "h7"} textAlign={"left"}> delete {isMobile ? "" : " selected "} </Typography>
+              </Button>
+              <Button
+                variant="contained"
+                onClick={addNewTagClick}
+                startIcon={<AddIcon sx={{ fontSize: isMobile ? "1rem" : "1.5rem", width: "100%" }} />}>
+                <Typography variant={isMobile ? "h7m" : "h7"} textAlign={"left"} sx={{}}> {isMobile ? "" : "create new "} tag </Typography>
+              </Button>
+              <Button variant="contained" onClick={addNewItemClick} startIcon={<AddIcon sx={{ fontSize: isMobile ? "1rem" : "1.5rem" }} />}>
+                <Typography variant={isMobile ? "h7m" : "h7"} textAlign={"left"} sx={{}}> {isMobile ? "" : "create new "} item </Typography>
+              </Button>
+            </Stack>
+          </Grid>
         </Grid>
-        <Grid size={{ xs: 3, md: 3, lg: 3 }}
-          sx={{
-            justifyContent: 'space-between',
-            display: 'flex',
-          }}>
-          <ButtonGroup variant="contained" aria-label="Basic button group" sx={{ mx: 1 }}>
-            <Button variant="contained" onClick={deleteButtonAction} startIcon={<DeleteIcon sx={{ fontSize: isMobile ? "1rem" : "1.5rem" }} />}>
-              <Typography variant={isMobile ? "h7m" : "h7"} component="div" textAlign={"left"} sx={{}}> delete {isMobile ? "" : " selected "} </Typography>
-            </Button>
-          </ButtonGroup>
-        </Grid>
-        <Grid size={{ xs: 3, md: 3, lg: 3 }}
-          sx={{
-            justifyContent: 'space-between',
-            display: 'flex',
-          }}>
-          <ButtonGroup variant="contained" aria-label="Basic button group" sx={{ mx: 1 }}>
-            <Button
-              variant="contained"
-              onClick={addNewTagClick}
-              startIcon={<AddIcon sx={{ fontSize: isMobile ? "1rem" : "1.5rem" }} />}>
-              <Typography variant={isMobile ? "h7m" : "h7"} component="div" textAlign={"left"} sx={{}}> {isMobile ? "" : "create new "} tag </Typography>
-            </Button>
-          </ButtonGroup>
-        </Grid>
-        <Grid size={{ xs: 3, md: 3, lg: 3 }}
-          sx={{
-            justifyContent: 'space-between',
-            display: 'flex',
-          }}>
-          <ButtonGroup variant="contained" aria-label="Basic button group" sx={{ mx: 1 }}>
-            <Button variant="contained" onClick={addNewItemClick} startIcon={<AddIcon sx={{ fontSize: isMobile ? "1rem" : "1.5rem" }} />}>
-              <Typography variant={isMobile ? "h7m" : "h7"} component="div" textAlign={"left"} sx={{}}> {isMobile ? "" : "create new "} item </Typography>
-            </Button>
-          </ButtonGroup>
-        </Grid>
-      </Grid>
-
+      </Box>
       <AppSectionPaper>
         <PagingContext.Provider value={pagingContextValue}>
           <ListBox>
@@ -410,7 +444,7 @@ export function ViewTag() {
     error,
     viewItemsClick,
     editTagClick,
-    tagCheck,
+    check,
   } = useViewTags() as unknown as IViewTagsContext;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -422,11 +456,11 @@ export function ViewTag() {
       isMobile,
       selected: tagsChecked,
       allSelected: allTagsChecked,
-      handleSelected: tagCheck,
+      handleSelected: check,
       handleViewUsage: viewItemsClick,
       handleEdit: editTagClick
     }),
-    [tagsChecked, tagCheck, editTagClick, viewItemsClick]
+    [tagsChecked, check, editTagClick, viewItemsClick]
   );
 
   if (isPending) {
@@ -446,10 +480,11 @@ export function ViewTag() {
         data={tags}
         context={context}
         computeItemKey={(_, row) => row.id}
+        // @ts-ignore
         components={VirtuosoTableComponents}
         fixedHeaderContent={() => <HeaderContent isMobile={isMobile} />}
         itemContent={
-          (i, row, ctx) => <RowContent
+          (i: number, row: ITag, ctx: IVirtuosoTableContext) => <RowContent
             isMobile={ctx.isMobile}
             item={row} index={i}
             checked={ctx.selected.has(row.id)}

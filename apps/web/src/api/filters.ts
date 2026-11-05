@@ -6,30 +6,34 @@ import type {
   IReadRequest,
   IFilterReadResponse,
   BackendErrorPayload,
-} from '@/domain/entities';
+} from '@/app-types';
 import {
   AppError,
   ApiEndpoints,
-} from "@/domain/entities";
+} from "@/app-types";
 import {
   getToken,
   GenericCode,
   GenericError
-} from '@/infra/api/auth';
+} from '@/api/auth';
+import {
+  adaptFilters,
+  adaptReadRequest,
+} from "@/api/adapter";
 
 
 
-
-export async function postFilter(f: IFilter) {
+export async function postFilter(f: IFilter[]) {
   const url = `${window.runtimeConfig.apiUrl}/${ApiEndpoints.updateFilter}`;
   try {
     const token = await getToken();
     if (!token) {
       throw new AppError(GenericError, 500);
     }
+    const adapted = adaptFilters(f);
     const req = new Request(url, {
       method: "POST",
-      body: JSON.stringify({ filters: [f] }),
+      body: JSON.stringify({ filters: adapted }),
       headers: {
         "Content-Type": "application/json",
         "Accept": "*/*",
@@ -64,9 +68,11 @@ export async function getFilter(opts: IReadRequest): Promise<IFilterReadResponse
     if (!token) {
       throw new AppError(GenericError, 500);
     }
+
+    const adapted = adaptReadRequest(opts);
     const req = new Request(url, {
       method: "POST",
-      body: JSON.stringify(opts),
+      body: JSON.stringify(adapted),
       headers: {
         "Content-Type": "application/json",
         "Accept": "*/*",

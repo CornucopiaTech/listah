@@ -6,7 +6,7 @@ import type {
   ILayoutState,
   ILayoutSlice,
   IStore,
-} from '@/domain/entities/store';
+} from '@/app-types/store';
 
 
 

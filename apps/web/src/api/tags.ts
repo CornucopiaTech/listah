@@ -7,18 +7,21 @@ import type {
   ITagReadResponse,
   ITagPropertyReadResponse,
   BackendErrorPayload
-} from '@/domain/entities';
+} from '@/app-types';
 import {
   ZTagPropertyReadResponse,
   AppError,
   ApiEndpoints
-} from "@/domain/entities";
+} from "@/app-types";
 import {
   getToken,
   GenericCode,
   GenericError
-} from '@/infra/api/auth';
-
+} from '@/api/auth';
+import {
+  adaptTags,
+  adaptReadRequest,
+} from "@/api/adapter";
 
 
 
@@ -31,9 +34,10 @@ export async function postTag(t: ITag[]) {
     if (!token) {
       throw new AppError(GenericError, 500);
     }
+    const adapted = adaptTags(t);
     const req = new Request(url, {
       method: "POST",
-      body: JSON.stringify({ tags: t }),
+      body: JSON.stringify({ tags: adapted }),
       headers: {
         "Content-Type": "application/json",
         "Accept": "*/*",
@@ -69,9 +73,10 @@ export async function getTag(opts: IReadRequest): Promise<ITagReadResponse> {
     if (!token) {
       throw new AppError(GenericError, 500);
     }
+    const adapted = adaptReadRequest(opts);
     const req = new Request(url, {
       method: "POST",
-      body: JSON.stringify(opts),
+      body: JSON.stringify(adapted),
       headers: {
         "Content-Type": "application/json",
         "Accept": "*/*",
@@ -108,9 +113,10 @@ export async function getTagProperty(opts: IReadRequest): Promise<ITagPropertyRe
     if (!token) {
       throw new AppError(GenericError, 500);
     }
+    const adapted = adaptReadRequest(opts);
     const req = new Request(url, {
       method: "POST",
-      body: JSON.stringify(opts),
+      body: JSON.stringify(adapted),
       headers: {
         "Content-Type": "application/json",
         "Accept": "*/*",

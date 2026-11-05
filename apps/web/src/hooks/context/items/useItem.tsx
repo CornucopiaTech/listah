@@ -8,7 +8,7 @@ import type {
   IViewItemsContext,
   IUpdateItemsContext,
   ISearchItemsContext,
-} from "@/domain/entities"
+} from "@/app-types"
 
 
 export const ViewItemsContext = createContext<IViewItemsContext | undefined>(undefined);

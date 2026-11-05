@@ -5,7 +5,7 @@ import { TableVirtuoso, } from 'react-virtuoso';
 import { useTables } from "@/hooks/context";
 import type {
   ITableContext,
-} from '@/domain/entities';
+} from '@/app-types';
 
 
 

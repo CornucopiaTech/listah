@@ -4,7 +4,6 @@ option go_package = "cornucopia/listah/internal/pkg/proto/v1";
 
 
 import "v1/commons.proto";
-import "google/protobuf/timestamp.proto";
 import "gnostic/openapi/v3/annotations.proto";
 
 
@@ -26,7 +25,7 @@ message ItemServiceUpsertItemRequest {
   repeated Item items = 1;
 }
 message ItemServiceUpsertItemResponse {
-  repeated string itemIds = 1;
+  repeated string item_ids = 1;
 }
 
 
@@ -37,7 +36,7 @@ message ItemServiceReadTagRequest {
 }
 message ItemServiceReadTagResponse {
   repeated Tag tags = 1;
-  map<string,StringList> tagidPropMap = 2;
+  map<string,StringList> tagid_prop_map = 2;
 
   ReadQuery query = 500;
   Pagination pagination = 501;
@@ -46,7 +45,7 @@ message ItemServiceUpsertTagRequest {
   repeated Tag tags = 1;
 }
 message ItemServiceUpsertTagResponse {
-  repeated string tagIds = 1;
+  repeated string tag_ids = 1;
 }
 
 
@@ -79,7 +78,7 @@ message ItemServiceUpsertFilterRequest {
   repeated Filter filters = 1;
 }
 message ItemServiceUpsertFilterResponse {
-  repeated string filterIds = 1;
+  repeated string filter_ids = 1;
 }
 
 

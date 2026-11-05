@@ -12,17 +12,17 @@ import type {
 
 // Internal imports
 import {
-  ZItem
-} from "@/domain/entities";
+  ZItems
+} from "@/app-types";
 import type {
   IItem,
   IReadRequest,
   IItemReadResponse,
-} from "@/domain/entities";
+} from "@/app-types";
 import {
   getItem,
   postItem,
-} from '@/infra/api';
+} from '@/api';
 import {
   QueryStaleTime
 } from '@/helpers/defaults';
@@ -49,11 +49,11 @@ export function useViewItemQuery(opts: IReadRequest): UseQueryResult<IItemReadRe
 }
 
 
-export function useUpdateItemQuery() {
+export function useUpdateItemsQuery() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (mutateItem: IItem) => {
-      const mi = ZItem.parse(mutateItem);
+    mutationFn: (mutateItem: IItem[]) => {
+      const mi = ZItems.parse(mutateItem);
       return postItem(mi);
     },
     onSuccess: async () => {

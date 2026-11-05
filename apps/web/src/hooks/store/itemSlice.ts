@@ -9,10 +9,10 @@ import type {
   IStore,
   ITag,
   IFilter,
-} from "@/domain/entities";
+} from "@/app-types";
 import {
   DefaultItem,
-} from "@/domain/entities";
+} from "@/app-types";
 
 
 
@@ -26,6 +26,7 @@ export const itemInitState: IItemState = {
   itemReference: undefined,
   itemScroll: 0,
   itemsChecked: new Set([]),
+  allItemsChecked: false,
 }
 
 export const createItemSlice: StateCreator<
@@ -42,5 +43,7 @@ export const createItemSlice: StateCreator<
   setItemTitle: (itemTitle: string) => set(() => ({ itemTitle })),
   setItemReference: (itemReference: undefined | ITag | IFilter) => set(() => ({ itemReference })),
   setItemScroll: (itemScroll: undefined | number) => set(() => ({ itemScroll })),
+  setItemsChecked: (itemsChecked: Set<string>) => set(() => ({ itemsChecked })),
+  setAllItemsChecked: (allItemsChecked: boolean) => set(() => ({ allItemsChecked })),
   reset: () => set(itemInitState),
 });

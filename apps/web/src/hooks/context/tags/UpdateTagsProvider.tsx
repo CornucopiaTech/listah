@@ -24,11 +24,11 @@ import type {
   IUpdateTagsContext,
   IUrlSearch,
   IEditor,
-} from "@/domain/entities";
+} from "@/app-types";
 import {
   DefaultTag,
   DefaultEditor,
-} from '@/domain/entities';
+} from '@/app-types';
 import {
   useUpdateTagsQuery,
 } from './queries';

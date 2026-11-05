@@ -2,7 +2,7 @@
 
 import type {
   IApiEndpointConfig,
-} from '@/domain/entities';
+} from '@/app-types';
 
 
 
@@ -35,7 +35,6 @@ export const ListItemStyling = { height: "fit-content" };
 
 
 // ToDo: change query time to dev time again
-// export const QueryStaleTime = process.env.NODE_ENV === "production" ? 24 * 60 * 60 * 1000 : 10;
 export const QueryStaleTime = process.env.NODE_ENV === "production" ? 24 * 60 * 60 * 1000 : 60 * 1000;
 
 

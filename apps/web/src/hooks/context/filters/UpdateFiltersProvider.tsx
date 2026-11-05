@@ -29,16 +29,16 @@ import type {
   IFilterForm,
   ITagReadResponse,
   ITag,
-} from "@/domain/entities";
+} from "@/app-types";
 import {
   DefaultFilter,
   DefaultEditor,
   DefaultReadRequest,
   DefaultReadQuery,
   DefaultPagination,
-} from '@/domain/entities';
+} from '@/app-types';
 import {
-  useUpdateFilterQuery,
+  useUpdateFiltersQuery,
 } from './queries';
 import {
   UpdateFiltersContext
@@ -96,7 +96,7 @@ export function UpdateFiltersProvider({ children }: { children: ReactNode }) {
 
   formData.tags = formData.tags.sort((a, b) => +b.checked - +a.checked);
 
-  const mutation = useUpdateFilterQuery();
+  const mutation = useUpdateFiltersQuery();
   const openDialog = flag && modal && modal == "filter" ? flag : false;
   const closeDialog = () => {
     form.reset();
@@ -109,7 +109,7 @@ export function UpdateFiltersProvider({ children }: { children: ReactNode }) {
   };
   function formSubmission({ value }: { value: IFilterForm }): void {
     const submitValue = prepFilterUpdate({ value, userId: user?.id || "" });
-    mutation.mutate(submitValue);
+    mutation.mutate([submitValue]);
     if (mutation.isSuccess) {
       closeDialog();
     }

@@ -6,7 +6,7 @@ import {
 
 import type {
   IPagingContext,
-} from "@/domain/entities"
+} from "@/app-types"
 
 
 

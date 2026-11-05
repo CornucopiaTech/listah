@@ -1,5 +1,8 @@
 openapi: 3.1.0
-info: {}
+info:
+  title: API
+  description: API documentation for API
+  version: 1.0.0
 paths:
   /listah.v1.ItemService/ReadFilter:
     get:
@@ -11,36 +14,49 @@ paths:
       parameters:
         - name: Connect-Protocol-Version
           in: header
-          required: true
+          description: Define the version of the Connect protocol
           schema:
             $ref: '#/components/schemas/connect-protocol-version'
+          example: 1
         - name: Connect-Timeout-Ms
           in: header
+          description: Define the timeout, in ms
           schema:
             $ref: '#/components/schemas/connect-timeout-header'
+          example: 1000
         - name: message
           in: query
+          description: The URL-encoded message query parameter contains the JSON or binary serialized request message
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/listah.v1.ItemServiceReadFilterRequest'
         - name: encoding
           in: query
+          description: Define which encoding or 'Message-Codec' to use
           required: true
           schema:
             $ref: '#/components/schemas/encoding'
+          example: json
         - name: base64
           in: query
+          description: Specifies if the message query param is base64 encoded, which may be required for binary data
           schema:
             $ref: '#/components/schemas/base64'
+          example: false
         - name: compression
           in: query
+          description: Which compression algorithm to use for this request
           schema:
             $ref: '#/components/schemas/compression'
+          example: gzip
         - name: connect
           in: query
+          description: Define the version of the Connect protocol
+          required: true
           schema:
             $ref: '#/components/schemas/connect'
+          example: v1
       responses:
         default:
           description: Error
@@ -63,13 +79,16 @@ paths:
       parameters:
         - name: Connect-Protocol-Version
           in: header
-          required: true
+          description: Define the version of the Connect protocol
           schema:
             $ref: '#/components/schemas/connect-protocol-version'
+          example: 1
         - name: Connect-Timeout-Ms
           in: header
+          description: Define the timeout, in ms
           schema:
             $ref: '#/components/schemas/connect-timeout-header'
+          example: 1000
       requestBody:
         content:
           application/json:
@@ -99,36 +118,49 @@ paths:
       parameters:
         - name: Connect-Protocol-Version
           in: header
-          required: true
+          description: Define the version of the Connect protocol
           schema:
             $ref: '#/components/schemas/connect-protocol-version'
+          example: 1
         - name: Connect-Timeout-Ms
           in: header
+          description: Define the timeout, in ms
           schema:
             $ref: '#/components/schemas/connect-timeout-header'
+          example: 1000
         - name: message
           in: query
+          description: The URL-encoded message query parameter contains the JSON or binary serialized request message
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/listah.v1.ItemServiceReadItemRequest'
         - name: encoding
           in: query
+          description: Define which encoding or 'Message-Codec' to use
           required: true
           schema:
             $ref: '#/components/schemas/encoding'
+          example: json
         - name: base64
           in: query
+          description: Specifies if the message query param is base64 encoded, which may be required for binary data
           schema:
             $ref: '#/components/schemas/base64'
+          example: false
         - name: compression
           in: query
+          description: Which compression algorithm to use for this request
           schema:
             $ref: '#/components/schemas/compression'
+          example: gzip
         - name: connect
           in: query
+          description: Define the version of the Connect protocol
+          required: true
           schema:
             $ref: '#/components/schemas/connect'
+          example: v1
       responses:
         default:
           description: Error
@@ -151,13 +183,16 @@ paths:
       parameters:
         - name: Connect-Protocol-Version
           in: header
-          required: true
+          description: Define the version of the Connect protocol
           schema:
             $ref: '#/components/schemas/connect-protocol-version'
+          example: 1
         - name: Connect-Timeout-Ms
           in: header
+          description: Define the timeout, in ms
           schema:
             $ref: '#/components/schemas/connect-timeout-header'
+          example: 1000
       requestBody:
         content:
           application/json:
@@ -187,36 +222,49 @@ paths:
       parameters:
         - name: Connect-Protocol-Version
           in: header
-          required: true
+          description: Define the version of the Connect protocol
           schema:
             $ref: '#/components/schemas/connect-protocol-version'
+          example: 1
         - name: Connect-Timeout-Ms
           in: header
+          description: Define the timeout, in ms
           schema:
             $ref: '#/components/schemas/connect-timeout-header'
+          example: 1000
         - name: message
           in: query
+          description: The URL-encoded message query parameter contains the JSON or binary serialized request message
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/listah.v1.ItemServiceReadTagRequest'
         - name: encoding
           in: query
+          description: Define which encoding or 'Message-Codec' to use
           required: true
           schema:
             $ref: '#/components/schemas/encoding'
+          example: json
         - name: base64
           in: query
+          description: Specifies if the message query param is base64 encoded, which may be required for binary data
           schema:
             $ref: '#/components/schemas/base64'
+          example: false
         - name: compression
           in: query
+          description: Which compression algorithm to use for this request
           schema:
             $ref: '#/components/schemas/compression'
+          example: gzip
         - name: connect
           in: query
+          description: Define the version of the Connect protocol
+          required: true
           schema:
             $ref: '#/components/schemas/connect'
+          example: v1
       responses:
         default:
           description: Error
@@ -239,13 +287,16 @@ paths:
       parameters:
         - name: Connect-Protocol-Version
           in: header
-          required: true
+          description: Define the version of the Connect protocol
           schema:
             $ref: '#/components/schemas/connect-protocol-version'
+          example: 1
         - name: Connect-Timeout-Ms
           in: header
+          description: Define the timeout, in ms
           schema:
             $ref: '#/components/schemas/connect-timeout-header'
+          example: 1000
       requestBody:
         content:
           application/json:
@@ -275,36 +326,49 @@ paths:
       parameters:
         - name: Connect-Protocol-Version
           in: header
-          required: true
+          description: Define the version of the Connect protocol
           schema:
             $ref: '#/components/schemas/connect-protocol-version'
+          example: 1
         - name: Connect-Timeout-Ms
           in: header
+          description: Define the timeout, in ms
           schema:
             $ref: '#/components/schemas/connect-timeout-header'
+          example: 1000
         - name: message
           in: query
+          description: The URL-encoded message query parameter contains the JSON or binary serialized request message
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/listah.v1.ItemServiceReadTagPropertyRequest'
         - name: encoding
           in: query
+          description: Define which encoding or 'Message-Codec' to use
           required: true
           schema:
             $ref: '#/components/schemas/encoding'
+          example: json
         - name: base64
           in: query
+          description: Specifies if the message query param is base64 encoded, which may be required for binary data
           schema:
             $ref: '#/components/schemas/base64'
+          example: false
         - name: compression
           in: query
+          description: Which compression algorithm to use for this request
           schema:
             $ref: '#/components/schemas/compression'
+          example: gzip
         - name: connect
           in: query
+          description: Define the version of the Connect protocol
+          required: true
           schema:
             $ref: '#/components/schemas/connect'
+          example: v1
       responses:
         default:
           description: Error
@@ -327,13 +391,16 @@ paths:
       parameters:
         - name: Connect-Protocol-Version
           in: header
-          required: true
+          description: Define the version of the Connect protocol
           schema:
             $ref: '#/components/schemas/connect-protocol-version'
+          example: 1
         - name: Connect-Timeout-Ms
           in: header
+          description: Define the timeout, in ms
           schema:
             $ref: '#/components/schemas/connect-timeout-header'
+          example: 1000
       requestBody:
         content:
           application/json:
@@ -363,13 +430,16 @@ paths:
       parameters:
         - name: Connect-Protocol-Version
           in: header
-          required: true
+          description: Define the version of the Connect protocol
           schema:
             $ref: '#/components/schemas/connect-protocol-version'
+          example: 1
         - name: Connect-Timeout-Ms
           in: header
+          description: Define the timeout, in ms
           schema:
             $ref: '#/components/schemas/connect-timeout-header'
+          example: 1000
       requestBody:
         content:
           application/json:
@@ -399,13 +469,16 @@ paths:
       parameters:
         - name: Connect-Protocol-Version
           in: header
-          required: true
+          description: Define the version of the Connect protocol
           schema:
             $ref: '#/components/schemas/connect-protocol-version'
+          example: 1
         - name: Connect-Timeout-Ms
           in: header
+          description: Define the timeout, in ms
           schema:
             $ref: '#/components/schemas/connect-timeout-header'
+          example: 1000
       requestBody:
         content:
           application/json:
@@ -435,13 +508,16 @@ paths:
       parameters:
         - name: Connect-Protocol-Version
           in: header
-          required: true
+          description: Define the version of the Connect protocol
           schema:
             $ref: '#/components/schemas/connect-protocol-version'
+          example: 1
         - name: Connect-Timeout-Ms
           in: header
+          description: Define the timeout, in ms
           schema:
             $ref: '#/components/schemas/connect-timeout-header'
+          example: 1000
       requestBody:
         content:
           application/json:
@@ -465,9 +541,13 @@ components:
   schemas:
     base64:
       type: boolean
+      examples:
+        - false
       title: base64
       description: Specifies if the message query param is base64 encoded, which may be required for binary data
     compression:
+      examples:
+        - gzip
       title: compression
       enum:
         - identity
@@ -475,19 +555,23 @@ components:
         - br
       description: Which compression algorithm to use for this request
     connect:
+      examples:
+        - v1
       title: connect
       enum:
         - v1
       description: Define the version of the Connect protocol
     connect-protocol-version:
       type: number
-      title: Connect-Protocol-Version
-      enum:
+      examples:
         - 1
+      title: Connect-Protocol-Version
       description: Define the version of the Connect protocol
       const: 1
     connect-timeout-header:
       type: number
+      examples:
+        - 1000
       title: Connect-Timeout-Ms
       description: Define the timeout, in ms
     connect.error:
@@ -531,24 +615,21 @@ components:
       properties:
         type:
           type: string
-          description: 'A URL that acts as a globally unique identifier for the type of the serialized message. For example: `type.googleapis.com/google.rpc.ErrorInfo`. This is used to determine the schema of the data in the `value` field and is the discriminator for the `debug` field.'
+          description: 'A URL that acts as a globally unique identifier for the type of the serialized message. For example: `type.googleapis.com/google.rpc.ErrorInfo`.'
         value:
           type: string
-          format: binary
+          format: byte
           description: The Protobuf message, serialized as bytes and base64-encoded. The specific message type is identified by the `type` field.
         debug:
-          oneOf:
-            - type: object
-              title: Any
-              additionalProperties: true
-              description: Detailed error information.
-          discriminator:
-            propertyName: type
+          type: object
           title: Debug
+          additionalProperties: true
           description: Deserialized error detail payload. The 'type' field indicates the schema. This field is for easier debugging and should not be relied upon for application logic.
       additionalProperties: true
       description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message, with an additional debug field for ConnectRPC error details.
     encoding:
+      examples:
+        - json
       title: encoding
       enum:
         - proto
@@ -560,102 +641,14 @@ components:
         - "2023-01-15T01:30:15.01Z"
         - "2024-12-25T12:00:00Z"
       format: date-time
-      description: |-
-        A Timestamp represents a point in time independent of any time zone or local
-         calendar, encoded as a count of seconds and fractions of seconds at
-         nanosecond resolution. The count is relative to an epoch at UTC midnight on
-         January 1, 1970, in the proleptic Gregorian calendar which extends the
-         Gregorian calendar backwards to year one.
-
-         All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-         second table is needed for interpretation, using a [24-hour linear
-         smear](https://developers.google.com/time/smear).
-
-         The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-         restricting to that range, we ensure that we can convert to and from [RFC
-         3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-
-         # Examples
-
-         Example 1: Compute Timestamp from POSIX `time()`.
-
-             Timestamp timestamp;
-             timestamp.set_seconds(time(NULL));
-             timestamp.set_nanos(0);
-
-         Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-
-             struct timeval tv;
-             gettimeofday(&tv, NULL);
-
-             Timestamp timestamp;
-             timestamp.set_seconds(tv.tv_sec);
-             timestamp.set_nanos(tv.tv_usec * 1000);
-
-         Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-
-             FILETIME ft;
-             GetSystemTimeAsFileTime(&ft);
-             UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-
-             // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-             // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-             Timestamp timestamp;
-             timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-             timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-
-         Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-
-             long millis = System.currentTimeMillis();
-
-             Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-                 .setNanos((int) ((millis % 1000) * 1000000)).build();
-
-         Example 5: Compute Timestamp from Java `Instant.now()`.
-
-             Instant now = Instant.now();
-
-             Timestamp timestamp =
-                 Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-                     .setNanos(now.getNano()).build();
-
-         Example 6: Compute Timestamp from current time in Python.
-
-             timestamp = Timestamp()
-             timestamp.GetCurrentTime()
-
-         # JSON Mapping
-
-         In JSON format, the Timestamp type is encoded as a string in the
-         [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
-         format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
-         where {year} is always expressed using four digits while {month}, {day},
-         {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
-         seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
-         are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
-         is required. A ProtoJSON serializer should always use UTC (as indicated by
-         "Z") when printing the Timestamp type and a ProtoJSON parser should be
-         able to accept both UTC and other timezones (as indicated by an offset).
-
-         For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
-         01:30 UTC on January 15, 2017.
-
-         In JavaScript, one can convert a Date object to this format using the
-         standard
-         [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-         method. In Python, a standard `datetime.datetime` object can be converted
-         to this format using
-         [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
-         the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
-         the Joda Time's [`ISODateTimeFormat.dateTime()`](
-         http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
-         ) to obtain a formatter capable of generating timestamps in this format.
+      description: A point in time in RFC 3339 format, with up to nanosecond precision. Output uses UTC (`Z`); input may use an offset from UTC.
     listah.v1.BadRequestDetails:
       type: object
       properties:
         code:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.ErrorCode'
           title: code
-          $ref: '#/components/schemas/listah.v1.ErrorCode'
         fieldViolations:
           type: array
           items:
@@ -697,7 +690,7 @@ components:
           title: id
         userId:
           type: string
-          title: userId
+          title: user_id
         name:
           type: string
           title: name
@@ -712,13 +705,14 @@ components:
           format: int32
         softDelete:
           type: boolean
-          title: softDelete
+          title: soft_delete
         updatedBy:
           type: string
-          title: updatedBy
+          title: updated_by
         updatedAt:
-          title: updatedAt
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: updated_at
       title: Filter
       additionalProperties: false
     listah.v1.InnerPropTagMap:
@@ -728,20 +722,10 @@ components:
           type: object
           title: value
           additionalProperties:
+            allOf:
+              - $ref: '#/components/schemas/listah.v1.Tag'
             title: value
-            $ref: '#/components/schemas/listah.v1.Tag'
       title: InnerPropTagMap
-      additionalProperties: false
-    listah.v1.InnerPropTagMap.ValueEntry:
-      type: object
-      properties:
-        key:
-          type: string
-          title: key
-        value:
-          title: value
-          $ref: '#/components/schemas/listah.v1.Tag'
-      title: ValueEntry
       additionalProperties: false
     listah.v1.Item:
       type: object
@@ -751,7 +735,7 @@ components:
           title: id
         userId:
           type: string
-          title: userId
+          title: user_id
         name:
           type: string
           title: name
@@ -771,49 +755,41 @@ components:
             title: value
         softDelete:
           type: boolean
-          title: softDelete
+          title: soft_delete
         tagObjs:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.Tag'
-          title: tagObjs
+          title: tag_objs
         propObjs:
           type: array
           items:
             $ref: '#/components/schemas/listah.v1.MapObj'
-          title: propObjs
+          title: prop_objs
         suspension:
           type: integer
           title: suspension
           format: int32
         updatedBy:
           type: string
-          title: updatedBy
+          title: updated_by
         updatedAt:
-          title: updatedAt
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: updated_at
       title: Item
-      additionalProperties: false
-    listah.v1.Item.PropsEntry:
-      type: object
-      properties:
-        key:
-          type: string
-          title: key
-        value:
-          type: string
-          title: value
-      title: PropsEntry
       additionalProperties: false
     listah.v1.ItemServiceReadFilterRequest:
       type: object
       properties:
         query:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.ReadQuery'
           title: query
-          $ref: '#/components/schemas/listah.v1.ReadQuery'
         pagination:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Pagination'
           title: pagination
-          $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceReadFilterRequest
       additionalProperties: false
       description: Filter Messages
@@ -826,22 +802,26 @@ components:
             $ref: '#/components/schemas/listah.v1.Filter'
           title: filters
         query:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.ReadQuery'
           title: query
-          $ref: '#/components/schemas/listah.v1.ReadQuery'
         pagination:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Pagination'
           title: pagination
-          $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceReadFilterResponse
       additionalProperties: false
     listah.v1.ItemServiceReadItemRequest:
       type: object
       properties:
         query:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.ReadQuery'
           title: query
-          $ref: '#/components/schemas/listah.v1.ReadQuery'
         pagination:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Pagination'
           title: pagination
-          $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceReadItemRequest
       additionalProperties: false
       description: Item Messages
@@ -854,22 +834,26 @@ components:
             $ref: '#/components/schemas/listah.v1.Item'
           title: items
         query:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.ReadQuery'
           title: query
-          $ref: '#/components/schemas/listah.v1.ReadQuery'
         pagination:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Pagination'
           title: pagination
-          $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceReadItemResponse
       additionalProperties: false
     listah.v1.ItemServiceReadTagPropertyRequest:
       type: object
       properties:
         query:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.ReadQuery'
           title: query
-          $ref: '#/components/schemas/listah.v1.ReadQuery'
         pagination:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Pagination'
           title: pagination
-          $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceReadTagPropertyRequest
       additionalProperties: false
       description: Tag Property Messages
@@ -880,36 +864,30 @@ components:
           type: object
           title: props
           additionalProperties:
+            allOf:
+              - $ref: '#/components/schemas/listah.v1.StringList'
             title: value
-            $ref: '#/components/schemas/listah.v1.StringList'
         query:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.ReadQuery'
           title: query
-          $ref: '#/components/schemas/listah.v1.ReadQuery'
         pagination:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Pagination'
           title: pagination
-          $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceReadTagPropertyResponse
-      additionalProperties: false
-    listah.v1.ItemServiceReadTagPropertyResponse.PropsEntry:
-      type: object
-      properties:
-        key:
-          type: string
-          title: key
-        value:
-          title: value
-          $ref: '#/components/schemas/listah.v1.StringList'
-      title: PropsEntry
       additionalProperties: false
     listah.v1.ItemServiceReadTagRequest:
       type: object
       properties:
         query:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.ReadQuery'
           title: query
-          $ref: '#/components/schemas/listah.v1.ReadQuery'
         pagination:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Pagination'
           title: pagination
-          $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceReadTagRequest
       additionalProperties: false
       description: Tag Messages
@@ -923,28 +901,20 @@ components:
           title: tags
         tagidPropMap:
           type: object
-          title: tagidPropMap
+          title: tagid_prop_map
           additionalProperties:
+            allOf:
+              - $ref: '#/components/schemas/listah.v1.StringList'
             title: value
-            $ref: '#/components/schemas/listah.v1.StringList'
         query:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.ReadQuery'
           title: query
-          $ref: '#/components/schemas/listah.v1.ReadQuery'
         pagination:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Pagination'
           title: pagination
-          $ref: '#/components/schemas/listah.v1.Pagination'
       title: ItemServiceReadTagResponse
-      additionalProperties: false
-    listah.v1.ItemServiceReadTagResponse.TagidPropMapEntry:
-      type: object
-      properties:
-        key:
-          type: string
-          title: key
-        value:
-          title: value
-          $ref: '#/components/schemas/listah.v1.StringList'
-      title: TagidPropMapEntry
       additionalProperties: false
     listah.v1.ItemServiceUpsertFilterRequest:
       type: object
@@ -963,7 +933,7 @@ components:
           type: array
           items:
             type: string
-          title: filterIds
+          title: filter_ids
       title: ItemServiceUpsertFilterResponse
       additionalProperties: false
     listah.v1.ItemServiceUpsertItemRequest:
@@ -983,7 +953,7 @@ components:
           type: array
           items:
             type: string
-          title: itemIds
+          title: item_ids
       title: ItemServiceUpsertItemResponse
       additionalProperties: false
     listah.v1.ItemServiceUpsertTagRequest:
@@ -1003,7 +973,7 @@ components:
           type: array
           items:
             type: string
-          title: tagIds
+          title: tag_ids
       title: ItemServiceUpsertTagResponse
       additionalProperties: false
     listah.v1.MapObj:
@@ -1021,24 +991,18 @@ components:
       type: object
       properties:
         size:
-          type:
-            - integer
-            - string
+          type: string
           title: size
           format: int64
         page:
-          type:
-            - integer
-            - string
+          type: string
           title: page
           format: int64
         sort:
           type: string
           title: sort
         volume:
-          type:
-            - integer
-            - string
+          type: string
           title: volume
           format: int64
       title: Pagination
@@ -1048,7 +1012,7 @@ components:
       properties:
         userId:
           type: string
-          title: userId
+          title: user_id
         id:
           type: string
           title: id
@@ -1066,11 +1030,13 @@ components:
       type: object
       properties:
         query:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.ReadQuery'
           title: query
-          $ref: '#/components/schemas/listah.v1.ReadQuery'
         pagination:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.Pagination'
           title: pagination
-          $ref: '#/components/schemas/listah.v1.Pagination'
       title: ReadRequest
       additionalProperties: false
     listah.v1.StringList:
@@ -1087,8 +1053,9 @@ components:
       type: object
       properties:
         code:
+          allOf:
+            - $ref: '#/components/schemas/listah.v1.ErrorCode'
           title: code
-          $ref: '#/components/schemas/listah.v1.ErrorCode'
         trackingId:
           type: string
           title: tracking_id
@@ -1104,7 +1071,7 @@ components:
           title: id
         userId:
           type: string
-          title: userId
+          title: user_id
         name:
           type: string
           title: name
@@ -1119,13 +1086,14 @@ components:
           format: int32
         softDelete:
           type: boolean
-          title: softDelete
+          title: soft_delete
         updatedBy:
           type: string
-          title: updatedBy
+          title: updated_by
         updatedAt:
-          title: updatedAt
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
+          allOf:
+            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+          title: updated_at
       title: Tag
       additionalProperties: false
     listah.v1.TagPropertyMap:
@@ -1135,20 +1103,10 @@ components:
           type: object
           title: value
           additionalProperties:
+            allOf:
+              - $ref: '#/components/schemas/listah.v1.StringList'
             title: value
-            $ref: '#/components/schemas/listah.v1.StringList'
       title: TagPropertyMap
-      additionalProperties: false
-    listah.v1.TagPropertyMap.ValueEntry:
-      type: object
-      properties:
-        key:
-          type: string
-          title: key
-        value:
-          title: value
-          $ref: '#/components/schemas/listah.v1.StringList'
-      title: ValueEntry
       additionalProperties: false
 security: []
 tags:

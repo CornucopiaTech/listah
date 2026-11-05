@@ -47,12 +47,13 @@ func (a *tag) Read(ctx context.Context, m *[]*model.Tag, s *model.RepoSearch) (i
 
 	query := `
 		SELECT t."id", t."user_id", t."name", t.props::VARCHAR props
+			,t.updated_at, t.soft_delete
 			,SUM(CASE WHEN it.id IS NOT NULL THEN 1 ELSE 0 END) count
 		FROM apps.tags t LEFT JOIN items it
 			ON t.user_id = it.user_id AND t.id = it.tag_id
 		WHERE t.user_id = '` + s.UserId + `' ` + idFilter + `
 			AND (t.soft_delete = false OR t.soft_delete IS NULL)
-		GROUP BY 1, 2, 3, 4
+		GROUP BY 1, 2, 3, 4, 5, 6
 	`
 
 	if s.Text != "" {

@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import {
   devtools,
-  persist,
 } from 'zustand/middleware';
 import type { ExtractState } from 'zustand';
 
@@ -11,12 +10,11 @@ import { createTagSlice } from '@/hooks/store/tagSlice';
 import { createFilterSlice } from '@/hooks/store/filterSlice';
 import { createItemSlice } from '@/hooks/store/itemSlice';
 import { createLayoutSlice } from '@/hooks/store/layoutSlice';
-import type { IStore } from '@/domain/entities/store';
+import type { IStore } from '@/app-types/store';
 
 
 
 export const useAppStore = create<IStore>()(
-  // persist(
   devtools(
     (...a) => ({
       ...createTagSlice(...a),
@@ -25,8 +23,6 @@ export const useAppStore = create<IStore>()(
       ...createLayoutSlice(...a),
     }),
   ),
-  // { name: 'listah-store' },
-  // )
 );
 
 

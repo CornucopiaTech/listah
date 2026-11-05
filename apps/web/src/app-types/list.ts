@@ -2,7 +2,6 @@ import type {
   ChangeEvent,
   MouseEvent,
   ReactNode,
-  RefObject,
 } from 'react';
 
 
@@ -22,6 +21,16 @@ import {
 import {
   type IItem,
 } from "./item";
+
+
+export type IVirtuosoTableContext = {
+  isMobile: boolean,
+  selected: Set<string>,
+  allSelected: boolean,
+  handleSelected: (i: string) => void,
+  handleEdit: (i: number) => void,
+  handleViewUsage: (i: number) => void
+}
 
 
 export type IListContext = {
@@ -50,6 +59,10 @@ export type IViewItemsContext = {
   pageSizeChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
   pageSortChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
   editItemClick: (idx: number) => void,
+  bulkDelete: () => void,
+  selectAll: () => void,
+  check: (checkedId: string) => void,
+  toggleSelectAll: () => void,
 }
 
 
@@ -83,8 +96,8 @@ export type IViewTagsContext = {
   editTagClick: (idx: number) => void,
   bulkDelete: () => void,
   selectAll: () => void,
-  tagCheck: (checkedTagId: string) => void,
-  toggleSelectAllTags: () => void,
+  check: (checkedId: string) => void,
+  toggleSelectAll: () => void,
 }
 
 
@@ -99,4 +112,8 @@ export type IViewFiltersContext = {
   pageSortChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
   viewItemsClick: (idx: number) => void,
   editFilterClick: (idx: number) => void,
+  bulkDelete: () => void,
+  selectAll: () => void,
+  check: (checkedId: string) => void,
+  toggleSelectAll: () => void,
 }

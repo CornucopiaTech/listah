@@ -4,18 +4,19 @@ import type {
 } from 'react';
 import {
   forwardRef,
-  Fragment
+  Fragment,
+  memo,
+  useMemo,
 } from 'react';
 import { useTheme, useMediaQuery } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
 import LinearProgress from '@mui/material/LinearProgress';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import Button from '@mui/material/Button';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
@@ -33,6 +34,9 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import Checkbox from '@mui/material/Checkbox';
+import { TableVirtuoso, } from 'react-virtuoso';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 
 
@@ -42,19 +46,18 @@ import {
 } from '@/hooks/store/boundStore';
 import type {
   IViewFiltersContext,
-  ITableContext,
   IUpdateFiltersContext,
   IFormContext,
   ICreateContext,
   IPagingContext,
   IFilter,
-} from "@/domain/entities";
+  IVirtuosoTableContext,
+} from "@/app-types";
 import {
   useViewFilters,
   useUpdateFilters,
   FormContext,
   PagingContext,
-  TableContext,
   UpdateFiltersProvider,
   ViewFiltersProvider,
   SearchItemsProvider,
@@ -66,11 +69,9 @@ import {
 import {
   AppContainer,
   AppSectionPaper,
-  AppTooltip,
   FormDialog,
   getFormTextFieldProps,
   ListBox,
-  TableLayout,
   OuterBox,
   UpdateFormActions,
   ItemSearchList,
@@ -78,22 +79,6 @@ import {
   AppBreadcrumb,
 } from '@/components';
 
-
-const VirtuosoTableComponents: TableComponents<IFilter> = {
-  Scroller: forwardRef<HTMLDivElement>((props, ref) => (
-    <TableContainer component={Paper} {...props} ref={ref} />
-  )),
-  Table: (props) => (
-    <Table {...props} sx={{ borderCollapse: 'separate', tableLayout: 'fixed' }} />
-  ),
-  TableHead: forwardRef<HTMLTableSectionElement>((props, ref) => (
-    <TableHead {...props} ref={ref} />
-  )),
-  TableRow,
-  TableBody: forwardRef<HTMLTableSectionElement>((props, ref) => (
-    <TableBody {...props} ref={ref} />
-  )),
-};
 
 export function Filters(): ReactNode {
   const theme = useTheme();
@@ -115,735 +100,404 @@ export function Filters(): ReactNode {
         {/* Main Page Content */}
         <BreadcrumbProvider route="/filters"><AppBreadcrumb sx={{ display: isMobile ? "block" : "none" }} /></BreadcrumbProvider>
         <CreateProvider>
-          <ViewFiltersProvider> <ViewFilter /> </ViewFiltersProvider>
+          <ViewFiltersProvider>
+            <ViewFilterShell>
+              <ViewFilter />
+            </ViewFilterShell>
+          </ViewFiltersProvider>
         </CreateProvider>
       </AppSectionPaper>
     </AppContainer >
   );
 }
 
-export function ViewFilterMobile(): ReactNode {
-  const {
-    filters,
-    pagination,
-    isPending,
-    isError,
-    error,
-    pageChange,
-    pageSizeChange,
-    viewItemsClick,
-    editFilterClick,
-  } = useViewFilters() as unknown as IViewFiltersContext;
-  const storeFilterScroll = useAppStore((state) => state.filterScroll);
-  const {
-    addNewItemClick,
-    addNewFilterClick,
-  } = useMutator() as unknown as ICreateContext;
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+const VirtuosoTableComponents: TableComponents<IFilter> = {
+  Scroller: forwardRef<HTMLDivElement>((props, ref) => (
+    <TableContainer component={Paper} {...props} ref={ref} />
+  )),
+  Table: (props) => (
+    <Table {...props} size="small"
+      sx={{
+        borderCollapse: 'separate', tableLayout: 'fixed'
+      }} />
+  ),
+  TableHead: forwardRef<HTMLTableSectionElement>((props, ref) => (
+    <TableHead {...props} ref={ref} />
+  )),
+  TableRow,
+  TableBody: forwardRef<HTMLTableSectionElement>((props, ref) => (
+    <TableBody {...props} ref={ref} />
+  )),
+};
 
-  function renderCell(itemKey: number): ReactNode {
-    const item = filters[itemKey];
-    const tc = item?.name ?? "";
-    const itemcount = item?.count?.toString() ?? "0";
-    const fontSize = isMobile ? "0.9rem" : '1rem';
-    const iconFontSize = isMobile ? "1.1rem" : "1.5rem";
-    return (
-      <Fragment>
-        <TableCell
-          key="name"
-          component='th'
-          scope='row'
-          align='left'
-          onClick={() => viewItemsClick(itemKey)}
-          sx={{
-            fontSize: fontSize,
-          }}>
-          {tc}
-        </TableCell>
-        <TableCell
-          key="count"
-          component='td'
-          scope={undefined}
-          align='right'
-          sx={{
-            fontSize: fontSize,
-            display: isMobile ? "none" : undefined
-          }}>
-          {itemcount}
-        </TableCell>
-        <TableCell
-          key="updatedAt"
-          component='td'
-          scope={undefined}
-          align='right'
-          sx={{
-            fontSize: fontSize,
-            display: isMobile ? "none" : undefined
-          }}>
-          {item.updatedAt ?? ""}
-        </TableCell>
-        <TableCell
-          key="actions"
-          component='td'
-          scope={undefined}
-          align='right'
-          sx={{
-            fontSize: fontSize,
-          }}>
-          <IconButton aria-label="edit" onClick={() => editFilterClick(itemKey)}>
-            <AppTooltip title="Edit filter">
-              <EditIcon sx={{ fontSize: iconFontSize }} />
-            </AppTooltip>
-          </IconButton>
-          <IconButton aria-label="edit" onClick={() => editFilterClick(itemKey)}>
-            <AppTooltip title="Delete filter">
-              <DeleteIcon sx={{ fontSize: iconFontSize, color: "red" }} />
-            </AppTooltip>
-          </IconButton>
-        </TableCell>
-      </Fragment>
-    );
-  }
+const RowContent = memo(function RowContent(
+  {
+    item, index, checked, isMobile, allChecked,
+    handleCheck, handleEdit, handleViewUsage
+  }: {
+    item: IFilter, index: number, checked: boolean,
+    isMobile: boolean, allChecked: boolean,
+    handleCheck: (i: string) => void,
+    handleEdit: (i: number) => void,
+    handleViewUsage: (i: number) => void
+  }) {
+  const tc = item?.name ?? "";
+  const itemcount = item?.count?.toString() ?? "0";
+  const fontSize = isMobile ? "0.9rem" : '1rem';
+  const buttonFontSize = isMobile ? "0.9rem" : '1.1rem';
+  const iconFontSize = isMobile ? "1.0rem" : "1.5rem";
 
-  function headerContent() {
-    const headerFontSize = isMobile ? "1rem" : '1.4rem';
-    return (
-      <TableRow>
-        <TableCell
-          key="name"
-          variant="head"
-          align='left'
-          style={{ width: isMobile ? 80 : 100 }}
-          sx={{
-            backgroundColor: 'background.paper',
-            fontSize: headerFontSize,
-            fontWeight: 'bold',
-          }} >
-          Name
-        </TableCell>
-        <TableCell
-          key="count"
-          variant="head"
-          align='right'
-          style={{ width: 50 }}
-          sx={{
-            backgroundColor: 'background.paper',
-            fontSize: headerFontSize,
-            fontWeight: 'bold',
-            display: isMobile ? "none" : undefined
-          }} >
-          Usage
-        </TableCell>
-        <TableCell
-          key="updatedAt"
-          variant="head"
-          align='right'
-          style={{ width: 100 }}
-          sx={{
-            backgroundColor: 'background.paper',
-            fontSize: headerFontSize,
-            fontWeight: 'bold',
-            display: isMobile ? "none" : undefined
-          }} >
-          Updated At
-        </TableCell>
-        <TableCell
-          key="actions"
-          variant="head"
-          align='right'
-          style={{ width: 50 }}
-          sx={{
-            backgroundColor: 'background.paper',
-            fontSize: headerFontSize,
-            fontWeight: 'bold'
-          }} >
-          Actions
-        </TableCell>
-      </TableRow>
-    );
-  }
-
-
-  const tableContextValue = {
-    data: filters,
-    isPending,
-    isError,
-    error,
-    scrollIndex: Math.max(0, storeFilterScroll),
-    clickRow: viewItemsClick,
-    renderCell,
-    headerContent,
-    components: VirtuosoTableComponents,
-  } as unknown as ITableContext;
-
-  const pagingContextValue = {
-    pagination: pagination.paging,
-    pageChange: filters.length > 0 ? pageChange : undefined,
-    pageSizeChange: filters.length > 0 ? pageSizeChange : undefined,
-  } as unknown as IPagingContext;
-
-  const sortOptions = [
-    { value: "name asc", label: "Name Asc" },
-    { value: "name desc", label: "Name Desc" },
-    { value: "updatedAt asc", label: "Last Updated Asc" },
-    { value: "updatedAt desc", label: "Last Updated  Desc" },
-  ]
-
-  function Shell({ children }: { children: ReactNode }) {
-    return (
-      <Stack>
-        {/* Add new item, add new tag, add new filter buttons*/}
-        <Stack direction="row" spacing={1} sx={{
-          justifyContent: 'flex-end', alignContent: 'center',
-          display: 'flex', width: '100%', flexWrap: 'wrap',
-          alignItems: 'center'
-        }}>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={""}
-            label="rows-per-page"
-            //  @ts-ignore
-            onChange={() => undefined}
-            sx={{
-              // height: 36,                     // overall component height
-              height: "fit-content",                     // overall component height
-              '& .MuiSelect-select': {
-                paddingY: 1.2,                // vertical padding
-              },
-            }}
-          >
-            {sortOptions.map((i, _) =>
-              <MenuItem value={i.value}>{isMobile ? "" : "Sort by: "} <Typography variant={isMobile ? "body2m" : "body2"} component="div" textAlign={"left"} sx={{}}> {i.label} </Typography>  </MenuItem>
-            )}
-          </Select>
-          <Button size={isMobile ? "small" : "medium"} variant="contained" onClick={addNewFilterClick}
-            sx={{ fontSize: isMobile ? "0.6rem" : "1rem", p: 1, }}>
-            <AddIcon sx={{ display: isMobile ? "none" : undefined }} />
-            <Typography variant={isMobile ? "h7m" : "h7"} component="div" textAlign={"left"} sx={{}}> Create filter </Typography>
-
-          </Button>
-          <Button size={isMobile ? "small" : "medium"}
-            sx={{ fontSize: isMobile ? "0.6rem" : "1rem", p: 1, }}
-            variant="contained" onClick={addNewItemClick}>
-            <AddIcon sx={{ display: isMobile ? "none" : undefined }} />
-            <Typography variant={isMobile ? "h7m" : "h7"} component="div" textAlign={"left"} sx={{}}> Create item </Typography>
-          </Button>
-        </Stack>
-        <AppSectionPaper>
-          <PagingContext.Provider value={pagingContextValue}>
-            <TableContext.Provider value={tableContextValue}>
-              <ListBox>
-                <OuterBox>{children} </OuterBox>
-              </ListBox>
-            </TableContext.Provider>
-          </PagingContext.Provider>
-        </AppSectionPaper>
-      </Stack >
-    );
-  }
-
-  if (isPending) {
-    return <Shell><LinearProgress /></Shell>
-  }
-  if (error) {
-    return <Shell><Alert severity="error">{error.message || "An error occurred. Please try again"}</Alert></Shell>
-  }
-  if (filters.length == 0) {
-    return (
-      <Shell><Typography variant="h6"> No items found </Typography></Shell>
-    )
-  }
-  if (filters.length > 0) {
-    return (<Shell><TableLayout /></Shell>)
-  }
   return (
-    <Shell><Alert severity="error">"An error occurred. Please try again"</Alert></Shell>
-  )
+    <Fragment>
+      <TableCell
+        key="select"
+        component='td'
+        scope={undefined}
+        align='left'
+        sx={{
+          fontSize: fontSize,
+        }}>
+        <Checkbox disableRipple
+          checked={checked || allChecked}
+          onChange={() => handleCheck(item.id)}
+          slotProps={{
+            input: { 'aria-label': 'controlled' },
+          }}
+        />
+      </TableCell>
+      <TableCell
+        key="name"
+        component='th'
+        scope='row'
+        align='left'
+        onClick={() => handleViewUsage(index)}
+        sx={{
+          fontSize: fontSize,
+        }}>
+        <Typography variant={isMobile ? "body2m" : "body1"}  >{tc}</Typography>
+      </TableCell>
+      <TableCell
+        key="count"
+        component='td'
+        scope={undefined}
+        align='left'
+        sx={{
+          fontSize: fontSize,
+          display: isMobile ? "none" : undefined
+        }}>
+        <Typography variant={isMobile ? "body2m" : "body1"}  >{itemcount}</Typography>
+      </TableCell>
+      <TableCell
+        key="updatedAt"
+        component='td'
+        scope={undefined}
+        align='left'
+        sx={{
+          fontSize: fontSize,
+          display: isMobile ? "none" : undefined
+        }}>
+        <Typography variant={isMobile ? "body2m" : "body1"}  >{item.updatedAt}</Typography>
+      </TableCell>
+      <TableCell
+        key="actions"
+        component='td'
+        scope={undefined}
+        align='left'
+        sx={{
+          fontSize: fontSize,
+        }}>
+        <Button
+          variant="text" color="inherit"
+          onClick={() => handleEdit(index)}
+          sx={{
+            '&:hover': {
+              boxShadow: 2,
+            },
+            fontSize: buttonFontSize,
+            fontWeight: "500",
+            p: 0.5, width: "100%",
+            justifyContent: 'flex-start', display: 'flex',
+          }}
+          startIcon={<EditIcon sx={{ fontSize: iconFontSize }} />}>
+          <Typography variant={isMobile ? "body2" : "body1"}>Edit filter</Typography>
+        </Button>
+
+        <Button
+          variant="text" color="inherit"
+          onClick={() => handleViewUsage(index)}
+          sx={{
+            '&:hover': {
+              boxShadow: 2,
+            },
+            fontSize: buttonFontSize,
+            fontWeight: "500",
+            p: 0.5, width: "100%",
+            justifyContent: 'flex-start', display: 'flex',
+          }}
+          startIcon={<VisibilityIcon sx={{ fontSize: iconFontSize }} />}>
+
+          <Typography variant={isMobile ? "body2" : "body1"}>View items</Typography>
+        </Button>
+      </TableCell>
+    </Fragment>
+  );
+});
+
+function HeaderContent({ isMobile }: { isMobile: boolean }) {
+  const {
+    toggleSelectAll,
+  } = useViewFilters() as unknown as IViewFiltersContext;
+  const allFiltersChecked = useAppStore((state) => state.allFiltersChecked);
+  const headerFontSize = isMobile ? "1rem" : '1.2rem';
+
+
+  return (
+    <TableRow sx={{}}>
+      <TableCell
+        key="select"
+        variant="head"
+        align='left'
+        style={{ width: 20 }}
+        sx={{
+          fontSize: headerFontSize,
+          fontWeight: 'bold',
+          backgroundColor: "primary.dark",
+          color: "primary.contrastText",
+          '& .MuiTableCell-root': {
+            color: "primary.contrastText",
+          },
+        }} >
+        <Checkbox disableRipple
+          checked={allFiltersChecked}
+          onChange={toggleSelectAll}
+          slotProps={{
+            input: { 'aria-label': 'controlled' },
+          }}
+          sx={{
+            color: "primary.contrastText",
+            '&.Mui-checked': {
+              color: "primary.contrastText",
+            },
+          }}
+        />
+      </TableCell>
+      <TableCell
+        key="name"
+        variant="head"
+        align='left'
+        style={{ width: isMobile ? 80 : 120 }}
+        sx={{
+          fontSize: headerFontSize, fontWeight: 'bold',
+          backgroundColor: "primary.dark",
+          color: "primary.contrastText",
+          '& .MuiTableCell-root': {
+            color: "primary.contrastText",
+          },
+        }} >
+        Name
+      </TableCell>
+      <TableCell
+        key="count"
+        variant="head"
+        align='left'
+        style={{ width: 30 }}
+        sx={{
+          fontSize: headerFontSize,
+          fontWeight: 'bold',
+          display: isMobile ? "none" : undefined,
+          backgroundColor: "primary.dark",
+          color: "primary.contrastText",
+          '& .MuiTableCell-root': {
+            color: "primary.contrastText",
+          },
+        }} >
+        Usage
+      </TableCell>
+      <TableCell
+        key="updatedAt"
+        variant="head"
+        align='left'
+        style={{ width: 80 }}
+        sx={{
+          fontSize: headerFontSize,
+          fontWeight: 'bold',
+          display: isMobile ? "none" : undefined,
+          backgroundColor: "primary.dark",
+          color: "primary.contrastText",
+          '& .MuiTableCell-root': {
+            color: "primary.contrastText",
+          },
+        }} >
+        Last Update
+      </TableCell>
+      <TableCell
+        key="actions"
+        variant="head"
+        align='left'
+        style={{ width: isMobile ? 80 : 100 }}
+        sx={{
+          fontSize: headerFontSize,
+          fontWeight: 'bold',
+          backgroundColor: "primary.dark",
+          color: "primary.contrastText",
+          '& .MuiTableCell-root': {
+            color: "primary.contrastText",
+          },
+        }} >
+        Actions
+      </TableCell>
+    </TableRow >
+  );
 }
 
-export function ViewFilterDesktop(): ReactNode {
+export function ViewFilterShell({ children }: { children: ReactNode }) {
   const {
     filters,
     pagination,
-    isPending,
-    isError,
-    error,
     pageChange,
     pageSizeChange,
-    viewItemsClick,
-    editFilterClick,
+    pageSortChange,
+    bulkDelete,
   } = useViewFilters() as unknown as IViewFiltersContext;
-  const storeFilterScroll = useAppStore((state) => state.filterScroll);
   const {
     addNewItemClick,
     addNewFilterClick,
   } = useMutator() as unknown as ICreateContext;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const filtersChecked = useAppStore((state) => state.filtersChecked);
+  const allFiltersChecked = useAppStore((state) => state.allFiltersChecked);
 
-  function renderCell(itemKey: number): ReactNode {
-    const item = filters[itemKey];
-    const tc = item?.name ?? "";
-    const itemcount = item?.count?.toString() ?? "0";
-    const fontSize = '1rem';
-    const iconFontSize = "1.5rem";
-    // const toDisplay = undefined;
-    return (
-      <Fragment>
-        <TableCell
-          key="name"
-          component='th'
-          scope='row'
-          align='left'
-          onClick={() => viewItemsClick(itemKey)}
-          sx={{
-            fontSize: fontSize,
-          }}>
-          {tc}
-        </TableCell>
-        <TableCell
-          key="count"
-          component='td'
-          scope={undefined}
-          align='right'
-          sx={{
-            fontSize: fontSize,
-          }}>
-          {itemcount}
-        </TableCell>
-        <TableCell
-          key="updatedAt"
-          component='td'
-          scope={undefined}
-          align='right'
-          sx={{
-            fontSize: fontSize,
-          }}>
-          {item.updatedAt ?? ""}
-        </TableCell>
-        <TableCell
-          key="actions"
-          component='td'
-          scope={undefined}
-          align='right'
-          sx={{
-            fontSize: fontSize,
-          }}>
-          <IconButton aria-label="edit" onClick={() => editFilterClick(itemKey)}>
-            <AppTooltip title="Edit filter">
-              <EditIcon sx={{ fontSize: iconFontSize }} />
-            </AppTooltip>
-          </IconButton>
-          <IconButton aria-label="edit" onClick={() => editFilterClick(itemKey)}>
-            <AppTooltip title="Delete filter">
-              <DeleteIcon sx={{ fontSize: iconFontSize, color: "red" }} />
-            </AppTooltip>
-          </IconButton>
-        </TableCell>
-      </Fragment>
-    );
-  }
-
-  function headerContent() {
-    const headerFontSize = '1.4rem';
-    return (
-      <TableRow>
-        <TableCell
-          key="name"
-          variant="head"
-          align='left'
-          style={{ width: isMobile ? 80 : 100 }}
-          sx={{
-            backgroundColor: 'background.paper',
-            fontSize: headerFontSize,
-            fontWeight: 'bold',
-          }} >
-          Name
-        </TableCell>
-        <TableCell
-          key="count"
-          variant="head"
-          align='right'
-          style={{ width: 50 }}
-          sx={{
-            backgroundColor: 'background.paper',
-            fontSize: headerFontSize,
-            fontWeight: 'bold',
-            display: undefined
-          }} >
-          Usage
-        </TableCell>
-        <TableCell
-          key="updatedAt"
-          variant="head"
-          align='right'
-          style={{ width: 100 }}
-          sx={{
-            backgroundColor: 'background.paper',
-            fontSize: headerFontSize,
-            fontWeight: 'bold',
-            display: undefined
-          }} >
-          Updated At
-        </TableCell>
-        <TableCell
-          key="actions"
-          variant="head"
-          align='right'
-          style={{ width: 50 }}
-          sx={{
-            backgroundColor: 'background.paper',
-            fontSize: headerFontSize,
-            fontWeight: 'bold'
-          }} >
-          Actions
-        </TableCell>
-      </TableRow>
-    );
-  }
-
-
-  const tableContextValue = {
-    data: filters,
-    isPending,
-    isError,
-    error,
-    scrollIndex: Math.max(0, storeFilterScroll),
-    clickRow: viewItemsClick,
-    renderCell,
-    headerContent,
-    components: VirtuosoTableComponents,
-  } as unknown as ITableContext;
+  const canBulkDelete = allFiltersChecked || filtersChecked.size > 0;
+  const deleteButtonAction = canBulkDelete ? bulkDelete : () => undefined;
 
   const pagingContextValue = {
     pagination: pagination.paging,
     pageChange: filters.length > 0 ? pageChange : undefined,
     pageSizeChange: filters.length > 0 ? pageSizeChange : undefined,
   } as unknown as IPagingContext;
-
-  const sortOptions = [
-    { value: "name asc", label: "Name Asc" },
-    { value: "name desc", label: "Name Desc" },
-    { value: "updatedAt asc", label: "Last Updated Asc" },
-    { value: "updatedAt desc", label: "Last Updated  Desc" },
-  ]
-
-  function Shell({ children }: { children: ReactNode }) {
-    return (
-      <Stack>
-        {/* Add new item, add new tag, add new filter buttons*/}
-        <Stack direction="row" spacing={1} sx={{
-          justifyContent: 'flex-end', alignContent: 'center',
-          display: 'flex', width: '100%', flexWrap: 'wrap',
-          alignItems: 'center'
-        }}>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={""}
-            label="rows-per-page"
-            //  @ts-ignore
-            onChange={() => undefined}
-            sx={{
-              // height: 36,                     // overall component height
-              height: "fit-content",                     // overall component height
-              '& .MuiSelect-select': {
-                paddingY: 1.2,                // vertical padding
-              },
-            }}
-          >
-            {sortOptions.map((i, _) =>
-              <MenuItem value={i.value}>"Sort by: " <Typography variant="body2" component="div" textAlign={"left"} sx={{}}> {i.label} </Typography>  </MenuItem>
-            )}
-          </Select>
-          <Button size={isMobile ? "small" : "medium"} variant="contained" onClick={addNewFilterClick}
-            sx={{ fontSize: isMobile ? "0.6rem" : "1rem", p: 1, }}>
-            <AddIcon sx={{ display: isMobile ? "none" : undefined }} />
-            <Typography variant={isMobile ? "h7m" : "h7"} component="div" textAlign={"left"} sx={{}}> Create filter </Typography>
-
-          </Button>
-          <Button size={isMobile ? "small" : "medium"}
-            sx={{ fontSize: isMobile ? "0.6rem" : "1rem", p: 1, }}
-            variant="contained" onClick={addNewItemClick}>
-            <AddIcon sx={{ display: isMobile ? "none" : undefined }} />
-            <Typography variant={isMobile ? "h7m" : "h7"} component="div" textAlign={"left"} sx={{}}> Create item </Typography>
-          </Button>
-        </Stack>
-        <AppSectionPaper>
-          <PagingContext.Provider value={pagingContextValue}>
-            <TableContext.Provider value={tableContextValue}>
-              <ListBox>
-                <OuterBox>{children} </OuterBox>
-              </ListBox>
-            </TableContext.Provider>
-          </PagingContext.Provider>
-        </AppSectionPaper>
-      </Stack >
-    );
-  }
-
-  if (isPending) {
-    return <Shell><LinearProgress /></Shell>
-  }
-  if (error) {
-    return <Shell><Alert severity="error">{error.message || "An error occurred. Please try again"}</Alert></Shell>
-  }
-  if (filters.length == 0) {
-    return (
-      <Shell><Typography variant="h6"> No items found </Typography></Shell>
-    )
-  }
-  if (filters.length > 0) {
-    return (<Shell><TableLayout /></Shell>)
-  }
   return (
-    <Shell><Alert severity="error">"An error occurred. Please try again"</Alert></Shell>
-  )
+    <Stack sx={{ marginTop: "2rem", }}>
+      <Box sx={{ flexGrow: 1 }}>
+        {/* Add new item, add new tag, add new filter buttons*/}
+        <Grid container spacing={1}>
+          <Grid size={{ xs: 12, sm: 12, md: 3, lg: 3, xl: 3, }} >
+            <FormControl sx={{}}>
+              <InputLabel id="sortinput">Sort</InputLabel>
+              <Select
+                labelId="sortinput"
+                id="sortselect"
+                value={pagination.paging.sort}
+                label="rows-per-page"
+                //  @ts-ignore
+                onChange={pageSortChange}
+                sx={{
+                  height: "fit-content",                     // overall component height
+                  '& .MuiSelect-select': {
+                    paddingY: 1,                // vertical padding
+                  },
+                }} >
+                {pagination.sortOptions.map((i, _) =>
+                  <MenuItem value={i.value}> <Typography variant={isMobile ? "condensedBody2" : "body2"} component="div" textAlign={"left"} sx={{}}> {i.label} </Typography>  </MenuItem>
+                )}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 12, md: 9, lg: 9, xl: 9, }} >
+            <Stack spacing={2} direction="row"
+              sx={{
+                justifyContent: isMobile ? 'flex-start' : 'flex-end', display: 'flex'
+              }}>
+              <Button variant="contained" onClick={deleteButtonAction} startIcon={<DeleteIcon sx={{ fontSize: isMobile ? "1rem" : "1.5rem", width: "100%" }} />}>
+                <Typography variant={isMobile ? "h7m" : "h7"} textAlign={"left"}> delete {isMobile ? "" : " selected "} </Typography>
+              </Button>
+              <Button
+                variant="contained"
+                onClick={addNewFilterClick}
+                startIcon={<AddIcon sx={{ fontSize: isMobile ? "1rem" : "1.5rem", width: "100%" }} />}>
+                <Typography variant={isMobile ? "h7m" : "h7"} textAlign={"left"} sx={{}}> {isMobile ? "" : "create new "} filter </Typography>
+              </Button>
+              <Button variant="contained" onClick={addNewItemClick} startIcon={<AddIcon sx={{ fontSize: isMobile ? "1rem" : "1.5rem" }} />}>
+                <Typography variant={isMobile ? "h7m" : "h7"} textAlign={"left"} sx={{}}> {isMobile ? "" : "create new "} item </Typography>
+              </Button>
+            </Stack>
+          </Grid>
+        </Grid>
+      </Box>
+      <AppSectionPaper>
+        <PagingContext.Provider value={pagingContextValue}>
+          <ListBox>
+            <OuterBox>{children} </OuterBox>
+          </ListBox>
+        </PagingContext.Provider>
+      </AppSectionPaper>
+    </Stack >
+  );
 }
 
 export function ViewFilter(): ReactNode {
   const {
     filters,
-    pagination,
     isPending,
-    isError,
     error,
-    pageChange,
-    pageSizeChange,
-    pageSortChange,
     viewItemsClick,
     editFilterClick,
+    check,
   } = useViewFilters() as unknown as IViewFiltersContext;
-  const storeFilterScroll = useAppStore((state) => state.filterScroll);
-  const {
-    addNewItemClick,
-    addNewFilterClick,
-  } = useMutator() as unknown as ICreateContext;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const filtersChecked = useAppStore((state) => state.filtersChecked);
+  const allFiltersChecked = useAppStore((state) => state.allFiltersChecked);
 
-  function renderCell(itemKey: number): ReactNode {
-    const item = filters[itemKey];
-    const tc = item?.name ?? "";
-    const itemcount = item?.count?.toString() ?? "0";
-    const fontSize = isMobile ? "0.9rem" : '1rem';
-    const iconFontSize = isMobile ? "1.1rem" : "1.5rem";
-    return (
-      <Fragment>
-        <TableCell
-          key="name"
-          component='th'
-          scope='row'
-          align='left'
-          onClick={() => viewItemsClick(itemKey)}
-          sx={{
-            fontSize: fontSize,
-          }}>
-          <Typography variant={isMobile ? "body2m" : "body1"}  >{tc}</Typography>
-        </TableCell>
-        <TableCell
-          key="count"
-          component='td'
-          scope={undefined}
-          align='right'
-          sx={{
-            fontSize: fontSize,
-            display: isMobile ? "none" : undefined
-          }}>
-          <Typography variant={isMobile ? "body2m" : "body1"}  >{itemcount}</Typography>
-        </TableCell>
-        <TableCell
-          key="updatedAt"
-          component='td'
-          scope={undefined}
-          align='right'
-          sx={{
-            fontSize: fontSize,
-            display: isMobile ? "none" : undefined
-          }}>
-          <Typography variant={isMobile ? "body2m" : "body1"}  >{item.updatedAt ?? ""}</Typography>
-        </TableCell>
-        <TableCell
-          key="actions"
-          component='td'
-          scope={undefined}
-          align='right'
-          sx={{
-            fontSize: fontSize,
-          }}>
-          <IconButton aria-label="edit" onClick={() => editFilterClick(itemKey)}>
-            <AppTooltip title="Edit filter">
-              <EditIcon sx={{ fontSize: iconFontSize }} />
-            </AppTooltip>
-          </IconButton>
-          <IconButton aria-label="edit" onClick={() => editFilterClick(itemKey)}>
-            <AppTooltip title="Delete filter">
-              <DeleteIcon sx={{ fontSize: iconFontSize, color: "red" }} />
-            </AppTooltip>
-          </IconButton>
-        </TableCell>
-      </Fragment>
-    );
-  }
+  const context = useMemo(
+    () => ({
+      isMobile,
+      selected: filtersChecked,
+      allSelected: allFiltersChecked,
+      handleSelected: check,
+      handleViewUsage: viewItemsClick,
+      handleEdit: editFilterClick
+    }),
+    [filtersChecked, check, editFilterClick, viewItemsClick]
+  );
 
-  function headerContent() {
-    const headerFontSize = isMobile ? "1rem" : '1.4rem';
-    return (
-      <TableRow>
-        <TableCell
-          key="name"
-          variant="head"
-          align='left'
-          style={{ width: isMobile ? 80 : 100 }}
-          sx={{
-            backgroundColor: 'background.paper',
-            fontSize: headerFontSize,
-            fontWeight: 'bold',
-          }} >
-          Name
-        </TableCell>
-        <TableCell
-          key="count"
-          variant="head"
-          align='right'
-          style={{ width: 50 }}
-          sx={{
-            backgroundColor: 'background.paper',
-            fontSize: headerFontSize,
-            fontWeight: 'bold',
-            display: isMobile ? "none" : undefined
-          }} >
-          Usage
-        </TableCell>
-        <TableCell
-          key="updatedAt"
-          variant="head"
-          align='right'
-          style={{ width: 100 }}
-          sx={{
-            backgroundColor: 'background.paper',
-            fontSize: headerFontSize,
-            fontWeight: 'bold',
-            display: isMobile ? "none" : undefined
-          }} >
-          Updated At
-        </TableCell>
-        <TableCell
-          key="actions"
-          variant="head"
-          align='right'
-          style={{ width: 50 }}
-          sx={{
-            backgroundColor: 'background.paper',
-            fontSize: headerFontSize,
-            fontWeight: 'bold'
-          }} >
-          Actions
-        </TableCell>
-      </TableRow>
-    );
-  }
-
-
-  const tableContextValue = {
-    data: filters,
-    isPending,
-    isError,
-    error,
-    scrollIndex: Math.max(0, storeFilterScroll),
-    clickRow: viewItemsClick,
-    renderCell,
-    headerContent,
-    components: VirtuosoTableComponents,
-  } as unknown as ITableContext;
-
-  const pagingContextValue = {
-    pagination: pagination.paging,
-    pageChange: filters.length > 0 ? pageChange : undefined,
-    pageSizeChange: filters.length > 0 ? pageSizeChange : undefined,
-  } as unknown as IPagingContext;
-
-  function Shell({ children }: { children: ReactNode }) {
-    return (
-      <Stack sx={{ marginTop: "1rem" }}>
-        {/* Add new item, add new tag, add new filter buttons*/}
-        <Stack direction="row" spacing={1}
-          sx={{
-            justifyContent: 'flex-end', alignContent: 'center',
-            display: 'flex', width: '100%', flexWrap: 'wrap',
-            alignItems: 'center'
-          }}>
-          <FormControl sx={{}}>
-            <InputLabel id="sortinput">Sort by</InputLabel>
-            <Select
-              labelId="sortinput"
-              id="sortselect"
-              value={pagination.paging.sort}
-              label="rows-per-page"
-              //  @ts-ignore
-              onChange={pageSortChange}
-              sx={{
-                // height: 36,                     // overall component height
-                height: "fit-content",                     // overall component height
-                '& .MuiSelect-select': {
-                  paddingY: 1.2,                // vertical padding
-                },
-              }} >
-              {pagination.sortOptions.map((i, _) =>
-                <MenuItem value={i.value}> <Typography variant={isMobile ? "condensedBody2" : "body2"} component="div" textAlign={"left"} sx={{}}> {i.label} </Typography>  </MenuItem>
-              )}
-            </Select>
-          </FormControl>
-          <Button size={isMobile ? "small" : "medium"} variant="contained" onClick={addNewFilterClick}
-            sx={{ fontSize: isMobile ? "0.6rem" : "1rem", p: 1, }}>
-            <AddIcon sx={{
-              // display: isMobile ? "none" : undefined,
-              fontSize: isMobile ? "1rem" : "1.5rem"
-            }} />
-            <Typography variant={isMobile ? "h7m" : "h7"} component="div" textAlign={"left"} sx={{}}> {isMobile ? "" : "create new "} filter </Typography>
-
-          </Button>
-          <Button size={isMobile ? "small" : "medium"}
-            sx={{ fontSize: isMobile ? "0.6rem" : "1rem", p: 1, }}
-            variant="contained" onClick={addNewItemClick}>
-            <AddIcon sx={{
-              // display: isMobile ? "none" : undefined,
-              fontSize: isMobile ? "1rem" : "1.5rem"
-            }} />
-            <Typography variant={isMobile ? "h7m" : "h7"} component="div" textAlign={"left"} sx={{}}> {isMobile ? "" : "create new "} item </Typography>
-          </Button>
-        </Stack>
-        <AppSectionPaper>
-          <PagingContext.Provider value={pagingContextValue}>
-            <TableContext.Provider value={tableContextValue}>
-              <ListBox>
-                <OuterBox>{children} </OuterBox>
-              </ListBox>
-            </TableContext.Provider>
-          </PagingContext.Provider>
-        </AppSectionPaper>
-      </Stack >
-    );
-  }
 
   if (isPending) {
-    return <Shell><LinearProgress /></Shell>
+    return <LinearProgress />
   }
   if (error) {
-    return <Shell><Alert severity="error">{error.message || "An error occurred. Please try again"}</Alert></Shell>
+    return <Alert severity="error">{error.message || "An error occurred. Please try again"}</Alert>
   }
   if (filters.length == 0) {
     return (
-      <Shell><Typography variant="h6"> No items found </Typography></Shell>
+      <Typography variant="h6"> No items found </Typography>
     )
   }
   if (filters.length > 0) {
-    return (<Shell><TableLayout /></Shell>)
+    return (<Fragment>
+      <TableVirtuoso
+        data={filters}
+        context={context}
+        computeItemKey={(_, row) => row.id}
+        // @ts-ignore
+        components={VirtuosoTableComponents}
+        fixedHeaderContent={() => <HeaderContent isMobile={isMobile} />}
+        itemContent={
+          (i: number, row: IFilter, ctx: IVirtuosoTableContext) => <RowContent
+            isMobile={ctx.isMobile}
+            item={row} index={i}
+            checked={ctx.selected.has(row.id)}
+            allChecked={ctx.allSelected}
+            handleCheck={ctx.handleSelected}
+            handleEdit={ctx.handleEdit}
+            handleViewUsage={ctx.handleViewUsage}
+          />
+        }
+      />
+    </Fragment>)
   }
   return (
-    <Shell><Alert severity="error">"An error occurred. Please try again"</Alert></Shell>
+    <Alert severity="error">"An error occurred. Please try again"</Alert>
   )
 }
 

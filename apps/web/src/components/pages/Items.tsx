@@ -3,6 +3,8 @@ import {
   Fragment,
   useState,
   forwardRef,
+  memo,
+  useMemo,
 } from "react";
 import type {
   ReactNode,
@@ -40,6 +42,11 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import Checkbox from '@mui/material/Checkbox';
+import { TableVirtuoso, } from 'react-virtuoso';
+
+
+
 
 
 // Internal
@@ -50,7 +57,6 @@ import {
 import type {
   IListContext,
   IFormContext,
-  ITableContext,
   IViewItemsContext,
   IUpdateItemsContext,
   IPagingContext,
@@ -59,10 +65,11 @@ import type {
   IItemFormProps,
   ISearchItemsContext,
   ICreateContext,
-} from '@/domain/entities';
+  IVirtuosoTableContext,
+} from '@/app-types';
 import {
   DefaultTag,
-} from '@/domain/entities';
+} from '@/app-types';
 import {
   ListItemStyling
 } from "@/helpers/defaults";
@@ -72,7 +79,6 @@ import {
   useSearchItems,
   FormContext,
   PagingContext,
-  TableContext,
   ListContext,
   ViewItemsProvider,
   UpdateItemsProvider,
@@ -88,7 +94,6 @@ import {
   AppSectionPaper,
   AppContainer,
   ListLayout,
-  TableLayout,
   ListBox,
   OuterBox,
   FormDialog,
@@ -107,24 +112,9 @@ import {
 
 
 
-// ToDo: Add bulk deletion
+
 // ToDo. Read the url and find out if a filter or tag is being looked at and then add the tags associated with the tag or filter to the create new item form
 // ToDo: Add the functionality for inheriting properties from an existing filter.
-const VirtuosoTableComponents: TableComponents<IItem> = {
-  Scroller: forwardRef<HTMLDivElement>((props, ref) => (
-    <TableContainer component={Paper} {...props} ref={ref} />
-  )),
-  Table: (props) => (
-    <Table {...props} sx={{ borderCollapse: 'separate', tableLayout: 'fixed' }} />
-  ),
-  TableHead: forwardRef<HTMLTableSectionElement>((props, ref) => (
-    <TableHead {...props} ref={ref} />
-  )),
-  TableRow,
-  TableBody: forwardRef<HTMLTableSectionElement>((props, ref) => (
-    <TableBody {...props} ref={ref} />
-  )),
-};
 
 export function Items() {
   const theme = useTheme();
@@ -136,222 +126,353 @@ export function Items() {
 
       <BreadcrumbProvider route="/items"><AppBreadcrumb sx={{ display: isMobile ? "block" : "none" }} /></BreadcrumbProvider>
       <CreateProvider>
-        <ViewItemsProvider> <ItemList /> </ViewItemsProvider>
+        <ViewItemsProvider>
+          <ViewItemShell>
+            <ViewItem />
+          </ViewItemShell>
+        </ViewItemsProvider>
       </CreateProvider>
     </AppContainer >
   );
 }
 
+const VirtuosoTableComponents: TableComponents<IItem> = {
+  Scroller: forwardRef<HTMLDivElement>((props, ref) => (
+    <TableContainer component={Paper} {...props} ref={ref} />
+  )),
+  Table: (props) => (
+    <Table {...props} size="small"
+      sx={{
+        borderCollapse: 'separate', tableLayout: 'fixed'
+      }} />
+  ),
+  TableHead: forwardRef<HTMLTableSectionElement>((props, ref) => (
+    <TableHead {...props} ref={ref} />
+  )),
+  TableRow,
+  TableBody: forwardRef<HTMLTableSectionElement>((props, ref) => (
+    <TableBody {...props} ref={ref} />
+  )),
+};
 
-export function ItemList() {
+const RowContent = memo(function RowContent(
+  {
+    item, index, checked, isMobile, allChecked,
+    handleCheck, handleEdit
+  }: {
+    item: IItem, index: number, checked: boolean,
+    isMobile: boolean, allChecked: boolean,
+    handleCheck: (i: string) => void,
+    handleEdit: (i: number) => void,
+  }) {
+  const tc = item?.name ?? "";
+  const fontSize = isMobile ? "0.9rem" : '1rem';
+  const buttonFontSize = isMobile ? "0.9rem" : '1.1rem';
+  const iconFontSize = isMobile ? "1.0rem" : "1.5rem";
+
+  return (
+    <Fragment>
+      <TableCell
+        key="select"
+        component='td'
+        scope={undefined}
+        align='left'
+        sx={{
+          fontSize: fontSize,
+        }}>
+        <Checkbox disableRipple
+          checked={checked || allChecked}
+          onChange={() => handleCheck(item.id)}
+          slotProps={{
+            input: { 'aria-label': 'controlled' },
+          }}
+        />
+      </TableCell>
+      <TableCell
+        key="name"
+        component='th'
+        scope='row'
+        align='left'
+        sx={{
+          fontSize: fontSize,
+        }}>
+        <Typography variant={isMobile ? "body2m" : "body1"}  >{tc}</Typography>
+      </TableCell>
+      <TableCell
+        key="updatedAt"
+        component='td'
+        scope={undefined}
+        align='left'
+        sx={{
+          fontSize: fontSize,
+          display: isMobile ? "none" : undefined
+        }}>
+        <Typography variant={isMobile ? "body2m" : "body1"}  >{item.updatedAt}</Typography>
+      </TableCell>
+      <TableCell
+        key="actions"
+        component='td'
+        scope={undefined}
+        align='left'
+        sx={{
+          fontSize: fontSize,
+        }}>
+        <Button
+          variant="text" color="inherit"
+          onClick={() => handleEdit(index)}
+          sx={{
+            '&:hover': {
+              boxShadow: 2,
+            },
+            fontSize: buttonFontSize,
+            fontWeight: "500",
+            p: 0.5, width: "100%",
+            justifyContent: 'flex-start', display: 'flex',
+          }}
+          startIcon={<EditIcon sx={{ fontSize: iconFontSize }} />}>
+          <Typography variant={isMobile ? "body2" : "body1"}>Edit item</Typography>
+        </Button>
+      </TableCell>
+    </Fragment>
+  );
+});
+
+function HeaderContent({ isMobile }: { isMobile: boolean }) {
+  const {
+    toggleSelectAll,
+  } = useViewItems() as unknown as IViewItemsContext;
+  const allItemsChecked = useAppStore((state) => state.allItemsChecked);
+  const headerFontSize = isMobile ? "1rem" : '1.2rem';
+
+
+  return (
+    <TableRow sx={{}}>
+      <TableCell
+        key="select"
+        variant="head"
+        align='left'
+        style={{ width: 20 }}
+        sx={{
+          fontSize: headerFontSize,
+          fontWeight: 'bold',
+          backgroundColor: "primary.dark",
+          color: "primary.contrastText",
+          '& .MuiTableCell-root': {
+            color: "primary.contrastText",
+          },
+        }} >
+        <Checkbox disableRipple
+          checked={allItemsChecked}
+          onChange={toggleSelectAll}
+          slotProps={{
+            input: { 'aria-label': 'controlled' },
+          }}
+          sx={{
+            color: "primary.contrastText",
+            '&.Mui-checked': {
+              color: "primary.contrastText",
+            },
+          }}
+        />
+      </TableCell>
+      <TableCell
+        key="name"
+        variant="head"
+        align='left'
+        style={{ width: isMobile ? 80 : 120 }}
+        sx={{
+          fontSize: headerFontSize, fontWeight: 'bold',
+          backgroundColor: "primary.dark",
+          color: "primary.contrastText",
+          '& .MuiTableCell-root': {
+            color: "primary.contrastText",
+          },
+        }} >
+        Name
+      </TableCell>
+      <TableCell
+        key="updatedAt"
+        variant="head"
+        align='left'
+        style={{ width: 80 }}
+        sx={{
+          fontSize: headerFontSize,
+          fontWeight: 'bold',
+          display: isMobile ? "none" : undefined,
+          backgroundColor: "primary.dark",
+          color: "primary.contrastText",
+          '& .MuiTableCell-root': {
+            color: "primary.contrastText",
+          },
+        }} >
+        Last Update
+      </TableCell>
+      <TableCell
+        key="actions"
+        variant="head"
+        align='left'
+        style={{ width: isMobile ? 80 : 100 }}
+        sx={{
+          fontSize: headerFontSize,
+          fontWeight: 'bold',
+          backgroundColor: "primary.dark",
+          color: "primary.contrastText",
+          '& .MuiTableCell-root': {
+            color: "primary.contrastText",
+          },
+        }} >
+        Actions
+      </TableCell>
+    </TableRow >
+  );
+}
+
+export function ViewItemShell({ children }: { children: ReactNode }) {
   const {
     items,
     pagination,
-    isPending,
-    isError,
-    error,
     pageChange,
     pageSizeChange,
     pageSortChange,
-    editItemClick,
+    bulkDelete,
   } = useViewItems() as unknown as IViewItemsContext;
-
-  const storeItemScroll = useAppStore((state) => state.itemScroll);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
   const {
     addNewItemClick,
+    addNewTagClick,
   } = useMutator() as unknown as ICreateContext;
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const itemsChecked = useAppStore((state) => state.itemsChecked);
+  const allItemsChecked = useAppStore((state) => state.allItemsChecked);
 
-  function renderCell(itemKey: number): ReactNode {
-    const item = items[itemKey];
-    const tc = item?.name ?? "";
-    const fontSize = isMobile ? "0.9rem" : '1rem';
-    const iconFontSize = isMobile ? "1.1rem" : "1.5rem";
-    return (
-      <Fragment>
-        <TableCell
-          key="name"
-          component='th'
-          scope='row'
-          align='left'
-          sx={{
-            fontSize: fontSize,
-          }}>
-          <Typography variant={isMobile ? "body2m" : "body1"}  >{tc}</Typography>
-        </TableCell>
-        <TableCell
-          key="updatedAt"
-          component='td'
-          scope={undefined}
-          align='right'
-          sx={{
-            fontSize: fontSize,
-            display: isMobile ? "none" : undefined
-          }}>
-          <Typography variant={isMobile ? "body2m" : "body1"}  >{item.updatedAt ?? ""}</Typography>
-        </TableCell>
-        <TableCell
-          key="actions"
-          component='td'
-          scope={undefined}
-          align='right'
-          sx={{
-            fontSize: fontSize,
-          }}>
-          <IconButton aria-label="edit" onClick={() => editItemClick(itemKey)}>
-            <AppTooltip title="Edit filter">
-              <EditIcon sx={{ fontSize: iconFontSize }} />
-            </AppTooltip>
-          </IconButton>
-          <IconButton aria-label="edit" onClick={() => editItemClick(itemKey)}>
-            <AppTooltip title="Delete filter">
-              <DeleteIcon sx={{ fontSize: iconFontSize, color: "red" }} />
-            </AppTooltip>
-          </IconButton>
-        </TableCell>
-      </Fragment>
-    );
-  }
-
-  function headerContent() {
-    const headerFontSize = isMobile ? "1rem" : '1.4rem';
-    return (
-      <TableRow>
-        <TableCell
-          key="name"
-          variant="head"
-          align='left'
-          style={{ width: isMobile ? 80 : 100 }}
-          sx={{
-            backgroundColor: 'background.paper',
-            fontSize: headerFontSize,
-            fontWeight: 'bold',
-          }} >
-          Name
-        </TableCell>
-        <TableCell
-          key="updatedAt"
-          variant="head"
-          align='right'
-          style={{ width: 100 }}
-          sx={{
-            backgroundColor: 'background.paper',
-            fontSize: headerFontSize,
-            fontWeight: 'bold',
-            display: isMobile ? "none" : undefined
-          }} >
-          Updated At
-        </TableCell>
-        <TableCell
-          key="actions"
-          variant="head"
-          align='right'
-          style={{ width: 50 }}
-          sx={{
-            backgroundColor: 'background.paper',
-            fontSize: headerFontSize,
-            fontWeight: 'bold'
-          }} >
-          Actions
-        </TableCell>
-      </TableRow>
-    );
-  }
-
-
-  const tableContextValue = {
-    data: items,
-    isPending,
-    isError,
-    error,
-    scrollIndex: Math.max(0, storeItemScroll),
-    renderCell,
-    headerContent,
-    components: VirtuosoTableComponents,
-  } as unknown as ITableContext;
+  const canBulkDelete = allItemsChecked || itemsChecked.size > 0;
+  const deleteButtonAction = canBulkDelete ? bulkDelete : () => undefined;
 
   const pagingContextValue = {
     pagination: pagination.paging,
     pageChange: items.length > 0 ? pageChange : undefined,
     pageSizeChange: items.length > 0 ? pageSizeChange : undefined,
   } as unknown as IPagingContext;
-
-  function Shell({ children }: { children: ReactNode }) {
-    return (
-      <Stack sx={{ marginTop: "1rem" }}>
+  return (
+    <Stack sx={{ marginTop: "2rem", }}>
+      <Box sx={{ flexGrow: 1 }}>
         {/* Add new item, add new tag, add new filter buttons*/}
-        <Stack direction="row" spacing={1}
-          sx={{
-            justifyContent: 'flex-end', alignContent: 'center',
-            display: 'flex', width: '100%', flexWrap: 'wrap',
-            alignItems: 'center'
-          }}>
-          <FormControl sx={{}}>
-            <InputLabel id="sortinput">Sort by</InputLabel>
-            <Select
-              labelId="sortinput"
-              id="sortselect"
-              value={pagination.paging.sort}
-              label="rows-per-page"
-              //  @ts-ignore
-              onChange={pageSortChange}
+        <Grid container spacing={1}>
+          <Grid size={{ xs: 12, sm: 12, md: 3, lg: 3, xl: 3, }} >
+            <FormControl sx={{}}>
+              <InputLabel id="sortinput">Sort</InputLabel>
+              <Select
+                labelId="sortinput"
+                id="sortselect"
+                value={pagination.paging.sort}
+                label="rows-per-page"
+                //  @ts-ignore
+                onChange={pageSortChange}
+                sx={{
+                  height: "fit-content",                     // overall component height
+                  '& .MuiSelect-select': {
+                    paddingY: 1,                // vertical padding
+                  },
+                }} >
+                {pagination.sortOptions.map((i, _) =>
+                  <MenuItem value={i.value}> <Typography variant={isMobile ? "condensedBody2" : "body2"} component="div" textAlign={"left"} sx={{}}> {i.label} </Typography>  </MenuItem>
+                )}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 12, md: 9, lg: 9, xl: 9, }} >
+            <Stack spacing={2} direction="row"
               sx={{
-                // height: 36,                     // overall component height
-                height: "fit-content",                     // overall component height
-                '& .MuiSelect-select': {
-                  paddingY: 1.2,                // vertical padding
-                },
-              }} >
-              {pagination.sortOptions.map((i, _) =>
-                <MenuItem value={i.value}> <Typography variant={isMobile ? "condensedBody2" : "body2"} component="div" textAlign={"left"} sx={{}}> {i.label} </Typography>  </MenuItem>
-              )}
-            </Select>
-          </FormControl>
-          <Button size={isMobile ? "small" : "medium"}
-            sx={{ fontSize: isMobile ? "0.6rem" : "1rem", p: 1, }}
-            variant="contained" onClick={addNewItemClick}>
-            <AddIcon sx={{
-              // display: isMobile ? "none" : undefined,
-              fontSize: isMobile ? "1rem" : "1.5rem"
-            }} />
-            <Typography variant={isMobile ? "h7m" : "h7"} component="div" textAlign={"left"} sx={{}}> {isMobile ? "" : "create new "} item </Typography>
-          </Button>
-        </Stack>
-        <AppSectionPaper>
-          <PagingContext.Provider value={pagingContextValue}>
-            <TableContext.Provider value={tableContextValue}>
-              <ListBox>
-                <OuterBox>{children} </OuterBox>
-              </ListBox>
-            </TableContext.Provider>
-          </PagingContext.Provider>
-        </AppSectionPaper>
-      </Stack >
-    );
-  }
+                justifyContent: isMobile ? 'flex-start' : 'flex-end', display: 'flex'
+              }}>
+              <Button variant="contained" onClick={deleteButtonAction} startIcon={<DeleteIcon sx={{ fontSize: isMobile ? "1rem" : "1.5rem", width: "100%" }} />}>
+                <Typography variant={isMobile ? "h7m" : "h7"} textAlign={"left"}> delete {isMobile ? "" : " selected "} </Typography>
+              </Button>
+              <Button
+                variant="contained"
+                onClick={addNewTagClick}
+                startIcon={<AddIcon sx={{ fontSize: isMobile ? "1rem" : "1.5rem", width: "100%" }} />}>
+                <Typography variant={isMobile ? "h7m" : "h7"} textAlign={"left"} sx={{}}> {isMobile ? "" : "create new "} tag </Typography>
+              </Button>
+              <Button variant="contained" onClick={addNewItemClick} startIcon={<AddIcon sx={{ fontSize: isMobile ? "1rem" : "1.5rem" }} />}>
+                <Typography variant={isMobile ? "h7m" : "h7"} textAlign={"left"} sx={{}}> {isMobile ? "" : "create new "} item </Typography>
+              </Button>
+            </Stack>
+          </Grid>
+        </Grid>
+      </Box>
+      <AppSectionPaper>
+        <PagingContext.Provider value={pagingContextValue}>
+          <ListBox>
+            <OuterBox>{children} </OuterBox>
+          </ListBox>
+        </PagingContext.Provider>
+      </AppSectionPaper>
+    </Stack >
+  );
+}
+
+export function ViewItem() {
+  const {
+    items,
+    isPending,
+    error,
+    editItemClick,
+    check,
+  } = useViewItems() as unknown as IViewItemsContext;
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const itemsChecked = useAppStore((state) => state.itemsChecked);
+  const allItemsChecked = useAppStore((state) => state.allItemsChecked);
+
+  const context = useMemo(
+    () => ({
+      isMobile,
+      selected: itemsChecked,
+      allSelected: allItemsChecked,
+      handleSelected: check,
+      handleEdit: editItemClick
+    }),
+    [itemsChecked, check, editItemClick]
+  );
 
   if (isPending) {
-    return <Shell><LinearProgress /></Shell>
+    return <LinearProgress />
   }
-
-
   if (error) {
-    return <Shell><Alert severity="error">{error.message || "An error occurred. Please try again"}</Alert></Shell>
+    return <Alert severity="error">{error.message || "An error occurred. Please try again"}</Alert>
   }
-
   if (items.length == 0) {
     return (
-      <Shell><Typography variant="body1" sx={{ textAlign: "center", p: 3 }}> No items found </Typography></Shell>
+      <Typography variant="h6"> No items found </Typography>
     )
   }
-
   if (items.length > 0) {
-    return (<Shell><TableLayout /></Shell>)
+    return (<Fragment>
+      <TableVirtuoso
+        data={items}
+        // @ts-ignore
+        context={context}
+        computeItemKey={(_, row) => row.id}
+        // @ts-ignore
+        components={VirtuosoTableComponents}
+        fixedHeaderContent={() => <HeaderContent isMobile={isMobile} />}
+        itemContent={
+          (i: number, row: IItem, ctx: IVirtuosoTableContext) => <RowContent
+            isMobile={ctx.isMobile}
+            item={row} index={i}
+            checked={ctx.selected.has(row.id)}
+            allChecked={ctx.allSelected}
+            handleCheck={ctx.handleSelected}
+            handleEdit={ctx.handleEdit}
+          />
+        }
+      />
+    </Fragment>)
   }
   return (
-    <Shell><Alert severity="error">"An error occurred. Please try again"</Alert></Shell>
+    <Alert severity="error">"An error occurred. Please try again"</Alert>
   )
 }
 
@@ -563,7 +684,6 @@ function AppItemFormTagAutocompleteField(): ReactNode {
 
 }
 
-
 export function ItemUpdate() {
   const {
     openDialog,
@@ -702,7 +822,6 @@ export function ItemUpdate() {
   return <FormContext.Provider value={contextValue} > <FormDialog /> </FormContext.Provider >
 }
 
-
 export function ItemSearchList() {
   const {
     search,
@@ -757,7 +876,14 @@ export function ItemSearchList() {
     renderRow,
   } as unknown as IListContext;
 
+  const pagingContextValue = {
+    pagination: pagination.paging,
+    pageChange: items.length > 0 ? pageChange : undefined,
+    pageSizeChange: items.length > 0 ? pageSizeChange : undefined,
+  } as unknown as IPagingContext;
+
   let content;
+  // this uses context to provide data to List layout.
   if (items.length > 0) {
     content = (<ListLayout />)
   }
@@ -787,7 +913,13 @@ export function ItemSearchList() {
     closeDialog,
   } as unknown as IFormContext;
 
-  return <ListContext.Provider value={contextValue}>
-    <FormContext.Provider value={dialogVal} > <ViewDialog /> </FormContext.Provider >
-  </ListContext.Provider>
+  return (
+    <PagingContext.Provider value={pagingContextValue}>
+      <ListContext.Provider value={contextValue}>
+        <FormContext.Provider value={dialogVal} >
+          <ViewDialog />
+        </FormContext.Provider >
+      </ListContext.Provider>
+    </PagingContext.Provider>
+  )
 }

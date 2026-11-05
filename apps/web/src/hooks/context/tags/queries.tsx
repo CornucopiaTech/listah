@@ -13,18 +13,18 @@ import type {
 // Internal
 import {
   ZTags,
-} from "@/domain/entities";
+} from "@/app-types";
 import type {
   ITags,
   IReadRequest,
   ITagReadResponse,
   ITagPropertyReadResponse,
-} from '@/domain/entities';
+} from '@/app-types';
 import {
   getTag,
   getTagProperty,
   postTag,
-} from '@/infra/api';
+} from '@/api';
 import {
   QueryStaleTime,
 } from '@/helpers/defaults';
