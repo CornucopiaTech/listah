@@ -1,13 +1,13 @@
 
 import type {
   IItem,
-} from "@/domain/entities/item";
+} from "@/app-types/item";
 import type {
   ITag,
-} from "@/domain/entities/tag";
+} from "@/app-types/tag";
 import type {
   IFilter,
-} from "@/domain/entities/filter";
+} from "@/app-types/filter";
 
 
 
@@ -37,11 +37,15 @@ export type ITagState = {
   tagScroll: number
   tagAlertMsg: string | null | undefined
   alertMsg: string | null | undefined
+  tagsChecked: Set<string>
+  allTagsChecked: boolean
 }
 export type ITagActions = {
   setTagModal: (tagModal: boolean) => void
   setDisplayTag: (displayTag: undefined | ITag) => void
   setTagScroll: (tagScroll: number) => void
+  setTagsChecked: (tagsChecked: Set<string>) => void
+  setAllTagsChecked: (allTagsChecked: boolean) => void
   setTagAlertMsg: (tagAlertMsg: undefined | string) => void
   setAlertMsg: (tagAlertMsg: undefined | string) => void
   reset: () => void
@@ -54,11 +58,15 @@ export type IFilterState = {
   filterModal: boolean
   displayFilter: undefined | IFilter
   filterScroll: number
+  filtersChecked: Set<string>
+  allFiltersChecked: boolean
 }
 export type IFilterActions = {
   setFilterModal: (filterModal: boolean) => void
   setDisplayFilter: (displayFilter: undefined | IFilter) => void
   setFilterScroll: (filterScroll: number) => void
+  setFiltersChecked: (filtersChecked: Set<string>) => void
+  setAllFiltersChecked: (allFiltersChecked: boolean) => void
   reset: () => void
 }
 export type IFilterSlice = IFilterState & IFilterActions;
@@ -74,6 +82,8 @@ export type IItemState = {
   itemTitle: undefined | string
   itemReference: undefined | ITag | IFilter
   itemScroll: number
+  itemsChecked: Set<string>
+  allItemsChecked: boolean
 }
 export type IItemActions = {
   setMessage: (message: string) => void
@@ -83,6 +93,8 @@ export type IItemActions = {
   setItemTitle: (itemTitle: string) => void
   setItemReference: (itemReference: undefined | ITag | IFilter) => void
   setItemScroll: (itemScroll: number) => void
+  setItemsChecked: (itemsChecked: Set<string>) => void
+  setAllItemsChecked: (allItemsChecked: boolean) => void
   reset: () => void
 }
 export type IItemSlice = IItemState & IItemActions;

@@ -16,8 +16,8 @@ export type ISortOptions = { value: string, label: string };
 export const DefaultSortOptions = [
   { value: "name asc", label: "Name Asc" },
   { value: "name desc", label: "Name Desc" },
-  { value: "updatedAt asc", label: "Last Updated Asc" },
-  { value: "updatedAt desc", label: "Last Updated  Desc" },
+  { value: "updated_at asc", label: "Last Update Asc" },
+  { value: "updated_at desc", label: "Last Update  Desc" },
 ];
 
 export const ZPagination = z.object({

@@ -4,7 +4,7 @@ import {
 } from "./pagination";
 import {
   ZTag,
-} from "@/domain/entities/tag";
+} from "@/app-types/tag";
 
 
 
@@ -42,9 +42,16 @@ export const ZItem = z.object({
   propObjs: z.nullish(z.array(ZItemFormProps)).catch([]),
   softDelete: z.nullish(z.boolean()).catch(false),
   suspension: z.nullish(z.int()),
-  updatedAt: z.nullish(z.string().catch('')),
+  tempUpdatedAt: z.nullish(z.date()).catch(new Date()),
+  updatedAt: z.string().catch(""),
 });
 export type IItem = z.infer<typeof ZItem>;
+
+export const ZItems = z.array(ZItem);
+export type IItems = z.infer<typeof ZItems>;
+
+
+
 export const DefaultItem = {
   id: "",
   userId: "",

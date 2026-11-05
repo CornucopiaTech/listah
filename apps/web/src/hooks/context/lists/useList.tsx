@@ -7,7 +7,7 @@ import {
 import type {
   IListContext,
   ITableContext,
-} from "@/domain/entities"
+} from "@/app-types"
 
 
 

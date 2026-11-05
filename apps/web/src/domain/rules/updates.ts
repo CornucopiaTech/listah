@@ -14,7 +14,7 @@ import type {
   IItemForm,
   IFilterFormCheckedTag,
   IItemFormProps,
-} from '@/domain/entities';
+} from '@/app-types';
 
 
 
@@ -27,6 +27,7 @@ export function prepTagUpdate({ value, userId }: { value: ITag, userId: string }
     props: value.props?.filter((t) => t != ""),
     softDelete: value?.softDelete,
     count: undefined,
+    updatedAt: (new Date(Date.now())).toJSON(),
   }
   return submitValue;
 }
@@ -47,6 +48,7 @@ export function prepFilterUpdate({ value, userId }: { value: IFilterForm, userId
     filters: [],
     count: 0,
     softDelete: value?.softDelete,
+    updatedAt: (new Date(Date.now())).toJSON(),
   };
   return submitValue;
 }
@@ -71,6 +73,7 @@ export function prepItemUpdate({ value, userId }: { value: IItemForm, userId: st
     propObjList: undefined,
     softDelete: value.softDelete,
     suspension: value.suspension,
+    updatedAt: (new Date(Date.now())).toJSON(),
   }
 
   return submitValue;

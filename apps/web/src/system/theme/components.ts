@@ -1,6 +1,6 @@
 import { color } from "@/system/tokens/colors";
 import { lightPalette } from "@/system/theme/palette";
-
+import type { Theme } from '@mui/material/styles';
 
 
 export const components = {
@@ -60,16 +60,27 @@ export const components = {
   MuiButton: {
     // 1. ROOT OVERRIDES: Applies to ALL buttons (Text, Outlined, and Contained)
     styleOverrides: {
-      root: {
+      root: ({ theme }: { theme: Theme }) => ({
+        fontSize: '0.875rem',
         textTransform: 'none', // Prevents default ALL CAPS text
-        borderRadius: '4px',   // Global custom rounding
+        borderRadius: '3px',   // Global custom rounding
         fontWeight: 600,        // Make button text slightly punchier
-        padding: '8px 20px',    // Uniform padding
+        padding: '6px 16px',    // Uniform padding
         boxShadow: 'none',      // Flat design style
         '&:hover': {
           boxShadow: 'none',    // Keep it flat on hover
         },
-      },
+        // Override for small screens and up (sm: 600px)
+        [theme.breakpoints.up('sm')]: {
+          fontSize: '1rem',
+          padding: '4px 18px',
+        },
+        // Override for large screens and up (lg: 1200px)
+        [theme.breakpoints.up('lg')]: {
+          fontSize: '1.125rem',
+          padding: '10px 24px',
+        },
+      }),
       text: {
         backgroundColor: 'transparent',
         fontWeight: 600,

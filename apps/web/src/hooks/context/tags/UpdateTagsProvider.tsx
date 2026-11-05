@@ -24,11 +24,11 @@ import type {
   IUpdateTagsContext,
   IUrlSearch,
   IEditor,
-} from "@/domain/entities";
+} from "@/app-types";
 import {
   DefaultTag,
   DefaultEditor,
-} from '@/domain/entities';
+} from '@/app-types';
 import {
   useUpdateTagsQuery,
 } from './queries';
@@ -69,7 +69,7 @@ export function UpdateTagsProvider({ children }: { children: ReactNode }) {
   const mutation = useUpdateTagsQuery();
   const formSubmission = ({ value }: { value: any }) => {
     const submitValue = prepTagUpdate({ value, userId: user?.id || "" });
-    mutation.mutate(submitValue);
+    mutation.mutate([submitValue]);
     if (mutation.isSuccess) {
       closeDialog();
     }

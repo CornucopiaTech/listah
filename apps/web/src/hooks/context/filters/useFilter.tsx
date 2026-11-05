@@ -7,7 +7,7 @@ import {
 import type {
   IViewFiltersContext,
   IUpdateFiltersContext,
-} from "@/domain/entities"
+} from "@/app-types"
 
 
 export const ViewFiltersContext = createContext<IViewFiltersContext | undefined>(undefined);

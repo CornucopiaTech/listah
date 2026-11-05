@@ -16,7 +16,7 @@ import {
 import type {
   ICreateContext,
   IUrlSearch,
-} from "@/domain/entities";
+} from "@/app-types";
 import {
   CreateContext
 } from './useCreate';
@@ -27,7 +27,7 @@ import {
   DefaultItem,
   DefaultFilter,
   DefaultTag,
-} from '@/domain/entities';
+} from '@/app-types';
 
 
 

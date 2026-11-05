@@ -10,7 +10,7 @@ import type {
 import {
   useStore,
 } from "@tanstack/react-form";
-import { useTheme, } from '@mui/material/styles';
+import { useTheme, useMediaQuery } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
@@ -39,7 +39,7 @@ import {
 } from '@/hooks/context';
 import type {
   IFormContext,
-} from "@/domain/entities";
+} from "@/app-types";
 import {
   CloseDialogButton,
   AppBackdrop,
@@ -51,6 +51,8 @@ import {
 
 // ToDo: Change disable behaviour of action buttons.
 export function UpdateFormActionsSpeedDial() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { form } = useForms() as unknown as IFormContext;
 
   const canSubmit = useStore(form.store, (state: any) => state.errors).length == 0;
@@ -63,17 +65,18 @@ export function UpdateFormActionsSpeedDial() {
     form.handleSubmit();
   };
 
+  const iconSize = isMobile ? "0.8rem" : "1.5rem";
   const dummyAction = () => undefined;
 
-  const saveIcon = isSubmitted ? <HourglassOutlineIcon height="1.5rem" /> :
-    canSubmit ? <SaveIcon height="1.5rem" /> : <SaveOffIcon height="1.5rem" />
+  const saveIcon = isSubmitted ? <HourglassOutlineIcon height={iconSize} /> :
+    canSubmit ? <SaveIcon height={iconSize} /> : <SaveOffIcon height={iconSize} />
   return (
     <ItemFormSpeedDialBox>
       <SpeedDial ariaLabel="SpeedDial basic example"
         icon={<SpeedDialIcon />} >
         <SpeedDialAction
           key={"delete"}
-          icon={canDelete ? <DeleteIcon height="1.5rem" /> : <DeleteOffIcon height="1.5rem" />}
+          icon={canDelete ? <DeleteIcon height={iconSize} /> : <DeleteOffIcon height={iconSize} />}
           // @ts-ignore
           onClick={canDelete ? handleDelete : dummyAction}
           slotProps={{
@@ -93,7 +96,7 @@ export function UpdateFormActionsSpeedDial() {
 
         <SpeedDialAction
           key={isDirty ? "reset" : "No changes yet"}
-          icon={isDirty ? <RestartIcon height="1.5rem" /> : <RestartOffIcon height="1.5rem" />}
+          icon={isDirty ? <RestartIcon height={iconSize} /> : <RestartOffIcon height={iconSize} />}
           // @ts-ignore
           onClick={isDirty ? form.reset : dummyAction}
           slotProps={{

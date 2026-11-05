@@ -28,12 +28,13 @@ import type {
   ITagReadResponse,
   IReadRequest,
   IUrlSearch,
-} from "@/domain/entities";
+  ITag,
+} from "@/app-types";
 import {
   DefaultReadQuery,
   DefaultPagination,
   Pagination,
-} from '@/domain/entities';
+} from '@/app-types';
 import {
   useViewTagsQuery
 } from './queries';
@@ -44,12 +45,23 @@ import {
   encodeState,
   decodeState
 } from '@/helpers/encoders';
+import {
+  useUpdateTagsQuery,
+} from './queries';
+
 
 
 export function ViewTagsProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const storeSetTagScroll = useAppStore((state) => state.setTagScroll);
   const storeSetItemScroll = useAppStore((state) => state.setItemScroll);
+  const tagsChecked = useAppStore((state) => state.tagsChecked);
+  const setTagsChecked = useAppStore((state) => state.setTagsChecked);
+  const setAllTagsChecked = useAppStore((state) => state.setAllTagsChecked);
+  const allTagsChecked = useAppStore((state) => state.allTagsChecked);
+  const mutation = useUpdateTagsQuery();
+
+
   const navigate = useNavigate();
   const routeApi = getRouteApi("/tags");
   const { query: urlQuery, pagination: urlPagination } = decodeState(routeApi.useSearch({ select: (search) => search.p, })) as unknown as IReadRequest;
@@ -59,7 +71,15 @@ export function ViewTagsProvider({ children }: { children: ReactNode }) {
   };
 
   const { data, isPending, isError, error, }: UseQueryResult<ITagReadResponse> = useViewTagsQuery(opts);
-  const tags = data?.tags ?? [];
+  const servertags = data?.tags ?? []
+  const tags = servertags.map(
+    (v: ITag) => ({ ...v, tempUpdatedAt: new Date(v.updatedAt) })
+  ).map(
+    (v: ITag) => ({
+      ...v,
+      updatedAt: `${v.tempUpdatedAt?.getFullYear()}-${String(v.tempUpdatedAt?.getMonth()).padStart(2, '0')}-${String(v.tempUpdatedAt?.getDay()).padStart(2, '0')}`
+    })
+  );
   const paginationObj = data?.pagination ? data.pagination : urlPagination ? urlPagination : DefaultPagination;
   const pagination = new Pagination(paginationObj);
 
@@ -67,6 +87,7 @@ export function ViewTagsProvider({ children }: { children: ReactNode }) {
   const pageChange = useCallback((event: MouseEvent<HTMLButtonElement> | null, value: number) => {
     if (event) { event.stopPropagation() };
     pagination.changePage(value);
+    setAllTagsChecked(false);
     navigate({
       to: ".",
       // @ts-ignore
@@ -79,6 +100,7 @@ export function ViewTagsProvider({ children }: { children: ReactNode }) {
 
   const pageSizeChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     pagination.changeSize(e.target.value);
+    setAllTagsChecked(false);
     navigate({
       to: ".",
       // @ts-ignore
@@ -91,6 +113,7 @@ export function ViewTagsProvider({ children }: { children: ReactNode }) {
 
   const pageSortChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     pagination.changeSort(e.target.value);
+    setAllTagsChecked(false);
     navigate({
       to: ".",
       // @ts-ignore
@@ -131,6 +154,42 @@ export function ViewTagsProvider({ children }: { children: ReactNode }) {
     });
   }, [opts]);
 
+  const check = useCallback((checkedId: string) => {
+    // If id is already checked, uncheck it. Otherwise, check it.
+    const newChecked = tagsChecked.has(checkedId) ?
+      tagsChecked.difference(new Set([checkedId])) :
+      tagsChecked.union(new Set([checkedId]))
+    setTagsChecked(newChecked);
+  }, [opts]);
+
+  const toggleSelectAll = useCallback(() => {
+    setAllTagsChecked(!allTagsChecked);
+  }, [opts]);
+
+  const bulkDelete = useCallback(() => {
+    let deleted = tags.filter(
+      (val: ITag) => allTagsChecked ? true : tagsChecked.has(val.id)
+    ).map(
+      (val: ITag) => ({ ...val, softDelete: true, updatedAt: val.tempUpdatedAt?.toJSON() || "" })
+    );
+
+    mutation.mutate(deleted, {
+      onSuccess: () => {
+        pagination.resetPaging();
+        console.info({ pagination: pagination.paging });
+        setTagsChecked(new Set());
+        setAllTagsChecked(false);
+        navigate({
+          to: ".",
+          // @ts-ignore
+          search: (prev: IUrlSearch) => {
+            const dPrev = decodeState(prev.p) as unknown as IReadRequest;
+            return { ...prev, p: encodeState({ ...dPrev, pagination: pagination.paging }) }
+          }
+        });
+      }
+    });
+  }, [opts]);
 
 
   const contextValue = useMemo(() => ({
@@ -144,6 +203,9 @@ export function ViewTagsProvider({ children }: { children: ReactNode }) {
     pageSortChange,
     viewItemsClick,
     editTagClick,
+    bulkDelete,
+    check,
+    toggleSelectAll,
   } as unknown as IViewTagsContext), [opts]);
 
   return <ViewTagsContext.Provider value={contextValue}> {children} </ViewTagsContext.Provider>

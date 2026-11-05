@@ -30,14 +30,14 @@ import type {
   IItemForm,
   IUpdateItemsContext,
   IItem,
-} from "@/domain/entities";
+} from "@/app-types";
 import {
   DefaultEditor,
   DefaultReadRequest,
   DefaultReadQuery,
   DefaultPagination,
   DefaultItem,
-} from '@/domain/entities';
+} from '@/app-types';
 import {
   encodeState,
   decodeState
@@ -48,7 +48,7 @@ import {
   validateName,
 } from "@/domain/rules";
 import {
-  useUpdateItemQuery,
+  useUpdateItemsQuery,
   useViewTagsQuery,
   UpdateItemsContext,
 } from "@/hooks/context";
@@ -129,10 +129,10 @@ export function UpdateItemsProvider({ children, route }: { children: ReactNode, 
   const title = item.id == "" ? "Add new item" : "Update item";
   const formData = prepFormData({ item, data, });
 
-  const mutation = useUpdateItemQuery();
+  const mutation = useUpdateItemsQuery();
   const formSubmission = ({ value }: { value: IItemForm }) => {
     const submitValue = prepItemUpdate({ value, userId: user?.id || "" });
-    mutation.mutate(submitValue);
+    mutation.mutate([submitValue]);
   };
 
   function formValidator({ value }: { value: IItemForm }) {

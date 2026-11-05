@@ -12,7 +12,7 @@ import {
   DefaultReadRequest,
   DefaultEditor,
   DefaultSearchReadRequest,
-} from "@/domain/entities";
+} from "@/app-types";
 
 
 

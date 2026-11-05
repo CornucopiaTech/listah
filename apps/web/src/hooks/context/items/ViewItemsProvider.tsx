@@ -28,11 +28,12 @@ import type {
   IChildReadRequest,
   IUrlSearch,
   IItemReadResponse,
-} from "@/domain/entities";
+  IItem,
+} from "@/app-types";
 import {
   DefaultPagination,
   Pagination,
-} from '@/domain/entities';
+} from '@/app-types';
 import {
   encodeState,
   decodeState,
@@ -41,11 +42,21 @@ import {
   useViewItemQuery,
   ViewItemsContext,
 } from "@/hooks/context/items";
+import {
+  useUpdateItemsQuery,
+} from './queries';
 
 
 export function ViewItemsProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const storeSetItemScroll = useAppStore((state) => state.setItemScroll);
+
+  const itemsChecked = useAppStore((state) => state.itemsChecked);
+  const setItemsChecked = useAppStore((state) => state.setItemsChecked);
+  const setAllItemsChecked = useAppStore((state) => state.setAllItemsChecked);
+  const allItemsChecked = useAppStore((state) => state.allItemsChecked);
+  const mutation = useUpdateItemsQuery();
+
   const navigate = useNavigate();
   // @ts-ignore
   const routeApi = getRouteApi("/items");
@@ -59,13 +70,23 @@ export function ViewItemsProvider({ children }: { children: ReactNode }) {
     data, isPending, isError, error
   }: UseQueryResult<IItemReadResponse> = useViewItemQuery(opts);
 
-  const items = data?.items ?? [];
+  const serveritems = data?.items ?? [];
+  const items = serveritems.map(
+    (v: IItem) => ({ ...v, tempUpdatedAt: new Date(v.updatedAt) })
+  ).map(
+    (v: IItem) => ({
+      ...v,
+      updatedAt: `${v.tempUpdatedAt?.getFullYear()}-${String(v.tempUpdatedAt?.getMonth()).padStart(2, '0')}-${String(v.tempUpdatedAt?.getDay()).padStart(2, '0')}`
+    })
+  );
+
   const paginationObj = data?.pagination ? data.pagination : opts?.pagination ? opts.pagination : DefaultPagination;
   const pagination = new Pagination(paginationObj);
 
   const pageSizeChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     e.stopPropagation()
     pagination.changeSize(e.target.value);
+    setAllItemsChecked(false);
     navigate({
       to: ".",
       // @ts-ignore
@@ -79,6 +100,7 @@ export function ViewItemsProvider({ children }: { children: ReactNode }) {
   const pageSortChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     e.stopPropagation()
     pagination.changeSort(e.target.value);
+    setAllItemsChecked(false);
     navigate({
       to: ".",
       // @ts-ignore
@@ -92,6 +114,7 @@ export function ViewItemsProvider({ children }: { children: ReactNode }) {
   const pageChange = useCallback((event: MouseEvent<HTMLButtonElement> | null, value: number) => {
     if (event) { event.stopPropagation() };
     pagination.changePage(value);
+    setAllItemsChecked(false);
     navigate({
       to: ".",
       // @ts-ignore
@@ -117,6 +140,44 @@ export function ViewItemsProvider({ children }: { children: ReactNode }) {
     });
   }, [opts]);
 
+  const check = useCallback((checkedId: string) => {
+    // If id is already checked, uncheck it. Otherwise, check it.
+    const newChecked = itemsChecked.has(checkedId) ?
+      itemsChecked.difference(new Set([checkedId])) :
+      itemsChecked.union(new Set([checkedId]))
+    setItemsChecked(newChecked);
+  }, [opts]);
+
+  const toggleSelectAll = useCallback(() => {
+    setAllItemsChecked(!allItemsChecked);
+  }, [opts]);
+
+  const bulkDelete = useCallback(() => {
+    let deleted = items.filter(
+      (val: IItem) => allItemsChecked ? true : itemsChecked.has(val.id)
+    ).map(
+      (val: IItem) => ({ ...val, softDelete: true, updatedAt: val.tempUpdatedAt?.toJSON() || "" })
+    );
+
+    mutation.mutate(deleted, {
+      onSuccess: () => {
+        pagination.resetPaging();
+        console.info({ pagination: pagination.paging });
+        setItemsChecked(new Set());
+        setAllItemsChecked(false);
+        navigate({
+          to: ".",
+          // @ts-ignore
+          search: (prev: IUrlSearch) => {
+            const dPrev = decodeState(prev.c) as unknown as IChildReadRequest;
+            return { ...prev, c: encodeState({ ...dPrev, pagination: pagination.paging }) }
+          }
+        });
+      }
+    });
+  }, [opts]);
+
+
 
   const contextValue = useMemo(() => ({
     items,
@@ -128,6 +189,9 @@ export function ViewItemsProvider({ children }: { children: ReactNode }) {
     pageSizeChange,
     pageSortChange,
     editItemClick,
+    check,
+    toggleSelectAll,
+    bulkDelete,
   } as unknown as IViewItemsContext), [opts]);
   return <ViewItemsContext.Provider value={contextValue}> {children} </ViewItemsContext.Provider>
 }

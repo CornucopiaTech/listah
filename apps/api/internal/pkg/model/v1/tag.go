@@ -1,12 +1,12 @@
 package v1
 
 import (
+	pb "cornucopia/listah/internal/pkg/proto/v1"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/uptrace/bun"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
-
-	pb "cornucopia/listah/internal/pkg/proto/v1"
 )
 
 type Tag struct {
@@ -15,10 +15,11 @@ type Tag struct {
 	UserId        string
 	Name          string
 	Props         []string
-	Count         int32 `bun:",scanonly"`
-	SoftDelete    bool
-	UpdatedBy     string
-	UpdatedAt     time.Time
+	Count         int32  `bun:",scanonly"`
+	SoftDelete    bool   `json:"softDelete" bun:"soft_delete"`
+	UpdatedBy     string `json:"updatedBy" bun:"updated_by"`
+	// UpdatedAt     time.Time `json:"updatedAt" bun:"updated_at"`
+	UpdatedAt time.Time `json:"updatedAt" bun:"updated_at,nullzero,notnull,default:current_timestamp"`
 }
 
 func (v *Tag) ToTagProto() *pb.Tag {
@@ -36,7 +37,10 @@ func (v *Tag) ToTagProto() *pb.Tag {
 
 func TagModelListToTagProtoList(m []*Tag) []*pb.Tag {
 	c := []*pb.Tag{}
-	for _, v := range m {
+	for i, v := range m {
+		if i == 5 {
+			fmt.Printf("\n\n\n%+v\n\n\n", v)
+		}
 		c = append(c, v.ToTagProto())
 	}
 	return c

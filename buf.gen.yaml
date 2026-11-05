@@ -32,5 +32,10 @@ plugins:
       - allow-get
       - format=yaml
       - path=openapi-ref.yaml
+  - local: protoc-gen-es
+    out: apps/web/src/proto/
+    opt:
+      - target=ts
+      # - paths=source_relative
 inputs:
   - directory: proto

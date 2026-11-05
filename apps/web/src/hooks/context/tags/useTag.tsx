@@ -7,7 +7,7 @@ import {
 import type {
   IViewTagsContext,
   IUpdateTagsContext,
-} from "@/domain/entities"
+} from "@/app-types"
 
 
 export const ViewTagsContext = createContext<IViewTagsContext | undefined>(undefined);

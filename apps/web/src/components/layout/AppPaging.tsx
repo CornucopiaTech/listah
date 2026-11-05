@@ -20,7 +20,7 @@ import { useTheme, useMediaQuery, Typography } from '@mui/material';
 
 import {
   PaginationMenu,
-} from '@/domain/entities';
+} from '@/app-types';
 import {
   ListBoxSize,
   ViewListBoxSize,
@@ -34,7 +34,7 @@ import {
 } from "@/hooks/context";
 import type {
   IPagingContext,
-} from "@/domain/entities"
+} from "@/app-types"
 
 
 
@@ -110,7 +110,7 @@ export function PrevListBox({ children }: { children: ReactNode }): ReactNode {
 export function ListBox({ children }: { children: ReactNode }): ReactNode {
   return (
     <Fragment>
-      <Stack spacing={0}>
+      <Stack spacing={0} sx={{ marginTop: "1rem" }}>
         {children}
         <Divider />
         <AppListPagination />
@@ -128,10 +128,10 @@ export function AppListPagination(): ReactNode {
   } = usePaging() as unknown as IPagingContext;
   const totalPages = Math.max(1, Math.ceil(pagination.volume / pagination.size));
   const beginNumber = pagination.size * (pagination.page - 1);
-  const endNumber = Math.min(
-    pagination.size * (pagination.page),
-    pagination.volume
-  );
+  const endRec = pagination.size * (pagination.page);
+  const volCheck = !pagination.volume ? 0 : pagination.volume;
+
+  const endNumber = Math.min(endRec, volCheck);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   return (
@@ -142,7 +142,7 @@ export function AppListPagination(): ReactNode {
         alignItems: 'center'
       }}>
       <Typography sx={{ display: isMobile ? "none" : undefined }}>
-        {beginNumber} - {endNumber} of {pagination.volume}
+        {beginNumber} - {endNumber} of {volCheck}
       </Typography>
       <FormControl sx={{}}>
         <InputLabel id="demo-simple-select-label">Rows</InputLabel>

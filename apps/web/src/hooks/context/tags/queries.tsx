@@ -12,19 +12,19 @@ import type {
 
 // Internal
 import {
-  ZTag,
-} from "@/domain/entities";
+  ZTags,
+} from "@/app-types";
 import type {
-  ITag,
+  ITags,
   IReadRequest,
   ITagReadResponse,
   ITagPropertyReadResponse,
-} from '@/domain/entities';
+} from '@/app-types';
 import {
   getTag,
   getTagProperty,
   postTag,
-} from '@/infra/api';
+} from '@/api';
 import {
   QueryStaleTime,
 } from '@/helpers/defaults';
@@ -64,8 +64,8 @@ export function useViewTagsPropertyQuery(opts: IReadRequest): UseQueryResult<ITa
 export function useUpdateTagsQuery() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (mutateTag: ITag) => {
-      const mi = ZTag.parse(mutateTag);
+    mutationFn: async (mutateTag: ITags) => {
+      const mi = ZTags.parse(mutateTag);
       return postTag(mi);
     },
     onSuccess: async () => {

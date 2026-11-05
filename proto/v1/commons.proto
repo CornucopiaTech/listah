@@ -16,13 +16,13 @@ import "google/protobuf/timestamp.proto";
 
 message Tag {
   string id = 1;
-  string userId = 2;
+  string user_id = 2;
   string name = 3;
   repeated string props = 4;
   int32 count = 5;
-  bool softDelete = 7;
-  string updatedBy = 500;
-  google.protobuf.Timestamp updatedAt = 501;
+  bool soft_delete = 7;
+  string updated_by = 500;
+  google.protobuf.Timestamp updated_at = 501;
 }
 
 // message TagProperty1 {
@@ -50,28 +50,28 @@ message TagPropertyMap {
 }
 message Item {
   string id = 1;
-  string userId = 2 [json_name = "userId"];
+  string user_id = 2;
   string name = 3;
   string note = 4;
   repeated string tags = 5;
   map<string,string> props = 6;
-  bool softDelete = 7;
-  repeated Tag tagObjs = 8;
-  repeated MapObj propObjs = 9;
+  bool soft_delete = 7;
+  repeated Tag tag_objs = 8;
+  repeated MapObj prop_objs = 9;
   int32 suspension = 10;
-  string updatedBy = 500;
-  google.protobuf.Timestamp updatedAt = 501;
+  string updated_by = 500;
+  google.protobuf.Timestamp updated_at = 501;
 }
 
 message Filter {
   string id = 1;
-  string userId = 2;
+  string user_id = 2;
   string name = 3;
   repeated string tags = 4;
   int32 count = 5;
-  bool softDelete = 7;
-  string updatedBy = 500;
-  google.protobuf.Timestamp updatedAt = 501;
+  bool soft_delete = 7;
+  string updated_by = 500;
+  google.protobuf.Timestamp updated_at = 501;
 }
 
 // message Search {
@@ -90,7 +90,7 @@ message Pagination {
 
 
 message ReadQuery {
-  string userId = 1;
+  string user_id = 1;
   string id = 2;
   repeated string tags = 3;
   string text = 4;

@@ -28,12 +28,13 @@ import type {
   IFilterReadResponse,
   IReadRequest,
   IUrlSearch,
-} from "@/domain/entities";
+  IFilter,
+} from "@/app-types";
 import {
   DefaultReadQuery,
   DefaultPagination,
   Pagination,
-} from '@/domain/entities';
+} from '@/app-types';
 import {
   useViewFilterQuery
 } from './queries';
@@ -44,7 +45,9 @@ import {
   encodeState,
   decodeState
 } from '@/helpers/encoders';
-
+import {
+  useUpdateFiltersQuery,
+} from './queries';
 
 
 
@@ -53,22 +56,40 @@ export function ViewFiltersProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const storeSetFilterScroll = useAppStore((state) => state.setFilterScroll);
   const storeSetItemScroll = useAppStore((state) => state.setItemScroll);
+  const filtersChecked = useAppStore((state) => state.filtersChecked);
+  const setFiltersChecked = useAppStore((state) => state.setFiltersChecked);
+  const setAllFiltersChecked = useAppStore((state) => state.setAllFiltersChecked);
+  const allTagsChecked = useAppStore((state) => state.allTagsChecked);
+  const mutation = useUpdateFiltersQuery();
+
   const navigate = useNavigate();
   const routeApi = getRouteApi("/filters");
-  const { query: urlQuery, pagination: urlPagination } = decodeState(routeApi.useSearch({ select: (search) => search.p, })) as unknown as IReadRequest;
+  const {
+    query: urlQuery,
+    pagination: urlPagination } = decodeState(
+      routeApi.useSearch({ select: (search) => search.p, })) as unknown as IReadRequest;
   const opts = {
     pagination: { ...urlPagination },
     query: { ...urlQuery, userId: user?.id ?? "", },
   };
 
   const { data, isPending, isError, error }: UseQueryResult<IFilterReadResponse> = useViewFilterQuery(opts);
-  const filters = data?.filters ?? [];
+  const serverfilters = data?.filters ?? [];
+  const filters = serverfilters.map(
+    (v: IFilter) => ({ ...v, tempUpdatedAt: new Date(v.updatedAt) })
+  ).map(
+    (v: IFilter) => ({
+      ...v,
+      updatedAt: `${v.tempUpdatedAt?.getFullYear()}-${String(v.tempUpdatedAt?.getMonth()).padStart(2, '0')}-${String(v.tempUpdatedAt?.getDay()).padStart(2, '0')}`
+    })
+  );
   const paginationObj = data?.pagination ? data.pagination : urlPagination ? urlPagination : DefaultPagination;
   const pagination = new Pagination(paginationObj);
 
   const pageChange = useCallback((event: MouseEvent<HTMLButtonElement> | null, value: number) => {
     if (event) { event.stopPropagation() };
     pagination.changePage(value);
+    setAllFiltersChecked(false);
     navigate({
       to: ".",
       // @ts-ignore
@@ -81,6 +102,7 @@ export function ViewFiltersProvider({ children }: { children: ReactNode }) {
 
   const pageSizeChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     pagination.changeSize(e.target.value);
+    setAllFiltersChecked(false);
     navigate({
       to: ".",
       // @ts-ignore
@@ -93,6 +115,7 @@ export function ViewFiltersProvider({ children }: { children: ReactNode }) {
 
   const pageSortChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     pagination.changeSort(e.target.value);
+    setAllFiltersChecked(false);
     navigate({
       to: ".",
       // @ts-ignore
@@ -133,6 +156,43 @@ export function ViewFiltersProvider({ children }: { children: ReactNode }) {
     });
   }, [opts]);
 
+  const check = useCallback((checkedId: string) => {
+    // If id is already checked, uncheck it. Otherwise, check it.
+    const newChecked = filtersChecked.has(checkedId) ?
+      filtersChecked.difference(new Set([checkedId])) :
+      filtersChecked.union(new Set([checkedId]))
+    setFiltersChecked(newChecked);
+  }, [opts]);
+
+  const toggleSelectAll = useCallback(() => {
+    setAllFiltersChecked(!allTagsChecked);
+  }, [opts]);
+
+  const bulkDelete = useCallback(() => {
+    let deleted = filters.filter(
+      (val: IFilter) => allTagsChecked ? true : filtersChecked.has(val.id)
+    ).map(
+      (val: IFilter) => ({ ...val, softDelete: true, updatedAt: val.tempUpdatedAt?.toJSON() || "" })
+    );
+
+    mutation.mutate(deleted, {
+      onSuccess: () => {
+        pagination.resetPaging();
+        console.info({ pagination: pagination.paging });
+        setFiltersChecked(new Set());
+        setAllFiltersChecked(false);
+        navigate({
+          to: ".",
+          // @ts-ignore
+          search: (prev: IUrlSearch) => {
+            const dPrev = decodeState(prev.p) as unknown as IReadRequest;
+            return { ...prev, p: encodeState({ ...dPrev, pagination: pagination.paging }) }
+          }
+        });
+      }
+    });
+  }, [opts]);
+
 
   const contextValue = useMemo(() => ({
     filters,
@@ -145,6 +205,9 @@ export function ViewFiltersProvider({ children }: { children: ReactNode }) {
     pageSortChange,
     viewItemsClick,
     editFilterClick,
+    bulkDelete,
+    check,
+    toggleSelectAll,
   } as unknown as IViewFiltersContext), [opts]);
 
 

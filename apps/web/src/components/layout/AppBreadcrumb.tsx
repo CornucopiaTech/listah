@@ -18,7 +18,7 @@ import { useTheme, useMediaQuery } from '@mui/material';
 // Internal
 import type {
   IBreadcrumbContext,
-} from "@/domain/entities";
+} from "@/app-types";
 import {
   useBreadcrumb,
 } from "@/hooks/context";

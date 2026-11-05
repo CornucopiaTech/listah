@@ -3,18 +3,18 @@ import * as z from "zod";
 
 import {
   ZFilter,
-} from "@/domain/entities/filter";
+} from "@/app-types/filter";
 import {
   ZTag,
   ZTagProperty,
-} from "@/domain/entities/tag";
+} from "@/app-types/tag";
 import {
   ZItem,
-} from "@/domain/entities/item";
+} from "@/app-types/item";
 import {
   ZPagination,
   DefaultPagination,
-} from "@/domain/entities/pagination";
+} from "@/app-types/pagination";
 import {
   ZReadQuery,
   DefaultReadQuery

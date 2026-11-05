@@ -8,7 +8,7 @@ import {
 import type {
   ITag,
   IFilterForm,
-} from '@/domain/entities';
+} from '@/app-types';
 
 
 

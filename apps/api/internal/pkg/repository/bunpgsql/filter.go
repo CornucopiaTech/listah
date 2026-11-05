@@ -22,7 +22,7 @@ type filter struct {
 	logger *logging.Factory
 }
 
-func (a *filter) Read(ctx context.Context, m *[]*model.Filter, s *model.RepoSearch) (int, error) {
+func (a *filter) PrevRead(ctx context.Context, m *[]*model.Filter, s *model.RepoSearch) (int, error) {
 	ctx, span := otel.Tracer("filter-repository").Start(ctx, "FilterRepository Read")
 	defer span.End()
 
@@ -51,13 +51,75 @@ func (a *filter) Read(ctx context.Context, m *[]*model.Filter, s *model.RepoSear
 	`
 	query := `
 		SELECT
-			sf.id, sf.user_id, sf."name", sf.tags::VARCHAR tags,
-			SUM(CASE WHEN it.id IS NOT NULL THEN 1 ELSE 0 END) count
+			sf.id, sf.user_id, sf."name", sf.tags::VARCHAR tags
+			, sf.updated_at, sf.soft_delete
+			,SUM(CASE WHEN it.id IS NOT NULL THEN 1 ELSE 0 END) count
 		FROM filts sf
 			LEFT JOIN its it
 				ON sf.user_id = it.user_id
 				AND sf.tag_id = it.tag_id
-		GROUP BY 1, 2, 3, 4
+		GROUP BY 1, 2, 3, 4, 5, 6
+	`
+
+	countq := cte + fmt.Sprintf(`SELECT COUNT(*) row_count FROM (%v)`, query)
+	recCnt := []*model.RowCount{}
+	err := a.db.NewRaw(countq).Scan(ctx, &recCnt)
+	if err != nil {
+		a.logger.LogError(ctx, svcName, activity, "Error occurred while getting total population", errors.Cause(err).Error())
+		return 0, err
+	}
+
+	if s.Sort != "" {
+		query = query + fmt.Sprintf(` ORDER BY %v `, s.Sort)
+	}
+	if s.Limit > 0 {
+		query = query + fmt.Sprintf(` LIMIT %d `, s.Limit)
+	}
+	if s.Offset > 0 {
+		query = query + fmt.Sprintf(` OFFSET %d `, s.Offset)
+	}
+	err = a.db.NewRaw(cte+query).Scan(ctx, m)
+	if err != nil {
+		a.logger.LogError(ctx, svcName, activity, "Error occurred", errors.Cause(err).Error())
+		return 0, err
+	}
+
+	a.logger.LogInfo(ctx, svcName, activity, "End "+activity)
+	return recCnt[0].RowCount, nil
+}
+
+func (a *filter) Read(ctx context.Context, m *[]*model.Filter, s *model.RepoSearch) (int, error) {
+	ctx, span := otel.Tracer("filter-repository").Start(ctx, "FilterRepository Read")
+	defer span.End()
+
+	var activity = "ReadFilter"
+	a.logger.LogInfo(ctx, svcName, activity, "Begin "+activity)
+
+	var idFilter string
+	if s.Id != "" {
+		idFilter = fmt.Sprintf(` AND sf.id = '%v' `, s.Id)
+	}
+	cte := `
+		WITH filts AS (
+			SELECT sf.*, elem.tag_id, elem_it.item_tag_id
+			FROM apps.filters sf
+				LEFT JOIN  LATERAL JSONB_ARRAY_ELEMENTS_TEXT(sf.tags::JSONB) AS elem(tag_id) ON TRUE
+				JOIN apps.items it
+				LEFT JOIN LATERAL JSONB_ARRAY_ELEMENTS_TEXT(it.tags::JSONB) AS elem_it(item_tag_id) ON TRUE
+				ON elem.tag_id = elem_it.item_tag_id
+				AND it.user_id = sf.user_id
+			WHERE sf.user_id = '` + s.UserId + `' ` + idFilter + `
+				AND (sf.soft_delete = false OR sf.soft_delete IS NULL)
+				AND (it.soft_delete = false OR it.soft_delete IS NULL)
+		)
+	`
+	query := `
+		SELECT
+			sf.id, sf.user_id, sf."name", sf.tags::VARCHAR tags
+			, sf.updated_at, sf.soft_delete
+			,SUM(CASE WHEN item_tag_id IS NOT NULL THEN 1 ELSE 0 END) count
+		FROM filts sf
+		GROUP BY 1, 2, 3, 4, 5, 6
 	`
 
 	countq := cte + fmt.Sprintf(`SELECT COUNT(*) row_count FROM (%v)`, query)

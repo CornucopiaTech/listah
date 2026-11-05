@@ -19,7 +19,7 @@ import type {
   IChildReadRequest,
   IUrlSearch,
   IRouteStrings,
-} from "@/domain/entities";
+} from "@/app-types";
 import {
   BreadcrumbContext
 } from './useBreadcrumb';
@@ -31,19 +31,33 @@ import {
   DefaultItem,
   DefaultFilter,
   DefaultTag,
-} from '@/domain/entities';
-
+} from '@/app-types';
+import {
+  DefaultUrlSearch,
+} from '@/helpers/encoders';
 
 
 export function BreadcrumbProvider({ children, route, }: { children: ReactNode, route: IRouteStrings }) {
   const navigate = useNavigate();
   // @ts-ignore
   const routeApi = getRouteApi(route);
-  const csearch = decodeState(routeApi.useSearch({ select: (search: any) => search.c as unknown as string })) as unknown as IChildReadRequest;
+  const csearch = decodeState(routeApi.useSearch({
+    select: (search: any) => search.c as unknown as string
+  })) as unknown as IChildReadRequest;
 
   const breadcrumbClick = () => {
-    // @ts-ignore
-    navigate({ to: csearch?.parent ?? ".", search: (prev: IUrlSearch) => ({ p: prev.p }) });
+    navigate({
+      to: csearch?.parent ?? ".",
+      // @ts-ignore
+      search: (prev: IUrlSearch) => {
+        return {
+          p: prev.p,
+          c: DefaultUrlSearch.c,
+          e: DefaultUrlSearch.e,
+          s: DefaultUrlSearch.s,
+        }
+      },
+    });
   }
 
   const addNewItemClick = () => {

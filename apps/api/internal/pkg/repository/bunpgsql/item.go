@@ -39,7 +39,7 @@ func (a *item) Read(ctx context.Context, m *[]*model.Item, s *model.RepoSearch) 
 		WITH items AS (
 			SELECT
 				it.id ,it.user_id ,it.name ,it.note ,it.props
-				,it.tags ,it.soft_delete
+				,it.tags ,it.soft_delete, it.updated_at
 				,json_agg(DISTINCT jsonb_build_object(
 					'id', tg.id, 'user_id', tg.user_id,  'name', tg."name"
 					,'props', tg.props, 'soft_delete', tg.soft_delete
@@ -59,8 +59,8 @@ func (a *item) Read(ctx context.Context, m *[]*model.Item, s *model.RepoSearch) 
 
 	query := `
 		SELECT
-			id ,user_id ,name ,note ,props
-			,tags ,soft_delete ,tag_objs ,prop_objs
+			id ,user_id ,name ,note ,props ,tags
+			,soft_delete ,tag_objs ,prop_objs ,updated_at
 		FROM items it
 		WHERE 1 = 1
 	`

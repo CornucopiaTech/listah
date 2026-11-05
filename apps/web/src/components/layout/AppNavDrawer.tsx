@@ -51,8 +51,10 @@ import {
 } from "@/hooks/context";
 import type {
   IRouteStrings,
-} from '@/domain/entities';
-
+} from '@/app-types';
+import {
+  DefaultUrlSearch,
+} from '@/helpers/encoders';
 
 
 export function AppNavDrawer(): ReactNode {
@@ -64,17 +66,18 @@ export function AppNavDrawer(): ReactNode {
   const altIconStyle = { color: theme.palette.primary.contrastText }
   const appbarWidth = storeDrawerOpen ? `calc(100% - ${AppDrawerWidth}px)` : `calc(100% - calc(${theme.spacing(7)} + 1px))`;
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const queryParams = new URLSearchParams(DefaultUrlSearch).toString();
 
   const iconList = [
     {
       icon: <TagIcon sx={altIconStyle} />,
       name: "Tags",
-      url: "/tags"
+      url: `/tags?${queryParams}`,
     },
     {
       icon: <CategoryIcon sx={altIconStyle} />,
       name: "Filters",
-      url: "/filters"
+      url: `/filters?${queryParams}`,
     },
   ];
 
