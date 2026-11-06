@@ -30,7 +30,8 @@ echo "Logging into ${CONTAINER_REGISTRY_NAME}"
 az acr login --name ${CONTAINER_REGISTRY_NAME}
 
 echo "Building image ${API_IMAGE_FULL_NAME}"
-docker build -t "${API_IMAGE_FULL_NAME}" .
+# docker build --platform linux/amd64,linux/arm64 -t "${API_IMAGE_FULL_NAME}" .
+docker build --platform linux/arm64 -t "${API_IMAGE_FULL_NAME}" .
 
 echo "Pushing image ${API_IMAGE_FULL_NAME}"
 docker push "${API_IMAGE_FULL_NAME}"

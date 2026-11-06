@@ -16,6 +16,8 @@ import { useUser } from '@clerk/react';
 import LinearProgress from '@mui/material/LinearProgress';
 import Alert from '@mui/material/Alert';
 
+
+
 // Internal imports
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
@@ -42,8 +44,19 @@ declare global {
 enableMapSet();
 export const queryClient = new QueryClient();
 
+
+// Detect base path dynamically based on current URL path
+const getBasepath = (): string => {
+  if (typeof window !== 'undefined' && window.location.pathname.startsWith('/app')) {
+    return '/app'
+  }
+  return '/'
+}
+
+
 const router = createRouter({
   routeTree,
+  basepath: getBasepath(),
   defaultPendingComponent: LinearProgress,
   defaultErrorComponent: ({ error }) => <Alert severity="error">{error.message}</Alert>,
   defaultNotFoundComponent: NotFound,
@@ -78,7 +91,7 @@ function Wrapper({ children }: { children: ReactNode }) {
 };
 
 async function loadConfig() {
-  const res = await fetch('./config.json');
+  const res = await fetch('/config.json');
   const config = await res.json();
   window.runtimeConfig = config;
 }

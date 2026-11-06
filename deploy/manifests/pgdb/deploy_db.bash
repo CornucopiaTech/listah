@@ -19,7 +19,8 @@ echo "Latest image url: ${DB_IMAGE_URL}"
 
 
 # 2. Perform installation for loop
-setupfiles=( "pg-secrets" "postgres-ha" "postgres-db"  )
+# setupfiles=( "pg-secrets" "postgres-ha"  )
+setupfiles=( "postgres-ha"  )
 for kfilename in "${setupfiles[@]}"; do
     envsubst < "${CICD_BSH_DIR}/${kfilename}.tmpl.yaml" > "${CICD_BSH_DIR}/${kfilename}.yaml"
     echo "Applying local file ${kfilename}.yaml ..."

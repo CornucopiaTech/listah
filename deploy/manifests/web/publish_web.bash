@@ -29,8 +29,14 @@ echo "WEB_IMAGE_FULL_NAME:       ${WEB_IMAGE_FULL_NAME}"
 echo "Logging into ${CONTAINER_REGISTRY_NAME}"
 az acr login --name ${CONTAINER_REGISTRY_NAME}
 
+# # 1. Create a new builder instance using the docker-container driver
+# docker buildx create --name mybuilder --use
+
+# # 2. Start the builder instance
+# docker buildx inspect --bootstrap
+
 echo "Building image ${WEB_IMAGE_FULL_NAME}"
-docker build -t "${WEB_IMAGE_FULL_NAME}" .
+docker build --platform linux/arm64 -t "${WEB_IMAGE_FULL_NAME}" .
 
 echo "Pushing image ${WEB_IMAGE_FULL_NAME}"
 docker push "${WEB_IMAGE_FULL_NAME}"

@@ -18,31 +18,36 @@ jobs:
       contents: read
       id-token: write # Required for Workload Identity Federation
     env:
+      APP_ENV: ${{ inputs.environment }}
+      K8_SERVICE_ACCOUNT_NAME: "${{ vars.ROOT_NAME }}-${{ vars.APP_NAME }}-sa"
+      K8_STORAGE_CLASS: azure-storage-retained
+      K8_NAMESPACE: "${{ vars.APP_NAME }}"
       TF_VAR_root_name: ${{ vars.ROOT_NAME }}
       TF_VAR_app_name: ${{ vars.APP_NAME }}
-      APP_NAME: ${{ vars.APP_NAME }}
       TF_VAR_location: ${{ vars.AZ_LOCATION }}
       TF_VAR_resource_group_name: ${{ vars.AZ_RESOURCE_GROUP_NAME }}
       TF_VAR_state_management_container_name: ${{ vars.AZ_STATE_MGT_CONTAINER_NAME }}
       TF_VAR_storage_account_name: ${{ vars.AZ_STORAGE_ACCT_NAME }}
       TF_VAR_environment: ${{ inputs.environment }}
-      APP_ENV: ${{ inputs.environment }}
       TF_VAR_subscription_id: ${{ secrets.AZ_SUBSCRIPTION_ID }}
-      TF_VAR_state_management_key: azure/${{ inputs.environment }}
-      TF_VAR_admin_group_id: ${{ secrets.AZ_ADMIN_GRP_ID }}
+      TF_VAR_state_management_key: azure/${{ inputs.environment }}/${{ vars.APP_NAME }}/terraform.tfstate
       TF_VAR_k8_cluster_name: "${{ vars.ROOT_NAME }}-k8-cluster-${{ inputs.environment }}-${{ vars.AZ_LOCATION }}"
       TF_VAR_k8_cluster_rg: "${{ vars.ROOT_NAME }}-k8-user-admin-rg-${{ inputs.environment }}-${{ vars.AZ_LOCATION }}"
       TF_VAR_k8_service_account_name: "${{ vars.ROOT_NAME }}-${{ vars.APP_NAME }}-sa"
       TF_VAR_k8_namespace: "${{ vars.APP_NAME }}"
-      K8_SERVICE_ACCOUNT_NAME: "${{ vars.ROOT_NAME }}-${{ vars.APP_NAME }}-sa"
-      K8_NAMESPACE: "${{ vars.APP_NAME }}"
       TF_VAR_vnet_name: "${{ vars.ROOT_NAME }}-vnet-${{ inputs.environment }}-${{ vars.AZ_LOCATION }}"
       TF_VAR_vnet_rg: "${{ vars.ROOT_NAME }}-k8-user-admin-rg-${{ inputs.environment }}-${{ vars.AZ_LOCATION }}"
       TF_VAR_subnet_name: "${{ vars.ROOT_NAME }}-k8-node-subnet-${{ inputs.environment }}-${{ vars.AZ_LOCATION }}"
       TF_VAR_container_registry_name: "${{ vars.ROOT_NAME }}Acr${{ inputs.environment^ }}${{ vars.AZ_LOCATION^ }}"
       TF_VAR_container_registry_rg: "${{ vars.ROOT_NAME }}-k8-user-admin-rg-${{ inputs.environment }}-${{ vars.AZ_LOCATION }}"
+      TF_VAR_app_dns_name: "${{ vars.ROOT_NAME }}.com"
+      TF_VAR_app_dns_rg: "${{ vars.ROOT_NAME }}-k8-user-admin-rg-${{ inputs.environment }}-${{ vars.AZ_LOCATION }}"
+      TF_VAR_k8_control_plane_identity_name: "${{ vars.ROOT_NAME }}-k8-control-plane-id-${{ inputs.environment }}"
+      TF_VAR_k8_control_plane_identity_rg: "${{ vars.ROOT_NAME }}-k8-user-admin-rg-${{ inputs.environment }}-${{ vars.AZ_LOCATION }}"
+      TF_VAR_app_auth_domain: ${{ secrets.CLERK_FRONTEND_API }}
+      TF_VAR_app_api_key: ${{ secrets.CLERK_SECRET_KEY }}
+      TF_VAR_app_web_key: ${{ secrets.CLERK_PUBLIC_KEY }}
       TF_LOG: INFO
-      K8_STORAGE_CLASS: azure-storage-retained
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -74,7 +79,7 @@ jobs:
             -backend-config="resource_group_name=${{ vars.AZ_RESOURCE_GROUP_NAME }}" \
             -backend-config="storage_account_name=${{ vars.AZ_STORAGE_ACCT_NAME }}" \
             -backend-config="container_name=${{ vars.AZ_STATE_MGT_CONTAINER_NAME }}" \
-            -backend-config="key=azure/${{ inputs.environment }}/${{ vars.APP_NAME }}/terraform.tfstate" \
+            -backend-config="key=${{ vars.TF_VAR_state_management_key }}" \
             -var-file="${{ inputs.environment }}.tfvars" \
 
           terraform validate

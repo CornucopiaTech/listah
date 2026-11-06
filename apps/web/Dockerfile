@@ -1,6 +1,10 @@
 # Build stage
-FROM node:25 AS build
+FROM --platform=$BUILDPLATFORM node:25 AS build
 WORKDIR /app
+
+# Docker Buildx automatically populates these variables
+ARG TARGETOS
+ARG TARGETARCH
 
 COPY package*.json ./
 RUN npm ci
@@ -9,7 +13,7 @@ COPY . .
 RUN npm run build
 
 # Runtime stage
-FROM nginx:stable-alpine AS production
+FROM --platform=${TARGETPLATFORM} nginx:stable-alpine AS production
 
 
 # Copy built React app
@@ -21,10 +25,15 @@ COPY ./public/config.template.json /usr/share/nginx/html/config.template.json
 # Copy Nginx config
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# # Install ONLY production dependencies.
+# # If you have native C++ bindings, add --build-from-source flag
+# RUN npm ci --omit=dev
+
 EXPOSE 80
 
 # Copy entrypoint
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY --chown=10001:10001 --chmod=0755 entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
+
+# CMD ["bash", "/entrypoint.sh"]

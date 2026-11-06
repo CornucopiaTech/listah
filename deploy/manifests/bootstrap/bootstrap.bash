@@ -28,10 +28,8 @@ export PUBLIC_ZONE_ID=$(
 
 
 # 2a. Create an array of strings
-# setupfiles=( "namespaces" "service-account" "cluster-secret-store" "gateway" "external-dns" "certificate"  )
-setupfiles=(  )
-
-# 2b. Perform installation for loop
+setupfiles=( "namespaces" "service-account" "cluster-secret-store" "external-dns"  "certificate" "gateway" )
+# setupfiles=(  )
 for kfilename in "${setupfiles[@]}"; do
     envsubst < "${CICD_BSH_DIR}/${kfilename}.tmpl.yaml" > "${CICD_BSH_DIR}/${kfilename}.yaml"
     echo "Applying local file ${kfilename}.yaml ..."

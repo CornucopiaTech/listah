@@ -11,7 +11,7 @@ data:
   APP_NAME: "${K8_NAMESPACE}"
   ALLOWED_ORIGINS: "1,2"
   DATABASE_DB: "${K8_NAMESPACE}-pgdb-instance"
-  DATABASE_HOST: "${K8_NAMESPACE}-pgdb-cluster.${K8_NAMESPACE}.svc"
+  DATABASE_HOST: "${K8_NAMESPACE}-pgdb-cluster-rw.${K8_NAMESPACE}.svc.cluster.local"
   DATABASE_PORT: "5432"
   DATABASE_USE_TLS: "false"
   OTEL_EXPORTER_OTLP_ENDPOINT: "DEBUG"

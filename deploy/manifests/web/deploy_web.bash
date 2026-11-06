@@ -20,7 +20,7 @@ echo "Latest image url: ${WEB_IMAGE_URL}"
 
 # 2. Perform installation for loop
 # setupfiles=("web-secrets" "web-config-map" "web-deployment" "web-svc" "web-route")
-setupfiles=( "web-deployment" "web-route" )
+setupfiles=( "web-deployment" )
 for kfilename in "${setupfiles[@]}"; do
     envsubst < "${CICD_BSH_DIR}/${kfilename}.tmpl.yaml" > "${CICD_BSH_DIR}/${kfilename}.yaml"
     echo "Applying local file ${kfilename}.yaml ..."

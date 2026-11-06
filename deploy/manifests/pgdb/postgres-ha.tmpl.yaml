@@ -11,7 +11,7 @@ metadata:
     app.kubernetes.io/layer: data
     # app.kubernetes.io/managed-by: Helm
 spec:
-  instances: 2 # 1 primary + 1 streaming replicas
+  instances: 1 # 1 primary + 1 streaming replicas
   imageName: ghcr.io/cloudnative-pg/postgresql:18.0-system-trixie
   enableSuperuserAccess: true
   superuserSecret:
@@ -73,7 +73,7 @@ spec:
           name: ${K8_NAMESPACE}-pgdb-admin-role
 
   storage:
-    size: 20Gi
+    size: 30Gi
     storageClass: ${K8_ROOT_STORAGE_CLASS}
     pvcTemplate:
       accessModes:
@@ -81,10 +81,10 @@ spec:
   resources:
     requests:
       cpu: "0.1"
-      memory: 0.5Gi
+      memory: 0.3Gi
     limits:
       cpu: "0.2"
-      memory: 0.8Gi
+      memory: 0.5Gi
 
   # Spread the pods across zones so one outage can't take them all
   affinity:
@@ -95,4 +95,4 @@ spec:
   postgresql:
     parameters:
       max_connections: "200"
-      shared_buffers: "512MB"
+      shared_buffers: "128MB"

@@ -17,8 +17,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-      // '@mui/styled-engine': '@mui/styled-engine-sc'
     },
   },
-  base: './',
 })

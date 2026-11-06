@@ -19,7 +19,7 @@ echo "Latest image url: ${API_IMAGE_URL}"
 
 
 # setupfiles=("api-secrets" "api-config-map" "api-deployment" "api-svc" "api-route")
-setupfiles=( "api-route" )
+setupfiles=( "api-deployment" )
 
 
 # 2. Perform installation for loop
