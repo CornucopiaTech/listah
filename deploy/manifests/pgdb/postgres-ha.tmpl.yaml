@@ -1,35 +1,38 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: ${K8_NAMESPACE}-pgdb-cluster
-  namespace: ${K8_NAMESPACE}
+  name: ${APP1_NAME}-pgdb-cluster
+  namespace: ${APP_ENV}
   labels:
-    app.kubernetes.io/name: ${K8_NAMESPACE}-pgdb-cluster
+    app.kubernetes.io/name: ${APP1_NAME}-pgdb-cluster
     app.kubernetes.io/version: "18.0"
     app.kubernetes.io/component: database-cluster
-    app.kubernetes.io/part-of: ${K8_NAMESPACE}
+    app.kubernetes.io/part-of: ${APP1_NAME}
     app.kubernetes.io/layer: data
-    # app.kubernetes.io/managed-by: Helm
+    app: ${APP1_NAME}
+    env: ${APP_ENV}
+    target: pgdb
+    tier: data
 spec:
   instances: 1 # 1 primary + 1 streaming replicas
   imageName: ghcr.io/cloudnative-pg/postgresql:18.0-system-trixie
   enableSuperuserAccess: true
   superuserSecret:
-    name: ${K8_NAMESPACE}-pgdb-superuser
+    name: ${APP1_NAME}-pgdb-superuser
 
   bootstrap:
     initdb:
       database: app
       owner: app
       secret:
-        name: ${K8_NAMESPACE}-pgdb-user
+        name: ${APP1_NAME}-pgdb-user
 
   managed:
     roles:
       - name: app
         createdb: true
         login: true
-      - name: ${K8_NAMESPACE}-pgdb-rw-role
+      - name: ${APP1_NAME}-pgdb-rw-role
         ensure: present
         login: true
         superuser: false
@@ -41,8 +44,8 @@ spec:
         connectionLimit: 50
         validUntil: "2099-04-12T15:04:05Z"
         passwordSecret:
-          name: ${K8_NAMESPACE}-pgdb-rw-role
-      - name: ${K8_NAMESPACE}-pgdb-ro-role
+          name: ${APP1_NAME}-pgdb-rw-role
+      - name: ${APP1_NAME}-pgdb-ro-role
         ensure: present
         login: true
         superuser: false
@@ -54,8 +57,8 @@ spec:
         connectionLimit: 50
         validUntil: "2099-04-12T15:04:05Z"
         passwordSecret:
-          name: ${K8_NAMESPACE}-pgdb-ro-role
-      - name: ${K8_NAMESPACE}-pgdb-admin-role
+          name: ${APP1_NAME}-pgdb-ro-role
+      - name: ${APP1_NAME}-pgdb-admin-role
         ensure: present
         login: true
         superuser: true
@@ -70,7 +73,7 @@ spec:
           - pg_monitor
           - pg_signal_backend
         passwordSecret:
-          name: ${K8_NAMESPACE}-pgdb-admin-role
+          name: ${APP1_NAME}-pgdb-admin-role
 
   storage:
     size: 30Gi

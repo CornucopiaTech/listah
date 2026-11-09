@@ -7,15 +7,15 @@ echo "Getting latest image tag: "
 az acr login --name ${CONTAINER_REGISTRY_NAME}
 LATEST_IMAGE_TAG="$(az acr repository show-tags \
   --name ${CONTAINER_REGISTRY_NAME} \
-  --repository ${API_IMAGE_NAME} \
+  --repository ${APP1_API_IMAGE_NAME} \
   --orderby time_desc \
   --top 1 \
   --query "[0]" \
  --output tsv
 )"
 
-export API_IMAGE_URL="${CONTAINER_REGISTRY_URL}/${API_IMAGE_NAME}:${LATEST_IMAGE_TAG}"
-echo "Latest image url: ${API_IMAGE_URL}"
+export APP1_API_IMAGE_URL="${CONTAINER_REGISTRY_URL}/${APP1_API_IMAGE_NAME}:${LATEST_IMAGE_TAG}"
+echo "Latest image url: ${APP1_API_IMAGE_URL}"
 
 
 # setupfiles=("api-secrets" "api-config-map" "api-deployment" "api-svc" "api-route")

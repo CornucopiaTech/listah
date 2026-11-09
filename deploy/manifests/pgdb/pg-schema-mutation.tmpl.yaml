@@ -1,33 +1,38 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: ${K8_NAMESPACE}-pgdb-db-schema-mutation
-  namespace: ${K8_NAMESPACE}
+  name: ${APP1_NAME}-pgdb-db-schema-mutation
+  namespace: ${APP_ENV}
+  labels:
+    app: ${APP1_NAME}
+    env: ${APP_ENV}
+    target: pgdb
+    tier: data
 spec:
   template:
     spec:
       containers:
-        - name: ${K8_NAMESPACE}-pgdb-db-schema-mutation
-          image: "${DB_IMAGE_URL}"
+        - name: ${APP1_NAME}-pgdb-db-schema-mutation
+          image: "${APP1_DB_IMAGE_URL}"
           env:
             - name: LIQUIBASE_COMMAND_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: ${K8_NAMESPACE}-pgdb-admin-role
+                  name: ${APP1_NAME}-pgdb-admin-role
                   key: username
             - name: LIQUIBASE_COMMAND_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: ${K8_NAMESPACE}-pgdb-admin-role
+                  name: ${APP1_NAME}-pgdb-admin-role
                   key: password
             - name: DATABASE_DIALECT
               value: postgresql
             - name: DATABASE_NAME
-              value: ${K8_NAMESPACE}-pgdb-instance
+              value: ${APP1_NAME}-pgdb-instance
             - name: DATABASE_PORT
               value: "5432"
             - name: DATABASE_HOST
-              value: ${K8_NAMESPACE}-pgdb-cluster-rw
+              value: ${APP1_NAME}-pgdb-cluster-rw
             - name: LIQUIBASE_COMMAND_URL
               value: jdbc:$(DATABASE_DIALECT)://$(DATABASE_HOST):$(DATABASE_PORT)/$(DATABASE_NAME)
       restartPolicy: Never

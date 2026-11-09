@@ -1,17 +1,20 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Database
 metadata:
-  name: ${K8_NAMESPACE}-pgdb-db
-  namespace: ${K8_NAMESPACE}
+  name: ${APP1_NAME}-pgdb-db
+  namespace: ${APP_ENV}
   labels:
-    app.kubernetes.io/name: ${K8_NAMESPACE}-pgdb-db
+    app.kubernetes.io/name: ${APP1_NAME}-pgdb-db
     app.kubernetes.io/version: "18.0"
     app.kubernetes.io/component: database-instance
-    app.kubernetes.io/part-of: ${K8_NAMESPACE}
+    app.kubernetes.io/part-of: ${APP1_NAME}
     app.kubernetes.io/layer: data
-    # app.kubernetes.io/managed-by: Helm
+    app: ${APP1_NAME}
+    env: ${APP_ENV}
+    target: pgdb
+    tier: data
 spec:
-  name: ${K8_NAMESPACE}-pgdb-instance # The actual name of the database in Postgres
+  name: ${APP1_NAME}-pgdb-instance # The actual name of the database in Postgres
   owner: app # The database owner role
   cluster:
-    name: ${K8_NAMESPACE}-pgdb-cluster # Name of your target CloudNativePG Cluster
+    name: ${APP1_NAME}-pgdb-cluster # Name of your target CloudNativePG Cluster

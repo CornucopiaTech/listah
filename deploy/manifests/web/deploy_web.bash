@@ -7,15 +7,15 @@ echo "Getting latest image tag: "
 az acr login --name ${CONTAINER_REGISTRY_NAME}
 LATEST_IMAGE_TAG="$(az acr repository show-tags \
   --name ${CONTAINER_REGISTRY_NAME} \
-  --repository ${WEB_IMAGE_NAME} \
+  --repository ${APP1_WEB_IMAGE_NAME} \
   --orderby time_desc \
   --top 1 \
   --query "[0]" \
  --output tsv
 )"
 
-export WEB_IMAGE_URL="${CONTAINER_REGISTRY_URL}/${WEB_IMAGE_NAME}:${LATEST_IMAGE_TAG}"
-echo "Latest image url: ${WEB_IMAGE_URL}"
+export APP1_WEB_IMAGE_URL="${CONTAINER_REGISTRY_URL}/${APP1_WEB_IMAGE_NAME}:${LATEST_IMAGE_TAG}"
+echo "Latest image url: ${APP1_WEB_IMAGE_URL}"
 
 
 # 2. Perform installation for loop

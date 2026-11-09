@@ -1,23 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ${K8_NAMESPACE}-web-deployment
-  namespace: ${K8_NAMESPACE}
+  name: ${APP1_NAME}-web-deployment
+  namespace: ${APP_ENV}
   labels:
-    app: ${K8_NAMESPACE}-web
+    app: ${APP1_NAME}
+    env: ${APP_ENV}
+    target: web
+    tier: frontend
 spec:
   replicas: 2 # Number of identical containers to run
   selector:
     matchLabels:
-      app: ${K8_NAMESPACE}-web
+      app: ${APP1_NAME}
+      env: ${APP_ENV}
+      target: web
+      tier: frontend
   template:
     metadata:
       labels:
-        app: ${K8_NAMESPACE}-web
+        app: ${APP1_NAME}
+        env: ${APP_ENV}
+        target: web
+        tier: frontend
     spec:
       containers:
-        - name: ${K8_NAMESPACE}-web-container
-          image: "${WEB_IMAGE_URL}" # Your Docker image
+        - name: ${APP1_NAME}-web-container
+          image: "${APP1_WEB_IMAGE_URL}" # Your Docker image
           ports:
             - name: http
               containerPort: 80
@@ -33,7 +42,7 @@ spec:
           #     port: 443
           envFrom:
             - configMapRef:
-                name: ${K8_NAMESPACE}-web-configmap
+                name: ${APP1_NAME}-web-configmap
           env:
             - name: TLS_CERT
               value: /etc/tls/tls.crt
@@ -42,9 +51,9 @@ spec:
             - name: AUTH_KEY
               valueFrom:
                 secretKeyRef:
-                  name: ${K8_NAMESPACE}-web-auth
+                  name: ${APP1_NAME}-web-auth
                   key: auth_web_key
       volumes:
         - name: tls
           secret:
-            secretName: "${K8_NAMESPACE}-${APP_ENV}-tls"
+            secretName: "${APP1_NAME}-${APP_ENV}-tls"

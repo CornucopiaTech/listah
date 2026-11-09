@@ -16,22 +16,22 @@ echo "Current working directory: $(pwd)"
 
 RANDOM_TEXT="$( tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 10; echo ""
 )"
-API_IMAGE_NAME_TAG="${API_IMAGE_NAME}:${RANDOM_TEXT}"
-API_IMAGE_FULL_NAME="${CONTAINER_REGISTRY_URL}/${API_IMAGE_NAME_TAG}"
+APP1_API_IMAGE_NAME_TAG="${APP1_API_IMAGE_NAME}:${RANDOM_TEXT}"
+APP1_API_IMAGE_FULL_NAME="${CONTAINER_REGISTRY_URL}/${APP1_API_IMAGE_NAME_TAG}"
 
 
 echo "CONTAINER_REGISTRY_URL:    ${CONTAINER_REGISTRY_URL}"
 echo "CONTAINER_REGISTRY_NAME:   ${CONTAINER_REGISTRY_URL}"
-echo "API_IMAGE_NAME_TAG:        ${API_IMAGE_NAME_TAG}"
-echo "API_IMAGE_FULL_NAME:       ${API_IMAGE_FULL_NAME}"
+echo "APP1_API_IMAGE_NAME_TAG:        ${APP1_API_IMAGE_NAME_TAG}"
+echo "APP1_API_IMAGE_FULL_NAME:       ${APP1_API_IMAGE_FULL_NAME}"
 
 
 echo "Logging into ${CONTAINER_REGISTRY_NAME}"
 az acr login --name ${CONTAINER_REGISTRY_NAME}
 
-echo "Building image ${API_IMAGE_FULL_NAME}"
-# docker build --platform linux/amd64,linux/arm64 -t "${API_IMAGE_FULL_NAME}" .
-docker build --platform linux/arm64 -t "${API_IMAGE_FULL_NAME}" .
+echo "Building image ${APP1_API_IMAGE_FULL_NAME}"
+# docker build --platform linux/amd64,linux/arm64 -t "${APP1_API_IMAGE_FULL_NAME}" .
+docker build --platform linux/arm64 -t "${APP1_API_IMAGE_FULL_NAME}" .
 
-echo "Pushing image ${API_IMAGE_FULL_NAME}"
-docker push "${API_IMAGE_FULL_NAME}"
+echo "Pushing image ${APP1_API_IMAGE_FULL_NAME}"
+docker push "${APP1_API_IMAGE_FULL_NAME}"

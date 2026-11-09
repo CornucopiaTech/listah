@@ -1,17 +1,22 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: ${K8_NAMESPACE}-api-configmap
-  namespace: ${K8_NAMESPACE}
+  name: ${APP1_NAME}-api-configmap
+  namespace: ${APP_ENV}
+  labels:
+    app: ${APP1_NAME}
+    env: ${APP_ENV}
+    target: api
+    tier: backend
 data:
   LOG_LEVEL: "INFO"
   ENV: "${APP_ENV}"
   PORT: "80"
   APP_PORT: "80"
-  APP_NAME: "${K8_NAMESPACE}"
+  APP_NAME: "${APP1_NAME}"
   ALLOWED_ORIGINS: "1,2"
-  DATABASE_DB: "${K8_NAMESPACE}-pgdb-instance"
-  DATABASE_HOST: "${K8_NAMESPACE}-pgdb-cluster-rw.${K8_NAMESPACE}.svc.cluster.local"
+  DATABASE_DB: "${APP1_NAME}-pgdb-instance"
+  DATABASE_HOST: "${APP1_NAME}-pgdb-cluster-rw.${APP_ENV}.svc.cluster.local"
   DATABASE_PORT: "5432"
   DATABASE_USE_TLS: "false"
   OTEL_EXPORTER_OTLP_ENDPOINT: "DEBUG"
