@@ -1,24 +1,5 @@
 
-locals {
-  db_usernames_map = {
-    superuser  = "postgres"
-    appuser    = "app"
-    ro_role    = "ro-role"
-    rw_role    = "rw-role"
-    admin_role = "admin-role"
-  }
 
-  deploy_envs = ["dev", "prod"]
-
-  web_auth = {
-    dev  = ""
-    prod = ""
-  }
-  api_auth = {
-    dev  = ""
-    prod = ""
-  }
-}
 
 
 # DB Super user credentials
@@ -62,6 +43,7 @@ locals {
 
 }
 
+# PGDB Secrets
 resource "azurerm_key_vault_secret" "pgdb" {
   for_each = tomap(local.pgdb_creds)
 
@@ -80,36 +62,34 @@ resource "azurerm_key_vault_secret" "pgdb" {
 
 
 
-# # API auth key
-# resource "azurerm_key_vault_secret" "app_auth_secrets_api" {
-#   name = "${local.default_tags.app_name}-api-auth-secrets-${local.default_tags.environment}"
-#   value = jsonencode({
-#     domain       = var.app_auth_domain
-#     auth_api_key = var.app_auth_api_key
-#     }
-#   )
-#   key_vault_id = azurerm_key_vault.app_vault.id
-#   tags = {
-#     for k in sort(concat(keys(azurerm_resource_group.app_rg.tags), ["res_purpose"])) :
-#     k =>
-#     k == "res_purpose" ? "app api auth secrets" :
-#     try(azurerm_resource_group.app_rg.tags[k], null)
-#   }
-# }
+# API secrets
+resource "azurerm_key_vault_secret" "api_secrets" {
+  for_each = tomap(local.api_secrets)
 
+  name         = "${local.default_tags.app_name}-${each.key}-api-secrets-${local.default_tags.location}"
+  value        = jsonencode(each.value)
+  key_vault_id = data.azurerm_key_vault.app_vault.id
+  tags = {
+    for k in sort(keys(data.azurerm_resource_group.app_rg.tags)) :
+    k =>
+    k == "res_purpose" ? "api secrets" :
+    k == "env" ? each.key :
+    try(data.azurerm_resource_group.app_rg.tags[k], null)
+  }
+}
 
-# # Web auth key
-# resource "azurerm_key_vault_secret" "app_auth_secrets_web" {
-#   name = "${local.default_tags.app_name}-web-auth-secrets-${local.default_tags.environment}"
-#   value = jsonencode({
-#     auth_web_key = var.app_auth_web_key
-#     }
-#   )
-#   key_vault_id = azurerm_key_vault.app_vault.id
-#   tags = {
-#     for k in sort(concat(keys(azurerm_resource_group.app_rg.tags), ["res_purpose"])) :
-#     k =>
-#     k == "res_purpose" ? "app web auth secrets" :
-#     try(azurerm_resource_group.app_rg.tags[k], null)
-#   }
-# }
+# Web secrets
+resource "azurerm_key_vault_secret" "web_secrets" {
+  for_each = tomap(local.web_secrets)
+
+  name         = "${local.default_tags.app_name}-${each.key}-web-secrets-${local.default_tags.location}"
+  value        = jsonencode(each.value)
+  key_vault_id = data.azurerm_key_vault.app_vault.id
+  tags = {
+    for k in sort(keys(data.azurerm_resource_group.app_rg.tags)) :
+    k =>
+    k == "res_purpose" ? "web secrets" :
+    k == "env" ? each.key :
+    try(data.azurerm_resource_group.app_rg.tags[k], null)
+  }
+}

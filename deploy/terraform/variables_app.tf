@@ -26,18 +26,34 @@ variable "container_registry_name" {
 
 
 
-variable "app_auth_domain" {
+variable "api_dev_auth_domain" {
+  sensitive   = true
+  type        = string
+  description = "Auth domain for API"
+}
+variable "api_prod_auth_domain" {
   sensitive   = true
   type        = string
   description = "Auth domain for API"
 }
 
-variable "app_auth_api_key" {
+variable "api_dev_auth_key" {
   sensitive   = true
   type        = string
   description = "Auth key for API"
 }
-variable "app_auth_web_key" {
+variable "api_prod_auth_key" {
+  sensitive   = true
+  type        = string
+  description = "Auth key for API"
+}
+
+variable "web_dev_auth_key" {
+  sensitive   = true
+  type        = string
+  description = "Auth key for web"
+}
+variable "web_prod_auth_key" {
   sensitive   = true
   type        = string
   description = "Auth key for web"

@@ -1,7 +1,0 @@
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: ${APP1_NAME}
-  labels:
-    gateway-access: shared
