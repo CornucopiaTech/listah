@@ -22,6 +22,26 @@ variable "container_registry_name" {
   description = "Name of container registry"
 }
 
+variable "storage_class" {
+  type        = string
+  description = "Name of storage class"
+}
+
+# variable "app_tls_secret" {
+#   type        = string
+#   description = "TLS secret name for app"
+# }
+
+variable "gateway_name" {
+  type        = string
+  description = "Name for app gateway"
+}
+
+variable "app_dns_name" {
+  type        = string
+  description = "Name for app public DNS"
+}
+
 
 
 
@@ -48,6 +68,7 @@ variable "api_prod_auth_key" {
   description = "Auth key for API"
 }
 
+
 variable "web_dev_auth_key" {
   sensitive   = true
   type        = string
@@ -57,4 +78,38 @@ variable "web_prod_auth_key" {
   sensitive   = true
   type        = string
   description = "Auth key for web"
+}
+
+
+variable "api_dev_image_url" {
+  sensitive   = true
+  type        = string
+  description = "Image URL for API"
+}
+variable "api_prod_image_url" {
+  sensitive   = true
+  type        = string
+  description = "Image URL for API"
+}
+
+variable "web_dev_image_url" {
+  sensitive   = true
+  type        = string
+  description = "Image URL for web"
+}
+variable "web_prod_image_url" {
+  sensitive   = true
+  type        = string
+  description = "Image URL for web"
+}
+
+variable "pgdb_dev_image_url" {
+  sensitive   = true
+  type        = string
+  description = "Image URL for pgdb"
+}
+variable "pgdb_prod_image_url" {
+  sensitive   = true
+  type        = string
+  description = "Image URL for pgdb"
 }

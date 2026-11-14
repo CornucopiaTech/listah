@@ -25,6 +25,11 @@ data "azurerm_user_assigned_identity" "k8_control_plane_identity" {
 }
 
 
+data "azurerm_dns_zone" "public_dns_zone" {
+  name                = var.app_dns_name
+  resource_group_name = var.root_rg
+}
+
 
 
 
@@ -37,9 +42,4 @@ data "azurerm_user_assigned_identity" "k8_control_plane_identity" {
 #   name                 = var.subnet_name
 #   virtual_network_name = data.azurerm_virtual_network.app_network.name
 #   resource_group_name  = data.azurerm_virtual_network.app_network.resource_group_name
-# }
-
-# data "azurerm_dns_zone" "public_dns_zone" {
-#   name                = var.app_dns_name
-#   resource_group_name = var.app_dns_rg
 # }

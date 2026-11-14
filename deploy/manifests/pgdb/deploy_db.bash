@@ -22,15 +22,15 @@ done
 
 
 # # 3. Replace jobs
-# az acr login --name ${CONTAINER_REGISTRY_NAME}
-# LATEST_IMAGE_TAG="$(az acr repository show-tags \
-#   --name ${CONTAINER_REGISTRY_NAME} \
-#   --repository ${APP1_DB_IMAGE_NAME} \
-#   --orderby time_desc \
-#   --top 1 \
-#   --query "[0]" \
-#  --output tsv
-# )"
+az acr login --name ${CONTAINER_REGISTRY_NAME}
+LATEST_IMAGE_TAG="$(az acr repository show-tags \
+  --name ${CONTAINER_REGISTRY_NAME} \
+  --repository ${APP1_DB_IMAGE_NAME} \
+  --orderby time_desc \
+  --top 1 \
+  --query "[0]" \
+ --output tsv
+)"
 
 # export APP1_DB_IMAGE_URL="${CONTAINER_REGISTRY_URL}/${APP1_DB_IMAGE_NAME}:${LATEST_IMAGE_TAG}"
 # echo "Latest image url: ${APP1_DB_IMAGE_URL}"

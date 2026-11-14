@@ -35,5 +35,20 @@ locals {
     rw_role    = "rw-role"
     admin_role = "admin-role"
   }
-
+  domain_prefix = {
+    dev  = "dev."
+    prod = ""
+  }
+  web_image_url = {
+    dev  = var.web_dev_image_url
+    prod = var.web_prod_image_url
+  }
+  api_image_url = {
+    dev  = var.api_dev_image_url
+    prod = var.api_prod_image_url
+  }
+  pgdb_image_url = {
+    dev  = var.pgdb_dev_image_url
+    prod = var.pgdb_prod_image_url
+  }
 }

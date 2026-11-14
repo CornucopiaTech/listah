@@ -6,15 +6,6 @@ variable "location" {
   description = "Region used in deployment"
 }
 
-variable "environment" {
-  type        = string
-  description = "Deployment environment. dev, test, or prod"
-  validation {
-    condition     = var.environment == "dev" || var.environment == "test" || var.environment == "prod"
-    error_message = "Unknown deployment environment.."
-  }
-}
-
 variable "root_name" {
   type        = string
   description = "Root/stack name defined in labels/tags"
